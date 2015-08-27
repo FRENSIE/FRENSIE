@@ -14,8 +14,9 @@
  * the materials, and run time configuration options. The following sections 
  * will discuss the construction of each of these XML files.
  *
- * \section geometry_sec Geometry Construction
- * Currently, only CAD geometries can be used with FACEMC. The CAD file must
+ * \section geometry_sec_dag Geometry Construction - DAGMC
+ * In order to use DagMC as the geometry handler for a simulation, a CAD
+ * geometry must be utilized. Further, the CAD file must
  * be constructed before the XML file. 
  *
  * \subsection dagmc_workflow DAGMC Workflow
@@ -137,7 +138,7 @@
  *
  * Three parameter elements must appear in every geometry file. The first
  * is the handler element, which specifies the geometry handler that will be
- * used by FACEMC (currently only DAGMC is available). The second is the
+ * used by FACEMC. The second is the
  * CAD file that FACEMC will use. The third is the face tolerance that 
  * DAGMC will use to facet the CAD geometry. A basic geometry file is
  * shown below.
@@ -173,10 +174,6 @@
  * \endcode
  * Please note that keyword synonyms may not use the underscore ("_") character
  * as this is a reserved character in DagMC.
- *
- * \section material_construction Material Construction
- * Before discussing how materials are specified, the layout of the directory
- * containing the cross section tables must be discussed.
  *
  * \subsection cross_section_dir Cross Section Directory
  * The cross section directory must contain all of the cross section tables
@@ -263,6 +260,439 @@
  *
  * </ParameterList>
  * \endcode
+ *
+ * \section geometry_sec_root Geometry Construction - ROOT
+ * In order to use Root as the geometry handler for a simulation, a Root
+ * geometry must be utilized. The geometry must be constructed according to
+ * Root standards, and must be exported to a binary file prior to being used
+ * for a simulation. While this section will provide a brief overview of using
+ * ROOT with FRENSIE, for more in depth topics consult the
+ * <a href="ftp://root.cern.ch/root/doc/18Geometry.pdf">ROOT Geometry Handbook</a>.
+ *
+ * \subsection root_workflow ROOT Workflow
+ * 
+ * Workflow in ROOT is quite straightforward. In order to construct a ROOT
+ * geometry for particle tracking, the following workflow should be followed:
+ *
+ * \subsection material_construction_root Material Construction
+ * Before discussing how materials are specified, the layout of the directory
+ * containing the cross section tables must be discussed.
+ *
+ * <ol>
+ *  <li> Construct a standard C file containing the ROOT geometry via a
+         collection of volumes (discrete and combined), all embedded within a graveyard volume.</li>
+ *   <ul><li> Each volume must have an assigned material and density</li>
+ *       <li> Each volume must have an unique user-specified identifer assigned</li></ul>
+ *  <li> Ensure that overlapping regions of sister volumes are properly assigned</li>
+ *  <li> Ensure that daughters are assigned to a parent, starting from the bottom node</li>
+ *  <li> Visualize the geometry</li>
+ *  <li> Export to binary format for use in FRENSIE</li>
+ * </ol>     
+ *
+ * \subsection root_std_c Constructing ROOT Geometries
+ *
+ * An input file for ROOT is a C style file whose contained class 
+ * <b>must</b> match the name of the file itself. For example, if an input file
+ * is named <b>root_input.C</b>, then the geometry definition will be contained
+ * within a class named <b>root_input()</b>. Once the class has been
+ * constructed, the first function call must always be to load the ROOT
+ * geometry library. This can be done with the following function call:
+ *
+ * \code{.c}
+ * gSystem->Load("libGeom");
+ * \endcode
+ *
+ * The second function call must always be to generate a geometry manager which
+ * will handle the specific world contained in this geometry file. This is done
+ * by creating a 
+ * <a href="https://root.cern.ch/root/html/TGeoManager.html"> TGeoManager</a>
+ * by passing in a name and description for the geometry. See the following
+ * function call
+ *
+ * \code{.c}
+ * new TGeoManager( "Geometry_Name", "Geometry_Description" );
+ * \endcode
+ *
+ * Combining all of this, an initial skeleton code for a ROOT input file named
+ * <b>root_input.C</b> would take the form:
+ *
+ * \code{.c}
+ * void root_input()
+ * {
+ *   // Load the geometry library and initialize the geometry handler
+ *   gSystem->Load("libGeom");
+ *   new TGeoManager( "Geometry_Name", "Geometry_Description" );
+ * } 
+ * \endcode
+ *
+ * In order to define an actual geometry, one must first understand that ROOT is
+ * an atypical combinatorial geometry (CG) package. In most CG packages, such
+ * as that found in MCNP, a user defines a series of surfaces, from which they
+ * define cells which are bounded by various combinations of those surfaces.
+ * However, in ROOT a user defines a set of volumes, which are a combination of
+ * a closed three-dimensional shape, and a filling medium. 
+ *
+ * \subsubsection root_material ROOT Material Generation 
+ *
+ * The first step in geometry creation is to define the materials that will be
+ * used in the problem. These materials will be used to construct various media
+ * which are needed by ROOT to fill volumes. For the purposes of FRENSIE, the
+ * importance of the medium class can be ignored, but if the user wishes to
+ * see a description of its origins (GEANT3), see the
+ * <a href="ftp://root.cern.ch/root/doc/18Geometry.pdf">ROOT Geometry Handbook</a> 
+ * (pg. 302).
+ *
+ * The <a href="https://root.cern.ch/root/html/TGeoMaterial.html"> TGeoMaterial</a> 
+ * class is used to construct a material in ROOT. For an elemental material,
+ * one must provide a name to the material, the mass number, the atomic number,
+ * and the density. Note that the material name should follow the FRENSIE naming
+ * convention of "mat_#". Further, a positive value for density denotes atomic
+ * atomic density (atoms/b-cm), while a negative value denotes mass density 
+ * (g/cm^3). The example below defines a material consisting of elemental
+ * hydrogen at a density of 0.001 g/cm^3.
+ *
+ * \code{.c}
+ * // Material Definition Form:
+ * // TGeoMaterial( "name", A, Z, Density )
+ *
+ * // Elemental Hydrogen ( rho = 0.001 g/cm^3 )
+ * TGeoMaterial* H = new TGeoMaterial( "mat_1", 1, 1, -0.001 );
+ * \endcode
+ *
+ * <b>Note:</b> There are two important material names: "void" and "graveyard".
+ * Assigning a material name of "void" indicates to FRENSIE that this cell
+ * contains no material but particle transport should still be done on it. 
+ * Assigning a material name of "graveyard" indicates to FRENSIE that any
+ * particle entering this cell should be terminated.
+ *
+ * For materials which are compounds or mixtures, one may need a material which
+ * is defined by several different elements. In order to do this, the
+ * <a href="https://root.cern.ch/root/html/TGeoMixture.html"> TGeoMixture</a>
+ * is derived from the 
+ * <a href="https://root.cern.ch/root/html/TGeoMaterial.html"> TGeoMaterial</a> 
+ * class, and is designed to allow for multiple elements. In order to define a
+ * mixture, the user must provide a name, the number of elements, and the
+ * density. Each element is then added individually into the mixture by 
+ * providing a unique index [0, number_elements - 1], the mass number, the
+ * atomic number, and the weight fraction of that element. Element indices
+ * start at 0 and increment to ensure that each element has a unique
+ * index. <b>Warning:</b>
+ * ROOT will not renormalize weight fractions, thus the user must ensure that
+ * the weight fractions sum to unity. The following is a simple definition for
+ * water.
+ *
+ * \code{.c}
+ * // Mixture Definition Form:
+ * // TGeoMixture( "name", Number_Elements, Density)
+ *
+ * // Pure Liquid Water at STP ( rho = 1.0 g/cm^3 )
+ * TGeoMixture* Water = new TGeoMixture( "mat_1", 2, -1.0 );
+ *
+ * // Elemental Definition Form:
+ * // DefineElement( Index, A, Z, Weight_Fraction )
+ *
+ * // Add Hydrogen to Water
+ * Water->DefineElement( 0, 1, 1, 0.201133 )
+ *
+ * // Add Oxygen to Water
+ * Water->DefineElement( 1, 16, 8, 0.798867 )
+ * \endcode
+ *
+ * A helpful reference for determining appropriate weight fractions of many
+ * known mixtures (especially those common in nuclear engineering) is the 
+ * <a href="http://www.pnnl.gov/main/publications/external/technical_reports/PNNL-15870Rev1.pdf"> 
+ * PNNL Compendium of Material Composition Data for Radiation Transport 
+ * Modeling</a>.
+ *
+ * The final step before proceeding to volume creation is to create a 
+ * corresponding
+ * <a href="https://root.cern.ch/root/html/TGeoMedium.html"> TGeoMedium</a> for
+ * each material/mixture that has been defined. To define a medium, the user 
+ * must provide a name, a medium index, and a material/mixture. By convention
+ * the name should be "med_#" where the number matches that of the material or
+ * mixture to which it corresponds. Further, the index should increment for each
+ * medium in the same way that it incremented for the elements in the mixture.
+ * This ensures that each medium has a unique index. The following example 
+ * shows the medium definition of water assuming the materials were defined
+ * as those in the previous example.
+ *
+ * \code{.c}
+ * // Medium Definition Form:
+ * // TGeoMedium( "name", Index, TGeoMaterial (or TGeoMixture) )
+ * 
+ * // Medium for Pure Liquid Water
+ * TGeoMedium* Water_medium = new TGeoMedium( "med_1", 0, Water );
+ * \endcode
+ *
+ * \subsubsection root_volume ROOT Volume Generation 
+ * 
+ * Once the materials and media have been defined, volumes construction can
+ * proceed. There are various types of predefined shapes in ROOT, all of which
+ * are discussed in the 
+ * <a href="ftp://root.cern.ch/root/doc/18Geometry.pdf">ROOT Geometry Handbook</a> 
+ * (pg. 306). A volume in ROOT consists of a shape which has been filled with
+ * a medium. While one can construct a shape separately and then form a volume,
+ * for simple volumes it is often easier to use predefined functions which allow
+ * for direct volume creation. The following simple volumes can be constructed
+ * directly from the geometry manager:
+ *
+ * <ul>
+ *   <li><b>Right Parallelepiped</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeBox"> MakeBox</a>) </li>
+ *   <li><b>Sphere</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeSphere"> MakeSphere</a>) </li>
+ *   <li><b>Cylinder or Tube</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeTube"> MakeTube</a>) </li>
+ *   <li><b>Cone</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeCone"> MakeCone</a>) </li>
+ *   <li><b>Trapezoidal Volumes</b></li>
+ *   <ul>
+ *     <li>(<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeTrd1"> MakeTrd1</a>)</li>
+ *     <li>(<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeTrd2"> MakeTrd2</a>)</li>
+ *     <li>(<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeTrap"> MakeTrap</a>)</li>
+ *   </ul>
+ *   <li><b>Torus</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeTorus"> MakeTorus</a>) </li>
+ *   <li><b>Paraboloid</b> - (<a href="https://root.cern.ch/root/html/TGeoManager.html#TGeoManager:MakeParaboloid"> MakeParaboloid</a>) </li>
+ *   <li>See the handbook for the full list of volumes that can be created...</li>
+ * </ul>
+ * 
+ * The simple example of constructing a sphere of water is shown below, assuming
+ * the water medium is defined from the previous section.
+ *
+ * \code{.c}
+ * // Sphere Definition Form:
+ * // MakeSphere( "name", TGeoMedium, Minimum_Radius, Maximum_Radius )
+ *
+ * // Sphere of Water of radius 1.0cm centered at (0,0,0)
+ * TGeoVolume *Water_Sphere = gGeoManager->MakeSphere( "Water_Sphere", Water_medium, 0.0, 1.0 );
+ * \endcode
+ *
+ * It should be noted that most volumes (Box, Sphere, Torus, etc.) are centered
+ * about the point (0,0,0). The next section on heirarchy will explore 
+ * the movement (translation and rotation) of volumes in space. The final thing
+ * that <b>must</b> be done, is to assign a unique identifier to each volume.
+ * This is so that when estimators and materials are assigned in the XML input
+ * files for FRENSIE, they are mapped to the correct volume entity. Note that
+ * all unique identifiers must be positive, and each volume must have its own
+ * unique identifier.
+ *
+ * \code{.c}
+ * Water_Sphere->SetUniqueID(1);
+ * \endcode
+ *
+ * \subsubsection root_heirarchy ROOT Volume Heirarchy and Positioning 
+ *
+ * In ROOT, the heirarchy between various volumes must be explicitly stated by
+ * defining relationships between volumes which overlap, and those which are 
+ * completely contained within another volume. The simplest case is when a
+ * volume is completely contained within another volume. In this case there is a
+ * daughter and parent volume. For example, the sphere of water we defined is
+ * now sitting in an a box of side length 3cm. Therefore, if no heirarchy is
+ * defined, the region which the sphere occupies is also occupied by the cube,
+ * and ROOT cannot determine what volume owns that space. In order to clarify
+ * we need to state that the water sphere is now a daughter of the box. This
+ * can be done by using the AddNode() function call.
+ *
+ * \code{.c}
+ * // Assume that Water_Sphere defines a sphere of water of radius 1.0cm 
+ * // and Air_Cube defines a cube of air of side length 3.0cm both centered
+ * // at (0,0,0).
+ *
+ * // AddNode Definition Form:
+ * // AddNode( Daughter_Node, Copy_Number )
+ *
+ * Air_Cube->AddNode( Water_Sphere, 1 );
+ * \endcode
+ *
+ * Taking this one step further, perhaps the user would like to offset the
+ * sphere, such that it still remains within the box but is translated by 
+ * (0.25cm,0.25cm,0.25cm). This can be done by utilizing an optional input
+ * parameter on the AddNode() function, which allows for a translation
+ * matrix to be utilized.
+ *
+ * \code{.c}
+ * Air_Cube->AddNode( Water_Sphere, 1, new TGeoTranslation(0.25,0.25,0.25) );
+ * \endcode
+ *
+ * The final issue to take into account would be overlapping regions. These
+ * become significantly more complicated and require the user to deal with them
+ * carefully. If two volumes at the same heirarchy level overlap, the 
+ * AddNodeOverlap() function must be used. However, one must keep the following
+ * points in mind:
+ *
+ * <ol>
+ *  <li> Overlapping regions are owned by all volumes in which they reside</li>
+ *  <li> The geometry handler will assign priority ownership to the volume which was <b>not</b> defined as overlapping
+ *  <li> In the event the user fails to specify overlap, the volume which was defined first will assume priority ownership of the region</li>
+ * </ol> 
+ *
+ * For a simple example, imagine two spheres, Sphere_Left and Sphere_Right 
+ * which overlap each other. If the user wishes to have Sphere_Left own the
+ * region of overlap, the appropriate function call would be:
+ *
+ * \code{.c}
+ * Sphere_Right->AddNodeOverlap( Sphere_Left, 1 );
+ * \endcode
+ *
+ * This function call has stated that Sphere_Right has an overlapping region
+ * with Sphere_Left. This leaves Sphere_Left in a "non-overlapping" state.
+ * Therefore, in the region where both spheres overlap, the geometry handler
+ * will see that Sphere_Right was defined as overlapping, where Sphere_Left was
+ * not, and thus assign priority ownership to Sphere_Left. This is by far the
+ * most cumbersome component to geometry manipulation in ROOT, and requires 
+ * great care on the part of the user.
+ *
+ * \subsubsection Geometry Visualization and Export
+ *
+ * The final step in creating a ROOT geometry is to visualize the geometry, and
+ * then once satisfied (and ROOT does not throw any errors) to export it to
+ * a binary which can be read by FRENSIE.
+ *
+ * When constructing the geometry, one must also include a volume which contains
+ * all other volumes. This volume will be the graveyard volume, or the rest of
+ * universe region. Note that the material in this volume should be assigned a 
+ * material name of "graveyard", so that it can be identified by FRENSIE. 
+ * One must also set this volume as the Top volume using the
+ * function call SetTopVolume:
+ *
+ * \code{.c}
+ * gGeoManager->SetTopVolume( Graveyard );
+ * \endcode
+ *
+ * Once this has been done the geometry can be closed as follows:
+ *
+ * \code{.c}
+ * gGeoManager->CloseGeometry( Graveyard );
+ * \endcode
+ *
+ * The geometry can then be visualized using the functions:
+ *
+ * \code{.c}
+ * gGeoManager->SetTopVisible();
+ * Graveyard->Draw(); // Where Graveyard is the name of the top volume
+ * \endcode
+ *
+ * Finally, the geometry can be exported to a binary file via the function:
+ *
+ * \code{.c}
+ * gGeoManager->Export( "output_file_name.root" );
+ * \endcode
+ *
+ * \subsubsection Example ROOT Geometry File
+ *
+ * The following is a very simple example ROOT geometry file. It consists of a
+ * 1cm radius sphere of hydrogen, inside of a void cube of side length 3cm, all
+ * contained within a graveyard cube of side length 4cm. 
+ *
+ * \code{.c}
+ * //---------------------------------------------------------------------------//
+ * //!
+ * //! \file   Verification_Test.C
+ * //! \author Eli Moll
+ * //! \brief  Geometry for verification testing on ROOT implementation
+ * //!
+ * //---------------------------------------------------------------------------//
+ * 
+ * //  Description: A verification study geometry file for comparison between
+ * //  ROOT and DagMC using FRENSIE. Hydrogen at 2500k in a 1cm sphere is
+ * //  surrounded by void. A surface current tally and cell track-length flux
+ * //  tally are placed on the sphere.
+ *  
+ * void Verification_Test()
+ * {
+ *   // Set up manager of geometry world
+ *   gSystem->Load( "libGeom" );
+ *   new TGeoManager( "Verification_Geometry",
+ *                    "Geometry for verifying root implementation" );
+ * 
+ * //---------------------------------------------------------------------------//
+ * // Material Definitions
+ * //---------------------------------------------------------------------------//
+ * 
+ *   // Hydrogen
+ *   TGeoMaterial *mat_1 = new TGeoMaterial( "mat_1",1,1,1 );
+ *   TGeoMedium   *med_1 = new TGeoMedium( "med_1",2,mat_1 );
+ * 
+ *   // Void
+ *   TGeoMaterial *void_mat = new TGeoMaterial( "void",0,0,0 );
+ *   TGeoMedium   *void_med = new TGeoMedium( "void_med",1,void_mat );
+ * 
+ *   // Graveyard (terminal)
+ *   TGeoMaterial *terminal_mat = new TGeoMaterial( "graveyard",0,0,0 );
+ *   TGeoMedium   *terminal_med = new TGeoMedium( "graveyard",3,terminal_mat );
+ * 
+ * //---------------------------------------------------------------------------//
+ * // Volume Definitions
+ * //---------------------------------------------------------------------------//
+ * 
+ *   // Graveyard Volume
+ *   TGeoVolume *terminal_cube = gGeoManager->MakeBox( "TERMINAL",
+ *                                                      terminal_med,
+ *                                                      2.0, 2.0, 2.0 );
+ *   terminal_cube->SetUniqueID(3);   
+ *                                                      
+ *   // Set the graveyard to be the top volume (rest-of-universe)
+ *   gGeoManager->SetTopVolume( terminal_cube );
+ * 
+ *   // Void Volume (cube)
+ *   TGeoVolume *cube = gGeoManager->MakeBox( "CUBE",
+ *                                            void_med, 
+ *                                            1.5, 1.5, 1.5 );
+ *   cube->SetUniqueID(2);
+ * 
+ *   // Hydrogen Volume (sphere)
+ *   TGeoVolume *sphere = gGeoManager->MakeSphere( "SPHERE",
+ *                                                 med_1,
+ *                                                 0.0,1.0 );
+ *   sphere->SetUniqueID(1);
+ * 
+ * //---------------------------------------------------------------------------//
+ * // Heirarchy (Volume) Definitions
+ * //---------------------------------------------------------------------------//
+ * 
+ *   // Add SPHERE as a daughter of CUBE
+ *   terminal_cube->AddNode( cube, 1 );
+ *   
+ *   // Add CUBE as a daughter of TERMINAL
+ *   cube->AddNode( sphere, 1 );
+ * 
+ * //---------------------------------------------------------------------------//
+ * // Export and Drawing Capabilities
+ * //---------------------------------------------------------------------------//
+ * 
+ *   // Close the geometry
+ *   gGeoManager->CloseGeometry();
+ *   gGeoManager->SetTopVisible();
+ *   
+ *   // Uncomment to draw the geometry in an X-Window
+ *   terminal_cube->Draw();
+ *   
+ *   gGeoManager->Export("overlap_study.root");
+ * 
+ * }  // end Test_Root_Geometry
+ * 
+ * //---------------------------------------------------------------------------//
+ * // end Test_Root_Geometry.C
+ * //---------------------------------------------------------------------------//
+ * \endcode
+ *
+ * \subsection root_geom_xml Creating the Geometry XML File
+ *
+ * The ROOT geometry XML file only requires two parameters, which are the 
+ * geometry handler and the name of the ROOT binary geometry file.
+ *
+ * \code
+ * <ParameterList name="Geometry">
+ *
+ * <Parameter name="Handler" type="string" value="ROOT"/>
+ * <Parameter name="Root File" type="string" value="geometry_file.root"/>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
+ * \subsection cross_section_dir_root Cross Section Directory
+ *
+ * See \ref cross_section_dir 
+ *
+ * \subsection creating_material_xml_file_root Creating the Material XML file
+ *
+ * See \ref creating_material_xml_file
  *
  * \section one_d_distributions One-Dimensional Distributions
  * Before discussing the remaining XML files, a special parameter type must
