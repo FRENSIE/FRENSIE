@@ -45,17 +45,20 @@ private:
   // The distribution normalization quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
 
-  // Typedef for Teuchos::ScalarTraits<double>
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
 
-  // Typedef for Teuchos::ScalarTraits<IndepQuantity>
-  typedef Teuchos::ScalarTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IST;
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
 
-  // Typedef for Teuchos::ScalarTraits<InverseIndepQuantity>
-  typedef Teuchos::ScalarTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIST;
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
-  // Typedef for Teuchos::ScalarTraits<DistMultiplierQuantity>
-  typedef Teuchos::ScalarTraits<DistMultiplierQuantity> MST;
+  // Typedef for QuantityTraits<DistMultiplierQuantity>
+  typedef QuantityTraits<DistMultiplierQuantity> DMQT;
 
 public:
 
@@ -70,14 +73,10 @@ public:
  
   //! Default Constructor
   UnitAwareWattDistribution( 
-	       const IndepQuantity incident_energy = 
-	       QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
-	       const IndepQuantity a_parameter =
-	       QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
-	       const InverseIndepQuantity b_parameter =
-	       QuantityTraits<InverseIndepQuantity>::initializeQuantity( 1.0 ),
-	       const IndepQuantity restriction_energy = 
-	       QuantityTraits<IndepQuantity>::initializeQuantity( 0.0 ) );
+			const IndepQuantity incident_energy = IQT::one(),
+			const IndepQuantity a_parameter = IQT::one(),
+			const InverseIndepQuantity b_parameter = IIQT::one(),
+			const IndepQuantity restriction_energy = IQT::zero() );
 
   //! Constructor
   template<typename InputIndepQuantityA,

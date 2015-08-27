@@ -32,16 +32,16 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( DMQT::one() ),
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( nuclear_temperature ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( restriction_energy ) ) );
+  testPrecondition( !IQT::isnaninf( incident_energy ) );
+  testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
+  testPrecondition( !IQT::isnaninf( restriction_energy ) );
   // Make sure that incident energy and nuclear temperature is positive
-  testPrecondition( incident_energy > QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( nuclear_temperature > QuantityTraits<IndepQuantity>::zero() );
+  testPrecondition( incident_energy > IQT::zero() );
+  testPrecondition( nuclear_temperature > IQT::zero() );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
@@ -64,16 +64,18 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( DMQT::one() ),
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( nuclear_temperature ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( restriction_energy ) ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( incident_energy ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( nuclear_temperature ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
   // Make sure that incident energy and nuclear temperature is positive
-  testPrecondition( incident_energy > QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( nuclear_temperature > QuantityTraits<InputIndepQuantityB>::zero() );
+  testPrecondition( incident_energy > 
+		    QuantityTraits<InputIndepQuantityA>::zero() );
+  testPrecondition( nuclear_temperature > 
+		    QuantityTraits<InputIndepQuantityB>::zero() );
 
   // Calculate the norm constant 
   this->calculateNormalizationConstant();
@@ -97,17 +99,17 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
     d_norm_constant()
 {
   // Make sure the multipliers are valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_nuclear_temperature) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_restriction_energy) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_norm_constant ) ) );
+  remember( typedef QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_nuclear_temperature));
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_restriction_energy) );
   // Make sure that incident energy and nuclear temperature is positive
-  testPrecondition( (dist_instance.d_incident_energy > QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
-  testPrecondition( (dist_instance.d_nuclear_temperature > QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
+  testPrecondition( dist_instance.d_incident_energy > InputIQT::zero() );
+  testPrecondition( dist_instance.d_nuclear_temperature > InputIQT::zero() );
 
   // Calculate the scaled multiplier (for complex units, boost::units often has
   // problems doing the conversion so we will do it manually)
-  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/Utility::sqrt( IndepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
+  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*DepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/Utility::sqrt( IndepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
@@ -116,17 +118,16 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 // Copy constructor
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance, int )
-  : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
-    d_nuclear_temperature( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
-    d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
+  : d_incident_energy( IQT::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
+    d_nuclear_temperature( IQT::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
+    d_restriction_energy( IQT::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
+    d_multiplier( DMQT::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
     d_norm_constant()
 {
   // Make sure the multipliers are valid
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_incident_energy ) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_nuclear_temperature) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_restriction_energy) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_norm_constant ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_incident_energy ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_nuclear_temperature) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_restriction_energy) );
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( unitless_dist_instance.d_incident_energy > 0.0 );
   testPrecondition( unitless_dist_instance.d_nuclear_temperature > 0.0 );
@@ -156,15 +157,12 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::operator=(
     const UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure the distribution is valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_nuclear_temperature ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_restriction_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_multiplier ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_norm_constant ) ) );
-  testPrecondition( dist_instance.d_incident_energy > 
-		    QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( dist_instance.d_nuclear_temperature > 
-		    QuantityTraits<IndepQuantity>::zero() );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_nuclear_temperature ) );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_restriction_energy ) );
+  testPrecondition( !DMQT::isnaninf( dist_instance.d_multiplier ) );
+  testPrecondition( dist_instance.d_incident_energy > IQT::zero() );
+  testPrecondition( dist_instance.d_nuclear_temperature > IQT::zero() );
 
   if( this != &dist_instance )
   {
@@ -187,8 +185,8 @@ typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::Dep
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::evaluate( 
  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < QuantityTraits<IndepQuantity>::zero() )
-    return QuantityTraits<DepQuantity>::zero();
+  if( indep_var_value < IQT::zero() )
+    return DQT::zero();
   else
   {
     return d_multiplier*Utility::sqrt( indep_var_value )*
@@ -298,7 +296,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return QuantityTraits<IndepQuantity>::zero();
+  return IQT::zero();
 }
 
 // Return the distribution type
@@ -324,7 +322,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::toStrea
      << "," << getRawQuantity( d_restriction_energy );
 
   // Only print the multiplier when a scaling has been done
-  if( d_multiplier != QuantityTraits<DistMultiplierQuantity>::one() )
+  if( d_multiplier != DMQT::one() )
     os << "," << getRawQuantity( d_multiplier ) << "}";
   else
     os << "}";
@@ -378,14 +376,13 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
       setQuantity( d_incident_energy, incident_energy );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_incident_energy ) ),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
   
-    TEST_FOR_EXCEPTION( d_incident_energy < 
-			QuantityTraits<IndepQuantity>::zero(),
+    TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid incident energy "
@@ -410,14 +407,13 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
       setQuantity( d_nuclear_temperature, nuclear_temperature );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_nuclear_temperature )),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_nuclear_temperature ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid nuclear temperature "
 			<< d_nuclear_temperature );
   
-    TEST_FOR_EXCEPTION( d_nuclear_temperature <= 
-			QuantityTraits<IndepQuantity>::zero(),
+    TEST_FOR_EXCEPTION( d_nuclear_temperature <= IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid nuclear temperature "
@@ -442,7 +438,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
       setQuantity( d_restriction_energy, restriction_energy );
     }
     
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_restriction_energy ) ),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid restriction energy "
@@ -468,7 +464,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
       setQuantity( d_multiplier, multiplier );
     }
 
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_multiplier ) ),
+    TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
 			"constructed because of an invalid multiplier "
