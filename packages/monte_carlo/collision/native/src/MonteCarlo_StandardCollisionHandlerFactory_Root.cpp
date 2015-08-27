@@ -110,8 +110,8 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
       density_names.push_back( std::to_string( density ) );
     
       // Update the unordered maps
-      cell_id_mat_id_map[i + 1] = material_names;
-      cell_id_density_map[i + 1] = density_names;
+      cell_id_mat_id_map[ cell->GetUniqueID() ] = material_names;
+      cell_id_density_map[ cell->GetUniqueID() ] = density_names;
     }
   }
 

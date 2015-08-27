@@ -242,7 +242,7 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
       }
       else
       {
-        std::cout << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+        std::cerr << "Warning: Estimator type: " << estimator_id_type_map[id] <<
                   " is not a valid estimator type for the Root geometry " <<
                   "handler. Therefore, estimator " << id << " will be ignored." <<
                   std::endl;
@@ -260,36 +260,16 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
     
       Teuchos::Array<double> surface_areas;
       
-      if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceFluxEstimator( estimator_id_type_map[id] ) )
+      if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceFluxEstimator( estimator_id_type_map[id] ) || 
+          EstimatorHandlerFactory<Geometry::Root>::isSurfaceCurrentEstimator( estimator_id_type_map[id] ) )
       {
-	EstimatorHandlerFactory<Geometry::Root>::fillSurfaceAreasArray( surfaces,
-							surface_area_map,
-							surface_areas );
-	
-	EstimatorHandlerFactory<Geometry::Root>::createSurfaceFluxEstimator(
-							id,
-							multiplier,
-							particle_types,
-							surfaces,
-							surface_areas,
-							response_functions,
-							energy_mult,
-							estimator_bins );
-      }
-      else if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceCurrentEstimator( estimator_id_type_map[id] ) )
-      {	
-	EstimatorHandlerFactory<Geometry::Root>::createSurfaceCurrentEstimator(
-							id,
-							multiplier,
-							particle_types,
-							surfaces,
-							response_functions,
-							energy_mult,
-							estimator_bins );
+        std::cerr << "Warning: Surface estimators are not supported by the "
+                  "Root geometry handler. Estimator " << id << " will be " <<
+                  "ignored." << std::endl;
       }
       else
       {
-        std::cout << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+        std::cerr << "Warning: Estimator type: " << estimator_id_type_map[id] <<
                   " is not a valid estimator type for the Root geometry " <<
                   "handler. Therefore, estimator " << id << " will be ignored." <<
                   std::endl;
@@ -633,7 +613,6 @@ void EstimatorHandlerFactory<Geometry::Root>::createCellVolumeMap(
                        "Error: Root contains a cell which has not been "
                        " assigned a unique cell ID in the input file." );
     }
-    std::cout << current_volume->GetName() << " " << current_volume->GetUniqueID() << " " << Geometry::ModuleInterface<Geometry::Root>::getCellVolume(current_volume->GetUniqueID()) << " " << Geometry::Root::getManager()->GetVolume(current_volume->GetUniqueID())->Capacity() << " " << current_volume->Capacity() << std::endl;
   } 
 
 

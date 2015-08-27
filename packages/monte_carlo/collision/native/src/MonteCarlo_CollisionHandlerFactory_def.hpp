@@ -54,8 +54,6 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
 			"Error: " << cell_id_density_map.find( cell_id_mat_id_it->first )->second.size() << 
 			" densities set to cell "
 			<< cell_id_mat_id_it->first << "!" );
-    
-    std::cout << cell_id_mat_id_it->second[0] << std::endl;
 
     Teuchos::RCP<std::istringstream> 
       iss( new std::istringstream( cell_id_mat_id_it->second[0] ) );
