@@ -26,10 +26,12 @@ std::string convertElectroatomicReactionEnumToString(
     return "Total Electroatomic Reaction";
   case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION: 
     return "Total Absorption Electroatomic Reaction";
-  case HARD_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Hard Elastic Electroatomic Reaction";
-  case SOFT_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Soft Elastic Electroatomic Reaction";
+  case ANALOG_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Analog Elastic Electroatomic Reaction";
+  case SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Analog Elastic Electroatomic Reaction";
+  case MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION:
+    return "Moment Preserving Elastic Electroatomic Reaction";
   case BREMSSTRAHLUNG_ELECTROATOMIC_REACTION:
     return "Bremsstrahlung Electroatomic Reaction";
   case POSITRON_ANNIHILATION_ELECTROATOMIC_REACTION:

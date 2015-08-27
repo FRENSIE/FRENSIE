@@ -44,7 +44,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getReactionType(),
-		       MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//

@@ -22,12 +22,12 @@ class ElectroatomicReactionACEFactory
 
 public:
 
-  //! Create a hard elastic scattering electroatomic reaction
-  static void createHardElasticReaction(
+  //! Create an analog elastic scattering electroatomic reaction
+  static void createAnalogElasticReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double cutoff_angle_cosine );
+        const double lower_cutoff_angle = 1.0e-6 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(

@@ -19,8 +19,6 @@
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
@@ -34,8 +32,6 @@ std::string test_cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
 boost::unordered_set<std::string> electroatom_aliases;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution> 
-                    distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -62,25 +58,21 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicTotalCrossSection )
   double energy = 1.00000e-05;
   double cross_section = 
     material->getMacroscopicTotalCrossSection( energy );
-  double ratio = 
-    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
   TEST_FLOATING_EQUALITY( cross_section, 
-                          7.641204418336E+06 + ratio*7.234825686582E+06, 
+                          7.641204418336E+06, 
                           1e-12 );
 
 
   energy = 1.00000e+05;
   cross_section = 
     material->getMacroscopicTotalCrossSection( energy );
-  ratio = 
-    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
   cross_section = 
     material->getMacroscopicTotalCrossSection( energy );
 
   TEST_FLOATING_EQUALITY( cross_section, 
-                          8.269992326372E+03 + ratio*2.566534386946E-04, 
+                          8.269992326372E+03, 
                           1e-12 );
 }
 
@@ -181,27 +173,24 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
 
-  // Test that the hard elastic cross section can be returned
+  // Test that the analog elastic cross section can be returned
   double energy = 1.00000e-05;
-  double ratio = 
-    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
   cross_section = material->getMacroscopicReactionCrossSection(
 			    energy,
-			    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
-                          7.234825686582E+06*( 1.0 + ratio ), 
+                          7.234825686582E+06, 
                           1e-12 );
 
 
   energy = 1.00000e+05;
-  ratio = distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
   cross_section = material->getMacroscopicReactionCrossSection( 
 			    energy,
-			    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
-                          2.566534386946E-04*( 1.0 + ratio ), 
+                          2.566534386946E-04, 
                           1e-12 );
 }
 
@@ -218,11 +207,10 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideAnalogue )
   electron.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 9.9990E-01; // choose angle from distribution
-  fake_stream[3] = 0.5; // sample mu = 0.9874366113907
+  fake_stream[2] = 0.5; // sample mu = 9.874339332031E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -247,11 +235,10 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
   electron.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 9.9990E-01; // sample angle from distribution
-  fake_stream[3] = 0.5; // sample mu = 0.9874366113907
+  fake_stream[2] = 0.5; // sample mu = 9.874339332031E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -303,6 +290,8 @@ int main( int argc, char** argv )
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
       atomic_relaxation_model_factory(
 				new MonteCarlo::AtomicRelaxationModelFactory );
+
+    double lower_cutoff_angle = 1.0e-6;
     
     MonteCarlo::ElectroatomFactory factory( test_cross_sections_xml_directory,
                                             cross_section_table_info,
@@ -310,7 +299,7 @@ int main( int argc, char** argv )
                                             atomic_relaxation_model_factory,
                                             MonteCarlo::TWOBS_DISTRIBUTION,
                                             true,
-                                            1.0 );
+                                            lower_cutoff_angle );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       atom_map;
@@ -373,10 +362,6 @@ int main( int argc, char** argv )
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() ) );
-
-  MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
-                                                 *xss_data_extractor,
-                                                 distribution ); 
 
   
   // Initialize the random number generator

@@ -74,8 +74,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
 	MonteCarlo::DIPOLE_DISTRIBUTION );
 
   TEST_EQUALITY_CONST(  
-    MonteCarlo::SimulationProperties::getElasticCutoffAngleCosine(),
-	0.9 );
+    MonteCarlo::SimulationProperties::getElasticCutoffAngle(),
+	0.1 );
 }
 
 //---------------------------------------------------------------------------//

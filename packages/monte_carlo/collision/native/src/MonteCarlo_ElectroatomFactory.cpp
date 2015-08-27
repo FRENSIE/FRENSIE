@@ -28,7 +28,7 @@ ElectroatomFactory::ElectroatomFactory(
 		  const BremsstrahlungAngularDistributionType 
 		  photon_distribution_function,
 		  const bool use_atomic_relaxation_data,
-          const double cutoff_angle_cosine )
+          const double cutoff_angle )
 {
   // Create each electroatom in the set
   boost::unordered_set<std::string>::const_iterator electroatom_name = 
@@ -66,7 +66,7 @@ ElectroatomFactory::ElectroatomFactory(
                                      atomic_relaxation_model_factory,
                                      photon_distribution_function,
                                      use_atomic_relaxation_data,
-                                     cutoff_angle_cosine );
+                                     cutoff_angle );
     }
     else
     {
@@ -106,7 +106,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
               const BremsstrahlungAngularDistributionType 
                      photon_distribution_function,
               const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine )
+              const double cutoff_angle )
 {
 
   // Set the abs. path to the ace library file containing the desired table
@@ -207,7 +207,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                                               electroatom,
                                               photon_distribution_function,
                                               use_atomic_relaxation_data,
-                                              cutoff_angle_cosine );
+                                              cutoff_angle );
 
     // Cache the new electroatom in the table name map
     d_electroatomic_table_name_map[electroatomic_table_name] = electroatom;

@@ -304,7 +304,7 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
 
   // Undergo reaction selected
   SubshellType subshell_vacancy;
-  
+std::cout << " reaction type = \t"<<electroatomic_reaction->second->getReactionType() << std::endl;
   electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
 
   // Relax the atom

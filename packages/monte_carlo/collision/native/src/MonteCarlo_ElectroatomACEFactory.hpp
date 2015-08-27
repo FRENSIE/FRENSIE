@@ -36,7 +36,7 @@ public:
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine );
+        const double cutoff_angle = 1.0e-6 );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
@@ -48,7 +48,7 @@ public:
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine );
+        const double cutoff_angle = 1.0e-6 );
 private:
 
   // Constructor

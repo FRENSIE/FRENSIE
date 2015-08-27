@@ -12,8 +12,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 #include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
-#include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
@@ -28,12 +28,12 @@
 
 namespace MonteCarlo{
 
-// Create a hard elastic scattering electroatomic reaction
-void ElectroatomicReactionACEFactory::createHardElasticReaction(
+// Create an analog elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double cutoff_angle_cosine )
+            const double lower_cutoff_angle )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -42,11 +42,12 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
 						      energy_grid.end() ) );
 
   // Create the elastic scattering distribution
-  Teuchos::RCP<const HardElasticElectronScatteringDistribution> distribution;
+  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> distribution;
 
-  HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
+  ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistribution(
+                                                 distribution,
                                                  raw_electroatom_data,
-                                                 distribution ); 
+                                                 lower_cutoff_angle ); 
 
   // Elastic cross section with zeros removed
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -62,12 +63,12 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
                               threshold_energy_index );
 
   elastic_reaction.reset(
-	new HardElasticElectroatomicReaction<Utility::LinLin>(
+	new AnalogElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
 						  distribution,
-                          cutoff_angle_cosine ) );
+                          lower_cutoff_angle ) );
 }
 
 

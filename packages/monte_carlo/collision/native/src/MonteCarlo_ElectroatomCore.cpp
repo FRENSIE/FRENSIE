@@ -23,9 +23,11 @@ ElectroatomCore::setDefaultScatteringReactionTypes()
 {
   boost::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
   tmp_scattering_reaction_types.insert( 
-				  HARD_ELASTIC_ELECTROATOMIC_REACTION );
+				  ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert( 
-				  SOFT_ELASTIC_ELECTROATOMIC_REACTION );
+				  SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+  tmp_scattering_reaction_types.insert( 
+				  MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert( 
 				  BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert(

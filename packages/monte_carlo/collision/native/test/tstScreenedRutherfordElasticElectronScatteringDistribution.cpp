@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample angle = 9.99999500000093
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -196,7 +196,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample angle = 9.99999500000093
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -223,7 +223,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample angle = 9.99999500000093
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -253,7 +253,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample angle = 9.99999500000093
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -282,7 +282,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample angle = 9.99999500000093
+  fake_stream[0] = 0.5; // sample mu = 9.99999500000093E-01,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

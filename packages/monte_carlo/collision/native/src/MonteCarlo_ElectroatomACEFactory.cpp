@@ -32,7 +32,7 @@ void ElectroatomACEFactory::createElectroatomCore(
             const BremsstrahlungAngularDistributionType 
                     photon_distribution_function,
             const bool use_atomic_relaxation_data,
-            const double cutoff_angle_cosine )
+            const double cutoff_angle )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -48,13 +48,13 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the hard elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[HARD_ELASTIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createHardElasticReaction(
+    ElectroatomicReactionACEFactory::createAnalogElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
 					   reaction_pointer,
-                       cutoff_angle_cosine );
+                       cutoff_angle );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -132,7 +132,7 @@ void ElectroatomACEFactory::createElectroatom(
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine )
+        const double cutoff_angle )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -147,7 +147,7 @@ void ElectroatomACEFactory::createElectroatom(
                                                atomic_weight,
                                                photon_distribution_function,
                                                use_atomic_relaxation_data,
-                                               cutoff_angle_cosine );
+                                               cutoff_angle );
 					    
   // Create the electroatom
   electroatom.reset(

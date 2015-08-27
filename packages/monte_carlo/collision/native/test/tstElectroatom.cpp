@@ -133,9 +133,11 @@ TEUCHOS_UNIT_TEST( Electroatom, getScatteringReactionTypes )
 	       MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
 
   TEST_ASSERT( scattering_types.count(
-	       MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION ) );
+	       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION ) );
   TEST_ASSERT( scattering_types.count(
-	       MonteCarlo::SOFT_ELASTIC_ELECTROATOMIC_REACTION ) );
+	       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION ) );
+  TEST_ASSERT( scattering_types.count(
+	       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION ) );
   TEST_ASSERT( scattering_types.count(
 	       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION ) );
   TEST_ASSERT( scattering_types.count(
@@ -330,22 +332,22 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection )
   
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
-  // Hard Elastic
+  // Analog Elastic
   cross_section = ace_electroatom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   
   cross_section = ace_electroatom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 

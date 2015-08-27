@@ -121,6 +121,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
+std::cout << " scattering_angle_cosine = \t"<<scattering_angle_cosine << std::endl;
     return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF( 
                          incoming_energy,
                          scattering_angle_cosine,
@@ -254,11 +255,12 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     // evaluate the cdf value at the upper cutoff angle cosine
     double upper_cutoff_cdf = 
             evaluateCDF( incoming_energy, d_lower_cutoff_angle );
-
+std::cout << " d_lower_cutoff_angle = \t"<<d_lower_cutoff_angle << std::endl;
+std::cout << " upper_cutoff_cdf = \t"<<upper_cutoff_cdf << std::endl;
     // scale the random number to only sample below the upper cutoff angle cosine
     scaled_random_number = upper_cutoff_cdf*
         Utility::RandomNumberGenerator::getRandomNumber<double>();
-
+std::cout << " scaled_random_number = \t"<<scaled_random_number << std::endl;
   scattering_angle_cosine = 
         sampleTwoDDistributionCorrelatedWithRandomNumber( 
             incoming_energy,
