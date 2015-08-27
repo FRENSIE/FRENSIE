@@ -10,13 +10,10 @@
 #define UTILITY_UNIT_TRAITS_DECL_HPP
 
 // Boost Includes
-#include <boost/units/unit.hpp>
-#include <boost/units/quantity.hpp>
 #include <boost/units/operators.hpp>
-#include <boost/units/io.hpp>
-#include <boost/units/dimensionless_unit.hpp>
-#include <boost/mpl/if.hpp>
-#include <boost/type_traits/is_same.hpp>
+
+// FRENSIE Includes
+#include "Utility_UndefinedTraits.hpp"
 
 /*! \defgroup unit_traits Unit Traits
  * \ingroup traits
@@ -30,44 +27,47 @@ namespace Utility{
  * is the template parameter. Specializations should be made for other types.
  * \ingroup unit_traits
  */
-template<typename Unit>
+template<typename T>
 struct UnitTraits
 {
+  //! The unit type
+  typedef T Unit;
+  
   //! The dimension of the unit
-  typedef typename Unit::dimension_type Dimension;
+  typedef void Dimension;
 
   //! The unit system that the unit belongs to
-  typedef typename Unit::system_type System;
+  typedef void System;
 
   //! The inverse unit type
-  typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<-1> >::type InverseUnit;
+  typedef T InverseUnit;
 
   //! The unit raised to power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   {
-    typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N,D> >::type type;
+    typedef T type;
   };
 
   //! The unit multiplied by another unit type
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   {
-    typedef typename boost::mpl::if_<boost::is_same<OtherUnit,void>,Unit,typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type>::type type;
+    typedef OtherUnit type;
   };
 
   //! The wrapped quantity type associated with the unit and value type T
-  template<typename T>
+  template<typename U>
   struct GetQuantityType
-  { typedef boost::units::quantity<Unit,T> type; };
+  { typedef U type; };
 
   //! The name string
   static inline std::string name()
-  { return boost::units::name_string( Unit() ); }
+  { return UndefinedTraits<T>::notDefined(); }
 
   //! The symbol string
   static inline std::string symbol()
-  { return boost::units::symbol_string( Unit() ); }
+  { return UndefinedTraits<T>::notDefined(); }
 };
 
 } // end Utility namespace
