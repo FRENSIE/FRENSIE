@@ -438,8 +438,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be constructed from a unitless
-// distribution
+// Check that distributions can be scaled
 TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEvaporationDistribution,
 				   explicit_conversion,
 				   IndepUnitA,
