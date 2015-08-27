@@ -31,6 +31,9 @@ void RootInstanceFactory::initializeRoot(
   // Initialize the Root geometry handler
   Geometry::Root::initialize( root_file_name );
 
+  // Print unused parameters
+  geom_rep.unused( std::cerr );
+
 }
 
 // Validate a geometry representation
