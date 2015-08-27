@@ -17,6 +17,7 @@ namespace Utility{
  * \ingroup compare_policy
  * \ingroup tuple_traits
  * \ingroup quantity_traits
+ * \ingroup unit_traits
  */
 template<typename T>
 struct UndefinedTraits

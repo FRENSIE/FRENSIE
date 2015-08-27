@@ -9,9 +9,6 @@
 #ifndef UTILITY_QUANTITY_TRAITS_DECL_HPP
 #define UTILITY_QUANTITY_TRAITS_DECL_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 

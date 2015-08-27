@@ -18,12 +18,15 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
 #include "Utility_QuantityTraitsDecl.hpp"
 
 namespace Utility{
 
-/*! The specialization of QuantityTraits for boost::units::quantity
+/*! The partial specialization of QuantityTraits for boost::units::quantity
  * \ingroup quantity_traits
  */
 template<typename Unit, typename T>
