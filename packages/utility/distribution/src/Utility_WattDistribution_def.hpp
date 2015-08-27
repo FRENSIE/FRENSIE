@@ -31,18 +31,18 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_a_parameter( a_parameter ),
     d_b_parameter( b_parameter ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( DMQT::one() ),
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !IST::isnaninf( incident_energy ) );
-  testPrecondition( !IST::isnaninf( a_parameter ) );
-  testPrecondition( !IIST::isnaninf( b_parameter ) );
-  testPrecondition( !IST::isnaninf( restriction_energy ) );
+  testPrecondition( !IQT::isnaninf( incident_energy ) );
+  testPrecondition( !IQT::isnaninf( a_parameter ) );
+  testPrecondition( !IIQT::isnaninf( b_parameter ) );
+  testPrecondition( !IQT::isnaninf( restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy > QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( a_parameter > QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( b_parameter > QuantityTraits<InverseIndepQuantity>::zero() );
+  testPrecondition( incident_energy > IQT::zero() );
+  testPrecondition( a_parameter > IQT::zero() );
+  testPrecondition( b_parameter > IIQT::zero() );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
@@ -68,18 +68,21 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_a_parameter( a_parameter ),
     d_b_parameter( b_parameter ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( DMQT::one() ),
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !IST::isnaninf( incident_energy ) );
-  testPrecondition( !IST::isnaninf( a_parameter ) );
-  testPrecondition( !IIST::isnaninf( b_parameter ) );
-  testPrecondition( !IST::isnaninf( restriction_energy ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( incident_energy ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( a_parameter ) );
+  testPrecondition( !QuantityTraits<InputInverseIndepQuantity>::isnaninf( b_parameter ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy > QuantityTraits<InputIndepQuantityA>::zero() );
-  testPrecondition( a_parameter > QuantityTraits<InputIndepQuantityB>::zero() );
-  testPrecondition( b_parameter > QuantityTraits<InputInverseIndepQuantity>::zero() );
+  testPrecondition( incident_energy > 
+		    QuantityTraits<InputIndepQuantityA>::zero() );
+  testPrecondition( a_parameter > 
+		    QuantityTraits<InputIndepQuantityB>::zero() );
+  testPrecondition( b_parameter > 
+		    QuantityTraits<InputInverseIndepQuantity>::zero() );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
@@ -104,14 +107,16 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_norm_constant()
 {
   // Make sure the multipliers are valid
-  testPrecondition( !IST::isnaninf( dist_instance.d_incident_energy ) );
-  testPrecondition( !IST::isnaninf( dist_instance.d_a_parameter ) );
-  testPrecondition( !IIST::isnaninf( dist_instance.d_b_parameter ) );
-  testPrecondition( !IST::isnaninf( dist_instance.d_restriction_energy ) );
+  remember( typedef QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
+  remember( typedef QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::InverseIndepQuantity> InputIIQT );
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_a_parameter ) );
+  testPrecondition( !InputIIQT::isnaninf( dist_instance.d_b_parameter ) );
+  testPrecondition( !InputIQT::isnaninf( dist_instance.d_restriction_energy ));
   // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( (dist_instance.d_incident_energy > QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
-  testPrecondition( (dist_instance.d_a_parameter > QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
-  testPrecondition( (dist_instance.d_b_parameter > QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::InverseIndepQuantity>::zero()) );
+  testPrecondition( dist_instance.d_incident_energy > InputIQT::zero() );
+  testPrecondition( dist_instance.d_a_parameter > InputIQT::zero() );
+  testPrecondition( dist_instance.d_b_parameter > InputIIQT::zero() );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
@@ -120,18 +125,18 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
 // Copy constructor (copying from unitless distribution only)
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribution( const UnitAwareWattDistribution<void,void>& unitless_dist_instance, int )
-  : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
-    d_a_parameter( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_a_parameter ) ),
-    d_b_parameter( QuantityTraits<InverseIndepQuantity>::initializeQuantity( unitless_dist_instance.d_b_parameter ) ),
-    d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
-  d_multiplier( QuantityTraits<DistMultiplierQuantity>::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
+  : d_incident_energy( IQT::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
+    d_a_parameter( IQT::initializeQuantity( unitless_dist_instance.d_a_parameter ) ),
+    d_b_parameter( IIQT::initializeQuantity( unitless_dist_instance.d_b_parameter ) ),
+    d_restriction_energy( IQT::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
+    d_multiplier( DMQT::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
     d_norm_constant()
 {
   // Make sure the multipliers are valid
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_incident_energy ) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_a_parameter ) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_b_parameter ) );
-  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_restriction_energy ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_incident_energy ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_a_parameter ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_b_parameter ) );
+  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
   testPrecondition( unitless_dist_instance.d_incident_energy > 0.0 );
   testPrecondition( unitless_dist_instance.d_a_parameter > 0.0 );
@@ -162,16 +167,13 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::operator=(
 const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure the distribution is valid
-  testPrecondition( !IST::isnaninf( dist_instance.d_incident_energy ) );
-  testPrecondition( !IST::isnaninf( dist_instance.d_a_parameter ) );
-  testPrecondition( !IIST::isnaninf( dist_instance.d_b_parameter ) );
-  testPrecondition( !IST::isnaninf( dist_instance.d_restriction_energy ) );
-  testPrecondition( dist_instance.d_incident_energy > 
-		    QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( dist_instance.d_a_parameter > 
-		    QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( dist_instance.d_b_parameter > 
-		    QuantityTraits<InverseIndepQuantity>::zero() );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_a_parameter ) );
+  testPrecondition( !IIQT::isnaninf( dist_instance.d_b_parameter ) );
+  testPrecondition( !IQT::isnaninf( dist_instance.d_restriction_energy ) );
+  testPrecondition( dist_instance.d_incident_energy > IQT::zero() );
+  testPrecondition( dist_instance.d_a_parameter > IQT::zero() );
+  testPrecondition( dist_instance.d_b_parameter > IIQT::zero() );
 
   if( this != &dist_instance )
   {
@@ -192,8 +194,8 @@ typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::DepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::evaluate( 
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < QuantityTraits<IndepQuantity>::zero() )
-    return QuantityTraits<DepQuantity>::zero();
+  if( indep_var_value < IQT::zero() )
+    return DQT::zero();
   else
   {
     return d_multiplier*exp( -indep_var_value / d_a_parameter )* 
@@ -313,7 +315,7 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
-  return QuantityTraits<IndepQuantity>::zero();
+  return IQT::zero();
 }
 
 // Return the distribution type
@@ -342,7 +344,7 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::toStream( std::os
      << "," << getRawQuantity( d_restriction_energy );
 
   // Only print the multiplier when a scaling has been done
-  if( d_multiplier != QuantityTraits<DistMultiplierQuantity>::one() )
+  if( d_multiplier != DMQT::one() )
     os << "," << getRawQuantity( d_multiplier ) << "}";
   else
     os << "}";
@@ -397,14 +399,13 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_incident_energy, incident_energy );
     }
   
-    TEST_FOR_EXCEPTION( IST::isnaninf( d_incident_energy ),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid incident energy "
 			<< d_incident_energy );
   
-    TEST_FOR_EXCEPTION( d_incident_energy < 
-			QuantityTraits<IndepQuantity>::zero(),
+    TEST_FOR_EXCEPTION( d_incident_energy < IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid incident energy "
@@ -429,14 +430,13 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_a_parameter, a_parameter );
     }
   
-    TEST_FOR_EXCEPTION( IST::isnaninf( d_a_parameter ),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_a_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid a_parameter "
 			<< d_a_parameter );
   
-    TEST_FOR_EXCEPTION( d_a_parameter <= 
-			QuantityTraits<IndepQuantity>::zero(),
+    TEST_FOR_EXCEPTION( d_a_parameter <= IQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid a_parameter "
@@ -461,14 +461,13 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_b_parameter, b_parameter );
     }
   
-    TEST_FOR_EXCEPTION( IIST::isnaninf( d_b_parameter ),
+    TEST_FOR_EXCEPTION( IIQT::isnaninf( d_b_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid b_parameter "
 			<< d_b_parameter );
   
-    TEST_FOR_EXCEPTION( d_b_parameter <= 
-			QuantityTraits<InverseIndepQuantity>::zero(),
+    TEST_FOR_EXCEPTION( d_b_parameter <= IIQT::zero(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid b_parameter "
@@ -493,7 +492,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_restriction_energy, restriction_energy );
     }
   
-    TEST_FOR_EXCEPTION( IST::isnaninf( d_restriction_energy ),
+    TEST_FOR_EXCEPTION( IQT::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid restriction energy "
@@ -518,7 +517,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_multiplier, multiplier );
     }
 
-    TEST_FOR_EXCEPTION( MST::isnaninf( d_multiplier ),
+    TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid multiplier "

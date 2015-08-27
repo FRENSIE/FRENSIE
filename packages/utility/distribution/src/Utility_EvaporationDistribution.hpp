@@ -16,9 +16,6 @@
 // Boost Includes
 #include <boost/units/physical_dimensions/energy.hpp>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
@@ -38,9 +35,6 @@ class UnitAwareEvaporationDistribution : public UnitAwareOneDDistribution<Indepe
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
-
   // The distribution multiplier unit traits typedef
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistMultiplierUnitTraits;
   
@@ -49,6 +43,21 @@ private:
   
   // The distribution normalization quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+
+  // Typedef for QuantityTraits<DistMultiplierQuantity>
+  typedef QuantityTraits<DistMultiplierQuantity> DMQT;
 
 public:
 
@@ -63,12 +72,9 @@ public:
  
   //! Default constructor
   UnitAwareEvaporationDistribution( 
-	            const IndepQuantity incident_energy = 
-		    QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
-		    const IndepQuantity nuclear_temperature = 
-		    QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
-		    const IndepQuantity restriction_energy = 
-		    QuantityTraits<IndepQuantity>::initializeQuantity( 0.0 ) );
+			const IndepQuantity incident_energy = IQT::one(),
+			const IndepQuantity nuclear_temperature = IQT::one(),
+			const IndepQuantity restriction_energy = IQT::zero() );
 
   //! Constructor
   template<typename InputIndepQuantityA,

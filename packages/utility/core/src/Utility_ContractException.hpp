@@ -125,12 +125,10 @@ public:
   EXCEPTION_CATCH_RETHROW( Utility::ContractException,		\
 			   "Nested condition violated" << std::endl )
   
-/*! Test
-
-/*! Remember a variable that is needed for testing DBC conditions
+/*! Remember a variable, typedef, etc. that is needed for DBC testing
  * \ingroup contract_exceptions_macros
  */
-#define remember(c) c
+#define remember(...) __VA_ARGS__
 
 #else
 			      
@@ -140,7 +138,7 @@ public:
 #define testNestedConditions(c)
 #define testNestedConditionsBegin(depth)
 #define testNestedConditionsEnd(depth)
-#define remember(c)
+#define remember(...)
 
 #endif // end HAVE_FRENSIE_DBC
 
