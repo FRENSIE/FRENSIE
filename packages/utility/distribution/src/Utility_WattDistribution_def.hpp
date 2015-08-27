@@ -244,7 +244,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
 
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+inline typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
@@ -269,8 +269,8 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
     random_number = RandomNumberGenerator::getRandomNumber<double>();
     
     sample = maxwell_sample + 0.25*a_parameter*a_parameter*b_parameter +
-      (2.0 * random_number - 1.0)*sqrt( a_parameter*a_parameter*b_parameter*
-					maxwell_sample );
+      (2.0*random_number-1.0)*Utility::sqrt( a_parameter*a_parameter*
+					     b_parameter*maxwell_sample );
  
     if( sample <= (incident_energy - restriction_energy) )
       break;
@@ -293,11 +293,11 @@ void UnitAwareWattDistribution<IndependentUnit,DependentUnit>::calculateNormaliz
   IndepQuantity term_1 = 0.5*exp( argument_2 )*
     (erf( sqrt(argument_1) - sqrt(argument_2) ) + 
      erf( sqrt(argument_1)+ sqrt(argument_2) ))*
-    sqrt( 0.25*PhysicalConstants::pi*
-	  d_a_parameter*d_a_parameter*d_a_parameter*d_b_parameter );
+    Utility::sqrt( 0.25*PhysicalConstants::pi*
+		   d_a_parameter*d_a_parameter*d_a_parameter*d_b_parameter );
 
   IndepQuantity term_2 = d_a_parameter*exp( -argument_1 )*
-    sinh( sqrt(argument_1*d_a_parameter*d_b_parameter) );
+    sinh( Utility::sqrt(argument_1*d_a_parameter*d_b_parameter) );
 
   d_norm_constant = 1.0/( d_multiplier*(term_1 - term_2) );
 }

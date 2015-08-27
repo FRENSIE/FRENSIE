@@ -227,7 +227,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
 
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+inline typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
