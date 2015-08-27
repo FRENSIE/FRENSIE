@@ -400,6 +400,11 @@ ADD_TEST(ElectroionizationSubshellElectroatomicReaction_test tstElectroionizatio
 #TARGET_LINK_LIBRARIES(tstHardElasticElectroatomicReaction monte_carlo_collision_native)
 #ADD_TEST(HardElasticElectroatomicReaction_test tstHardElasticElectroatomicReaction --#test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstAnalogElasticElectroatomicReaction
+  tstAnalogElasticElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstAnalogElasticElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(AnalogElasticElectroatomicReaction_test tstAnalogElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)

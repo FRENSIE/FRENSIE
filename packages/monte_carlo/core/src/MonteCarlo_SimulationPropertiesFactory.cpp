@@ -313,7 +313,7 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   }
 
   // Get the elastic cutoff angle cosine - optional
-  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
+  if( properties.isParameter( "Elastic Cutoff Angle" ) )
   {
     double cutoff_angle = 
             properties.get<double>( "Elastic Cutoff Angle" );
