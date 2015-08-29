@@ -9,19 +9,20 @@ ABSPATHEXE="__abspath.py"
 echo "import os; import sys; sys.stdout.write(os.path.abspath(sys.argv[1]))" > $ABSPATHEXE
 
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=/home/software/trilinos
-TRILINOS_SOURCE_PATH=/home/software/trilinos/src
-HDF5_PREFIX_PATH=/home/software/hdf5
-MOAB_PREFIX_PATH=/home/software/moab
-MOAB_SOURCE_PATH=/home/software/moab/src
-ODEPACK_PREFIX_PATH=/home/software/odepack
-BOOST_PREFIX_PATH=/home/software/boost
-GSL_PREFIX_PATH=/home/software/gsl
-MPI_PREFIX_PATH=/home/software/mpi
-ROOT_PREFIX_PATH=/home/software/root
+TRILINOS_PREFIX_PATH=$HOME/
+TRILINOS_SOURCE_PATH=$HOME/
+HDF5_PREFIX_PATH=$HOME/
+MOAB_PREFIX_PATH=$HOME/
+MOAB_SOURCE_PATH=$HOME/
+ODEPACK_PREFIX_PATH=$HOME/
+BOOST_PREFIX_PATH=$HOME/
+GSL_PREFIX_PATH=$HOME/
+MPI_PREFIX_PATH=$HOME/
+ROOT_PREFIX_PATH=
 DOXYGEN_PREFIX_PATH=
-FRENSIE_SRC=/home/ecmoll/frensie/root/FRENSIE
-FRENSIE_INSTALL=/home/ecmoll/frensie/root/build
+MCNP_DATA_PATH=$HOME/
+FRENSIE_SRC=$HOME/
+FRENSIE_INSTALL=$HOME/
 
 # No longer needed after this point.
 # Move lower if $ABSPATHEXE needs to be used below this.
@@ -55,7 +56,7 @@ cmake \
     -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
     -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
-    -D MCNP_DATA_DIR:PATH=/home/software/mcnpdata \
+    -D MCNP_DATA_DIR:PATH=$MCNP_DATA_PATH \
     -D SETUP_DASHBOARD_CLIENT:BOOL=OFF \
     $EXTRA_ARGS \
     $FRENSIE_SRC
