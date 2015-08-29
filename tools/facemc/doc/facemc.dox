@@ -175,92 +175,6 @@
  * Please note that keyword synonyms may not use the underscore ("_") character
  * as this is a reserved character in DagMC.
  *
- * \subsection cross_section_dir Cross Section Directory
- * The cross section directory must contain all of the cross section tables
- * that will be used in the simulation. It can be set up in a very similar
- * fashion to the MCNP_DATA directory used by MCNP. In this directory, an
- * XML file must be created called "cross_sections.xml", which is very similar
- * to the xsdir file used by MCNP. The file will have the following form:
- * \code
- * <ParameterList name="cross sections">
- * 
- * <ParameterList name="alias map">
- *   <Parameter name="1001" type="string" value="H-1_293.6K"/>
- *   <Parameter name="8016" type="string" value="O-16_293.6K"/>
- *   <Parameter name="H-1" type="string" value="H-1_239.6K"/>
- *   <Parameter name="O-16" type="string" value="O-16_239.6K"/>
- * </ParameterList>
- * 
- * <ParameterList name="H-1_293.6K">
- *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
- *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
- *   <Parameter name="nuclear_file_start_line" type="int" value="1"/>
- *   <Parameter name="nuclear_table_name" type="string" value="1001.70c"/>
- *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
- *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
- *   <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
- *   <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
- *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
- *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
- *   <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
- *   <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
- *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
- *   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
- *   <Parameter name="atomic_number" type="int" value="1"/>
- *   <Parameter name="atomic_mass_number" type="int" value="1"/>
- *   <Parameter name="isomer_number" type="int" value="0"/>
- * </ParameterList>
- *
- * <ParameterList name="O-16_293.6K">
- *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
- *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
- *   <Parameter name="nuclear_file_start_line" type="int" value="1428717"/>
- *   <Parameter name="nuclear_table_name" type="string" value="8016.70c"/>
- *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
- *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
- *   <Parameter name="photoatomic_file_start_line" type="int" value="31405"/>
- *   <Parameter name="photoatomic_table_name" type="string" value="8000.12p"/>
- *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
- *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
- *   <Parameter name="electroatomic_file_start_line" type="int" value="31405"/>
- *   <Parameter name="electroatomic_table_name" type="string" value="8000.12p"/>
- *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
- *   <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
- *   <Parameter name="atomic_number" type="int" value="8"/>
- *   <Parameter name="atomic_mass_number" type="int" value="16"/>
- *   <Parameter name="isomer_number" type="int" value="0"/>
- * </ParameterList>
- *
- * </ParameterList>
- * \endcode
- * Note that each isotope will have an alias that will be used to refer to it
- * (as apposed to a zaid number). There is also a set of alternative aliases in
- * the "alias map" that can be used instead of the default aliases.
- *
- * \subsection creating_material_xml_file Creating the Material XML file
- * Three parameter elements must appear in every material file. The first
- * is the material id. Note that any material id specified in the CAD file must
- * have a corresponding material definition in this XML file. The second is
- * the fractions element, which is used to specify the atom or weight fractions
- * of each isotope in the material. To specify weight fractions, negative
- * numbers should be given. Also note that the fractions need not be 
- * normalized - this will be done internally. The third parameter is the 
- * isotopes element, which is used to specify the isotopes in the material.
- * A valid alias (specified in the cross_sections.xml file) must be used
- * to refer to an isotope. A material XML file that could be used to specify
- * water is given below.
- * \code
- * <ParameterList name="Materials">
- *
- * <ParameterList name="H Sphere">
- * <Parameter name="Id" type="unsigned int" value="1"/>
- * <Parameter name="Fractions" type="Array" value="{1.0,2.0}"/>
- * <Parameter name="Isotopes" type="Array(string)" value="{O-16_293.6K, H-1_293.6K}"/>
- * </ParameterList>
- *
- * </ParameterList>
- * \endcode
- *
  * \section geometry_sec_root Geometry Construction - ROOT
  * In order to use Root as the geometry handler for a simulation, a Root
  * geometry must be utilized. The geometry must be constructed according to
@@ -686,13 +600,91 @@
  * </ParameterList>
  * \endcode
  *
- * \subsection cross_section_dir_root Cross Section Directory
+ * \section cross_section_dir Cross Section Directory
+ * The cross section directory must contain all of the cross section tables
+ * that will be used in the simulation. It can be set up in a very similar
+ * fashion to the MCNP_DATA directory used by MCNP. In this directory, an
+ * XML file must be created called "cross_sections.xml", which is very similar
+ * to the xsdir file used by MCNP. The file will have the following form:
+ * \code
+ * <ParameterList name="cross sections">
+ * 
+ * <ParameterList name="alias map">
+ *   <Parameter name="1001" type="string" value="H-1_293.6K"/>
+ *   <Parameter name="8016" type="string" value="O-16_293.6K"/>
+ *   <Parameter name="H-1" type="string" value="H-1_239.6K"/>
+ *   <Parameter name="O-16" type="string" value="O-16_239.6K"/>
+ * </ParameterList>
+ * 
+ * <ParameterList name="H-1_293.6K">
+ *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
+ *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+ *   <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+ *   <Parameter name="nuclear_table_name" type="string" value="1001.70c"/>
+ *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+ *   <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+ *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+ *   <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
+ *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+ *   <Parameter name="atomic_number" type="int" value="1"/>
+ *   <Parameter name="atomic_mass_number" type="int" value="1"/>
+ *   <Parameter name="isomer_number" type="int" value="0"/>
+ * </ParameterList>
  *
- * See \ref cross_section_dir 
+ * <ParameterList name="O-16_293.6K">
+ *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
+ *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+ *   <Parameter name="nuclear_file_start_line" type="int" value="1428717"/>
+ *   <Parameter name="nuclear_table_name" type="string" value="8016.70c"/>
+ *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="photoatomic_file_start_line" type="int" value="31405"/>
+ *   <Parameter name="photoatomic_table_name" type="string" value="8000.12p"/>
+ *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="electroatomic_file_start_line" type="int" value="31405"/>
+ *   <Parameter name="electroatomic_table_name" type="string" value="8000.12p"/>
+ *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
+ *   <Parameter name="atomic_number" type="int" value="8"/>
+ *   <Parameter name="atomic_mass_number" type="int" value="16"/>
+ *   <Parameter name="isomer_number" type="int" value="0"/>
+ * </ParameterList>
  *
- * \subsection creating_material_xml_file_root Creating the Material XML file
+ * </ParameterList>
+ * \endcode
+ * Note that each isotope will have an alias that will be used to refer to it
+ * (as apposed to a zaid number). There is also a set of alternative aliases in
+ * the "alias map" that can be used instead of the default aliases.
  *
- * See \ref creating_material_xml_file
+ * \section creating_material_xml_file Creating the Material XML file
+ * Three parameter elements must appear in every material file. The first
+ * is the material id. Note that any material id specified in the CAD file must
+ * have a corresponding material definition in this XML file. The second is
+ * the fractions element, which is used to specify the atom or weight fractions
+ * of each isotope in the material. To specify weight fractions, negative
+ * numbers should be given. Also note that the fractions need not be 
+ * normalized - this will be done internally. The third parameter is the 
+ * isotopes element, which is used to specify the isotopes in the material.
+ * A valid alias (specified in the cross_sections.xml file) must be used
+ * to refer to an isotope. A material XML file that could be used to specify
+ * water is given below.
+ * \code
+ * <ParameterList name="Materials">
+ *
+ * <ParameterList name="H Sphere">
+ * <Parameter name="Id" type="unsigned int" value="1"/>
+ * <Parameter name="Fractions" type="Array" value="{1.0,2.0}"/>
+ * <Parameter name="Isotopes" type="Array(string)" value="{O-16_293.6K, H-1_293.6K}"/>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
  *
  * \section one_d_distributions One-Dimensional Distributions
  * Before discussing the remaining XML files, a special parameter type must
