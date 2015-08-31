@@ -11,12 +11,11 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
@@ -30,10 +29,22 @@ class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<Ind
 
 private:
   
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
+
+  //! This distribution type
+  typedef UnitAwareUniformDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -54,10 +65,11 @@ public:
 			       const InputDepQuantity& dependent_value );
 
   //! Copy constructor
-  UnitAwareUniformDistribution( const UnitAwareUniformDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareUniformDistribution( const UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
-  //! Copy constructor (copying from unitless distribution only)
-  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareUniformDistribution );
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareUniformDistribution fromUnitlessDistribution( const UnitAwareUniformDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
   UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );
@@ -78,11 +90,27 @@ public:
   //! Return a random sample from the distribution
   IndepQuantity sample() const;
 
+  //! Return a random sample from the distribution
+  static IndepQuantity sample( const IndepQuantity min_independent_value,
+			       const IndepQuantity max_independent_value );
+
   //! Return a random sample from the corresponding CDF and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
+  //! Return a random sample from the distribution and record the number of trials
+  static IndepQuantity sampleAndRecordTrials( 
+			        const IndepQuantity min_independent_value,
+			        const IndepQuantity max_independent_value,
+				unsigned& trials );
+
   //! Return a random sample from the distribution at the given CDF value
   IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  static IndepQuantity sampleWithRandomNumber( 
+				const IndepQuantity min_independent_value,
+				const IndepQuantity max_independent_value,
+				const double random_number );
 
   //! Return a random sample and sampled index from the corresponding CDF
   IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
@@ -116,7 +144,19 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const;
 
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareUniformDistribution( const UnitAwareUniformDistribution<void,void>& unitless_dist_instance, int );
+
 private:
+
+  // Calculate the PDF value
+  void calculatePDFValue();
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareUniformDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
@@ -133,38 +173,6 @@ private:
   // The uniform distribution PDF value
   InverseIndepQuantity d_pdf_value;
 };
-
-// Return a random sample from the distribution at the given CDF value
-template<typename IndependentUnit, typename DependentUnit>
-inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber( 
-					     const double random_number ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-
-  return random_number*(d_max_independent_value - d_min_independent_value) +
-    d_min_independent_value;
-}
-
-// Return a random sample from the distribution at the given CDF value in a subrange
-template<typename IndependentUnit, typename DependentUnit>
-inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
-	    const double random_number,
-	    const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the upper bound of the subrange is valid
-  testPrecondition( max_indep_var <= d_max_independent_value );
-  testPrecondition( max_indep_var >= d_min_independent_value );
-
-  return random_number*(max_indep_var - d_min_independent_value) + 
-    d_min_independent_value;
-}
 
 /*! The uniform distribution (unit-agnostic)
  * \ingroup one_d_distributions
