@@ -157,7 +157,7 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
     double lower_pdf_value = lower_bin_boundary->third;
     double upper_indep_value = upper_bin_boundary->first;
     double upper_pdf_value = upper_bin_boundary->third;
-    
+   
     return InterpolationPolicy::interpolate( lower_indep_value,
 					     upper_indep_value,
 					     indep_var_value,

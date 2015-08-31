@@ -25,8 +25,8 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
-                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "cutoff_angle", 
+                                        d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
 /*
@@ -37,14 +37,20 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp( "hard_elastic_pdf", 
                                         d_hard_elastic_pdf );
 */
-  ar & boost::serialization::make_nvp( "elastic_angles", 
-                                        d_elastic_angles );
-  ar & boost::serialization::make_nvp( "elastic_pdf", 
-                                        d_elastic_pdf );
-  ar & boost::serialization::make_nvp( "soft_elastic_discrete_angles", 
-                                        d_soft_elastic_discrete_angles );
-  ar & boost::serialization::make_nvp( "soft_elastic_weights", 
-                                        d_soft_elastic_weights );
+  ar & boost::serialization::make_nvp( "analog_elastic_angles", 
+                                        d_analog_elastic_angles );
+  ar & boost::serialization::make_nvp( "analog_elastic_pdf", 
+                                        d_analog_elastic_pdf );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_normalization_constant", 
+            d_screened_rutherford_normalization_constant );
+  ar & boost::serialization::make_nvp( "moliere_screening_constant", 
+                                        d_moliere_screening_constant );
+  ar & boost::serialization::make_nvp( 
+            "moment_preserving_elastic_discrete_angles", 
+            d_moment_preserving_elastic_discrete_angles );
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
+                                        d_moment_preserving_elastic_weights );
   ar & boost::serialization::make_nvp( "electroionization_energy_grid",
 				                        d_electroionization_energy_grid );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy",
@@ -63,6 +69,17 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 				                        d_atomic_excitation_energy_loss );
   ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section", 
+                                        d_cutoff_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "cutoff_elastic_cross_section_threshold_index", 
+            d_cutoff_elastic_cross_section_threshold_index );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_elastic_cross_section", 
+            d_screened_rutherford_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_elastic_cross_section_threshold_index", 
+            d_screened_rutherford_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
                                         d_total_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
@@ -76,11 +93,11 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
             d_hard_elastic_cross_section_threshold_index );
 */
   ar & boost::serialization::make_nvp( 
-            "moment_preserving_soft_elastic_cross_section", 
-            d_moment_preserving_soft_elastic_cross_section );
+            "moment_preserving_elastic_cross_section", 
+            d_moment_preserving_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
-            "moment_preserving_soft_elastic_cross_section_threshold_index", 
-            d_moment_preserving_soft_elastic_cross_section_threshold_index );
+            "moment_preserving_elastic_cross_section_threshold_index", 
+            d_moment_preserving_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "electroionization_subshell_cross_section", 
             d_electroionization_subshell_cross_section );
@@ -106,8 +123,8 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
-                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "cutoff_angle", 
+                                        d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
 /*
@@ -118,14 +135,20 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp( "hard_elastic_pdf", 
                                         d_hard_elastic_pdf );
 */
-  ar & boost::serialization::make_nvp( "elastic_angles", 
-                                        d_elastic_angles );
-  ar & boost::serialization::make_nvp( "elastic_pdf", 
-                                        d_elastic_pdf );
-  ar & boost::serialization::make_nvp( "soft_elastic_discrete_angles", 
-                                        d_soft_elastic_discrete_angles );
-  ar & boost::serialization::make_nvp( "soft_elastic_weights", 
-                                        d_soft_elastic_weights );
+  ar & boost::serialization::make_nvp( "analog_elastic_angles", 
+                                        d_analog_elastic_angles );
+  ar & boost::serialization::make_nvp( "analog_elastic_pdf", 
+                                        d_analog_elastic_pdf );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_normalization_constant", 
+            d_screened_rutherford_normalization_constant );
+  ar & boost::serialization::make_nvp( "moliere_screening_constant", 
+                                        d_moliere_screening_constant );
+  ar & boost::serialization::make_nvp( 
+            "moment_preserving_elastic_discrete_angles", 
+            d_moment_preserving_elastic_discrete_angles );
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
+                                        d_moment_preserving_elastic_weights );
   ar & boost::serialization::make_nvp( "electroionization_energy_grid",
 				                        d_electroionization_energy_grid );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy",
@@ -144,6 +167,17 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 				                        d_atomic_excitation_energy_loss );
   ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section", 
+                                        d_cutoff_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "cutoff_elastic_cross_section_threshold_index", 
+            d_cutoff_elastic_cross_section_threshold_index );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_elastic_cross_section", 
+            d_screened_rutherford_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "screened_rutherford_elastic_cross_section_threshold_index", 
+            d_screened_rutherford_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
                                         d_total_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
@@ -157,11 +191,11 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
             d_hard_elastic_cross_section_threshold_index );
 */
   ar & boost::serialization::make_nvp( 
-            "moment_preserving_soft_elastic_cross_section", 
-            d_moment_preserving_soft_elastic_cross_section );
+            "moment_preserving_elastic_cross_section", 
+            d_moment_preserving_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
-            "moment_preserving_soft_elastic_cross_section_threshold_index", 
-            d_moment_preserving_soft_elastic_cross_section_threshold_index );
+            "moment_preserving_elastic_cross_section_threshold_index", 
+            d_moment_preserving_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "electroionization_subshell_cross_section", 
             d_electroionization_subshell_cross_section );

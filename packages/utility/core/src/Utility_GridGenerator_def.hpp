@@ -163,7 +163,7 @@ void GridGenerator<InterpPolicy>::generateAndEvaluateInPlace(
     x_mid = InterpPolicy::recoverProcessedIndepVar( 
 				     0.5*(InterpPolicy::processIndepVar(x0) +
 					  InterpPolicy::processIndepVar(x1)) );
-    
+
     y1 = function( x1 );
     y_mid_exact = function( x_mid );
 

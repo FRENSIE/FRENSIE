@@ -49,8 +49,8 @@ public:
   //! Return the atomic subshells 
   const std::set<unsigned>& getSubshells() const;
 
-  //! Return the elastic cutoff angle cosine
-  double getCutoffAngleCosine() const;
+  //! Return the upper cutoff scattering angle below which moment preserving elastic scattering is used
+  double getCutoffAngle() const;
 
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
@@ -58,23 +58,29 @@ public:
   //! Return the number of elastic angular bins for an incoming energy
   unsigned getNumberOfAngularBins( const double incoming_energy ) const;
 */
-  //! Return the elastic scattering angles for an incoming energy
-  const std::vector<double>& getElasticAngles(
+  //! Return the analog elastic scattering angles for an incoming energy
+  const std::vector<double>& getAnalogElasticAngles(
 					       const double incoming_energy ) const;
 
-  //! Return the elastic scatering pdf for an incoming energy
-  const std::vector<double>& getElasticPDF(
+  //! Return the analog elastic scatering pdf for an incoming energy
+  const std::vector<double>& getAnalogElasticPDF(
 					       const double incoming_energy ) const;
+
+  //! Return the screened Rutherford elastic normalization constants
+  const std::vector<double>& getScreenedRutherfordNormalizationConstant( ) const;
+
+  //! Return Moliere's screening constant
+  const std::vector<double>& getMoliereScreeningConstant( ) const;
 /*
-  //! Return the number of soft discrete angles for an incoming energy
+  //! Return the number of moment preserving discrete angles for an incoming energy
   unsigned getNumberOfDiscreteAngles( const double incoming_energy ) const;
 */
-  //! Return the soft elastic discrete angles for an incoming energy
-  const std::vector<double>& getSoftElasticDiscreteAngles(
+  //! Return the moment preserving elastic discrete angles for an incoming energy
+  const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
 					       const double incoming_energy ) const;
 
-  //! Return the soft elastic weights for an incoming energy
-  const std::vector<double>& getSoftElasticWeights(
+  //! Return the moment preserving elastic weights for an incoming energy
+  const std::vector<double>& getMomentPreservingElasticWeights(
 					       const double incoming_energy ) const;
 
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
@@ -112,57 +118,54 @@ public:
   const std::vector<double>& getElectronEnergyGrid() const;
 
   //! Return the elastic electron cross section below mu = 0.999999
-  const std::vector<double>& 
-  getCutoffElasticCrossSection() const;
+  const std::vector<double>& getCutoffElasticCrossSection() const;
 
   //! Return the cutoff elastic cross section threshold energy bin index
-  unsigned 
-  getCutoffElasticCrossSectionThresholdEnergyIndex() const;
+  unsigned getCutoffElasticCrossSectionThresholdEnergyIndex() const;
+
+  //! Return the screened Rutherford elastic electron cross section
+  const std::vector<double>& getScreenedRutherfordElasticCrossSection() const;
+
+  //! Return the screened Rutherford elastic cross section threshold energy bin index
+  unsigned getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() const;
 
   //! Return the total elastic electron cross section
-  const std::vector<double>& 
-  getTotalElasticCrossSection() const;
+  const std::vector<double>& getTotalElasticCrossSection() const;
 
   //! Return the total elastic cross section threshold energy bin index
-  unsigned 
-  getTotalElasticCrossSectionThresholdEnergyIndex() const;
+  unsigned getTotalElasticCrossSectionThresholdEnergyIndex() const;
 /*
   //! Return the hard elastic electron cross section
-  const std::vector<double>& 
-  getHardElasticCrossSection() const;
+  const std::vector<double>& getHardElasticCrossSection() const;
 
   //! Return the hard cross section threshold energy bin index
   unsigned getHardElasticCrossSectionThresholdEnergyIndex() const;
 */
-  //! Return the Moment Preserving (MP) soft elastic electron cross section
+  //! Return the Moment Preserving (MP) elastic electron cross section
   const std::vector<double>& getMomentPreservingCrossSection() const;
 
-  //! Return the MP soft elastic cross section threshold energy bin index
+  //! Return the MP elastic cross section threshold energy bin index
   unsigned getMomentPreservingCrossSectionThresholdEnergyIndex() const;
 
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>& 
-  getElectroionizationCrossSection( const unsigned subshell ) const;
+    getElectroionizationCrossSection( const unsigned subshell ) const;
 
   //! Return the electroionization cross section threshold energy bin index for a subshell
   unsigned getElectroionizationCrossSectionThresholdEnergyIndex( 
     const unsigned subshell ) const;
 
   //! Return the bremsstrahlung electron cross section
-  const std::vector<double>& 
-  getBremsstrahlungCrossSection() const;
+  const std::vector<double>& getBremsstrahlungCrossSection() const;
 
   //! Return the bremsstrahlung cross section threshold energy bin index
-  unsigned 
-  getBremsstrahlungCrossSectionThresholdEnergyIndex() const;
+  unsigned getBremsstrahlungCrossSectionThresholdEnergyIndex() const;
 
   //! Return the atomic excitation electron cross section
-  const std::vector<double>& 
-  getAtomicExcitationCrossSection() const;
+  const std::vector<double>& getAtomicExcitationCrossSection() const;
 
   //! Return the atomic excitation cross section threshold energy bin index
-  unsigned 
-  getAtomicExcitationCrossSectionThresholdEnergyIndex() const;
+  unsigned getAtomicExcitationCrossSectionThresholdEnergyIndex() const;
 
 protected:
 
@@ -176,59 +179,75 @@ protected:
   //! set the atomic subshells 
   void setSubshells( const std::set<unsigned>& subshells );
 
-  //! Set the elastic cutoff angle cosine
-  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+  //! Set the elastic cutoff angle
+  void setCutoffAngle( const double cutoff_angle );
 
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid( 
-            const std::vector<double>& angular_energy_grid );
+    const std::vector<double>& angular_energy_grid );
 /*
   //! Set the number of elastic angles for an incoming energy
   void setNumberOfAngles( 
-            const double incoming_energy, 
-            const unsigned number_of_elastic_angles );
+    const double incoming_energy, 
+    const unsigned number_of_elastic_angles );
 */
   //! Set the elastic scattering angles for an incoming energy
-  void setElasticAngles(
-            const double incoming_energy,
-            const std::vector<double>& elastic_angles );
+  void setAnalogElasticAnglesAtEnergy( 
+    const double incoming_energy,
+    const std::vector<double>& elastic_angles );
 
   //! Set the elastic scattering pdf for an incoming energy
-  void setElasticPDF(
-            const double incoming_energy,
-            const std::vector<double>& elastic_pdf );
+  void setAnalogElasticPDFAtEnergy( 
+    const double incoming_energy,
+    const std::vector<double>& elastic_pdf );
+
+  //! Set the elastic scattering angles
+  void setAnalogElasticAngles(
+    const std::map<double,std::vector<double> >& elastic_angles );
+
+  //! Set the elastic scattering pdf
+  void setAnalogElasticPDF(
+    const std::map<double,std::vector<double> >& elastic_pdf );
+
+  //! Set the screened Rutherford elastic normalization constant
+  void setScreenedRutherfordNormalizationConstant(
+    const std::vector<double>& screened_rutherford_normalization_constant );
+
+  //! Set Moliere's screening constant
+  void setMoliereScreeningConstant(
+    const std::vector<double>& moliere_screening_constant );
 /*
   //! Set the number of discrete angles for an incoming energy
   void setNumberOfDiscreteAngles( 
-             const double incoming_energy,
-             const unsigned number_of_discrete_angles );
+    const double incoming_energy,
+    const unsigned number_of_discrete_angles );
 */
-  //! Set the soft elastic discrete angles for an incoming energy
-  void setSoftElasticDiscreteAngles(
-		     const double incoming_energy,
-		     const std::vector<double>& soft_elastic_discrete_angles );
+  //! Set the moment preserving elastic discrete angles for an incoming energy
+  void setMomentPreservingElasticDiscreteAngles(
+	const double incoming_energy,
+	const std::vector<double>& moment_preserving_elastic_discrete_angles );
 
-  //! Set the soft elastic weights for an incoming energy
-  void setSoftElasticWeights( 
-			 const double incoming_energy,
-			 const std::vector<double>& soft_elastic_weights );
+  //! Set the moment preserving elastic weights for an incoming energy
+  void setMomentPreservingElasticWeights( 
+	const double incoming_energy,
+	const std::vector<double>& moment_preserving_elastic_weights );
 
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
-            const unsigned subshell, 
-            const std::vector<double>& electroionization_energy_grid );
+    const unsigned subshell, 
+    const std::vector<double>& electroionization_energy_grid );
 
   //! Set the electroionization recoil energy for an incoming energy and subshell
   void setElectroionizationRecoilEnergyAtIncomingEnergy( 
-            const unsigned subshell, 
-            const double incoming_energy,
-            const std::vector<double>& electroionization_recoil_energy );
+    const unsigned subshell, 
+    const double incoming_energy,
+    const std::vector<double>& electroionization_recoil_energy );
 
   //! Set the electroionization recoil energy pdf for an incoming energy and subshell
   void setElectroionizationRecoilPDFAtIncomingEnergy(
-            const unsigned subshell,
-            const double incoming_energy,
-            const std::vector<double>& electroionization_recoil_pdf );
+    const unsigned subshell,
+    const double incoming_energy,
+    const std::vector<double>& electroionization_recoil_pdf );
 
   //! Set electroionization recoil energy for all incoming energies in a subshell
   void setElectroionizationRecoilEnergy(
@@ -242,17 +261,17 @@ protected:
 
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid( 
-            const std::vector<double>& bremsstrahlung_energy_grid );
+    const std::vector<double>& bremsstrahlung_energy_grid );
 
   //! Set the bremsstrahlung photon energy for an incoming energy
   void setBremsstrahlungPhotonEnergyAtIncomingEnergy(
-            const double incoming_energy,
-            const std::vector<double>& bremsstrahlung_photon_energy );
+    const double incoming_energy,
+    const std::vector<double>& bremsstrahlung_photon_energy );
 
   //! Set the bremsstrahlung photon energy pdf for an incoming energy
   void setBremsstrahlungPhotonPDFAtIncomingEnergy(
-            const double incoming_energy,
-            const std::vector<double>&  bremsstrahlung_photon_pdf );
+    const double incoming_energy,
+    const std::vector<double>&  bremsstrahlung_photon_pdf );
 
   //! Set all the bremsstrahlung photon energy data
   void setBremsstrahlungPhotonEnergy(
@@ -264,7 +283,7 @@ protected:
 
   //! Set the atomic excitation average energy loss energy grid
   void setAtomicExcitationEnergyGrid( 
-            const std::vector<double>& atomic_excitation_energy_grid );
+    const std::vector<double>& atomic_excitation_energy_grid );
 
   //! Set the atomic excitation average energy loss
   void setAtomicExcitationEnergyLoss( 
@@ -280,6 +299,13 @@ protected:
   //! Set the elastic cutoff cross section threshold energy bin index
   void setCutoffElasticCrossSectionThresholdEnergyIndex( const unsigned index );
 
+  //! Set the screened Rutherford elastic electron cross section
+  void setScreenedRutherfordElasticCrossSection( 
+    const std::vector<double>& total_elastic_cross_section );
+
+  //! Set the screened Rutherford elastic cross section threshold energy bin index
+  void setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex( const unsigned index );
+
   //! Set the total elastic electron cross section
   void setTotalElasticCrossSection( 
     const std::vector<double>& total_elastic_cross_section );
@@ -294,11 +320,11 @@ protected:
   //! Set the hard elastic cross section threshold energy bin index
   void setHardElasticCrossSectionThresholdEnergyIndex( const unsigned index );
 */
-  //! Set the soft elastic electron cross section using Moment Preserving (MP) theory
+  //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
   void setMomentPreservingCrossSection(
-			 const std::vector<double>& soft_elastic_cross_section );
+			 const std::vector<double>& moment_preserving_elastic_cross_section );
 
-  //! Set the MP soft elastic cross section threshold energy bin index
+  //! Set the MP moment preserving elastic cross section threshold energy bin index
   void setMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
 
@@ -362,17 +388,23 @@ private:
   // The atomic subshells (ENDF designators)
   std::set<unsigned> d_subshells;
 
-  // The elastic cutoff angle cosine
-  double d_cutoff_angle_cosine;
+  // The elastic cutoff angle
+  double d_cutoff_angle;
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
 
-  // The elastic scattering angles
-  std::map<double,std::vector<double> > d_elastic_angles;
+  // The analog elastic scattering angles
+  std::map<double,std::vector<double> > d_analog_elastic_angles;
 
-  // The elastic scattering pdf
-  std::map<double,std::vector<double> > d_elastic_pdf;
+  // The analog elastic scattering pdf
+  std::map<double,std::vector<double> > d_analog_elastic_pdf;
+
+  // The screened rutherford normalization constant for elastic scattering
+  std::vector<double> d_screened_rutherford_normalization_constant;
+
+  // Moliere's screening constant
+  std::vector<double> d_moliere_screening_constant;
 /*
   // The number of elastic angles for incoming energy
   std::map<double,unsigned> d_number_of_elastic_angles;
@@ -386,11 +418,11 @@ private:
   // The number of discrete angles for incoming energy
   std::map<double,unsigned> d_number_of_discrete_angles;
 */
-  // The soft elastic discrete angles
-  std::map<double,std::vector<double> > d_soft_elastic_discrete_angles;
+  // The moment preserving elastic discrete angles
+  std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
 
-  // The soft elastic weights
-  std::map<double,std::vector<double> > d_soft_elastic_weights;
+  // The moment preserving elastic weights
+  std::map<double,std::vector<double> > d_moment_preserving_elastic_weights;
 
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
@@ -430,12 +462,17 @@ private:
   // The cutoff elastic electron cross section threshold energy index
   unsigned d_cutoff_elastic_cross_section_threshold_index;
 
+  // The screened rutherford elastic electron cross section (b)
+  std::vector<double> d_screened_rutherford_elastic_cross_section;
+
+  // The screened rutherford elastic electron cross section threshold energy index
+  unsigned d_screened_rutherford_elastic_cross_section_threshold_index;
+
   // The total elastic electron cross section (b)
   std::vector<double> d_total_elastic_cross_section;
 
   // The total elastic electron cross section threshold energy index
   unsigned d_total_elastic_cross_section_threshold_index;
-
 /*
   // The hard elastic electron cross section (b)
   std::vector<double> d_hard_elastic_cross_section;
@@ -443,11 +480,11 @@ private:
   // The hard elastic electron cross section threshold energy index
   unsigned d_hard_elastic_cross_section_threshold_index;
 */
-  // The Moment Preserving soft elastic electron cross section (b)
-  std::vector<double> d_moment_preserving_soft_elastic_cross_section;
+  // The Moment Preserving elastic electron cross section (b)
+  std::vector<double> d_moment_preserving_elastic_cross_section;
 
-  // The Moment Preserving soft elastic electron cross section threshold energy index
-  unsigned d_moment_preserving_soft_elastic_cross_section_threshold_index;
+  // The Moment Preserving elastic electron cross section threshold energy index
+  unsigned d_moment_preserving_elastic_cross_section_threshold_index;
 
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> > 

@@ -49,10 +49,10 @@ EvaluatedElectronDataContainer::getSubshells() const
   return d_subshells;
 }
 
-// Return the elastic cutoff angle cosine
-double EvaluatedElectronDataContainer::getCutoffAngleCosine() const
+// Return the elastic cutoff angle
+double EvaluatedElectronDataContainer::getCutoffAngle() const
 {
-  return d_cutoff_angle_cosine;
+  return d_cutoff_angle;
 }
 
 // Return the elastic angular energy grid
@@ -75,50 +75,64 @@ unsigned EvaluatedElectronDataContainer::getNumberOfDiscreteAngles(
 */
 // Return the elastic angles for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElasticAngles(
+EvaluatedElectronDataContainer::getAnalogElasticAngles(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_elastic_angles.find( incoming_energy )->second;
+  return d_analog_elastic_angles.find( incoming_energy )->second;
 }
 
 // Return the elastic pdf for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElasticPDF(
+EvaluatedElectronDataContainer::getAnalogElasticPDF(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_elastic_pdf.find( incoming_energy )->second;
+  return d_analog_elastic_pdf.find( incoming_energy )->second;
 }
 
-// Return the soft elastic discrete angles for an incoming energy
+// Return the screened Rutherford elastic normalization constant 
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getSoftElasticDiscreteAngles(
-					        const double incoming_energy ) const
+EvaluatedElectronDataContainer::getScreenedRutherfordNormalizationConstant() const
 {
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
-  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
-
-  return d_soft_elastic_discrete_angles.find( incoming_energy )->second;
+  return d_screened_rutherford_normalization_constant;
 }
 
-// Return the soft elastic weights for an incoming energy
+// Return Moliere's screening constant 
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getSoftElasticWeights(
+EvaluatedElectronDataContainer::getMoliereScreeningConstant() const
+{
+  return d_moliere_screening_constant;
+}
+
+// Return the moment preserving elastic discrete angles for an incoming energy
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getMomentPreservingElasticDiscreteAngles(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_soft_elastic_weights.find( incoming_energy )->second;
+  return d_moment_preserving_elastic_discrete_angles.find( incoming_energy )->second;
+}
+
+// Return the moment preserving elastic weights for an incoming energy
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getMomentPreservingElasticWeights(
+					        const double incoming_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
+  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
+
+  return d_moment_preserving_elastic_weights.find( incoming_energy )->second;
 }
 
 // Return the electroionization energy grid for a subshell
@@ -141,8 +155,12 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilEnergy(
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
-  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
+  testPrecondition( 
+            incoming_energy >= 
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition( 
+            incoming_energy <= 
+            d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_energy.find( subshell )->second.find( incoming_energy )->second;
 }
@@ -156,8 +174,12 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilPDF(
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
-  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
+  testPrecondition( 
+            incoming_energy >= 
+            d_electroionization_energy_grid.find( subshell )->second.front() );
+  testPrecondition( 
+            incoming_energy <= 
+            d_electroionization_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incoming_energy )->second;
 }
@@ -166,7 +188,7 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilPDF(
 const std::vector<double>& 
 EvaluatedElectronDataContainer::getBremsstrahlungEnergyGrid() const
 {
-  return d_angular_energy_grid;
+  return d_bremsstrahlung_energy_grid;
 }
 
 // Return the bremsstrahlung for an incoming energy
@@ -175,8 +197,8 @@ EvaluatedElectronDataContainer::getBremsstrahlungPhotonEnergy(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
-  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
+  testPrecondition( incoming_energy >= d_bremsstrahlung_energy_grid.front() );
+  testPrecondition( incoming_energy <= d_bremsstrahlung_energy_grid.back() );
 
   return d_bremsstrahlung_photon_energy.find( incoming_energy )->second;
 }
@@ -187,8 +209,8 @@ EvaluatedElectronDataContainer::getBremsstrahlungPhotonPDF(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
-  testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
+  testPrecondition( incoming_energy >= d_bremsstrahlung_energy_grid.front() );
+  testPrecondition( incoming_energy <= d_bremsstrahlung_energy_grid.back() );
 
   return d_bremsstrahlung_photon_pdf.find( incoming_energy )->second;
 }
@@ -212,6 +234,32 @@ const std::vector<double>&
 EvaluatedElectronDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
+}
+// Return the cutoff elastic electron cross section
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getCutoffElasticCrossSection() const
+{
+  return d_cutoff_elastic_cross_section;
+}
+
+// Return the cutoff elastic cross section threshold energy bin index
+unsigned
+EvaluatedElectronDataContainer::getCutoffElasticCrossSectionThresholdEnergyIndex() const
+{
+  return d_cutoff_elastic_cross_section_threshold_index;
+}
+// Return the screened Rutherford elastic electron cross section
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getScreenedRutherfordElasticCrossSection() const
+{
+  return d_screened_rutherford_elastic_cross_section;
+}
+
+// Return the screened Rutherford elastic cross section threshold energy bin index
+unsigned
+EvaluatedElectronDataContainer::getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() const
+{
+  return d_screened_rutherford_elastic_cross_section_threshold_index;
 }
 // Return the total elastic electron cross section
 const std::vector<double>& 
@@ -241,18 +289,18 @@ EvaluatedElectronDataContainer::getHardElasticCrossSectionThresholdEnergyIndex()
   return d_hard_elastic_cross_section_threshold_index;
 }
 */
-// Return the Moment Preserving (MP) soft elastic electron cross section
+// Return the Moment Preserving (MP) elastic electron cross section
 const std::vector<double>& 
 EvaluatedElectronDataContainer::getMomentPreservingCrossSection() const
 {
-  return d_moment_preserving_soft_elastic_cross_section;
+  return d_moment_preserving_elastic_cross_section;
 }
 
-// Return the MP soft elastic cross section threshold energy bin index
+// Return the MP elastic cross section threshold energy bin index
 unsigned
 EvaluatedElectronDataContainer::getMomentPreservingCrossSectionThresholdEnergyIndex() const
 {
-  return d_moment_preserving_soft_elastic_cross_section_threshold_index;
+  return d_moment_preserving_elastic_cross_section_threshold_index;
 }
 
 // Return the electroionization electron cross section for a subshell
@@ -324,15 +372,15 @@ void EvaluatedElectronDataContainer::setSubshells(
   d_subshells = subshells;
 }
 
-// Set the elastic cutoff angle cosine
-void EvaluatedElectronDataContainer::setCutoffAngleCosine( 
-                         const double cutoff_angle_cosine )
+// Set the elastic cutoff angle
+void EvaluatedElectronDataContainer::setCutoffAngle( 
+                         const double cutoff_angle )
 {
-  // Make sure the elastic cutoff angle cosine is valid
-  testPrecondition( cutoff_angle_cosine > -1.0 );
-  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  // Make sure the elastic cutoff angle is valid
+  testPrecondition( cutoff_angle >= 0.0 );
+  testPrecondition( cutoff_angle < 2.0 );
 
-  d_cutoff_angle_cosine = cutoff_angle_cosine;
+  d_cutoff_angle = cutoff_angle;
 }
 
 // Set the elastic angular energy grid
@@ -368,88 +416,122 @@ void EvaluatedElectronDataContainer::setNumberOfDiscreteAngles(
 }
 */
 // Set the total elastic angles for an incoming energy
-void EvaluatedElectronDataContainer::setElasticAngles(
-		     const double incoming_energy,
-		     const std::vector<double>& elastic_angles )
+void EvaluatedElectronDataContainer::setAnalogElasticAnglesAtEnergy(
+    const double incoming_energy,
+    const std::vector<double>& analog_elastic_angles )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the elastic angles are valid
-  testPrecondition( std::find_if( elastic_angles.begin(),
-                                  elastic_angles.end(),
+  testPrecondition( std::find_if( analog_elastic_angles.begin(),
+                                  analog_elastic_angles.end(),
                                   isValueLessThanMinusOne ) ==
-                    elastic_angles.end() );
-  testPrecondition( std::find_if( elastic_angles.begin(),
-                                  elastic_angles.end(),
+                    analog_elastic_angles.end() );
+  testPrecondition( std::find_if( analog_elastic_angles.begin(),
+                                  analog_elastic_angles.end(),
                                   isValueGreaterThanOne ) ==
-                    elastic_angles.end() );
+                    analog_elastic_angles.end() );
 
-  d_elastic_angles[incoming_energy] = elastic_angles;
+  d_analog_elastic_angles[incoming_energy] = analog_elastic_angles;
 }
 
 // Set the total elastic pdf for an incoming energy
-void EvaluatedElectronDataContainer::setElasticPDF( 
-			 const double incoming_energy,
-			 const std::vector<double>& elastic_pdf )
+void EvaluatedElectronDataContainer::setAnalogElasticPDFAtEnergy( 
+    const double incoming_energy,
+    const std::vector<double>& analog_elastic_pdf )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the weight is valid
-  testPrecondition( std::find_if( elastic_pdf.begin(),
-                                  elastic_pdf.end(),
+  testPrecondition( std::find_if( analog_elastic_pdf.begin(),
+                                  analog_elastic_pdf.end(),
                                   isValueLessThanOrEqualToZero ) ==
-                    elastic_pdf.end() );
+                    analog_elastic_pdf.end() );
   
-  d_elastic_pdf[incoming_energy] = elastic_pdf;
+  d_analog_elastic_pdf[incoming_energy] = analog_elastic_pdf;
+}
+// Set the total elastic angles
+void EvaluatedElectronDataContainer::setAnalogElasticAngles(
+    const std::map<double,std::vector<double> >& analog_elastic_angles )
+{
+  d_analog_elastic_angles = analog_elastic_angles;
 }
 
-// Set the soft elastic discrete angles for an incoming energy
-void EvaluatedElectronDataContainer::setSoftElasticDiscreteAngles(
+// Set the total elastic pdf 
+void EvaluatedElectronDataContainer::setAnalogElasticPDF( 
+    const std::map<double,std::vector<double> >& analog_elastic_pdf )
+{
+  d_analog_elastic_pdf = analog_elastic_pdf;
+}
+
+// Set the screened Rutherford elastic normalization constant 
+void EvaluatedElectronDataContainer::setScreenedRutherfordNormalizationConstant(
+		     const std::vector<double>& screened_rutherford_normalization_constant )
+{
+  // Make sure the screened_rutherford_normalization_constants are valid
+  testPrecondition( std::find_if( screened_rutherford_normalization_constant.begin(),
+                                  screened_rutherford_normalization_constant.end(),
+                                  isValueLessThanZero ) ==
+                    screened_rutherford_normalization_constant.end() );
+
+  d_screened_rutherford_normalization_constant = 
+    screened_rutherford_normalization_constant;
+}
+
+// Set Moliere's screening constant 
+void EvaluatedElectronDataContainer::setMoliereScreeningConstant( 
+			 const std::vector<double>& moliere_screening_constant )
+{
+  d_moliere_screening_constant = moliere_screening_constant;
+}
+
+// Set the moment preserving elastic discrete angles for an incoming energy
+void EvaluatedElectronDataContainer::setMomentPreservingElasticDiscreteAngles(
 		     const double incoming_energy,
-		     const std::vector<double>& soft_elastic_discrete_angles )
+		     const std::vector<double>& moment_preserving_elastic_discrete_angles )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
-  // Make sure the soft elastic discrete angles are valid
- /* testPrecondition( soft_elastic_discrete_angles.size() ==
+  // Make sure the moment preserving elastic discrete angles are valid
+ /* testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
                d_number_of_discrete_angles.find( incoming_energy )->second );*/
-  testPrecondition( std::find_if( soft_elastic_discrete_angles.begin(),
-                                  soft_elastic_discrete_angles.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
                                   isValueLessThanMinusOne ) ==
-                    soft_elastic_discrete_angles.end() );
-  testPrecondition( std::find_if( soft_elastic_discrete_angles.begin(),
-                                  soft_elastic_discrete_angles.end(),
+                    moment_preserving_elastic_discrete_angles.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
                                   isValueGreaterThanOne ) ==
-                    soft_elastic_discrete_angles.end() );
+                    moment_preserving_elastic_discrete_angles.end() );
 
-  d_soft_elastic_discrete_angles[incoming_energy] = 
-        soft_elastic_discrete_angles;
+  d_moment_preserving_elastic_discrete_angles[incoming_energy] = 
+        moment_preserving_elastic_discrete_angles;
 }
 
-// Set the soft elastic weights for an incoming energy
-void EvaluatedElectronDataContainer::setSoftElasticWeights( 
+// Set the moment preserving elastic weights for an incoming energy
+void EvaluatedElectronDataContainer::setMomentPreservingElasticWeights( 
 			 const double incoming_energy,
-			 const std::vector<double>& soft_elastic_weights )
+			 const std::vector<double>& moment_preserving_elastic_weights )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the weight is valid
-  /*testPrecondition( soft_elastic_weights.size() ==
+  /*testPrecondition( moment_preserving_elastic_weights.size() ==
                d_number_of_discrete_angles.find( incoming_energy )->second );*/
-  testPrecondition( std::find_if( soft_elastic_weights.begin(),
-                                  soft_elastic_weights.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
                                   isValueLessThanOrEqualToZero ) ==
-                    soft_elastic_weights.end() );
-  testPrecondition( std::find_if( soft_elastic_weights.begin(),
-                                  soft_elastic_weights.end(),
+                    moment_preserving_elastic_weights.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==
-                    soft_elastic_weights.end() );
+                    moment_preserving_elastic_weights.end() );
   
-  d_soft_elastic_weights[incoming_energy] = soft_elastic_weights;
+  d_moment_preserving_elastic_weights[incoming_energy] = moment_preserving_elastic_weights;
 }
 
 // Set the electroionization energy grid for a subshell
@@ -635,6 +717,61 @@ void EvaluatedElectronDataContainer::setElectronEnergyGrid(
 
   d_electron_energy_grid = energy_grid;
 }
+
+// Set the cutoff elastic electron cross section 
+void EvaluatedElectronDataContainer::setCutoffElasticCrossSection(
+			 const std::vector<double>& cutoff_elastic_cross_section )
+{
+  // Make sure the cutoff elastic cross section is valid
+  testPrecondition( cutoff_elastic_cross_section.size() <= 
+                    d_electron_energy_grid.size() );
+  testPrecondition( std::find_if( cutoff_elastic_cross_section.begin(),
+                                  cutoff_elastic_cross_section.end(),
+                                  isValueLessThanOrEqualToZero ) ==
+                    cutoff_elastic_cross_section.end() );
+  
+  d_cutoff_elastic_cross_section = cutoff_elastic_cross_section;
+}
+
+// Set the cutoff elastic cross section threshold energy bin index
+void EvaluatedElectronDataContainer::setCutoffElasticCrossSectionThresholdEnergyIndex(
+						        const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( 
+        d_cutoff_elastic_cross_section.size() + index ==
+        d_electron_energy_grid.size() );
+  
+ d_cutoff_elastic_cross_section_threshold_index = index;
+}
+
+// Set the screened rutherford elastic electron cross section 
+void EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSection(
+			 const std::vector<double>& screened_rutherford_elastic_cross_section )
+{
+  // Make sure the screened rutherford elastic cross section is valid
+  testPrecondition( screened_rutherford_elastic_cross_section.size() <= 
+                    d_electron_energy_grid.size() );
+  testPrecondition( std::find_if( screened_rutherford_elastic_cross_section.begin(),
+                                  screened_rutherford_elastic_cross_section.end(),
+                                  isValueLessThanZero ) ==
+                    screened_rutherford_elastic_cross_section.end() );
+  
+  d_screened_rutherford_elastic_cross_section = screened_rutherford_elastic_cross_section;
+}
+
+// Set the screened rutherford elastic cross section threshold energy bin index
+void EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(
+						        const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( 
+        d_screened_rutherford_elastic_cross_section.size() + index ==
+        d_electron_energy_grid.size() );
+  
+ d_screened_rutherford_elastic_cross_section_threshold_index = index;
+}
+
 // Set the total elastic electron cross section 
 void EvaluatedElectronDataContainer::setTotalElasticCrossSection(
 			 const std::vector<double>& total_elastic_cross_section )
@@ -689,31 +826,32 @@ void EvaluatedElectronDataContainer::setHardElasticCrossSectionThresholdEnergyIn
  d_hard_elastic_cross_section_threshold_index = index;
 }
 */
-// Set the soft elastic electron cross section using Moment Preserving (MP) theory
+// Set the elastic electron cross section using Moment Preserving (MP) theory
 void EvaluatedElectronDataContainer::setMomentPreservingCrossSection(
-			 const std::vector<double>& soft_elastic_cross_section )
+			 const std::vector<double>& moment_preserving_elastic_cross_section )
 {
-  // Make sure the soft elastic cross section is valid
-  testPrecondition( soft_elastic_cross_section.size() <= 
+  // Make sure the moment preserving elastic cross section is valid
+  testPrecondition( moment_preserving_elastic_cross_section.size() <= 
                     d_electron_energy_grid.size() );
-  testPrecondition( std::find_if( soft_elastic_cross_section.begin(),
-                                  soft_elastic_cross_section.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_cross_section.begin(),
+                                  moment_preserving_elastic_cross_section.end(),
                                   isValueLessThanOrEqualToZero ) ==
-                    soft_elastic_cross_section.end() );
+                    moment_preserving_elastic_cross_section.end() );
   
-  d_moment_preserving_soft_elastic_cross_section = soft_elastic_cross_section;
+  d_moment_preserving_elastic_cross_section = 
+        moment_preserving_elastic_cross_section;
 }
 
-// Set the MP soft elastic cross section threshold energy bin index
+// Set the MP elastic cross section threshold energy bin index
 void EvaluatedElectronDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
   testPrecondition( 
-        d_moment_preserving_soft_elastic_cross_section.size() + index ==
+        d_moment_preserving_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
   
- d_moment_preserving_soft_elastic_cross_section_threshold_index= index;
+ d_moment_preserving_elastic_cross_section_threshold_index= index;
 }
 
 // Set the electroionization electron cross section 
@@ -825,7 +963,7 @@ bool EvaluatedElectronDataContainer::isValueGreaterThanOne(
   return value > 1.0;
 }
 
-// Test if a value is less than the angle cosine cutoff
+// Test if a value is less than -1.0
 bool EvaluatedElectronDataContainer::isValueLessThanMinusOne( 
 							   const double value )
 {

@@ -102,7 +102,7 @@ void ENDLIB97FileHandler::readFirstTableHeader( unsigned int &atomic_number,
 {
   // The data file must be valid
   testPrecondition( d_endlib_file );
-  
+ 
   // Variables for reading in EPDL data file header 1
   //  the variable names are consistent with the names in the EPDL docs,
   //  the variables are one char longer than needed to account for the '\0' char
@@ -114,7 +114,7 @@ void ENDLIB97FileHandler::readFirstTableHeader( unsigned int &atomic_number,
   char Ar[3];
   char date[7];
   char iflag[2];
-  char extra[40];
+  char extra[42];
 
   d_endlib_file.get( zaid, 7 );
   d_endlib_file.get( space, 2 );
@@ -127,7 +127,7 @@ void ENDLIB97FileHandler::readFirstTableHeader( unsigned int &atomic_number,
   d_endlib_file.get( space, 2 );
   d_endlib_file.get( date, 7 );
   d_endlib_file.get( iflag, 2 );
-  d_endlib_file.getline( extra, 40 );
+  d_endlib_file.getline( extra, 42 );
 
   atomic_number = atoi(zaid)/1000;
   outgoing_particle_designator = atoi(Yo);
@@ -257,18 +257,13 @@ void ENDLIB97FileHandler::skipFourColumnTable()
 // Process two column table in ENDLIB file 
 void ENDLIB97FileHandler::processTwoColumnTable( 
     std::vector<double>& indep_variable,
-    std::vector<double>& dep_variable,
-    double lower_indep_limit,
-    double upper_indep_limit )
+    std::vector<double>& dep_variable )
 {
   // The data file must be valid
   testPrecondition( d_endlib_file );
   // The data arrays must be valid
   testPrecondition( indep_variable.size() == 0 );
   testPrecondition( dep_variable.size() == 0 );
-  // The limits must be valid
-  testPrecondition( lower_indep_limit > 0.0 );
-  testPrecondition( upper_indep_limit >= lower_indep_limit );
   
   // Variables for reading in a two column table
   char data1_l [10];
@@ -295,11 +290,8 @@ void ENDLIB97FileHandler::processTwoColumnTable(
       indep = extractValue<double>( data1_l, data1_r );
       dep = extractValue<double>( data2_l, data2_r );
    
-      if ( indep >= lower_indep_limit && indep <= upper_indep_limit )
-      {
-        indep_variable.push_back( indep );
-        dep_variable.push_back( dep );
-      }
+      indep_variable.push_back( indep );
+      dep_variable.push_back( dep );
     }
   }
   while( strcmp( data1_l, test ) != 0 );    
@@ -317,15 +309,10 @@ void ENDLIB97FileHandler::processTwoColumnTable(
 void ENDLIB97FileHandler::processThreeColumnTable(
     std::vector<double>& energy_bin,
     std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable,
-    double lower_energy_limit,
-    double upper_energy_limit  )
+    std::map<double,std::vector<double> >& dep_variable )
 {
   // The data file must be valid
   testPrecondition( d_endlib_file );
-  // The limits must be valid
-  testPrecondition( lower_energy_limit > 0.0 );
-  testPrecondition( upper_energy_limit >= lower_energy_limit );
 
   // Clear the data arrays 
   energy_bin.clear();
@@ -362,44 +349,41 @@ void ENDLIB97FileHandler::processThreeColumnTable(
       indep_point = extractValue<double>( data2_l, data2_r );
       dep_point = extractValue<double>( data3_l, data3_r );
 
-      if ( energy >= lower_energy_limit && energy <= upper_energy_limit )
+      // start the distribution at the first energy bin
+      if ( energy_bin.empty() )
       {
-        // start the distribution at the first energy bin
-        if ( energy_bin.empty() )
-        {
-          // insert energy bin
-          energy_bin.push_back( energy );
-          indep.first = energy;
-          dep.first = energy;
+        // insert energy bin
+        energy_bin.push_back( energy );
+        indep.first = energy;
+        dep.first = energy;
 
-          // insert first indep and dep data points at that energy
-          indep.second.push_back( indep_point );
-          dep.second.push_back( dep_point );
-        }
-        // start a new distribution at next energy bin
-        else if ( energy != energy_bin.back() )
-        {
-          // insert old distribution
-          indep_variable.insert( indep );
-          dep_variable.insert( dep );
+        // insert first indep and dep data points at that energy
+        indep.second.push_back( indep_point );
+        dep.second.push_back( dep_point );
+      }
+      // start a new distribution at next energy bin
+      else if ( energy != energy_bin.back() )
+      {
+        // insert old distribution
+        indep_variable.insert( indep );
+        dep_variable.insert( dep );
 
-          // clear indep and dep distributions
-          indep.second.clear();
-          dep.second.clear();
+        // clear indep and dep distributions
+        indep.second.clear();
+        dep.second.clear();
 
-          // start the new distribution
-          energy_bin.push_back( energy );
-          indep.first = energy;
-          dep.first = energy;
-          indep.second.push_back( indep_point );
-          dep.second.push_back( dep_point );
-        }
-        // Continue inderting idep and dep variables for this energy bin
-        else
-        {
-          indep.second.push_back( indep_point );
-          dep.second.push_back( dep_point );
-        }
+        // start the new distribution
+        energy_bin.push_back( energy );
+        indep.first = energy;
+        dep.first = energy;
+        indep.second.push_back( indep_point );
+        dep.second.push_back( dep_point );
+      }
+      // Continue inderting idep and dep variables for this energy bin
+      else
+      {
+        indep.second.push_back( indep_point );
+        dep.second.push_back( dep_point );
       }
     }
   }

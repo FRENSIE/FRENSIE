@@ -31,13 +31,17 @@ public:
   // Add the setter member functions to the public interface
   using EvaluatedElectronDataContainer::setAtomicNumber;
   using EvaluatedElectronDataContainer::setSubshells;
-  using EvaluatedElectronDataContainer::setCutoffAngleCosine;
+  using EvaluatedElectronDataContainer::setCutoffAngle;
   using EvaluatedElectronDataContainer::setElasticAngularEnergyGrid;
 //  using EvaluatedElectronDataContainer::setNumberOfDiscreteAngles;
-  using EvaluatedElectronDataContainer::setSoftElasticDiscreteAngles;
-  using EvaluatedElectronDataContainer::setSoftElasticWeights;
-  using EvaluatedElectronDataContainer::setElasticAngles;
-  using EvaluatedElectronDataContainer::setElasticPDF;
+  using EvaluatedElectronDataContainer::setAnalogElasticAnglesAtEnergy;
+  using EvaluatedElectronDataContainer::setAnalogElasticPDFAtEnergy;
+  using EvaluatedElectronDataContainer::setAnalogElasticAngles;
+  using EvaluatedElectronDataContainer::setAnalogElasticPDF;
+  using EvaluatedElectronDataContainer::setScreenedRutherfordNormalizationConstant;
+  using EvaluatedElectronDataContainer::setMoliereScreeningConstant;
+  using EvaluatedElectronDataContainer::setMomentPreservingElasticDiscreteAngles;
+  using EvaluatedElectronDataContainer::setMomentPreservingElasticWeights;
   using EvaluatedElectronDataContainer::setElectroionizationEnergyGrid;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
@@ -51,6 +55,10 @@ public:
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid;
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyLoss;
   using EvaluatedElectronDataContainer::setElectronEnergyGrid;
+  using EvaluatedElectronDataContainer::setCutoffElasticCrossSection;
+  using EvaluatedElectronDataContainer::setCutoffElasticCrossSectionThresholdEnergyIndex;
+  using EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSection;
+  using EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex;
   using EvaluatedElectronDataContainer::setTotalElasticCrossSection;
   using EvaluatedElectronDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex;
 /*

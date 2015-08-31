@@ -52,13 +52,13 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setSubshells )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Cutoff Angle Cosine can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setCutoffAngleCosine )
+// Check that the Cutoff Angle can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setCutoffAngle )
 {
-  evaluated_electron_data_container.setCutoffAngleCosine( 0.90 );
+  evaluated_electron_data_container.setCutoffAngle( 0.10 );
   
-  TEST_EQUALITY_CONST( evaluated_electron_data_container.getCutoffAngleCosine(), 
-                       0.90 );
+  TEST_EQUALITY_CONST( evaluated_electron_data_container.getCutoffAngle(), 
+                       0.10 );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,65 +89,139 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the elastic angles can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setElasticAngles )
+                   setAnalogElasticAnglesAtEnergy )
 {
   std::vector<double> angles( 3 );
   angles[0] = -1.0;
   angles[1] = 0.0;
   angles[2] = 0.90;
 
-  evaluated_electron_data_container.setElasticAngles( 1.0, angles );
+  evaluated_electron_data_container.setAnalogElasticAnglesAtEnergy( 1.0, angles );
 
-  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getElasticAngles(1.0),
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getAnalogElasticAngles(1.0),
                        angles );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic pdf can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setElasticPDF )
+                   setAnalogElasticPDFAtEnergy )
 {
   std::vector<double> pdf( 3 );
   pdf[0] = 0.1;
   pdf[1] = 0.2;
   pdf[2] = 0.7;
 
-  evaluated_electron_data_container.setElasticPDF( 1.0, pdf );
+  evaluated_electron_data_container.setAnalogElasticPDFAtEnergy( 1.0, pdf );
 
-  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getElasticPDF(1.0),
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getAnalogElasticPDF(1.0),
                        pdf );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the soft elastic discrete angles can be set
+// Check that the elastic angles can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setSoftElasticDiscreteAngles )
+                   setAnalogElasticAngles )
+{
+  std::vector<double> angles( 3 );
+  angles[0] = -1.0;
+  angles[1] = 0.0;
+  angles[2] = 0.90;
+
+  double energy = 1.0;
+  std::map<double, std::vector<double> > angles_map;
+
+  angles_map[energy] = angles;
+
+  evaluated_electron_data_container.setAnalogElasticAngles( angles_map );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getAnalogElasticAngles(1.0),
+                       angles );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic pdf can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setAnalogElasticPDF )
+{
+  std::vector<double> pdf( 3 );
+  pdf[0] = 0.1;
+  pdf[1] = 0.2;
+  pdf[2] = 0.7;
+  
+  double energy = 1.0;
+  std::map<double, std::vector<double> > pdf_map;
+
+  pdf_map[energy] = pdf;
+
+  evaluated_electron_data_container.setAnalogElasticPDF( pdf_map );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getAnalogElasticPDF(1.0),
+                       pdf );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screened Rutherford elastic normalization constant can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setScreenedRutherfordNormalizationConstant )
+{
+  std::vector<double> norm( 3 );
+  norm[0] = 100;
+  norm[1] = 200;
+  norm[2] = 700;
+
+  evaluated_electron_data_container.setScreenedRutherfordNormalizationConstant( norm );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getScreenedRutherfordNormalizationConstant(),
+                       norm );
+}
+
+//---------------------------------------------------------------------------//
+// Check that Moliere's screening constant can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setMoliereScreeningConstant )
+{
+  std::vector<double> eta( 3 );
+  eta[0] = 100;
+  eta[1] = 0.0;
+  eta[2] = 0.90;
+
+  evaluated_electron_data_container.setMoliereScreeningConstant( eta );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getMoliereScreeningConstant(),
+                       eta );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the moment preserving elastic discrete angles can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setMomentPreservingElasticDiscreteAngles )
 {
   std::vector<double> discrete_angles( 3 );
   discrete_angles[0] = 0.90;
   discrete_angles[1] = 0.95;
   discrete_angles[2] = 0.99;
 
-  evaluated_electron_data_container.setSoftElasticDiscreteAngles( 1.0, 
+  evaluated_electron_data_container.setMomentPreservingElasticDiscreteAngles( 1.0, 
                                                             discrete_angles );
 
-  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getSoftElasticDiscreteAngles(1.0),
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getMomentPreservingElasticDiscreteAngles(1.0),
                        discrete_angles );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the soft elastic weights can be set
+// Check that the moment preserving elastic weights can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setSoftElasticWeights )
+                   setMomentPreservingElasticWeights )
 {
   std::vector<double> weights( 3 );
   weights[0] = 0.1;
   weights[1] = 0.2;
   weights[2] = 0.7;
 
-  evaluated_electron_data_container.setSoftElasticWeights( 1.0, weights );
+  evaluated_electron_data_container.setMomentPreservingElasticWeights( 1.0, weights );
 
-  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getSoftElasticWeights(1.0),
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getMomentPreservingElasticWeights(1.0),
                        weights );
 }
 
@@ -408,7 +482,66 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the elastic electron cross section can be set
+// Check that the cutoff elastic electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setCutoffElasticCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  evaluated_electron_data_container.setCutoffElasticCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            evaluated_electron_data_container.getCutoffElasticCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic cs threshold index can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+		           setCutoffElasticCrossSectionThresholdEnergyIndex )
+{
+  evaluated_electron_data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( 0 );
+
+  TEST_EQUALITY_CONST( evaluated_electron_data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+                       0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the screened rutherford elastic electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setScreenedRutherfordElasticCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.6e-6;
+  cross_section[1] = 0.6e-1;
+  cross_section[2] = 0.6;
+
+  evaluated_electron_data_container.setScreenedRutherfordElasticCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            evaluated_electron_data_container.getScreenedRutherfordElasticCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic cs threshold index can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+		           setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex )
+{
+  evaluated_electron_data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex( 0 );
+
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+    0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total elastic electron cross section can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
                    setTotalElasticCrossSection )
 {
@@ -466,7 +599,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 }
 */
 //---------------------------------------------------------------------------//
-// Check that the Moment Preserving (MP) soft elastic electron cross section can be set
+// Check that the Moment Preserving (MP) elastic electron cross section can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
                    setMomentPreservingCrossSection )
 {
@@ -484,7 +617,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Moment Preserving soft elastic cs threshold index can be set
+// Check that the Moment Preserving elastic cs threshold index can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 		        setMomentPreservingCrossSectionThresholdEnergyIndex )
 {
@@ -607,7 +740,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngleCosine(), 0.90 );
+    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -617,13 +750,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 /*  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getNumberOfDiscreteAngles(0), 3 ); */
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticPDF(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
     1 );
@@ -656,6 +793,18 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
@@ -711,12 +860,13 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy( test_binary_file_name, 
 			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
+
   TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
   TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngleCosine(), 0.90 );
+    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -726,13 +876,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 /*  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getNumberOfDiscreteAngles(0), 3 ); */
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticPDF(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
     1 );
@@ -765,6 +919,18 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
@@ -825,7 +991,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngleCosine(), 0.90 );
+    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -835,13 +1001,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 /*  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getNumberOfDiscreteAngles(0), 3 ); */
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticPDF(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
     1 );
@@ -874,6 +1044,18 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );
@@ -925,12 +1107,13 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   
   evaluated_electron_data_container_copy.unpackDataFromString( packed_data );
   
+
   TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
   TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngleCosine(), 0.90 );
+    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -940,13 +1123,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 /*  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getNumberOfDiscreteAngles(0), 3 ); */
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticPDF(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getSoftElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
     1 );
@@ -979,6 +1166,18 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
 		       3u );

@@ -79,9 +79,7 @@ public:
   //! Process two column table in ENDLIB file 
   void processTwoColumnTable(     
     std::vector<double>& indep_variable,
-    std::vector<double>& dep_variable,
-    double lower_indep_limit = 1.0e-5,
-    double upper_indep_limit = 1.0e5 );
+    std::vector<double>& dep_variable );
 
   //! Skip three column table in ENDLIB file
   void skipThreeColumnTable();
@@ -94,9 +92,7 @@ public:
   void processThreeColumnTable(
     std::vector<double>& energy_bins,
     std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable,
-    double lower_indep_limit = 1.0e-5,
-    double upper_indep_limit = 1.0e5  );
+    std::map<double,std::vector<double> >& dep_variable  );
 
   //! Skip four column table in ENDLIB file
   void skipFourColumnTable();
