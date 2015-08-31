@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/units/systems/si.hpp>
+#include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
 // Trilinos Includes
@@ -34,6 +35,7 @@
 using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -182,6 +184,58 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UniformDistribution, sample_static )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double sample = Utility::UniformDistribution::sample( -1.0, 1.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = Utility::UniformDistribution::sample( -1.0, 1.0 );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+
+  sample = Utility::UniformDistribution::sample( -1.0, 1.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sample_static )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  quantity<si::energy> sample = 
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+					        0.0*si::joule, 1.0*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+
+  sample = 
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+					        0.0*si::joule, 1.0*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule );
+  
+  sample = 
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+					        0.0*si::joule, 1.0*si::joule );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
 {
@@ -232,6 +286,70 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordTrials )
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials_static )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  double sample = Utility::UniformDistribution::sampleAndRecordTrials(
+							   -1.0, 1.0, trials );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = Utility::UniformDistribution::sampleAndRecordTrials(
+							   -1.0, 1.0, trials );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = Utility::UniformDistribution::sampleAndRecordTrials(
+							   -1.0, 1.0, trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordTrials_static )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  quantity<si::energy> sample = Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleAndRecordTrials( 
+				        0.0*si::joule, 1.0*si::joule, trials );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample =
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleAndRecordTrials( 
+				        0.0*si::joule, 1.0*si::joule, trials );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample =
+    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleAndRecordTrials( 
+				        0.0*si::joule, 1.0*si::joule, trials );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
@@ -321,6 +439,41 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleWithRandomNumber )
   TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
     
   sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumber_static )
+{
+  double sample = Utility::UniformDistribution::sampleWithRandomNumber( 
+							      -1.0, 1.0, 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = Utility::UniformDistribution::sampleWithRandomNumber( 
+							      -1.0, 1.0, 0.5 );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+    
+  sample = Utility::UniformDistribution::sampleWithRandomNumber( 
+							      -1.0, 1.0, 1.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled w/o an instance
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, 
+		   sampleWithRandomNumber_static )
+{
+  quantity<si::energy> sample = Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleWithRandomNumber( 
+					   0.0*si::joule, 1.0*si::joule, 0.0 );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  
+  sample = Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleWithRandomNumber( 
+					   0.0*si::joule, 1.0*si::joule, 0.5 );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
+    
+  sample = Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sampleWithRandomNumber( 
+					   0.0*si::joule, 1.0*si::joule, 1.0 );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
 }
 
@@ -587,85 +740,180 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromParameterList )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be constructed from a unitless
-// distribution
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareUniformDistribution,
-				   unitless_copy_constructor,
-				   IndepUnit,
-				   DepUnit )
+// Check that a unit-aware distribution can be scaled
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareUniformDistribution,
+				   explicit_conversion,
+				   IndepUnitA,
+				   DepUnitA,
+				   IndepUnitB,
+				   DepUnitB )
 {
-  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
-    IndepQuantity;
-  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::type
-    DepQuantity;
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
   
-  Utility::UnitAwareUniformDistribution<IndepUnit,DepUnit> 
-    unit_aware_dist_copy( 
-     *Teuchos::rcp_dynamic_cast<Utility::UniformDistribution>(distribution) );
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
+  
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
+  
+  // Copy from a unitless distribution to distribution type A (static method)
+  Utility::UnitAwareUniformDistribution<IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareUniformDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::UniformDistribution>( distribution ) );
 
-  IndepQuantity indep_quantity = 
-    Utility::QuantityTraits<IndepQuantity>::initializeQuantity( -1.0 );
-  DepQuantity dep_quantity = 
-    Utility::QuantityTraits<DepQuantity>::initializeQuantity( 2.0 );
+  // Copy from distribution type A to distribution type B (explicit cast)
+  Utility::UnitAwareUniformDistribution<IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
 
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
-		       dep_quantity );
-  
-  Utility::setQuantity( indep_quantity, 0.0 );
-  Utility::setQuantity( dep_quantity, 2.0 );
-  
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
-		       dep_quantity );
+  IndepQuantityA indep_quantity_a =
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( -1.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.5 );
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 2.0 );
 
-  Utility::setQuantity( indep_quantity, 1.0 );
-  Utility::setQuantity( dep_quantity, 2.0 );
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
   
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
-		       dep_quantity );
+  UTILITY_TEST_FLOATING_EQUALITY(
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY(
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 0.5 );
+  Utility::setQuantity( dep_quantity_a, 2.0 );
+  
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
 }
 
 typedef si::energy si_energy;
+typedef cgs::energy cgs_energy;
 typedef si::length si_length;
-typedef si::area si_area;
+typedef cgs::length cgs_length;
 typedef si::mass si_mass;
-typedef si::time si_time;
+typedef cgs::mass cgs_mass;
 typedef si::amount si_amount;
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
+typedef si::dimensionless si_dimensionless;
+typedef cgs::dimensionless cgs_dimensionless;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_amount,
+				      cgs_energy,
+				      si_amount )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      si_amount,
 				      si_energy,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_length,
+				      si_energy,
+				      cgs_length,
+				      cgs_energy )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_length,
+				      cgs_energy,
+				      si_length,
+				      si_energy );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_length,
+				      si_mass,
+				      cgs_length,
+				      cgs_mass )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_length,
+				      cgs_mass,
 				      si_length,
 				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      si_time,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_length,
+				      void,
+				      cgs_length,
+				      void )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_length,
+				      void,
+				      si_length,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      void,
+				      si_mass,
+				      void,
+				      cgs_mass )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      void,
+				      cgs_mass,
+				      void,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_length,
+				      si_dimensionless,
+				      cgs_length,
+				      cgs_dimensionless )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_length,
+				      cgs_dimensionless,
+				      si_length,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      si_dimensionless,
+				      si_length,
+				      cgs_dimensionless,
+				      cgs_length )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
+				      explicit_conversion,
+				      cgs_dimensionless,
+				      cgs_length,
+				      si_dimensionless,
 				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      si_energy,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      si_area,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      si_time,
-				      si_energy );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      si_time,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      void,
-				      si_energy );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareUniformDistribution,
-				      unitless_copy_constructor,
-				      void,
-				      void );
+				      
 
 //---------------------------------------------------------------------------//
 // Custom main function
