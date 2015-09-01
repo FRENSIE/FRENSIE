@@ -31,12 +31,6 @@ MACRO(ENABLE_ROOT_SUPPORT)
   # Configure the root_config.hpp header file
   SET(HAVE_${PROJECT_NAME}_ROOT "1")
 
-  SET(CMAKEDEFINE \#cmakedefine)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
-  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
-
   # Echo ROOT build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("\nFound ROOT!  Here are the details: ")

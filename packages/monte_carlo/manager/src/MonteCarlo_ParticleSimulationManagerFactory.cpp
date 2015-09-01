@@ -10,10 +10,6 @@
 #include "DagMC.hpp"
 
 // FRENSIE Includes
-#include "Geometry_Root.hpp"
-#include "Geometry_RootInstanceFactory.hpp"
-#include "Geometry_ModuleInterface_Root.hpp"
-
 #include "FRENSIE_dagmc_config.hpp"
 #include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
@@ -31,6 +27,11 @@
 #include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+
+#ifdef HAVE_FRENSIE_ROOT
+#include "Geometry_RootInstanceFactory.hpp"
+#include "Geometry_ModuleInterface_Root.hpp"
+#endif
 
 namespace MonteCarlo{
 

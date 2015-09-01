@@ -22,7 +22,6 @@
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Geometry_Root.hpp"
 
 namespace MonteCarlo{
 
