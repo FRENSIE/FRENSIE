@@ -2,7 +2,8 @@
 //!
 //! \file   Utility_WattDistribution_def.hpp
 //! \author Aaron Tumulak
-//! \brief  Watt distribution class definition.
+//! \brief  Watt distribution class definition. Modified by Alex Robinson
+//!         to accommodate units.
 //!
 //---------------------------------------------------------------------------//
 
@@ -157,7 +158,7 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareWattDistribution<IndependentUnit,DependentUnit> 
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareWattDistribution<void,void>& unitless_distribution )
 {
-  return UnitAwareWattDistribution<IndependentUnit,DependentUnit>( unitless_distribution, 0 );
+  return ThisType( unitless_distribution, 0 );
 }
 
 // Assignment operator
@@ -219,14 +220,28 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample() const
 {
-  unsigned trials = 0;
+  return ThisType::sample( d_incident_energy,
+			   d_a_parameter,
+			   d_b_parameter,
+			   d_restriction_energy );
+}
 
-  return UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-  d_incident_energy,
-  d_a_parameter,
-  d_b_parameter,
-  d_restriction_energy,
-  trials );
+// Return a sample from the distribution
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sample( 
+  const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
+  const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
+  const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
+	const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+{
+  unsigned trials = 0;
+  
+  return ThisType::sampleAndRecordTrials( incident_energy,
+					  a_parameter,
+					  b_parameter,
+					  restriction_energy,
+					  trials );
 }
 
 // Return a random sample and record the number of trials
@@ -234,12 +249,11 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-  d_incident_energy,
-  d_a_parameter,
-  d_b_parameter,
-  d_restriction_energy,
-  trials );
+  return ThisType::sampleAndRecordTrials( d_incident_energy,
+					  d_a_parameter,
+					  d_b_parameter,
+					  d_restriction_energy,
+					  trials );
 }
 
 // Return a random sample from the corresponding CDF and record the number of trials
@@ -252,6 +266,16 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
   const typename UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
   unsigned& trials )
 {
+  // Make sure values are valid
+  testPrecondition( !IQT::isnaninf( incident_energy ) );
+  testPrecondition( !IQT::isnaninf( a_parameter ) );
+  testPrecondition( !IIQT::isnaninf( b_parameter ) );
+  testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  // Make sure that incident energy, a_parameter, and b_parameter are positive
+  testPrecondition( incident_energy > IQT::zero() );
+  testPrecondition( a_parameter > IQT::zero() );
+  testPrecondition( b_parameter > IIQT::zero() );
+  
   double random_number;
   IndepQuantity maxwell_sample, sample;
   
@@ -323,7 +347,7 @@ template<typename IndependentUnit, typename DependentUnit>
 OneDDistributionType 
 UnitAwareWattDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return UnitAwareWattDistribution::distribution_type;
+  return ThisType::distribution_type;
 }
 
 // Test if the distribution is continuous

@@ -144,7 +144,7 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> 
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_distribution )
 {
-  return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>( unitless_distribution, 0 );
+  return ThisType( unitless_distribution, 0 );
 }
 
 // Assignment operator
@@ -204,13 +204,25 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample() const
 {
+  return ThisType::sample( d_incident_energy,
+			   d_nuclear_temperature,
+			   d_restriction_energy );
+}
+
+// Return a random sample from the distribution
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample(
+  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
+  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
+  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+{
   unsigned trials = 0;
-    
-  return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-  d_incident_energy,
-  d_nuclear_temperature,
-  d_restriction_energy,
-  trials );
+
+  return ThisType::sampleAndRecordTrials( incident_energy,
+					  nuclear_temperature,
+					  restriction_energy, 
+					  trials );
 }
 
 // Return a random sample and record the number of trials
@@ -218,11 +230,10 @@ template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-  d_incident_energy,
-  d_nuclear_temperature,
-  d_restriction_energy,
-  trials );
+  return ThisType::sampleAndRecordTrials( d_incident_energy,
+					  d_nuclear_temperature,
+					  d_restriction_energy,
+					  trials );
 }
 
 // Return a random sample from the corresponding CDF and record the number of trials
@@ -234,6 +245,14 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
   unsigned& trials )
 {
+  // Make sure values are valid
+  testPrecondition( !IQT::isnaninf( incident_energy ) );
+  testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
+  testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  // Make sure that incident energy and nuclear temperature are positive
+  testPrecondition( incident_energy > IQT::zero() );
+  testPrecondition( nuclear_temperature > IQT::zero() );
+  
   double random_number_1, random_number_2;
   IndepQuantity sample;
   
@@ -295,7 +314,7 @@ template<typename IndependentUnit, typename DependentUnit>
 OneDDistributionType 
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::distribution_type;
+  return ThisType::distribution_type;
 }
 
 // Test if the distribution is continuous

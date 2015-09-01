@@ -219,6 +219,83 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, sampleAndRecordTrials )
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
+		   sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 9 );
+  fake_stream[0] = 0.1324998063336137;
+  fake_stream[1] = 0.9247996934252033;
+  fake_stream[2] = 0.1918514900811418;
+  fake_stream[3] = 0.3062640867105594;
+  fake_stream[4] = 0.8754839687423933;
+  fake_stream[5] = 0.2274300298185482;
+  fake_stream[6] = 0.9336967385663441;
+  fake_stream[7] = 0.2459018944829507;
+  fake_stream[8] = 0.4770873202414019;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double incident_energy, nuclear_temperature, restriction_energy, sample;
+  
+  incident_energy = 0.5;
+  nuclear_temperature = 0.1;
+  restriction_energy = 0.01;
+
+  sample = Utility::MaxwellFissionDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
+  
+  incident_energy = 0.75;
+  nuclear_temperature = 0.5;
+  restriction_energy = 0.25;
+
+  sample = Utility::MaxwellFissionDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled using OpenMC method,
+// passing in parameters
+TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution, 
+		   sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 9 );
+  fake_stream[0] = 0.1324998063336137;
+  fake_stream[1] = 0.9247996934252033;
+  fake_stream[2] = 0.1918514900811418;
+  fake_stream[3] = 0.3062640867105594;
+  fake_stream[4] = 0.8754839687423933;
+  fake_stream[5] = 0.2274300298185482;
+  fake_stream[6] = 0.9336967385663441;
+  fake_stream[7] = 0.2459018944829507;
+  fake_stream[8] = 0.4770873202414019;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+    restriction_energy, sample;
+    
+  incident_energy = 0.5*MeV;
+  nuclear_temperature = 0.1*MeV;
+  restriction_energy = 0.01*MeV;
+
+  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,void>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
+  
+  incident_energy = 0.75*MeV;
+  nuclear_temperature = 0.5*MeV;
+  restriction_energy = 0.25*MeV;
+
+  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled using OpenMC method, passing in
+// parameters
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, 
 		   sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 9 );

@@ -147,7 +147,7 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_distribution )
 {
-  return UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>( unitless_distribution, 0 );
+  return ThisType( unitless_distribution, 0 );
 }
 
 // Assignment operator
@@ -208,13 +208,25 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sample() const
 {
+  return ThisType::sample( d_incident_energy,
+			   d_nuclear_temperature,
+			   d_restriction_energy );
+}
+
+// Return a random sample from the corresponding CDF and record the number of trials
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sample(
+  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
+  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
+  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+{
   unsigned trials = 0;
 
-  return UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
-  d_incident_energy,
-  d_nuclear_temperature,
-  d_restriction_energy,
-  trials );
+  return ThisType::sampleAndRecordTrials( incident_energy,
+					  nuclear_temperature,
+					  restriction_energy,
+					  trials );
 }
 
 // Return a random sample and record the number of trials
@@ -222,11 +234,10 @@ template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( 
-  d_incident_energy,
-  d_nuclear_temperature,
-  d_restriction_energy,
-  trials );
+  return ThisType::sampleAndRecordTrials( d_incident_energy,
+					  d_nuclear_temperature,
+					  d_restriction_energy,
+					  trials );
 }
 
 // Return a random sample from the corresponding CDF and record the number of trials
@@ -238,6 +249,14 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
   unsigned& trials )
 {
+  // Make sure values are valid
+  testPrecondition( !IQT::isnaninf( incident_energy ) );
+  testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
+  testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  // Make sure that incident energy and nuclear temperature is positive
+  testPrecondition( incident_energy > IQT::zero() );
+  testPrecondition( nuclear_temperature > IQT::zero() );
+  
   double random_number_1, random_number_2, random_number_3;
   double term_1, term_2, arg;
   IndepQuantity sample;
@@ -303,7 +322,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getLowerBoun
 template<typename IndependentUnit, typename DependentUnit>
 OneDDistributionType UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::distribution_type;
+  return ThisType::distribution_type;
 }
 
 // Test if the distribution is continuous

@@ -62,6 +62,9 @@ private:
 
 public:
 
+  //! The distribution type
+  typedef UnitAwareWattDistribution<IndependentUnit,DependentUnit> ThisType;
+
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
   
@@ -111,6 +114,12 @@ public:
 
   //! Return a sample from the distribution
   IndepQuantity sample() const;
+
+  //! Return a sample from the distribution
+  static IndepQuantity sample( const IndepQuantity incident_energy,
+			       const IndepQuantity a_parameter,
+			       const InverseIndepQuantity b_parameter,
+			       const IndepQuantity restriction_energy );
 
   //! Return a random sample from the distribution and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
