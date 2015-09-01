@@ -147,6 +147,75 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, sample )
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, and the
 // trials can be recorded
+TEUCHOS_UNIT_TEST( EvaporationDistribution, sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.7109904185738904;
+  fake_stream[1] = 0.1535897705184878;
+  fake_stream[2] = 0.6915260327666102;
+  fake_stream[3] = 0.6291257012282162;
+  fake_stream[4] = 0.3183560295023423;
+  fake_stream[5] = 0.7492388871308626;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double incident_energy, nuclear_temperature, restriction_energy, sample;
+   
+  incident_energy = 0.5;
+  nuclear_temperature = 0.1;
+  restriction_energy = 0.01;
+
+  sample = Utility::EvaporationDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.13885427138954, 1e-13 );
+  
+  incident_energy = 0.75;
+  nuclear_temperature = 0.5;
+  restriction_energy = 0.25;
+
+  sample = Utility::EvaporationDistribution::sample( incident_energy, nuclear_temperature, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.43320278283758, 1e-13 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled using OpenMC method,
+// and the trials can be recorded
+TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.7109904185738904;
+  fake_stream[1] = 0.1535897705184878;
+  fake_stream[2] = 0.6915260327666102;
+  fake_stream[3] = 0.6291257012282162;
+  fake_stream[4] = 0.3183560295023423;
+  fake_stream[5] = 0.7492388871308626;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  quantity<MegaElectronVolt> incident_energy, nuclear_temperature, 
+    restriction_energy, sample;
+ 
+  incident_energy = 0.5*MeV;
+  nuclear_temperature = 0.1*MeV;
+  restriction_energy = 0.01*MeV;
+
+  sample = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.13885427138954*MeV, 1e-13 );
+
+  incident_energy = 0.75*MeV;
+  nuclear_temperature = 0.5*MeV;
+  restriction_energy = 0.25*MeV;
+
+  sample = Utility::UnitAwareEvaporationDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.43320278283758*MeV, 1e-13 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled using OpenMC method, and the
+// trials can be recorded
 TEUCHOS_UNIT_TEST( EvaporationDistribution, sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 6 );

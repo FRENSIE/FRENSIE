@@ -166,6 +166,99 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, sample )
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled using OpenMC method, passing in
 // parameters
+TEUCHOS_UNIT_TEST( WattDistribution, sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 15 );
+  fake_stream[0] = 0.6617443503056450; // Maxwellian Distribution
+  fake_stream[1] = 0.8510592242616175; // Sample Accepted. Sample is:
+  fake_stream[2] = 0.5401745197210969; // 0.09667248521245
+  fake_stream[3] = 0.2005969462099806; // Watt Distribution Sample Accepted. Sample is: 0.07927727029875
+  fake_stream[4] = 0.5189418543931951; // Maxwellian Distribution
+  fake_stream[5] = 0.7484231272861934; // Sample Rejected. Sample is:
+  fake_stream[6] = 0.8345865134048199; // 0.13501824430785
+  fake_stream[7] = 0.8704061668810904; // Maxwellian Distribution
+  fake_stream[8] = 0.5575773053122431; // Sample Accepted. Sample is:
+  fake_stream[9] = 0.7452925729418971; // 0.04548390223293
+  fake_stream[10] = 0.6556974287666129; // Watt Distribution Sample Rejected. Sample is: 0.05068410532744
+  fake_stream[11] = 0.8140855348977614; // Maxwellian Distribution
+  fake_stream[12] = 0.5750169688125915; // Sample Accepted. Sample is:
+  fake_stream[13] = 0.8372435273691630; // 0.04821527540845
+  fake_stream[14] = 0.4721727279140688; // Watt Distribution Sample Accepted. Sample is: 0.04844237604136
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double incident_energy, a_parameter, b_parameter, restriction_energy, sample;
+  
+  incident_energy = 0.5;
+  a_parameter = 0.2;
+  b_parameter = 0.3;
+  restriction_energy = 0.4;
+
+  sample = Utility::WattDistribution::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.07927727029875, 1e-13 );
+    
+  incident_energy = 0.3;
+  a_parameter = 0.2;
+  b_parameter = 0.1;
+  restriction_energy = 0.25;
+
+  sample = Utility::WattDistribution::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  TEST_FLOATING_EQUALITY( sample, 0.04844237604136, 1e-13 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled using OpenMC method, 
+// passing in parameters
+TEUCHOS_UNIT_TEST( UnitAwareWattDistribution, 
+		   sample_pass_parameters )
+{
+  std::vector<double> fake_stream( 15 );
+  fake_stream[0] = 0.6617443503056450; // Maxwellian Distribution
+  fake_stream[1] = 0.8510592242616175; // Sample Accepted. Sample is:
+  fake_stream[2] = 0.5401745197210969; // 0.09667248521245
+  fake_stream[3] = 0.2005969462099806; // Watt Distribution Sample Accepted. Sample is: 0.07927727029875
+  fake_stream[4] = 0.5189418543931951; // Maxwellian Distribution
+  fake_stream[5] = 0.7484231272861934; // Sample Rejected. Sample is:
+  fake_stream[6] = 0.8345865134048199; // 0.13501824430785
+  fake_stream[7] = 0.8704061668810904; // Maxwellian Distribution
+  fake_stream[8] = 0.5575773053122431; // Sample Accepted. Sample is:
+  fake_stream[9] = 0.7452925729418971; // 0.04548390223293
+  fake_stream[10] = 0.6556974287666129; // Watt Distribution Sample Rejected. Sample is: 0.05068410532744
+  fake_stream[11] = 0.8140855348977614; // Maxwellian Distribution
+  fake_stream[12] = 0.5750169688125915; // Sample Accepted. Sample is:
+  fake_stream[13] = 0.8372435273691630; // 0.04821527540845
+  fake_stream[14] = 0.4721727279140688; // Watt Distribution Sample Accepted. Sample is: 0.04844237604136
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
+  
+  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
+
+  incident_energy = 0.5*MeV;
+  a_parameter = 0.2*MeV;
+  b_parameter = 0.3/MeV;
+  restriction_energy = 0.4*MeV;
+
+  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.07927727029875*MeV, 1e-13 );
+    
+  incident_energy = 0.3*MeV;
+  a_parameter = 0.2*MeV;
+  b_parameter = 0.1/MeV;
+  restriction_energy = 0.25*MeV;
+
+  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.04844237604136*MeV, 1e-13 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled using OpenMC method, passing in
+// parameters
 TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
 {
   std::vector<double> fake_stream( 15 );
