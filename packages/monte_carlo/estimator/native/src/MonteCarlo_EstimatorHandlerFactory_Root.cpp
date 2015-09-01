@@ -21,8 +21,6 @@
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
-#include "Geometry_Root.hpp"
-#include "Geometry_ModuleInterface.hpp"
 #include "Geometry_ModuleInterface_Root.hpp"
 #endif
 
@@ -31,6 +29,8 @@
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+#ifdef HAVE_FRENSIE_ROOT
 
 // Initialize static member data
 const std::string EstimatorHandlerFactory<Geometry::Root>::surface_current_name = 
@@ -376,7 +376,7 @@ void EstimatorHandlerFactory<Geometry::Root>::appendDataToEstimatorDataMaps(
     if( estimator_id_type_map.find( id ) != estimator_id_type_map.end() )
     {   
       // Append cells to the estimator cells map
-      if( Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type) )
+      if( EstimatorHandlerFactory<Geometry::Root>::isCellEstimatorTypeValid(estimator_type) )
       {
         if( estimator_rep.isParameter( "Cells" ) )
         {
@@ -430,8 +430,8 @@ void EstimatorHandlerFactory<Geometry::Root>::appendDataToEstimatorDataMaps(
       std::string estimator_type = estimator_rep.get<std::string>( "Type" );
 
       TEST_FOR_EXCEPTION( 
-       !Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type) &&
-       !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) &&
+       !EstimatorHandlerFactory<Geometry::Root>::isCellEstimatorTypeValid(estimator_type) &&
+       !EstimatorHandlerFactory<Geometry::Root>::isSurfaceEstimatorTypeValid(estimator_type) &&
        !EstimatorHandlerFactory<Geometry::Root>::isEstimatorTypeValid(estimator_type),
        InvalidEstimatorRepresentation,
        "Error: estimator " << id << " has estimator type " 
@@ -457,8 +457,7 @@ void EstimatorHandlerFactory<Geometry::Root>::appendDataToEstimatorDataMaps(
 
       estimator_id_ptype_map[id] = particle_type;
 			 
-      if( Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type)||
-          EstimatorHandlerFactory<Geometry::Root>::isCellEstimatorTypeValid(estimator_type) )
+      if( EstimatorHandlerFactory<Geometry::Root>::isCellEstimatorTypeValid(estimator_type) )
       {
 	      TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Cells" ),
 			          InvalidEstimatorRepresentation,
@@ -484,8 +483,7 @@ void EstimatorHandlerFactory<Geometry::Root>::appendDataToEstimatorDataMaps(
 						          estimator_id_cells_map[id],
 						          cells );
       }
-      else if( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) ||
-               EstimatorHandlerFactory<Geometry::Root>::isSurfaceEstimatorTypeValid( estimator_type ) )
+      else if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceEstimatorTypeValid( estimator_type ) )
       {
 	      TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Surfaces" ),
 			          InvalidEstimatorRepresentation,
@@ -964,52 +962,8 @@ void EstimatorHandlerFactory<Geometry::Root>::createTetMeshTrackLengthFluxEstima
 	 const bool energy_multiplication,
 	 const Teuchos::ParameterList* bins )
 {
-  // Create the estimator
-  Teuchos::RCP<Estimator> estimator;
-  
-  if( energy_multiplication )
-  {
-    estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier>(
-						     id,
-						     multiplier,
-						     mesh_file_name,
-						     output_mesh_file_name ) );
-  }
-  else
-  {
-    estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightMultiplier>(
-						     id,
-						     multiplier,
-						     mesh_file_name,
-						     output_mesh_file_name ) );
-  }
-
-  // Set the particle type
-  estimator->setParticleTypes( particle_types );
-
-  // Set the response functions
-  if( response_funcs.size() > 0 )
-    estimator->setResponseFunctions( response_funcs );
-
-  // Assign estimator bins
-  if( bins )
-    EstimatorHandlerFactory<Geometry::Root>::assignBinsToEstimator( *bins, estimator );
-
-  // Add this estimator to the handler
-  if( energy_multiplication )
-  {
-    Teuchos::RCP<TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> > 
-      derived_estimator = Teuchos::rcp_dynamic_cast<TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> >( estimator );
-
-    EstimatorHandler::addGlobalEstimator( derived_estimator );
-  }
-  else
-  {
-    Teuchos::RCP<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >
-      derived_estimator = Teuchos::rcp_dynamic_cast<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >( estimator );
-
-    EstimatorHandler::addGlobalEstimator( derived_estimator );
-  }
+  // ROOT does not currently support the creation of a tet mesh track length
+  // flux estimator...
 }
 
 // Assign bins to an estimator
@@ -1207,6 +1161,8 @@ bool EstimatorHandlerFactory<Geometry::Root>::isMeshEstimatorTypeValid(
   else
     return false;
 }
+
+#endif // end HAVE_FRENSIE_ROOT
 
 } // end MonteCarlo namespace
 

@@ -21,11 +21,9 @@
 #include "MonteCarlo_EstimatorHandler.hpp"
 #include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
 
-#ifdef HAVE_FRENSIE_ROOT
-#include "Geometry_Root.hpp"
-#endif
-
 namespace MonteCarlo{
+
+#ifdef HAVE_FRENSIE_ROOT
 
 /*! The specialization of the EstimatorHandlerFactory class for the Root 
  * geometry handler.
@@ -274,6 +272,8 @@ inline bool EstimatorHandlerFactory<Geometry::Root>::isSurfaceCurrentEstimator(
 {
   return estimator_name == EstimatorHandlerFactory<Geometry::Root>::surface_current_name;
 }
+
+#endif // end HAVE_FRENSIE_ROOT
 
 } // end MonteCarlo namespace
 

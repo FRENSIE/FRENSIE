@@ -17,14 +17,16 @@
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Geometry_Root.hpp"
 
 namespace MonteCarlo{
+
+#ifdef HAVE_FRENSIE_ROOT
 
 /*! The specialization of the CollimatorHandlerFactory class for the Root 
  * geometry handler.
@@ -58,6 +60,8 @@ protected:
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                        std::vector<std::string> >& cell_id_density_map ) const;
 };
+
+#endif // end HAVE_FRENSIE_ROOT
 
 } // end MonteCarlo namespace
 

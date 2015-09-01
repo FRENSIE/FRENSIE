@@ -10,7 +10,6 @@
 #include <boost/unordered_set.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
@@ -24,13 +23,14 @@
 
 namespace MonteCarlo{
 
+#ifdef HAVE_FRENSIE_ROOT
+
 // Validate the material ids
 /*! \details If ROOT has not been enabled this function will be empty. 
  */
 void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
 			    const Teuchos::ParameterList& material_reps ) const
 {
-  #ifdef HAVE_FRENSIE_ROOT
   // Construct the set of material ids
   boost::unordered_set<ModuleTraits::InternalMaterialHandle> material_ids;
 
@@ -74,7 +74,6 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
 	material_counter += 1;
 	mat = Geometry::Root::getManager()->GetMaterial( material_counter );
   } 
-  #endif // end HAVE_FRENSIE_ROOT
 }
 
 // Create the cell id data maps
@@ -86,7 +85,6 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
           boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
 	  std::vector<std::string> >& cell_id_density_map ) const
 {
-#ifdef HAVE_FRENSIE_ROOT
   // Get the cell property values (material and density)
   TObjArray* cells = Geometry::Root::getManager()->GetListOfVolumes();
   TIterator* iter  = cells->MakeIterator();
@@ -120,8 +118,9 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
 		      InvalidMaterialRepresentation,
 		      "Error: ROOT must specify densities with material "
 		      "ids." );
-  #endif // end HAVE_FRENSIE_ROOT
 }
+
+#endif // end HAVE_FRENSIE_ROOT
 
 } // end MonteCarlo namespace
 
