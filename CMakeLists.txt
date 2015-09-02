@@ -18,6 +18,9 @@ INCLUDE(Macros)
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
+# Enable C++11 standard support
+ENABLE_CXX11_STANDARD_SUPPORT()
+
 # Load the patch files
 SET(TEUCHOS_TWO_D_ARRAY_PATCH 
   ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
@@ -100,6 +103,21 @@ IF(GSL_PREFIX)
 ELSE()
   MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
 ENDIF()
+
+# Enable ROOT Support
+IF(${FRENSIE_ENABLE_ROOT})
+  IF(ROOT_PREFIX)
+    ENABLE_ROOT_SUPPORT()
+  ELSE()
+    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
+  ENDIF()
+ENDIF()
+
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
 
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})

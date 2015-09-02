@@ -67,8 +67,6 @@ MACRO(ENABLE_MOAB_SUPPORT)
     SET(MOAB ${DAGMC} ${MOAB})
 
     SET(HAVE_${PROJECT_NAME}_DAGMC "1")
-  ELSE()
-    MESSAGE(WARNING "The facemc executable cannot be built currently without enabling DagMC!")
   ENDIF()
 
   SET(CMAKEDEFINE \#cmakedefine)

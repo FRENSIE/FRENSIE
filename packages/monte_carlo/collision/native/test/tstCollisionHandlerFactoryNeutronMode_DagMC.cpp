@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCollisionHandlerFactory.cpp
-//! \author Alex Robinson
+//! \file   tstCollisionHandlerFactoryNeutronMode_DagMC.cpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  Collision handler factory unit tests
 //!
 //---------------------------------------------------------------------------//
@@ -16,10 +16,14 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
+// Moab Includes
+#include <DagMC.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 
@@ -34,7 +38,7 @@ std::string test_geom_xml_file_name;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the collision handler can be initialize with DagMC
-TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
+TEUCHOS_UNIT_TEST( CollisionHandlerFactoryDagMC, initializeHandlerUsingDagMC )
 {
   // Assign the name of the cross_sections.xml file with path
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
@@ -51,10 +55,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
 					Teuchos::inoutArg(material_reps) );
 
-  // Set the particle mode to NEUTRON_PHOTON_MODE
-  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE);
+  // Set the particle mode to NEUTRON_MODE
+  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_MODE);
 
-  MonteCarlo::CollisionHandlerFactory::initializeHandlerUsingDagMC( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
@@ -209,153 +213,60 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
 	  1e-12 );
 
   // Photons
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 26 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 27, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 27 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 28, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 28 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 29, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 29 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 30, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 30 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 31, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 31 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 32, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 32 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 33, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 33 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 34, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 34 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 35, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 35 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 36, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 36 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 37, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 37 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 48, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 48 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 49, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 49 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 50, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 50 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 51, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 51 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 52, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 52 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 53, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 53 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 54, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 54 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 55, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 55 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 56, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 56 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 57, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 57 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 58, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 58 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 59, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 59 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 70, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 70 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 71, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 71 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 72, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 72 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 73, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 73 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 74, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 74 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 75, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 75 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 76, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 76 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 77, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 77 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 78, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 78 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 79, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 79 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 80, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 80 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 81, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 81 )->getId() == 9 );
-  TEST_FLOATING_EQUALITY( 
-	   MonteCarlo::CollisionHandler::getCellPhotonMaterial( 81 )->getNumberDensity(),
-	   4.6787270057348,
-	   1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 9, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 9 )->getId() == 1 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 88, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 88 )->getId() == 1 );
-  TEST_FLOATING_EQUALITY( 
-	   MonteCarlo::CollisionHandler::getCellPhotonMaterial( 88 )->getNumberDensity(),
-	   4.7964421040911,
-	   1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 136, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 136 )->getId() == 2);
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 136 )->getNumberDensity(),
-	  4.6309239201079,
-	  1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 19, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 19 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 41, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 41 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 63, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 63 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 82, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 82 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 152, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 152 )->getId() == 3);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 166, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 166 )->getId() == 3);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 184, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 184 )->getId() == 3);
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 184 )->getNumberDensity(),
-	  9.7578048535952e-4,
-	  1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 3 )->getId() == 4 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 7 )->getId() == 4 );
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 7 )->getNumberDensity(),
-	  0.59648092706701,
-	  1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 )->getId() == 10 );
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 )->getNumberDensity(),
-	  7.9532383711789,
-	  1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 1 )->getId() == 8 );
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 1 )->getNumberDensity(),
-	  1.1104059252563,
-	  1e-12 );
-  
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 13, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 13 )->getId() == 7 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 83 )->getId() == 7 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 154, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 154 )->getId() == 7);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::PHOTON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellPhotonMaterial( 168 )->getId() == 7);
-  TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellPhotonMaterial( 168 )->getNumberDensity(),
-	  3.3760929224013,
-	  1e-12 );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 27, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 28, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 29, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 30, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 31, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 32, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 33, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 34, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 35, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 36, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 37, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 48, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 49, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 50, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 51, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 52, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 53, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 54, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 55, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 56, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 57, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 58, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 59, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 70, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 71, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 72, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 73, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 74, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 75, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 76, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 77, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 78, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 79, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 80, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 81, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 9, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 88, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 136, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 19, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 41, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 63, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 82, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 152, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 166, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 184, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 13, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 154, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::PHOTON ) );
 
   // Electrons
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::ELECTRON ) );
@@ -466,5 +377,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCollisionHandlerFactory.cpp
+// end tstCollisionHandlerFactoryNeutronMode_DagMC.cpp
 //---------------------------------------------------------------------------//
