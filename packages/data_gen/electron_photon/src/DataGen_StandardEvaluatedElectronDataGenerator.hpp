@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "DataGen_EvaluatedElectronDataGenerator.hpp"
-#include "Data_ENDLIB97FileHandler.hpp"
+#include "Data_ENDLFileHandler.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
@@ -32,7 +32,7 @@ public:
   //! Constructor
   StandardEvaluatedElectronDataGenerator( 
         const unsigned atomic_number,
-        const Teuchos::RCP<Data::ENDLIB97FileHandler>& eedl_file_handler,
+        const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
         const double min_electron_energy = 1.0e-5,
         const double max_electron_energy = 1.0e5,
         const double cutoff_angle = 1.0e-6,
@@ -99,7 +99,7 @@ private:
   static const double s_threshold_energy_nudge_factor;
 
   // The EEDL file handler
-  Teuchos::RCP<Data::ENDLIB97FileHandler> d_eedl_file_handler;
+  Teuchos::RCP<Data::ENDLFileHandler> d_eedl_file_handler;
 
   // The min electron energy
   double d_min_electron_energy;

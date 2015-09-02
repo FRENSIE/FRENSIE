@@ -379,7 +379,7 @@ void ENDLIB97FileHandler::processThreeColumnTable(
         indep.second.push_back( indep_point );
         dep.second.push_back( dep_point );
       }
-      // Continue inderting idep and dep variables for this energy bin
+      // Continue inserting idep and dep variables for this energy bin
       else
       {
         indep.second.push_back( indep_point );

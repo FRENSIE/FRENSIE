@@ -32,7 +32,7 @@ const double StandardEvaluatedElectronDataGenerator::s_threshold_energy_nudge_fa
 // Constructor
 StandardEvaluatedElectronDataGenerator::StandardEvaluatedElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<Data::ENDLIB97FileHandler>& eedl_file_handler,
+	   const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
        const double cutoff_angle,
@@ -77,7 +77,7 @@ void StandardEvaluatedElectronDataGenerator::populateEvaluatedDataContainer(
 }
 
 // Process EEDL file
-/*! \details This function uses the Data::ENDLIB97FileHandler to read the
+/*! \details This function uses the Data::ENDLFileHandler to read the
  * EEDL data file. The data that is read is then processed into an appropriate
  * format and finally stored in the necessary HDF5 file. 
  */
@@ -85,13 +85,13 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
     Data::EvaluatedElectronVolatileDataContainer& data_container ) const
 {   
   // Information in first header of the EEDL file
-  unsigned int atomic_number_in_table, 
-               outgoing_particle_designator, 
-               interpolation_flag;
+  int atomic_number_in_table, 
+      outgoing_particle_designator, 
+      interpolation_flag;
   double atomic_weight;
 
   // Information in the second header of the EEDL file
-  unsigned int reaction_type, electron_shell;
+  int reaction_type, electron_shell;
 
   // array of all the subshells read
   std::set<unsigned> atomic_subshells;
@@ -117,7 +117,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
   std::cout.flush();
 
   // Process every table in the EEDL file
-  while( d_eedl_file_handler->validFile() )
+  while( d_eedl_file_handler->validFile() && !d_eedl_file_handler->endOfFile() )
   {
     // Read first table header and determine which element is being processed
     d_eedl_file_handler->readFirstTableHeader( atomic_number_in_table,
@@ -153,7 +153,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
     case 7000:
       // Integrated elastic transport cross section data - ignored
       
-      d_eedl_file_handler->skipTwoColumnTable();
+      d_eedl_file_handler->skipTable();
 
       std::cout << ".";
       std::cout.flush();   
@@ -185,7 +185,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
     case 8011:
       // Average energy to residual atom from elastic scattering - ignored
       
-      d_eedl_file_handler->skipTwoColumnTable();
+      d_eedl_file_handler->skipTable();
 
       std::cout << ".";
       std::cout.flush(); 
@@ -194,7 +194,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
     case 8010:
       // Average energy of scattered electron from elastic scattering - ignored
       
-      d_eedl_file_handler->skipTwoColumnTable();
+      d_eedl_file_handler->skipTable();
 
       std::cout << ".";
       std::cout.flush();    
@@ -284,7 +284,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
       // Average energy of secondary electron from ionization - ignored
       // ( Yo == 19 )
 
-      d_eedl_file_handler->skipTwoColumnTable();
+      d_eedl_file_handler->skipTable();
 
       std::cout << ".";
       std::cout.flush(); 
@@ -354,7 +354,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
       // Average energy of secondary electron from bremsstrahlung - ignored
       // ( Yo == 9 )
       
-      d_eedl_file_handler->skipTwoColumnTable();
+      d_eedl_file_handler->skipTable();
 
       std::cout << ".";
       std::cout.flush(); 
@@ -447,7 +447,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
     }
   }
   // Close the EEDL file
-  d_eedl_file_handler->closeENDLIB97File();
+  d_eedl_file_handler->closeENDLFile();
 
   std::cout << "done." << std::endl;
 
@@ -675,8 +675,6 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
     screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
         ( d_cutoff_angle + moliere_screening_constant.back() )* 
         ( d_cutoff_angle + moliere_screening_constant.back() ) ) );
-std::cout << std::setprecision(20)<<"moliere_screening_constant=\t"<<moliere_screening_constant.back()<<std::endl;
-std::cout << std::setprecision(20)<<"screened_rutherford_normalization_constant=\t"<<screened_rutherford_normalization_constant.back()<<std::endl;
     }
   }
   // Set Moliere's screening constant

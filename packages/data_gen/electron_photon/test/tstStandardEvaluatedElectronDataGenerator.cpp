@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "DataGen_StandardEvaluatedElectronDataGenerator.hpp"
 #include "DataGen_EvaluatedElectronDataGenerator.hpp"
-#include "Data_ENDLIB97FileHandler.hpp"
+#include "Data_ENDLFileHandler.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 
@@ -29,6 +29,8 @@
 Teuchos::RCP<const DataGen::StandardEvaluatedElectronDataGenerator>
   data_generator_h, data_generator_pb;
 
+std::string test_h_endl_file_name, test_pb_endl_file_name;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -36,6 +38,31 @@ Teuchos::RCP<const DataGen::StandardEvaluatedElectronDataGenerator>
 TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
                    populateEvaluatedDataContainer_h )
 {
+  unsigned atomic_number;
+  double min_electron_energy = 1.0e-5;
+  double max_electron_energy = 1.0e+5;
+  double cutoff_angle = 1.0e-6;
+  double grid_convergence_tol = 0.001;
+  double grid_absolute_diff_tol = 1e-13;
+  double grid_distance_tol = 1e-13;
+
+  // Create the file handler and data extractor for hydrogen
+  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler(
+		new Data::ENDLFileHandler( test_h_endl_file_name ) );
+
+  atomic_number = 1u;    
+
+  data_generator_h.reset( 
+		new DataGen::StandardEvaluatedElectronDataGenerator(
+            atomic_number,
+            endl_file_handler,
+            min_electron_energy,
+            max_electron_energy,
+            cutoff_angle,
+            grid_convergence_tol,
+            grid_absolute_diff_tol,
+            grid_distance_tol ) );
+
   Data::EvaluatedElectronVolatileDataContainer data_container;
 
   data_generator_h->populateEvaluatedDataContainer( data_container );
@@ -262,6 +289,31 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
 TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
                    populateEvaluatedDataContainer_pb )
 {
+  unsigned atomic_number;
+  double min_electron_energy = 1.0e-5;
+  double max_electron_energy = 1.0e+5;
+  double cutoff_angle = 1.0e-6;
+  double grid_convergence_tol = 0.001;
+  double grid_absolute_diff_tol = 1e-13;
+  double grid_distance_tol = 1e-13;
+
+  // Create the file handler and data extractor for lead
+  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler(
+        new Data::ENDLFileHandler( test_pb_endl_file_name ) );
+
+  atomic_number = 82u; 
+
+  data_generator_pb.reset( 
+		new DataGen::StandardEvaluatedElectronDataGenerator(
+            atomic_number,
+            endl_file_handler,
+            min_electron_energy,
+            max_electron_energy,
+            cutoff_angle,
+            grid_convergence_tol,
+            grid_absolute_diff_tol,
+            grid_distance_tol ) );
+
   Data::EvaluatedElectronVolatileDataContainer data_container;
 
   data_generator_pb->populateEvaluatedDataContainer( data_container );
@@ -540,8 +592,6 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_h_endl_file_name, test_pb_endl_file_name;
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_h_endl_file",
@@ -562,51 +612,6 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  unsigned atomic_number;
-  double min_electron_energy = 1.0e-5;
-  double max_electron_energy = 1.0e+5;
-  double cutoff_angle = 1.0e-6;
-  double grid_convergence_tol = 0.001;
-  double grid_absolute_diff_tol = 1e-13;
-  double grid_distance_tol = 1e-13;
-
-  {
-    // Create the file handler and data extractor for hydrogen
-    Teuchos::RCP<Data::ENDLIB97FileHandler> endl_file_handler(
-		new Data::ENDLIB97FileHandler( test_h_endl_file_name ) );
-
-    atomic_number = 1u;    
-
-    data_generator_h.reset( 
-		new DataGen::StandardEvaluatedElectronDataGenerator(
-            atomic_number,
-            endl_file_handler,
-            min_electron_energy,
-            max_electron_energy,
-            cutoff_angle,
-            grid_convergence_tol,
-            grid_absolute_diff_tol,
-            grid_distance_tol ) );
-  }
-
-  {
-    // Create the file handler and data extractor for lead
-    Teuchos::RCP<Data::ENDLIB97FileHandler> endl_file_handler(
-        new Data::ENDLIB97FileHandler( test_pb_endl_file_name ) );
-
-    atomic_number = 82u; 
-
-    data_generator_pb.reset( 
-		new DataGen::StandardEvaluatedElectronDataGenerator(
-            atomic_number,
-            endl_file_handler,
-            min_electron_energy,
-            max_electron_energy,
-            cutoff_angle,
-            grid_convergence_tol,
-            grid_absolute_diff_tol,
-            grid_distance_tol ) );
-  }
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
