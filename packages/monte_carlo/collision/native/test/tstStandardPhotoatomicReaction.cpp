@@ -90,11 +90,6 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getThresholdEnergy_ace_pe )
 TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pp )
 {
   double cross_section = 
-    ace_pp_reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = 
     ace_pp_reaction->getCrossSection( ace_pp_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -3.84621780013E+01 ), 1e-12 );
@@ -106,10 +101,6 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pp )
   cross_section = ace_pp_reaction->getCrossSection( exp( 1.15129254650E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.71803283438E+00 ), 1e-12 );
-  
-  cross_section = ace_pp_reaction->getCrossSection( exp( 12.0 ) );
-  
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -118,11 +109,6 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pp )
 TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pe )
 {
   double cross_section = 
-    ace_pe_reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = 
     ace_pe_reaction->getCrossSection( ace_pe_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 1.43969286532E+01 ), 1e-12 );
@@ -134,10 +120,6 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pe )
   cross_section = ace_pe_reaction->getCrossSection( exp( 1.15129254650E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.11594725061E+01 ), 1e-12 );
-  
-  cross_section = ace_pe_reaction->getCrossSection( exp( 12.0 ) );
-  
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//

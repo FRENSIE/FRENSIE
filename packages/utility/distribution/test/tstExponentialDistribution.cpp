@@ -22,6 +22,13 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution( 
 			     new Utility::ExponentialDistribution( 2.0, 3.0 ) );
@@ -70,10 +77,31 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( ExponentialDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( ExponentialDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[2] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+  
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( trials, 1 );
+
+  sample = distribution->sampleAndRecordTrials( trials ); 
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( trials, 2 );
+
+  sample = distribution->sampleAndRecordTrials( trials ); 
+  TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 3 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -102,8 +130,22 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( ExponentialDistribution, toFromParameterList )
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( ExponentialDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( ExponentialDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( ExponentialDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::ExponentialDistribution> true_distribution =
    Teuchos::rcp_dynamic_cast<Utility::ExponentialDistribution>( distribution );
@@ -132,12 +174,40 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
+{
+  Utility::ExponentialDistribution distribution = 
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ),
+		       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( distribution.evaluate( 1.0 ),
+			  Utility::PhysicalConstants::pi*exp( -3.0 ),
+			  1e-15 );
+
+  distribution = 
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), 1.0 );
+  TEST_FLOATING_EQUALITY( distribution.evaluate( 1.0 ),
+			  exp( -Utility::PhysicalConstants::pi ),
+			  1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -148,6 +218,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::ExponentialDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

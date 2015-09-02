@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <list>
+#include <utility>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -33,8 +34,8 @@
  * \ingroup print_format
  */
 template<typename T, template<typename,typename> class List>
-std::ostream& operator<<( std::ostream &out, 
-			  List<T,std::allocator<T> > &list)
+std::ostream& operator<<( std::ostream& out, 
+			  List<T,std::allocator<T> >& list)
 {
   typename List<T,std::allocator<T> >::const_iterator element, end_element;
   element = list.begin();

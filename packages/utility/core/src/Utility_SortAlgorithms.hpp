@@ -23,11 +23,15 @@ namespace Sort{
  * order
  */
 template<TupleMember member, typename Iterator>
-bool isSortedAscending( Iterator start, Iterator end );
+bool isSortedAscending( Iterator start, 
+			Iterator end, 
+			const bool verbose = false  );
 
 //! Test if an array is sorted in ascending order
 template<typename Iterator>
-bool isSortedAscending( Iterator start, Iterator end );	        
+bool isSortedAscending( Iterator start, 
+			Iterator end,
+			const bool verbose = false );	        
 
 } // end Sort namespace
 

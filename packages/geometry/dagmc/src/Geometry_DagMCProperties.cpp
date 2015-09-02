@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Geometry_DagMCProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Geometry{
 
@@ -20,10 +21,18 @@ std::string DagMCProperties::termination_cell_property = "termination.cell";
 std::string DagMCProperties::material_property = "material";
 std::string DagMCProperties::density_property = "density";
 std::string DagMCProperties::estimator_property = "estimator";
+std::string DagMCProperties::surface_current_name = "surface.current";
+std::string DagMCProperties::surface_flux_name = "surface.flux";
+std::string DagMCProperties::cell_pulse_height_name = "cell.pulse.height";
+std::string DagMCProperties::cell_track_length_flux_name = "cell.tl.flux";
+std::string DagMCProperties::cell_collision_flux_name = "cell.c.flux";
 
 // Set the termination cell property name
 void DagMCProperties::setTerminationCellPropertyName( const std::string& name )
 {
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   DagMCProperties::termination_cell_property = name;
 }
 
@@ -36,6 +45,9 @@ const std::string& DagMCProperties::getTerminationCellPropertyName()
 // Set the material property name
 void DagMCProperties::setMaterialPropertyName( const std::string& name )
 {
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   DagMCProperties::material_property = name;
 }
 
@@ -48,6 +60,9 @@ const std::string& DagMCProperties::getMaterialPropertyName()
 // Set the density property name
 void DagMCProperties::setDensityPropertyName( const std::string& name )
 {
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   DagMCProperties::density_property = name;
 }
 
@@ -60,6 +75,9 @@ const std::string& DagMCProperties::getDensityPropertyName()
 // Set the estimator property name
 void DagMCProperties::setEstimatorPropertyName( const std::string& name )
 {
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
   DagMCProperties::estimator_property = name;
 }
 
@@ -67,6 +85,81 @@ void DagMCProperties::setEstimatorPropertyName( const std::string& name )
 const std::string& DagMCProperties::getEstimatorPropertyName()
 {
   return DagMCProperties::estimator_property;
+}
+
+// Set the surface current name
+void DagMCProperties::setSurfaceCurrentName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
+  DagMCProperties::surface_current_name = name;
+}
+
+// Get the surface current name
+const std::string& DagMCProperties::getSurfaceCurrentName()
+{
+  return DagMCProperties::surface_current_name;
+}
+
+// Set the surface flux name
+void DagMCProperties::setSurfaceFluxName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+
+  DagMCProperties::surface_flux_name = name;
+}
+
+// Get the surface flux name
+const std::string& DagMCProperties::getSurfaceFluxName()
+{
+  return DagMCProperties::surface_flux_name;
+}
+
+// Set the cell pulse height name
+void DagMCProperties::setCellPulseHeightName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+
+  DagMCProperties::cell_pulse_height_name = name;
+}
+
+// Get the cell pulse height name
+const std::string& DagMCProperties::getCellPulseHeightName()
+{
+  return DagMCProperties::cell_pulse_height_name;
+}
+
+// Set the cell track-length flux name
+void DagMCProperties::setCellTrackLengthFluxName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
+  DagMCProperties::cell_track_length_flux_name = name;
+}
+
+// Get the cell pulse height name
+const std::string& DagMCProperties::getCellTrackLengthFluxName()
+{
+  return DagMCProperties::cell_track_length_flux_name;
+}
+
+// Set the cell collision flux name
+void DagMCProperties::setCellCollisionFluxName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+  
+  DagMCProperties::cell_collision_flux_name = name;
+}
+
+// Get the cell collision flux name
+const std::string& DagMCProperties::getCellCollisionFluxName()
+{
+  return DagMCProperties::cell_collision_flux_name;
 }
 
 // Extract estimator property values
@@ -97,24 +190,25 @@ void DagMCProperties::extractEstimatorPropertyValues(
 bool DagMCProperties::isCellEstimatorTypeValid( 
 					    const std::string& estimator_type )
 {
-  return estimator_type.compare( "cell.pulse.height" ) == 0 ||
-    estimator_type.compare( "cell.tl.flux" ) == 0 ||
-    estimator_type.compare( "cell.c.flux" ) == 0;
+  return estimator_type.compare(DagMCProperties::cell_pulse_height_name)== 0 ||
+    estimator_type.compare(DagMCProperties::cell_track_length_flux_name)== 0 ||
+    estimator_type.compare( DagMCProperties::cell_collision_flux_name ) == 0;
 }
 
 // Check if the surface estimator type is valid
 bool DagMCProperties::isSurfaceEstimatorTypeValid( 
 					    const std::string& estimator_type )
 {
-  return estimator_type.compare( "surface.flux" ) == 0 ||
-    estimator_type.compare( "surface.current" ) == 0;
+  return estimator_type.compare( DagMCProperties::surface_flux_name ) == 0 ||
+    estimator_type.compare( DagMCProperties::surface_current_name ) == 0;
 }
 
 // Check if the particle type is valid
 bool DagMCProperties::isParticleTypeValid( const std::string& particle_type )
 {
   return particle_type.compare( "n" ) == 0 ||
-    particle_type.compare( "p" ) == 0;
+    particle_type.compare( "p" ) == 0 ||
+    particle_type.compare( "e" ) == 0;
 }
 
 // Get all of the properties

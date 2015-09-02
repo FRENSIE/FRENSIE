@@ -18,6 +18,9 @@ ParticleModeType SimulationProperties::particle_mode = NEUTRON_MODE;
 // The number of histories to run
 unsigned long long SimulationProperties::number_of_histories = 0;
 
+// The angle cosine cutoff value for surface flux estimators
+double SimulationProperties::surface_flux_estimator_angle_cosine_cutoff =0.001;
+
 // Initialize the static member data
 double SimulationProperties::free_gas_threshold = 400.0;
 
@@ -49,8 +52,18 @@ const double SimulationProperties::absolute_max_photon_energy = 20.0;
 double SimulationProperties::max_photon_energy = 
   SimulationProperties::absolute_max_photon_energy;
 
+// The absolute min Kahn sampling cutoff energy
+const double SimulationProperties::absolute_min_kahn_sampling_cutoff_energy =
+  (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
+
+// The Kahn sampling cutoff energy (MeV)
+double SimulationProperties::kahn_sampling_cutoff_energy = 3.0;
+
+// The number of photon has grid bins
+unsigned SimulationProperties::num_photon_hash_grid_bins = 1000;
+
 // The absolute min electron energy
-const double SimulationProperties::absolute_min_electron_energy = 1e-3;
+const double SimulationProperties::absolute_min_electron_energy = 1.5e-5;
 
 // The minimum electron energy (MeV)
 double SimulationProperties::min_electron_energy = 
@@ -63,11 +76,15 @@ const double SimulationProperties::absolute_max_electron_energy = 20.0;
 double SimulationProperties::max_electron_energy =
   SimulationProperties::absolute_max_electron_energy;
 
+// The warning message flag
+bool SimulationProperties::display_warnings = true;
+
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
 
-// The photon Doppler broadening mode (true = on - default, false = off)
-bool SimulationProperties::doppler_broadening_mode_on = true;
+// The incoherent model 
+IncoherentModelType SimulationProperties::incoherent_model_type = 
+  COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL;
 
 // The atomic relaxation mode (true = on - default, false = off)
 bool SimulationProperties::atomic_relaxation_mode_on = true;
@@ -77,6 +94,11 @@ bool SimulationProperties::detailed_pair_production_mode_on = false;
 
 // The photonuclear interaction mode (true = on, false = off - default)
 bool SimulationProperties::photonuclear_interaction_mode_on = false;
+
+// The bremsstrahlung photon angular distribution function (2BS by default)
+BremsstrahlungAngularDistributionType 
+  SimulationProperties::bremsstrahlung_angular_distribution_function = 
+                             TWOBS_DISTRIBUTION;
 
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
@@ -90,6 +112,21 @@ void SimulationProperties::setNumberOfHistories(
 					   const unsigned long long histories )
 {
   SimulationProperties::number_of_histories = histories;
+}
+
+// Set the angle cosine cutoff value for surface flux estimators
+/*! \details When the angle cosine falls below the given cutoff an
+ * approximation is used for the angle cosine to help bound the flux (avoids
+ * a possible divide by zero).
+ */
+void SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 
+							  const double cutoff )
+{
+  // Make sure the cutoff is valid
+  testPrecondition( cutoff > 0.0 );
+  testPrecondition( cutoff < 1.0 );
+
+  SimulationProperties::surface_flux_estimator_angle_cosine_cutoff = cutoff;
 }
 
 // Set the free gas thermal treatment temperature threshold
@@ -145,6 +182,24 @@ void SimulationProperties::setMaxPhotonEnergy( const double energy )
   SimulationProperties::max_photon_energy = energy;
 }
 
+// Set the Kahn sampling cutoff energy (MeV) 
+void SimulationProperties::setKahnSamplingCutoffEnergy( const double energy )
+{
+  // Make sure the energy is valid
+  testPrecondition( energy >= SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+
+  SimulationProperties::kahn_sampling_cutoff_energy = energy;
+}
+
+// Set the number of photon hash grid bins
+void SimulationProperties::setNumberOfPhotonHashGridBins( const unsigned bins )
+{
+  // Make sure the number of bins is valid
+  testPrecondition( bins >= 1 );
+
+  SimulationProperties::num_photon_hash_grid_bins = bins;
+}
+
 // Set the minimum electron energy (MeV)
 void SimulationProperties::setMinElectronEnergy( const double energy )
 {
@@ -165,16 +220,23 @@ void SimulationProperties::setMaxElectronEnergy( const double energy )
   SimulationProperties::max_electron_energy = energy;
 }
 
+// Turn off warnings
+void SimulationProperties::setWarningsOff()
+{
+  SimulationProperties::display_warnings = false;
+}
+
 // Set implicit capture mode to on (off by default)
 void SimulationProperties::setImplicitCaptureModeOn()
 {
   SimulationProperties::implicit_capture_mode_on = true;
 }
 
-// Set photon Doppler broadening mode to off (on by default)
-void SimulationProperties::setPhotonDopplerBroadeningModeOff()
+// Set the incoherent model type
+void SimulationProperties::setIncoherentModelType( 
+					      const IncoherentModelType model )
 {
-  SimulationProperties::doppler_broadening_mode_on = false;
+  SimulationProperties::incoherent_model_type = model;
 }
 
 // Set atomic relaxation mode to off (on by default)
@@ -193,6 +255,13 @@ void SimulationProperties::setDetailedPairProductionModeOn()
 void SimulationProperties::setPhotonuclearInteractionModeOn()
 {
   SimulationProperties::photonuclear_interaction_mode_on = true;
+}
+
+// Set the bremsstrahlung photon angular distribution function (2BS by default)
+void SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          const BremsstrahlungAngularDistributionType function )
+{
+  SimulationProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
 } // end MonteCarlo namespace

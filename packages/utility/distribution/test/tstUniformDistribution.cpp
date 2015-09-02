@@ -22,9 +22,18 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
-Teuchos::RCP<Utility::OneDDistribution> distribution( 
-			   new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+
+Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution( 
+			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+
+Teuchos::RCP<Utility::OneDDistribution> distribution = tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -51,6 +60,17 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( UniformDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 {
@@ -74,10 +94,110 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( UniformDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned bin_index;
+
+  double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumber )
+{
+  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleWithRandomNumber( 0.5 );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+    
+  sample = tab_distribution->sampleWithRandomNumber( 1.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleInSubrange )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double sample = tab_distribution->sampleInSubrange( 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleInSubrange( 0.0 );
+  TEST_EQUALITY_CONST( sample, -0.5 ); 
+    
+  sample = tab_distribution->sampleInSubrange( 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
+    
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumberInSubrange )
+{
+  double sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 0.0 );
+  TEST_EQUALITY_CONST( sample, -0.5 ); 
+    
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -105,8 +225,22 @@ TEUCHOS_UNIT_TEST( UniformDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( UniformDistribution, toFromParameterList )
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( UniformDistribution, isTabular )
+{
+  TEST_ASSERT( distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( UniformDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( UniformDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::UniformDistribution> true_distribution =
    Teuchos::rcp_dynamic_cast<Utility::UniformDistribution>( distribution );
@@ -135,12 +269,38 @@ TEUCHOS_UNIT_TEST( UniformDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( UniformDistribution, fromParameterList )
+{
+  Utility::UniformDistribution distribution = 
+    test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), 2.0 );
+  
+  distribution = 
+    test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+		       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -151,6 +311,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::UniformDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

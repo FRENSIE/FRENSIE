@@ -16,7 +16,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
+#include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -46,10 +50,10 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_basic_incoherent_reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( ace_detailed_incoherent_reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -143,8 +147,10 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
   
   TEST_ASSERT( photon.getEnergy() >= min_energy );
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
-  TEST_ASSERT( bank.empty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != MonteCarlo::INVALID_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -162,9 +168,12 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
   ace_detailed_incoherent_reaction->react( photon, 
 					   bank, 
 					   shell_of_interaction );
-
-  TEST_ASSERT( bank.empty() );
+  
+  TEST_ASSERT( photon.getEnergy() <= 20.0 );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != MonteCarlo::INVALID_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -266,7 +275,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
     compton_profiles( lswd_block.size() );
   
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
@@ -275,11 +284,44 @@ int main( int argc, char** argv )
 
     unsigned num_mom_vals = swd_block[shell_index];
 
+    Teuchos::Array<double> half_momentum_grid( 
+				  swd_block( shell_index + 1, num_mom_vals ) );
+
+    Teuchos::Array<double> half_profile(
+		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						 half_profile.end() );
+
     compton_profiles[shell].reset( 
-	  new Utility::TabularDistribution<Utility::LinLin>(
-		 swd_block( shell_index + 1, num_mom_vals ),
-		 swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) ) );
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
+		 
   }
+
+  // Create the incoherent scattering distributions
+  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
+    basic_distribution( new MonteCarlo::DetailedWHIncoherentPhotonScatteringDistribution(
+			  scattering_function,
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order ) );
+
+  Teuchos::RCP<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
+    doppler_dist( new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order,
+			  xss_data_extractor->extractLBEPSBlock(),
+			  xss_data_extractor->extractLNEPSBlock(),
+			  compton_profiles ) );
+
+  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
+    detailed_distribution( new MonteCarlo::DopplerBroadenedHybridIncoherentPhotonScatteringDistribution(
+			  scattering_function,
+			  doppler_dist,
+			  3.0 ) );
 
   // Create the reactions
   ace_basic_incoherent_reaction.reset(
@@ -287,19 +329,14 @@ int main( int argc, char** argv )
 						    energy_grid,
 						    incoherent_cross_section,
 						    incoherent_threshold_index,
-						    scattering_function ) );
+						    basic_distribution ) );
 
   ace_detailed_incoherent_reaction.reset(
 		new MonteCarlo::IncoherentPhotoatomicReaction<Utility::LogLog>(
 			  energy_grid,
 			  incoherent_cross_section,
 			  incoherent_threshold_index,
-			  scattering_function,
-			  xss_data_extractor->extractSubshellBindingEnergies(),
-			  xss_data_extractor->extractSubshellOccupancies(),
-			  subshell_order,
-			  converter,
-			  compton_profiles ) );
+			  detailed_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

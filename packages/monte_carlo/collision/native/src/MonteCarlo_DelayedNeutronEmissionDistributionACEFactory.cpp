@@ -9,10 +9,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "MonteCarlo_DelayedNeutronEmissionDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
-#include "MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
+#include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -38,7 +38,8 @@ DelayedNeutronEmissionDistributionACEFactory::DelayedNeutronEmissionDistribution
 
 // Create the delayed neutron emission distribution
 void DelayedNeutronEmissionDistributionACEFactory::createEmissionDistribution(
-	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
+       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       distribution ) const
 {
   distribution.reset( new DelayedNeutronEmissionDistribution(
 				  d_atomic_weight_ratio,
@@ -62,7 +63,7 @@ DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupProbDists() const
 }
 
 // Return the precursor group emission distributions
-const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
 DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists() const
 {
   return d_precursor_group_emission_distributions;
@@ -138,10 +139,10 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const Teuchos::ArrayView<const double>& dned_block )
 {
   // Create the default (isotropic in lab system)
-  Teuchos::RCP<NeutronScatteringAngularDistribution> 
+  Teuchos::RCP<NuclearScatteringAngularDistribution> 
     default_angular_distribution;
 
-  NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
+  NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 						default_angular_distribution );
 
   // Create the energy distributions
@@ -152,8 +153,9 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 
   unsigned dist_index, ace_law;
   
-  Teuchos::RCP<NeutronScatteringDistribution> emission_distribution;
-  Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+    emission_distribution;
+  Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_distribution;
   
   for( unsigned i = 0u; i < dnedl_block.size(); ++i )
   {
@@ -166,7 +168,7 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 
     if( ace_law != 44 )
     {
-      NeutronScatteringEnergyDistributionACEFactory::createDistribution( 
+      NuclearScatteringEnergyDistributionACEFactory::createDistribution( 
 						     energy_dist_array,
 						     dist_index,
 						     table_name,
@@ -174,14 +176,16 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 						     energy_distribution );
 
       emission_distribution.reset( 
-	  new IndependentEnergyAngleNeutronScatteringDistribution<LabSystemConversionPolicy>( 
+	new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,
+	                                                        NeutronState,
+	                                                        LabSystemConversionPolicy>( 
 					      atomic_weight_ratio,
 					      energy_distribution,
 					      default_angular_distribution ) );
     }
     else
     {
-      NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
+      NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 						     atomic_weight_ratio,
 						     energy_dist_array,
 						     dist_index,

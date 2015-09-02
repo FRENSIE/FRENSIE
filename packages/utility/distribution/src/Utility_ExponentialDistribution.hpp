@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -24,7 +24,7 @@ namespace Utility{
  * exponent is always assumed to be negative)
  */
 class ExponentialDistribution : public OneDDistribution,
-			    public XMLCompatibleObject<ExponentialDistribution>
+			    public ParameterListCompatibleObject<ExponentialDistribution>
 {
 
 private:
@@ -59,13 +59,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -75,6 +72,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;

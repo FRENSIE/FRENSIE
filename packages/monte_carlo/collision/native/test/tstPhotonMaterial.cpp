@@ -100,14 +100,14 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, getMacroscopicReactionCrossSection )
 {
   // Test that the incoherent cross section can be returned
   double cross_section = material->getMacroscopicReactionCrossSection(
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.460222195795113e-09, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.060877396028078e-06, 1e-12 );
 
@@ -211,7 +211,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideAnalogue )
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.1; // select the incoherent reaction
+  fake_stream[1] = 0.9; // select the incoherent reaction
   fake_stream[2] = 0.001; // sample from first term of koblinger's method
   fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[4] = 0.5; // accept x in scattering function rejection loop
@@ -222,8 +222,9 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideAnalogue )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideAnalogue( photon, bank );
-
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  std::cout.precision( 18 );
+  std::cout << photon.getEnergy() << std::endl;
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -245,7 +246,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.1; // select the incoherent reaction
+  fake_stream[1] = 0.9; // select the incoherent reaction
   fake_stream[2] = 0.001; // sample from first term of koblinger's method
   fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[4] = 0.5; // accept x in scattering function rejection loop
@@ -257,7 +258,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
 
   material->collideSurvivalBias( photon, bank );
   
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getWeight(), 0.99623491442141220986, 1e-12 );
 
@@ -307,13 +308,16 @@ int main( int argc, char** argv )
       atomic_relaxation_model_factory(
 				new MonteCarlo::AtomicRelaxationModelFactory );
     
-    MonteCarlo::PhotoatomFactory factory( test_cross_sections_xml_directory,
-					  cross_section_table_info,
-					  atom_aliases,
-					  atomic_relaxation_model_factory,
-					  true,
-					  false,
-					  true );
+    MonteCarlo::PhotoatomFactory factory( 
+		 test_cross_sections_xml_directory,
+		 cross_section_table_info,
+		 atom_aliases,
+		 atomic_relaxation_model_factory,
+		 1000,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 true );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       atom_map;

@@ -10,7 +10,6 @@
 #include <set>
 
 // FRENSIE Includes
-#include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_EstimatorHandlerFactory.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
@@ -19,23 +18,38 @@
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCHelpers.hpp"
-#include "Geometry_DagMCProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
-#endif
-
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Initialize static member data
+const std::string EstimatorHandlerFactory::surface_current_name = 
+  "Surface Current";
+
+const std::string EstimatorHandlerFactory::surface_flux_name = 
+  "Surface Flux";
+
+const std::string EstimatorHandlerFactory::cell_pulse_height_name = 
+  "Cell Pulse Height";
+
+const std::string EstimatorHandlerFactory::cell_track_length_flux_name = 
+  "Cell Track-Length Flux";
+
+const std::string EstimatorHandlerFactory::cell_collision_flux_name = 
+  "Cell Collision Flux";
+
+const std::string EstimatorHandlerFactory::tet_mesh_track_length_flux_name = 
+  "Tet Mesh Track-Length Flux";
 
 // Initialize the estimator handler using DagMC
 void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 				 const Teuchos::ParameterList& response_reps,
 				 const Teuchos::ParameterList& estimator_reps )
 {
+#ifdef HAVE_FRENSIE_DAGMC
   // Create the response functions
   boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> > 
     response_id_map;
@@ -138,8 +152,19 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 
     if( estimator_rep.isParameter( "Response Functions" ) )
     {  
-      const Teuchos::Array<unsigned>& requested_response_functions = 
-	estimator_rep.get<Teuchos::Array<unsigned> >( "Response Functions" );
+      const Utility::ArrayString& array_string = 
+	estimator_rep.get<Utility::ArrayString>( "Response Functions" );
+      
+      Teuchos::Array<unsigned> requested_response_functions;
+
+      try{
+	requested_response_functions = 
+	  array_string.getConcreteArray<unsigned>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the response functions requested for"
+				  " estimator " << id << " are not valid!" );
 
       response_functions.resize( requested_response_functions.size() );
 
@@ -166,7 +191,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> cell_volumes;
     
-      if( estimator_id_type_map[id] == "cell.pulse.height" )
+      if( EstimatorHandlerFactory::isCellPulseHeightEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::createPulseHeightEstimator(
 							id,
@@ -177,7 +202,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
-      else if( estimator_id_type_map[id] == "cell.tl.flux" )
+      else if( EstimatorHandlerFactory::isCellTrackLengthFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -193,7 +218,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
-      else if( estimator_id_type_map[id] == "cell.c.flux" )
+      else if( EstimatorHandlerFactory::isCellCollisionFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -222,7 +247,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> surface_areas;
       
-      if( estimator_id_type_map[id] == "surface.flux" )
+      if( EstimatorHandlerFactory::isSurfaceFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillSurfaceAreasArray( surfaces,
 							surface_area_map,
@@ -254,7 +279,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     }
 
     // Create a tet mesh track length flux estimator
-    else if( estimator_id_type_map[id] == "tet.mesh.tl.flux" )
+    else if( estimator_id_type_map[id] == 
+	     EstimatorHandlerFactory::tet_mesh_track_length_flux_name )
     {
       TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Mesh File Name" ),
 			  InvalidEstimatorRepresentation,
@@ -292,7 +318,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     ++it;
   }
 
-  // Create any remaining estimators
+  // Create any remaining estimators - specified in sat file only
   while( estimator_id_type_map.size() > 0 )
   {
     unsigned id = estimator_id_type_map.begin()->first;
@@ -313,7 +339,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> cell_volumes;
     
-      if( estimator_id_type_map[id] == "cell.pulse.height" )
+      if( estimator_id_type_map[id] == 
+	  Geometry::DagMCProperties::getCellPulseHeightName() )
       {
 	EstimatorHandlerFactory::createPulseHeightEstimator(
 							  id,
@@ -322,7 +349,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							  cells,
 							  response_functions );
       }
-      else if( estimator_id_type_map[id] == "cell.tl.flux" )
+      else if( estimator_id_type_map[id] == 
+	       Geometry::DagMCProperties::getCellTrackLengthFluxName() )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -336,7 +364,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							cell_volumes,
 							response_functions );
       }
-      else if( estimator_id_type_map[id] == "cell.c.flux" )
+      else if( estimator_id_type_map[id] == 
+	       Geometry::DagMCProperties::getCellCollisionFluxName() )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -360,7 +389,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> surface_areas;
       
-      if( estimator_id_type_map[id] == "surface.flux" )
+      if( estimator_id_type_map[id] == 
+	  Geometry::DagMCProperties::getSurfaceFluxName() )
       {
 	EstimatorHandlerFactory::fillSurfaceAreasArray( surfaces,
 							surface_area_map,
@@ -389,7 +419,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     estimator_id_type_map.erase( id );
     estimator_id_ptype_map.erase( id );
     estimator_id_cells_map.erase( id );
-  }    
+  }
+#endif  
 }
 
 // Validate an estimator representation
@@ -409,6 +440,57 @@ void EstimatorHandlerFactory::validateEstimatorRep(
 		      InvalidEstimatorRepresentation,
 		      "Error: the estimator type was not specified in "
 		      "estimator " << estimator_rep.name() << "!" );
+}
+
+// Test if two estimator types are equivalent
+bool EstimatorHandlerFactory::areEstimatorTypesEquivalent( 
+						 const std::string& dagmc_type,
+						 const std::string& xml_type )
+{
+  if( dagmc_type == xml_type )
+    return true;
+#ifdef HAVE_FRENSIE_DAGMC
+  else
+  {
+    if( dagmc_type == Geometry::DagMCProperties::getSurfaceCurrentName() )
+    {
+      if( xml_type == EstimatorHandlerFactory::surface_current_name )
+	return true;
+      else
+	return false;
+    }
+    else if( dagmc_type == Geometry::DagMCProperties::getSurfaceFluxName() )
+    {
+      if( xml_type == EstimatorHandlerFactory::surface_flux_name )
+	return true;
+      else
+	return false;
+    }
+    else if( dagmc_type == Geometry::DagMCProperties::getCellPulseHeightName())
+    {
+      if( xml_type == EstimatorHandlerFactory::cell_pulse_height_name )
+	return true;
+      else
+	return false;
+    }
+    else if( dagmc_type == Geometry::DagMCProperties::getCellTrackLengthFluxName() )
+    {
+      if( xml_type == EstimatorHandlerFactory::cell_track_length_flux_name )
+	return true;
+      else
+	return false;
+    }
+    else if( dagmc_type == Geometry::DagMCProperties::getCellCollisionFluxName() )
+    {
+      if( xml_type == EstimatorHandlerFactory::cell_collision_flux_name )
+	return true;
+      else
+	return false;
+    }
+    else
+      return false;
+  }
+#endif
 }
 
 // Create the estimator data maps using DagMC information
@@ -481,20 +563,18 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	     InvalidEstimatorRepresentation,
 	     "Error: estimator " << id << " has particle type " 
 	     << particle_type << " specified in the .sat file, which is "
-	     "not valid (choose n or p)!" );
+	     "not valid (choose n, p or e)!" );
     
     TEST_FOR_EXCEPTION( estimator_type == "cell.pulse.height" &&
 			particle_type == "n",
 			InvalidEstimatorRepresentation,
 			"Error: pulse height estimator " << id << " has "
 			"been assigned a particle type of neutron (only "
-			"photons can be assigned)" );
+			"photons or electrons can be assigned)" );
 			
 
-    if( particle_type == "n" )
-      estimator_id_ptype_map[id] = "Neutron";
-    else if( particle_type == "p" )
-      estimator_id_ptype_map[id] = "Photon";
+    estimator_id_ptype_map[id] = 
+      convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the cells assigned to the estimator
     TEST_FOR_EXCEPTION( cell_it->second.size() == 0,
@@ -546,13 +626,11 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	     InvalidEstimatorRepresentation,
 	     "Error: estimator " << id << " has particle type " 
 	     << particle_type << " specified in the .sat file, which is "
-	     "not valid (choose n or p)!" );
+	     "not valid (choose n, p or e)!" );
 
-    if( particle_type == "n" )
-      estimator_id_ptype_map[id] = "Neutron";
-    else if( particle_type == "p" )
-      estimator_id_ptype_map[id] = "Photon";
-
+    estimator_id_ptype_map[id] = 
+      convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
+    
     // Store the cells assigned to the estimator
     TEST_FOR_EXCEPTION( surface_it->second.size() == 0,
 			InvalidEstimatorRepresentation,
@@ -600,7 +678,8 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 
     if( estimator_id_type_map.find( id ) != estimator_id_type_map.end() )
     {
-      TEST_FOR_EXCEPTION( estimator_id_type_map[id] != estimator_type,
+  TEST_FOR_EXCEPTION( !areEstimatorTypesEquivalent( estimator_id_type_map.find( id )->second,
+                                                    estimator_type ),
 			  InvalidEstimatorRepresentation,
 			  "Error: estimator " << id << " specified in the "
 			  "xml file and the .sat file have inconsistent "
@@ -626,12 +705,23 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
       {
 	if( estimator_rep.isParameter( "Cells" ) )
 	{
-	  const Teuchos::Array<unsigned>& extra_cells =
-	    estimator_rep.get<Teuchos::Array<unsigned int> >( "Cells" );
+	  const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Cells" );
+	  
+	  Teuchos::Array<unsigned> extra_cells;
 
+	  try{
+	    extra_cells = array_string.getConcreteArray<unsigned>();
+	  }
+	  EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				     InvalidEstimatorRepresentation,
+				     "Error: the cells requested for "
+				     "estimator " << id << 
+				     " are not valid!" );
+	    
 	  EstimatorHandlerFactory::appendCellsToAssignedCells( 
 						    id,
-						    estimator_id_cells_map[id],
+				                    estimator_id_cells_map[id],
 						    extra_cells );
 	}
       }
@@ -639,8 +729,18 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
       {
 	if( estimator_rep.isParameter( "Surfaces" ) )
 	{
-	  const Teuchos::Array<unsigned>& extra_surfaces = 
-	    estimator_rep.get<Teuchos::Array<unsigned int> >( "Surfaces" );
+	  const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Surfaces" );
+	  
+	  Teuchos::Array<unsigned> extra_surfaces;
+
+	  try{
+	    extra_surfaces = array_string.getConcreteArray<unsigned>();
+	  }
+	  EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				     InvalidEstimatorRepresentation,
+				     "Error: the surfaces requested for "
+				     "estimator " << id << " are not valid!" );
 
 	  EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
 						 id,
@@ -657,7 +757,7 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
       TEST_FOR_EXCEPTION( 
        !Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type) &&
        !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) &&
-       !EstimatorHandlerFactory::isMeshEstimatorTypeValid(estimator_type),
+       !EstimatorHandlerFactory::isEstimatorTypeValid(estimator_type),
        InvalidEstimatorRepresentation,
        "Error: estimator " << id << " has estimator type " 
        << estimator_type << " specified in the xml file, which is "
@@ -682,30 +782,53 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 
       estimator_id_ptype_map[id] = particle_type;
 			 
-      if( Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type) )
+      if( Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type)||
+          EstimatorHandlerFactory::isCellEstimatorTypeValid(estimator_type) )
       {
 	TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Cells" ),
 			    InvalidEstimatorRepresentation,
 			    "Error: estimator " << id << " does not have "
 			    "cells specified!" );
+
+	const Utility::ArrayString& array_string = 
+	  estimator_rep.get<Utility::ArrayString>( "Cells" );
 	
-	const Teuchos::Array<unsigned>& cells = 
-	  estimator_rep.get<Teuchos::Array<unsigned int> >( "Cells" );
+	Teuchos::Array<unsigned> cells;
+
+	try{
+	  cells = array_string.getConcreteArray<unsigned>();
+	}
+	EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				   InvalidEstimatorRepresentation,
+				   "Error: the cells requested for "
+				   "estimator " << id << 
+				   " are not valid!" );
 	
 	EstimatorHandlerFactory::appendCellsToAssignedCells( 
 						    id,
 						    estimator_id_cells_map[id],
 						    cells );
       }
-      else if( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) )
+      else if( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) ||
+               EstimatorHandlerFactory::isSurfaceEstimatorTypeValid( estimator_type ) )
       {
 	TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Surfaces" ),
 			    InvalidEstimatorRepresentation,
 			    "Error: estimator " << id << " does not have "
 			    "surfaces specified!" );
 
-	const Teuchos::Array<unsigned>& surfaces = 
-	  estimator_rep.get<Teuchos::Array<unsigned int> >( "Surfaces" );
+	const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Surfaces" );
+	  
+	Teuchos::Array<unsigned> surfaces;
+
+	try{
+	  surfaces = array_string.getConcreteArray<unsigned>();
+	}
+	EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				    InvalidEstimatorRepresentation,
+				    "Error: the surfaces requested for "
+				    "estimator " << id << " are not valid!" );
 
 	EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
 						 id,
@@ -1209,8 +1332,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
   {
     if( bins.name( it ) == "Energy Bins" )
     {
-      const Teuchos::Array<double>& energy_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> energy_bins;
+      
+      try{
+	energy_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the energy bins requested for "
+				  "estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(energy_bins.begin(),
 							   energy_bins.end() ),
@@ -1224,8 +1358,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Time Bins" )
     {
-      const Teuchos::Array<double>& time_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> time_bins;
+
+      try{
+	time_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the time bins requested for "
+				  "estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( time_bins.begin(),
 							     time_bins.end() ),
@@ -1239,8 +1384,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Collision Number Bins" )
     {
-      const Teuchos::Array<unsigned>& col_num_bins = 
-	Teuchos::any_cast<Teuchos::Array<unsigned int> >( it->second.getAny());
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<unsigned> col_num_bins;
+      
+      try{
+	col_num_bins = array_string.getConcreteArray<unsigned>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the collision number bins requested "
+				  "for estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending(
 							  col_num_bins.begin(),
@@ -1255,8 +1411,20 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Cosine Bins" )
     {
-      const Teuchos::Array<double>& cosine_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> cosine_bins;
+
+      try{
+	cosine_bins = array_string.getConcreteArray<double>();
+      }
+
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the cosine bins requested "
+				  "for estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(cosine_bins.begin(),
 							   cosine_bins.end() ),
@@ -1304,11 +1472,47 @@ void EstimatorHandlerFactory::fillSurfaceAreasArray(
     surface_areas[i] = surface_area_map.find( surfaces[i] )->second;
 }
 
-// Check if the mesh estimator type is valid
-bool EstimatorHandlerFactory::isMeshEstimatorTypeValid(
+// Check if the estimator type is valid
+bool EstimatorHandlerFactory::isEstimatorTypeValid(
 					   const std::string& estimator_type )
 {
-  if( estimator_type == "tet.mesh.tl.flux" )
+  return EstimatorHandlerFactory::isCellEstimatorTypeValid( estimator_type ) ||
+    EstimatorHandlerFactory::isSurfaceEstimatorTypeValid( estimator_type ) ||
+    EstimatorHandlerFactory::isMeshEstimatorTypeValid( estimator_type );
+  
+}
+
+// Check if a cell estimator type is valid
+bool EstimatorHandlerFactory::isCellEstimatorTypeValid( 
+					    const std::string& estimator_type )
+{
+  if( estimator_type == EstimatorHandlerFactory::cell_track_length_flux_name )
+    return true;
+  else if( estimator_type == EstimatorHandlerFactory::cell_collision_flux_name )
+    return true;
+  else if( estimator_type == EstimatorHandlerFactory::cell_pulse_height_name )
+    return true;
+  else
+    return false;
+}
+
+// Check if a surface estimator type is valid
+bool EstimatorHandlerFactory::isSurfaceEstimatorTypeValid( 
+					    const std::string& estimator_type )
+{
+  if( estimator_type == EstimatorHandlerFactory::surface_current_name )
+    return true;
+  else if( estimator_type == EstimatorHandlerFactory::surface_flux_name )
+    return true;
+  else
+    return false;
+}
+
+// Check if a mesh estimator type is valid
+bool EstimatorHandlerFactory::isMeshEstimatorTypeValid( 
+                                            const std::string& estimator_type )
+{
+  if( estimator_type == EstimatorHandlerFactory::tet_mesh_track_length_flux_name )
     return true;
   else
     return false;

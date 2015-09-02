@@ -10,7 +10,9 @@
 #include "Utility_ContractException.hpp"
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -129,13 +131,6 @@ double PowerDistribution<N>::evaluatePDF( const double indep_var_value ) const
 
 // Return a random sample from the distribution
 template<unsigned N>
-double PowerDistribution<N>::sample()
-{
-  return (const_cast<const PowerDistribution<N>*>(this))->sample();
-}
-
-// Return a random sample from the distribution
-template<unsigned N>
 double PowerDistribution<N>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -147,11 +142,13 @@ double PowerDistribution<N>::sample() const
   return pow( argument, 1.0/(N+1u) );
 }
 
-// Return the sampling efficiency from the distribution
+// Return a random sample and record the number of trials
 template<unsigned N>
-double PowerDistribution<N>::getSamplingEfficiency() const
+double PowerDistribution<N>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -175,6 +172,13 @@ OneDDistributionType PowerDistribution<N>::getDistributionType() const
   return PowerDistribution<N>::distribution_type;
 }
 
+// Test if the distribution is continuous
+template<unsigned N>
+bool PowerDistribution<N>::isContinuous() const
+{
+  return true;
+}
+
 // Method for placing the object in an output stream
 template<unsigned N>
 void PowerDistribution<N>::toStream( std::ostream& os ) const
@@ -194,28 +198,39 @@ void PowerDistribution<N>::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power " << N << " distribution "
+			      "cannot be constructed because the "
+			      "representation is not valid (see details "
+			      "below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::ostringstream message;
-    message << "Error: the power " << N << " distribution cannot be "
-	    << "constructed because the representation is not valid "
-	    << "(see details below)!\n" << error.what();
-    
-    throw InvalidDistributionStringRepresentation( message.str() );
-  }
-
-  TEST_FOR_EXCEPTION( distribution.size() != 3,
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power " << N << " distribution "
+			      "cannot be constructed because the "
+			      "representation is not valid (see details "
+			      "below)!\n" );
+  
+  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the power " << N << " distribution cannot be "
 		      "constructed because the representation is not valid "
 		      "(only 3 values may be specified)!" );
 
   // Set the constant multiplier
-  d_constant_multiplier = distribution[0];
+  if( distribution.size() == 3 )
+    d_constant_multiplier = distribution[0];
+  else
+    d_constant_multiplier = 1.0;
   
   TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
 		      InvalidDistributionStringRepresentation,
@@ -224,7 +239,10 @@ void PowerDistribution<N>::fromStream( std::istream& is )
 		      "valid!" );
   
   // Read the min independent limit
-  d_min_indep_limit = distribution[1];
+  if( distribution.size() == 3 )
+    d_min_indep_limit = distribution[1];
+  else
+    d_min_indep_limit = distribution[0];
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
 		      InvalidDistributionStringRepresentation,
@@ -239,7 +257,10 @@ void PowerDistribution<N>::fromStream( std::istream& is )
 		      "valid!" );
 
   // Read the max independent limit
-  d_max_indep_limit = distribution[2];
+  if( distribution.size() == 3 )
+    d_max_indep_limit = distribution[2];
+  else
+    d_max_indep_limit = distribution[1];
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
 		      InvalidDistributionStringRepresentation,

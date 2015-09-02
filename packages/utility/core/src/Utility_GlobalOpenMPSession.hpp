@@ -87,7 +87,7 @@ inline double GlobalOpenMPSession::getTime()
 #ifdef HAVE_FRENSIE_OPENMP
   return omp_get_wtime();
 #else
-  return cloc()/((double)CLOCKS_PER_SEC);
+  return clock()/((double)CLOCKS_PER_SEC);
 #endif
 }
 

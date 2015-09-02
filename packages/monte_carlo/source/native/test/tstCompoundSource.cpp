@@ -30,6 +30,7 @@
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -66,6 +67,8 @@ void initializeDagMC()
   Geometry::initializeDagMC( test_geometry_file_name,
 			     property_names,
 			     1e-3 );
+
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
 }
 
 // Initialize the compound source (uniform spherical source and point source)
@@ -92,7 +95,7 @@ void initializeSource()
 							    0.0,
 							    0.0 ) );
   Teuchos::RCP<Utility::DirectionalDistribution>
-    directional_distribution( new Utility::DirectionalDistribution( 
+    directional_distribution( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 

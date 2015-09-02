@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -22,48 +23,61 @@
 TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 {
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_MODE );
+                       MonteCarlo::NEUTRON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
-		      0 );
+                      0 );
+  TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		      0.001 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
-		       400.0 );
+                       400.0 );
   TEST_EQUALITY_CONST( 
-	       MonteCarlo::SimulationProperties::getAbsoluteMinNeutronEnergy(),
-	       1e-11 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinNeutronEnergy(),
+               1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
-		       1e-11 );
+                       1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxNeutronEnergy(),
-		       20.0 );
+                       20.0 );
   TEST_EQUALITY_CONST( 
-	       MonteCarlo::SimulationProperties::getAbsoluteMaxNeutronEnergy(),
-	       20.0 );
+               MonteCarlo::SimulationProperties::getAbsoluteMaxNeutronEnergy(),
+               20.0 );
   TEST_EQUALITY_CONST(
-		MonteCarlo::SimulationProperties::getAbsoluteMinPhotonEnergy(),
-		1e-3 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinPhotonEnergy(),
+               1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinPhotonEnergy(),
 		       1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
-		       20.0 );
+                       20.0 );
   TEST_EQUALITY_CONST( 
-		MonteCarlo::SimulationProperties::getAbsoluteMaxPhotonEnergy(),
-		20.0 );    
+                MonteCarlo::SimulationProperties::getAbsoluteMaxPhotonEnergy(),
+                20.0 );    
   TEST_EQUALITY_CONST(
-	      MonteCarlo::SimulationProperties::getAbsoluteMinElectronEnergy(),
-	      1e-3 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinElectronEnergy(),
+               1.5e-5 );
   TEST_EQUALITY_CONST(
-		     MonteCarlo::SimulationProperties::getMinElectronEnergy(),
-		     1e-3 );
+               MonteCarlo::SimulationProperties::getMinElectronEnergy(),
+               1.5e-5 );
   TEST_EQUALITY_CONST(
-		     MonteCarlo::SimulationProperties::getMaxElectronEnergy(),
-		     20.0 );
+               MonteCarlo::SimulationProperties::getMaxElectronEnergy(),
+               20.0 );
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
 	      20.0 );
+  TEST_EQUALITY_CONST(
+	       MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
+	       3.0 );
+  TEST_EQUALITY_CONST(
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     1000 );
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getIncoherentModelType(),
+		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TWOBS_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -123,6 +137,25 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfHistories )
 	       default_value );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
 		      1000000000 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the surface flux angle cosine cutoff can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, 
+		   setSurfaceFluxEstimatorAngleCosineCutoff )
+{
+  double default_value = 
+    MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+
+  MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
+
+  TEST_ASSERT( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff() !=
+	       default_value );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.1 );
+
+  // Reset to the default
+  MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( default_value );
 }
 
 //---------------------------------------------------------------------------//
@@ -213,6 +246,47 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 
   // Reset the default value
   MonteCarlo::SimulationProperties::setMaxPhotonEnergy( default_value );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the Kahn sampling cutoff energy can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setKahnSamplingCutoffEnergy )
+{
+  double default_value = 
+    MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy();
+
+  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 2.5 );
+
+  TEST_ASSERT( 
+	    MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy() !=
+	    default_value );
+  TEST_EQUALITY_CONST(
+	      MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
+	      2.5 );
+  
+  // Reset the default value
+  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 
+							       default_value );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of photon hash grid bins can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
+{
+  unsigned default_value = 
+    MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins();
+
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
+
+  TEST_ASSERT( 
+	  MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins() !=
+	  default_value );
+  TEST_EQUALITY_CONST( 
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     500 );
+  
+  // Reset the default value
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
 }
 
 //---------------------------------------------------------------------------//
@@ -316,6 +390,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Test that warnings can be disabled
+TEUCHOS_UNIT_TEST( SimulationProperties, setWarningsOff )
+{
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
+
+  MonteCarlo::SimulationProperties::setWarningsOff();
+
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
+}
+
+//---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on
 TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 {
@@ -327,14 +412,23 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 }
 
 //---------------------------------------------------------------------------//
-// Test that photon Doppler broadening mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonDopplerBroadeningModeOff )
+// Test that the incoherent model type can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setIncoherentModelType )
 {
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
-  
-  MonteCarlo::SimulationProperties::setPhotonDopplerBroadeningModeOff();
+  MonteCarlo::IncoherentModelType default_model = 
+    MonteCarlo::SimulationProperties::getIncoherentModelType();
 
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  MonteCarlo::SimulationProperties::setIncoherentModelType(
+					     MonteCarlo::KN_INCOHERENT_MODEL );
+
+  TEST_ASSERT( MonteCarlo::SimulationProperties::getIncoherentModelType() !=
+	       default_model );
+  TEST_EQUALITY_CONST(
+		    MonteCarlo::SimulationProperties::getIncoherentModelType(),
+		    MonteCarlo::KN_INCOHERENT_MODEL );
+  
+  // Reset the default model
+  MonteCarlo::SimulationProperties::setIncoherentModelType( default_model );
 }
 
 //---------------------------------------------------------------------------//
@@ -368,6 +462,44 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonuclearInteractionModeOn )
   MonteCarlo::SimulationProperties::setPhotonuclearInteractionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the bremsstrahlung angular distribution function can be turned to Dipole
+TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Dipole )
+{
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TWOBS_DISTRIBUTION );
+  
+  MonteCarlo::BremsstrahlungAngularDistributionType function;
+  function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          function );
+
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the bremsstrahlung angular distribution function can be turned to Tabular
+TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Tabular )
+{
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
+  
+  MonteCarlo::BremsstrahlungAngularDistributionType function;
+  function = MonteCarlo::TABULAR_DISTRIBUTION;
+
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          function );
+
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TABULAR_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//

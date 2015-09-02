@@ -14,14 +14,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Power distribution class (N > 2)
 template<unsigned N>
 class PowerDistribution : public OneDDistribution,
-			  public XMLCompatibleObject<PowerDistribution<N> >
+			  public ParameterListCompatibleObject<PowerDistribution<N> >
 {
 
 private:
@@ -56,13 +56,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -72,6 +69,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -109,7 +109,7 @@ private:
 //! Power distribution class (N = 2)
 template<>
 class PowerDistribution<2u> : public OneDDistribution,
-			     public XMLCompatibleObject<PowerDistribution<2u> >
+			     public ParameterListCompatibleObject<PowerDistribution<2u> >
 {
 
 private:
@@ -145,13 +145,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -161,6 +158,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -195,7 +195,7 @@ private:
 //! Power distribution class (N = 1)
 template<>
 class PowerDistribution<1u> : public OneDDistribution,
-			     public XMLCompatibleObject<PowerDistribution<1u> >
+			     public ParameterListCompatibleObject<PowerDistribution<1u> >
 {
 
 private:
@@ -231,13 +231,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -247,6 +244,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;

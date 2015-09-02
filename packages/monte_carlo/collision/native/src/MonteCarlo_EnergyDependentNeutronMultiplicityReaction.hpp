@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -40,7 +40,7 @@ public:
 	      const unsigned threshold_energy_index,
 	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const Teuchos::RCP<NeutronScatteringDistribution>& 
+	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
 	      scattering_distribution );
 
   //! Destructor
@@ -66,7 +66,8 @@ private:
   Teuchos::Array<double> d_multiplicity;
 
   // The scattering distribution
-  Teuchos::RCP<NeutronScatteringDistribution> d_scattering_distribution;
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+  d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

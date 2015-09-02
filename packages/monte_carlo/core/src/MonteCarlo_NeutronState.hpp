@@ -10,12 +10,12 @@
 #define MONTE_CARLO_NEUTRON_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MassiveParticleState.hpp"
 
 namespace MonteCarlo{
 
 //! The neutron state class
-class NeutronState : public ParticleState
+class NeutronState : public MassiveParticleState
 {
   
 private:
@@ -35,12 +35,12 @@ public:
   NeutronState( const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
-  NeutronState( const NeutronState& existing_neutron_state,
+  NeutronState( const ParticleState& existing_base_state,
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
   //! Copy constructor (with possible creation of new generation)
-  NeutronState( const ParticleState& existing_base_state,
+  NeutronState( const NeutronState& existing_base_state,
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
@@ -54,25 +54,12 @@ public:
   ~NeutronState()
   { /* ... */ }
 
-  //! Set the energy of the neutron (MeV)
-  void setEnergy( const ParticleState::energyType energy );
-
-  //! Return the speed of the neutron (cm/s)
-  double getSpeed() const;
-
-  //! Set the speed of the neutron (cm/s)
-  void setSpeed( const double speed );
+  //! Return the rest mass energy of the neutron (MeV)
+  double getRestMassEnergy() const;
 
   //! Print the neutron state
   void print( std::ostream& os ) const;
 
-private:
-
-  //! Calculate the time to traverse a distance
-  ParticleState::timeType calculateTraversalTime( const double distance) const;
-
-  // The speed of the particle
-  double d_speed;
 };
 
 } // end MonteCarlo namespace

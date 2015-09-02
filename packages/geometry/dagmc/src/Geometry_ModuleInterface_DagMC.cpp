@@ -26,23 +26,38 @@ ModuleInterface<moab::DagMC>::cells_containing_test_points;
 
 moab::Range ModuleInterface<moab::DagMC>::all_cells;
 
+boost::unordered_map<ModuleInterface<moab::DagMC>::InternalCellHandle,
+		     ModuleInterface<moab::DagMC>::ExternalCellHandle> 
+ModuleInterface<moab::DagMC>::cell_handle_map;
+
+boost::unordered_map<ModuleInterface<moab::DagMC>::InternalSurfaceHandle,
+		     ModuleInterface<moab::DagMC>::ExternalSurfaceHandle>
+ModuleInterface<moab::DagMC>::surface_handle_map;
+
 std::vector<moab::DagMC::RayHistory> 
 ModuleInterface<moab::DagMC>::ray_history( 1 );
 
-// Do just in time initialization required for interface to work properly
+// Do just in time initialization of interface members
 void ModuleInterface<moab::DagMC>::initialize()  
 {
   #pragma omp master
   {
     // Get all of the cells from the problem (for quick lookup)
     ModuleInterface<moab::DagMC>::getAllCells();
-  
-    // Create a moab::DagMC::RayHistory for each thread
-    ModuleInterface<moab::DagMC>::ray_history.resize( 
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+
+    // Get all of the surfaces from the problem (for quick lookup)
+    ModuleInterface<moab::DagMC>::getAllSurfaces();
   }
 
   #pragma omp barrier
+}
+
+// Enable support for multiple threads
+void ModuleInterface<moab::DagMC>::enableThreadSupport(
+						   const unsigned num_threads )
+{
+  // Create a moab::DagMC::RayHistory for each thread
+  ModuleInterface<moab::DagMC>::ray_history.resize( num_threads );
 }
 
 // Find the cell that contains a given point (start of history)
@@ -257,6 +272,63 @@ void ModuleInterface<moab::DagMC>::getAllCells()
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      Utility::MOABException,
 		      moab::ErrorCodeStr[return_value] );
+
+  // Construct the cell handle map
+  moab::Range::const_iterator external_cell_handle = 
+    ModuleInterface<moab::DagMC>::all_cells.begin();
+
+  while( external_cell_handle != ModuleInterface<moab::DagMC>::all_cells.end())
+  {
+    InternalCellHandle internal_cell_handle = 
+      ModuleInterface<moab::DagMC>::dagmc_instance->get_entity_id(
+                                                       *external_cell_handle );
+    
+    cell_handle_map[internal_cell_handle] = *external_cell_handle;
+
+    ++external_cell_handle;
+  }
+}
+
+// Get all the surfaces contained in the geometry
+void ModuleInterface<moab::DagMC>::getAllSurfaces()
+{
+  moab::Interface* moab_instance = 
+    ModuleInterface<moab::DagMC>::dagmc_instance->moab_instance();
+  
+  const int two = 2;
+  const void* const two_val[] = {&two};
+
+  moab::Range surfaces;
+  
+  moab::Tag geom_tag = 
+    ModuleInterface<moab::DagMC>::dagmc_instance->geom_tag();
+  
+  moab::ErrorCode return_value = 
+    moab_instance->get_entities_by_type_and_tag( 
+			     0, 
+			     moab::MBENTITYSET,
+			     &geom_tag,
+			     two_val,
+			     1,
+			     surfaces );
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+		      Utility::MOABException,
+		      moab::ErrorCodeStr[return_value] );
+
+  // Construct the cell handle map
+  moab::Range::const_iterator external_surface_handle = surfaces.begin();
+
+  while( external_surface_handle != surfaces.end() )
+  {
+    InternalSurfaceHandle internal_surface_handle = 
+      ModuleInterface<moab::DagMC>::dagmc_instance->get_entity_id(
+						    *external_surface_handle );
+    
+    surface_handle_map[internal_surface_handle] = *external_surface_handle;
+
+    ++external_surface_handle;
+  }
 }
 
 // Test the cells found to contain test points for point containment

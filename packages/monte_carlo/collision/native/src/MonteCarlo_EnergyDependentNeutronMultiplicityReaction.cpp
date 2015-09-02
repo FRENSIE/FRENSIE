@@ -27,7 +27,7 @@ EnergyDependentNeutronMultiplicityReaction::EnergyDependentNeutronMultiplicityRe
 	      const unsigned threshold_energy_index,
 	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const Teuchos::RCP<NeutronScatteringDistribution>& 
+	      const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
 	      scattering_distribution )
   : NuclearReaction( reaction_type, 
 		     temperature, 
@@ -107,8 +107,8 @@ void EnergyDependentNeutronMultiplicityReaction::react(
     Teuchos::RCP<NeutronState> new_neutron(
 				   new NeutronState( neutron, true, false ) );
 					   
-    d_scattering_distribution->scatterNeutron( *new_neutron, 
-					       this->getTemperature() );
+    d_scattering_distribution->scatterParticle( *new_neutron, 
+						this->getTemperature() );
 
     // Add the new neutron to the bank
     bank.push( new_neutron, this->getReactionType() );
@@ -119,8 +119,8 @@ void EnergyDependentNeutronMultiplicityReaction::react(
   // zero or between zero and one
   if( num_outgoing_neutrons > 0u )
   {
-    d_scattering_distribution->scatterNeutron( neutron,
-					       this->getTemperature() );
+    d_scattering_distribution->scatterParticle( neutron,
+						this->getTemperature() );
   }
   else
     neutron.setAsGone();

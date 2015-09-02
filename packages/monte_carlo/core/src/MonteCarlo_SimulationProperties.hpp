@@ -11,6 +11,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 
 namespace MonteCarlo{
 
@@ -34,6 +36,12 @@ public:
 
   //! Return the number of histories to run
   static unsigned long long getNumberOfHistories();
+
+  //! Set the angle cosine cutoff value for surface flux estimators
+  static void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
+
+  //! Return the angle cosine cutoff value for surface flux estimators
+  static double getSurfaceFluxEstimatorAngleCosineCutoff();
 
   //! Set the free gas thermal treatment temperature threshold
   static void setFreeGasThreshold( const double threshold );
@@ -77,6 +85,21 @@ public:
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
 
+  //! Set the Kahn sampling cutoff energy (MeV) 
+  static void setKahnSamplingCutoffEnergy( const double energy );
+
+  //! Return the Kahn sampling cutoff energy (MeV)
+  static double getKahnSamplingCutoffEnergy();
+
+  //! Return the absolute min Kahn sampling cutoff energy (MeV)
+  static double getAbsoluteMinKahnSamplingCutoffEnergy();
+
+  //! Set the number of photon hash grid bins
+  static void setNumberOfPhotonHashGridBins( const unsigned bins );
+
+  //! Get the number of photon hash grid bins
+  static unsigned getNumberOfPhotonHashGridBins();
+
   //! Set the minimum electron energy (MeV)
   static void setMinElectronEnergy( const double energy );
 
@@ -103,17 +126,23 @@ public:
   template<typename ParticleType>
   static double getMaxParticleEnergy();
 
+  //! Turn off warnings
+  static void setWarningsOff();
+
+  //! Return if warnings should be printed
+  static bool displayWarnings();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
 
-  //! Set photon Doppler broadening mode to off (on by default)
-  static void setPhotonDopplerBroadeningModeOff();
+  //! Set the incoherent model type
+  static void setIncoherentModelType( const IncoherentModelType model );
 
-  //! Return if photon Doppler broadening mode is on
-  static bool isPhotonDopplerBroadeningModeOn();
+  //! Return the incohernt model
+  static IncoherentModelType getIncoherentModelType();
 
   //! Set atomic relaxation mode to off (on by default)
   static void setAtomicRelaxationModeOff();
@@ -133,6 +162,14 @@ public:
   //! Return if photonuclear interaction mode is on
   static bool isPhotonuclearInteractionModeOn();
 
+  //! Set the bremsstrahlung photon angular distribution function (2BS by default)
+  static void setBremsstrahlungAngularDistributionFunction( 
+                         const BremsstrahlungAngularDistributionType function );
+
+  //! Return the bremsstrahlung photon angular distribution function
+  static BremsstrahlungAngularDistributionType 
+          getBremsstrahlungAngularDistributionFunction();
+
 private:
 
   // The particle mode
@@ -140,6 +177,9 @@ private:
 
   // The number of histories to run
   static unsigned long long number_of_histories;
+
+  // The angle cosine cutoff value for surface flux estimators
+  static double surface_flux_estimator_angle_cosine_cutoff;
 
   // The free gas thermal treatment temperature threshold
   // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
@@ -169,23 +209,35 @@ private:
   // The absolute maximum photon energy
   static const double absolute_max_photon_energy;
 
+  // The Kahn sampling cutoff energy (MeV)
+  static double kahn_sampling_cutoff_energy;
+
+  // The absolute min Kahn sampling cutoff energy (MeV)
+  static const double absolute_min_kahn_sampling_cutoff_energy;
+
+  // The number of photon hash grid bins
+  static unsigned num_photon_hash_grid_bins;
+
   // The absolute minimum electron energy
   static const double absolute_min_electron_energy;
 
-  // The minimum photon energy (MeV)
+  // The minimum electron energy (MeV)
   static double min_electron_energy;
 
-  // The maximum photon energy (MeV)
+  // The maximum electron energy (MeV)
   static double max_electron_energy;
 
-  // The absolute maximum photon energy (MeV)
+  // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
+
+  // The warning message flag
+  static bool display_warnings;
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
 
-  // The photon Doppler broadening mode (true = on - default, false = off)
-  static bool doppler_broadening_mode_on;
+  // The incoherent model
+  static IncoherentModelType incoherent_model_type;
 
   // The atomic relaxation mode (true = on - default, false = off)
   static bool atomic_relaxation_mode_on;
@@ -195,6 +247,10 @@ private:
 
   // The photonuclear interaction mode (true = on, false = off - default)
   static bool photonuclear_interaction_mode_on;
+
+  // The bremsstrahlung photon angular distribution function (default is 2BS)
+  static BremsstrahlungAngularDistributionType 
+           bremsstrahlung_angular_distribution_function;
 };
 
 // Return the particle mode type
@@ -207,6 +263,12 @@ inline ParticleModeType SimulationProperties::getParticleMode()
 inline unsigned long long SimulationProperties::getNumberOfHistories()
 {
   return SimulationProperties::number_of_histories;
+}
+
+// Return the angle cosine cutoff value for surface flux estimators
+inline double SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
+{
+  return SimulationProperties::surface_flux_estimator_angle_cosine_cutoff;
 }
 
 // Return the free gas thermal treatment temperature threshold
@@ -263,6 +325,24 @@ inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
   return SimulationProperties::absolute_max_photon_energy;
 }
 
+// Return the Kahn sampling cutoff energy (MeV)
+inline double SimulationProperties::getKahnSamplingCutoffEnergy()
+{
+  return SimulationProperties::kahn_sampling_cutoff_energy;
+}
+
+// Return the absolute min Kahn sampling cutoff energy (MeV)
+inline double SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+{
+  return SimulationProperties::absolute_min_kahn_sampling_cutoff_energy;
+}
+
+// Get the number of photon hash grid bins
+inline unsigned SimulationProperties::getNumberOfPhotonHashGridBins()
+{
+  return SimulationProperties::num_photon_hash_grid_bins;
+}
+
 // Return the minimum electron energy (MeV)
 inline double SimulationProperties::getMinElectronEnergy()
 {
@@ -287,6 +367,11 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
+//! Return if warnings should be printed
+inline bool SimulationProperties::displayWarnings()
+{
+  return SimulationProperties::display_warnings;
+}
 
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
@@ -294,10 +379,10 @@ inline bool SimulationProperties::isImplicitCaptureModeOn()
   return SimulationProperties::implicit_capture_mode_on;
 }
 
-// Return if photon Doppler broadening mode is on
-inline bool SimulationProperties::isPhotonDopplerBroadeningModeOn()
+// Return the incohernt model
+inline IncoherentModelType SimulationProperties::getIncoherentModelType()
 {
-  return SimulationProperties::doppler_broadening_mode_on;
+  return SimulationProperties::incoherent_model_type;
 }
 
 // Return if atomic relaxation mode is on
@@ -316,6 +401,13 @@ inline bool SimulationProperties::isDetailedPairProductionModeOn()
 inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
 {
   return SimulationProperties::photonuclear_interaction_mode_on;
+}
+
+// Return if detailed bremsstrahlung mode is on
+inline BremsstrahlungAngularDistributionType 
+  SimulationProperties::getBremsstrahlungAngularDistributionFunction()
+{
+  return SimulationProperties::bremsstrahlung_angular_distribution_function;
 }
 
 } // end MonteCarlo namespace

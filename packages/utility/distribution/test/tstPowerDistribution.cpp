@@ -22,6 +22,13 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 
@@ -109,24 +116,45 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, sample, N )
 UNIT_TEST_INSTANTIATION( PowerDistribution, sample );
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
+// Check that the distribution can be sampled
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getSamplingEfficiency, 
-					   N )
+					    sampleAndRecordTrials, 
+					    N )
 {
   initializeDistribution<N>( distribution );
+  
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
 
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u)) );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, getSamplingEfficiency );
+UNIT_TEST_INSTANTIATION( PowerDistribution, sampleAndRecordTrials );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getUpperBoundOfIndepVar,
-					   N )
+					    getUpperBoundOfIndepVar,
+					    N )
 {
   initializeDistribution<N>( distribution );
   
@@ -139,8 +167,8 @@ UNIT_TEST_INSTANTIATION( PowerDistribution, getUpperBoundOfIndepVar );
 // Check that the lower bound of the distribution independent variable can be
 // returned
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getLowerBoundOfIndepVar,
-					   N )
+					    getLowerBoundOfIndepVar,
+					    N )
 {
   initializeDistribution<N>( distribution );
   
@@ -177,7 +205,33 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 UNIT_TEST_INSTANTIATION( PowerDistribution, getDistributionType );
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
+// Check if the distribution is tabular
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					    isTabular,
+					    N )
+{
+  initializeDistribution<N>( distribution );
+  
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, isTabular );
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					    isContinuous,
+					    N )
+{
+  initializeDistribution<N>( distribution );
+  
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, isContinuous );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 					    toFromParameterList,
 					    N )
@@ -216,12 +270,70 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 UNIT_TEST_INSTANTIATION( PowerDistribution, toFromParameterList );
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( PowerDistribution, fromParameterList )
+{
+  Utility::PowerDistribution<1u> distribution_1 = 
+    test_dists_list->get<Utility::PowerDistribution<1u> >( "Power Distribution A" );
+  
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 1 );
+  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0 ), 2.0 );
+
+  distribution_1 = 
+    test_dists_list->get<Utility::PowerDistribution<1u> >( "Power Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_1.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( distribution_1.evaluate( 1.0 ), 1.0 );
+
+  Utility::PowerDistribution<2u> distribution_2 = 
+    test_dists_list->get<Utility::PowerDistribution<2u> >( "Power Distribution C" );
+
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 
+		       2*Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution_2.evaluate( 1.0 ), 3.0 );
+
+  distribution_2 = 
+    test_dists_list->get<Utility::PowerDistribution<2u> >( "Power Distribution D" );
+
+  TEST_EQUALITY_CONST( distribution_2.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_2.getUpperBoundOfIndepVar(), 
+		       3*Utility::PhysicalConstants::pi/4 );
+  TEST_EQUALITY_CONST( distribution_2.evaluate( 0.5 ), 0.25 );
+
+  Utility::PowerDistribution<3u> distribution_3 = 
+    test_dists_list->get<Utility::PowerDistribution<3u> >( "Power Distribution E" );
+
+  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0 ), 4.0 );
+
+  distribution_3 = 
+    test_dists_list->get<Utility::PowerDistribution<3u> >( "Power Distribution F" );
+
+  TEST_EQUALITY_CONST( distribution_3.getLowerBoundOfIndepVar(), 0 );
+  TEST_EQUALITY_CONST( distribution_3.getUpperBoundOfIndepVar(), 
+		       5*Utility::PhysicalConstants::pi/4 );
+  TEST_EQUALITY_CONST( distribution_3.evaluate( 1.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -232,6 +344,12 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<1u> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<2u> );
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PowerDistribution<3u> );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

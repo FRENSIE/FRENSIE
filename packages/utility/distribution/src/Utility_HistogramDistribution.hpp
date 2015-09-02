@@ -15,8 +15,8 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
@@ -24,8 +24,8 @@
 namespace Utility{
 
 //! Histogram distribution class
-class HistogramDistribution : public OneDDistribution,
-			      public XMLCompatibleObject<HistogramDistribution>
+class HistogramDistribution : public TabularOneDDistribution,
+			      public ParameterListCompatibleObject<HistogramDistribution>
 {
 
 private:
@@ -40,7 +40,8 @@ public:
 
   //! Constructor (data owning)
   HistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
-			 const Teuchos::Array<double>& bin_values );
+			             const Teuchos::Array<double>& bin_values,
+                         const bool interpret_dependent_values_as_cdf = false );
 
   //! Copy constructor
   HistogramDistribution( const HistogramDistribution& dist_instance );
@@ -59,17 +60,27 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
-  //! Return a random sample from the distribution
-  double sample();
+  //! Evaluate the CDF
+  double evaluateCDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return a random sample and bin index from the distribution
-  double sample( unsigned& sampled_bin_index ) const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and bin index from the distribution
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  double sampleWithRandomNumber( const double random_number ) const;
+
+  //! Return a random sample from the corresponding CDF in a subrange
+  double sampleInSubrange( const double max_indep_var ) const;
+
+  //! Return a sample from the distribution at the given CDF value in a subrange
+  double sampleWithRandomNumberInSubrange( const double random_number,
+					   const double max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -79,6 +90,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -93,7 +107,11 @@ private:
 
   // Initialize the distribution
   void initializeDistribution( const Teuchos::Array<double>& bin_boundaries,
-			       const Teuchos::Array<double>& bin_values );
+			                   const Teuchos::Array<double>& bin_values );
+
+  // Return a random sample using the random number and record the bin index
+  double sampleImplementation( double random_number,
+			       unsigned& sampled_bin_index ) const;
 
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
@@ -106,18 +124,43 @@ private:
   double d_norm_constant;
 };
 
-// Return a random sample from the distribution
-inline double HistogramDistribution::sample() 
+// Return a random sample using the random number and record the bin index
+inline double HistogramDistribution::sampleImplementation( 
+					    double random_number,
+					    unsigned& sampled_bin_index ) const
 {
-  return (const_cast<const HistogramDistribution*>(this))->sample();
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
+    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
+                                     d_distribution.end(),
+                                     random_number );
+
+  sampled_bin_index = std::distance( d_distribution.begin(), bin );
+
+  return bin->first + (random_number - bin->third)/bin->second;
 }
 
-// Return a random sample from the distribution
-inline double HistogramDistribution::sample() const
+// Return a sample from the distribution at the given CDF value in a subrange
+inline double HistogramDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
 {
-  unsigned bin_index;
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
   
-  return this->sample( bin_index );
+  // Compute the scaled random number
+  double scaled_random_number = 
+    random_number*this->evaluateCDF( max_indep_var );
+
+  unsigned dummy_index;
+    
+  return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
 } // end Utility namespace

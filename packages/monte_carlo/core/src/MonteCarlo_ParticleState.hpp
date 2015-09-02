@@ -127,6 +127,10 @@ public:
   //! Set the direction of the particle
   void setDirection( const double direction[3] );
 
+  //! Rotate the direction of the particle using polar a. cos and azimuthal a.
+  void rotateDirection( const double polar_angle_cosine,
+			const double azimuthal_angle );
+
   //! Advance the particle along its direction by the requested distance
   void advance( const double distance );
 

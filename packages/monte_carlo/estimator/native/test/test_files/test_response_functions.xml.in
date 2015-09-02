@@ -1,0 +1,30 @@
+<ParameterList name="Response Functions">
+  
+  <ParameterList name="Energy Response">
+    <Parameter name="Id" type="unsigned int" value="0"/> 
+    <Parameter name="Energy Distribution" type="Histogram Distribution"
+	       value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+  </ParameterList>
+  
+  <ParameterList name="Phase Space Response">
+    <Parameter name="Id" type="unsigned int" value="1"/>
+    <ParameterList name="Spatial Distribution">
+      <Parameter name="X Distribution" type="Uniform Distribution"
+		 value="{-1e50,1e50,1.0}"/>
+      <Parameter name="Y Distribution" type="Uniform Distribution"
+		 value="{-1e50,1e50,1.0}"/>
+      <Parameter name="Z Distribution" type="Uniform Distribution"
+		 value="{-1e50,1e50,1.0}"/>
+    </ParameterList>
+    <ParameterList name="Directional Distribution">
+      <Parameter name="Mu Distribution" type="Uniform Distribution"
+		 value="{-1.0,1.0,1.0}"/>
+      <Parameter name="Theta Distribution" type="Uniform Distribution"
+		 value="{0.0, 6.283185307179586, 1.0}"/>
+    </ParameterList>
+    <Parameter name="Energy Distribution" type="Histogram Distribution"
+	       value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+    <Parameter name="Time Distribution" type="Uniform Distribution"
+	       value="{0.0,1e50,1.0}"/>
+  </ParameterList>
+</ParameterList>

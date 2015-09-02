@@ -27,12 +27,20 @@ class PairProductionPhotoatomicReaction : public StandardPhotoatomicReaction<Int
 
 public:
 
-  //! Constructor
+  //! Basic constructor
   PairProductionPhotoatomicReaction(
 		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index,
 		const bool use_detailed_electron_emission_physics = true );
+
+  //! Constructor
+  PairProductionPhotoatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const bool use_detailed_electron_emission_physics = true );
 
   //! Destructor
   ~PairProductionPhotoatomicReaction()

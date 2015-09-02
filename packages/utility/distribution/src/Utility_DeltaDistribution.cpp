@@ -11,7 +11,9 @@
 
 // FRENSIE Includes
 #include "Utility_DeltaDistribution.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -61,10 +63,13 @@ double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
     return 0.0;
 }
 
-// Return a random sample from the distribution
-double DeltaDistribution::sample()
+// Evaluate the CDF
+double DeltaDistribution::evaluateCDF( const double indep_var_value ) const
 {
-  return (const_cast<const DeltaDistribution*>(this))->sample();
+  if( indep_var_value < d_location )
+    return 0.0;
+  else
+    return 1.0;
 }
 
 // Return a random sample from the distribution
@@ -73,10 +78,54 @@ double DeltaDistribution::sample() const
   return d_location;
 }
 
-// Return the sampling efficiency from this distribution
-double DeltaDistribution::getSamplingEfficiency() const
+//! Return a random sample from the corresponding CDF and record the number of trials
+double DeltaDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+  
+  return d_location;
+}
+
+// Return a random sample from the distribution and the sampled index 
+double DeltaDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
+{
+  sampled_bin_index = 0;
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  return d_location;
+}
+
+// Return a random sample from the distribution in a subrange
+double DeltaDistribution::sampleInSubrange( const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
 }
 
 // Return the maximum point at which the distribution is non-zero
@@ -97,6 +146,16 @@ OneDDistributionType DeltaDistribution::getDistributionType() const
   return DeltaDistribution::distribution_type;
 }
 
+// Test if the distribution is continuous
+/*! \details Though the delta distribution is technically continuous 
+ * because it is only non-zero at the specified point it will be treated as
+ * a discrete distribution.
+ */
+bool DeltaDistribution::isContinuous() const
+{
+  return false;
+}
+
 // Method for placing the object in an output stream
 void DeltaDistribution::toStream( std::ostream& os ) const
 {
@@ -111,19 +170,25 @@ void DeltaDistribution::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the delta distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the delta distribution cannot be constructed "
-			 "because the representation is not valid (see "
-			 "details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the delta distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
 
   TEST_FOR_EXCEPTION( distribution.size() != 1,
 		      InvalidDistributionStringRepresentation,

@@ -24,12 +24,20 @@ class AbsorptionPhotoatomicReaction : public StandardPhotoatomicReaction<InterpP
   
 public:
 
-  //! Constructor
+  //! Basic constructor
   AbsorptionPhotoatomicReaction(
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
 	  const PhotoatomicReactionType reaction );
+
+  //! Constructor
+  AbsorptionPhotoatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const PhotoatomicReactionType reaction );
 
   //! Destructor
   ~AbsorptionPhotoatomicReaction()
