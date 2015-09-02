@@ -1,0 +1,15 @@
+// Define if we want to use ROOT
+// NOTE: If the CMake variable HAVE_${PROJECT_NAME}_ROOT is defined the macro
+//       HAVE_${PROJECT_NAME}_ROOT will be set. If the CMake variable does not
+//       exist, the macro will be commented out.
+#ifndef ROOT_CONFIGURE_HPP
+#define ROOT_CONFIGURE_HPP
+
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_ROOT
+
+#ifdef HAVE_${PROJECT_NAME}_ROOT
+// FRENSIE Includes
+#include "Geometry_Root.hpp"
+#endif
+
+#endif // end ROOT_CONFIGURE_HPP

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCollisionHandlerFactoryElectronMode.cpp
-//! \author Luke Kersting
+//! \file   tstCollisionHandlerFactoryElectronMode_DagMC.cpp
+//! \author Luke Kersting, Eli Moll
 //! \brief  Collision handler factory unit tests for electron mode
 //!
 //---------------------------------------------------------------------------//
@@ -16,10 +16,15 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
+// Moab Includes
+#include <DagMC.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 
@@ -54,10 +59,10 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   // Set the particle mode to ELECTRON_MODE
   MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::CollisionHandlerFactory::initializeHandlerUsingDagMC( 
-                                           material_reps,
-                                           cross_section_table_info,
-                                           test_cross_sections_xml_directory );
+  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+					   material_reps,
+					   cross_section_table_info,
+					   test_cross_sections_xml_directory );
 
   // Electrons
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::ELECTRON ) );
@@ -373,5 +378,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCollisionHandlerFactory.cpp
+// end tstCollisionHandlerFactoryElectronMode_DagMC.cpp
 //---------------------------------------------------------------------------//
