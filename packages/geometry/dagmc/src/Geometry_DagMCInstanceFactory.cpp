@@ -165,7 +165,16 @@ void DagMCInstanceFactory::initializeDagMC(
 void DagMCInstanceFactory::validateGeometryRep( 
 				       const Teuchos::ParameterList& geom_rep )
 {
-  testPrecondition( geom_rep.get<std::string>( "Handler" ) == "DagMC" );
+  TEST_FOR_EXCEPTION( !geom_rep.isParameter( "Handler" ),
+		      InvalidGeometryRepresentation,
+		      "Error: The geometry handler type has not been "
+		      "specified!" );
+
+  TEST_FOR_EXCEPTION( geom_rep.get<std::string>( "Handler" ) != "DagMC",
+		      InvalidGeometryRepresentation,
+		      "Error: The geometry handler type is "
+		      << geom_rep.get<std::string>( "Handler" ) <<
+		      " and not DagMC!" );
   
   TEST_FOR_EXCEPTION( !geom_rep.isParameter( "CAD File" ),
 		      InvalidGeometryRepresentation,

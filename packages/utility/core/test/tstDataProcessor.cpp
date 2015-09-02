@@ -335,23 +335,37 @@ typedef Utility::SqrSqrDataProcessing SqrSqrDataProcessing;
 template<typename ProcessingPolicy>
 struct ProcessingPolicyTestingTraits
 {
-  static const double referenceIndepValue = 0.0;
-  static const double referenceDepValue = 0.0;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+template<typename ProcessingPolicy>
+const double ProcessingPolicyTestingTraits<ProcessingPolicy>::referenceIndepValue = 0.0;
+
+template<typename ProcessingPolicy>
+const double ProcessingPolicyTestingTraits<ProcessingPolicy>::referenceDepValue = 0.0;
 
 template<>
 struct ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>
 {
-  static const double referenceIndepValue = LOG_INDEP_VAR;
-  static const double referenceDepValue = LOG_DEP_VAR;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+const double ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>::referenceIndepValue = LOG_INDEP_VAR;
+
+const double ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>::referenceDepValue = LOG_DEP_VAR;
 
 template<>
 struct ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>
 {
-  static const double referenceIndepValue = SQR_INDEP_VAR;
-  static const double referenceDepValue = SQR_DEP_VAR;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::referenceIndepValue = SQR_INDEP_VAR;
+
+const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::referenceDepValue = SQR_DEP_VAR;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
