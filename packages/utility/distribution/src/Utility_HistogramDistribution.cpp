@@ -13,7 +13,9 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -24,10 +26,54 @@ HistogramDistribution::HistogramDistribution()
 // Constructor
 HistogramDistribution::HistogramDistribution( 
 				  const Teuchos::Array<double>& bin_boundaries,
-				  const Teuchos::Array<double>& bin_values )
+				  const Teuchos::Array<double>& bin_values, 
+                  const bool interpret_dependent_values_as_cdf )
   : d_distribution( bin_boundaries.size() )
 {
-  initializeDistribution( bin_boundaries, bin_values );
+  if( interpret_dependent_values_as_cdf )
+  {
+  // Make sure that the bin values are sorted
+  testPrecondition( Sort::isSortedAscending( bin_values.begin(), 
+					     bin_values.end() ) );
+
+  // Make sure that for n bin boundaries there are n-1 bin values
+  testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
+
+    // Assign the first cdf value
+    d_distribution[0].first = bin_boundaries[0];
+    d_distribution[0].third = 0.0;
+
+    // Assign the distribution
+    for( unsigned i = 1; i < bin_boundaries.size(); ++i )
+    {
+      d_distribution[i].first = bin_boundaries[i];
+      d_distribution[i].third = bin_values[i-1];
+
+      // Calculate the pdf from the cdf
+      d_distribution[i-1].second = 
+        (d_distribution[i].third - d_distribution[i-1].third)/
+        (d_distribution[i].first - d_distribution[i-1].first);
+    }
+
+    // Last PDF value is unused and can be assigned to the second to last value
+    d_distribution.back().second =
+      d_distribution[d_distribution.size()-2].second;
+
+    // Set normalization constant
+    d_norm_constant = d_distribution.back().third;
+ 
+    // Verify that the CDF is normalized (in event of round-off errors)
+    if( bin_values.back() != 1.0 )
+    {
+      for( unsigned j = 0; j < d_distribution.size(); ++j )
+      {
+        d_distribution[j].second /= d_norm_constant;
+        d_distribution[j].third /= d_norm_constant;
+      }
+    }
+  }
+  else
+    initializeDistribution( bin_boundaries, bin_values );
 }
 
 // Copy constructor
@@ -70,33 +116,84 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
   {
     Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
-				       d_distribution.end(),
-				       indep_var_value );
+                                       d_distribution.end(),
+                                       indep_var_value );
     
     return bin->second;
   }
-} 
-
-// Return a random sample and bin index from the distribution
-double HistogramDistribution::sample( unsigned& sampled_bin_index ) const
-{
-  // Sample the bin
-  double random_number = RandomNumberGenerator::getRandomNumber<double>();
-  
-  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
-    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
-				     d_distribution.end(),
-				     random_number );
-
-  sampled_bin_index = std::distance( d_distribution.begin(), bin );
-
-  return bin->first + (random_number - bin->third)/bin->second;
 }
 
-// Return the sampling efficiency from the distribution
-double HistogramDistribution::getSamplingEfficiency() const
+// Evaluate the CDF
+double HistogramDistribution::evaluateCDF( const double indep_var_value ) const
 {
-  return 1.0;
+  if( indep_var_value < d_distribution.front().first )
+    return 0.0;
+  else if( indep_var_value >= d_distribution.back().first )
+    return 1.0;
+  else
+  {
+    Teuchos::Array<Trip<double,double,double> >::const_iterator lower_bin = 
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+                                       d_distribution.end(),
+                                       indep_var_value );
+
+    double indep_diff = indep_var_value - lower_bin->first;
+
+    return lower_bin->third + lower_bin->second * indep_diff;
+  }
+} 
+
+// Return a random sample from the distribution
+double HistogramDistribution::sample() const
+{
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  
+  unsigned dummy_index;
+  
+  return this->sampleImplementation( random_number, dummy_index );
+}
+
+// Return a random sample and record the number of trials
+double HistogramDistribution::sampleAndRecordTrials( unsigned& trials ) const
+{
+  ++trials;
+
+  this->sample();
+}
+
+// Return a random sample and bin index from the distribution
+double HistogramDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
+{
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  
+  return this->sampleImplementation( random_number, sampled_bin_index );
+}
+
+// Return a random sample from the distribution at the given CDF value
+double HistogramDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  unsigned dummy_index;
+
+  return this->sampleImplementation( random_number, dummy_index );
+}
+
+// Return a random sample from the corresponding CDF in a subrange
+double HistogramDistribution::sampleInSubrange( 
+					     const double max_indep_var ) const
+{
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleWithRandomNumberInSubrange( random_number,
+						 max_indep_var );
 }
 
 // Return the upper bound of the distribution independent variable
@@ -115,6 +212,12 @@ double HistogramDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType HistogramDistribution::getDistributionType() const
 {
   return HistogramDistribution::distribution_type;
+}
+
+//! Test if the distribution is continuous
+bool HistogramDistribution::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream
@@ -151,21 +254,28 @@ void HistogramDistribution::fromStream( std::istream& is )
   std::string bin_boundaries_rep;
   std::getline( is, bin_boundaries_rep, '}' );
   bin_boundaries_rep += "}";
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( bin_boundaries_rep );
+    ArrayString::locateAndReplaceIntervalOperator( bin_boundaries_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
   
   Teuchos::Array<double> bin_boundaries;
   try{
     bin_boundaries = Teuchos::fromStringToArray<double>( bin_boundaries_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the histogram distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
 		      InvalidDistributionStringRepresentation,
@@ -180,21 +290,28 @@ void HistogramDistribution::fromStream( std::istream& is )
   std::string bin_values_rep;
   std::getline( is, bin_values_rep, '}' );
   bin_values_rep += "}";
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( bin_values_rep );
+    ArrayString::locateAndReplaceIntervalOperator( bin_values_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
   
   Teuchos::Array<double> bin_values;
   try{
     bin_values = Teuchos::fromStringToArray<double>( bin_values_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the histogram distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( bin_boundaries.size()-1 != bin_values.size(),
 		      InvalidDistributionStringRepresentation, 
 		      "Error: the histogram distribution "

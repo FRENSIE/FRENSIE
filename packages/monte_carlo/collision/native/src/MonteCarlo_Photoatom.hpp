@@ -57,6 +57,8 @@ public:
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  grid_searcher,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -144,13 +146,25 @@ public:
 
 private:
 
+  // Return the total cross section from atomic interactions with a bin index
+  double getAtomicScatteringCrossSection( 
+				        const double energy,
+					const unsigned energy_grid_bin ) const;
+
+  // Return the absorption cross section from atomic interactions w/ bin index
+  double getAtomicAbsorptionCrossSection( 
+				        const double energy,
+					const unsigned energy_grid_bin ) const;
+
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 
@@ -248,6 +262,48 @@ inline double Photoatom::getReactionCrossSection(
 inline const PhotoatomCore& Photoatom::getCore() const
 {
   return d_core;
+}
+
+// Return the total cross section from atomic interactions with a bin index
+inline double Photoatom::getAtomicScatteringCrossSection( 
+					 const double energy,
+				         const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator photoatomic_reaction = 
+    d_core.getScatteringReactions().begin();
+
+  while( photoatomic_reaction != d_core.getScatteringReactions().end() )
+  {
+    cross_section +=
+      photoatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
+
+    ++photoatomic_reaction;
+  }
+  
+  return cross_section;
+}
+
+// Return the absorption cross section from atomic interactions w/ bin index
+inline double Photoatom::getAtomicAbsorptionCrossSection( 
+					 const double energy,
+					 const unsigned energy_grid_bin ) const
+{
+  double cross_section = 0.0;
+
+  ConstReactionMap::const_iterator photoatomic_reaction = 
+    d_core.getAbsorptionReactions().begin();
+
+  while( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
+  {
+    cross_section +=
+      photoatomic_reaction->second->getCrossSection( energy, energy_grid_bin );
+
+    ++photoatomic_reaction;
+  }
+  
+  return cross_section;
 }
 
 } // end MonteCarlo namespace

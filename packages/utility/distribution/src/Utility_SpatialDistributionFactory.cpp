@@ -11,6 +11,7 @@
 #include "Utility_CartesianSpatialDistribution.hpp"
 #include "Utility_CylindricalSpatialDistribution.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
+#include "Utility_PointSpatialDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
@@ -41,6 +42,13 @@ SpatialDistributionFactory::createDistribution(
   else if( distribution_rep.isParameter( "Mu Distribution" ) )
   {
     return SpatialDistributionFactory::createSphericalDistribution(
+							    distribution_rep );
+  }
+
+  // Create a point spatial distribution
+  else if( distribution_rep.isParameter( "Position" ) )
+  {
+    return SpatialDistributionFactory::createPointDistribution(
 							    distribution_rep );
   }
 }
@@ -144,6 +152,11 @@ void SpatialDistributionFactory::validateDistributionRep(
 			"coordinates and the axis must be specified for "
 			"a spherical spatial distribution!" );
     
+    valid_distribution = true;
+  }
+
+  if( distribution_rep.isParameter( "Position" ) )
+  {
     valid_distribution = true;
   }
 
@@ -289,6 +302,25 @@ SpatialDistributionFactory::createSphericalDistribution(
 							    center_y_position,
 							    center_z_position,
 							    axis ) );
+}
+
+// Create a point distribution
+Teuchos::RCP<Utility::SpatialDistribution>
+SpatialDistributionFactory::createPointDistribution( 
+			       const Teuchos::ParameterList& distribution_rep )
+{
+  Teuchos::Array<double> position = 
+    distribution_rep.get<Teuchos::Array<double> >( "Position" );
+
+  TEST_FOR_EXCEPTION( position.size() != 3,
+		      InvalidSpatialDistributionRepresentation,
+		      "Error: the position is invalid - size ("
+		      << position.size() << ") != 3" );
+
+  return Teuchos::RCP<SpatialDistribution>(
+				  new PointSpatialDistribution( position[0],
+								position[1],
+								position[2]) );
 }
 
 } // end Utility namespace

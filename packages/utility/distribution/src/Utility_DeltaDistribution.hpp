@@ -14,14 +14,14 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Delta distribution class
-class DeltaDistribution : public OneDDistribution,
-			  public XMLCompatibleObject<DeltaDistribution>
+class DeltaDistribution : public TabularOneDDistribution,
+			  public ParameterListCompatibleObject<DeltaDistribution>
 {
 
 private:
@@ -53,14 +53,27 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
-  //! Return a random sample from the corresponding CDF
-  double sample();
+  //! Evaulate the CDF
+  double evaluateCDF( const double indep_var_value ) const;
 
   //! Return a random sample from the corresponding CDF
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample from the corresponding CDF and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
+
+  //! Return a random sample from the distribution and the sampled index 
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  double sampleWithRandomNumber( const double random_number ) const;
+
+  //! Return a random sample from the distribution in a subrange
+  double sampleInSubrange( const double max_indep_var ) const;
+
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  double sampleWithRandomNumberInSubrange( const double random_number,
+					   const double max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -70,6 +83,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;

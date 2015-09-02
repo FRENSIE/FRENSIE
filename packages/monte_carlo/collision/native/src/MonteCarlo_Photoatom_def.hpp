@@ -21,6 +21,8 @@ Photoatom::Photoatom(
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  grid_searcher,
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -41,10 +43,13 @@ Photoatom::Photoatom(
   testPrecondition( standard_scattering_reactions.size() +
 		    standard_absorption_reactions.size() > 0 );
   // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );  
+  testPrecondition( !atomic_relaxation_model.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 
   // Populate the core
   d_core = PhotoatomCore( energy_grid,
+			  grid_searcher,
 			  standard_scattering_reactions,
 			  standard_absorption_reactions,
 			  atomic_relaxation_model,

@@ -23,8 +23,11 @@ enum ParticleType{
   NEUTRON,
   ELECTRON,
   ADJOINT_PHOTON,
+  ADJOINT_PHOTON_PROBE,
   ADJOINT_NEUTRON,
+  ADJOINT_NEUTRON_PROBE,
   ADJOINT_ELECTRON,
+  ADJOINT_ELECTRON_PROBE,
   UNKNOWN_PARTICLE,
   PARTICLE_end
 };
@@ -32,9 +35,24 @@ enum ParticleType{
 //! Test if the particle type name is valid
 bool isValidParticleTypeName( const std::string& particle_type_name );
 
+//! Convert shorthand particle type name to verbose particle type name
+std::string convertShortParticleTypeNameToVerboseParticleTypeName(
+				 const std::string& short_particle_type_name );
+
 //! Convert the particle type name to a ParticleType enum
 ParticleType convertParticleTypeNameToParticleTypeEnum( 
 				       const std::string& particle_type_name );
+
+//! Convert the ParticleType enum to a string
+std::string convertParticleTypeEnumToString( const ParticleType particle_type);
+
+//! Stream operator for print ParticleType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const ParticleType particle_type )
+{
+  os << convertParticleTypeEnumToString( particle_type );
+  return os;
+}
 
 } // end MonteCarlo namespace
 
@@ -49,9 +67,6 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
 {
   static inline H5::EnumType dataType()
   {
-    // Make sure all particle types will be converted
-    testPrecondition( MonteCarlo::PARTICLE_end == 7 );
-    
     H5::EnumType hdf5_particle_type( sizeof( MonteCarlo::ParticleType ) );
 
     MonteCarlo::ParticleType particle_type = MonteCarlo::PHOTON;

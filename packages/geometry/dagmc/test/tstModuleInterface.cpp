@@ -311,6 +311,10 @@ int main( int argc, char** argv )
   // Initialize the Module Interface
   Geometry::ModuleInterface<moab::DagMC>::initialize();
 
+  // Enable thread support
+  Geometry::ModuleInterface<moab::DagMC>::enableThreadSupport( 
+		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  
   mpiSession.barrier();
   
   // Run the unit tests

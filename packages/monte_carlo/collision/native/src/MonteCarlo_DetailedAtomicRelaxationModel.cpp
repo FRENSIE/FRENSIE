@@ -21,15 +21,15 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel()
 
 // Constructor 
 DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
-                  const Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >&
-		  subshell_relaxation_models )
+            const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+	    subshell_relaxation_models )
 {
   // Make sure that the array is valid
   //testPrecondition( subshell_reaction_models.size() > 0 );
   
   for( unsigned i = 0; i < subshell_relaxation_models.size(); ++i )
   {
-    const Teuchos::RCP<SubshellRelaxationModel>& model = 
+    const Teuchos::RCP<const SubshellRelaxationModel>& model = 
       subshell_relaxation_models[i];
     
     // Neglect duplicate models
@@ -52,7 +52,7 @@ DetailedAtomicRelaxationModel::relaxAtom( const SubshellType vacancy_shell,
     // Recursively relax subshells
     SubshellType primary_vacancy_shell, secondary_vacancy_shell;
 
-    const Teuchos::RCP<SubshellRelaxationModel>& model = 
+    const Teuchos::RCP<const SubshellRelaxationModel>& model = 
       d_subshell_relaxation_models.find( vacancy_shell )->second;
 
     model->relaxSubshell( particle, 

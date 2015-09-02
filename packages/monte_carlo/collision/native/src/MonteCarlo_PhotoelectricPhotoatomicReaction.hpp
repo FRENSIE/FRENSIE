@@ -24,11 +24,18 @@ class PhotoelectricPhotoatomicReaction : public StandardPhotoatomicReaction<Inte
 
 public:
 
-  //! Constructor 
+  //! Basic constructor 
   PhotoelectricPhotoatomicReaction(
 		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index );
+
+  //! Constructor 
+  PhotoelectricPhotoatomicReaction(
+     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+     const Teuchos::ArrayRCP<const double>& cross_section,
+     const unsigned threshold_energy_index,
+     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   ~PhotoelectricPhotoatomicReaction()

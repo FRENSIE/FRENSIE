@@ -15,18 +15,19 @@
 
 namespace MonteCarlo{
 
-// Constructor without doppler broadening
+// Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction(
-           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	   const Teuchos::ArrayRCP<const double>& cross_section,
-	   const unsigned threshold_energy_index,
-	   const Teuchos::RCP<Utility::OneDDistribution>& scattering_function )
+              const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	      const Teuchos::ArrayRCP<const double>& cross_section,
+	      const unsigned threshold_energy_index,
+              const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	      scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,
                                                       threshold_energy_index ),
-   d_scattering_distribution( scattering_function )
+   d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -39,33 +40,25 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  // Make sure the scattering distribution is valid
+  testPrecondition( !scattering_distribution.is_null() );
 }
 
-// Constructor for doppler broadening
+// Constructor 
 template<typename InterpPolicy, bool processed_cross_section>
-IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction( 
+IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
-       const Teuchos::Array<double>& subshell_binding_energies,
-       const Teuchos::Array<double>& subshell_occupancies,
-       const Teuchos::Array<SubshellType>& subshell_order,
-       const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-       const IncoherentPhotonScatteringDistribution::ElectronMomentumDistArray&
-       electron_momentum_dist_array )
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+       scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,
-                                                      threshold_energy_index ),
-    d_scattering_distribution( scattering_function,
-			       subshell_binding_energies,
-			       subshell_occupancies,
-			       subshell_order,
-			       subshell_converter,
-			       electron_momentum_dist_array )
+                                                      threshold_energy_index,
+						      grid_searcher ),
+   d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -79,13 +72,9 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
-  // Make sure the shell data is valid
-  testPrecondition( subshell_binding_energies.size() > 0 );
-  testPrecondition( subshell_occupancies.size() ==
-		    subshell_binding_energies.size() );
-  testPrecondition( subshell_order.size() ==
-		    subshell_binding_energies.size() );
+  testPrecondition( !scattering_distribution.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -104,7 +93,7 @@ unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::ge
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return INCOHERENT_PHOTOATOMIC_REACTION;
+  return TOTAL_INCOHERENT_PHOTOATOMIC_REACTION;
 }
 
 // Simulate the reaction
@@ -114,7 +103,9 @@ void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution.scatterPhoton( photon, bank, shell_of_interaction);
+  d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
+
+  photon.incrementCollisionNumber();
 }
 
 } // end MonteCarlo namespace

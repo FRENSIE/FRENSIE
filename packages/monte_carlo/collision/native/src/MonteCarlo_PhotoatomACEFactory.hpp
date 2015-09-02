@@ -16,6 +16,7 @@
 #include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_PhotoatomCore.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
@@ -31,7 +32,9 @@ public:
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
-	    const bool use_doppler_broadening_data,
+	    const unsigned hash_grid_bins,
+	    const IncoherentModelType incoherent_model,
+	    const double kahn_sampling_cutoff_energy,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data );
 
@@ -42,7 +45,9 @@ public:
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
-	    const bool use_doppler_broadening_data,
+	    const unsigned hash_grid_bins,
+	    const IncoherentModelType incoherent_model,
+	    const double kahn_sampling_cutoff_energy,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data );
 private:

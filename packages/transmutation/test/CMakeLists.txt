@@ -14,7 +14,8 @@ TARGET_LINK_LIBRARIES(tstIsotopesForDepletion transmutation)
 ADD_TEST(IsotopesForDepletion_test tstIsotopesForDepletion)
 
 ADD_EXECUTABLE(tstDecayMatrix 
-  tstDecayMatrix.cpp )
+  tstDecayMatrix.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDecayMatrix transmutation)
 ADD_TEST(DecayMatrix_test tstDecayMatrix)
 

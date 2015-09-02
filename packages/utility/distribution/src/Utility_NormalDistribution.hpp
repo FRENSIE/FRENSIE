@@ -17,13 +17,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 class NormalDistribution : public OneDDistribution,
-			   public XMLCompatibleObject<NormalDistribution>
+			   public ParameterListCompatibleObject<NormalDistribution>
 {
 
 private:
@@ -58,14 +58,11 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
-
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
-
+  
+  //! Return a random sample from the distribution and record the trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
+  
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
 
@@ -74,6 +71,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -106,12 +106,6 @@ private:
 
   // The max independent value
   double d_max_independent_value;
-
-  // The number of trials
-  unsigned d_trials;
-
-  // The number of random samples returned
-  unsigned d_samples;
 };
 
 } // end Utility namespace

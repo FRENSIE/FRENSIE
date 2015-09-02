@@ -13,6 +13,9 @@
 #include "MonteCarlo_CollisionModuleInterfaceDecl.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 
 namespace MonteCarlo{
 
@@ -48,6 +51,9 @@ public:
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const PhotonState& particle);
 
+  //! Get the total macroscopic cross section of a material
+  static double getMacroscopicTotalCrossSection( const ElectronState& particle);
+
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
 					  const NeutronState& particle,
@@ -63,6 +69,11 @@ public:
 				     const PhotonState& particle,
 				     const PhotonuclearReactionType reaction );
 
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				      const ElectronState& particle,
+				      const ElectroatomicReactionType reaction );
+
   //! Sample the optical path length traveled by a particle before a collision
   static double sampleOpticalPathLength();
 
@@ -73,6 +84,11 @@ public:
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( PhotonState& particle,
+				       ParticleBank& bank,
+				       const bool analogue );
+
+  //! Collide with the material in a cell
+  static void collideWithCellMaterial( ElectronState& particle,
 				       ParticleBank& bank,
 				       const bool analogue );
 };
@@ -110,7 +126,15 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 // Get the total macroscopic cross section of a material
 inline double 
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
-					        const PhotonState& particle )
+					   const PhotonState& particle )
+{
+  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
+}
+
+// Get the total macroscopic cross section of a material
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
+					   const ElectronState& particle )
 {
   return CollisionHandler::getMacroscopicTotalCrossSection( particle );
 }
@@ -122,7 +146,7 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 					   const NuclearReactionType reaction )
 {
   return CollisionHandler::getMacroscopicReactionCrossSection( particle,
-							       reaction );
+                                                               reaction );
 }
 
 // Get the macroscopic cross section for a specific reaction
@@ -140,6 +164,16 @@ inline double
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 				      const PhotonState& particle,
 				      const PhotonuclearReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
+}
+
+// Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+				       const ElectronState& particle,
+				       const ElectroatomicReactionType reaction )
 {
   return CollisionHandler::getMacroscopicReactionCrossSection( particle,
 							       reaction );
@@ -172,8 +206,20 @@ CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 						       const bool analogue )
 {
   CollisionHandler::collideWithCellMaterial( particle,
-					     bank,
-					     analogue );
+                                             bank,
+                                             analogue );
+}
+
+// Collide with the material in a cell
+inline void 
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
+						       ElectronState& particle,
+						       ParticleBank& bank,
+						       const bool analogue )
+{
+  CollisionHandler::collideWithCellMaterial( particle,
+                                             bank,
+                                             analogue );
 }
 
 } // end MonteCarlo namespace

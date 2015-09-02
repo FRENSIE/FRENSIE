@@ -9,6 +9,9 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
+// Boost Includes
+#include <boost/bind.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -19,6 +22,11 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+
 
 namespace MonteCarlo{
 
@@ -48,6 +56,65 @@ ParticleSimulationManager<GeometryHandler,
 {
   // At least one history must be simulated
   testPrecondition( number_of_histories > 0 );
+
+  // Assign the functions based on the mode
+  ParticleModeType mode = SimulationProperties::getParticleMode();
+  
+  switch( mode )
+  {
+  case NEUTRON_MODE:
+  {
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );		   
+    break;
+  }
+  case PHOTON_MODE:
+  {
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    break;
+  }
+  case ELECTRON_MODE:
+  {
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<ElectronState>,
+					     boost::cref( *this ),
+					     _1,
+					     _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
+					   boost::cref( *this ),
+					   _1,
+					   _2 );
+    break;
+  }
+  default:
+    THROW_EXCEPTION( std::runtime_error,
+		     "Error: particle mode " << mode << " is not currently "
+		     << "supported by the particle simulation manager." );
+  }
 }
 
 // Run the simulation set up by the user
@@ -66,9 +133,10 @@ void ParticleSimulationManager<GeometryHandler,
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
-  // Set up the geometry module interface for the number of threads requested
-  GMI::initialize();
-
+  // Enable geometry thread support
+  GMI::enableThreadSupport(
+	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  
   // Enable estimator thread support
   EMI::enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
@@ -115,12 +183,16 @@ void ParticleSimulationManager<GeometryHandler,
 	  switch( bank.top()->getParticleType() )
 	  {
 	  case NEUTRON: 
-	    simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
-			      bank );
+	    d_simulate_neutron( dynamic_cast<NeutronState&>( *bank.top() ),
+				bank );
 	    break;
 	  case PHOTON:
-	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
-			      bank );
+	    d_simulate_photon( dynamic_cast<PhotonState&>( *bank.top() ),
+			       bank );
+	    break;
+	  case ELECTRON:
+	    d_simulate_electron( dynamic_cast<ElectronState&>( *bank.top() ),
+	    			 bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
@@ -128,8 +200,8 @@ void ParticleSimulationManager<GeometryHandler,
 			     << bank.top()->getParticleType() <<
 			     " is not currently supported!" );
 	  }
-	  
-	  bank.pop();
+  
+	bank.pop();
 	}
 	
 	// Commit all estimator history contributions
@@ -150,16 +222,16 @@ void ParticleSimulationManager<GeometryHandler,
 
 // Set the number of particle histories to simulate
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::simulateParticle( 
-						   ParticleStateType& particle,
-						   ParticleBank& bank )
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::simulateParticle( 
+                                                   ParticleStateType& particle,
+						   ParticleBank& bank ) const
 {
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
@@ -193,126 +265,142 @@ void ParticleSimulationManager<GeometryHandler,
     {
       // Fire a ray at the cell currently containing the particle
       try{
-	distance_to_surface_hit = 0.0;
+  	distance_to_surface_hit = 0.0;
 	
-	GMI::fireRay( particle.ray(),
-		      particle.getCell(),
-		      surface_hit,
-		      distance_to_surface_hit );
+  	GMI::fireRay( particle.ray(),
+  		      particle.getCell(),
+  		      surface_hit,
+  		      distance_to_surface_hit );
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
-	cell_total_macro_cross_section = 
-	  CMI::getMacroscopicTotalCrossSection( particle );
+      	cell_total_macro_cross_section = 
+      	  CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
-	cell_total_macro_cross_section = 0.0;
+  	cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
-	distance_to_surface_hit*cell_total_macro_cross_section;
+  	distance_to_surface_hit*cell_total_macro_cross_section;
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
 
       if( op_to_surface_hit < remaining_subtrack_op )
       {
-	// Advance the particle to the cell boundary
-	particle.advance( distance_to_surface_hit );
+  	// Advance the particle to the cell boundary
+  	particle.advance( distance_to_surface_hit );
 
-	// Get the surface normal at the intersection point
-	GMI::getSurfaceNormal( surface_hit,
-			       particle.getPosition(),
-			       surface_normal.getRawPtr() );		       
+  	// Get the surface normal at the intersection point
+  	GMI::getSurfaceNormal( surface_hit,
+  			       particle.getPosition(),
+  			       surface_normal.getRawPtr() );		       
 
-	cell_leaving = particle.getCell();
+  	cell_leaving = particle.getCell();
 	
-	// Find the cell on the other side of the surface hit
-	try{
-	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
-							cell_leaving,
-							surface_hit );
-	}
-	CATCH_LOST_PARTICLE_AND_BREAK( particle );
+  	// Find the cell on the other side of the surface hit
+  	try{
+  	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
+  							cell_leaving,
+  							surface_hit );
+  	}
+  	CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-	particle.setCell( cell_entering );
+  	particle.setCell( cell_entering );
 
-	// Update estimators
-	EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
-						  particle,
-						  cell_entering,
-						  cell_leaving,
-						  surface_hit,
-						  distance_to_surface_hit,
-						  subtrack_start_time,
-						  surface_normal.getRawPtr() );
+  	// Update estimators
+  	EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
+  						  particle,
+  						  cell_entering,
+  						  cell_leaving,
+  						  surface_hit,
+  						  distance_to_surface_hit,
+  						  subtrack_start_time,
+  						  surface_normal.getRawPtr() );
 
-	// Check if a termination cell was encountered
-	if( GMI::isTerminationCell( particle.getCell() ) )
-	{
-	  particle.setAsGone();
+  	// Check if a termination cell was encountered
+  	if( GMI::isTerminationCell( particle.getCell() ) )
+  	{
+  	  particle.setAsGone();
 
-	  break;
-	}
+  	  break;
+  	}
 
-	// Update the remaining subtrack mfp
-	remaining_subtrack_op -= op_to_surface_hit;
+  	// Update the remaining subtrack mfp
+  	remaining_subtrack_op -= op_to_surface_hit;
       } 
       
       // A collision occurs in this cell
       else
       {
-	// Advance the particle to the collision site
-	double distance = remaining_subtrack_op/cell_total_macro_cross_section;
+  	// Advance the particle to the collision site
+  	double distance = remaining_subtrack_op/cell_total_macro_cross_section;
 	
-	particle.advance( distance );
+  	particle.advance( distance );
 	
-	// Update estimators
-	EMI::updateEstimatorsFromParticleCollidingInCellEvent(
-					  particle,
-					  distance,
-					  subtrack_start_time,
-					  1.0/cell_total_macro_cross_section );
+  	// Update estimators
+  	EMI::updateEstimatorsFromParticleCollidingInCellEvent(
+  					  particle,
+  					  distance,
+  					  subtrack_start_time,
+  					  1.0/cell_total_macro_cross_section );
 
 	
 
-	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-						      particle,
-						      ray_start_point,
-						      particle.getPosition() );
+  	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  						      particle,
+  						      ray_start_point,
+  						      particle.getPosition() );
 
-	// Undergo a collision with the material in the cell
-	CMI::collideWithCellMaterial( particle, bank, true );
+  	// Undergo a collision with the material in the cell
+  	CMI::collideWithCellMaterial( particle, bank, true );
 
-	// Indicate that a collision has occurred
-	GMI::newRay();
+  	// Indicate that a collision has occurred
+  	GMI::newRay();
 
-	// Cache the current position of the new ray
-	ray_start_point[0] = particle.getXPosition();
-	ray_start_point[1] = particle.getYPosition();
-	ray_start_point[2] = particle.getZPosition();
+  	// Cache the current position of the new ray
+  	ray_start_point[0] = particle.getXPosition();
+  	ray_start_point[1] = particle.getYPosition();
+  	ray_start_point[2] = particle.getZPosition();
 
-	// Make sure the energy is above the cutoff
-	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
-	  particle.setAsGone();
+  	// Make sure the energy is above the cutoff
+  	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  	  particle.setAsGone();
 
-	// This subtrack is finished
-	break;
+  	// This subtrack is finished
+  	break;
       }
     }	     
   }
 
   // Update the global estimators
   EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-						      particle,
-						      ray_start_point,
-						      particle.getPosition() );
+  						      particle,
+  						      ray_start_point,
+  						      particle.getPosition() );
 
   // Indicate that this particle history is complete
   GMI::newRay();
+}
+
+// Set the number of particle histories to simulate
+template<typename GeometryHandler,
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
+template<typename ParticleStateType>
+void ParticleSimulationManager<GeometryHandler,
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::ignoreParticle( 
+                                                   ParticleStateType& particle,
+						   ParticleBank& bank ) const
+{
+  particle.setAsGone();
 }
 
 // Print the data in all estimators to the desired stream
@@ -331,9 +419,7 @@ void ParticleSimulationManager<GeometryHandler,
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
   os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
-  os << "/*---------------------------------------------------------------*/";
-  os << "Estimator Data" << std::endl;
-  os << "/*---------------------------------------------------------------*/";
+  
   EMI::printEstimators( os,
 			d_histories_completed,
 			d_start_time,

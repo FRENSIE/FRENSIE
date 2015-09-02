@@ -1,0 +1,24 @@
+ADD_EXECUTABLE(tstOccupationNumberEvaluator tstOccupationNumberEvaluator.cpp)
+TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
+ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+
+ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator tstStandardElectronPhotonRelaxationDataGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
+ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p")
+
+ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
+  tstAdjointIncoherentCrossSectionHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionHelpers data_gen_electron_photon)
+ADD_TEST(AdjointIncoherentCrossSectionHelpers_test tstAdjointIncoherentCrossSectionHelpers)
+
+ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
+  tstAdjointIncoherentGridGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_electron_photon)
+ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
+
+ADD_EXECUTABLE(tstStandardAdjointIncoherentGridGenerator
+  tstStandardAdjointIncoherentGridGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
+ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")

@@ -32,8 +32,8 @@ public:
 
   //! Relax atom
   void relaxAtom( const SubshellType vacancy_shell,
-		  const ParticleState& particle,
-		  ParticleBank& bank ) const;
+		          const ParticleState& particle,
+		          ParticleBank& bank ) const;
 };
 
 // Relax atom

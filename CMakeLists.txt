@@ -18,6 +18,9 @@ INCLUDE(Macros)
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
+# Enable C++11 standard support
+ENABLE_CXX11_STANDARD_SUPPORT()
+
 # Load the patch files
 SET(TEUCHOS_TWO_D_ARRAY_PATCH 
   ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
@@ -101,11 +104,47 @@ ELSE()
   MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
 ENDIF()
 
+# Enable ROOT Support
+IF(${FRENSIE_ENABLE_ROOT})
+  IF(ROOT_PREFIX)
+    ENABLE_ROOT_SUPPORT()
+  ELSE()
+    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
+  ENDIF()
+ENDIF()
+
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
+
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})
   SET(HAVE_${PROJECT_NAME}_DBC "1")
 ELSE()
   SET(HAVE_${PROJECT_NAME}_DBC "0")
+ENDIF()
+
+# Enable profiling support if requested
+IF(${${PROJECT_NAME}_ENABLE_PROFILING})
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
+  SET(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -pg")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  
+  IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+    MESSAGE(WARNING "profiling can only be done in debug builds!")
+  ENDIF()
+ENDIF()
+
+# Enable coverage support if requested
+IF(${${PROJECT_NAME}_ENABLE_COVERAGE})
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+
+  IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+    MESSAGE(WARNING "coverage testing can only be done in debug builds!")
+  ENDIF()
 ENDIF()
 
 # Parse the DBC configure file so it can be used in the source files
@@ -139,17 +178,6 @@ ENDIF()
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
-INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
-packages/utility/hdf5/src packages/utility/distribution/src
-packages/geometry/core/src packages/geometry/dagmc/src
-packages/geometry/interface packages/data/ace/src packages/data/epdl/src
-packages/monte_carlo/core/src packages/monte_carlo/source/core/src
-packages/monte_carlo/source/interface packages/monte_carlo/source/native/src
-packages/monte_carlo/estimator/core/src packages/monte_carlo/estimator/interface
-packages/monte_carlo/estimator/native/src packages/monte_carlo/collision/core/src
-packages/monte_carlo/collision/interface packages/monte_carlo/collision/native/src
-packages/monte_carlo/manager/src packages/transmutation/src packages/data/decay/src
-packages/data/endf/src)
 
 ADD_SUBDIRECTORY(tools)
 
@@ -157,10 +185,10 @@ ADD_SUBDIRECTORY(doc)
 
 # Add custom build ctest target for continuous integration tests
 ADD_CUSTOM_TARGET(test-fast 
-  COMMAND ctest -E verification
+  COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-ADD_CUSTOM_TARGET(test-slow
-  COMMAND ctest -R verification
+ADD_CUSTOM_TARGET(test-facemc
+  COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # Configure the CTestCustom.cake file

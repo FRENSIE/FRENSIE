@@ -2,7 +2,7 @@
   
   <ParameterList name="H Sphere">
     <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Fractions" type="Array(double)" value="{1.0}"/>
+    <Parameter name="Fractions" type="Array" value="{1.0}"/>
     <Parameter name="Isotopes" type="Array(string)" value="{H-1_2500K}"/>
   </ParameterList>
 

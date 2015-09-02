@@ -34,6 +34,54 @@ ADD_EXECUTABLE(tstInterpolationPolicy
 TARGET_LINK_LIBRARIES(tstInterpolationPolicy utility_core)
 ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
 
+ADD_EXECUTABLE(tstLinLinLinTwoDInterpolationPolicy
+  tstLinLinLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLinLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLinLinTwoDInterpolationPolicy_test tstLinLinLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLinLogTwoDInterpolationPolicy
+  tstLinLinLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLinLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLinLogTwoDInterpolationPolicy_test tstLinLinLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLogLinTwoDInterpolationPolicy
+  tstLinLogLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLogLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLogLinTwoDInterpolationPolicy_test tstLinLogLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLogLogTwoDInterpolationPolicy
+  tstLinLogLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLogLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLogLogTwoDInterpolationPolicy_test tstLinLogLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLinLinTwoDInterpolationPolicy
+  tstLogLinLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLinLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLinLinTwoDInterpolationPolicy_test tstLogLinLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLogLinTwoDInterpolationPolicy
+  tstLogLogLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLogLinTwoDInterpolationPolicy_test tstLogLogLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLinLogTwoDInterpolationPolicy
+  tstLogLinLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLinLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLinLogTwoDInterpolationPolicy_test tstLogLinLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLogLogTwoDInterpolationPolicy
+  tstLogLogLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLogLogTwoDInterpolationPolicy_test tstLogLogLogTwoDInterpolationPolicy)
+
 ADD_EXECUTABLE(tstSetOperationFunctor 
   tstSetOperationFunctor.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -104,20 +152,29 @@ ADD_EXECUTABLE(tstGaussKronrodQuadratureKernel
 TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureKernel utility_core)
 ADD_TEST(GaussKronrodQuadratureKernel_test tstGaussKronrodQuadratureKernel)
 
-ADD_EXECUTABLE(tstLinearGridGenerator 
-  tstLinearGridGenerator.cpp
+ADD_EXECUTABLE(tstGridGenerator 
+  tstGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstLinearGridGenerator utility_core)
-ADD_TEST(LinearGridGenerator_test tstLinearGridGenerator)
-
-ADD_EXECUTABLE(tstBilinearGridGenerator 
-  tstBilinearGridGenerator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstBilinearGridGenerator utility_core)
-ADD_TEST(BilinearGridGenerator_test tstBilinearGridGenerator)
+TARGET_LINK_LIBRARIES(tstGridGenerator utility_core)
+ADD_TEST(GridGenerator_test tstGridGenerator)
 
 ADD_EXECUTABLE(tstTetrahedronHelpers
   tstTetrahedronHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
 ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)
+
+ADD_EXECUTABLE(tstStandardHashBasedGridSearcher 
+  tstStandardHashBasedGridSearcher.cpp)
+TARGET_LINK_LIBRARIES(tstStandardHashBasedGridSearcher utility_core)
+ADD_TEST(StandardHashBasedGridSearcher_test tstStandardHashBasedGridSearcher)
+
+ADD_EXECUTABLE(tstArrayString tstArrayString.cpp)
+TARGET_LINK_LIBRARIES(tstArrayString utility_core)
+ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
+
+ADD_EXECUTABLE(tstUnitConversionPolicy 
+  tstUnitConversionPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstUnitConversionPolicy utility_core)
+ADD_TEST(UnitConversionPolicy_test tstUnitConversionPolicy)

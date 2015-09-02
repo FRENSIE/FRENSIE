@@ -39,7 +39,7 @@ PhotonMaterial::PhotonMaterial(
 					    photoatom_fractions.end() ) );
   testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
 
-  // Copy that photoatoms that make up this material
+  // Copy the photoatoms that make up this material
   for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
   {
     d_atoms[i].first = photoatom_fractions[i];

@@ -39,15 +39,18 @@ Teuchos::RCP<MonteCarlo::Photoatom> atom;
 // Check that a basic photoatom can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    false,
-						    false,
-						    false );
-
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+					       *xss_data_extractor,
+					       photoatom_name,
+					       atomic_weight,
+					       relaxation_model,
+					       atom,
+					       100,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
+					       false,
+					       false );
+					       
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
@@ -82,20 +85,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.364234411496E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.364234411496E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
@@ -153,6 +156,8 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   cross_section = atom->getReactionCrossSection( 
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
@@ -198,10 +203,11 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.1; // select the incoherent reaction
+  fake_stream[0] = 0.9; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
+  fake_stream[4] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -220,14 +226,17 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 // Check that a photoatom with Doppler broadening data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    true,
-						    false,
-						    false );
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+		 *xss_data_extractor,
+		 photoatom_name,
+		 atomic_weight,
+		 relaxation_model,
+		 atom,
+		 100,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 false );
   
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -263,20 +272,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.364234411496E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.364234411496E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
@@ -365,6 +374,8 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 			 exp( 1.151292546497E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
   // Test that the Doppler data is present
   MonteCarlo::ParticleBank bank;
 
@@ -376,20 +387,21 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 7 );
-  fake_stream[0] = 0.1; // select the incoherent reaction
+  std::vector<double> fake_stream( 8);
+  fake_stream[0] = 0.9; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
   fake_stream[4] = 0.005; // select first shell for collision
   fake_stream[5] = 6.427713151861e-01; // select pz = 40.0
   fake_stream[6] = 0.25; // select energy loss
+  fake_stream[7] = 0.5; // azimuthal_angle = pi
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   atom->collideAnalogue( photon, bank );
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -413,14 +425,17 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // Check that a photoatom with subshell photoelectric data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    false,
-						    false,
-						    true );
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+					       *xss_data_extractor,
+					       photoatom_name,
+					       atomic_weight,
+					       relaxation_model,
+					       atom,
+					       100,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
+					       false,
+					       true );
   
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -456,20 +471,20 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 
   // Test that the incoherent cross section can be returned
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.338724079720E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection( 
-				 exp( -1.364234411496E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.364234411496E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.304090138782E+01 ), 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 

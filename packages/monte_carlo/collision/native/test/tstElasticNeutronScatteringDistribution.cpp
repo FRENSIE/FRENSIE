@@ -33,7 +33,7 @@ void initializeScatteringDistribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
   
   Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > >
+			       Teuchos::RCP<const Utility::OneDDistribution> > >
     raw_scattering_distribution( 5 );
 
   raw_scattering_distribution[0].first = 1e-11;

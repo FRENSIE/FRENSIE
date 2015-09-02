@@ -14,15 +14,15 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 //! Uniform distribution class
-class UniformDistribution : public OneDDistribution,
-			    public XMLCompatibleObject<UniformDistribution>
+class UniformDistribution : public TabularOneDDistribution,
+			    public ParameterListCompatibleObject<UniformDistribution>
 {
 
 private:
@@ -56,14 +56,27 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
-  //! Return a random sample from the distribution
-  double sample();
+  //! Evaluate the CDF
+  double evaluateCDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample from the corresponding CDF and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  double sampleWithRandomNumber( const double random_number ) const;
+
+  //! Return a random sample and sampled index from the corresponding CDF
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the corresponding CDF in a subrange
+  double sampleInSubrange( const double max_indep_var ) const;
+
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  double sampleWithRandomNumberInSubrange( const double random_number,
+					   const double max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -73,6 +86,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  // Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -100,6 +116,34 @@ private:
   // The uniform distribution PDF value
   double d_pdf_value;
 };
+
+// Return a random sample from the distribution at the given CDF value
+inline double UniformDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
+  return random_number*(d_max_independent_value - d_min_independent_value) +
+    d_min_independent_value;
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+inline double UniformDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the upper bound of the subrange is valid
+  testPrecondition( max_indep_var <= d_max_independent_value );
+  testPrecondition( max_indep_var >= d_min_independent_value );
+
+  return random_number*(max_indep_var - d_min_independent_value) + 
+    d_min_independent_value;
+}
 
 } // end Utility namespace
 

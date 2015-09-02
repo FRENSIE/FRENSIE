@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -33,6 +34,8 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       mode = PHOTON_MODE;
     else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
       mode = NEUTRON_PHOTON_MODE;
+    else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
+      mode = ELECTRON_MODE;
     else
     {
       THROW_EXCEPTION( std::runtime_error,
@@ -50,6 +53,25 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   
   SimulationProperties::setNumberOfHistories( 
 				 properties.get<unsigned int>( "Histories" ) );
+
+  // Get the angle cosine cutoff value for surface flux estimators - optional
+  if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )
+  {
+    double cutoff = 
+      properties.get<double>( "Surface Flux Angle Cosine Cutoff" );
+
+    TEST_FOR_EXCEPTION( cutoff < 0.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+                        "be a positive number!" );
+
+    TEST_FOR_EXCEPTION( cutoff > 1.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+			"be less than 1.0!" );
+
+    SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
+  }
   
   // Get the free gas thermal treatment temperature threshold - optional
   if( properties.isParameter( "Free Gas Threshold" ) )
@@ -178,6 +200,42 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the kahn sampling cutoff energy - optional
+  if( properties.isParameter( "Kahn Sampling Cutoff Energy" ) )
+  {
+    double energy = properties.get<double>( "Kahn Sampling Cutoff Energy" );
+
+    if( energy >= SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
+    {
+      SimulationProperties::setKahnSamplingCutoffEnergy( energy );
+    }
+    else
+    {
+      std::cerr << "Warning: the Kahn sampling cutoff energy must be greater "
+		<< "than "
+		<< SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+		<< " MeV. The default value of "
+		<< SimulationProperties::getKahnSamplingCutoffEnergy()
+		<< " MeV will be used instead of " << energy << "." 
+		<< std::endl;
+    }
+  }
+
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Photon Hash Grid Bins" ) )
+  {
+    unsigned bins = properties.get<unsigned>( "Photon Hash Grid Bins" );
+
+    SimulationProperties::setNumberOfPhotonHashGridBins( bins );
+  }
+
+  // Get the warnings mode - optional
+  if( properties.isParameter( "Warnings" ) )
+  {
+    if( !properties.get<bool>( "Warnings" ) )
+      SimulationProperties::setWarningsOff();
+  }
+
   // Get the capture mode - optional
   if( properties.isParameter( "Implicit Capture" ) )
   {
@@ -185,11 +243,27 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       SimulationProperties::setImplicitCaptureModeOn();
   }
 
-  // Get the photon Doppler broadening mode - optional
-  if( properties.isParameter( "Photon Doppler Broadening" ) )
+  // Get the incohernt scattering model - optional
+  if( properties.isParameter( "Incoherent Photon Scattering Model" ) )
   {
-    if( !properties.get<bool>( "Photon Doppler Broadening" ) )
-      SimulationProperties::setPhotonDopplerBroadeningModeOff();
+    std::string model_name = 
+      properties.get<std::string>( "Incoherent Photon Scattering Model" );
+
+    IncoherentModelType model;
+    
+    try{
+      model = convertStringToIncoherentModelTypeEnum( model_name );
+    }
+    catch( std::logic_error )
+    {
+      model = SimulationProperties::getIncoherentModelType();
+      
+      std::cerr << "Warning: incohernt photon scattering model "
+		<< model_name << " is unknown. The default model "
+		<< model << " will be used instead." << std::endl;
+    }
+
+    SimulationProperties::setIncoherentModelType( model );
   }
 
   // Get the atomic relaxation mode - optional
@@ -211,6 +285,31 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   {
     if( properties.get<bool>( "Photonuclear Interaction" ) )
       SimulationProperties::setPhotonuclearInteractionModeOn();
+  }
+
+  // Get the bremsstrahlung photon angular distribution function - optional
+  if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
+  {
+    std::string raw_function = 
+           properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
+    
+     MonteCarlo::BremsstrahlungAngularDistributionType function;
+    
+    if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "2BS" || raw_function == "2bs" || raw_function == "twobs" )
+      function = MonteCarlo::TWOBS_DISTRIBUTION;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "Error: bremsstrahlung angular distribution " << raw_function << 
+               " is not currently supported!" );
+    }
+   
+     SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                                                                     function );
   }
   
   properties.unused( std::cerr );

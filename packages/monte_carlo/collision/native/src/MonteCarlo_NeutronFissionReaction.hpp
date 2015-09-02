@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
@@ -39,7 +39,7 @@ public:
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
 		   fission_neutron_multiplicity_distribution,
-		   const Teuchos::RCP<NeutronScatteringDistribution>&
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   prompt_neutron_emission_distribution );
 
   //! Destructor
@@ -81,7 +81,7 @@ private:
   d_fission_neutron_multiplicity_distribution;
   
   // The prompt neutron scattering distribution
-  Teuchos::RCP<NeutronScatteringDistribution> 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
   d_prompt_neutron_emission_distribution;		  
 };
 

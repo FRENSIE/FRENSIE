@@ -8,9 +8,11 @@
 
 // Moab Includes
 #include <moab/Core.hpp>
+#include <moab/BoundBox.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
@@ -18,6 +20,11 @@
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
+
+// Initialize static member data
+template<typename ContributionMultiplierPolicy>
+const double 
+TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::s_tol = 1e-6;
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
@@ -31,9 +38,6 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     d_tet_meshset(),
     d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
     d_kd_tree_root(),
-    d_obb_tree( new moab::OrientedBoxTreeTool( d_moab_interface.getRawPtr() )),
-    d_obb_tree_root(),
-    d_last_visited_cell(),
     d_tet_barycentric_transform_matrices(),
     d_tet_reference_vertices(),
     d_output_mesh_name( output_mesh_file_name )
@@ -224,7 +228,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                            
     moab::ErrorCode return_value = 
        d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
-                                           1e-6,
+                                           s_tol,
                                            particle.getDirection(),
                                            start_point,
                                            tet_surface_triangles,
@@ -282,7 +286,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
       }
       
       // Compute and add the partial history contribution to appropriate tet
-      for( unsigned int i = 0; i < array_of_hit_points.size(); ++i )
+      for( unsigned int i = 0; i < ray_tet_intersections.size(); ++i )
       {
 	moab::CartVect tet_centroid = ( (array_of_hit_points[i+1] + 
 					 array_of_hit_points[i])/2.0 );
@@ -343,16 +347,62 @@ bool
 TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh( 
 						        const double point[3] )
 {
+  bool point_in_mesh = false;
+
+  // Find the leaf that the point is in (if there is one)
   moab::AdaptiveKDTreeIter kd_tree_iteration;
+  
+  moab::ErrorCode return_value = 
+    d_kd_tree->point_search( point, kd_tree_iteration );
 
-  moab::ErrorCode return_value = d_kd_tree->point_search( point,
-							  kd_tree_iteration );
+  // Check that the leaf actually contains the point (concave mesh)
+  if( return_value == moab::MB_SUCCESS && kd_tree_iteration.handle() != 0 )
+  {  
+    moab::EntityHandle leaf_node = kd_tree_iteration.handle();
 
-  return (return_value == moab::MB_SUCCESS) && 
-    (kd_tree_iteration.handle() != 0 );
+    moab::Range tets_in_leaf;
+    
+    return_value = d_moab_interface->get_entities_by_dimension( leaf_node,
+								3,
+								tets_in_leaf,
+								false );
+    
+    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			Utility::MOABException,
+			moab::ErrorCodeStr[return_value] );
+
+    // Quickly check if the point is likely in one of the tets
+    for( moab::Range::const_iterator tet = tets_in_leaf.begin();
+	 tet != tets_in_leaf.end();
+	 ++tet )
+    {
+      if( Utility::isPointInTet( 
+		  point,
+		  d_tet_reference_vertices.find( *tet )->second,
+		  d_tet_barycentric_transform_matrices.find( *tet )->second,
+		  s_tol ) )
+      {
+	point_in_mesh = true;
+
+	break;
+      }
+    }
+  }
+  // The point is outside the mesh bounding box
+  else 
+    point_in_mesh = false;
+  
+  return point_in_mesh;
 }
 
 // Determine which tet a given point is in
+/*! \details This function should only be called after testing if the point
+ * is in the mesh. If the point is in the mesh, it is still possible that
+ * this function will not be able to find the correct tet due to numerical
+ * precision. In that event the return value will be zero. It is therefore
+ * important to test that the return value from this function is not zero
+ * before using it. 
+ */
 template<typename ContributionMultiplierPolicy>
 moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichTetIsPointIn(
 	                                                const double point[3] )
@@ -387,7 +437,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
 		      moab::ErrorCodeStr[return_value] );     
     
   // A tet must be found since a leaf was found - failure to find a tet
-  // indicates a tolerance issue
+  // indicates a tolerance issue usually
   moab::EntityHandle tet_handle = 0;
     
   for( moab::Range::const_iterator tet = tets_in_leaf.begin(); 
@@ -398,7 +448,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
 		  point,
 		  d_tet_reference_vertices.find( *tet )->second,
 		  d_tet_barycentric_transform_matrices.find( *tet )->second,
-		  1e-9 ) )
+		  s_tol ) )
     {
       tet_handle = *tet;
       
@@ -407,7 +457,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   }
     
   // Make sure the tet has been found
-  if( tet_handle == 0 )
+  if( tet_handle == 0 && SimulationProperties::displayWarnings() )
   {
     #pragma omp critical( point_in_tet_warning_message )
     {

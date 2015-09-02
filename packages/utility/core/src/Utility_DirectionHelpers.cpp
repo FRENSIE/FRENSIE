@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_DirectionHelpers.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 
 namespace Utility{
@@ -89,6 +90,12 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
 					       const double direction[3],
 					       double rotated_direction[3] )
 {
+  // Make sure the polar angle is valid
+  testPrecondition( polar_angle_cosine >= -1.0 );
+  testPrecondition( polar_angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPrecondition( azimuthal_angle >= 0.0 );
+  testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
   // Make sure the direction is valid
   testPrecondition( validDirection( direction ) );
   

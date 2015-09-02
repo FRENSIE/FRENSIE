@@ -42,6 +42,8 @@ void initializeDagMC()
   Geometry::initializeDagMC( test_geometry_file_name,
 			     property_names,
 			     1e-3 );
+
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
 }
 
 //---------------------------------------------------------------------------//
@@ -66,8 +68,6 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_source_xml_file",

@@ -11,12 +11,30 @@
 
 namespace Utility{
 
+//! The log independent variable processing tag
+struct LogIndepVarProcessingTag{};
+
+//! The lin independent variable processing tag
+struct LinIndepVarProcessingTag{};
+
+//! The log dependent variable processing tag
+struct LogDepVarProcessingTag{};
+
+//! The lin dependent variable processing tag
+struct LinDepVarProcessingTag{};
+
 /*! \brief Policy struct for interpolating data tables that require log-log 
  * interpolation between evaluated points.
  * \ingroup policies
  */
 struct LogLog
 {
+  //! Independent variable processing tag
+  typedef LogIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LogDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -31,6 +49,21 @@ struct LogLog
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
 
   //! Process the independent value
   template<typename T>
@@ -47,6 +80,14 @@ struct LogLog
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
+
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -58,6 +99,12 @@ struct LogLog
  */
 struct LogLin
 {
+  //! Independent variable processing tag
+  typedef LinIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LogDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -72,6 +119,21 @@ struct LogLin
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
 
   //! Process the independent value
   template<typename T>
@@ -88,6 +150,14 @@ struct LogLin
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
+
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -99,6 +169,12 @@ struct LogLin
  */
 struct LinLog
 {
+  //! Independent variable processing tag
+  typedef LogIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LinDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -113,6 +189,21 @@ struct LinLog
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
 
   //! Process the independent value
   template<typename T>
@@ -130,6 +221,14 @@ struct LinLog
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
 
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
+
   //! The name of the policy
   static const std::string name();
 };
@@ -140,6 +239,12 @@ struct LinLog
  */
 struct LinLin
 {
+  //! Independent variable processing tag
+  typedef LinIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LinDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -154,7 +259,30 @@ struct LinLin
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
   
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
+
   //! Process the independent value
   template<typename T>
   static T processIndepVar( const T indep_var );
