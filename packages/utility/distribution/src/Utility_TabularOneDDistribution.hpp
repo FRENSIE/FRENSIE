@@ -14,7 +14,9 @@
 
 namespace Utility{
 
-//! The unit-aware tabular one-dimensional distribution declaration
+/*! The unit-aware tabular one-dimensional distribution declaration
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareTabularOneDDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
@@ -23,6 +25,9 @@ public:
 
   //! The independent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
@@ -64,7 +69,9 @@ inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isT
   return true;
 }
 
-//! The unit-agnostic tabular one-dimensional distribution declaration
+/*! The tabular one-dimensional distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 
 } // end Utility namespace
