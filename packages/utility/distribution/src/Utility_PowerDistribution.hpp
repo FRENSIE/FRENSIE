@@ -35,7 +35,7 @@ private:
   typedef typename IndepUnitTraitsNp1::template GetQuantityType<double>::type IndepQuantityNp1;
 
   // The distribution multiplier unit traits
-  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-N>::type>::type> DistMultiplierUnitTraits;
+  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<N,-1>::type>::type> DistMultiplierUnitTraits;
 
   // The distribution multiplier quantity type
   typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
@@ -64,13 +64,13 @@ public:
   typedef UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
   
   //! Default constructor
   UnitAwarePowerDistribution();
@@ -182,22 +182,22 @@ struct PowerDistributionTraits
   static const OneDDistributionType distribution_type = POWER_N_DISTRIBUTION;
 
   //! The N+1 root function
-  template<Np1Quantity>
+  template<typename Np1Quantity>
   static inline typename QuantityTraits<Np1Quantity>::template GetQuantityToPowerType<1,N+1>::type np1Root( const Np1Quantity& quantity )
   { return rpow<1,N+1>( quantity ); }
 
   //! The pow N function
-  template<Quantity>
+  template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N>::type powN( const Quantity& quantity )
   { 
-    return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N>::type>::initializeQuantity( Exponentiation::recursive( getRawValue( quantity ), N ) );
+    return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N>::type>::initializeQuantity( Exponentiation::recursive( getRawQuantity( quantity ), N ) );
   } 
 
   //! The pow Np1 function
-  template<Quantity>
+  template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N+1>::type powNp1( const Quantity& quantity )
   { 
-    return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N+1>::type>::initializeQuantity( Exponentiation::recursive( getRawValue( quantity ), N+1 ) );
+    return QuantityTraits<typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N+1>::type>::initializeQuantity( Exponentiation::recursive( getRawQuantity( quantity ), N+1 ) );
   } 
 };
 
@@ -212,19 +212,19 @@ struct PowerDistributionTraits<2>
   static const OneDDistributionType distribution_type = POWER_2_DISTRIBUTION;
 
   //! The N+1 root function
-  template<CubedQuantity>
+  template<typename CubedQuantity>
   static inline typename QuantityTraits<CubedQuantity>::template GetQuantityToPowerType<1,3>::type np1Root( const CubedQuantity& quantity )
   { return rpow<1,3>( quantity ); }
 
   //! The pow N function
-  template<Quantity>
+  template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<2>::type powN( const Quantity& quantity )
   {
     return quantity*quantity;
   }
 
   //! The pow N+1 function
-  template<Quantity>
+  template<typename Quantity>
   static inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<3>::type powNp1( const Quantity& quantity )
   {
     return quantity*quantity*quantity;
@@ -236,13 +236,13 @@ struct PowerDistributionTraits<2>
  * \ingroup traits
  */
 template<>
-struct PowerDistribution<1>
+struct PowerDistributionTraits<1>
 {
   //! The distribution type
   static const OneDDistributionType distribution_type = POWER_1_DISTRIBUTION;
 
   //! The N+1 root function
-  template<SquaredQuantity>
+  template<typename SquaredQuantity>
   static inline typename QuantityTraits<SquaredQuantity>::template GetQuantityToPowerType<1,2>::type np1Root( const SquaredQuantity& quantity )
   { return Utility::sqrt( quantity ); }
 
@@ -303,7 +303,7 @@ public:
     std::ostringstream iss;
     iss << "Unit-Aware Power " << N << " Distribution (" 
 	<< Utility::UnitTraits<U>::symbol() << ","
-	<< Utility::UnitTraits<V>::symbol() << "+";
+	<< Utility::UnitTraits<V>::symbol() << ")";
 
     return iss.str();
   }
@@ -313,7 +313,7 @@ public:
   {
     return name();
   }
-}
+};
 
 } // end Teuchos namespace
 

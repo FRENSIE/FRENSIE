@@ -38,7 +38,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 				     const double constant_multiplier,
 				     const InputIndepQuantity min_indep_limit,
 				     const InputIndepQuantity max_indep_limit )
-  : d_multiplier( DMQT::initializeQuantity( constant_mutliplier ) ),
+  : d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_min_indep_limit( min_indep_limit ),
     d_min_indep_limit_to_power_Np1(),
     d_max_indep_limit( max_indep_limit ),
@@ -168,21 +168,21 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::operator=(
 
 // Evaluate the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::DepQuantity
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::DepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluate( 
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_min_indep_limit )
-    return IQT::zero();
+    return DQT::zero();
   else if( indep_var_value > d_max_indep_limit )
-    return IQT::zero();
+    return DQT::zero();
   else
     return d_multiplier*PowerDistributionTraits<N>::powN( indep_var_value );
 }
 
 // Evaluate the PDF
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::InverseIndepQuantity
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::InverseIndepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF( 
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
@@ -191,7 +191,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF(
 
 // Return a random sample from the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample() const
 {
   IndepQuantityNp1 argument = RandomNumberGenerator::getRandomNumber<double>()*
@@ -203,24 +203,24 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample() const
 
 // Return a random sample from the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample( 
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity min_independent_value,
   const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity max_independent_value )
 {
   // Make sure that the values are valid
-  testPrecondition( !IQT::isnaninf( min_independent_limit ) );
-  testPrecondition( !IQT::isnaninf( max_independent_limit ) );
+  testPrecondition( !IQT::isnaninf( min_independent_value ) );
+  testPrecondition( !IQT::isnaninf( max_independent_value ) );
   // Make sure that the min value is greater than or equal to zero
-  testPrecondition( min_independent_limit >= IQT::zero() );
+  testPrecondition( min_independent_value >= IQT::zero() );
   // Make sure that the max value is greater than the min value
-  testPrecondition( max_independent_limit > min_independent_limit );
+  testPrecondition( max_independent_value > min_independent_value );
 
   IndepQuantityNp1 min_indep_limit_to_power_np1 = 
-    PowerDistributionTraits<N>::powNp1( min_independent_limit );
+    PowerDistributionTraits<N>::powNp1( min_independent_value );
 
   IndepQuantityNp1 argument = RandomNumberGenerator::getRandomNumber<double>()*
-    (PowerDistributionTraits<N>::powNp1( max_independent_limit ) -
+    (PowerDistributionTraits<N>::powNp1( max_independent_value ) -
      min_indep_limit_to_power_np1) + min_indep_limit_to_power_np1;
 
   return PowerDistributionTraits<N>::np1Root( argument );
@@ -228,7 +228,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sample(
 
 // Return a random sample and record the number of trials
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
- UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
@@ -238,7 +238,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sampleAndRecordTria
 
 // Return the upper bound of the distribution independent variable
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
   return d_max_indep_limit;
@@ -246,7 +246,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getUpperBoundOfInde
 
 // Return the lower bound of the distribution independent variable
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const 
 {
   return d_min_indep_limit;
@@ -273,9 +273,9 @@ template<unsigned N, typename IndependentUnit, typename DependentUnit>
 void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::toStream( 
 						       std::ostream& os ) const
 {
-  os << "{" << d_multiplier 
-     << "," << d_min_indep_limit
-     << "," << d_max_indep_limit
+  os << "{" << getRawQuantity( d_multiplier )
+     << "," << getRawQuantity( d_min_indep_limit )
+     << "," << getRawQuantity( d_max_indep_limit )
      << "}";
 }
 
@@ -321,7 +321,7 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::fromStream(
   if( distribution.size() == 3 )
     d_multiplier = DMQT::initializeQuantity( distribution[0] );
   else
-    d_constant_multiplier = DMQT::one();
+    d_multiplier = DMQT::one();
   
   TEST_FOR_EXCEPTION( DMQT::isnaninf( d_multiplier ),
 		      InvalidDistributionStringRepresentation,
@@ -389,9 +389,9 @@ void UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::initializeDist
     PowerDistributionTraits<N>::powNp1( d_max_indep_limit );
   
   // Calculate the normalization constant
-  d_norm_constant = (N+1u)/
+  d_norm_constant = (N+1.0)/
     (d_multiplier*(d_max_indep_limit_to_power_Np1 - 
-		   d_min_indep_limit_to_power_Np1 ));
+  		   d_min_indep_limit_to_power_Np1 ));
 }
 
 } // end Utility namespace
