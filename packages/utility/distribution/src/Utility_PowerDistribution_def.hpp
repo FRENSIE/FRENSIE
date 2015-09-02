@@ -91,7 +91,7 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
 
   // Calculate the scaled multiplier (for complex units, boost::units has
   // problems doing the conversion so we will do it manually)
-  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*DepQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/PowerDistributionTraits<N>::powN( IndeqQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
+  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*DepQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/PowerDistributionTraits<N>::powN( IndepQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
 
   this->initializeDistribution();
 }

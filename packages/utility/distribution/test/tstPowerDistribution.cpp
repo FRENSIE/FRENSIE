@@ -713,8 +713,290 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
 				   IndepUnitB,
 				   DepUnitB )
 {
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
+  
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
+  
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
+  initializeDistribution<1,void,void>( distribution );
+
+  // Copy from unitless distribution to distribution type A
+  Utility::UnitAwarePowerDistribution<1,IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<1,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<1> >( distribution ) );
+
+  // Copy from distribution type A to distribution type B
+  Utility::UnitAwarePowerDistribution<1,IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
+
+  IndepQuantityA indep_quantity_a = 
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
+
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 2.0 );
+  Utility::setQuantity( dep_quantity_a, 2.0 );
+
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that distributions can be scaled
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwarePowerDistribution,
+				   explicit_conversion_2,
+				   IndepUnitA,
+				   DepUnitA,
+				   IndepUnitB,
+				   DepUnitB )
+{
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
+  
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
+  
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
+
+  initializeDistribution<2,void,void>( distribution );
+
+  // Copy from unitless distribution to distribution type A
+  Utility::UnitAwarePowerDistribution<2,IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwarePowerDistribution<2,IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<2> >( distribution ) );
+
+  // Copy from distribution type A to distribution type B
+  Utility::UnitAwarePowerDistribution<2,IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
+
+  IndepQuantityA indep_quantity_a = 
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
+
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 3.0 );
+  Utility::setQuantity( dep_quantity_a, 3.0 );
+
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+}
+
+typedef cgs::length cgs_length;
+typedef si::length si_length;
+typedef cgs::mass cgs_mass;
+typedef si::mass si_mass;
+typedef cgs::dimensionless cgs_dimensionless;
+typedef si::dimensionless si_dimensionless;
+typedef si::amount si_amount;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      si_length,
+				      si_amount,
+				      cgs_length,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      cgs_length,
+				      si_amount,
+				      si_length,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      cgs_length,
+				      cgs_mass,
+				      si_length,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      si_length,
+				      si_mass,
+				      cgs_length,
+				      cgs_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      cgs_length,
+				      cgs_dimensionless,
+				      si_length,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      si_length,
+				      si_dimensionless,
+				      cgs_length,
+				      cgs_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      cgs_length,
+				      void,
+				      si_length,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      si_length,
+				      void,
+				      cgs_length,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      void,
+				      cgs_dimensionless,
+				      void,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_1,
+				      void,
+				      si_dimensionless,
+				      void,
+				      cgs_dimensionless );
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      si_length,
+				      si_amount,
+				      cgs_length,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      cgs_length,
+				      si_amount,
+				      si_length,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      cgs_length,
+				      cgs_mass,
+				      si_length,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      si_length,
+				      si_mass,
+				      cgs_length,
+				      cgs_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      cgs_length,
+				      cgs_dimensionless,
+				      si_length,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      si_length,
+				      si_dimensionless,
+				      cgs_length,
+				      cgs_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      cgs_length,
+				      void,
+				      si_length,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      si_length,
+				      void,
+				      cgs_length,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      void,
+				      cgs_dimensionless,
+				      void,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwarePowerDistribution,
+				      explicit_conversion_2,
+				      void,
+				      si_dimensionless,
+				      void,
+				      cgs_dimensionless );
 
 //---------------------------------------------------------------------------//
 // Custom main function
