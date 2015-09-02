@@ -18,12 +18,7 @@
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCHelpers.hpp"
 #include "Geometry_ModuleInterface.hpp"
-#endif
-
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"

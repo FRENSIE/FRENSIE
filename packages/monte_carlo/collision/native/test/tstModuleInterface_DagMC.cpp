@@ -18,6 +18,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_CollisionModuleInterface_Native.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
@@ -313,7 +315,7 @@ int main( int argc, char** argv )
     Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
 					  Teuchos::inoutArg(material_reps) );
 
-    MonteCarlo::CollisionHandlerFactory::initializeHandlerUsingDagMC( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );

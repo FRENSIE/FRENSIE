@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEstimatorHandlerFactory.cpp
+//! \file   tstEstimatorHandlerFactory_DagMC.cpp
 //! \author Alex Robinson
 //! \brief  Estimator handler factory unit tests
 //!
@@ -15,8 +15,12 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
+// Moab Includes
+#include <DagMC.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHandlerFactory.hpp"
+#include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
+#include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
@@ -32,7 +36,7 @@ std::string test_estimator_xml_file_name;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the estimator handler can be initialized
-TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
+TEUCHOS_UNIT_TEST( EstimatorHandlerFactoryDagMC, initializeHandlerUsingDagMC )
 {
   Teuchos::RCP<Teuchos::ParameterList> response_reps = 
     Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
@@ -40,7 +44,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
   Teuchos::RCP<Teuchos::ParameterList> estimator_reps =
     Teuchos::getParametersFromXmlFile( test_estimator_xml_file_name );
 
-  MonteCarlo::EstimatorHandlerFactory::initializeHandlerUsingDagMC( 
+  MonteCarlo::EstimatorHandlerFactory<moab::DagMC>::initializeHandler( 
 							     *response_reps,
 							     *estimator_reps );
 
@@ -101,5 +105,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstEstimatorHandlerFactory.cpp
+// end tstEstimatorHandlerFactory_DagMC.cpp
 //---------------------------------------------------------------------------//

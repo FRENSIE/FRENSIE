@@ -20,10 +20,6 @@
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_EstimatorHandler.hpp"
 
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCProperties.hpp"
-#endif
-
 namespace MonteCarlo{
 
 //! The estimator handler factory
