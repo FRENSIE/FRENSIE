@@ -41,46 +41,46 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    getAngularGrid )
 {
 
-  double cutoff_angle = -1.0;
-  Teuchos::Array<double> angular_grid =
+  double cutoff_angle_cosine = -1.0;
+  Teuchos::Array<double> angular_cosine_grid =
     MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                                                 *xss_data_extractor,
                                                 0,
-                                                cutoff_angle );
+                                                cutoff_angle_cosine );
   // Test
-  TEST_EQUALITY_CONST( angular_grid.size(), 3 );
-  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
-  TEST_EQUALITY_CONST( angular_grid[1], 0.999999 );
-  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 3 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_cosine_grid[1], 0.999999 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
 
-  angular_grid.clear();
+  angular_cosine_grid.clear();
 
-  cutoff_angle = 0.9;
-  angular_grid =
+  cutoff_angle_cosine = 0.9;
+  angular_cosine_grid =
     MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                                                 *xss_data_extractor,
                                                 0,
-                                                cutoff_angle );
+                                                cutoff_angle_cosine );
   // Test
-  TEST_EQUALITY_CONST( angular_grid.size(), 3 );
-  TEST_EQUALITY_CONST( angular_grid.front(), 0.9 );
-  TEST_EQUALITY_CONST( angular_grid[1], 0.999999 );
-  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 3 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.front(), 0.9 );
+  TEST_EQUALITY_CONST( angular_cosine_grid[1], 0.999999 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
 
-  angular_grid.clear();
+  angular_cosine_grid.clear();
 
-  cutoff_angle = -1.0;
-  angular_grid =
+  cutoff_angle_cosine = -1.0;
+  angular_cosine_grid =
     MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                                                 *xss_data_extractor,
                                                 13,
-                                                cutoff_angle );
+                                                cutoff_angle_cosine );
   // Test
-  TEST_EQUALITY_CONST( angular_grid.size(), 85 );
-  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
-  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
-  angular_grid.pop_back();
-  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 85 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
+  angular_cosine_grid.pop_back();
+  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 0.999999 );
 
 }
 

@@ -43,6 +43,7 @@ void findLowerAndUpperBinBoundary(
 							lower_bin_boundary,
 							upper_bin_boundary,
 							independent_variable );
+
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
 
@@ -74,7 +75,7 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
                                 lower_bin_boundary,
                                 upper_bin_boundary,
                                 interpolation_fraction );
-  
+
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return correlatedSampleWithRandomNumber( upper_bin_boundary->second,

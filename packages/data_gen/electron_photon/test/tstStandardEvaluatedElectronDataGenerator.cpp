@@ -143,19 +143,23 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
     data_container.getMoliereScreeningConstant();
 
   TEST_EQUALITY_CONST( moliere_screening_constant.front(), 
+                       -1.0e-6 );
+  TEST_EQUALITY_CONST( moliere_screening_constant[1], 
                        -1.0039841898413188328e-06 );
   TEST_EQUALITY_CONST( moliere_screening_constant.back(), 
                        9.968622523875358279e-16 );
-  TEST_EQUALITY_CONST( moliere_screening_constant.size(), 7 );
+  TEST_EQUALITY_CONST( moliere_screening_constant.size(), 8 );
 
   std::vector<double> screened_rutherford_normalization_constant = 
     data_container.getScreenedRutherfordNormalizationConstant();
 
   TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.front(), 
-                        2.75592435140403470e-13 );
+                       0.0 );
+  TEST_EQUALITY_CONST( screened_rutherford_normalization_constant[1], 
+                       2.75592435140403470e-13 );
   TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.back(),  
                        9.86945001967696289e-07 );
-  TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.size(), 7 );
+  TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.size(), 8 );
 
   // Check the electroionization data
   threshold = 
@@ -282,6 +286,9 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
 
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
+
+  data_container.exportData( "/home/ljkerst/software/frensie/data/test_h_epr.xml",
+			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
 //---------------------------------------------------------------------------//
@@ -395,23 +402,29 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
     data_container.getMoliereScreeningConstant();
 
   TEST_FLOATING_EQUALITY( moliere_screening_constant.front(), 
+                          -1.0e-06,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( moliere_screening_constant[1], 
                           -1.06552060095948850e-05,
                           1e-12 );
   TEST_FLOATING_EQUALITY( moliere_screening_constant.back(), 
                           4.124902891289890E-14,
                           1e-12 );
-  TEST_EQUALITY_CONST( moliere_screening_constant.size(), 4 );
+  TEST_EQUALITY_CONST( moliere_screening_constant.size(), 5 );
 
   std::vector<double> screened_rutherford_normalization_constant = 
     data_container.getScreenedRutherfordNormalizationConstant();
 
   TEST_FLOATING_EQUALITY( screened_rutherford_normalization_constant.front(), 
+                          0.0,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( screened_rutherford_normalization_constant[1], 
                           1.94353181297334527e-05,
                           1e-12 );
   TEST_FLOATING_EQUALITY( screened_rutherford_normalization_constant.back(),  
                           9.863740813739410E-07,
                           1e-12 );
-  TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.size(), 4 );
+  TEST_EQUALITY_CONST( screened_rutherford_normalization_constant.size(), 5 );
 
   // Check the electroionization data
   threshold = 
@@ -585,6 +598,7 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
 		    
   data_container.exportData( "test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
+
 }
 
 //---------------------------------------------------------------------------//

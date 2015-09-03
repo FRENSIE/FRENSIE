@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/core/src"
 "${CMAKE_SOURCE_DIR}/packages/geometry/interface"
 "${CMAKE_SOURCE_DIR}/packages/data/ace/src" 
 "${CMAKE_SOURCE_DIR}/packages/data/native/src"
+"${CMAKE_SOURCE_DIR}/packages/data/endl/src"
 "${CMAKE_SOURCE_DIR}/packages/monte_carlo/core/src" 
 "${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/core/src"
 "${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/interface" 
@@ -35,5 +36,7 @@ ADD_SUBDIRECTORY(listcs)
 ADD_SUBDIRECTORY(facemc)
 
 ADD_SUBDIRECTORY(epr_generator)
+
+ADD_SUBDIRECTORY(endl_generator)
 
 ADD_SUBDIRECTORY(sample)

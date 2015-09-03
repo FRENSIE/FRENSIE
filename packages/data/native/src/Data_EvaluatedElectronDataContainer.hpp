@@ -67,10 +67,10 @@ public:
 					       const double incoming_energy ) const;
 
   //! Return the screened Rutherford elastic normalization constants
-  const std::vector<double>& getScreenedRutherfordNormalizationConstant( ) const;
+  const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
 
   //! Return Moliere's screening constant
-  const std::vector<double>& getMoliereScreeningConstant( ) const;
+  const std::vector<double>& getMoliereScreeningConstant() const;
 /*
   //! Return the number of moment preserving discrete angles for an incoming energy
   unsigned getNumberOfDiscreteAngles( const double incoming_energy ) const;

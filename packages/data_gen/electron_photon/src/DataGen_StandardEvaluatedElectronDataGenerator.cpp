@@ -646,8 +646,8 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
     Data::EvaluatedElectronVolatileDataContainer& data_container ) const
 {
   // Calculate Moliere's screening constant and the screened rutherford normalization constant
-  std::vector<double> 
-    moliere_screening_constant, screened_rutherford_normalization_constant;
+  std::vector<double> moliere_screening_constant(1), 
+                      screened_rutherford_normalization_constant(1);
   
   // iterate through all angular energy bins
   for ( int i = 0; i < elastic_energy_grid.size(); ++i )
@@ -661,7 +661,6 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
         cutoff_elastic_cross_section->evaluate( energy ) )/
         cutoff_elastic_cross_section->evaluate( energy );
 
-    
     if ( cross_section_ratio > 1.0e-6 )
     {
     // get the pdf value at the cutoff angle for the given energy
@@ -675,6 +674,11 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
     screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
         ( d_cutoff_angle + moliere_screening_constant.back() )* 
         ( d_cutoff_angle + moliere_screening_constant.back() ) ) );
+    }
+    else
+    {
+      screened_rutherford_normalization_constant[0] = 0.0;
+      moliere_screening_constant[0] = -d_cutoff_angle;
     }
   }
   // Set Moliere's screening constant
