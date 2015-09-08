@@ -599,6 +599,9 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
   data_container.exportData( "test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
+  data_container.exportData( "/home/ljkerst/software/frensie/data/test_pb_epr.xml",
+			     Utility::ArchivableObject::XML_ARCHIVE );
+
 }
 
 //---------------------------------------------------------------------------//

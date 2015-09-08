@@ -130,7 +130,7 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAn
                  const double energy,
                  const double cutoff_angle )
 {
-  // Get the energy grid
+  // Get the angular grid
   std::vector<double> raw_grid = 
     raw_electroatom_data.getAnalogElasticAngles( energy );
 

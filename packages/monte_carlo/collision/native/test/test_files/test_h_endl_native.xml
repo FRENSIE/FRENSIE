@@ -2246,8 +2246,9 @@
 		</item>
 	</analog_elastic_pdf>
 	<screened_rutherford_normalization_constant>
-		<count>7</count>
+		<count>8</count>
 		<item_version>0</item_version>
+		<item>0.00000000000000000e+00</item>
 		<item>2.75592435140403470e-13</item>
 		<item>1.07150572955789778e-06</item>
 		<item>1.00720620160647709e-06</item>
@@ -2257,8 +2258,9 @@
 		<item>9.86945001967696289e-07</item>
 	</screened_rutherford_normalization_constant>
 	<moliere_screening_constant>
-		<count>7</count>
+		<count>8</count>
 		<item_version>0</item_version>
+		<item>-9.99999999999999955e-07</item>
 		<item>-1.00398418984131883e-06</item>
 		<item>8.88632341402135541e-08</item>
 		<item>2.09987949844790104e-08</item>

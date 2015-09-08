@@ -18,7 +18,6 @@
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "Data_EvaluatedElectronDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_ElasticElectronDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -267,7 +266,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name, test_native_table_name;
+  std::string test_native_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
