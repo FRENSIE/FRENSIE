@@ -60,7 +60,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   // Get size of the distribution
   int size = energy_grid.size();
 
-  // Create the scattering function
+  // Create the photon energy function
   BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution 
          scattering_function( size );
 
