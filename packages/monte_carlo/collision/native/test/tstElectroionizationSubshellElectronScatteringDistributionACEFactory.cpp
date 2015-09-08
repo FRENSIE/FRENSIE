@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroionizationSubshellElectronScatteringDistribution.cpp
+//! \file   tstElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp
 //! \author Luke Kersting
-//! \brief  Electroionization electron scattering distribution unit tests
+//! \brief  electroionization subshell scattering distribution ACE factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,18 +15,20 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> 
+Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
+
+Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   ace_electroionization_distribution;
 
 //---------------------------------------------------------------------------//
@@ -36,6 +38,7 @@ Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution
 TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution, 
                    getBindingEnergy )
 {
+
   // Get binding energy
   double binding_energy =
     ace_electroionization_distribution->getBindingEnergy();
@@ -109,28 +112,28 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   
   double pdf = 
     ace_electroionization_distribution->evaluatePDF( 8.8290000000000E-02,
-						     1.000000000000E-08 );
+                                                     1.000000000000E-08 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  1.111111111111E+07,
-				  1e-12 );
+				                  1.111111111111E+07,
+				                  1e-12 );
 
   pdf = 
     ace_electroionization_distribution->evaluatePDF( 1.000000000000E+00,
-						     9.716300000000E-02 );
+						                             9.716300000000E-02 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  2.045394577710E+00,
-				  1e-12 );
+				                  2.045394577710E+00,
+				                  1e-12 );
 				  
   pdf = 
     ace_electroionization_distribution->evaluatePDF( 1.000000000000E+05,
-						     1.752970000000E+02 );
+						                             1.752970000000E+02 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
-				  4.399431656723E-07,
-				  1e-12 );				  				  
-}
+				                  4.399431656723E-07,
+				                  1e-12 );
+}	
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
@@ -256,7 +259,6 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 4.105262105768E-02, 1e-12 );
 
 }
-
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
@@ -279,7 +281,8 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
@@ -349,28 +352,14 @@ int main( int argc, char** argv )
                              subshell_info + 2*num_tables[subshell],
                              num_tables[subshell] ) );
 
-   // Create the electroionization sampling table for the subshell
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      subshell_distribution( num_tables[subshell] );
-
-
-  for( unsigned n = 0; n < num_tables[subshell]; ++n )
-  {
-    subshell_distribution[n].first = table_energy_grid[n];
-
-    subshell_distribution[n].second.reset( 
-     new Utility::HistogramDistribution(
-	  eion_block( subshell_loc + table_offset[n], table_length[n] ),
-      eion_block( subshell_loc + table_offset[n] + table_length[n] + 1, 
-                  table_length[n] - 1),
-      true ) );
-  }
-
-  // Create the distributions
-  ace_electroionization_distribution.reset(
-		new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-                            subshell_distribution,
-                            binding_energies[subshell] ) );
+  // Create the electroionization subshell distribution
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+    subshell_info,
+    subshell_loc,
+    num_tables[subshell],
+    binding_energies[subshell],
+	eion_block,
+	ace_electroionization_distribution );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -378,7 +367,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
+  
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -395,5 +384,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstElectroionizationSubshellElectronScatteringDistribution.cpp
+// end tstElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//
