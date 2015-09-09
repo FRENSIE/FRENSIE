@@ -435,6 +435,11 @@ ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
+  tstElectroatomicReactionNativeFactory.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactory monte_carlo_collision_native)
+ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_endl_native.xml" --test_binding_energy_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
@@ -449,6 +454,11 @@ ADD_EXECUTABLE(tstElectroatomACEFactory
   tstElectroatomACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstElectroatomNativeFactory
+  tstElectroatomNativeFactory.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomNativeFactory monte_carlo_collision_native)
+ADD_TEST(ElectroatomNativeFactory_test tstElectroatomNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_endl_native.xml" --test_epr_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
 ADD_EXECUTABLE(tstElectroatomFactory
   tstElectroatomFactory.cpp)

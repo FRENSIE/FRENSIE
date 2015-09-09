@@ -11,12 +11,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
@@ -290,50 +291,15 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 			bremsstrahlung_cross_section,
 			threshold_energy_index );
 
-  // Extract the bremsstrahlung scattering information data block (BREMI)
-  Teuchos::ArrayView<const double> bremi_block(
-				      raw_electroatom_data.extractBREMIBlock() );
-
-  // Extract the number of tabulated distributions
-  int N = bremi_block.size()/3;
-
-  // Extract the electron energy grid for bremsstrahlung energy distributions
-  Teuchos::Array<double> electron_energy_grid(bremi_block(0,N));
-
-  // Extract the table lengths for bremsstrahlung energy distributions
-  Teuchos::Array<double> table_length(bremi_block(N,N));
-
-  // Extract the offsets for bremsstrahlung energy distributions
-  Teuchos::Array<double> offset(bremi_block(2*N,N));
-
-  // Extract the bremsstrahlung photon energy distributions block (BREME)
-  Teuchos::ArrayView<const double> breme_block = 
-    raw_electroatom_data.extractBREMEBlock();
-
-  // Create the bremsstrahlung scattering distributions
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-    energy_loss_distribution( N );
-  
-  for( unsigned n = 0; n < N; ++n )
-  {
-    energy_loss_distribution[n].first = electron_energy_grid[n];
-
-    energy_loss_distribution[n].second.reset( 
-	  new Utility::HistogramDistribution(
-		 breme_block( offset[n], table_length[n] ),
-		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
-  }
+  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>
+        bremsstrahlung_distribution;
 
   if( photon_distribution_function = DIPOLE_DISTRIBUTION )
   {
-  // Create the bremsstrahlung reaction
-  bremsstrahlung_reaction.reset(
-		     new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-					      energy_grid,
-					      bremsstrahlung_cross_section,
-					      threshold_energy_index,
-					      energy_loss_distribution ) );
+    // Create bremsstrahlung dipole distribution
+     BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+        raw_electroatom_data,
+        bremsstrahlung_distribution );
   }
   else if( photon_distribution_function = TABULAR_DISTRIBUTION )
   {
@@ -343,15 +309,20 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   }
   else if( photon_distribution_function = TWOBS_DISTRIBUTION )
   {
+  // Create bremsstrahlung 2BS distribution
+  BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
+    raw_electroatom_data,
+    bremsstrahlung_distribution,
+    raw_electroatom_data.extractAtomicNumber() );
+  }
+
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction.reset(
 		     new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
 					      energy_grid,
 					      bremsstrahlung_cross_section,
 					      threshold_energy_index,
-					      energy_loss_distribution,
-                          raw_electroatom_data.extractAtomicNumber() ) );
-  }
+					      bremsstrahlung_distribution ) );
 }
 
 // Create a void absorption electroatomic reaction

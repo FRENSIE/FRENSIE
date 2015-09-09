@@ -26,33 +26,13 @@ class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction
 
 public:
 
-  //! Constructor with simple dipole photon angular distribution
+  //! Constructor
   BremsstrahlungElectroatomicReaction( 
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
-              bremsstrahlung_scattering_distribution );
-
-  //! Constructor with detailed tabular photon angular distribution
-  BremsstrahlungElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
-              bremsstrahlung_scattering_distribution,
-       const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
-       const double lower_cutoff_energy,
-       const double upper_cutoff_energy );
-
-  //! Constructor with 2BS photon angular distribution
-  BremsstrahlungElectroatomicReaction(
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
-              bremsstrahlung_scattering_distribution,
-       const int atomic_number );
+      const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>& 
+              bremsstrahlung_distribution );
 
   //! Destructor
   virtual ~BremsstrahlungElectroatomicReaction()
@@ -75,7 +55,8 @@ public:
 private:
 
   // The bremsstrahlung scattering distribution
-  BremsstrahlungElectronScatteringDistribution d_scattering_distribution;
+  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution> 
+    d_bremsstrahlung_distribution;
 };
 
 } // end MonteCarlo namespace

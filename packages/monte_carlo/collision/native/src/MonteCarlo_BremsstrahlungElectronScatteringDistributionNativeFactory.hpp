@@ -31,15 +31,6 @@ public:
 	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
 		        	  scattering_distribution );
 
-  //! Create a detailed tabular bremsstrahlung distribution
-  static void createBremsstrahlungDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
-        scattering_distribution,
-    Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
-    const double lower_cutoff_energy,
-    const double upper_cutoff_energy );
-
   //! Create a detailed 2BS bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
 	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
@@ -50,11 +41,11 @@ public:
 protected:
 
   //! Create the energy loss function
-  static void createScatteringFunction(
+  static void createEnergyLossFunction(
     const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid, 
     BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
-        scattering_function );
+        energy_loss_function );
 };
 
 } // end MonteCarlo namespace

@@ -72,7 +72,7 @@ unsigned ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_c
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return SREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION;
+  return SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction

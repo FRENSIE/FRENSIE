@@ -71,7 +71,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
 		                  scattering_distribution,
-        const int atomic_number )
+    const int atomic_number )
 {
   // Get the number of tables
   double size = raw_electroatom_data.extractBREMIBlock().size()/3;

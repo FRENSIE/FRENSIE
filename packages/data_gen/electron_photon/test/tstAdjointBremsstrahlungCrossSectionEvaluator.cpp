@@ -168,7 +168,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> breme_block = 
     xss_data_extractor->extractBREMEBlock();
 
-  // Create the bremsstrahlung scattering distributions
+  // Create the bremsstrahlung scattering functions
   DataGen::AdjointBremsstrahlungCrossSectionEvaluator::BremsstrahlungDistribution
     energy_loss_distribution( N );
   
@@ -183,6 +183,13 @@ int main( int argc, char** argv )
          true ) );
   }
 
+  Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+    b_scattering_distribution;
+
+    b_scattering_distribution.reset( 
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+            energy_loss_distribution ) );
+
   // Create standard electroatomic reaction
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> bremsstrahlung_reaction;
   
@@ -191,7 +198,7 @@ int main( int argc, char** argv )
                       energy_grid,
                       bremsstrahlung_cross_section,
                       threshold_energy_index,
-                      energy_loss_distribution ) );
+                      b_scattering_distribution ) );
 
 
   // Initialize the hydrogen adjoint cross section evaluator
