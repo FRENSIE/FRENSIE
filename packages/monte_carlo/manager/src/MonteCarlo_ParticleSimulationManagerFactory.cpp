@@ -105,7 +105,8 @@ ParticleSimulationManagerFactory::createManager(
 						cross_sections_xml_directory );
    
      
-    if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
+	Teuchos::GlobalMPISession::getNProc() > 1 )
     {
       return Teuchos::rcp( 
 	      new BatchedDistributedParticleSimulationManager<moab::DagMC,
@@ -159,7 +160,8 @@ ParticleSimulationManagerFactory::createManager(
 						cross_sections_table_info,
 						cross_sections_xml_directory );
 
-    if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
+	Teuchos::GlobalMPISession::getNProc() > 1 )
     {
       return Teuchos::rcp( 
 	      new BatchedDistributedParticleSimulationManager<Geometry::Root,
