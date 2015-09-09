@@ -44,7 +44,8 @@ public:
 		    const IncoherentModelType incoherent_model,
 		    const double kahn_sampling_cutoff_energy,
 		    const bool use_detailed_pair_production_data,
-		    const bool use_atomic_relaxation_data );
+		    const bool use_atomic_relaxation_data,
+		    std::ostream* os_message = &std::cout );
 
   //! Destructor
   ~PhotoatomFactory()
@@ -94,6 +95,9 @@ private:
   // The table map
   boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   d_photoatomic_table_name_map;
+
+  // The message output stream
+  std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

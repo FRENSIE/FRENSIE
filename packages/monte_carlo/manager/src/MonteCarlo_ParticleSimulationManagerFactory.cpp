@@ -9,6 +9,9 @@
 // Moab Includes
 #include "DagMC.hpp"
 
+// Trilinos Includes
+#include <Teuchos_VerboseObject.hpp>
+
 // FRENSIE Includes
 #include "FRENSIE_dagmc_config.hpp"
 #include "FRENSIE_root_config.hpp"
@@ -55,6 +58,21 @@ ParticleSimulationManagerFactory::createManager(
 {
   // Make sure the comm object is valid
   testPrecondition( !comm.is_null() );
+
+  // Create the output stream
+  Teuchos::RCP<std::ostream> out;
+  
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+  {
+    Teuchos::RCP<Teuchos::FancyOStream> fancy_out =
+      Teuchos::VerboseObjectBase::getDefaultOStream();
+    fancy_out->setProcRankAndSize( comm->getRank(), comm->getSize() );
+    fancy_out->setOutputToRootOnly( 0 );
+
+    out = fancy_out;
+  }
+  else
+    out.reset( &std::cerr, false );
   
   TEST_FOR_EXCEPTION( !simulation_info.isParameter( "Histories" ),
 		      InvalidSimulationInfo,
@@ -96,10 +114,11 @@ ParticleSimulationManagerFactory::createManager(
 
     // Initialize the estimator handler
     EstimatorHandlerFactory<moab::DagMC>::initializeHandler( response_def,
-							     estimator_def );
+							     estimator_def,
+							     *out );
     
     // Initialize the collision handler
-    getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler(
+    getCollisionHandlerFactoryInstance<moab::DagMC>( out.getRawPtr() )->initializeHandler(
 						material_def,
 						cross_sections_table_info,
 						cross_sections_xml_directory );
@@ -152,10 +171,11 @@ ParticleSimulationManagerFactory::createManager(
 
     // Initialize the estimator handler
     EstimatorHandlerFactory<Geometry::Root>::initializeHandler( response_def,
-							     estimator_def );
+								estimator_def,
+								*out );
     
     // Initialize the collision handler
-    getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler(
+    getCollisionHandlerFactoryInstance<Geometry::Root>( out.getRawPtr() )->initializeHandler(
 						material_def,
 						cross_sections_table_info,
 						cross_sections_xml_directory );

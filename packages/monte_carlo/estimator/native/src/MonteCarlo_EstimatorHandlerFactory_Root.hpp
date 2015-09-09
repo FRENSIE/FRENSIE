@@ -37,7 +37,8 @@ public:
   //! Initialize the estimator handler using Root
   static void initializeHandler(
 			        const Teuchos::ParameterList& response_reps,
-				      const Teuchos::ParameterList& estimator_reps );
+				const Teuchos::ParameterList& estimator_reps,
+				std::ostream& os_warn = std::cerr );
 
 private:
 
@@ -189,7 +190,7 @@ private:
 
   // Assign bins to an estimator
   static void assignBinsToEstimator( const Teuchos::ParameterList& bins,
-				     Teuchos::RCP<Estimator>& estimator ); 
+				     Teuchos::RCP<Estimator>& estimator );
 
   // Fill cell volumes array
   static void fillCellVolumesArray( 
@@ -235,6 +236,9 @@ private:
 
   // The tet mesh track-length flux estimator name
   static const std::string tet_mesh_track_length_flux_name;
+
+  // The warning output stream
+  static std::ostream* s_os_warn;
 };
 
 // Test if an estimator type is a cell pulse height estimator
