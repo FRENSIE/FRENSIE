@@ -15,6 +15,7 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
+#include <Teuchos_DefaultComm.hpp>
 
 // FRENSIE Includes
 #include "facemcCore.hpp"
@@ -28,6 +29,9 @@ Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
  */
 int facemcCore( int argc, char** argv )
 {
+  // Initialize the global MPI session
+  Teuchos::GlobalMPISession mpi_session( &argc, &argv );
+  
   Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -138,6 +142,10 @@ int facemcCore( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
+  // Create the default communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+    Teuchos::DefaultComm<unsigned long long>::getComm();
+
   // Create the simulation manager
   facemc_manager = 
     MonteCarlo::ParticleSimulationManagerFactory::createManager( 
@@ -148,7 +156,11 @@ int facemcCore( int argc, char** argv )
 						*estimator_definitions,
 						*material_definitions,
 						*cross_sections_table_info,
-						cross_section_directory );
+						cross_section_directory,
+						comm );
+
+  // Wait for all processes here
+  mpi_session.barrier();
 
   // Run the simulation
   facemc_manager->runSimulation();

@@ -14,6 +14,7 @@
 #include "FRENSIE_root_config.hpp"
 #include "FRENSIE_mpi_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
+#include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
@@ -28,10 +29,7 @@
 #include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-
-#ifdef HAVE_FRENSIE_MPI
-#include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
-#endif
+#include "Utility_ContractException.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
 #include "Geometry_RootInstanceFactory.hpp"
@@ -45,15 +43,19 @@ namespace MonteCarlo{
  */
 Teuchos::RCP<SimulationManager> 
 ParticleSimulationManagerFactory::createManager(
-		       const Teuchos::ParameterList& simulation_info,
-		       const Teuchos::ParameterList& geom_def,
-		       const Teuchos::ParameterList& source_def,
-		       const Teuchos::ParameterList& response_def,
-		       const Teuchos::ParameterList& estimator_def,
-		       const Teuchos::ParameterList& material_def,
-		       const Teuchos::ParameterList& cross_sections_table_info,
-		       const std::string& cross_sections_xml_directory )
+	   const Teuchos::ParameterList& simulation_info,
+	   const Teuchos::ParameterList& geom_def,
+	   const Teuchos::ParameterList& source_def,
+	   const Teuchos::ParameterList& response_def,
+	   const Teuchos::ParameterList& estimator_def,
+	   const Teuchos::ParameterList& material_def,
+	   const Teuchos::ParameterList& cross_sections_table_info,
+	   const std::string& cross_sections_xml_directory,
+	   const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm )
 {
+  // Make sure the comm object is valid
+  testPrecondition( !comm.is_null() );
+  
   TEST_FOR_EXCEPTION( !simulation_info.isParameter( "Histories" ),
 		      InvalidSimulationInfo,
 		      "Error: the number of histories to run must be "
@@ -102,30 +104,30 @@ ParticleSimulationManagerFactory::createManager(
 						cross_sections_table_info,
 						cross_sections_xml_directory );
    
-      #ifdef HAVE_FRENSIE_MPI
-   
-      // Make sure the global MPI session has been initialized
-      testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-      testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() ); 
-      
+     
+    if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    {
       return Teuchos::rcp( 
 	      new BatchedDistributedParticleSimulationManager<moab::DagMC,
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
+			       comm,
+			       0,
                                SimulationProperties::getNumberOfHistories() ) );
-      #else
-        
+    }
+    else
+    {   
       return Teuchos::rcp( 
 	      new ParticleSimulationManager<moab::DagMC,
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
-                               SimulationProperties::getNumberOfHistories() ) );
-      #endif // HAVE_FRENSIE_MPI
+                             SimulationProperties::getNumberOfHistories() ) );
+    }
     
     #else
-    return Teuchos::RCP<SimulationManager>();
+      return Teuchos::RCP<SimulationManager>();
     #endif // end HAVE_FRENSIE_DAGMC
   }
   else if( geom_handler_name == "ROOT" )
@@ -157,30 +159,29 @@ ParticleSimulationManagerFactory::createManager(
 						cross_sections_table_info,
 						cross_sections_xml_directory );
 
-      #ifdef HAVE_FRENSIE_MPI
-   
-      // Make sure the global MPI session has been initialized
-      testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-      testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() ); 
-      
+    if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    {
       return Teuchos::rcp( 
 	      new BatchedDistributedParticleSimulationManager<Geometry::Root,
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
-                               SimulationProperties::getNumberOfHistories() ) );
-      #else
-
+                              comm,
+			      0,
+                              SimulationProperties::getNumberOfHistories() ) );
+    }
+    else
+    {
       return Teuchos::rcp( 
 	      new ParticleSimulationManager<Geometry::Root,
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
                                SimulationProperties::getNumberOfHistories() ) );
-      #endif // HAVE_FRENSIE_MPI
+    }      
 
     #else
-    return Teuchos::RCP<SimulationManager>();
+      return Teuchos::RCP<SimulationManager>();
     #endif // end HAVE_FRENSIE_ROOT
   }
 }

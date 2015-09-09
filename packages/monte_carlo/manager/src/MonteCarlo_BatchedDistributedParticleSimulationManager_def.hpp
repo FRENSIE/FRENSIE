@@ -67,11 +67,11 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   Utility::RandomNumberGenerator::createStreams();
 
   // Enable geometry thread support
-  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::GMI::enableThreadSupport(
+  GMI::enableThreadSupport(
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Enable estimator thread support
-  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI::enableThreadSupport( 
+  EMI::enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   // Cast the communicator to an MpiComm object
@@ -298,13 +298,19 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   mpi_comm->barrier();
 
   // Perform a reduction of the estimator data on the root process
-  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI::reduceData( d_comm, d_root_process );
+  EMI::reduceEstimatorData( d_comm, d_root_process );
 
   // Set the end time
   this->setEndTime( ::MPI_Wtime() );
 
   if( d_comm->getRank() == d_root_process )
     std::cout << "done." << std::endl;
+#else
+  if( d_comm->getRank() == d_root_process )
+  {
+    std::cout << "Simulation cannot be run without building with MPI!"
+	      << std::endl;
+  }
 #endif // end HAVE_FRENSIE_MPI
 }
 
