@@ -30,11 +30,11 @@ template<typename GeometryHandler,
 BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::BatchedDistributedParticleSimulationManager( 
       const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
-	    const unsigned number_of_histories,
-	    const unsigned start_history,
-	    const unsigned previously_completed_histories,
+	    const unsigned long long number_of_histories,
+	    const unsigned long long start_history,
+	    const unsigned long long previously_completed_histories,
 	    const double previous_run_time )
-  : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( number_of_histories, start_history, previously_completed_histories, previous_run_time ),
+  : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( number_of_histories, start_history, (comm->getRank() == root_process) ? previously_completed_histories : 0ull, previous_run_time ),
     d_comm( comm ),
     d_root_process( root_process )
 {
@@ -96,6 +96,10 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   // The batch info array that will be passed to workers
   unsigned long long batch_info[2];
   
+  // The histories completed by each worker
+  Teuchos::Array<unsigned long long> 
+    local_histories_completed( mpi_comm->size() );
+  
   // The MPI error code
   int return_value;
   
@@ -111,14 +115,12 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 	{
 	  if( i != d_root_process )
 	  {
-	    int message;
-	    
 	    // The recv request
 	    MPI_Request raw_recv_request;
 	    
-	    return_value = ::MPI_Irecv( &message,
+	    return_value = ::MPI_Irecv( &local_histories_completed[i],
 					1,
-					MPI_INT,
+					MPI_UNSIGNED_LONG_LONG,
 					i,
 					mpi_comm->getTag(),
 					*mpi_comm->getRawMpiComm(),
@@ -183,12 +185,12 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 	{
 	  int worker_rank = raw_status.MPI_SOURCE;
 	  int message_tag = raw_status.MPI_TAG;
-	  int message;
+	  unsigned long long message;
 	  
 	  // Initiate handshake with worker
 	  return_value = ::MPI_Recv( &message,
 				     1,
-				     MPI_INT,
+				     MPI_UNSIGNED_LONG_LONG,
 				     worker_rank,
 				     message_tag,
 				     *mpi_comm->getRawMpiComm(),
@@ -239,12 +241,13 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     // The workers
     else
     {    
-      int ready_for_work = 1;
+      unsigned long long work_completed = 
+	this->getNumberOfHistoriesCompleted();
       
       // Humbly request a new batch - wait patiently until you get one
-      return_value = ::MPI_Send( &ready_for_work, 
+      return_value = ::MPI_Send( &work_completed, 
 				 1,
-				 MPI_INT,
+				 MPI_UNSIGNED_LONG_LONG,
 				 d_root_process,
 				 mpi_comm->getTag(),
 				 *mpi_comm->getRawMpiComm() );
@@ -296,6 +299,17 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   // Wait for all processes to get to this point
   mpi_comm->barrier();
+
+  // Sum the number of histories completed
+  if( mpi_comm->getRank() == d_root_process )
+  {
+    unsigned long long total_histories_completed = 0ull;
+    
+    for( unsigned i = 0; i < local_histories_completed.size(); ++i )
+      total_histories_completed += local_histories_completed[i];
+    
+    this->incrementHistoriesCompleted( total_histories_completed );
+  }
 
   // Perform a reduction of the estimator data on the root process
   EMI::reduceEstimatorData( d_comm, d_root_process );
@@ -361,7 +375,20 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   if( d_comm->getRank() == d_root_process )
   {
-    ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::signalHandler( signal );
+    //ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::signalHandler( signal );
+    
+    // Ask the user what to do
+    std::cerr << " Status (s), Kill (k)" << std::endl;
+    std::string option;
+    std::cin >> option;
+
+  if( option.compare( "s" ) == 0 )
+  {
+    this->printSimulationStateInfo();
+  }
+  else if( option.compare( "k" ) == 0 )
+  {
+    exit(0);
   }
 }
 

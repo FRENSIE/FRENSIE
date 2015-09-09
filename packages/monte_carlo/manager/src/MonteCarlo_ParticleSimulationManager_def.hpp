@@ -416,6 +416,32 @@ unsigned long long  ParticleSimulationManager<GeometryHandler,
   return d_history_number_wall - d_start_history;
 }
 
+// Return the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+unsigned long long  ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::getNumberOfHistoriesCompleted() const
+{
+  return d_histories_completed;
+}
+
+// Increment the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::incrementHistoriesCompleted( const unsigned long long histories )
+{
+  d_histories_completed += histories;
+}
+
 // Set the start time
 template<typename GeometryHandler,
 	 typename SourceHandler,

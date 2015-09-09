@@ -42,9 +42,9 @@ public:
   BatchedDistributedParticleSimulationManager(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
-	    const unsigned number_of_histories,
-	    const unsigned start_history = 0u,
-	    const unsigned previously_completed_histories = 0u,
+	    const unsigned long long number_of_histories,
+	    const unsigned long long start_history = 0ull,
+	    const unsigned long long previously_completed_histories = 0ull,
 	    const double previous_run_time = 0.0 );
 
   //! Destructor
