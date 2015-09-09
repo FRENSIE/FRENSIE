@@ -27,7 +27,8 @@ class DagMCInstanceFactory
 public:
   
   //! Initialize DagMC (singleton class)
-  static void initializeDagMC( const Teuchos::ParameterList& geom_rep );
+  static void initializeDagMC( const Teuchos::ParameterList& geom_rep,
+			       std::ostream& os_warn = std::cerr );
 
 private:
 
