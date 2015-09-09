@@ -162,13 +162,13 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
       else
       {
 	// Probe for an idle worker
-	int* message_waiting = NULL;
+	int message_waiting = false;
 	MPI_Status raw_status;
 	
 	return_value = MPI_Iprobe( MPI_ANY_SOURCE,
 				   mpi_comm->getTag(),
 				   *mpi_comm->getRawMpiComm(),
-				   message_waiting,
+				   &message_waiting,
 				   &raw_status );
 	
 	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
