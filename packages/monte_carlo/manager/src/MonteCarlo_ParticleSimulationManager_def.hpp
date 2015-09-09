@@ -437,7 +437,8 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::incrementHistoriesCompleted( const unsigned long long histories )
+			       CollisionHandler>::incrementHistoriesCompleted( 
+					   const unsigned long long histories )
 {
   d_histories_completed += histories;
 }
