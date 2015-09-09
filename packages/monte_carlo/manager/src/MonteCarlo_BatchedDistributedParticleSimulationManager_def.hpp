@@ -382,13 +382,14 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     std::string option;
     std::cin >> option;
 
-  if( option.compare( "s" ) == 0 )
-  {
-    this->printSimulationStateInfo();
-  }
-  else if( option.compare( "k" ) == 0 )
-  {
-    exit(0);
+    if( option.compare( "s" ) == 0 )
+    {
+      this->printSimulationStateInfo();
+    }
+    else if( option.compare( "k" ) == 0 )
+    {
+      exit(0);
+    }
   }
 }
 
