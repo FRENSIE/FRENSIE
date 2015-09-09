@@ -98,7 +98,7 @@ ParticleSimulationManagerFactory::createManager(
   {
     #ifdef HAVE_FRENSIE_DAGMC   
     // Initialize DagMC 
-    Geometry::DagMCInstanceFactory::initializeDagMC( geom_def );
+    Geometry::DagMCInstanceFactory::initializeDagMC( geom_def, *out );
 
     // Initialize the geometry handler
     Geometry::ModuleInterface<moab::DagMC>::initialize();
