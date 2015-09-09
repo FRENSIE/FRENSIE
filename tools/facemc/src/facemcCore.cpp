@@ -29,9 +29,6 @@ Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
  */
 int facemcCore( int argc, char** argv )
 {
-  // Initialize the global MPI session
-  Teuchos::GlobalMPISession mpi_session( &argc, &argv );
-  
   Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -158,9 +155,6 @@ int facemcCore( int argc, char** argv )
 						*cross_sections_table_info,
 						cross_section_directory,
 						comm );
-
-  // Wait for all processes here
-  mpi_session.barrier();
 
   // Run the simulation
   facemc_manager->runSimulation();
