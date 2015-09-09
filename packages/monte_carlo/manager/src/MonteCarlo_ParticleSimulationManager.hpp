@@ -82,11 +82,20 @@ protected:
   //! Return the number of histories
   unsigned long long getNumberOfHistories() const;
 
+  //! Return the number of histories completed
+  unsigned long long getNumberOfHistoriesCompleted() const;
+
+  //! Increment the number of histories completed
+  void incrementHistoriesCompleted( const unsigned long long histories = 1ull );
+
   //! Set the start time
   void setStartTime( const double start_time );
   
   //! Set the end time
   void setEndTime( const double end_time );
+
+  //! Print simulation state info in collision handler
+  void printSimulationStateInfo();
 
 private:
 
@@ -99,9 +108,6 @@ private:
   template<typename ParticleStateType>
   void ignoreParticle( ParticleStateType& particle,
 		       ParticleBank& particle_bank ) const;
-
-  // Print simulation state info in collision handler
-  void printSimulationStateInfo();
 
   // Starting history
   unsigned long long d_start_history;
