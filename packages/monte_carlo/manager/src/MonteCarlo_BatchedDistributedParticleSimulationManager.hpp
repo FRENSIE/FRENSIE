@@ -10,6 +10,7 @@
 #define FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "FRENSIE_mpi_config.hpp"
 
 // Trilinos Includes
@@ -26,6 +27,14 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 class BatchedDistributedParticleSimulationManager : public ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>
 {
+
+private:
+
+  // Typedef for geometry module interface
+  typedef typename ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::GMI GMI;
+
+  // Typedef for estimator module interface
+  typedef typename ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI EMI;
   
 public:
 
