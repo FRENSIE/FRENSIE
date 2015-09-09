@@ -155,7 +155,7 @@ ParticleSimulationManagerFactory::createManager(
     #ifdef HAVE_FRENSIE_ROOT 
 
     // Initialize Root 
-    Geometry::RootInstanceFactory::initializeRoot( geom_def );
+    Geometry::RootInstanceFactory::initializeRoot( geom_def, *out );
 
     // Initialize the geometry handler
     Geometry::ModuleInterface<Geometry::Root>::initialize();

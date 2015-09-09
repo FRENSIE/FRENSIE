@@ -22,10 +22,10 @@ std::string Root::s_terminal_material_name;
 // Initialize the root geometry manager
 void Root::initialize( const std::string& filename )
 {
-  s_manager = TGeoManager::Import( filename.c_str() );
-  
   // Tell ROOT to suppress all non-fatal messages
   gErrorIgnoreLevel = kFatal;
+
+  s_manager = TGeoManager::Import( filename.c_str() );
   
   s_terminal_material_name = "graveyard";
 }
