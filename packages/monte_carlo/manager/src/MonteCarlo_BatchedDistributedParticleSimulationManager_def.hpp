@@ -98,7 +98,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   
   // The histories completed by each worker
   Teuchos::Array<unsigned long long> 
-    local_histories_completed( mpi_comm->size() );
+    local_histories_completed( mpi_comm->getSize() );
   
   // The MPI error code
   int return_value;
