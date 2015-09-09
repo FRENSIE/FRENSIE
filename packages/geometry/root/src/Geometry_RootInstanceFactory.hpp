@@ -27,12 +27,16 @@ class RootInstanceFactory
 public:
   
   //! Initialize Root (singleton geometry manager -> gGeoManager)
-  static void initializeRoot( const Teuchos::ParameterList& geom_rep );
+  static void initializeRoot( const Teuchos::ParameterList& geom_rep,
+                              std::ostream& os_warn = std::cerr );
 
 private:
 
   // Validate a geometry representation
   static void validateGeometryRep( const Teuchos::ParameterList& geom_rep );
+  
+  // The warning output stream
+  static std::ostream* s_os_warn;
 };
 
 } // end Geometry namespace

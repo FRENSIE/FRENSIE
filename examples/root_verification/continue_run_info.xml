@@ -6,7 +6,7 @@
   <ParameterList id="9" name="geometry_definition">
     <Parameter docString="" id="3" isDefault="false" isUsed="true" name="Handler" type="string" value="ROOT"/>
     <Parameter docString="" id="4" isDefault="false" isUsed="true" name="Root File" type="string" value="verification_test.root"/>
-    <Parameter docString="" id="5" isDefault="false" isUsed="true" name="Termination Cell Synonym" type="string" value="graveyhard"/>
+    <Parameter docString="" id="5" isDefault="false" isUsed="true" name="Termination Cell Synonym" type="string" value="graveyard"/>
     <Parameter docString="" id="6" isDefault="false" isUsed="true" name="Material Synonym" type="string" value="mat"/>
     <Parameter docString="" id="7" isDefault="false" isUsed="true" name="Density Synonym" type="string" value="rho"/>
     <Parameter docString="" id="8" isDefault="false" isUsed="true" name="Estimator Synonym" type="string" value="estimator"/>
