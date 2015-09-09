@@ -30,7 +30,7 @@ class BatchedDistributedParticleSimulationManager : public ParticleSimulationMan
 public:
 
   //! Constructor
-  BatchedDistributedParticleSimulationManger(
+  BatchedDistributedParticleSimulationManager(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned number_of_histories,
@@ -69,7 +69,7 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_BatchedDistributedParticleSimulationManger_def.hpp"
+#include "MonteCarlo_BatchedDistributedParticleSimulationManager_def.hpp"
 
 //---------------------------------------------------------------------------//
 

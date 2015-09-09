@@ -12,8 +12,15 @@
 // Trilinos Includes
 #include <Teuchos_GlobalMPISession.hpp>
 
+// MPI Includes
+#ifdef HAVE_FRENSIE_MPI
+#endif
+
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
+#include "FRENSIE_mpi_config.hpp"
+
+namespace MonteCarlo{
 
 // Constructor
 template<typename GeometryHandler, 
@@ -21,16 +28,15 @@ template<typename GeometryHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::BatchedDistributedParticleSimulationManager( 
-            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+      const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned number_of_histories,
 	    const unsigned start_history,
 	    const unsigned previously_completed_histories,
-	      const double previous_run_time )
+	    const double previous_run_time )
   : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( number_of_histories, start_history, previously_completed_histories, previous_run_time ),
     d_comm( comm ),
-    d_root_process( root_process );
-												  
+    d_root_process( root_process )
 {
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
@@ -61,11 +67,11 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   Utility::RandomNumberGenerator::createStreams();
 
   // Enable geometry thread support
-  GMI::enableThreadSupport(
+  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::GMI::enableThreadSupport(
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Enable estimator thread support
-  EMI::enableThreadSupport( 
+  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI::enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   // Cast the communicator to an MpiComm object
@@ -75,7 +81,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   mpi_comm->barrier();
 
   // Set the start time
-  this->setStartTime( ::MPI_WTime() );
+  this->setStartTime( ::MPI_Wtime() );
 
   // The number of batches that need to be run
   unsigned long long number_of_batches = 25*mpi_comm->getSize();
@@ -122,7 +128,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 			      std::runtime_error,
 			      "Error: unable to get receive message on root "
 			      "process " << d_root_process << " from worker "
-			      "process " << worker_rank << "! "
+			      "process " << i << "! "
 			      "MPI_Irecv failed with the following error: "
 			      << Teuchos::mpiErrorCodeToString(return_value) );
 	    
@@ -144,7 +150,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 				std::runtime_error,
 				"Error: unable to send batch info from "
 				"root process " << d_root_process << 
-				"to worker process " << worker_rank << "! "
+				"to worker process " << i << "! "
 				"MPI_Isend failed with the following error: "
 				<< Teuchos::mpiErrorCodeToString(return_value));
 	  }
@@ -159,9 +165,9 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 	int* message_waiting = NULL;
 	MPI_Status raw_status;
 	
-	return_value = MPI_IProbe( MPI_ANY_SOURCE,
+	return_value = MPI_Iprobe( MPI_ANY_SOURCE,
 				   mpi_comm->getTag(),
-				   *mpi_comm->getRawMPIComm(),
+				   *mpi_comm->getRawMpiComm(),
 				   message_waiting,
 				   &raw_status );
 	
@@ -277,7 +283,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
       // Check if the exit condition was sent
       return_value = ::MPI_Get_count( &raw_batch_status,
 				      MPI_UNSIGNED_LONG_LONG,
-				      &exit_contition );
+				      &exit_condition );
       
       // Run the simulation batch
       if( exit_condition != 1 )
@@ -292,10 +298,10 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   mpi_comm->barrier();
 
   // Perform a reduction of the estimator data on the root process
-  EMI::reduceData( d_comm, d_root_process );
+  ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::EMI::reduceData( d_comm, d_root_process );
 
   // Set the end time
-  this->setEndTime( ::MPI_WTime() );
+  this->setEndTime( ::MPI_Wtime() );
 
   if( d_comm->getRank() == d_root_process )
     std::cout << "done." << std::endl;
@@ -352,6 +358,8 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::signalHandler( signal );
   }
 }
+
+} // end MonteCarlo namespace
 
 #endif // end FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
