@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Root Includes
+#include <TError.h>
+
 // FRENSIE Includes
 #include "Geometry_Root.hpp"
 #include "Utility_ContractException.hpp"
@@ -20,6 +23,9 @@ std::string Root::s_terminal_material_name;
 void Root::initialize( const std::string& filename )
 {
   s_manager = TGeoManager::Import( filename.c_str() );
+  
+  // Tell ROOT to suppress all non-fatal messages
+  gErrorIgnoreLevel = kFatal;
   
   s_terminal_material_name = "graveyard";
 }
