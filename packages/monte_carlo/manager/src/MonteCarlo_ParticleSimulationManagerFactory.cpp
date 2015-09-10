@@ -62,7 +62,8 @@ ParticleSimulationManagerFactory::createManager(
   // Create the output stream
   Teuchos::RCP<std::ostream> out;
   
-  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
+	Teuchos::GlobalMPISession::getNProc() > 1 )
   {
     Teuchos::RCP<Teuchos::FancyOStream> fancy_out =
       Teuchos::VerboseObjectBase::getDefaultOStream();
