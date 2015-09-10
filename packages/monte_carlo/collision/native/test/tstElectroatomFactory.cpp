@@ -342,17 +342,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  // Test that there are no subshell cross sections
-  cross_section = atom->getReactionCrossSection(
-		   1e-6,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section = atom->getReactionCrossSection( 
-		   1e5,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   // Test that the K subshell electroionization cross section can be returned
   cross_section = atom->getReactionCrossSection(
 		   1.000000000000E-05,
@@ -797,17 +786,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  // Test that there are no subshell cross sections
-  cross_section = atom->getReactionCrossSection(
-		   1e-6,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section = atom->getReactionCrossSection( 
-		   1e5,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
   // Test that the K subshell electroionization cross section can be returned
   cross_section = atom->getReactionCrossSection(
 		   1.000000000000E-05,
@@ -1233,17 +1211,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
                    MonteCarlo::TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  // Test that there are no subshell cross sections
-  cross_section = atom->getReactionCrossSection(
-		   1e-6,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
-
-  cross_section = atom->getReactionCrossSection( 
-		   1e5,
-		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
 
   // Test that the K subshell electroionization cross section can be returned
   cross_section = atom->getReactionCrossSection(

@@ -16,6 +16,7 @@
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -32,21 +33,40 @@ class StandardElectroatomicReaction : public ElectroatomicReaction
 
 public:
 
+  //! Basic Constructor
+  StandardElectroatomicReaction( 
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+	const unsigned threshold_energy_index );
+
   //! Constructor
   StandardElectroatomicReaction( 
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index );
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+	const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
 
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const;
+
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
 
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+                          const unsigned bin_index ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const;
 
 private:
 
@@ -58,6 +78,9 @@ private:
 
   // The threshold energy
   unsigned d_threshold_energy_index;
+
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 //! Partial template specialization for raw data
@@ -66,21 +89,40 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
 {
   public:
 
+  //! Basic Constructor
+  StandardElectroatomicReaction( 
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+	const unsigned threshold_energy_index );
+
   //! Constructor
   StandardElectroatomicReaction( 
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index );
+	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
 
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const;
+
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
 
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+			  const unsigned bin_index ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const;
 
 private:
 
@@ -92,6 +134,9 @@ private:
 
   // The threshold energy
   const unsigned d_threshold_energy_index;
+
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 
