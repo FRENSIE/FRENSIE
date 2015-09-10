@@ -139,9 +139,12 @@ int facemcCore( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
+  std::cout << "Found" << std::endl;
   // Create the default communicator
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
-    Teuchos::DefaultComm<unsigned long long>::getComm();
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+  {
+    Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+      Teuchos::DefaultComm<unsigned long long>::getComm();
 
   // Create the simulation manager
   facemc_manager = 
@@ -154,7 +157,27 @@ int facemcCore( int argc, char** argv )
 						*material_definitions,
 						*cross_sections_table_info,
 						cross_section_directory,
-						comm );
+  						comm );
+  }
+  else
+  {
+    Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
+      Teuchos::DefaultComm<unsigned long long>::getDefaultSerialComm( NULL );
+
+  // Create the simulation manager
+  facemc_manager =
+    MonteCarlo::ParticleSimulationManagerFactory::createManager(
+                                                *simulation_info,
+                                                *geometry_definition,
+                                                *source_definition,
+                                                *response_function_definitions,
+                                                *estimator_definitions,
+                                                *material_definitions,
+                                                *cross_sections_table_info,
+                                                cross_section_directory,
+                                                comm );
+  }
+
 
   // Run the simulation
   facemc_manager->runSimulation();
