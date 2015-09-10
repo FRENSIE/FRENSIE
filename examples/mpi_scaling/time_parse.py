@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 # File prefix
-file_prefix = "MPI_Strong_"
+file_prefix = "OpenMP_Strong_"
 
 # File suffix
 file_suffix = ".txt"
@@ -31,5 +31,3 @@ for i in range(0, len(core_numbers)):
     input_file.close()
     
 output_file.close()
-
-
