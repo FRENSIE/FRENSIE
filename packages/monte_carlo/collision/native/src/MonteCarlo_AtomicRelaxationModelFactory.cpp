@@ -170,6 +170,90 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
   }
 }
 
+
+// Create the atomic relaxation model
+/*! \details If the use of atomic relaxation data is desired and that data
+ * is available for the atom of interest, a detailed atomic relaxation model
+ * will be created for the atom. Otherwise a "void" model, which essentially
+ * ignores relaxation, will be created.
+ */
+void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
+	 const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const bool use_atomic_relaxation_data )
+{
+  if( use_atomic_relaxation_data )
+  {
+    if( raw_photoatom_data.hasRelaxationData() )
+    {
+      const std::set<unsigned>& endf_designators =
+	raw_photoatom_data.getSubshells();
+
+      std::set<unsigned>::const_iterator subshell_it = 
+	endf_designators.begin();
+
+      Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >
+	subshell_relaxation_models;
+
+      while( subshell_it != endf_designators.end() )
+      {
+	if( raw_photoatom_data.hasSubshellRelaxationData( *subshell_it ) )
+	{
+	  const std::vector<std::pair<unsigned,unsigned> >& transitions = 
+	    raw_photoatom_data.getSubshellRelaxationVacancies( *subshell_it );
+	  
+	  Teuchos::Array<SubshellType> primary_transitions(transitions.size()),
+	    secondary_transitions( transitions.size() );
+
+	  for( unsigned i = 0; i < transitions.size(); ++i )
+	  {
+	    primary_transitions[i] = convertEADLDesignatorToSubshellEnum(
+							transitions[i].first );
+	    secondary_transitions[i] = convertEADLDesignatorToSubshellEnum(
+						       transitions[i].second );
+	  }
+
+	  const std::vector<double>& relaxation_energies = 
+	    raw_photoatom_data.getSubshellRelaxationParticleEnergies(
+							        *subshell_it );
+
+	  const std::vector<double>& transition_pdf = 
+	    raw_photoatom_data.getSubshellRelaxationProbabilities( 
+								*subshell_it );
+
+	  Teuchos::RCP<const SubshellRelaxationModel> subshell_model(
+	          new DetailedSubshellRelaxationModel(
+	                   convertEADLDesignatorToSubshellEnum( *subshell_it ),
+			   primary_transitions,
+			   secondary_transitions,
+			   relaxation_energies,
+			   transition_pdf,
+			   false ) );
+	  
+	  subshell_relaxation_models.push_back( subshell_model );
+	}
+	
+	++subshell_it;
+      }
+
+      atomic_relaxation_model.reset( new DetailedAtomicRelaxationModel(
+						subshell_relaxation_models ) );
+    }
+    // No atomic relaxation data is available
+    else
+    {
+      atomic_relaxation_model = 
+	AtomicRelaxationModelFactory::default_void_model;
+    }
+  }
+  // Ignore atomic relaxation
+  else
+  {
+    atomic_relaxation_model = 
+      AtomicRelaxationModelFactory::default_void_model;
+  }
+}
+
 // Create and cache the atomic relaxation model
 /*! \details If the use of atomic relaxation data is desired and that data
  * is available for the atom of interest, a detailed atomic relaxation model
@@ -218,6 +302,44 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
  */
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
          const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const bool use_atomic_relaxation_data )
+{
+  // Check if the model for this atom has already been created
+  if( d_relaxation_models.find( raw_photoatom_data.getAtomicNumber() ) !=
+      d_relaxation_models.end() )
+  {
+    atomic_relaxation_model = 
+      d_relaxation_models[raw_photoatom_data.getAtomicNumber()];
+  }
+  else
+  {
+    AtomicRelaxationModelFactory::createAtomicRelaxationModel(
+						  raw_photoatom_data,
+						  atomic_relaxation_model,
+						  use_atomic_relaxation_data );
+
+    // Cache the relaxation model
+    if( use_atomic_relaxation_data )
+    {
+      d_relaxation_models[raw_photoatom_data.getAtomicNumber()] =
+	atomic_relaxation_model;
+    }
+  }
+}
+
+
+// Create and cache the atomic relaxation model
+/*! \details If the use of atomic relaxation data is desired and that data
+ * is available for the atom of interest, a detailed atomic relaxation model
+ * will be created for the atom. Otherwise a "void" model, which essentially
+ * ignores relaxation, will be created. To save memory, a relaxation model
+ * can be cached. Calling this function multiple times with the same atomic
+ * data (same atomic number) will return a pointer to the previously created
+ * atomic relaxation model.
+ */
+void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
+         const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 const bool use_atomic_relaxation_data )
 {

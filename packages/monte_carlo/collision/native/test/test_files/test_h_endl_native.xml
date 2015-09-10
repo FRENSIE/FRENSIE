@@ -8,11 +8,38 @@
 		<item_version>0</item_version>
 		<item>1</item>
 	</subshells>
-	<binding_energies>
+	<subshell_occupancies class_id="2" tracking_level="0" version="0">
 		<count>1</count>
 		<item_version>0</item_version>
-		<item>1.36100000000000001e-05</item>
-	</binding_energies>
+		<item class_id="3" tracking_level="0" version="0">
+			<first>1</first>
+			<second>1.00000000000000000e+00</second>
+		</item>
+	</subshell_occupancies>
+	<subshell_binding_energies>
+		<count>1</count>
+		<item_version>0</item_version>
+		<item>
+			<first>1</first>
+			<second>1.36100000000000001e-05</second>
+		</item>
+	</subshell_binding_energies>
+	<relaxation_transitions class_id="4" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</relaxation_transitions>
+	<relaxation_vacancies class_id="5" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</relaxation_vacancies>
+	<relaxation_particle_energies class_id="6" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</relaxation_particle_energies>
+	<relaxation_probabilities>
+		<count>0</count>
+		<item_version>0</item_version>
+	</relaxation_probabilities>
 	<cutoff_angle>9.99999999999999955e-07</cutoff_angle>
 	<angular_energy_grid>
 		<count>16</count>
@@ -34,10 +61,10 @@
 		<item>6.62500000000000000e+01</item>
 		<item>1.00000000000000000e+05</item>
 	</angular_energy_grid>
-	<analog_elastic_angles class_id="3" tracking_level="0" version="0">
+	<analog_elastic_angles class_id="8" tracking_level="0" version="0">
 		<count>16</count>
 		<item_version>0</item_version>
-		<item class_id="4" tracking_level="0" version="0">
+		<item class_id="9" tracking_level="0" version="0">
 			<first>1.00000000000000008e-05</first>
 			<second>
 				<count>2</count>
@@ -2282,10 +2309,10 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_weights>
-	<electroionization_energy_grid class_id="5" tracking_level="0" version="0">
+	<electroionization_energy_grid>
 		<count>1</count>
 		<item_version>0</item_version>
-		<item class_id="6" tracking_level="0" version="0">
+		<item class_id="10" tracking_level="0" version="0">
 			<first>1</first>
 			<second>
 				<count>8</count>
@@ -2301,10 +2328,10 @@
 			</second>
 		</item>
 	</electroionization_energy_grid>
-	<electroionization_recoil_energy class_id="7" tracking_level="0" version="0">
+	<electroionization_recoil_energy class_id="11" tracking_level="0" version="0">
 		<count>1</count>
 		<item_version>0</item_version>
-		<item class_id="8" tracking_level="0" version="0">
+		<item class_id="12" tracking_level="0" version="0">
 			<first>1</first>
 			<second>
 				<count>8</count>
@@ -6868,12 +6895,12 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</total_elastic_cross_section>
-	<total_elastic_cross_section_threshold_index>994150912</total_elastic_cross_section_threshold_index>
+	<total_elastic_cross_section_threshold_index>78</total_elastic_cross_section_threshold_index>
 	<moment_preserving_elastic_cross_section>
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_cross_section>
-	<moment_preserving_elastic_cross_section_threshold_index>42817948</moment_preserving_elastic_cross_section_threshold_index>
+	<moment_preserving_elastic_cross_section_threshold_index>2730496176</moment_preserving_elastic_cross_section_threshold_index>
 	<electroionization_subshell_cross_section>
 		<count>1</count>
 		<item_version>0</item_version>
@@ -7606,10 +7633,10 @@
 			</second>
 		</item>
 	</electroionization_subshell_cross_section>
-	<electroionization_subshell_cross_section_threshold_index class_id="9" tracking_level="0" version="0">
+	<electroionization_subshell_cross_section_threshold_index>
 		<count>1</count>
 		<item_version>0</item_version>
-		<item class_id="10" tracking_level="0" version="0">
+		<item class_id="13" tracking_level="0" version="0">
 			<first>1</first>
 			<second>7</second>
 		</item>

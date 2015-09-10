@@ -191,6 +191,31 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
                           2.489240E+09, 
                           1e-12 );
 
+  // Test that the screened Rutherford elastic cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+            1.000E+05,
+            MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          2.1116099116949E+06, 
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            1.995260E+01,
+            MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+  
+  TEST_FLOATING_EQUALITY( cross_section,  
+                          1.088440E+06, 
+                          1e-12 );
+  
+  cross_section = atom->getReactionCrossSection(
+            6.309570E+00,
+            MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+  
+  TEST_FLOATING_EQUALITY( cross_section,  
+                          0.0, 
+                          1e-12 );
+
   // Test that there is no total electroionization
   cross_section = atom->getReactionCrossSection( 
 			1.000000000000E-05,

@@ -126,7 +126,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
 {
   std::cout << "Loading ACE electroatomic cross section table "
 	    << electroatomic_table_name << " (" << electroatom_alias << ") ... ";
-/*
+
   // Check if the table has already been loaded
   if( d_electroatomic_table_name_map.find( electroatomic_table_name ) ==
       d_electroatomic_table_name_map.end() )
@@ -173,7 +173,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
     d_electroatom_name_map[electroatom_alias] = 
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
-*/
+
   std::cout << "done." << std::endl;
 }
 
@@ -193,13 +193,13 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
 {
   std::cout << "Loading native electroatomic cross section table "
 	    << electroatom_alias << " ... ";
- /* 
+
   // Check if the table has already been loaded
   if( d_electroatomic_table_name_map.find( native_file_path ) ==
       d_electroatomic_table_name_map.end() )
   {
-    // Create the epr data container
-    Data::ElectronElectronRelaxationDataContainer 
+    // Create the eedl data container
+    Data::EvaluatedElectronDataContainer 
       data_container( native_file_path );
   
     // Create the atomic relaxation model
@@ -219,10 +219,9 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
 					     atomic_weight,
 					     atomic_relaxation_model,
 					     electroatom,
-					     incoherent_model,
-					     kahn_sampling_cutoff_energy,
-					     use_detailed_pair_production_data,
-					     use_atomic_relaxation_data );
+					     photon_distribution_function,
+                         use_atomic_relaxation_data,
+                         cutoff_angle );
 
     // Cache the new electroatom in the table name map
     d_electroatomic_table_name_map[native_file_path] = electroatom;
@@ -233,7 +232,7 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
     d_electroatom_name_map[electroatom_alias] = 
       d_electroatomic_table_name_map[native_file_path];
   }
-*/
+
   std::cout << "done." << std::endl;
 }
 

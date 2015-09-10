@@ -20,6 +20,7 @@
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_EvaluatedElectronDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -48,6 +49,12 @@ public:
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	const bool use_atomic_relaxation_data );
 
+  //! Create the atomic relaxation model (using Native eedl data)
+  static void createAtomicRelaxationModel(
+	const Data::EvaluatedElectronDataContainer& raw_photoatomc_data,
+	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	const bool use_atomic_relaxation_data );
+
   //! Constructor
   AtomicRelaxationModelFactory()
   { /* ... */ }
@@ -65,6 +72,12 @@ public:
   //! Create and cache the atomic relaxation model
   void createAndCacheAtomicRelaxationModel(
          const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	 const bool use_atomic_relaxation_data ); 
+
+  //! Create and cache the atomic relaxation model
+  void createAndCacheAtomicRelaxationModel(
+         const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 const bool use_atomic_relaxation_data ); 
 
