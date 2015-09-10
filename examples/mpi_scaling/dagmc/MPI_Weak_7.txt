@@ -1,0 +1,694 @@
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 7!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+Read 2 ACIS Entities from the input file
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Read 2 ACIS Entities from the input file
+
+Read 2 ACIS Entities from the input file
+
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+Constructed 2 Volumes: ERROR: Attribute type -1 not recognized.
+
+ERROR: Attribute type -1 not recognized.
+Constructed 2 Volumes: ERROR: Attribute type -1 not recognized.
+1, 4
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Read 2 ACIS Entities from the input file
+1, 4
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+Starting simulation ... Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement's total surface area = 162.556
+done.
+Exporting simulation data ... done.
+!!!Particle Simulation Finished!!!
+Number of histories completed: 700000
+Simulation Time (s): 219.829
+Previous Simulation Time (s): 0
+
+Estimators: 
+//---------------------------------------------------------------------------//
+
+Surface Current Estimator: 1
+Surface Ids: 1 
+Response Functions: 
+  1.) default
+Energy Bin Boundaries: 1e-11 1.25893e-11 1.58489e-11 1.99526e-11 2.51189e-11 3.16228e-11 3.98107e-11 5.01187e-11 6.30957e-11 7.94328e-11 1e-10 1.25893e-10 1.58489e-10 1.99526e-10 2.51189e-10 3.16228e-10 3.98107e-10 5.01187e-10 6.30957e-10 7.94328e-10 1e-09 1.25893e-09 1.58489e-09 1.99526e-09 2.51189e-09 3.16228e-09 3.98107e-09 5.01187e-09 6.30957e-09 7.94328e-09 1e-08 1.25893e-08 1.58489e-08 1.99526e-08 2.51189e-08 3.16228e-08 3.98107e-08 5.01187e-08 6.30957e-08 7.94328e-08 1e-07 1.25893e-07 1.58489e-07 1.99526e-07 2.51189e-07 3.16228e-07 3.98107e-07 5.01187e-07 6.30957e-07 7.94328e-07 1e-06 1.25893e-06 1.58489e-06 1.99526e-06 2.51189e-06 3.16228e-06 3.98107e-06 5.01187e-06 6.30957e-06 7.94328e-06 1e-05 1.25893e-05 1.58489e-05 1.99526e-05 2.51189e-05 3.16228e-05 3.98107e-05 5.01187e-05 6.30957e-05 7.94328e-05 0.0001 0.000125893 0.000158489 0.000199526 0.000251189 0.000316228 0.000398107 0.000501187 0.000630957 0.000794328 0.001 0.00125893 0.00158489 0.00199526 0.00251189 0.00316228 0.00398107 0.00501187 0.00630957 0.00794328 0.01 0.0125893 0.0158489 0.0199526 0.0251189 0.0316228 0.0398107 0.0501187 0.0630957 0.0794328 0.1 0.125893 0.158489 0.199526 0.251189 0.316228 0.398107 0.501187 0.630957 0.794328 1 
+
+Surface 1 Bin Data: 
+--------
+Response Function: default
+ Energy Bin: [1e-11,1.25893e-11] 0 0
+ Energy Bin: (1.25893e-11,1.58489e-11] 0 0
+ Energy Bin: (1.58489e-11,1.99526e-11] 0 0
+ Energy Bin: (1.99526e-11,2.51189e-11] 0 0
+ Energy Bin: (2.51189e-11,3.16228e-11] 0 0
+ Energy Bin: (3.16228e-11,3.98107e-11] 0 0
+ Energy Bin: (3.98107e-11,5.01187e-11] 0 0
+ Energy Bin: (5.01187e-11,6.30957e-11] 0 0
+ Energy Bin: (6.30957e-11,7.94328e-11] 0 0
+ Energy Bin: (7.94328e-11,1e-10] 0 0
+ Energy Bin: (1e-10,1.25893e-10] 0 0
+ Energy Bin: (1.25893e-10,1.58489e-10] 0 0
+ Energy Bin: (1.58489e-10,1.99526e-10] 0 0
+ Energy Bin: (1.99526e-10,2.51189e-10] 0 0
+ Energy Bin: (2.51189e-10,3.16228e-10] 1.42857e-06 0.999999
+ Energy Bin: (3.16228e-10,3.98107e-10] 0 0
+ Energy Bin: (3.98107e-10,5.01187e-10] 0 0
+ Energy Bin: (5.01187e-10,6.30957e-10] 0 0
+ Energy Bin: (6.30957e-10,7.94328e-10] 1.42857e-06 0.999999
+ Energy Bin: (7.94328e-10,1e-09] 1.42857e-06 0.999999
+ Energy Bin: (1e-09,1.25893e-09] 0 0
+ Energy Bin: (1.25893e-09,1.58489e-09] 5.71429e-06 0.499999
+ Energy Bin: (1.58489e-09,1.99526e-09] 4.28571e-06 0.577349
+ Energy Bin: (1.99526e-09,2.51189e-09] 7.14286e-06 0.447212
+ Energy Bin: (2.51189e-09,3.16228e-09] 1e-05 0.377963
+ Energy Bin: (3.16228e-09,3.98107e-09] 1e-05 0.377963
+ Energy Bin: (3.98107e-09,5.01187e-09] 2.28571e-05 0.249997
+ Energy Bin: (5.01187e-09,6.30957e-09] 4.42857e-05 0.179601
+ Energy Bin: (6.30957e-09,7.94328e-09] 6.14286e-05 0.152494
+ Energy Bin: (7.94328e-09,1e-08] 9.14286e-05 0.124994
+ Energy Bin: (1e-08,1.25893e-08] 0.000145714 0.0990075
+ Energy Bin: (1.25893e-08,1.58489e-08] 0.000258571 0.0743198
+ Energy Bin: (1.58489e-08,1.99526e-08] 0.00041 0.059016
+ Energy Bin: (1.99526e-08,2.51189e-08] 0.000704286 0.0450219
+ Energy Bin: (2.51189e-08,3.16228e-08] 0.00104 0.0370432
+ Energy Bin: (3.16228e-08,3.98107e-08] 0.00176143 0.0284535
+ Energy Bin: (3.98107e-08,5.01187e-08] 0.00262429 0.023301
+ Energy Bin: (5.01187e-08,6.30957e-08] 0.00408143 0.0186705
+ Energy Bin: (6.30957e-08,7.94328e-08] 0.00642571 0.0148625
+ Energy Bin: (7.94328e-08,1e-07] 0.00997429 0.0119078
+ Energy Bin: (1e-07,1.25893e-07] 0.0147314 0.00977475
+ Energy Bin: (1.25893e-07,1.58489e-07] 0.0211657 0.0081281
+ Energy Bin: (1.58489e-07,1.99526e-07] 0.0298357 0.00681562
+ Energy Bin: (1.99526e-07,2.51189e-07] 0.0396629 0.00588127
+ Energy Bin: (2.51189e-07,3.16228e-07] 0.0501186 0.00520339
+ Energy Bin: (3.16228e-07,3.98107e-07] 0.0591386 0.00476736
+ Energy Bin: (3.98107e-07,5.01187e-07] 0.0639871 0.00457136
+ Energy Bin: (5.01187e-07,6.30957e-07] 0.0622629 0.00463849
+ Energy Bin: (6.30957e-07,7.94328e-07] 0.0525543 0.00507486
+ Energy Bin: (7.94328e-07,1e-06] 0.0382229 0.00599552
+ Energy Bin: (1e-06,1.25893e-06] 0.02277 0.00783011
+ Energy Bin: (1.25893e-06,1.58489e-06] 0.0111971 0.0112319
+ Energy Bin: (1.58489e-06,1.99526e-06] 0.00483571 0.0171462
+ Energy Bin: (1.99526e-06,2.51189e-06] 0.00261857 0.0233265
+ Energy Bin: (2.51189e-06,3.16228e-06] 0.00215286 0.0257321
+ Energy Bin: (3.16228e-06,3.98107e-06] 0.00203 0.026501
+ Energy Bin: (3.98107e-06,5.01187e-06] 0.00193286 0.0271601
+ Energy Bin: (5.01187e-06,6.30957e-06] 0.00197714 0.0268536
+ Energy Bin: (6.30957e-06,7.94328e-06] 0.00188714 0.0274877
+ Energy Bin: (7.94328e-06,1e-05] 0.00183571 0.0278708
+ Energy Bin: (1e-05,1.25893e-05] 0.00193286 0.0271601
+ Energy Bin: (1.25893e-05,1.58489e-05] 0.00190143 0.0273841
+ Energy Bin: (1.58489e-05,1.99526e-05] 0.00186429 0.027656
+ Energy Bin: (1.99526e-05,2.51189e-05] 0.00187143 0.0276031
+ Energy Bin: (2.51189e-05,3.16228e-05] 0.00194143 0.0270999
+ Energy Bin: (3.16228e-05,3.98107e-05] 0.00174857 0.0285581
+ Energy Bin: (3.98107e-05,5.01187e-05] 0.00187286 0.0275925
+ Energy Bin: (5.01187e-05,6.30957e-05] 0.00184429 0.0278058
+ Energy Bin: (6.30957e-05,7.94328e-05] 0.00182143 0.0279801
+ Energy Bin: (7.94328e-05,0.0001] 0.00184286 0.0278166
+ Energy Bin: (0.0001,0.000125893] 0.00179571 0.0281801
+ Energy Bin: (0.000125893,0.000158489] 0.00182143 0.0279801
+ Energy Bin: (0.000158489,0.000199526] 0.00191714 0.0272714
+ Energy Bin: (0.000199526,0.000251189] 0.00182286 0.0279691
+ Energy Bin: (0.000251189,0.000316228] 0.00181714 0.0280131
+ Energy Bin: (0.000316228,0.000398107] 0.00179143 0.0282138
+ Energy Bin: (0.000398107,0.000501187] 0.00180714 0.0280907
+ Energy Bin: (0.000501187,0.000630957] 0.00182714 0.0279362
+ Energy Bin: (0.000630957,0.000794328] 0.00185571 0.0277199
+ Energy Bin: (0.000794328,0.001] 0.00181857 0.0280021
+ Energy Bin: (0.001,0.00125893] 0.00186571 0.0276454
+ Energy Bin: (0.00125893,0.00158489] 0.00186143 0.0276773
+ Energy Bin: (0.00158489,0.00199526] 0.00189571 0.0274254
+ Energy Bin: (0.00199526,0.00251189] 0.0019 0.0273944
+ Energy Bin: (0.00251189,0.00316228] 0.00185 0.0277628
+ Energy Bin: (0.00316228,0.00398107] 0.00187143 0.0276031
+ Energy Bin: (0.00398107,0.00501187] 0.00190286 0.0273737
+ Energy Bin: (0.00501187,0.00630957] 0.00194429 0.02708
+ Energy Bin: (0.00630957,0.00794328] 0.00207429 0.026216
+ Energy Bin: (0.00794328,0.01] 0.00196286 0.0269513
+ Energy Bin: (0.01,0.0125893] 0.00193429 0.02715
+ Energy Bin: (0.0125893,0.0158489] 0.00209571 0.0260813
+ Energy Bin: (0.0158489,0.0199526] 0.00211429 0.0259663
+ Energy Bin: (0.0199526,0.0251189] 0.00219286 0.0254958
+ Energy Bin: (0.0251189,0.0316228] 0.00237571 0.0244927
+ Energy Bin: (0.0316228,0.0398107] 0.00247 0.0240196
+ Energy Bin: (0.0398107,0.0501187] 0.00270714 0.0229407
+ Energy Bin: (0.0501187,0.0630957] 0.00295143 0.0219681
+ Energy Bin: (0.0630957,0.0794328] 0.00313286 0.0213206
+ Energy Bin: (0.0794328,0.1] 0.00327714 0.0208445
+ Energy Bin: (0.1,0.125893] 0.00402286 0.0188065
+ Energy Bin: (0.125893,0.158489] 0.00446 0.0178572
+ Energy Bin: (0.158489,0.199526] 0.00496143 0.0169265
+ Energy Bin: (0.199526,0.251189] 0.00587571 0.0155468
+ Energy Bin: (0.251189,0.316228] 0.00683429 0.0144084
+ Energy Bin: (0.316228,0.398107] 0.00777714 0.0135004
+ Energy Bin: (0.398107,0.501187] 0.00923571 0.0123794
+ Energy Bin: (0.501187,0.630957] 0.0105671 0.0115655
+ Energy Bin: (0.630957,0.794328] 0.0120814 0.0108082
+ Energy Bin: (0.794328,1] 0.0135529 0.010197
+
+ Total Bin Data: 
+--------
+Response Function: default
+ Energy Bin: [1e-11,1.25893e-11] 0 0
+ Energy Bin: (1.25893e-11,1.58489e-11] 0 0
+ Energy Bin: (1.58489e-11,1.99526e-11] 0 0
+ Energy Bin: (1.99526e-11,2.51189e-11] 0 0
+ Energy Bin: (2.51189e-11,3.16228e-11] 0 0
+ Energy Bin: (3.16228e-11,3.98107e-11] 0 0
+ Energy Bin: (3.98107e-11,5.01187e-11] 0 0
+ Energy Bin: (5.01187e-11,6.30957e-11] 0 0
+ Energy Bin: (6.30957e-11,7.94328e-11] 0 0
+ Energy Bin: (7.94328e-11,1e-10] 0 0
+ Energy Bin: (1e-10,1.25893e-10] 0 0
+ Energy Bin: (1.25893e-10,1.58489e-10] 0 0
+ Energy Bin: (1.58489e-10,1.99526e-10] 0 0
+ Energy Bin: (1.99526e-10,2.51189e-10] 0 0
+ Energy Bin: (2.51189e-10,3.16228e-10] 1.42857e-06 0.999999
+ Energy Bin: (3.16228e-10,3.98107e-10] 0 0
+ Energy Bin: (3.98107e-10,5.01187e-10] 0 0
+ Energy Bin: (5.01187e-10,6.30957e-10] 0 0
+ Energy Bin: (6.30957e-10,7.94328e-10] 1.42857e-06 0.999999
+ Energy Bin: (7.94328e-10,1e-09] 1.42857e-06 0.999999
+ Energy Bin: (1e-09,1.25893e-09] 0 0
+ Energy Bin: (1.25893e-09,1.58489e-09] 5.71429e-06 0.499999
+ Energy Bin: (1.58489e-09,1.99526e-09] 4.28571e-06 0.577349
+ Energy Bin: (1.99526e-09,2.51189e-09] 7.14286e-06 0.447212
+ Energy Bin: (2.51189e-09,3.16228e-09] 1e-05 0.377963
+ Energy Bin: (3.16228e-09,3.98107e-09] 1e-05 0.377963
+ Energy Bin: (3.98107e-09,5.01187e-09] 2.28571e-05 0.249997
+ Energy Bin: (5.01187e-09,6.30957e-09] 4.42857e-05 0.179601
+ Energy Bin: (6.30957e-09,7.94328e-09] 6.14286e-05 0.152494
+ Energy Bin: (7.94328e-09,1e-08] 9.14286e-05 0.124994
+ Energy Bin: (1e-08,1.25893e-08] 0.000145714 0.0990075
+ Energy Bin: (1.25893e-08,1.58489e-08] 0.000258571 0.0743198
+ Energy Bin: (1.58489e-08,1.99526e-08] 0.00041 0.059016
+ Energy Bin: (1.99526e-08,2.51189e-08] 0.000704286 0.0450219
+ Energy Bin: (2.51189e-08,3.16228e-08] 0.00104 0.0370432
+ Energy Bin: (3.16228e-08,3.98107e-08] 0.00176143 0.0284535
+ Energy Bin: (3.98107e-08,5.01187e-08] 0.00262429 0.023301
+ Energy Bin: (5.01187e-08,6.30957e-08] 0.00408143 0.0186705
+ Energy Bin: (6.30957e-08,7.94328e-08] 0.00642571 0.0148625
+ Energy Bin: (7.94328e-08,1e-07] 0.00997429 0.0119078
+ Energy Bin: (1e-07,1.25893e-07] 0.0147314 0.00977475
+ Energy Bin: (1.25893e-07,1.58489e-07] 0.0211657 0.0081281
+ Energy Bin: (1.58489e-07,1.99526e-07] 0.0298357 0.00681562
+ Energy Bin: (1.99526e-07,2.51189e-07] 0.0396629 0.00588127
+ Energy Bin: (2.51189e-07,3.16228e-07] 0.0501186 0.00520339
+ Energy Bin: (3.16228e-07,3.98107e-07] 0.0591386 0.00476736
+ Energy Bin: (3.98107e-07,5.01187e-07] 0.0639871 0.00457136
+ Energy Bin: (5.01187e-07,6.30957e-07] 0.0622629 0.00463849
+ Energy Bin: (6.30957e-07,7.94328e-07] 0.0525543 0.00507486
+ Energy Bin: (7.94328e-07,1e-06] 0.0382229 0.00599552
+ Energy Bin: (1e-06,1.25893e-06] 0.02277 0.00783011
+ Energy Bin: (1.25893e-06,1.58489e-06] 0.0111971 0.0112319
+ Energy Bin: (1.58489e-06,1.99526e-06] 0.00483571 0.0171462
+ Energy Bin: (1.99526e-06,2.51189e-06] 0.00261857 0.0233265
+ Energy Bin: (2.51189e-06,3.16228e-06] 0.00215286 0.0257321
+ Energy Bin: (3.16228e-06,3.98107e-06] 0.00203 0.026501
+ Energy Bin: (3.98107e-06,5.01187e-06] 0.00193286 0.0271601
+ Energy Bin: (5.01187e-06,6.30957e-06] 0.00197714 0.0268536
+ Energy Bin: (6.30957e-06,7.94328e-06] 0.00188714 0.0274877
+ Energy Bin: (7.94328e-06,1e-05] 0.00183571 0.0278708
+ Energy Bin: (1e-05,1.25893e-05] 0.00193286 0.0271601
+ Energy Bin: (1.25893e-05,1.58489e-05] 0.00190143 0.0273841
+ Energy Bin: (1.58489e-05,1.99526e-05] 0.00186429 0.027656
+ Energy Bin: (1.99526e-05,2.51189e-05] 0.00187143 0.0276031
+ Energy Bin: (2.51189e-05,3.16228e-05] 0.00194143 0.0270999
+ Energy Bin: (3.16228e-05,3.98107e-05] 0.00174857 0.0285581
+ Energy Bin: (3.98107e-05,5.01187e-05] 0.00187286 0.0275925
+ Energy Bin: (5.01187e-05,6.30957e-05] 0.00184429 0.0278058
+ Energy Bin: (6.30957e-05,7.94328e-05] 0.00182143 0.0279801
+ Energy Bin: (7.94328e-05,0.0001] 0.00184286 0.0278166
+ Energy Bin: (0.0001,0.000125893] 0.00179571 0.0281801
+ Energy Bin: (0.000125893,0.000158489] 0.00182143 0.0279801
+ Energy Bin: (0.000158489,0.000199526] 0.00191714 0.0272714
+ Energy Bin: (0.000199526,0.000251189] 0.00182286 0.0279691
+ Energy Bin: (0.000251189,0.000316228] 0.00181714 0.0280131
+ Energy Bin: (0.000316228,0.000398107] 0.00179143 0.0282138
+ Energy Bin: (0.000398107,0.000501187] 0.00180714 0.0280907
+ Energy Bin: (0.000501187,0.000630957] 0.00182714 0.0279362
+ Energy Bin: (0.000630957,0.000794328] 0.00185571 0.0277199
+ Energy Bin: (0.000794328,0.001] 0.00181857 0.0280021
+ Energy Bin: (0.001,0.00125893] 0.00186571 0.0276454
+ Energy Bin: (0.00125893,0.00158489] 0.00186143 0.0276773
+ Energy Bin: (0.00158489,0.00199526] 0.00189571 0.0274254
+ Energy Bin: (0.00199526,0.00251189] 0.0019 0.0273944
+ Energy Bin: (0.00251189,0.00316228] 0.00185 0.0277628
+ Energy Bin: (0.00316228,0.00398107] 0.00187143 0.0276031
+ Energy Bin: (0.00398107,0.00501187] 0.00190286 0.0273737
+ Energy Bin: (0.00501187,0.00630957] 0.00194429 0.02708
+ Energy Bin: (0.00630957,0.00794328] 0.00207429 0.026216
+ Energy Bin: (0.00794328,0.01] 0.00196286 0.0269513
+ Energy Bin: (0.01,0.0125893] 0.00193429 0.02715
+ Energy Bin: (0.0125893,0.0158489] 0.00209571 0.0260813
+ Energy Bin: (0.0158489,0.0199526] 0.00211429 0.0259663
+ Energy Bin: (0.0199526,0.0251189] 0.00219286 0.0254958
+ Energy Bin: (0.0251189,0.0316228] 0.00237571 0.0244927
+ Energy Bin: (0.0316228,0.0398107] 0.00247 0.0240196
+ Energy Bin: (0.0398107,0.0501187] 0.00270714 0.0229407
+ Energy Bin: (0.0501187,0.0630957] 0.00295143 0.0219681
+ Energy Bin: (0.0630957,0.0794328] 0.00313286 0.0213206
+ Energy Bin: (0.0794328,0.1] 0.00327714 0.0208445
+ Energy Bin: (0.1,0.125893] 0.00402286 0.0188065
+ Energy Bin: (0.125893,0.158489] 0.00446 0.0178572
+ Energy Bin: (0.158489,0.199526] 0.00496143 0.0169265
+ Energy Bin: (0.199526,0.251189] 0.00587571 0.0155468
+ Energy Bin: (0.251189,0.316228] 0.00683429 0.0144084
+ Energy Bin: (0.316228,0.398107] 0.00777714 0.0135004
+ Energy Bin: (0.398107,0.501187] 0.00923571 0.0123794
+ Energy Bin: (0.501187,0.630957] 0.0105671 0.0115655
+ Energy Bin: (0.630957,0.794328] 0.0120814 0.0108082
+ Energy Bin: (0.794328,1] 0.0135529 0.010197
+
+Surface 1 Total Data: 
+--------
+Response Function: default
+0.673269 0.00083263 7.7987e-07 6561.61
+
+All Surfaces Total Data: 
+--------
+Response Function: default
+0.673269 0.00083263 7.7987e-07 6561.61
+
+//---------------------------------------------------------------------------//
+
+Cell Track Length Flux Estimator: 2
+Cell Ids: 1 
+Cell Volumes: 4.18217 
+Response Functions: 
+  1.) default
+Energy Bin Boundaries: 1e-11 1.25893e-11 1.58489e-11 1.99526e-11 2.51189e-11 3.16228e-11 3.98107e-11 5.01187e-11 6.30957e-11 7.94328e-11 1e-10 1.25893e-10 1.58489e-10 1.99526e-10 2.51189e-10 3.16228e-10 3.98107e-10 5.01187e-10 6.30957e-10 7.94328e-10 1e-09 1.25893e-09 1.58489e-09 1.99526e-09 2.51189e-09 3.16228e-09 3.98107e-09 5.01187e-09 6.30957e-09 7.94328e-09 1e-08 1.25893e-08 1.58489e-08 1.99526e-08 2.51189e-08 3.16228e-08 3.98107e-08 5.01187e-08 6.30957e-08 7.94328e-08 1e-07 1.25893e-07 1.58489e-07 1.99526e-07 2.51189e-07 3.16228e-07 3.98107e-07 5.01187e-07 6.30957e-07 7.94328e-07 1e-06 1.25893e-06 1.58489e-06 1.99526e-06 2.51189e-06 3.16228e-06 3.98107e-06 5.01187e-06 6.30957e-06 7.94328e-06 1e-05 1.25893e-05 1.58489e-05 1.99526e-05 2.51189e-05 3.16228e-05 3.98107e-05 5.01187e-05 6.30957e-05 7.94328e-05 0.0001 0.000125893 0.000158489 0.000199526 0.000251189 0.000316228 0.000398107 0.000501187 0.000630957 0.000794328 0.001 0.00125893 0.00158489 0.00199526 0.00251189 0.00316228 0.00398107 0.00501187 0.00630957 0.00794328 0.01 0.0125893 0.0158489 0.0199526 0.0251189 0.0316228 0.0398107 0.0501187 0.0630957 0.0794328 0.1 0.125893 0.158489 0.199526 0.251189 0.316228 0.398107 0.501187 0.630957 0.794328 1 
+
+Cell 1 Bin Data: 
+--------
+Response Function: default
+ Energy Bin: [1e-11,1.25893e-11] 6.83192e-10 0.824907
+ Energy Bin: (1.25893e-11,1.58489e-11] 4.2452e-10 0.494439
+ Energy Bin: (1.58489e-11,1.99526e-11] 9.71082e-10 0.402517
+ Energy Bin: (1.99526e-11,2.51189e-11] 2.24837e-09 0.348135
+ Energy Bin: (2.51189e-11,3.16228e-11] 1.67775e-09 0.384016
+ Energy Bin: (3.16228e-11,3.98107e-11] 2.86323e-09 0.275551
+ Energy Bin: (3.98107e-11,5.01187e-11] 1.00603e-08 0.20094
+ Energy Bin: (5.01187e-11,6.30957e-11] 1.42786e-08 0.182678
+ Energy Bin: (6.30957e-11,7.94328e-11] 1.78961e-08 0.179063
+ Energy Bin: (7.94328e-11,1e-10] 3.00376e-08 0.144873
+ Energy Bin: (1e-10,1.25893e-10] 4.91196e-08 0.117423
+ Energy Bin: (1.25893e-10,1.58489e-10] 7.32745e-08 0.0959336
+ Energy Bin: (1.58489e-10,1.99526e-10] 1.02235e-07 0.0861691
+ Energy Bin: (1.99526e-10,2.51189e-10] 2.09719e-07 0.071549
+ Energy Bin: (2.51189e-10,3.16228e-10] 2.95939e-07 0.0625933
+ Energy Bin: (3.16228e-10,3.98107e-10] 5.20405e-07 0.0494789
+ Energy Bin: (3.98107e-10,5.01187e-10] 7.25046e-07 0.0427739
+ Energy Bin: (5.01187e-10,6.30957e-10] 1.15689e-06 0.0360539
+ Energy Bin: (6.30957e-10,7.94328e-10] 1.69986e-06 0.0307017
+ Energy Bin: (7.94328e-10,1e-09] 2.89894e-06 0.0259853
+ Energy Bin: (1e-09,1.25893e-09] 4.55604e-06 0.021674
+ Energy Bin: (1.25893e-09,1.58489e-09] 7.16472e-06 0.0183778
+ Energy Bin: (1.58489e-09,1.99526e-09] 1.14595e-05 0.0154479
+ Energy Bin: (1.99526e-09,2.51189e-09] 1.76568e-05 0.0131708
+ Energy Bin: (2.51189e-09,3.16228e-09] 2.82251e-05 0.0110716
+ Energy Bin: (3.16228e-09,3.98107e-09] 4.51385e-05 0.00926938
+ Energy Bin: (3.98107e-09,5.01187e-09] 7.22649e-05 0.0078704
+ Energy Bin: (5.01187e-09,6.30957e-09] 0.000112857 0.00665451
+ Energy Bin: (6.30957e-09,7.94328e-09] 0.000176689 0.00568252
+ Energy Bin: (7.94328e-09,1e-08] 0.000275194 0.00486744
+ Energy Bin: (1e-08,1.25893e-08] 0.000433444 0.00418989
+ Energy Bin: (1.25893e-08,1.58489e-08] 0.000678453 0.0036132
+ Energy Bin: (1.58489e-08,1.99526e-08] 0.00105877 0.00314588
+ Energy Bin: (1.99526e-08,2.51189e-08] 0.00164125 0.00278479
+ Energy Bin: (2.51189e-08,3.16228e-08] 0.00252285 0.00248216
+ Energy Bin: (3.16228e-08,3.98107e-08] 0.00386955 0.00223992
+ Energy Bin: (3.98107e-08,5.01187e-08] 0.00586936 0.00204636
+ Energy Bin: (5.01187e-08,6.30957e-08] 0.0088096 0.00190314
+ Energy Bin: (6.30957e-08,7.94328e-08] 0.0130551 0.00178828
+ Energy Bin: (7.94328e-08,1e-07] 0.0189796 0.00170032
+ Energy Bin: (1e-07,1.25893e-07] 0.0270119 0.00163431
+ Energy Bin: (1.25893e-07,1.58489e-07] 0.0373601 0.00158398
+ Energy Bin: (1.58489e-07,1.99526e-07] 0.0499759 0.00154681
+ Energy Bin: (1.99526e-07,2.51189e-07] 0.0638753 0.00151884
+ Energy Bin: (2.51189e-07,3.16228e-07] 0.0772845 0.00149877
+ Energy Bin: (3.16228e-07,3.98107e-07] 0.0873251 0.00148622
+ Energy Bin: (3.98107e-07,5.01187e-07] 0.0905296 0.00147941
+ Energy Bin: (5.01187e-07,6.30957e-07] 0.0844921 0.00148713
+ Energy Bin: (6.30957e-07,7.94328e-07] 0.0689302 0.00150683
+ Energy Bin: (7.94328e-07,1e-06] 0.0478224 0.00156765
+ Energy Bin: (1e-06,1.25893e-06] 0.0275422 0.00170629
+ Energy Bin: (1.25893e-06,1.58489e-06] 0.0131371 0.00202198
+ Energy Bin: (1.58489e-06,1.99526e-06] 0.00572965 0.00265754
+ Energy Bin: (1.99526e-06,2.51189e-06] 0.00312545 0.00338526
+ Energy Bin: (2.51189e-06,3.16228e-06] 0.0024791 0.00373994
+ Energy Bin: (3.16228e-06,3.98107e-06] 0.00234278 0.00383315
+ Energy Bin: (3.98107e-06,5.01187e-06] 0.0023204 0.00385044
+ Energy Bin: (5.01187e-06,6.30957e-06] 0.00227756 0.00387513
+ Energy Bin: (6.30957e-06,7.94328e-06] 0.00227146 0.0038758
+ Energy Bin: (7.94328e-06,1e-05] 0.00223987 0.00388813
+ Energy Bin: (1e-05,1.25893e-05] 0.00225288 0.00388549
+ Energy Bin: (1.25893e-05,1.58489e-05] 0.00224185 0.00388991
+ Energy Bin: (1.58489e-05,1.99526e-05] 0.002226 0.00389688
+ Energy Bin: (1.99526e-05,2.51189e-05] 0.00224005 0.00389874
+ Energy Bin: (2.51189e-05,3.16228e-05] 0.00223704 0.00388481
+ Energy Bin: (3.16228e-05,3.98107e-05] 0.00222937 0.00388109
+ Energy Bin: (3.98107e-05,5.01187e-05] 0.0022502 0.00386219
+ Energy Bin: (5.01187e-05,6.30957e-05] 0.00224331 0.0038637
+ Energy Bin: (6.30957e-05,7.94328e-05] 0.00225348 0.0038713
+ Energy Bin: (7.94328e-05,0.0001] 0.0022427 0.00385191
+ Energy Bin: (0.0001,0.000125893] 0.00225445 0.00386367
+ Energy Bin: (0.000125893,0.000158489] 0.00226853 0.00385784
+ Energy Bin: (0.000158489,0.000199526] 0.00227823 0.00384652
+ Energy Bin: (0.000199526,0.000251189] 0.00226649 0.00385043
+ Energy Bin: (0.000251189,0.000316228] 0.00227743 0.00383102
+ Energy Bin: (0.000316228,0.000398107] 0.00229634 0.00382296
+ Energy Bin: (0.000398107,0.000501187] 0.00228941 0.00382904
+ Energy Bin: (0.000501187,0.000630957] 0.00230877 0.00382435
+ Energy Bin: (0.000630957,0.000794328] 0.00229378 0.0038231
+ Energy Bin: (0.000794328,0.001] 0.00230954 0.00382378
+ Energy Bin: (0.001,0.00125893] 0.00232888 0.00382358
+ Energy Bin: (0.00125893,0.00158489] 0.00233664 0.00381362
+ Energy Bin: (0.00158489,0.00199526] 0.00235189 0.00379765
+ Energy Bin: (0.00199526,0.00251189] 0.00234165 0.00380794
+ Energy Bin: (0.00251189,0.00316228] 0.00235712 0.00379671
+ Energy Bin: (0.00316228,0.00398107] 0.00239298 0.00378477
+ Energy Bin: (0.00398107,0.00501187] 0.00240549 0.00378982
+ Energy Bin: (0.00501187,0.00630957] 0.0024138 0.00377497
+ Energy Bin: (0.00630957,0.00794328] 0.00244239 0.00377393
+ Energy Bin: (0.00794328,0.01] 0.00249136 0.00377052
+ Energy Bin: (0.01,0.0125893] 0.00251313 0.00377537
+ Energy Bin: (0.0125893,0.0158489] 0.00259769 0.00375005
+ Energy Bin: (0.0158489,0.0199526] 0.00262794 0.00376096
+ Energy Bin: (0.0199526,0.0251189] 0.00270425 0.00374959
+ Energy Bin: (0.0251189,0.0316228] 0.00281066 0.00374832
+ Energy Bin: (0.0316228,0.0398107] 0.00290179 0.00374585
+ Energy Bin: (0.0398107,0.0501187] 0.0030496 0.00373445
+ Energy Bin: (0.0501187,0.0630957] 0.00322357 0.00373496
+ Energy Bin: (0.0630957,0.0794328] 0.00341205 0.00372123
+ Energy Bin: (0.0794328,0.1] 0.00370582 0.00371436
+ Energy Bin: (0.1,0.125893] 0.00398324 0.0036967
+ Energy Bin: (0.125893,0.158489] 0.00437413 0.00369193
+ Energy Bin: (0.158489,0.199526] 0.00484042 0.00366758
+ Energy Bin: (0.199526,0.251189] 0.00535465 0.0036563
+ Energy Bin: (0.251189,0.316228] 0.00601867 0.00361149
+ Energy Bin: (0.316228,0.398107] 0.00675515 0.00358024
+ Energy Bin: (0.398107,0.501187] 0.00761859 0.00355579
+ Energy Bin: (0.501187,0.630957] 0.00863054 0.00350336
+ Energy Bin: (0.630957,0.794328] 0.009865 0.00344263
+ Energy Bin: (0.794328,1] 0.0112703 0.00337258
+
+ Total Bin Data: 
+--------
+Response Function: default
+ Energy Bin: [1e-11,1.25893e-11] 6.83192e-10 0.824907
+ Energy Bin: (1.25893e-11,1.58489e-11] 4.2452e-10 0.494439
+ Energy Bin: (1.58489e-11,1.99526e-11] 9.71082e-10 0.402517
+ Energy Bin: (1.99526e-11,2.51189e-11] 2.24837e-09 0.348135
+ Energy Bin: (2.51189e-11,3.16228e-11] 1.67775e-09 0.384016
+ Energy Bin: (3.16228e-11,3.98107e-11] 2.86323e-09 0.275551
+ Energy Bin: (3.98107e-11,5.01187e-11] 1.00603e-08 0.20094
+ Energy Bin: (5.01187e-11,6.30957e-11] 1.42786e-08 0.182678
+ Energy Bin: (6.30957e-11,7.94328e-11] 1.78961e-08 0.179063
+ Energy Bin: (7.94328e-11,1e-10] 3.00376e-08 0.144873
+ Energy Bin: (1e-10,1.25893e-10] 4.91196e-08 0.117423
+ Energy Bin: (1.25893e-10,1.58489e-10] 7.32745e-08 0.0959336
+ Energy Bin: (1.58489e-10,1.99526e-10] 1.02235e-07 0.0861691
+ Energy Bin: (1.99526e-10,2.51189e-10] 2.09719e-07 0.071549
+ Energy Bin: (2.51189e-10,3.16228e-10] 2.95939e-07 0.0625933
+ Energy Bin: (3.16228e-10,3.98107e-10] 5.20405e-07 0.0494789
+ Energy Bin: (3.98107e-10,5.01187e-10] 7.25046e-07 0.0427739
+ Energy Bin: (5.01187e-10,6.30957e-10] 1.15689e-06 0.0360539
+ Energy Bin: (6.30957e-10,7.94328e-10] 1.69986e-06 0.0307017
+ Energy Bin: (7.94328e-10,1e-09] 2.89894e-06 0.0259853
+ Energy Bin: (1e-09,1.25893e-09] 4.55604e-06 0.021674
+ Energy Bin: (1.25893e-09,1.58489e-09] 7.16472e-06 0.0183778
+ Energy Bin: (1.58489e-09,1.99526e-09] 1.14595e-05 0.0154479
+ Energy Bin: (1.99526e-09,2.51189e-09] 1.76568e-05 0.0131708
+ Energy Bin: (2.51189e-09,3.16228e-09] 2.82251e-05 0.0110716
+ Energy Bin: (3.16228e-09,3.98107e-09] 4.51385e-05 0.00926938
+ Energy Bin: (3.98107e-09,5.01187e-09] 7.22649e-05 0.0078704
+ Energy Bin: (5.01187e-09,6.30957e-09] 0.000112857 0.00665451
+ Energy Bin: (6.30957e-09,7.94328e-09] 0.000176689 0.00568252
+ Energy Bin: (7.94328e-09,1e-08] 0.000275194 0.00486744
+ Energy Bin: (1e-08,1.25893e-08] 0.000433444 0.00418989
+ Energy Bin: (1.25893e-08,1.58489e-08] 0.000678453 0.0036132
+ Energy Bin: (1.58489e-08,1.99526e-08] 0.00105877 0.00314588
+ Energy Bin: (1.99526e-08,2.51189e-08] 0.00164125 0.00278479
+ Energy Bin: (2.51189e-08,3.16228e-08] 0.00252285 0.00248216
+ Energy Bin: (3.16228e-08,3.98107e-08] 0.00386955 0.00223992
+ Energy Bin: (3.98107e-08,5.01187e-08] 0.00586936 0.00204636
+ Energy Bin: (5.01187e-08,6.30957e-08] 0.0088096 0.00190314
+ Energy Bin: (6.30957e-08,7.94328e-08] 0.0130551 0.00178828
+ Energy Bin: (7.94328e-08,1e-07] 0.0189796 0.00170032
+ Energy Bin: (1e-07,1.25893e-07] 0.0270119 0.00163431
+ Energy Bin: (1.25893e-07,1.58489e-07] 0.0373601 0.00158398
+ Energy Bin: (1.58489e-07,1.99526e-07] 0.0499759 0.00154681
+ Energy Bin: (1.99526e-07,2.51189e-07] 0.0638753 0.00151884
+ Energy Bin: (2.51189e-07,3.16228e-07] 0.0772845 0.00149877
+ Energy Bin: (3.16228e-07,3.98107e-07] 0.0873251 0.00148622
+ Energy Bin: (3.98107e-07,5.01187e-07] 0.0905296 0.00147941
+ Energy Bin: (5.01187e-07,6.30957e-07] 0.0844921 0.00148713
+ Energy Bin: (6.30957e-07,7.94328e-07] 0.0689302 0.00150683
+ Energy Bin: (7.94328e-07,1e-06] 0.0478224 0.00156765
+ Energy Bin: (1e-06,1.25893e-06] 0.0275422 0.00170629
+ Energy Bin: (1.25893e-06,1.58489e-06] 0.0131371 0.00202198
+ Energy Bin: (1.58489e-06,1.99526e-06] 0.00572965 0.00265754
+ Energy Bin: (1.99526e-06,2.51189e-06] 0.00312545 0.00338526
+ Energy Bin: (2.51189e-06,3.16228e-06] 0.0024791 0.00373994
+ Energy Bin: (3.16228e-06,3.98107e-06] 0.00234278 0.00383315
+ Energy Bin: (3.98107e-06,5.01187e-06] 0.0023204 0.00385044
+ Energy Bin: (5.01187e-06,6.30957e-06] 0.00227756 0.00387513
+ Energy Bin: (6.30957e-06,7.94328e-06] 0.00227146 0.0038758
+ Energy Bin: (7.94328e-06,1e-05] 0.00223987 0.00388813
+ Energy Bin: (1e-05,1.25893e-05] 0.00225288 0.00388549
+ Energy Bin: (1.25893e-05,1.58489e-05] 0.00224185 0.00388991
+ Energy Bin: (1.58489e-05,1.99526e-05] 0.002226 0.00389688
+ Energy Bin: (1.99526e-05,2.51189e-05] 0.00224005 0.00389874
+ Energy Bin: (2.51189e-05,3.16228e-05] 0.00223704 0.00388481
+ Energy Bin: (3.16228e-05,3.98107e-05] 0.00222937 0.00388109
+ Energy Bin: (3.98107e-05,5.01187e-05] 0.0022502 0.00386219
+ Energy Bin: (5.01187e-05,6.30957e-05] 0.00224331 0.0038637
+ Energy Bin: (6.30957e-05,7.94328e-05] 0.00225348 0.0038713
+ Energy Bin: (7.94328e-05,0.0001] 0.0022427 0.00385191
+ Energy Bin: (0.0001,0.000125893] 0.00225445 0.00386367
+ Energy Bin: (0.000125893,0.000158489] 0.00226853 0.00385784
+ Energy Bin: (0.000158489,0.000199526] 0.00227823 0.00384652
+ Energy Bin: (0.000199526,0.000251189] 0.00226649 0.00385043
+ Energy Bin: (0.000251189,0.000316228] 0.00227743 0.00383102
+ Energy Bin: (0.000316228,0.000398107] 0.00229634 0.00382296
+ Energy Bin: (0.000398107,0.000501187] 0.00228941 0.00382904
+ Energy Bin: (0.000501187,0.000630957] 0.00230877 0.00382435
+ Energy Bin: (0.000630957,0.000794328] 0.00229378 0.0038231
+ Energy Bin: (0.000794328,0.001] 0.00230954 0.00382378
+ Energy Bin: (0.001,0.00125893] 0.00232888 0.00382358
+ Energy Bin: (0.00125893,0.00158489] 0.00233664 0.00381362
+ Energy Bin: (0.00158489,0.00199526] 0.00235189 0.00379765
+ Energy Bin: (0.00199526,0.00251189] 0.00234165 0.00380794
+ Energy Bin: (0.00251189,0.00316228] 0.00235712 0.00379671
+ Energy Bin: (0.00316228,0.00398107] 0.00239298 0.00378477
+ Energy Bin: (0.00398107,0.00501187] 0.00240549 0.00378982
+ Energy Bin: (0.00501187,0.00630957] 0.0024138 0.00377497
+ Energy Bin: (0.00630957,0.00794328] 0.00244239 0.00377393
+ Energy Bin: (0.00794328,0.01] 0.00249136 0.00377052
+ Energy Bin: (0.01,0.0125893] 0.00251313 0.00377537
+ Energy Bin: (0.0125893,0.0158489] 0.00259769 0.00375005
+ Energy Bin: (0.0158489,0.0199526] 0.00262794 0.00376096
+ Energy Bin: (0.0199526,0.0251189] 0.00270425 0.00374959
+ Energy Bin: (0.0251189,0.0316228] 0.00281066 0.00374832
+ Energy Bin: (0.0316228,0.0398107] 0.00290179 0.00374585
+ Energy Bin: (0.0398107,0.0501187] 0.0030496 0.00373445
+ Energy Bin: (0.0501187,0.0630957] 0.00322357 0.00373496
+ Energy Bin: (0.0630957,0.0794328] 0.00341205 0.00372123
+ Energy Bin: (0.0794328,0.1] 0.00370582 0.00371436
+ Energy Bin: (0.1,0.125893] 0.00398324 0.0036967
+ Energy Bin: (0.125893,0.158489] 0.00437413 0.00369193
+ Energy Bin: (0.158489,0.199526] 0.00484042 0.00366758
+ Energy Bin: (0.199526,0.251189] 0.00535465 0.0036563
+ Energy Bin: (0.251189,0.316228] 0.00601867 0.00361149
+ Energy Bin: (0.316228,0.398107] 0.00675515 0.00358024
+ Energy Bin: (0.398107,0.501187] 0.00761859 0.00355579
+ Energy Bin: (0.501187,0.630957] 0.00863054 0.00350336
+ Energy Bin: (0.630957,0.794328] 0.009865 0.00344263
+ Energy Bin: (0.794328,1] 0.0112703 0.00337258
+
+Cell 1 Total Data: 
+--------
+Response Function: default
+0.923129 0.00109494 1.08823e-05 3794.32
+
+All Cells Total Data: 
+--------
+Response Function: default
+0.923129 0.00109494 1.08823e-05 3794.32
+
