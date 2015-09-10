@@ -1,6 +1,6 @@
 <ParameterList name="continue_run_info">
   <ParameterList id="2" name="simulation_info">
-    <Parameter docString="" id="0" isDefault="false" isUsed="true" name="Histories" type="unsigned int" value="1100000"/>
+    <Parameter docString="" id="0" isDefault="false" isUsed="true" name="Histories" type="unsigned int" value="1000000"/>
     <Parameter docString="" id="1" isDefault="false" isUsed="true" name="Mode" type="string" value="Neutron"/>
   </ParameterList>
   <ParameterList id="9" name="geometry_definition">
