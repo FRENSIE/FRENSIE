@@ -28,7 +28,6 @@ void ElectroatomNativeFactory::createElectroatomCore(
             const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
-            const Teuchos::Array<double>& binding_energy,
             const double atomic_weight,
             const BremsstrahlungAngularDistributionType 
                     photon_distribution_function,
@@ -97,8 +96,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
-							   energy_grid,
-                               binding_energy, 
+							   energy_grid, 
 							   reaction_pointers );
 
   for( unsigned i = 0; i < reaction_pointers.size(); ++i )
@@ -126,7 +124,6 @@ void ElectroatomNativeFactory::createElectroatomCore(
 void ElectroatomNativeFactory::createElectroatom(
 	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	    const std::string& electroatom_name,
-        const Teuchos::Array<double>& binding_energy,
         const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
@@ -145,7 +142,6 @@ void ElectroatomNativeFactory::createElectroatom(
   ElectroatomNativeFactory::createElectroatomCore(raw_electroatom_data,
                                                   atomic_relaxation_model,
                                                   core,
-                                                  binding_energy, 
                                                   atomic_weight,
                                                   photon_distribution_function,
                                                   use_atomic_relaxation_data,

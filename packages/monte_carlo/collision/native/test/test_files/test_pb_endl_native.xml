@@ -31,6 +31,34 @@
 		<item>43</item>
 		<item>44</item>
 	</subshells>
+	<binding_energies>
+		<count>24</count>
+		<item_version>0</item_version>
+		<item>8.82899999999999935e-02</item>
+		<item>1.58470000000000000e-02</item>
+		<item>1.52510000000000007e-02</item>
+		<item>1.30399999999999995e-02</item>
+		<item>3.82430000000000010e-03</item>
+		<item>3.54930000000000002e-03</item>
+		<item>3.05460000000000020e-03</item>
+		<item>2.59470000000000013e-03</item>
+		<item>2.48899999999999989e-03</item>
+		<item>8.76719999999999995e-04</item>
+		<item>7.56020000000000043e-04</item>
+		<item>6.34299999999999968e-04</item>
+		<item>4.35229999999999992e-04</item>
+		<item>4.12490000000000003e-04</item>
+		<item>1.53040000000000012e-04</item>
+		<item>1.47810000000000010e-04</item>
+		<item>1.52830000000000012e-04</item>
+		<item>1.10909999999999994e-04</item>
+		<item>8.76399999999999944e-05</item>
+		<item>2.88100000000000003e-05</item>
+		<item>2.60299999999999998e-05</item>
+		<item>1.50499999999999999e-05</item>
+		<item>6.99999999999999989e-06</item>
+		<item>5.29000000000000017e-06</item>
+	</binding_energies>
 	<cutoff_angle>9.99999999999999955e-07</cutoff_angle>
 	<angular_energy_grid>
 		<count>14</count>
@@ -21840,12 +21868,12 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</total_elastic_cross_section>
-	<total_elastic_cross_section_threshold_index>78</total_elastic_cross_section_threshold_index>
+	<total_elastic_cross_section_threshold_index>994150912</total_elastic_cross_section_threshold_index>
 	<moment_preserving_elastic_cross_section>
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_cross_section>
-	<moment_preserving_elastic_cross_section_threshold_index>2730496176</moment_preserving_elastic_cross_section_threshold_index>
+	<moment_preserving_elastic_cross_section_threshold_index>42817948</moment_preserving_elastic_cross_section_threshold_index>
 	<electroionization_subshell_cross_section>
 		<count>24</count>
 		<item_version>0</item_version>

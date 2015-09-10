@@ -829,6 +829,7 @@ int main( int argc, char** argv )
                                                        atom_names ) );
 
     double lower_cutoff_angle = 1e-6;
+    unsigned hash_grid_bins;
 
     // Create the electroatom factory
     MonteCarlo::ElectroatomFactory electroatom_factory( 
@@ -836,6 +837,7 @@ int main( int argc, char** argv )
 					     cross_section_table_info,
 					     atom_aliases,
 					     atomic_relaxation_model_factory,
+                         hash_grid_bins,   
 					     MonteCarlo::TWOBS_DISTRIBUTION,
 					     true,
                          lower_cutoff_angle );

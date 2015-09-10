@@ -26,7 +26,7 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
-{
+{/*
   Teuchos::RCP<const DataGen::EvaluatedElectronDataGenerator> 
     endl_generator;
   
@@ -128,7 +128,7 @@ int main( int argc, char** argv )
   
   data_container.exportData( new_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
-							      
+*/							      
   return 0;
 }
 

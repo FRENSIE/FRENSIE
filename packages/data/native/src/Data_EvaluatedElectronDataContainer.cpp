@@ -36,6 +36,10 @@ EvaluatedElectronDataContainer::EvaluatedElectronDataContainer(
   this->importData( archive_name, archive_type );
 }
 
+//---------------------------------------------------------------------------//
+// GET RELAXATION DATA
+//---------------------------------------------------------------------------//
+
 // Return the atomic number
 unsigned EvaluatedElectronDataContainer::getAtomicNumber() const
 {
@@ -48,6 +52,97 @@ EvaluatedElectronDataContainer::getSubshells() const
 {
   return d_subshells;
 }
+
+// Return the subshell occupancies
+double EvaluatedElectronDataContainer::getSubshellOccupancy(
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != 
+		    d_subshells.end() );
+  
+  return d_subshell_occupancies.find( subshell )->second;
+}
+
+// Return the subshell binding energies
+double EvaluatedElectronDataContainer::getSubshellBindingEnergy(
+						const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != 
+		    d_subshells.end() );
+  
+  return d_subshell_binding_energies.find( subshell )->second;
+}
+
+// Return if there is relaxation data
+bool EvaluatedElectronDataContainer::hasRelaxationData() const
+{
+  return d_relaxation_transitions.size() > 0;
+}
+
+// Return if the subshell has relaxation data
+bool EvaluatedElectronDataContainer::hasSubshellRelaxationData( 
+						const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+  
+  return d_relaxation_transitions.find( subshell ) != 
+    d_relaxation_transitions.end();
+}
+
+// Return the number of transitions that can fill a subshell vacancy
+unsigned EvaluatedElectronDataContainer::getSubshellRelaxationTransitions( 
+						const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_relaxation_transitions.find( subshell )->second;
+}
+
+// Return the relaxation vacancies for a subshell
+const std::vector<std::pair<unsigned,unsigned> >&
+EvaluatedElectronDataContainer::getSubshellRelaxationVacancies( 
+						const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_relaxation_vacancies.find( subshell )->second;
+}
+
+// Return the relaxation particle energies for a subshell
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getSubshellRelaxationParticleEnergies(
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_relaxation_particle_energies.find( subshell )->second;
+}
+
+// Return the relaxation probabilities for a subshell
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getSubshellRelaxationProbabilities(
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_relaxation_probabilities.find( subshell )->second;
+}
+
+//---------------------------------------------------------------------------//
+// GET ELECTRON DATA 
+//---------------------------------------------------------------------------//
 
 // Return the elastic cutoff angle
 double EvaluatedElectronDataContainer::getCutoffAngle() const
@@ -347,6 +442,9 @@ EvaluatedElectronDataContainer::getAtomicExcitationCrossSectionThresholdEnergyIn
   return d_atomic_excitation_cross_section_threshold_index;
 }
 
+//---------------------------------------------------------------------------//
+// SET RELAXATION DATA
+//---------------------------------------------------------------------------//
 
 // Set the atomic number
 void EvaluatedElectronDataContainer::setAtomicNumber( 
@@ -358,7 +456,7 @@ void EvaluatedElectronDataContainer::setAtomicNumber(
 
   d_atomic_number = atomic_number;
 }
-
+  
 // Set the atomic subshells
 void EvaluatedElectronDataContainer::setSubshells( 
 				       const std::set<unsigned>& subshells )
@@ -366,11 +464,101 @@ void EvaluatedElectronDataContainer::setSubshells(
   // Make sure the subshells are valid
   testPrecondition( subshells.size() > 0 );
   testPrecondition( std::find_if( subshells.begin(),
-                    subshells.end(),
-                    isValueLessThanOrEqualToZero ) == subshells.end() );
+				  subshells.end(),
+				  isValueLessThanOrEqualToZero ) ==
+		    subshells.end() );
 
   d_subshells = subshells;
 }
+
+// Set the subshell occupancy
+void EvaluatedElectronDataContainer::setSubshellOccupancy( 
+						       const unsigned subshell,
+						       const double occupancy )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the subshell occupancy is valid
+  testPrecondition( occupancy > 0.0 );
+
+  d_subshell_occupancies[subshell] = occupancy;
+}
+
+// Set the subshell binding energy
+void EvaluatedElectronDataContainer::setSubshellBindingEnergy(
+						  const unsigned subshell,
+						  const double binding_energy )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the subshell binding energy is valid
+  testPrecondition( binding_energy > 0.0 );
+
+  d_subshell_binding_energies[subshell] = binding_energy;
+}
+
+// Set the number of transitions that can fill a subshell vacancy
+void EvaluatedElectronDataContainer::setSubshellRelaxationTransitions( 
+						   const unsigned subshell,
+						   const unsigned transitions )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the number of transitions is valid
+  testPrecondition( transitions > 0 );
+  
+  d_relaxation_transitions[subshell] = transitions;
+}
+
+// Set the relaxation vacancies for a subshell
+void EvaluatedElectronDataContainer::setSubshellRelaxationVacancies( 
+       const unsigned subshell,
+       const std::vector<std::pair<unsigned,unsigned> >& relaxation_vacancies )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the relaxation vacancies are valid
+  testPrecondition( relaxation_vacancies.size() ==
+		    d_relaxation_transitions.find( subshell )->second );
+
+  d_relaxation_vacancies[subshell] = relaxation_vacancies;
+}
+
+// Set the relaxation particle energies for a subshell
+void EvaluatedElectronDataContainer::setSubshellRelaxationParticleEnergies(
+		      const unsigned subshell,
+		      const std::vector<double>& relaxation_particle_energies )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the relaxation particle energies are valid
+  testPrecondition( relaxation_particle_energies.size() ==
+		    d_relaxation_transitions.find( subshell )->second );
+
+  d_relaxation_particle_energies[subshell] = relaxation_particle_energies;
+}
+
+// Set the relaxation probabilities for a subshell
+void EvaluatedElectronDataContainer::setSubshellRelaxationProbabilities( 
+			  const unsigned subshell,
+			  const std::vector<double>& relaxation_probabilities )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the relaxation cdf is valid
+  testPrecondition( relaxation_probabilities.size() ==
+		    d_relaxation_transitions.find( subshell )->second );
+  testPrecondition( std::find_if( relaxation_probabilities.begin(),
+				  relaxation_probabilities.end(),
+				  isValueLessThanOrEqualToZero ) ==
+		    relaxation_probabilities.end() );
+  
+  d_relaxation_probabilities[subshell] = relaxation_probabilities;
+}
+
+//---------------------------------------------------------------------------//
+// SET ELECTRON DATA 
+//---------------------------------------------------------------------------//
 
 // Set the elastic cutoff angle
 void EvaluatedElectronDataContainer::setCutoffAngle( 

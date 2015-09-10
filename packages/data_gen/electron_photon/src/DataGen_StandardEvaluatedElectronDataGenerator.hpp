@@ -19,11 +19,12 @@
 // FRENSIE Includes
 #include "DataGen_EvaluatedElectronDataGenerator.hpp"
 #include "Data_ENDLFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
 
-//! The standard electron-electron-relaxation data generator class
+//! The standard evaluated electron data generator class
 class StandardEvaluatedElectronDataGenerator : public EvaluatedElectronDataGenerator
 {
 
@@ -33,6 +34,7 @@ public:
   StandardEvaluatedElectronDataGenerator( 
         const unsigned atomic_number,
         const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
+        const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
         const double min_electron_energy = 1.0e-5,
         const double max_electron_energy = 1.0e5,
         const double cutoff_angle = 1.0e-6,
@@ -51,6 +53,10 @@ public:
 
 protected:
 
+  // Set the atomic data
+  void setRelaxationData( Data::EvaluatedElectronVolatileDataContainer&
+			  data_container ) const;
+
   // Set the electron data
   void setElectronData( 
         Data::EvaluatedElectronVolatileDataContainer& data_container ) const;
@@ -66,6 +72,16 @@ private:
     const std::vector<double>& elastic_energy_grid,
     const std::map<double,std::vector<double> >& elastic_pdf,
     Data::EvaluatedElectronVolatileDataContainer& data_container ) const;
+
+  // Set the transition data
+  void setTransitionData( const unsigned subshell,
+			  const unsigned transitions,
+			  const unsigned subshell_data_start_index,
+			  Data::EvaluatedElectronVolatileDataContainer&
+			  data_container ) const;
+ 
+  // Set subshell array
+  void setSubshellArray();
 
   // Test if a value is greater than or equal to one
   static bool greaterThanOrEqualToOne( const double value );
@@ -95,11 +111,11 @@ private:
     const std::vector<double>& energy_grid,
     std::list<double>& union_energy_grid ) const;
 
-  // The threshold energy nudge factor
-  static const double s_threshold_energy_nudge_factor;
-
-  // The EEDL file handler
+  // The EEDL data
   Teuchos::RCP<Data::ENDLFileHandler> d_eedl_file_handler;
+
+  // The ACE data
+  Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
   // The min electron energy
   double d_min_electron_energy;
@@ -118,6 +134,9 @@ private:
 
   // The grid distance tolerance
   double d_grid_distance_tol;
+
+  // The atomic subshells
+  Teuchos::Array<unsigned> d_subshells;
 };
 
 // Test if a value is greater than or equal to one

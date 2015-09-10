@@ -31,6 +31,12 @@ public:
   // Add the setter member functions to the public interface
   using EvaluatedElectronDataContainer::setAtomicNumber;
   using EvaluatedElectronDataContainer::setSubshells;
+  using EvaluatedElectronDataContainer::setSubshellOccupancy;
+  using EvaluatedElectronDataContainer::setSubshellBindingEnergy;
+  using EvaluatedElectronDataContainer::setSubshellRelaxationTransitions;
+  using EvaluatedElectronDataContainer::setSubshellRelaxationVacancies;
+  using EvaluatedElectronDataContainer::setSubshellRelaxationParticleEnergies;
+  using EvaluatedElectronDataContainer::setSubshellRelaxationProbabilities;
   using EvaluatedElectronDataContainer::setCutoffAngle;
   using EvaluatedElectronDataContainer::setElasticAngularEnergyGrid;
 //  using EvaluatedElectronDataContainer::setNumberOfDiscreteAngles;

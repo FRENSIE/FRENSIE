@@ -25,6 +25,18 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
+  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+				       d_subshell_occupancies );
+  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+				       d_subshell_binding_energies );
+  ar & boost::serialization::make_nvp( "relaxation_transitions", 
+				       d_relaxation_transitions );
+  ar & boost::serialization::make_nvp( "relaxation_vacancies", 
+				       d_relaxation_vacancies );
+  ar & boost::serialization::make_nvp( "relaxation_particle_energies", 
+				       d_relaxation_particle_energies );
+  ar & boost::serialization::make_nvp( "relaxation_probabilities", 
+				       d_relaxation_probabilities );
   ar & boost::serialization::make_nvp( "cutoff_angle", 
                                         d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
@@ -123,6 +135,18 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
+  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+				       d_subshell_occupancies );
+  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+				       d_subshell_binding_energies );
+  ar & boost::serialization::make_nvp( "relaxation_transitions", 
+				       d_relaxation_transitions );
+  ar & boost::serialization::make_nvp( "relaxation_vacancies", 
+				       d_relaxation_vacancies );
+  ar & boost::serialization::make_nvp( "relaxation_particle_energies", 
+				       d_relaxation_particle_energies );
+  ar & boost::serialization::make_nvp( "relaxation_probabilities", 
+				       d_relaxation_probabilities );
   ar & boost::serialization::make_nvp( "cutoff_angle", 
                                         d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",

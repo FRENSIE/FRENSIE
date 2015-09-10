@@ -8,6 +8,11 @@
 		<item_version>0</item_version>
 		<item>1</item>
 	</subshells>
+	<binding_energies>
+		<count>1</count>
+		<item_version>0</item_version>
+		<item>1.36100000000000001e-05</item>
+	</binding_energies>
 	<cutoff_angle>9.99999999999999955e-07</cutoff_angle>
 	<angular_energy_grid>
 		<count>16</count>
@@ -6863,12 +6868,12 @@
 		<count>0</count>
 		<item_version>0</item_version>
 	</total_elastic_cross_section>
-	<total_elastic_cross_section_threshold_index>78</total_elastic_cross_section_threshold_index>
+	<total_elastic_cross_section_threshold_index>994150912</total_elastic_cross_section_threshold_index>
 	<moment_preserving_elastic_cross_section>
 		<count>0</count>
 		<item_version>0</item_version>
 	</moment_preserving_elastic_cross_section>
-	<moment_preserving_elastic_cross_section_threshold_index>2730496176</moment_preserving_elastic_cross_section_threshold_index>
+	<moment_preserving_elastic_cross_section_threshold_index>42817948</moment_preserving_elastic_cross_section_threshold_index>
 	<electroionization_subshell_cross_section>
 		<count>1</count>
 		<item_version>0</item_version>

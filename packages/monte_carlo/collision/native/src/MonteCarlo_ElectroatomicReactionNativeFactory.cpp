@@ -155,20 +155,9 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 		   const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
-           const Teuchos::Array<double>& binding_energies, 
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
 		   electroionization_subshell_reactions )
 {
-  // Make sure the energy grid is valid
-  testPrecondition( raw_electroatom_data.getSubshells().size() == 
-                    binding_energies.size() );
-
-  // Make sure the binding energies are valid
-  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() == 
-                    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-                                                      energy_grid.end() ) );
-
   electroionization_subshell_reactions.clear();
 
   // Extract the subshell information
@@ -179,7 +168,6 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   SubshellType subshell_type;
 
   std::set<unsigned>::iterator shell = subshells.begin();
-  int i = 0;
 
   for( shell; shell != subshells.end(); ++shell ) 
   {
@@ -205,7 +193,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
     ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
         raw_electroatom_data,
         *shell,
-        binding_energies[i],
+        raw_electroatom_data.getSubshellBindingEnergy( *shell ),
 	    electroionization_subshell_distribution );
 
 
@@ -220,8 +208,6 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
     electroionization_subshell_reactions.push_back( 
 					  electroionization_subshell_reaction );
-
-    ++i;
   }
 
   // Make sure the subshell electroelectric reactions have been created

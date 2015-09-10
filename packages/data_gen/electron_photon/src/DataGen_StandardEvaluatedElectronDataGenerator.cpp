@@ -22,17 +22,11 @@
 
 namespace DataGen{
 
-// Initialize the static member data
-/*! \details The u nion energy grid generator has a hard time generating grid 
-    points near a value of zero. By inserting another point just above the 
-    threshold, this problem is fixed.
- */
-const double StandardEvaluatedElectronDataGenerator::s_threshold_energy_nudge_factor = 1.0001;
-
 // Constructor
 StandardEvaluatedElectronDataGenerator::StandardEvaluatedElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
+       const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
+       const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
        const double cutoff_angle,
@@ -41,6 +35,7 @@ StandardEvaluatedElectronDataGenerator::StandardEvaluatedElectronDataGenerator(
 	   const double grid_distance_tol )
   : EvaluatedElectronDataGenerator( atomic_number ),
     d_eedl_file_handler( eedl_file_handler ),
+    d_ace_epr_data( ace_epr_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
     d_cutoff_angle( cutoff_angle ),
@@ -50,8 +45,6 @@ StandardEvaluatedElectronDataGenerator::StandardEvaluatedElectronDataGenerator(
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
-  // Make sure the eedl data is valid
-  testPrecondition( !d_eedl_file_handler.is_null() );
   // Make sure the electron energy limits are valid
   testPrecondition( min_electron_energy > 0.0 );
   testPrecondition( min_electron_energy < max_electron_energy );
@@ -74,6 +67,125 @@ void StandardEvaluatedElectronDataGenerator::populateEvaluatedDataContainer(
   // Set the electron data
   std::cout << "\nSetting the electron data: " << std::endl;
   this->setElectronData( data_container );
+  std::cout << "done." << std::endl;
+
+  // Set the relaxation data
+  std::cout << "Setting the relaxation data...";
+  std::cout.flush();
+  this->setRelaxationData( data_container );
+  std::cout << "done." << std::endl;
+}
+
+
+// Set the relaxation data
+void StandardEvaluatedElectronDataGenerator::setRelaxationData( 
+			   Data::EvaluatedElectronVolatileDataContainer&
+			   data_container ) const
+{
+  // Extract the subshell ENDF designators 
+  Teuchos::ArrayView<const double> subshell_designators = 
+    d_ace_epr_data->extractSubshellENDFDesignators();
+
+  Teuchos::Array<unsigned> subshells( data_container.getSubshells().begin(),
+                                      data_container.getSubshells().end() ); 
+
+  testPrecondition( subshell_designators.size() == subshells.size() );
+
+  // Extract the subshell occupancies
+  Teuchos::ArrayView<const double> subshell_occupancies = 
+    d_ace_epr_data->extractSubshellOccupancies();
+
+  // Extract the subshell binding energies
+  Teuchos::ArrayView<const double> subshell_binding_energies = 
+    d_ace_epr_data->extractSubshellBindingEnergies();
+
+  // Extract the number of subshell vacancy transitions
+  Teuchos::ArrayView<const double> subshell_vacancy_transitions =
+    d_ace_epr_data->extractSubshellVacancyTransitionPaths();
+
+  // Extract the relo block
+  Teuchos::ArrayView<const double> relo_block = 
+    d_ace_epr_data->extractRELOBlock();
+
+  // Assign the subshell data
+  for( unsigned i = 0; i < subshells.size(); ++i )
+  {
+    data_container.setSubshellOccupancy( subshells[i],
+					 subshell_occupancies[i] );
+    
+    data_container.setSubshellBindingEnergy( subshells[i],
+					     subshell_binding_energies[i] );
+    
+    unsigned transitions = (unsigned)subshell_vacancy_transitions[i];
+    
+    if( transitions > 0 )
+    {
+      data_container.setSubshellRelaxationTransitions( subshells[i],
+						       transitions );
+      
+      this->setTransitionData( subshells[i],
+			       transitions,
+			       (unsigned)relo_block[i],
+			       data_container );
+    }
+  }
+}
+
+
+// Set the transition data
+void StandardEvaluatedElectronDataGenerator::setTransitionData(
+			  const unsigned subshell,
+			  const unsigned transitions,
+			  const unsigned subshell_data_start_index,
+			  Data::EvaluatedElectronVolatileDataContainer&
+			  data_container ) const
+{
+  // Make sure the number of transitions is valid
+  testPrecondition( transitions > 0 );
+
+  // Extract the xprob block
+  Teuchos::ArrayView<const double> xprob_block = 
+    d_ace_epr_data->extractXPROBBlock();
+
+  std::vector<std::pair<unsigned,unsigned> > relaxation_vacancies( 
+								 transitions );
+  std::vector<double> relaxation_particle_energies( transitions );
+  std::vector<double> relaxation_probabilities( transitions );
+  std::vector<double> relaxation_cdf( transitions );
+
+  for( unsigned j = 0; j < transitions; ++j )
+  {
+    // Extract the primary transition subshell vacancy
+    relaxation_vacancies[j].first = 
+      (unsigned)xprob_block[subshell_data_start_index+j*4];
+	
+    // Extract the secondary transition subshell vacancy
+    relaxation_vacancies[j].second = 
+      (unsigned)xprob_block[subshell_data_start_index+j*4+1];
+    
+    // Extract the outgoing particle energies
+    relaxation_particle_energies[j] = 
+      xprob_block[subshell_data_start_index+j*4+2];
+    
+    // Extract the transition cdf
+    relaxation_cdf[j] = xprob_block[subshell_data_start_index+j*4+3];
+    
+    // Convert the cdf value to a pdf value
+    if( j != 0 )
+      relaxation_probabilities[j] = relaxation_cdf[j]-relaxation_cdf[j-1];
+    else // j == 0
+      relaxation_probabilities[j] = relaxation_cdf[j];
+  }
+  
+  data_container.setSubshellRelaxationVacancies( subshell,
+						 relaxation_vacancies );
+  
+  data_container.setSubshellRelaxationParticleEnergies( 
+						subshell,
+						relaxation_particle_energies );
+
+  data_container.setSubshellRelaxationProbabilities(subshell,
+						    relaxation_probabilities );
 }
 
 // Process EEDL file
@@ -83,7 +195,7 @@ void StandardEvaluatedElectronDataGenerator::populateEvaluatedDataContainer(
  */
 void StandardEvaluatedElectronDataGenerator::setElectronData( 
     Data::EvaluatedElectronVolatileDataContainer& data_container ) const
-{   
+{ 
   // Information in first header of the EEDL file
   int atomic_number_in_table, 
       outgoing_particle_designator, 
@@ -113,7 +225,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
   union_energy_grid.push_back( d_min_electron_energy );
   union_energy_grid.push_back( d_max_electron_energy );
 
-  std::cout << " Reading ENDL Data file";
+  std::cout << " Reading EEDL Data file";
   std::cout.flush();
 
   // Process every table in the EEDL file
@@ -459,7 +571,6 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
                              elastic_pdf,
                              data_container );
 
-
   // Create the union energy grid
   std::cout << " Creating union energy grid";
   std::cout.flush();
@@ -688,7 +799,6 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
   data_container.setScreenedRutherfordNormalizationConstant( 
     screened_rutherford_normalization_constant );  
 }
-
 
 // Create the cross section on the union energy grid
 void StandardEvaluatedElectronDataGenerator::createCrossSectionOnUnionEnergyGrid(

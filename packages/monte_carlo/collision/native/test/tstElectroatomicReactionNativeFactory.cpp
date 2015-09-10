@@ -28,7 +28,6 @@
 
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
-Teuchos::Array<double> binding_energy;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 
@@ -149,7 +148,6 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   *data_container,
 							   energy_grid,
-                               binding_energy,
 							   reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -332,16 +330,13 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name, test_binding_energy_file_name;
+  std::string test_native_file_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
 		 &test_native_file_name,
 		 "Test Native file name" );
-  clp.setOption( "test_binding_energy_file",
-		 &test_binding_energy_file_name,
-		 "Test binding energy file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -361,27 +356,6 @@ int main( int argc, char** argv )
 
     // Extract the common energy grid
     energy_grid.deepCopy( data_container->getElectronEnergyGrid() );
-  }
-
-  {
-    // Create the binding energy data
-    Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> 
-        binding_energy_container;
-
-    binding_energy_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
-						     test_binding_energy_file_name ) );
-
-    std::set<unsigned> subshells =  binding_energy_container->getSubshells();
-    std::set<unsigned>::iterator it = subshells.begin();
-
-    binding_energy.resize( subshells.size() );
-
-    int i = 0;  
-    for ( it; it != subshells.end(); ++it )
-    {
-      binding_energy[i] = 
-        binding_energy_container->getSubshellBindingEnergy( *it );
-    }
   }
 
   // Initialize the random number generator

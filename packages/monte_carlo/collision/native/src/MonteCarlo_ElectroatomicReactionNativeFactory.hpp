@@ -49,7 +49,6 @@ public:
   static void createSubshellElectroionizationReactions(
     const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
-    const Teuchos::Array<double>& binding_energies, 
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
         electroionization_subshell_reactions );
 

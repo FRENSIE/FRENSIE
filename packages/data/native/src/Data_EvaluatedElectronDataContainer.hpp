@@ -43,11 +43,47 @@ public:
   virtual ~EvaluatedElectronDataContainer()
   { /* ... */ }
 
+//---------------------------------------------------------------------------//
+// GET RELAXATION DATA
+//---------------------------------------------------------------------------//
+
   //! Return the atomic number
   unsigned getAtomicNumber() const;
 
   //! Return the atomic subshells 
   const std::set<unsigned>& getSubshells() const;
+
+  //! Return the occupancy for a subshell
+  double getSubshellOccupancy( const unsigned subshell ) const;
+
+  //! Return the binding energy for a subshell
+  double getSubshellBindingEnergy( const unsigned subshell ) const;
+
+  //! Return if there is relaxation data
+  bool hasRelaxationData() const;
+
+  //! Return if the subshell has relaxation data
+  bool hasSubshellRelaxationData( const unsigned subshell ) const;
+
+  //! Return the number of transitions that can fill a subshell vacancy
+  unsigned getSubshellRelaxationTransitions( const unsigned subshell ) const;
+
+  //! Return the relaxation vacancies for a subshell
+  const std::vector<std::pair<unsigned,unsigned> >&
+  getSubshellRelaxationVacancies( const unsigned subshell ) const;
+
+  //! Return the relaxation particle energies for a subshell
+  const std::vector<double>& getSubshellRelaxationParticleEnergies(
+					       const unsigned subshell ) const;
+
+  //! Return the relaxation probabilities for a subshell
+  const std::vector<double>& getSubshellRelaxationProbabilities(
+					       const unsigned subshell ) const;
+
+
+//---------------------------------------------------------------------------//
+// GET ELECTRON DATA 
+//---------------------------------------------------------------------------//
 
   //! Return the upper cutoff scattering angle below which moment preserving elastic scattering is used
   double getCutoffAngle() const;
@@ -173,11 +209,46 @@ protected:
   EvaluatedElectronDataContainer()
   { /* ... */ }
 
+//---------------------------------------------------------------------------//
+// SET RELAXATION DATA
+//---------------------------------------------------------------------------//
+
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
-
-  //! set the atomic subshells 
+  
+  //! Set the atomic subshells
   void setSubshells( const std::set<unsigned>& subshells );
+
+  //! Set the occupancy for a subshell
+  void setSubshellOccupancy( const unsigned subshell,
+                             const double occupancy );
+  
+  //! Set the binding energy for a subshell
+  void setSubshellBindingEnergy( const unsigned subshell,
+                                 const double binding_energy );
+
+  //! Set the number of transitions that can fill a subshell vacancy
+  void setSubshellRelaxationTransitions( const unsigned subshell,
+                                         const unsigned transitions );
+
+  //! Set the relaxation vacancies for a subshell
+  void setSubshellRelaxationVacancies( 
+      const unsigned subshell,
+      const std::vector<std::pair<unsigned,unsigned> >& relaxation_vacancies );
+
+  //! Set the relaxation particle energies for a subshell
+  void setSubshellRelaxationParticleEnergies(
+		     const unsigned subshell,
+		     const std::vector<double>& relaxation_particle_energies );
+
+  //! Set the relaxation probabilities for a subshell
+  void setSubshellRelaxationProbabilities( 
+			 const unsigned subshell,
+			 const std::vector<double>& relaxation_probabilities );
+
+//---------------------------------------------------------------------------//
+// SET ELECTRON DATA 
+//---------------------------------------------------------------------------//
 
   //! Set the elastic cutoff angle
   void setCutoffAngle( const double cutoff_angle );
@@ -382,11 +453,38 @@ private:
   // Declare the boost serialization access object as a friend
   friend class boost::serialization::access;
 
+//---------------------------------------------------------------------------//
+// RELAXATION DATA
+//---------------------------------------------------------------------------//
+
   // The atomic number
   unsigned d_atomic_number;
 
   // The atomic subshells (ENDF designators)
   std::set<unsigned> d_subshells;
+
+  // The subshell occupancies
+  std::map<unsigned,double> d_subshell_occupancies;
+
+  // The subshell binding energies
+  std::map<unsigned,double> d_subshell_binding_energies;
+
+  // The subshell relaxation transitions
+  std::map<unsigned,unsigned> d_relaxation_transitions;
+
+  // The subshell relaxation vacancies
+  std::map<unsigned,std::vector<std::pair<unsigned,unsigned> > >
+  d_relaxation_vacancies;
+
+  // The subshell relaxation particle energies
+  std::map<unsigned,std::vector<double> > d_relaxation_particle_energies;
+
+  // The subshell relaxation probabilities
+  std::map<unsigned,std::vector<double> > d_relaxation_probabilities;
+
+//---------------------------------------------------------------------------//
+// ELECTRON DATA 
+//---------------------------------------------------------------------------//
 
   // The elastic cutoff angle
   double d_cutoff_angle;

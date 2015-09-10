@@ -30,16 +30,17 @@ Data::EvaluatedElectronVolatileDataContainer evaluated_electron_data_container;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atomic number can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setAtomicNumber )
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setAtomicNumber )
 {
   evaluated_electron_data_container.setAtomicNumber( 1u );
   
-  TEST_EQUALITY_CONST( evaluated_electron_data_container.getAtomicNumber(), 1u );
+  TEST_EQUALITY_CONST(
+    evaluated_electron_data_container.getAtomicNumber(), 1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshells can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setSubshells )
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setSubshells )
 {
   std::set<unsigned> subshells;
   subshells.insert( 1 );
@@ -50,6 +51,98 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, setSubshells )
   TEST_ASSERT( !evaluated_electron_data_container.getSubshells().count( 0 ) );
   TEST_ASSERT( !evaluated_electron_data_container.getSubshells().count( 2 ) );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the subshell occupancies can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
+		   setSubshellOccupancy )
+{
+  evaluated_electron_data_container.setSubshellOccupancy( 1, 1.0 );
+
+  TEST_EQUALITY_CONST(
+    evaluated_electron_data_container.getSubshellOccupancy( 1 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell binding energies can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
+		   setSubshellBindingEnergy )
+{
+  evaluated_electron_data_container.setSubshellBindingEnergy( 1, 1.361e-5 );
+
+  TEST_EQUALITY_CONST( 
+               evaluated_electron_data_container.getSubshellBindingEnergy( 1 ),
+		       1.361e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of subshell relaxation transitions can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setSubshellRelaxationTransitions )
+{
+  TEST_ASSERT( !evaluated_electron_data_container.hasRelaxationData() );
+
+  evaluated_electron_data_container.setSubshellRelaxationTransitions( 1, 1 );
+  
+  TEST_EQUALITY_CONST( 
+        evaluated_electron_data_container.getSubshellRelaxationTransitions(1),
+		1 );
+  TEST_ASSERT( evaluated_electron_data_container.hasRelaxationData() );
+  TEST_ASSERT( 
+    evaluated_electron_data_container.hasSubshellRelaxationData( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the relaxation vacancies for a subshell can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setSubshellRelaxationVacancies )
+{
+  std::vector<std::pair<unsigned,unsigned> > vacancies( 1 );
+  vacancies[0].first = 1u;
+  vacancies[1].second = 0u;
+
+  evaluated_electron_data_container.setSubshellRelaxationVacancies( 
+    1, 
+    vacancies );
+
+  UTILITY_TEST_COMPARE_ARRAYS( 
+		evaluated_electron_data_container.getSubshellRelaxationVacancies( 1 ),
+		vacancies );
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the relaxation particle energies for a subshell can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setSubshellRelaxationEnergies )
+{
+  std::vector<double> energies( 1 );
+  energies[0] = 1e-6;
+  
+  evaluated_electron_data_container.setSubshellRelaxationParticleEnergies( 
+    1, energies );
+
+  TEST_COMPARE_ARRAYS( 
+	evaluated_electron_data_container.getSubshellRelaxationParticleEnergies( 1 ),
+	energies );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the relaxation probabilities for a subshell can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+		   setSubshellRelaxationProbabilities )
+{
+  std::vector<double> probabilities( 1 );
+  probabilities[0] = 1.0;
+
+  evaluated_electron_data_container.setSubshellRelaxationProbabilities( 
+    1, probabilities );
+
+  TEST_COMPARE_ARRAYS( 
+	evaluated_electron_data_container.getSubshellRelaxationProbabilities( 1 ),
+	probabilities );
+}
+
 
 //---------------------------------------------------------------------------//
 // Check that the Cutoff Angle can be set
@@ -735,10 +828,34 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy( test_ascii_file_name, 
 			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
-  TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellBindingEnergy( 1 ),
+    1.361e-5 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationTransitions(1),
+    1 );
+  TEST_ASSERT( evaluated_electron_data_container_copy.hasRelaxationData() );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.hasSubshellRelaxationData( 1 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -861,10 +978,34 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
 
-  TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellBindingEnergy( 1 ),
+    1.361e-5 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationTransitions(1),
+    1 );
+  TEST_ASSERT( evaluated_electron_data_container_copy.hasRelaxationData() );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.hasSubshellRelaxationData( 1 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -986,10 +1127,34 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy( test_xml_file_name, 
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
-  TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellBindingEnergy( 1 ),
+    1.361e-5 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationTransitions(1),
+    1 );
+  TEST_ASSERT( evaluated_electron_data_container_copy.hasRelaxationData() );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.hasSubshellRelaxationData( 1 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -1108,10 +1273,34 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   evaluated_electron_data_container_copy.unpackDataFromString( packed_data );
   
 
-  TEST_EQUALITY_CONST( evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
-  TEST_ASSERT( !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellBindingEnergy( 1 ),
+    1.361e-5 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationTransitions(1),
+    1 );
+  TEST_ASSERT( evaluated_electron_data_container_copy.hasRelaxationData() );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.hasSubshellRelaxationData( 1 ) );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 

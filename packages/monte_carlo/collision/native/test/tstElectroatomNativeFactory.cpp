@@ -32,7 +32,6 @@ Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> epr_data_container;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
-Teuchos::Array<double> binding_energy;
 double atomic_weight;
 double cutoff_angle;
 Teuchos::RCP<MonteCarlo::Electroatom> atom;
@@ -68,7 +67,6 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
   MonteCarlo::ElectroatomNativeFactory::createElectroatom( 
         *data_container,
         electroatom_name,
-        binding_energy,
         atomic_weight,
         relaxation_model,
         atom,
@@ -285,17 +283,6 @@ int main( int argc, char** argv )
 							   *epr_data_container,
 							   relaxation_model,
 							   true );
-
-    std::set<unsigned> subshells =  epr_data_container->getSubshells();
-    std::set<unsigned>::iterator it = subshells.begin();
-
-    binding_energy.resize( subshells.size() );
-
-    int i = 0;  
-    for ( it; it != subshells.end(); ++it )
-    {
-      binding_energy[i] = epr_data_container->getSubshellBindingEnergy( *it );
-    }
   }
 
   {

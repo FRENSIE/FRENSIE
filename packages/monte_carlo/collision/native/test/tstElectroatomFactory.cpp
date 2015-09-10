@@ -39,7 +39,7 @@ Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 MonteCarlo::BremsstrahlungAngularDistributionType function;
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -257,7 +257,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   TEST_ASSERT( !electroatom_map["Pb"].is_null() );
 }
 */
-
+/*
 //---------------------------------------------------------------------------//
 // Check that a electroatom map can be created (2BS bremsstrahlung data)
 //! \todo Finish unit test for 2BS function
@@ -680,7 +680,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   
   TEST_EQUALITY( electroatom_map["H-1_293.6K"], electroatom_map["H-1_300K"] );
 } 
-
+*/
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//

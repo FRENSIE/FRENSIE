@@ -19,6 +19,8 @@
 #include "DataGen_StandardEvaluatedElectronDataGenerator.hpp"
 #include "DataGen_EvaluatedElectronDataGenerator.hpp"
 #include "Data_ENDLFileHandler.hpp"
+#include "Data_ACEFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 
@@ -29,7 +31,11 @@
 Teuchos::RCP<const DataGen::StandardEvaluatedElectronDataGenerator>
   data_generator_h, data_generator_pb;
 
-std::string test_h_endl_file_name, test_pb_endl_file_name;
+Teuchos::RCP<Data::XSSEPRDataExtractor> 
+  h_xss_data_extractor, pb_xss_data_extractor;
+
+
+std::string test_h_eedl_file_name, test_pb_eedl_file_name;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -46,16 +52,16 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
   double grid_absolute_diff_tol = 1e-13;
   double grid_distance_tol = 1e-13;
 
-  // Create the file handler and data extractor for hydrogen
-  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler(
-		new Data::ENDLFileHandler( test_h_endl_file_name ) );
-
   atomic_number = 1u;    
+
+Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
+    new Data::ENDLFileHandler( test_h_eedl_file_name ) );
 
   data_generator_h.reset( 
 		new DataGen::StandardEvaluatedElectronDataGenerator(
             atomic_number,
-            endl_file_handler,
+            eedl_file_handler,
+            h_xss_data_extractor,
             min_electron_energy,
             max_electron_energy,
             cutoff_angle,
@@ -68,16 +74,25 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
   data_generator_h->populateEvaluatedDataContainer( data_container );
 
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   std::set<unsigned> atomic_subshells = data_container.getSubshells();
   TEST_EQUALITY_CONST( *atomic_subshells.begin(), 1 );
   TEST_EQUALITY_CONST( atomic_subshells.size(), 1 );
 
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 1 );
+  TEST_ASSERT( !data_container.hasRelaxationData() );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 1 ) );
+
+  double binding_energy = 
+    data_container.getSubshellBindingEnergy( *atomic_subshells.begin() );
+  TEST_EQUALITY_CONST( binding_energy, 1.36100e-5 );
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 728 );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   // Check the elastic data
   unsigned threshold = 
@@ -304,16 +319,16 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
   double grid_absolute_diff_tol = 1e-13;
   double grid_distance_tol = 1e-13;
 
-  // Create the file handler and data extractor for lead
-  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler(
-        new Data::ENDLFileHandler( test_pb_endl_file_name ) );
-
   atomic_number = 82u; 
+
+Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
+    new Data::ENDLFileHandler( test_pb_eedl_file_name ) );
 
   data_generator_pb.reset( 
 		new DataGen::StandardEvaluatedElectronDataGenerator(
             atomic_number,
-            endl_file_handler,
+            eedl_file_handler,
+            pb_xss_data_extractor,
             min_electron_energy,
             max_electron_energy,
             cutoff_angle,
@@ -326,17 +341,31 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
   data_generator_pb->populateEvaluatedDataContainer( data_container );
 
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 82 );
-  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   std::set<unsigned> atomic_subshells = data_container.getSubshells();
   TEST_EQUALITY_CONST( *atomic_subshells.begin(), 1 );
   TEST_EQUALITY_CONST( *--atomic_subshells.end(), 44 );
   TEST_EQUALITY_CONST( atomic_subshells.size(), 24 );
 
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 2 );
+  TEST_ASSERT( data_container.hasRelaxationData() );
+  TEST_ASSERT( data_container.hasSubshellRelaxationData( 1 ) );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 44 ) );
+
+  double binding_energy = 
+    data_container.getSubshellBindingEnergy( *atomic_subshells.begin() );
+  TEST_EQUALITY_CONST( binding_energy, 8.82900e-2 );
+
+  binding_energy = 
+    data_container.getSubshellBindingEnergy( *--atomic_subshells.end() );
+  TEST_EQUALITY_CONST( binding_energy, 5.29000e-6 );
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 759 );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   // Check the elastic data
   unsigned threshold = 
@@ -609,14 +638,30 @@ TEUCHOS_UNIT_TEST( StandardEvaluatedElectronDataGenerator,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_h_ace_file_name, test_pb_ace_file_name;
+  std::string test_h_ace_table_name, test_pb_ace_table_name;
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_h_endl_file",
-		 &test_h_endl_file_name,
-		 "Test ENDL file name" );
-  clp.setOption( "test_pb_endl_file",
-		 &test_pb_endl_file_name,
-		 "Test ENDL file name" );
+  clp.setOption( "test_h_eedl_file",
+		 &test_h_eedl_file_name,
+		 "Test EEDL file name" );
+  clp.setOption( "test_h_ace_file",
+		 &test_h_ace_file_name,
+		 "Test ACE file name" );
+  clp.setOption( "test_h_ace_table",
+		 &test_h_ace_table_name,
+		 "Test ACE table name" );
+
+  clp.setOption( "test_pb_eedl_file",
+		 &test_pb_eedl_file_name,
+		 "Test EEDL file name" );
+  clp.setOption( "test_pb_ace_file",
+		 &test_pb_ace_file_name,
+		 "Test ACE file name" );
+  clp.setOption( "test_pb_ace_table",
+		 &test_pb_ace_table_name,
+		 "Test ACE table name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -627,6 +672,34 @@ int main( int argc, char** argv )
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
+  }
+
+  {
+    // Create the ace file handler and data extractor for hydrogen
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+			       new Data::ACEFileHandler( test_h_ace_file_name,
+							 test_h_ace_table_name,
+							 1u ) );
+
+    h_xss_data_extractor.reset(
+				new Data::XSSEPRDataExtractor( 
+				      ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray() ) );
+  }
+
+  {
+    // Create the ace file handler and data extractor for lead
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+			       new Data::ACEFileHandler( test_pb_ace_file_name,
+							 test_pb_ace_table_name,
+							 1u ) );
+
+    pb_xss_data_extractor.reset(
+				new Data::XSSEPRDataExtractor( 
+				      ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray() ) );
   }
 
 

@@ -32,7 +32,6 @@ public:
 	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
-        const Teuchos::Array<double>& binding_energy,
         const double atomic_weight,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
@@ -43,7 +42,6 @@ public:
   static void createElectroatom(
 	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	    const std::string& electroatom_name,
-        const Teuchos::Array<double>& binding_energy,
         const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,

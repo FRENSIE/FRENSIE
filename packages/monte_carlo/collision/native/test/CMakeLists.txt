@@ -438,7 +438,7 @@ ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory
 ADD_EXECUTABLE(tstElectroatomicReactionNativeFactory
   tstElectroatomicReactionNativeFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionNativeFactory monte_carlo_collision_native)
-ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_endl_native.xml" --test_binding_energy_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+ADD_TEST(ElectroatomicReactionNativeFactory_test tstElectroatomicReactionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_endl_native.xml" )
 
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp)
