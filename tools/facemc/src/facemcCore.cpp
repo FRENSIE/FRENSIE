@@ -15,7 +15,8 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_DefaultComm.hpp>
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_DefaultSerialComm.hpp>
 
 // FRENSIE Includes
 #include "facemcCore.hpp"
@@ -139,30 +140,13 @@ int facemcCore( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
-  std::cout << "Found" << std::endl;
   // Create the default communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
+  
   if( Teuchos::GlobalMPISession::mpiIsInitialized() )
-  {
-    Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
-      Teuchos::DefaultComm<unsigned long long>::getComm();
-
-  // Create the simulation manager
-  facemc_manager = 
-    MonteCarlo::ParticleSimulationManagerFactory::createManager( 
-						*simulation_info,
-						*geometry_definition,
-						*source_definition,
-						*response_function_definitions,
-						*estimator_definitions,
-						*material_definitions,
-						*cross_sections_table_info,
-						cross_section_directory,
-  						comm );
-  }
+    comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
   else
-  {
-    Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
-      Teuchos::DefaultComm<unsigned long long>::getDefaultSerialComm( NULL );
+    comm.reset( new Teuchos::SerialComm<unsigned long long>() );
 
   // Create the simulation manager
   facemc_manager =
@@ -176,7 +160,6 @@ int facemcCore( int argc, char** argv )
                                                 *cross_sections_table_info,
                                                 cross_section_directory,
                                                 comm );
-  }
 
 
   // Run the simulation
