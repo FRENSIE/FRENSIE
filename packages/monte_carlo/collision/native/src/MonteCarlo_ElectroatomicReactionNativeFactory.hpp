@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
@@ -29,6 +30,7 @@ public:
   static void createAnalogElasticReaction(
         const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
         const double lower_cutoff_angle = 1.0e-6 );
 
@@ -36,6 +38,7 @@ public:
   static void createScreenedRutherfordElasticReaction(
         const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
         const double upper_cutoff_angle = 1.0e-6 );
 
@@ -43,12 +46,14 @@ public:
   static void createAtomicExcitationReaction(
 	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
     const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
         electroionization_subshell_reactions );
 
@@ -56,6 +61,7 @@ public:
   static void createBremsstrahlungReaction(
 	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
 	BremsstrahlungAngularDistributionType photon_distribution_function );
 

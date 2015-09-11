@@ -28,11 +28,18 @@ class ElectroionizationElectroatomicReaction : public StandardElectroatomicReact
 
 public:
 
+  //! Basic Constructor
+  ElectroionizationElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index );
+
   //! Constructor
   ElectroionizationElectroatomicReaction(
-  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-  const Teuchos::ArrayRCP<const double>& cross_section,
-  const unsigned threshold_energy_index );
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
 
   //! Destructor

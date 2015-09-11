@@ -20,20 +20,7 @@
 
 namespace MonteCarlo{
 
-/*
-      const double binding_energy, 
-      const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
-      electroionization_subshell_scattering_distribution )
-  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
-                                                       incoming_energy_grid,
-                                                       cross_section,
-                                                       threshold_energy_index ),
-    d_scattering_distribution( 
-         electroionization_subshell_scattering_distribution,
-         binding_energy ),
-*/
-
-// Constructor 
+// Basic Constructor 
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -50,6 +37,41 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     d_electroionization_subshell_distribution( electroionization_subshell_distribution ),
     d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
                                                         interaction_subshell ) )
+{
+  // Make sure the interaction subshell is valid
+  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+
+  // Make sure the distribution data is valid
+  testPrecondition( !electroionization_subshell_distribution.is_null() );
+
+/*
+  // Make sure the electroionization subshell scattering distribution data is valid
+  testPrecondition( electroionization_subshell_scattering_distribution.size() > 0 );
+*/
+}
+
+
+// Constructor 
+template<typename InterpPolicy, bool processed_cross_section>
+ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const SubshellType interaction_subshell,
+    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution )
+  : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
+            incoming_energy_grid,
+            cross_section,
+            threshold_energy_index,
+            grid_searcher ),
+    d_interaction_subshell( interaction_subshell ),
+    d_electroionization_subshell_distribution( 
+            electroionization_subshell_distribution ),
+    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
+            interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
   testPrecondition( interaction_subshell != INVALID_SUBSHELL );

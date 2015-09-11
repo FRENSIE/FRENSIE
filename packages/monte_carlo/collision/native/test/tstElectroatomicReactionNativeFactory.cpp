@@ -29,6 +29,7 @@
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
 Teuchos::ArrayRCP<double> energy_grid;
+Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
@@ -41,6 +42,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
                 *data_container,
                 energy_grid,
+                grid_searcher,
                 reaction );
 
   // Test reaction properties
@@ -77,6 +79,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
                 *data_container,
                 energy_grid,
+                grid_searcher,
                 reaction );
 
   // Test reaction properties
@@ -113,6 +116,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 					           *data_container,
 							   energy_grid,
+                               grid_searcher,
 							   reaction);
 
   // Test reaction properties
@@ -148,6 +152,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   *data_container,
 							   energy_grid,
+                               grid_searcher, 
 							   reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -216,6 +221,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 							   *data_container,
 							   energy_grid,
+                               grid_searcher,
 							   reaction,
 							   photon_distribution_function );
 
@@ -258,6 +264,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
   MonteCarlo::ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 							   *data_container,
 							   energy_grid,
+                               grid_searcher,
 							   reaction,
 							   photon_distribution_function );
 

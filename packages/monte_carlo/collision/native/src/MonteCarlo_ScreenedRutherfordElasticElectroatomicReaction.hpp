@@ -26,14 +26,24 @@ class ScreenedRutherfordElasticElectroatomicReaction : public StandardElectroato
 
 public:
 
+  //! Basic Constructor
+  ScreenedRutherfordElasticElectroatomicReaction( 
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+            scattering_distribution,
+    const double upper_cutoff_angle = 1.0e-6 );
+
   //! Constructor
   ScreenedRutherfordElasticElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-          const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution,
-      const double upper_cutoff_angle = 1.0e-6 );
+    const double upper_cutoff_angle = 1.0e-6 );
 
 
   //! Destructor

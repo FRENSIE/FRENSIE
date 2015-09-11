@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -43,7 +44,14 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( raw_electroatom_data.getElectronEnergyGrid() );
+  energy_grid.assign( raw_electroatom_data.getElectronEnergyGrid().begin(),
+                      raw_electroatom_data.getElectronEnergyGrid().end() );
+
+  // Construct the hash-based grid searcher for this atom
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+						     energy_grid,
+						     hash_grid_bins ) );
 
   // Create the analog elastic scattering reaction
   {
@@ -53,6 +61,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
     ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
+					   grid_searcher,
 					   reaction_pointer,
                        cutoff_angle );
   }
@@ -60,13 +69,13 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
   if ( cutoff_angle <= 1.0e-6 )
   {
-std::cout << "this should not happen" << std::endl;
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
+					   grid_searcher,
 					   reaction_pointer,
                        cutoff_angle );
   }
@@ -79,6 +88,7 @@ std::cout << "this should not happen" << std::endl;
     ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 						 raw_electroatom_data,
 						 energy_grid,
+					     grid_searcher,
 						 reaction_pointer, 
                          photon_distribution_function );
   }
@@ -91,6 +101,7 @@ std::cout << "this should not happen" << std::endl;
     ElectroatomicReactionNativeFactory::createAtomicExcitationReaction( 
                                raw_electroatom_data,
 	                           energy_grid,
+					           grid_searcher,
                                reaction_pointer );
   }
     
@@ -99,6 +110,7 @@ std::cout << "this should not happen" << std::endl;
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
 							   energy_grid, 
+					           grid_searcher,
 							   reaction_pointers );
 
   for( unsigned i = 0; i < reaction_pointers.size(); ++i )

@@ -25,7 +25,7 @@ class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationE
 
 public:
 
-  //! Constructor
+  //! Basic Constructor
   ElectroionizationSubshellElectroatomicReaction( 
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
@@ -33,12 +33,17 @@ public:
     const SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
-/*
-      const SubshellType interaction_subshell,
-      const double binding_energy,   
-      const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
-      electroionization_subshell_scattering_distribution );
-*/
+
+  //! Constructor
+  ElectroionizationSubshellElectroatomicReaction( 
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const SubshellType interaction_subshell,
+    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution );
+
 
   //! Destructor
   ~ElectroionizationSubshellElectroatomicReaction()

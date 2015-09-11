@@ -33,6 +33,7 @@ namespace MonteCarlo{
 void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
             const double lower_cutoff_angle )
 {
@@ -65,6 +66,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
+                          grid_searcher,
 						  distribution ) );
 }
 
@@ -72,6 +74,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
 			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
             const double upper_cutoff_angle )
 {
@@ -107,6 +110,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
+                          grid_searcher,
 						  distribution,
                           upper_cutoff_angle ) );
 }
@@ -115,6 +119,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
@@ -146,7 +151,8 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 	new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
                                                 energy_grid,
                                                 atomic_excitation_cross_section,
-                                                threshold_energy_index,				
+                                                threshold_energy_index,	
+                                                grid_searcher,			
                                                 energy_loss_distribution ) );
 }
 
@@ -154,6 +160,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 		   const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
+           const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
 		   electroionization_subshell_reactions )
 {
@@ -202,6 +209,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
               energy_grid,
               subshell_cross_section,
               threshold_energy_index,
+              grid_searcher,
               subshell_type,
               electroionization_subshell_distribution ) );
 
@@ -217,6 +225,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 		const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,
 		BremsstrahlungAngularDistributionType photon_distribution_function )
 {
@@ -266,6 +275,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 					      energy_grid,
 					      bremsstrahlung_cross_section,
 					      threshold_energy_index,
+                          grid_searcher,
 					      bremsstrahlung_distribution ) );
 }
 
