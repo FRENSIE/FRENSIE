@@ -14,47 +14,65 @@
 
 namespace Utility{
 
-//! The tabular one-dimensional distribution declaration
-class TabularOneDDistribution : public OneDDistribution
+/*! The unit-aware tabular one-dimensional distribution declaration
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareTabularOneDDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
 
 public:
 
+  //! The independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
   //! Constructor
-  TabularOneDDistribution()
+  UnitAwareTabularOneDDistribution()
   { /* ... */ }
 
   //! Destructor
-  virtual ~TabularOneDDistribution()
+  virtual ~UnitAwareTabularOneDDistribution()
   { /* ... */ }
 
   //! Evaluate the CDF
-  virtual double evaluateCDF( const double indep_var_value ) const = 0;
+  virtual double evaluateCDF( const IndepQuantity indep_var_value ) const = 0;
 
   //! Return a random sample from the distribution and the sampled index 
-  virtual double sampleAndRecordBinIndex( 
+  virtual IndepQuantity sampleAndRecordBinIndex( 
 				       unsigned& sampled_bin_index ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value
-  virtual double sampleWithRandomNumber( const double random_number ) const = 0;
+  virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const = 0;
 
   //! Return a random sample from the distribution in a subrange
-  virtual double sampleInSubrange( const double max_indep_var ) const = 0;
+  virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  virtual double sampleWithRandomNumberInSubrange( 
-					const double random_number,
-					const double max_indep_var ) const = 0;
+  virtual IndepQuantity sampleWithRandomNumberInSubrange( 
+				 const double random_number,
+				 const IndepQuantity max_indep_var ) const = 0;
 
   //! Test if the distribution is tabular
   bool isTabular() const;
 };
 
-// Test if the distribution is tabular
-inline bool TabularOneDDistribution::isTabular() const
+// Test if the distribution is tabular 
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
 {
   return true;
 }
+
+/*! The tabular one-dimensional distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 
 } // end Utility namespace
 

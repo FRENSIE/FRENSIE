@@ -14,6 +14,7 @@
 
 // FRENSE Includes
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
