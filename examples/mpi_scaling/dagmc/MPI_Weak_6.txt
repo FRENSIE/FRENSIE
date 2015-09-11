@@ -1,0 +1,200 @@
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+Read 2 ACIS Entities from the input file
+
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+
+Constructed 2 Volumes: 1, 4
+Constructed 2 Volumes: 1, 4
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Read 2 ACIS Entities from the input file
+
+Read 2 ACIS Entities from the input file
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+Constructed 2 Volumes: 1, 4
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+Starting simulation ... Requested faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+Requested faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+terminate called after throwing an instance of 'Utility::ContractException'
+  what():  /home/ecmoll/frensie/root/FRENSIE/packages/utility/core/src/Utility_DirectionHelpers.cpp:100:
+
+Throw test that evaluated to true: !(validDirection( direction ))
+
+Precondition exception
+
+[Denali:18151] *** Process received signal ***
+[Denali:18151] Signal: Aborted (6)
+[Denali:18151] Signal code:  (-6)
+[Denali:18151] [ 0] /lib/x86_64-linux-gnu/libc.so.6(+0x36d40)[0x7fd93cd5fd40]
+[Denali:18151] [ 1] /lib/x86_64-linux-gnu/libc.so.6(gsignal+0x39)[0x7fd93cd5fcc9]
+[Denali:18151] [ 2] /lib/x86_64-linux-gnu/libc.so.6(abort+0x148)[0x7fd93cd630d8]
+[Denali:18151] [ 3] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(_ZN9__gnu_cxx27__verbose_terminate_handlerEv+0x155)[0x7fd93da97535]
+[Denali:18151] [ 4] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0x5e6d6)[0x7fd93da956d6]
+[Denali:18151] [ 5] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0x5d799)[0x7fd93da94799]
+[Denali:18151] [ 6] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(__gxx_personality_v0+0x52a)[0x7fd93da9534a]
+[Denali:18151] [ 7] /lib/x86_64-linux-gnu/libgcc_s.so.1(+0xfff3)[0x7fd93d31bff3]
+[Denali:18151] [ 8] /lib/x86_64-linux-gnu/libgcc_s.so.1(_Unwind_Resume+0x57)[0x7fd93d31c517]
+[Denali:18151] [ 9] ./facemc-mpi(_ZNK10MonteCarlo25ParticleSimulationManagerIN4moab5DagMCENS_14ParticleSourceENS_16EstimatorHandlerENS_16CollisionHandlerEE16simulateParticleINS_12NeutronStateEEEvRT_RNS_12ParticleBankE+0x4ee)[0x64472e]
+[Denali:18151] [10] ./facemc-mpi(_ZNK5boost9function2IvRN10MonteCarlo12NeutronStateERNS1_12ParticleBankEEclES3_S5_+0x18)[0x64ad98]
+[Denali:18151] [11] ./facemc-mpi[0x635dbf]
+[Denali:18151] [12] ./facemc-mpi(_ZN10MonteCarlo43BatchedDistributedParticleSimulationManagerIN4moab5DagMCENS_14ParticleSourceENS_16EstimatorHandlerENS_16CollisionHandlerEE13runSimulationEv+0x2ca)[0x64c64a]
+[Denali:18151] [13] ./facemc-mpi(_Z10facemcCoreiPPc+0xcc2)[0x623572]
+[Denali:18151] [14] ./facemc-mpi(main+0x40)[0x60d9b0]
+[Denali:18151] [15] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf5)[0x7fd93cd4aec5]
+[Denali:18151] [16] ./facemc-mpi[0x6220bf]
+[Denali:18151] *** End of error message ***
+--------------------------------------------------------------------------
+mpiexec noticed that process rank 4 with PID 18151 on node Denali exited on signal 6 (Aborted).
+--------------------------------------------------------------------------

@@ -1,0 +1,48 @@
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 8!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 10!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 7!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 9!
+WARNING: Parameter "Termination Cell Synonym" graveyard   [unused] is unused
+WARNING: Parameter "Material Synonym" mat   [unused] is unused
+WARNING: Parameter "Density Synonym" rho   [unused] is unused
+WARNING: Parameter "Estimator Synonym" estimator   [unused] is unused
+Warning: Surface estimators are not supported by the Root geometry handler. Estimator 1 will be ignored.
+Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+Starting simulation ... terminate called after throwing an instance of 'Utility::ContractException'
+  what():  /home/ecmoll/frensie/root/FRENSIE/packages/utility/core/src/Utility_DirectionHelpers.cpp:100:
+
+Throw test that evaluated to true: !(validDirection( direction ))
+
+Precondition exception
+
+[Denali:07711] *** Process received signal ***
+[Denali:07711] Signal: Aborted (6)
+[Denali:07711] Signal code:  (-6)
+[Denali:07711] [ 0] /lib/x86_64-linux-gnu/libc.so.6(+0x36d40)[0x7fe9747a4d40]
+[Denali:07711] [ 1] /lib/x86_64-linux-gnu/libc.so.6(gsignal+0x39)[0x7fe9747a4cc9]
+[Denali:07711] [ 2] /lib/x86_64-linux-gnu/libc.so.6(abort+0x148)[0x7fe9747a80d8]
+[Denali:07711] [ 3] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(_ZN9__gnu_cxx27__verbose_terminate_handlerEv+0x155)[0x7fe9754dc535]
+[Denali:07711] [ 4] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0x5e6d6)[0x7fe9754da6d6]
+[Denali:07711] [ 5] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(+0x5d799)[0x7fe9754d9799]
+[Denali:07711] [ 6] /usr/lib/x86_64-linux-gnu/libstdc++.so.6(__gxx_personality_v0+0x52a)[0x7fe9754da34a]
+[Denali:07711] [ 7] /lib/x86_64-linux-gnu/libgcc_s.so.1(+0xfff3)[0x7fe974d60ff3]
+[Denali:07711] [ 8] /lib/x86_64-linux-gnu/libgcc_s.so.1(_Unwind_Resume+0x57)[0x7fe974d61517]
+[Denali:07711] [ 9] ./facemc-mpi(_ZNK10MonteCarlo25ParticleSimulationManagerIN8Geometry4RootENS_14ParticleSourceENS_16EstimatorHandlerENS_16CollisionHandlerEE16simulateParticleINS_12NeutronStateEEEvRT_RNS_12ParticleBankE+0x337)[0x645f17]
+[Denali:07711] [10] ./facemc-mpi(_ZNK5boost9function2IvRN10MonteCarlo12NeutronStateERNS1_12ParticleBankEEclES3_S5_+0x18)[0x64ad98]
+[Denali:07711] [11] ./facemc-mpi[0x63586f]
+[Denali:07711] [12] ./facemc-mpi(_ZN10MonteCarlo43BatchedDistributedParticleSimulationManagerIN8Geometry4RootENS_14ParticleSourceENS_16EstimatorHandlerENS_16CollisionHandlerEE13runSimulationEv+0x2ca)[0x64b13a]
+[Denali:07711] [13] ./facemc-mpi(_Z10facemcCoreiPPc+0xcc2)[0x623572]
+[Denali:07711] [14] ./facemc-mpi(main+0x40)[0x60d9b0]
+[Denali:07711] [15] /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf5)[0x7fe97478fec5]
+[Denali:07711] [16] ./facemc-mpi[0x6220bf]
+[Denali:07711] *** End of error message ***
+--------------------------------------------------------------------------
+mpiexec noticed that process rank 6 with PID 7711 on node Denali exited on signal 6 (Aborted).
+--------------------------------------------------------------------------
