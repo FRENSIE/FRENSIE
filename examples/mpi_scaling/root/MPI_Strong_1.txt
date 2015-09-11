@@ -1,0 +1,9 @@
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+WARNING: Parameter "Termination Cell Synonym" graveyard   [unused] is unused
+WARNING: Parameter "Material Synonym" mat   [unused] is unused
+WARNING: Parameter "Density Synonym" rho   [unused] is unused
+WARNING: Parameter "Estimator Synonym" estimator   [unused] is unused
+Warning: Surface estimators are not supported by the Root geometry handler. Estimator 1 will be ignored.
+Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+Starting simulation ... 
