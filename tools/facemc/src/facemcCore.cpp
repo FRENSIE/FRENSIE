@@ -172,15 +172,20 @@ int facemcCore( int argc, char** argv )
   facemc_manager->printSimulationSummary( *out );
   
   // Create a parameter list with all inputs for continue runs
-  Teuchos::ParameterList master_list( "continue_run_info" );
-  master_list.set( "simulation_info", *simulation_info );
-  master_list.set( "geometry_definition", *geometry_definition );
-  master_list.set( "source_definition", *source_definition );
-  master_list.set( "response_function_definitions", *response_function_definitions );
-  master_list.set( "estimator_definitions", *estimator_definitions );
-  master_list.set( "material_definitions", *material_definitions );
-
-  Teuchos::writeParameterListToXmlFile( master_list, "continue_run_info.xml" );
+  if( comm->getRank() == 0 )
+  {
+    Teuchos::ParameterList master_list( "continue_run_info" );
+    master_list.set( "simulation_info", *simulation_info );
+    master_list.set( "geometry_definition", *geometry_definition );
+    master_list.set( "source_definition", *source_definition );
+    master_list.set( "response_function_definitions", *response_function_definitions );
+    master_list.set( "estimator_definitions", *estimator_definitions );
+    master_list.set( "material_definitions", *material_definitions );
+    
+    Teuchos::writeParameterListToXmlFile( master_list, "continue_run.xml" );
+  }
+  
+  comm->barrier();
   
   return 0;
 }

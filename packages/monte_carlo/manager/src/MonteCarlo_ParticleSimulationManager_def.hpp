@@ -162,16 +162,21 @@ void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::runSimulationBatch( 
-                            const unsigned long long start_history, 
-			    const unsigned long long end_history )
+                            const unsigned long long batch_start_history, 
+			    const unsigned long long batch_end_history )
 {
+  // Make sure the history range is valid
+  testPrecondition( batch_start_history <= batch_end_history );
+  testPrecondition( batch_start_history >= d_start_history );
+  testPrecondition( batch_end_history <= d_history_number_wall );
+  
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   { 
     // Create a bank for each thread
     ParticleBank bank;
 
     #pragma omp for
-    for( unsigned long long history = start_history; history < end_history; ++history )
+    for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -441,6 +446,20 @@ void ParticleSimulationManager<GeometryHandler,
 					   const unsigned long long histories )
 {
   d_histories_completed += histories;
+}
+
+// Set the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::setHistoriesCompleted( 
+					   const unsigned long long histories )
+{
+  d_histories_completed = histories;
 }
 
 // Set the start time

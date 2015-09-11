@@ -64,12 +64,40 @@ public:
   void signalHandler(int signal);
 
 private:
+
+  // Coordinate workers (master only)
+  void coordinateWorkers();
+
+  // Tell workers to stop working
+  void tellWorkersToStop( 
+		        const Teuchos::MpiComm<unsigned long long>& mpi_comm );
+
+  // Check for idle worker
+  bool isIdleWorkerPresent( 
+                  const Teuchos::MpiComm<unsigned long long>& mpi_comm,
+                  Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> >&
+		  idle_worker_info );
+  
+  // Assign work to idle workers
+  void assignWorkToIdleWorker(
+               const Teuchos::MpiComm<unsigned long long>& mpi_comm,
+               const Teuchos::CommStatus<unsigned long long>& idle_worker_info,
+	       const Teuchos::Tuple<unsigned long long,2>& task );
+  
+  // Complete work for the master
+  void work();  
+
+  // Calculate the total work done
+  void calculateTotalWorkDone();
   
   // The mpi communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > d_comm;
 
   // The root process
   int d_root_process;
+
+  // The initial histories completed (from a previous run)
+  unsigned long long d_initial_histories_completed;
 };
 
 } // end MonteCarlo
