@@ -87,6 +87,8 @@ protected:
 
   //! Increment the number of histories completed
   void incrementHistoriesCompleted( const unsigned long long histories = 1ull );
+  //! Set the number of histories completed
+  void setHistoriesCompleted( const unsigned long long histories );
 
   //! Set the start time
   void setStartTime( const double start_time );
