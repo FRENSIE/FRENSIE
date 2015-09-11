@@ -21,6 +21,7 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,6 +30,7 @@
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
+Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
@@ -41,6 +43,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createAnalogElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
+                grid_searcher,
                 reaction );
 
   // Test reaction properties
@@ -77,6 +80,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 					           *xss_data_extractor,
 							   energy_grid,
+                               grid_searcher,
 							   reaction);
 
   // Test reaction properties
@@ -112,6 +116,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 							   *xss_data_extractor,
 							   energy_grid,
+                               grid_searcher,
 							   reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -180,6 +185,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 							   *xss_data_extractor,
 							   energy_grid,
+                               grid_searcher,
 							   reaction,
 							   photon_distribution_function );
 
@@ -239,6 +245,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 							   *xss_data_extractor,
 							   energy_grid,
+                               grid_searcher,
 							   reaction,
 							   photon_distribution_function );
 
@@ -346,6 +353,13 @@ int main( int argc, char** argv )
 
     // Extract the common energy grid
     energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
+
+    // Create the hash-based grid searcher
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     100 ) );
   }
 
   // Initialize the random number generator

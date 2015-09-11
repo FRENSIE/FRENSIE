@@ -31,10 +31,11 @@ namespace MonteCarlo{
 
 // Create an analog elastic scattering electroatomic reaction
 void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double lower_cutoff_angle )
+		const Data::XSSEPRDataExtractor& raw_electroatom_data,
+		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+		Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+        const double lower_cutoff_angle )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -74,9 +75,10 @@ void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
 
 // Create an atomic excitation electroatomic reaction
 void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction )
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -115,9 +117,10 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 
 // Create the total electroionization electroatomic reaction
 void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& total_electroionization_reaction )
+		const Data::XSSEPRDataExtractor& raw_electroatom_data,
+		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+		Teuchos::RCP<ElectroatomicReaction>& total_electroionization_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -148,10 +151,11 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 
 // Create the subshell electroionization electroatomic reactions
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
-		   electroionization_subshell_reactions )
+		const Data::XSSEPRDataExtractor& raw_electroatom_data,
+		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+		Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
+		electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -269,6 +273,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,
 		BremsstrahlungAngularDistributionType photon_distribution_function )
 {

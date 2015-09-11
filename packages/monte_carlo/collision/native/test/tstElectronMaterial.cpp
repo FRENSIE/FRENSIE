@@ -292,7 +292,7 @@ int main( int argc, char** argv )
 				new MonteCarlo::AtomicRelaxationModelFactory );
 
     double lower_cutoff_angle = 1.0e-6;
-    unsigned hash_grid_bins;
+    unsigned hash_grid_bins = 100;
     
     MonteCarlo::ElectroatomFactory factory( test_cross_sections_xml_directory,
                                             cross_section_table_info,

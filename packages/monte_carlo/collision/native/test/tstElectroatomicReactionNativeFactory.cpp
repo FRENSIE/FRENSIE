@@ -363,6 +363,13 @@ int main( int argc, char** argv )
 
     // Extract the common energy grid
     energy_grid.deepCopy( data_container->getElectronEnergyGrid() );
+
+    // Create the hash-based grid searcher
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     100 ) );
   }
 
   // Initialize the random number generator

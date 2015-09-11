@@ -45,6 +45,11 @@ void ElectroatomACEFactory::createElectroatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
 
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+						     energy_grid,
+						     hash_grid_bins ) );
+
   // Create the hard elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
@@ -53,6 +58,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createAnalogElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
+                       grid_searcher,
 					   reaction_pointer,
                        cutoff_angle );
   }
@@ -65,6 +71,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 						 raw_electroatom_data,
 						 energy_grid,
+                         grid_searcher,
 						 reaction_pointer, 
                          photon_distribution_function );
   }
@@ -77,6 +84,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createAtomicExcitationReaction( 
                                raw_electroatom_data,
 	                           energy_grid,
+                               grid_searcher,
                                reaction_pointer );
   }
     
@@ -88,6 +96,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
 							   energy_grid,
+                               grid_searcher,
 							   reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
@@ -104,6 +113,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 							    raw_electroatom_data,
 							    energy_grid,
+                                grid_searcher,
 							    reaction_pointer );
   }
 			

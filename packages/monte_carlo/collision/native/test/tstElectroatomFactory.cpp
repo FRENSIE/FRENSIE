@@ -37,7 +37,7 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 MonteCarlo::BremsstrahlungAngularDistributionType function;
-unsigned hash_grid_bins = 100;
+unsigned hash_grid_bins;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -51,7 +51,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -242,7 +241,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -495,7 +493,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -686,7 +683,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -909,7 +905,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -1112,7 +1107,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -1336,7 +1330,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
-  unsigned hash_grid_bins;
   double cutoff_angle = 1.0e-6;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
@@ -1400,6 +1393,8 @@ int main( int argc, char** argv )
     atomic_relaxation_model_factory.reset(
 				new MonteCarlo::AtomicRelaxationModelFactory );
   }
+
+  hash_grid_bins = 100;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
