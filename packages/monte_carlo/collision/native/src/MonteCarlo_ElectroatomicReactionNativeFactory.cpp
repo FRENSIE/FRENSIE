@@ -65,8 +65,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
-						  distribution,
-                          lower_cutoff_angle ) );
+						  distribution ) );
 }
 
 // Create the screened Rutherford elastic scattering electroatomic reaction

@@ -26,7 +26,15 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_elastic_reaction;
+Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
+    ace_elastic_reaction, test_elastic_reaction;
+Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    elastic_scattering_distribution;
+Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+    elastic_scattering_function;
+Teuchos::ArrayRCP<double> energy_grid;
+Teuchos::ArrayRCP<double> elastic_cross_section;
+unsigned elastic_threshold_index;
 double lower_cutoff_angle;
 
 //---------------------------------------------------------------------------//
@@ -98,6 +106,48 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getCrossSection_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the cutoff cross section can be returned
+TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, 
+                   getCrossSection_cutoff_ace )
+{
+  double cutoff_angle = 0.1;
+  // Create the reaction
+  elastic_scattering_distribution.reset( 
+	      new MonteCarlo::AnalogElasticElectronScatteringDistribution(  
+                elastic_scattering_function,
+                cutoff_angle,
+                false ) );
+
+  test_elastic_reaction.reset(
+	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                elastic_cross_section,
+                elastic_threshold_index,
+                elastic_scattering_distribution ) );
+
+  // cross section ratio for cutoff angle
+  double ratio = 9.500004750002380E-01;
+
+  double cross_section = 
+    test_elastic_reaction->getCrossSection( 1.0E-05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
+  
+  ratio = 2.439897074955E-01;
+  cross_section =
+    test_elastic_reaction->getCrossSection( 1.0E-03 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
+  
+  ratio = 1.410821289154E-05;
+  cross_section = 
+    test_elastic_reaction->getCrossSection( 1.0E+05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02*ratio, 1e-12 );
+}
+
+
+//---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
 TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, react_ace )
 {
@@ -157,7 +207,6 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableXSSArray() ) );
   
   // Extract the energy grid and cross section
-  Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
   
   Teuchos::ArrayView<const double> raw_elastic_cross_section = 
@@ -168,10 +217,9 @@ int main( int argc, char** argv )
                   raw_elastic_cross_section.end(),
                   notEqualZero );
 
-  Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign( start, raw_elastic_cross_section.end() );
 
-  unsigned elastic_threshold_index = 
+  elastic_threshold_index = 
     energy_grid.size() - elastic_cross_section.size();
 
   // Extract the elastic scattering information data block (ELASI)
@@ -195,8 +243,7 @@ int main( int argc, char** argv )
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    elastic_scattering_function( size );
+  elastic_scattering_function.resize( size );
   
   for( unsigned n = 0; n < size; ++n )
   {
@@ -212,9 +259,6 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    elastic_scattering_distribution;
-
   lower_cutoff_angle = 1.0e-6;
 
   elastic_scattering_distribution.reset( 
@@ -229,8 +273,7 @@ int main( int argc, char** argv )
                 energy_grid,
                 elastic_cross_section,
                 elastic_threshold_index,
-                elastic_scattering_distribution,
-                lower_cutoff_angle ) );
+                elastic_scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

@@ -32,7 +32,7 @@ public:
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
-        const double atomic_weight,
+	    const unsigned hash_grid_bins,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
@@ -43,6 +43,7 @@ public:
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const std::string& electroatom_name,
         const double atomic_weight,
+	    const unsigned hash_grid_bins,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 

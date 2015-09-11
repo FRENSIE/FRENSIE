@@ -28,7 +28,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
             const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
-            const double atomic_weight,
+	        const unsigned hash_grid_bins,
             const BremsstrahlungAngularDistributionType 
                     photon_distribution_function,
             const bool use_atomic_relaxation_data,
@@ -57,8 +57,10 @@ void ElectroatomNativeFactory::createElectroatomCore(
                        cutoff_angle );
   }
 
-  // Create the screened rutherford elastic scattering reaction
+  // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
+  if ( cutoff_angle <= 1.0e-6 )
   {
+std::cout << "this should not happen" << std::endl;
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
 
@@ -125,6 +127,7 @@ void ElectroatomNativeFactory::createElectroatom(
 	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
 	    const std::string& electroatom_name,
         const double atomic_weight,
+	    const unsigned hash_grid_bins,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 
@@ -142,7 +145,7 @@ void ElectroatomNativeFactory::createElectroatom(
   ElectroatomNativeFactory::createElectroatomCore(raw_electroatom_data,
                                                   atomic_relaxation_model,
                                                   core,
-                                                  atomic_weight,
+                                                  hash_grid_bins,  
                                                   photon_distribution_function,
                                                   use_atomic_relaxation_data,
                                                   cutoff_angle );

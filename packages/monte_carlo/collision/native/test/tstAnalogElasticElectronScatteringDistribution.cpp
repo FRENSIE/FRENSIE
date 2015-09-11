@@ -27,7 +27,9 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::AnalogElasticElectronScatteringDistribution> 
-  ace_elastic_distribution, endl_elastic_distribution;
+  ace_elastic_distribution, test_elastic_distribution;
+Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  elastic_scattering_distribution;
 
 double angle_cutoff = 1.0e-6;
 
@@ -139,6 +141,62 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Test 2
   TEST_FLOATING_EQUALITY( cdf_value, 5.512132182210E-01, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cross section ratio can be evaluated
+TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution, 
+                   evaluateCutoffCrossSectionRatio )
+{
+  // Set energy in MeV and angle cosine 
+  double energy = 1.0e-3;
+  double scattering_angle = 1.0; // angle cosine = 0.0
+  double max_cdf = 9.9990922382800E-01;
+
+  // Create the distribution
+  test_elastic_distribution.reset(
+		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+						    elastic_scattering_distribution,
+                            scattering_angle,
+                            false ) );
+
+  // Calculate the cdf
+  double cdf_value = 
+    test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+
+  // Test 1 energy 1
+  TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02/max_cdf, 1e-12 );
+
+
+  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  // Create the distribution
+  test_elastic_distribution.reset(
+		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+						    elastic_scattering_distribution,
+                            scattering_angle,
+                            false ) );
+
+  cdf_value = 
+    test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( cdf_value, 4.211953219580E-01/max_cdf, 1e-12 );
+
+  // Test with a different energy
+  energy = 1.00E+05;
+
+  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  // Create the distribution
+  test_elastic_distribution.reset(
+		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+						    elastic_scattering_distribution,
+                            scattering_angle,
+                            false ) );
+  cdf_value = 
+    test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -370,8 +428,7 @@ int main( int argc, char** argv )
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    elastic_scattering_distribution( size );
+  elastic_scattering_distribution.resize( size );
   
   for( unsigned n = 0; n < size; ++n )
   {

@@ -108,7 +108,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= d_lower_cutoff_angle );
+  testPrecondition( scattering_angle >= 1.0e-6 );
   testPrecondition( scattering_angle <= 2.0 );
 
   if ( d_angle_is_used_as_independent_variable )
@@ -128,6 +128,39 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
                          d_elastic_scattering_distribution );
   }
 }
+
+// Evaluate the cross section ratio for the cutoff angle
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio( 
+        const double incoming_energy ) const
+{
+  double cross_section_ratio = 0.0;
+
+  if ( d_angle_is_used_as_independent_variable )
+  {  
+    // Get the cdf
+    double cutoff_cdf = evaluateCDF( incoming_energy, d_lower_cutoff_angle );
+    cross_section_ratio = 1.0 - cutoff_cdf;
+  }
+  else
+  {
+    // Get the max cdf value
+    double max_cdf = evaluateCDF( incoming_energy, 1.0e-6 );
+
+    // Get the cdf
+    double cutoff_cdf = evaluateCDF( incoming_energy, d_lower_cutoff_angle );
+
+    // Make sure the cdf values are valid
+    testPostcondition( max_cdf >= cutoff_cdf );
+    testPostcondition( cutoff_cdf >= 0.0 );
+
+
+    if ( max_cdf > 0.0 )
+     cross_section_ratio = cutoff_cdf/max_cdf;
+  }
+
+  return cross_section_ratio;
+}
+
 
 // Return the energy at a given energy bin
 double AnalogElasticElectronScatteringDistribution::getEnergy( 

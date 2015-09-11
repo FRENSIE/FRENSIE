@@ -63,6 +63,9 @@ public:
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle ) const;
 
+  //! Evaluate the cross section ratio for the cutoff angle
+  double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
+
   //! Return the energy at a given energy bin
   double getEnergy( const unsigned energy_bin ) const;
 

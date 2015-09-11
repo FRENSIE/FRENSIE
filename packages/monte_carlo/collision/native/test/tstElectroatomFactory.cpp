@@ -37,6 +37,7 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 MonteCarlo::BremsstrahlungAngularDistributionType function;
+unsigned hash_grid_bins = 100;
 
 //---------------------------------------------------------------------------//
 // Tests

@@ -25,14 +25,22 @@ class AnalogElasticElectroatomicReaction : public StandardElectroatomicReaction<
 
 public:
 
-  //! Constructor
+  //! Basic Constructor
   AnalogElasticElectroatomicReaction( 
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
       const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-            scattering_distribution,
-      const double lower_cutoff_angle );
+            scattering_distribution );
+
+  //! Constructor
+  AnalogElasticElectroatomicReaction( 
+	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	  const Teuchos::ArrayRCP<const double>& cross_section,
+	  const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+            scattering_distribution );
 
 
   //! Destructor
@@ -53,6 +61,13 @@ public:
               ParticleBank& bank,
               SubshellType& shell_of_interaction ) const;
 
+  //! Return the cross section at the given energy
+  double getCrossSection( const double energy ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+			  const unsigned bin_index ) const;
+
 private:
 
 
@@ -69,8 +84,8 @@ private:
   // The threshold energy
   const unsigned d_threshold_energy_index;
 
-  // The cutoff angle cosine between analog and soft scattering
-  double d_lower_cutoff_angle;
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

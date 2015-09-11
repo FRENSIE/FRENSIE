@@ -156,7 +156,6 @@ template<typename InterpPolicy>
 double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection( 
 						    const double energy ) const
 {
-std::cout << "should not be here getcross section" <<std::endl;
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
