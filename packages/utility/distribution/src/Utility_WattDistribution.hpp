@@ -2,7 +2,8 @@
 //!
 //! \file   Utility_WattDistribution.hpp
 //! \author Aaron Tumulak
-//! \brief  Watt distribution class declaration.
+//! \brief  Watt distribution class declaration. Modified by Alex Robinson
+//!         to accommodate units.
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,72 +13,133 @@
 // Std Lib Includes
 #include <limits>
 
+// Boost Includes
+#include <boost/units/physical_dimensions/energy.hpp>
+
 // Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
-//! Watt distribution class
-class WattDistribution : public OneDDistribution,
-			   public ParameterListCompatibleObject<WattDistribution>
+/*! Watt distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+				  public ParameterListCompatibleObject<UnitAwareWattDistribution<IndependentUnit,DependentUnit> >
 {
 
-private:
+  // Only allow construction when the independent unit corresponds to energy
+  RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+private:
+  
+  // The distribution multiplier quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DistMultiplierQuantity;
+
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+  
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+
+  // Typedef for QuantityTraits<DistMultiplierQuantity>
+  typedef QuantityTraits<DistMultiplierQuantity> DMQT;
 
 public:
+
+  //! The distribution type
+  typedef UnitAwareWattDistribution<IndependentUnit,DependentUnit> ThisType;
+
+  //! The independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+  
+  //! The inverse independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
  
   //! Default Constructor
-  WattDistribution( const double incident_energy = 1.0,
-		      const double a_parameter = 1.0,
-                      const double b_parameter = 1.0,
-		      const double restriction_energy = 0.0 );
+  UnitAwareWattDistribution( 
+			const IndepQuantity incident_energy = IQT::one(),
+			const IndepQuantity a_parameter = IQT::one(),
+			const InverseIndepQuantity b_parameter = IIQT::one(),
+			const IndepQuantity restriction_energy = IQT::zero() );
+
+  //! Constructor
+  template<typename InputIndepQuantityA,
+	   typename InputIndepQuantityB,
+	   typename InputInverseIndepQuantity,
+	   typename InputIndepQuantityC>
+  UnitAwareWattDistribution(
+			    const InputIndepQuantityA incident_energy,
+			    const InputIndepQuantityB a_parameter,
+			    const InputInverseIndepQuantity b_parameter,
+			    const InputIndepQuantityC restriction_energy );
 
   //! Copy constructor
-  WattDistribution( const WattDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareWattDistribution( const UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
+  
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareWattDistribution fromUnitlessDistribution( const UnitAwareWattDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  WattDistribution& operator=( const WattDistribution& dist_instance );
+  UnitAwareWattDistribution& operator=( const UnitAwareWattDistribution& dist_instance );
 
   //! Destructor
-  ~WattDistribution()
+  ~UnitAwareWattDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
+
+  //! Return a sample from the distribution
+  static IndepQuantity sample( const IndepQuantity incident_energy,
+			       const IndepQuantity a_parameter,
+			       const InverseIndepQuantity b_parameter,
+			       const IndepQuantity restriction_energy );
 
   //! Return a random sample from the distribution and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Returna a random sample from the corresponding CDF and record the number of trials
-  static double sampleAndRecordTrials(
-    const double incident_energy,
-    const double a_parameter,
-    const double b_parameter,
-    const double restriction_energy,
+  //! Return a random sample from the corresponding CDF and record the number of trials
+  static IndepQuantity sampleAndRecordTrials(
+    const IndepQuantity incident_energy,
+    const IndepQuantity a_parameter,
+    const InverseIndepQuantity b_parameter,
+    const IndepQuantity restriction_energy,
     unsigned& trials );
 
   //! Test if the distribution is continuous
   bool isContinuous() const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -89,32 +151,48 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const WattDistribution& other ) const;
+  bool isEqual( const UnitAwareWattDistribution& other ) const;
+
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareWattDistribution( const UnitAwareWattDistribution<void,void>& unitless_dist_instance, int );
 
 private:
 
-  // Return the normalization constant of the distribution, pass in parameters
-  double getNormalizationConstant(
-    const double incident_energy,
-    const double a_parameter,
-    const double b_parameter,
-    const double restriction_energy ) const;
+  // Calculate the normalization constant of the distribution
+  void calculateNormalizationConstant();
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareWattDistribution;
  
   // The distribution type
   static const OneDDistributionType distribution_type = WATT_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
-  double d_incident_energy;
+  IndepQuantity d_incident_energy;
 
   // The a_parameter of the distribution
-  double d_a_parameter;
+  IndepQuantity d_a_parameter;
 
   // The b_parameter of the distribution
-  double d_b_parameter;
+  InverseIndepQuantity d_b_parameter;
   
   // The restriction energy of the distribution
-  double d_restriction_energy;
+  IndepQuantity d_restriction_energy;
+
+  // The distribution multiplier
+  DistMultiplierQuantity d_multiplier;
+
+  // The distribution normalization constant
+  DistNormQuantity d_norm_constant;
 };
+
+/*! The Watt distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareWattDistribution<void,void> WattDistribution;
 
 } // end Utility namespace
 
@@ -140,7 +218,38 @@ public:
   }
 };
 
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareWattDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U,typename V>
+class TypeNameTraits<Utility::UnitAwareWattDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Watt Distribution (" +
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+		      const Utility::UnitAwareWattDistribution<U,V>& instance )
+  {
+    return name();
+  }
+};
+
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_WattDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_WATT_DISTRIBUTION_HPP
 
