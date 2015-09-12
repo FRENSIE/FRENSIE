@@ -73,23 +73,16 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
   						sys_scattering_angle_cosine,
   						this->getAtomicWeightRatio() );
   
-  double outgoing_particle_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-					      scattering_angle_cosine,
-					      this->sampleAzimuthalAngle(),
-					      incoming_particle.getDirection(),
-					      outgoing_particle_direction );
-
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 
+  // Set the new direction
+  outgoing_particle.rotateDirection( scattering_angle_cosine,
+				     this->sampleAzimuthalAngle() );
+
   // Set the new energy
   outgoing_particle.setEnergy( outgoing_energy );
-
-  // Set the new direction
-  outgoing_particle.setDirection( outgoing_particle_direction );
 }
 
 } // end MonteCarlo namespace
