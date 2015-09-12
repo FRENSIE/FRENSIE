@@ -69,7 +69,7 @@ private:
   void coordinateWorkers();
 
   // Tell workers to stop working
-  void tellWorkersToStop( 
+  void stopWorkersAndRecordWork( 
 		        const Teuchos::MpiComm<unsigned long long>& mpi_comm );
 
   // Check for idle worker
@@ -87,9 +87,6 @@ private:
   // Complete work for the master
   void work();  
 
-  // Calculate the total work done
-  void calculateTotalWorkDone();
-  
   // The mpi communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > d_comm;
 
