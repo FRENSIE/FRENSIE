@@ -88,12 +88,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   else
     this->work();
 
-  // Calculate the total work done
-  this->calculateTotalWorkDone();
-
-  // Wait for all processes to finish their tasks
-  d_comm->barrier();
-
   // Perform a reduction of the estimator data on the root process
   EMI::reduceEstimatorData( d_comm, d_root_process );
 
@@ -153,7 +147,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     // All batches complete - tell workers to stop
     if( batch_number == number_of_batches )
     {
-      this->tellWorkersToStop( *mpi_comm );
+      this->stopWorkersAndRecordWork( *mpi_comm );
 
       break;
     }
@@ -187,7 +181,7 @@ template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
-void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::tellWorkersToStop(
+void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::stopWorkersAndRecordWork(
 			 const Teuchos::MpiComm<unsigned long long>& mpi_comm )
 	       
 {
@@ -272,6 +266,14 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 		      " was unable to wait for the worker process to stop! "
 		      "MPI_Waitall failed with the following error: "
 		      << Teuchos::mpiErrorCodeToString(return_value) );
+
+  // Calculate the total work completed by all workers
+  unsigned long long total_histories_completed = d_initial_histories_completed;
+
+  for( unsigned i = 0; i < worker_histories_completed.size(); ++i )
+    total_histories_completed += worker_histories_completed[i];
+
+  this->setHistoriesCompleted( total_histories_completed );  
   
 #endif // end HAVE_FRENSIE_MPI
 }
@@ -463,47 +465,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     else
       break;
   }
-#endif // end HAVE_FRENSIE_MPI
-}
-
-// Calculate the total work done
-template<typename GeometryHandler, 
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
-void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::calculateTotalWorkDone()
-{
-#ifdef HAVE_FRENSIE_MPI
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-
-  // Get the mpi comm object
-  Teuchos::RCP<const Teuchos::MpiComm<unsigned long long> > mpi_comm = 
-    Teuchos::rcp_dynamic_cast<const Teuchos::MpiComm<unsigned long long> >( 
-								      d_comm );
-  
-  unsigned long long histories_completed, total_histories_completed;
-
-  // Calculate the work done by all workers
-  if( mpi_comm->getRank() != d_root_process )
-    histories_completed = this->getNumberOfHistoriesCompleted();
-  else
-    histories_completed = d_initial_histories_completed;
-  
-  int return_value = ::MPI_Reduce( &histories_completed,
-				   &total_histories_completed,
-				   1,
-				   MPI_UNSIGNED_LONG_LONG,
-				   MPI_SUM,
-				   d_root_process,
-				   *mpi_comm->getRawMpiComm() );
-    
-  // Only the root process will keep track of the total histories completed - 
-  // the workers will only keep track of the histories that they have completed
-  if( mpi_comm->getRank() == d_root_process )
-    this->setHistoriesCompleted( total_histories_completed );
-
 #endif // end HAVE_FRENSIE_MPI
 }
 
