@@ -91,12 +91,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                                 *data_container );
 
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 4 );
   // Tabular
   fake_stream[0] = 0.5; // sample angle = 1.249161208881750E-02
   // Screened Rutherford
-  fake_stream[1] = 0.0; // sample angle = 0.0
-  fake_stream[2] = 1.0 - 1.0e-15; // sample angle = 0.0
+  fake_stream[1] = 0.0; // sample angle cosine = 1.0
+  fake_stream[2] = 0.5; // sample angle = 0.9999995
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle = 0.999999
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -134,8 +135,18 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9999995000000930, 1e-12 );
   TEST_EQUALITY_CONST( trials, 13 );
+
+  // sampleAndRecordTrialsImpl from screened Rutherford distribution
+  native_sr_elastic_distribution->sampleAndRecordTrialsImpl( 
+                                                incoming_energy,
+                                                scattering_angle_cosine,
+                                                trials );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -148,12 +159,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                                 native_sr_elastic_distribution,
                                                 *data_container );
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 4 );
   // Tabular
   fake_stream[0] = 0.5; // sample angle = 1.249161208881750E-02
   // Screened Rutherford
-  fake_stream[1] = 0.0; // sample angle = 0.0
-  fake_stream[2] = 1.0 - 1.0e-15; // sample angle = 0.0
+  fake_stream[1] = 0.0; // sample angle cosine = 1.0
+  fake_stream[2] = 0.5; // sample angle = 0.9999995
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle = 0.999999
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -189,6 +201,15 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                        scattering_angle_cosine );
 
   // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9999995000000930, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // sampleAndRecordTrialsImpl screened rutherford
+  native_sr_elastic_distribution->sample( incoming_energy,
+                                       outgoing_energy,
+                                       scattering_angle_cosine );
+
+  // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
@@ -206,12 +227,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                                 native_sr_elastic_distribution,
                                                 *data_container );
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 4 );
   // Tabular
   fake_stream[0] = 0.5; // sample angle = 1.249161208881750E-02
   // Screened Rutherford
-  fake_stream[1] = 0.0; // sample angle = 0.0
-  fake_stream[2] = 1.0 - 1.0e-15; // sample angle = 0.0
+  fake_stream[1] = 0.0; // sample angle cosine = 1.0
+  fake_stream[2] = 0.5; // sample angle = 0.9999995
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle = 0.999999
+
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -254,11 +277,22 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                           outgoing_energy,
                                           scattering_angle_cosine,
                                           trials );
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9999995000000930, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 13 );
+
+  // sampleAndRecordTrialsImpl screened rutherford
+  native_sr_elastic_distribution->sampleAndRecordTrials( 
+                                          incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine,
+                                          trials );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 13 );
+  TEST_EQUALITY_CONST( trials, 14 );
 }
 
 //---------------------------------------------------------------------------//

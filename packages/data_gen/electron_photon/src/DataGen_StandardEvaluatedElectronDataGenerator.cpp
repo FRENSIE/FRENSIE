@@ -728,7 +728,7 @@ void StandardEvaluatedElectronDataGenerator::setElectronData(
   {
     std::cout << " Setting subshell " 
 	      << electroionization_cross_section[i].first 
-	      << " photoelectric cross section...";
+	      << " electroionization cross section...";
     std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid( 
 				   union_energy_grid,
@@ -766,30 +766,42 @@ void StandardEvaluatedElectronDataGenerator::setScreenedRutherfordData(
     // get the angular energy bin
     double energy = elastic_energy_grid[i];
 
-    // get the ratio of the screened rutherford to cutoff cross section
-    double cross_section_ratio = 
+    // get the screened rutherford cross section
+    double sr_cross_section = 
         ( total_elastic_cross_section->evaluate( energy ) -
-        cutoff_elastic_cross_section->evaluate( energy ) )/
-        cutoff_elastic_cross_section->evaluate( energy );
+        cutoff_elastic_cross_section->evaluate( energy ) );
 
-    if ( cross_section_ratio > 1.0e-6 )
+    if ( sr_cross_section == 0.0 )
+    {
+    /* in order to not calculate negative the screened Rutherford cross section
+     * must be greater than ( cutoff_pdf*cutoff_angle ). It should also be small
+     * enough to give a negligable contribution to the overall cross section.
+     * This can be accomplished by setting eta slightly greater then the cutoff
+     * angle.
+     */
+    // get the pdf value at the cutoff angle for the given energy
+    double cutoff_pdf = elastic_pdf.find( energy )->second.front(); 
+
+    // calculate Moliere's screening constant
+    moliere_screening_constant.push_back( 1.01*d_cutoff_angle );
+
+    // calculate the screened rutherford normalization constant
+    screened_rutherford_normalization_constant.push_back( cutoff_pdf*
+        ( 2.01*d_cutoff_angle )*( 2.01*d_cutoff_angle ) );
+    }
+    else
     {
     // get the pdf value at the cutoff angle for the given energy
     double cutoff_pdf = elastic_pdf.find( energy )->second.front(); 
 
     // calculate Moliere's screening constant
     moliere_screening_constant.push_back( d_cutoff_angle/( 
-        cross_section_ratio/( d_cutoff_angle*cutoff_pdf ) - 1.0 ) );
+        sr_cross_section/( d_cutoff_angle*cutoff_pdf ) - 1.0 ) );
 
     // calculate the screened rutherford normalization constant
     screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
         ( d_cutoff_angle + moliere_screening_constant.back() )* 
         ( d_cutoff_angle + moliere_screening_constant.back() ) ) );
-    }
-    else
-    {
-      screened_rutherford_normalization_constant[0] = 0.0;
-      moliere_screening_constant[0] = -d_cutoff_angle;
     }
   }
   // Set Moliere's screening constant

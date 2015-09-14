@@ -33,7 +33,7 @@
 
 Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator>
   data_generator_h, data_generator_pb;
-
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -109,12 +109,12 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   data_container.exportData( "test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{
+{/*
   std::string test_h_ace_file_name, test_h_ace_table_name;
   std::string test_pb_ace_file_name, test_pb_ace_table_name;
   
@@ -202,7 +202,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);  */
 }
 
 //---------------------------------------------------------------------------//

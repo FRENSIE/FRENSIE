@@ -34,7 +34,6 @@ Teuchos::RCP<const DataGen::StandardEvaluatedElectronDataGenerator>
 Teuchos::RCP<Data::XSSEPRDataExtractor> 
   h_xss_data_extractor, pb_xss_data_extractor;
 
-
 std::string test_h_eedl_file_name, test_pb_eedl_file_name;
 
 //---------------------------------------------------------------------------//

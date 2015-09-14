@@ -18,27 +18,27 @@
 #include "Utility_HistogramDistribution.hpp"
 
 namespace DataGen{
-
+/*
 // Constructor
 StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+	   const Teuchos::RCP<const Data::EvaluatedElectronDataContainer>& native_eedl_data,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
-       const double cutoff_angle_cosine,
+       const double cutoff_angle,
        const unsigned number_of_discrete_angles )
   : SoftElasticElectronDataGenerator( atomic_number ),
-    d_ace_epr_data( ace_epr_data ),
+    d_native_eedl_data( native_eedl_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_cutoff_angle( cutoff_angle ),
     d_number_of_discrete_angles( number_of_discrete_angles )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
-  testPrecondition( atomic_number == ace_epr_data->extractAtomicNumber() );
-  // Make sure the ace data is valid
-  testPrecondition( !ace_epr_data.is_null() );
+  testPrecondition( atomic_number == native_eedl_data->extractAtomicNumber() );
+  // Make sure the endl data is valid
+  testPrecondition( !native_eedl_data.is_null() );
   // Make sure the electron energy limits are valid
   testPrecondition( min_electron_energy > 0.0 );
   testPrecondition( min_electron_energy < max_electron_energy );
@@ -63,18 +63,18 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
 			   data_container ) const
 {
   // Set cutoff angle cosine
-  data_container.setCutoffAngleCosine( d_cutoff_angle_cosine );
+  data_container.setCutoffAngleCosine( d_cutoff_angle );
 
   // Extract the energy grid and cross section
   Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( d_ace_epr_data->extractElectronEnergyGrid() );
+  energy_grid.deepCopy( d_native_eedl_data->extractElectronEnergyGrid() );
   
   Teuchos::Array<double> elastic_cross_section = 
-    d_ace_epr_data->extractElasticCrossSection();
+    d_native_eedl_data->extractElasticCrossSection();
 
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
-				      d_ace_epr_data->extractELASIBlock() );
+				      d_native_eedl_data->extractELASIBlock() );
   
   // Extract the number of tabulated distributions
   int size = elasi_block.size()/3;
@@ -90,7 +90,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
 
   // Extract the elastic scattering angular distributions block (elas)
   Teuchos::ArrayView<const double> elas_block = 
-    d_ace_epr_data->extractELASBlock();
+    d_native_eedl_data->extractELASBlock();
 
   // Create the elastic scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
@@ -115,16 +115,16 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
     elastic_distribution;
   elastic_distribution.reset( 
 	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
-                                        d_ace_epr_data->extractAtomicNumber(), 
+                                        d_native_eedl_data->extractAtomicNumber(), 
                                         elastic_scattering_function ) );
 
 
   // Get the moment of the elastic scattering distribution
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset( 
-    new DataGen::ElasticElectronMomentsEvaluator( *d_ace_epr_data, 
+    new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data, 
                                                   elastic_distribution, 
-                                                  d_cutoff_angle_cosine ) );
+                                                  d_cutoff_angle ) );
 
   
 
@@ -167,7 +167,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
     data_container.setSoftElasticWeights( i, weights.toVector() );
   }
 }
-
+*/
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

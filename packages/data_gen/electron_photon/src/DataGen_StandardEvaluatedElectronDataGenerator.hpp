@@ -80,13 +80,10 @@ private:
 			  Data::EvaluatedElectronVolatileDataContainer&
 			  data_container ) const;
  
-  // Set subshell array
-  void setSubshellArray();
-
   // Test if a value is greater than or equal to one
   static bool greaterThanOrEqualToOne( const double value );
 
-  // Test if a value is greater thanone
+  // Test if a value is greater than one
   static bool greaterThanOne( const double value );
 
   // The if a value is not equal to zero

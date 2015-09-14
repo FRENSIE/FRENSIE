@@ -68,12 +68,20 @@ protected:
         const std::vector<double> angular_energy_grid, 
         ElasticDistribution& scattering_function );
 
+  //! Create the elastic cutoff pdf function
+  static void createCutoffPDFFunction(
+        const AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
+                scattering_function,
+        const double upper_cutoff_angle,
+        Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >&
+                elastic_cutoff_pdf_function );
+/*
   //! Create the screened Rutherford parameter array
   static void createScreenedRutherfordParameterArray(
         const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
         const std::vector<double> angular_energy_grid, 
         ParameterArray& screened_rutherford_parameters );
-
+*/
 };
 
 } // end MonteCarlo namespace

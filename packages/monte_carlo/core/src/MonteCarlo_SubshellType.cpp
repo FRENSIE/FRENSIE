@@ -110,6 +110,56 @@ SubshellType convertEADLDesignatorToSubshellEnum(
   }
 }
 
+
+// Convert an EADL designator to an ENDF designator
+unsigned convertEADLDesignatorToENDFDesignator( 
+					       const unsigned eadl_designator )
+{
+  switch( eadl_designator )
+  {
+  case 1: return 1;
+  case 3: return 2;
+  case 5: return 3;
+  case 6: return 4;
+  case 8: return 5;
+  case 10: return 6;
+  case 11: return 7;
+  case 13: return 8;
+  case 14: return 9;
+  case 16: return 10;
+  case 18: return 11;
+  case 19: return 12;
+  case 21: return 13;
+  case 22: return 14;
+  case 24: return 15;
+  case 25: return 16;
+  case 27: return 17;
+  case 29: return 18;
+  case 30: return 19;
+  case 32: return 20;
+  case 33: return 21;
+  case 35: return 22;
+  case 36: return 23;
+  case 38: return 24;
+  case 39: return 25;
+  case 41: return 26;
+  case 43: return 27;
+  case 44: return 28;
+  case 46: return 29;
+  case 47: return 30;
+  case 49: return 31;
+  case 50: return 32;
+  case 52: return 33;
+  case 53: return 34;
+  case 55: return 35;
+  case 56: return 36;
+  case 58: return 37;
+  case 60: return 38;
+  case 61: return 39;
+  default: return INVALID_SUBSHELL;
+  }
+}
+
 // Convert a Subshell enumeration to a string
 std::string convertSubshellEnumToString( const SubshellType subshell )
 {

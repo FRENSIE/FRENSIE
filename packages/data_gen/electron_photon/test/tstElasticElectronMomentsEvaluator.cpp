@@ -147,7 +147,7 @@ n = 2;
                     5.000000000000E-01*1.0000000000000000,
                     1e-12 );
 }
-*/
+*//*
 //---------------------------------------------------------------------------//
 // Check that the moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
@@ -179,7 +179,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   9.99909223828E-01+9.07762058421518E-05,
                                   tol );
-*/
+*//*
   energy = 5.5e1;
   full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
@@ -454,7 +454,7 @@ int main( int argc, char** argv )
   // Create the elastic scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     elastic_scattering_function( size );
-  
+  /*
   for( unsigned n = 0; n < size; ++n )
   {
     elastic_scattering_function[n].first = elastic_energy_grid[n];
@@ -484,12 +484,12 @@ int main( int argc, char** argv )
                         elastic_cross_section,
                         elastic_threshold_index,
                         elastic_scattering_distribution ) );
-*/
+*//*
 
   distribution.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *xss_data_extractor,
                                     elastic_scattering_distribution ) );
-
+*/
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

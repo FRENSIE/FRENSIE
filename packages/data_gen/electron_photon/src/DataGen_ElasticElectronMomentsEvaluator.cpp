@@ -23,24 +23,24 @@
 #include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
 
 namespace DataGen{
-
+/*
 // Initialize static member data
 
-// cutoff angle cosine for analytical peak
-double ElasticElectronMomentsEvaluator::s_rutherford_cutoff = 0.999999;
+// cutoff angle for analytical peak
+double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle = 1.0e-6;
 
-// Difference btw cutoff angle cosine for analytical peak and foward peak (mu=1)
-double ElasticElectronMomentsEvaluator::s_delta_rutherford = 1.0e-6;
+// cutoff angle cosine for analytical peak
+double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle_cosine = 0.999999;
 
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::XSSEPRDataExtractor& raw_ace_data,
     const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
                                      elastic_distribution,
-    const double& cutoff_angle_cosine )
+    const double& cutoff_angle )
   : d_raw_ace_data ( raw_ace_data ),
     d_elastic_distribution( elastic_distribution ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine )
+    d_cutoff_angle( cutoff_angle )
 {
   // Make sure the data is valid
   testPrecondition( !d_elastic_distribution.is_null() );
@@ -56,7 +56,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
   d_elastic_reaction->getCrossSection( incoming_energy );
 */
-
+/*
 }
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
@@ -281,19 +281,19 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
   // Make sure the energy and angle are valid
   testPrecondition( energy > 0.0 );
 
-  double angle_cosine, delta_cosine;
+  double angle_cosine, angle;
 
-  if ( d_cutoff_angle_cosine <= s_rutherford_cutoff )
+  if ( d_cutoff_angle <= s_rutherford_cutoff_angle )
   { 
     angle_cosine = 
+        s_rutherford_cutoff_cosine;
+    angle = 
         s_rutherford_cutoff;
-    delta_cosine = 
-        s_delta_rutherford;
   }
   else
   {
-    angle_cosine = d_cutoff_angle_cosine;
-    delta_cosine = 1.0 - angle_cosine;
+    angle_cosine = 1.0 - angle;
+    angle = d_cutoff_angle;
   }
 
   // Calcuate Moliere's modified screening constant (eta) 
@@ -304,7 +304,7 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
   /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to 
    *! calculate the moments of the screened Rutherford peak. For larger eta the 
    *! moments will be calculated by numerical integration.
-   */
+   *//*
   if ( eta <= 1.0e-2 )
   {
     rutherford_moment = d_elastic_distribution->
@@ -315,10 +315,10 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
       Teuchos::Array<Utility::long_float> coef_one( n+1 ), coef_two( n+1 );
 
       coef_one[0] = Utility::long_float(0);
-      coef_one[1] = ( log( ( eta + delta_cosine )/( eta ) ) ) -
-                     delta_cosine/( delta_cosine + eta );
+      coef_one[1] = ( log( ( eta + angle )/( eta ) ) ) -
+                     angle/( angle + eta );
 
-      coef_two[0] = delta_cosine;
+      coef_two[0] = angle;
       coef_two[1] = ( Utility::long_float(1) - angle_cosine*angle_cosine )/
                       Utility::long_float(2);
 
@@ -328,8 +328,8 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
           ( Utility::long_float(2) + Utility::long_float(1)/i )*
           ( Utility::long_float(1) + eta )*coef_one[i] - 
           ( Utility::long_float(1) + Utility::long_float(1)/i )*coef_one[i-1] -
-          ( ( 2.0L + Utility::long_float(1)/i )/( delta_cosine + eta ) )*
-          ( delta_cosine - coef_two[i]);
+          ( ( 2.0L + Utility::long_float(1)/i )/( angle + eta ) )*
+          ( angle - coef_two[i]);
 
         coef_two[i+1] = 
           ( Utility::long_float(2)*i + Utility::long_float(1) )/
@@ -338,8 +338,8 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
           coef_two[i-1];
       } 
       Utility::long_float frac_disc = 
-          delta_cosine*( Utility::long_float(1) + eta/Utility::long_float(2) )/
-        ( delta_cosine + eta );
+          angle*( Utility::long_float(1) + eta/Utility::long_float(2) )/
+        ( angle + eta );
 
       rutherford_moment -= eta*coef_one[n]/frac_disc;
     }
@@ -368,7 +368,7 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
   rutherford_moment = moment_n;
   }
 }
-
+*/
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

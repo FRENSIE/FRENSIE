@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "Data_ENDLFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -34,8 +35,12 @@ public:
   StandardElectronPhotonRelaxationDataGenerator( 
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+       const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
+       const double min_electron_energy,
+       const double max_electron_energy,
+       const double cutoff_angle,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
 	   const double grid_convergence_tol = 0.001,
@@ -90,6 +95,9 @@ private:
   // Test if a value is greater than or equal to one
   static bool greaterThanOrEqualToOne( const double value );
 
+  // Test if a value is greater than one
+  static bool greaterThanOne( const double value );
+
   // The if a value is not equal to zero
   static bool notEqualZero( const double value );
 
@@ -106,12 +114,29 @@ private:
 			   std::vector<double>& half_momentum_grid,
 			   std::vector<double>& half_profile ) const;
 
+  // Set the screened rutherford data
+  void setScreenedRutherfordData( 
+    const Teuchos::RCP<const Utility::OneDDistribution>& 
+        cutoff_elastic_cross_section, 
+    const Teuchos::RCP<const Utility::OneDDistribution>& 
+        total_elastic_cross_section,
+    const std::vector<double>& elastic_energy_grid,
+    const std::map<double,std::vector<double> >& elastic_pdf,
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
   void extractCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
 	  Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
+
+  // Extract electron cross sections
+  template<typename InterpPolicy>
+  void extractElectronCrossSection(
+        std::vector<double>& raw_energy_grid,
+        std::vector<double>& raw_cross_section,
+        Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
   void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const;
@@ -141,6 +166,11 @@ private:
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const;
 
+  // Merge the electron union energy grid
+  void mergeElectronUnionEnergyGrid( 
+    const std::vector<double>& energy_grid,
+    std::list<double>& union_energy_grid ) const;
+
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection( 
 	                   Data::ElectronPhotonRelaxationVolatileDataContainer&
@@ -167,11 +197,23 @@ private:
   // The ACE data
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
+  // The EEDL data
+  Teuchos::RCP<Data::ENDLFileHandler> d_eedl_file_handler;
+
   // The min photon energy
   double d_min_photon_energy;
 
   // The max photon energy
   double d_max_photon_energy;
+
+  // The min electron energy
+  double d_min_electron_energy;
+
+  // The max electron energy
+  double d_max_electron_energy;
+
+  // The cutoff angle below which screened rutherford is used
+  double d_cutoff_angle;
 
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;
@@ -195,6 +237,14 @@ StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
 							   const double value )
 {
   return value >= 1.0;
+}
+
+// Test if a value is greater than one
+inline bool 
+StandardElectronPhotonRelaxationDataGenerator::greaterThanOne( 
+							   const double value )
+{
+  return value > 1.0;
 }
 
 // The if a value is not equal to zero

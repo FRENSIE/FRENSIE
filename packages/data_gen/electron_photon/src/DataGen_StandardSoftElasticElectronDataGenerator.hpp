@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_SoftElasticElectronDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_EvaluatedElectronDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
@@ -33,10 +33,10 @@ public:
   //! Constructor
   StandardSoftElasticElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+	   const Teuchos::RCP<const Data::EvaluatedElectronDataContainer>& native_eedl_data,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
-       const double cutoff_angle_cosine,
+       const double cutoff_angle,
        const unsigned number_of_discrete_angles );
 
   //! Destructor
@@ -56,8 +56,8 @@ protected:
 
 private:
 
-  // The ACE data
-  Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
+  // The EEDL data
+  Teuchos::RCP<const Data::EvaluatedElectronDataContainer> d_native_eedl_data;
 
   // The min electron energy
   double d_min_electron_energy;
@@ -65,8 +65,8 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle cosine between soft and hard elastic collisions
-  double d_cutoff_angle_cosine;
+  // The cutoff angle between soft and hard elastic collisions
+  double d_cutoff_angle;
 
   // The number of discrete angles that soft collisions can scatter into
   double d_number_of_discrete_angles;

@@ -25,8 +25,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_EvaluatedElectronDataContainer.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -49,10 +48,10 @@ public:
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
-    const Data::XSSEPRDataExtractor& raw_ace_data,
+    const Data::EvaluatedElectronDataContainer& native_eedl_data,
     const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
                                elastic_distribution,
-    const double& cutoff_angle_cosine = 0.9 );
+    const double& cutoff_angle = 1.0e-6 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
@@ -104,16 +103,16 @@ private:
                                          d_elastic_distribution;
 
   // The raw ace electron data extractor
-  Data::XSSEPRDataExtractor d_raw_ace_data;
+  Data::EvaluatedElectronDataContainer d_native_eedl_data;
+
+  // The angle cutoff between hard and soft scattering
+  double d_cutoff_angle;
 
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
   // The angle cosine cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff;
-
-  // Difference btw cutoff angle cosine for analytical peak and foward peak (mu=1)
-  static double s_delta_rutherford;
+  static double s_rutherford_cutoff_angle;
 };
 
 } // end DataGen namespace
