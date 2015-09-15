@@ -40,23 +40,9 @@ public:
   virtual ~UnitAwareTabularOneDDistribution()
   { /* ... */ }
 
-  //! Evaluate the CDF
-  virtual double evaluateCDF( const IndepQuantity indep_var_value ) const = 0;
-
   //! Return a random sample from the distribution and the sampled index 
   virtual IndepQuantity sampleAndRecordBinIndex( 
 				       unsigned& sampled_bin_index ) const = 0;
-
-  //! Return a random sample from the distribution at the given CDF value
-  virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const = 0;
-
-  //! Return a random sample from the distribution in a subrange
-  virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const = 0;
-
-  //! Return a random sample from the distribution at the given CDF value in a subrange
-  virtual IndepQuantity sampleWithRandomNumberInSubrange( 
-				 const double random_number,
-				 const IndepQuantity max_indep_var ) const = 0;
 
   //! Test if the distribution is tabular
   bool isTabular() const;
