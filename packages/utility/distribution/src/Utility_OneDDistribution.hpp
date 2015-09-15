@@ -87,7 +87,7 @@ public:
   virtual InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const = 0;
 
   //! Evaluate the CDF
-  virtual double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  virtual double evaluateCDF( const IndepQuantity indep_var_value ) const = 0;
 
   //! Return a random sample from the distribution
   virtual IndepQuantity sample() const = 0;
@@ -96,15 +96,18 @@ public:
   virtual IndepQuantity sampleAndRecordTrials( unsigned& trials ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value
-  virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const = 0;
 
   //! Return a random sample from the distribution in a subrange
-  virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const = 0;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
   virtual IndepQuantity sampleWithRandomNumberInSubrange( 
 				 const double random_number,
-				 const IndepQuantity max_indep_var ) const;
+				 const IndepQuantity max_indep_var ) const = 0;
+
+  //! Return the normalization constant
+  virtual DistNormQuantity getNormConstant() const = 0;
 
   //! Return the upper bound of the distribution independent variable
   virtual IndepQuantity getUpperBoundOfIndepVar() const = 0;

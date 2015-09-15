@@ -114,9 +114,6 @@ public:
   //! Return a random sample and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Return the multiplier
-  DistMultiplierQuantity getMultiplier() const;
-
   //! Return the normalization constant
   DistNormQuantity getNormConstant() const;
 
