@@ -26,7 +26,7 @@ Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 2000000
-Simulation Time (s): 898.416
+Simulation Time (s): 893.699
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -269,12 +269,12 @@ Response Function: default
 Surface 1 Total Data: 
 --------
 Response Function: default
-0.673886 0.0004919 2.75171e-07 4600.12
+0.673886 0.0004919 2.75171e-07 4624.41
 
 All Surfaces Total Data: 
 --------
 Response Function: default
-0.673886 0.0004919 2.75171e-07 4600.12
+0.673886 0.0004919 2.75171e-07 4624.41
 
 //---------------------------------------------------------------------------//
 
@@ -516,10 +516,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.923266 0.000647586 3.78205e-06 2654.16
+0.923266 0.000647586 3.78205e-06 2668.17
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.923266 0.000647586 3.78205e-06 2654.16
+0.923266 0.000647586 3.78205e-06 2668.17
 

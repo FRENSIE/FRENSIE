@@ -1,9 +1,9 @@
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
 WARNING: Parameter "Termination Cell Synonym" graveyard   [unused] is unused
 WARNING: Parameter "Material Synonym" mat   [unused] is unused
 WARNING: Parameter "Density Synonym" rho   [unused] is unused
@@ -14,7 +14,7 @@ Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 5000000
-Simulation Time (s): 280.564
+Simulation Time (s): 285.059
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -258,10 +258,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.922623 0.00040955 1.51777e-06 21249.8
+0.922623 0.00040955 1.51777e-06 20914.7
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.922623 0.00040955 1.51777e-06 21249.8
+0.922623 0.00040955 1.51777e-06 20914.7
 
