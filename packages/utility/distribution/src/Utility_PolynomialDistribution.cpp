@@ -1,15 +1,14 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_PolynomialDistribution_def.hpp
+//! \file   Utility_PolynomialDistribution.cpp
 //! \author Alex Robinson
 //! \brief  Polynomial distribution class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_POLYNOMIAL_DISTRIBUTION_DEF_HPP
-#define UTILITY_POLYNOMIAL_DISTRIBUTION_DEF_HPP
-
 // FRENSIE Includes
+#include "Utility_PolynomialDistribution.hpp"
+#include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -20,172 +19,100 @@
 namespace Utility{
 
 // Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynomialDistribution()
+PolynomialDistribution::PolynomialDistribution()
 { /* ... */ }
 
 // Constructor
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepQuantity>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynomialDistribution(
+PolynomialDistribution::PolynomialDistribution(
 			            const Teuchos::Array<double>& coefficients,
-				    const InputIndepQuantity min_indep_limit,
-				    const InputIndepQuantity max_indep_limit )
-  : d_min_indep_limit( min_indep_limit ),
-    d_max_indep_limit( max_indep_limit ),
-    d_norm_constant(),
-    d_terms()
+				    const double min_indep_limit,
+				    const double max_indep_limit )
+  : d_coefficients( coefficients ),
+    d_term_sampling_cdf( coefficients.size() ),
+    d_indep_limits_to_series_powers_p1( coefficients.size() ),
+    d_norm_constant( 1.0 )
 {
   // Make sure the polynomial is valid
   testPrecondition( coefficients.size() > 0 );
   // Make sure the values are valid
-  testPrecondition( !IQT::isnaninf( min_indep_limit ) );
-  testPrecondition( !IQT::isnaninf( max_indep_limit ) );
-  // Make sure the distribution is valid
-  testPrecondition( this->isValidSamplingDistribution( coefficient,
-						       min_indep_limit,
-						       max_indep_limit ) );
+  testPrecondition( !ST::isnaninf( min_indep_limit ) );
+  testPrecondition( !ST::isnaninf( max_indep_limit ) );
 
-  PolynomialConstructionHelper<IndependentUnit,DependentUnit>::createPolynomial( 
-						             coefficients,
-							     min_indep_limit,
-							     max_indep_limit,
-							     d_norm_constant,
-						             d_terms );
+  initializeDistribution( min_indep_limit, max_indep_limit );
 }
 
 // Copy constructor
-/*! \details Just like boost::units::quantity objects, the unit-aware 
- * distribution can be explicitly cast to a distribution with compatible
- * units. If the units are not compatible, this function will not compile. Note
- * that this allows distributions to be scaled safely (unit conversions 
- * are completely taken care of by boost::units)!
- */
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepUnit, typename InputDepUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynomialDistribution(
-  const UnitAwarePolynomialDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
-  : d_min_indep_limit( dist_instance.d_min_indep_limit ),
-    d_max_indep_limit( dist_instance.d_max_indep_limit ),
-    d_norm_constant(),
-    d_terms()
+PolynomialDistribution::PolynomialDistribution(
+				  const PolynomialDistribution& dist_instance )
+  : d_coefficients( dist_instance.d_coefficients ),
+    d_term_sampling_cdf( dist_instance.d_term_sampling_cdf ),
+    d_indep_limits_to_series_powers_p1(
+			    dist_instance.d_indep_limits_to_series_powers_p1 ),
+    d_norm_constant( dist_instance.d_norm_constant )
 {
   // Make sure the polynomial is valid
-  testPrecondition( dist_instance.d_terms.size() > 0 );
+  testPrecondition( dist_instance.d_coefficients.size() > 0 );
   // Make sure the values are valid
-  remember( typedef QuantityTraits<typename UnitAwarePolynomialDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_min_indep_limit ) );
-  testPrecondition( !InputIQT::isnaninf( dist_instance.d_max_indep_limit ) );
-
-  PolynomialConstructionHelper<IndependentUnit,DependentUnit>::convertPolynomial( 
-							 dist_instance.d_terms,
-							 d_norm_constant,
-							 d_terms );
-}
-
-// Copy constructor (copying from unitless distribution only)
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::UnitAwarePolynomialDistribution( 
-      const UnitAwarePolynomialDistribution<void,void>& unitless_dist_instance,
-      int )
-  : d_min_indep_limit( IQT::initializeQuantity( unitless_dist_instance.d_min_indep_limit ) ),
-    d_max_indep_limit( IQT::initializeQuantity( unitless_dist_instance.d_max_indep_limit ) ),
-    d_norm_constant(),
-    d_terms()
-{
-  // Make sure the polynomial is valid
-  testPrecondition( unitless_dist_instance.d_terms.size() > 0 );
-  // Make sure the limits are valid
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_min_indep_limit ));
-  testPrecondition( !QT::isnaninf( unitless_dist_instance.d_max_indep_limit ));
-
-  PolynomialConstructionHelper<IndependentUnit,DependentUnit>::convertPolynomial(
-						unitless_dist_instance.d_terms,
-						d_norm_constant,
-						d_terms );
-}
-
-// Construct distribution from a unitless dist. (potentially dangerous)
-/*! \details Constructing a unit-aware distribution from a unitless 
- * distribution is potentially dangerous. By forcing users to construct objects
- * using this method instead of a standard constructor we are trying to make
- * sure users are aware of the danger. This is designed to mimic the interface 
- * of the boost::units::quantity, which also has to deal with this issue. 
- */
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit> 
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwarePolynomialDistribution<void,void>& unitless_distribution )
-{
-  return ThisType( unitless_distribution, 0 );
+  testPrecondition( !ST::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
 }
 
 // Assignment operator
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& 
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::operator=( 
-    const UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>& dist_instance )
+PolynomialDistribution& PolynomialDistribution::operator=( 
+				  const PolynomialDistribution& dist_instance )
 {
   // Make sure the polynomial is valid
-  testPrecondition( dist_instance.d_terms.size() > 0 );
-  // Make sure the limits are valid
-  testPrecondition( !IQT::isnaninf(unitless_dist_instance.d_min_indep_limit) );
-  testPrecondition( !IQT::isnaninf(unitless_dist_instance.d_max_indep_limit) );
-  
+  testPrecondition( dist_instance.d_coefficients.size() > 0 );
+  // Make sure the values are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().first ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_indep_limits_to_series_powers_p1.front().second ) );
+
   if( this != &dist_instance )
   {
-    d_min_indep_limit = dist_instance.d_min_indep_limit;
-    d_max_indep_limit = dist_instance.d_max_indep_limit;
-
-    PolynomialConstructionHelper<IndependentUnit,DependentUnit>::convertPolynomial(
-						dist_instance.d_terms,
-						d_norm_constant,
-						d_terms );
+    d_coefficients = dist_instance.d_coefficients;
+    d_term_sampling_cdf = dist_instance.d_term_sampling_cdf;
+    d_indep_limits_to_series_powers_p1 =
+			      dist_instance.d_indep_limits_to_series_powers_p1;
+    d_norm_constant = dist_instance.d_norm_constant;
   }
 
   return *this;
 }
 
 // Evaluate the distribution
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwarePolynomialDistribution::evaluate( 
- const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+double PolynomialDistribution::evaluate( const double indep_var_value ) const
 {
-  if( indep_var_value < d_min_indep_limit )
+  if( indep_var_value < d_indep_limits_to_series_powers_p1.front().first )
     return 0.0;
-  else if( indep_var_value > d_max_indep_limit )
+  else if( indep_var_value > d_indep_limits_to_series_powers_p1.front().second)
     return 0.0;
   else
   {
-    DepQuanity dep_quantity;
+    double dep_value = 0.0;
+    double indep_var_to_series_power = 1.0;
 
-    setQuantity( quantity, 0.0 );
-    
-    for( unsigned i = 0u; i < d_terms.size(); ++i )
+    for( unsigned i = 0; i < d_coefficients.size(); ++i )
     {
-      if( d_terms[i].second )
-	dep_quantity += d_terms[i]->evaluate( indep_var_value );
+      dep_value += d_coefficients[i]*indep_var_to_series_power;
+
+      indep_var_to_series_power *= indep_var_value;
     }
-    
+
     return dep_value;
   }
 }
 
 // Evaluate the PDF
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::DepQuantity
-UnitAwarePolynomialDistribution::evaluatePDF( const double indep_var_value) const
+double PolynomialDistribution::evaluatePDF( const double indep_var_value) const
 {
-  return this->evaluate( indep_var_value )*d_norm_constant;
+  return evaluate( indep_var_value )*d_norm_constant;
 }
-
-  // Evaluate the CDF
 
 // Return a random sample from the distribution
 /*! \details The probability mixing technique is used to sample from the
  * polynomial exactly.
  */
-double UnitAwarePolynomialDistribution::sample() const
+double PolynomialDistribution::sample() const
 {
   double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -216,7 +143,7 @@ double UnitAwarePolynomialDistribution::sample() const
 }
 
 //! Return a random sample and record the number of trials
-double UnitAwarePolynomialDistribution::sampleAndRecordTrials( unsigned& trials ) const
+double PolynomialDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
 
@@ -224,31 +151,31 @@ double UnitAwarePolynomialDistribution::sampleAndRecordTrials( unsigned& trials 
 }
 
 // Return the upper bound of the distribution independent variable
-double UnitAwarePolynomialDistribution::getUpperBoundOfIndepVar() const
+double PolynomialDistribution::getUpperBoundOfIndepVar() const
 {
   return d_indep_limits_to_series_powers_p1.front().second;
 }
 
 // Return the lower bound of the distribution independent variable
-double UnitAwarePolynomialDistribution::getLowerBoundOfIndepVar() const
+double PolynomialDistribution::getLowerBoundOfIndepVar() const
 {
   return d_indep_limits_to_series_powers_p1.front().first;
 }
 
 // Return the distribution type
-OneDDistributionType UnitAwarePolynomialDistribution::getDistributionType() const
+OneDDistributionType PolynomialDistribution::getDistributionType() const
 {
-  return UnitAwarePolynomialDistribution::distribution_type;
+  return PolynomialDistribution::distribution_type;
 }
 
 // Test if the distribution is continuous
-bool UnitAwarePolynomialDistribution::isContinuous() const
+bool PolynomialDistribution::isContinuous() const
 {
   return true;
 }
 
 // Method for placing the object in an output stream
-void UnitAwarePolynomialDistribution::toStream( std::ostream& os ) const
+void PolynomialDistribution::toStream( std::ostream& os ) const
 {
   os << "{" << d_coefficients
      << "," << d_indep_limits_to_series_powers_p1.front().first
@@ -257,7 +184,7 @@ void UnitAwarePolynomialDistribution::toStream( std::ostream& os ) const
 }
 
 // Method for initializing the object from an input stream
-void UnitAwarePolynomialDistribution::fromStream( std::istream& is )
+void PolynomialDistribution::fromStream( std::istream& is )
 {
   // Read the initial '{'
   std::string start_bracket;
@@ -351,7 +278,7 @@ void UnitAwarePolynomialDistribution::fromStream( std::istream& is )
 }
 
 // Method for testing if two objects are equivalent
-bool UnitAwarePolynomialDistribution::isEqual( const UnitAwarePolynomialDistribution& other ) const
+bool PolynomialDistribution::isEqual( const PolynomialDistribution& other ) const
 {
   return d_coefficients == other.d_coefficients &&
     d_indep_limits_to_series_powers_p1.front().first ==
@@ -361,7 +288,7 @@ bool UnitAwarePolynomialDistribution::isEqual( const UnitAwarePolynomialDistribu
 }
 
 // Initialize the distribution
-void UnitAwarePolynomialDistribution::initializeDistribution(		            
+void PolynomialDistribution::initializeDistribution(		            
 						 const double min_indep_limit,
 						 const double max_indep_limit )
 {
@@ -380,25 +307,30 @@ void UnitAwarePolynomialDistribution::initializeDistribution(
     max_indep_limit_to_term_power_p2 *= max_indep_limit;
   }
 
-  // Calculate the term sampling cdf and the norm constant
-  d_term_sampling_cdf.resize( d_coefficients.size() );
-
+  // Calculate the norm constant
   d_norm_constant = 0.0;
   
   for( unsigned i = 0; i < d_coefficients.size(); ++i )
   {
-    d_term_sampling_cdf[i] = d_coefficients[i]/(i+1u)*
+    d_norm_constant += d_coefficients[i]/(i+1u)*
       (d_indep_limits_to_series_powers_p1[i].second -
        d_indep_limits_to_series_powers_p1[i].first);
-    
+  }
+
+  d_norm_constant = 1.0/d_norm_constant;
+
+  // Calculate the term sampling cdf
+  d_term_sampling_cdf.resize( d_coefficients.size() );
+
+  for( unsigned i = 0; i < d_coefficients.size(); ++i )
+  {
+    d_term_sampling_cdf[i] = d_coefficients[i]/(i+1u)*d_norm_constant*
+      (d_indep_limits_to_series_powers_p1[i].second -
+       d_indep_limits_to_series_powers_p1[i].first);
+
     if( i > 0 )
       d_term_sampling_cdf[i] += d_term_sampling_cdf[i-1];
   }
-
-  d_norm_constant = 1.0/d_term_sampling_cdf.back();
-
-  for( unsigned i = 0; i < d_coefficients.size(); ++i )
-    d_term_sampling_cdf[i] /= d_norm_constant;
   
   // Make sure the term sampling cdf has been constructed correctly
   testPostcondition( d_term_sampling_cdf.back() == 1.0 );
@@ -406,28 +338,27 @@ void UnitAwarePolynomialDistribution::initializeDistribution(
 
 // Test if the distribution can be used for sampling (each term must be a
 // positive function
-bool UnitAwarePolynomialDistribution::isValidSamplingDistribution(
-				   const Teuchos::Array<double>& coefficients,
-				   const double min_indep_limit,
-				   const double max_indep_limit )
-				   
+bool PolynomialDistribution::isValidSamplingDistribution()
 {
-  if( min_indep_limit < 0.0 && d_max_indep_limit > 0.0 )
+  if( d_indep_limits_to_series_powers_p1.front().first < 0.0 &&
+      d_indep_limits_to_series_powers_p1.front().second > 0.0 )
     return false;
-  else if( min_indep_limit < 0.0 && max_indep_limit <= 0.0 )
+  else if( d_indep_limits_to_series_powers_p1.front().first  < 0.0 &&  
+	   d_indep_limits_to_series_powers_p1.front().second <= 0.0 )
   {
-    for( unsigned i = 0; i < coefficients.size(); ++i )
+    for( unsigned i = 0; i < d_coefficients.size(); ++i )
     {
-      if( coefficients[i] > 0.0 )
+      if( d_coefficients[i] > 0.0 )
 	return false;
     }
     return true;
   }
-  else if( min_indep_limit >= 0.0 && max_indep_limit > 0.0 )
+  else if( d_indep_limits_to_series_powers_p1.front().first  >= 0.0 &&  
+	   d_indep_limits_to_series_powers_p1.front().second > 0.0 )
   {
-    for( unsigned i = 0; i < coefficients.size(); ++i )
+    for( unsigned i = 0; i < d_coefficients.size(); ++i )
     {
-      if( coefficients[i] < 0.0 )
+      if( d_coefficients[i] < 0.0 )
 	return false;
     }
     return true;
@@ -438,8 +369,6 @@ bool UnitAwarePolynomialDistribution::isValidSamplingDistribution(
 
 } // end Utility namespace
 
-#endif // end UTILITY_POLYNOMIAL_DISTRIBUTION_DEF_HPP
-
 //---------------------------------------------------------------------------//
-// end Utility_PolynomialDistribution_def.hpp
+// end Utility_PolynomialDistribution.cpp
 //---------------------------------------------------------------------------//
