@@ -189,22 +189,6 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluatePDF(
   return evaluate( indep_var_value )*d_norm_constant;
 }
 
-// Evaluate the CDF
-template<unsigned N, typename IndependentUnit, typename DependentUnit>
-double 
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::evaluateCDF( 
-  const UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
-{
-  if( indep_var_value < d_min_indep_limit )
-    return 0.0;
-  else if( indep_var_value > d_max_indep_limit )
-    return 1.0;
-  else
-    return (PowerDistributionTraits<N>::powNp1( indep_var_value ) -
-	    d_min_indep_limit_to_power_Np1)/
-      (d_max_indep_limit_to_power_Np1 - d_min_indep_limit_to_power_Np1);
-}
-
 // Return a random sample from the distribution
 template<unsigned N, typename IndependentUnit, typename DependentUnit>
 typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::IndepQuantity 
@@ -250,14 +234,6 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::sampleAndRecordTria
   ++trials;
 
   return this->sample();
-}
-
-// Return the normalization constant
-template<unsigned N, typename IndependentUnit, typename DependentUnit>
-typename UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::DistNormQuantity 
-UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::getNormConstant() const
-{
-  return d_norm_constant;
 }
 
 // Return the upper bound of the distribution independent variable

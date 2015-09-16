@@ -18,12 +18,9 @@
 #include <boost/units/quantity.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/utility/enable_if.hpp>
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
@@ -58,6 +55,9 @@ protected:
   //! The distribution normalization unit traits typedef
   typedef UnitTraits<typename UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistNormUnitTraits;
 
+  //! The distribution normalization quantity type
+  typedef typename DistNormUnitTraits::template GetQuantityType<double>::type DistNormQuantity;
+
 public:
 
   //! The independent quantity type
@@ -68,9 +68,6 @@ public:
 
   //! The dependent quantity type
   typedef typename DepUnitTraits::template GetQuantityType<double>::type DepQuantity;
-  
-  //! The distribution normalization quantity type
-  typedef typename DistNormUnitTraits::template GetQuantityType<double>::type DistNormQuantity;
 
   //! Constructor
   UnitAwareOneDDistribution()
@@ -86,25 +83,11 @@ public:
   //! Evaluate the PDF
   virtual InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const = 0;
 
-  //! Evaluate the CDF
-  virtual double evaluateCDF( const IndepQuantity indep_var_value ) const;
-
   //! Return a random sample from the distribution
   virtual IndepQuantity sample() const = 0;
 
   //! Return a random sample and record the number of trials
   virtual IndepQuantity sampleAndRecordTrials( unsigned& trials ) const = 0;
-
-  //! Return a random sample from the distribution at the given CDF value
-  virtual IndepQuantity sampleWithRandomNumber( const double random_number ) const;
-
-  //! Return a random sample from the distribution in a subrange
-  virtual IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
-
-  //! Return a random sample from the distribution at the given CDF value in a subrange
-  virtual IndepQuantity sampleWithRandomNumberInSubrange( 
-				 const double random_number,
-				 const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   virtual IndepQuantity getUpperBoundOfIndepVar() const = 0;
@@ -124,48 +107,6 @@ public:
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
 };
-
-//! Evaluate the CDF
-template<typename IndependentUnit, typename DependentUnit>
-inline double UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::evaluateCDF( const IndepQuantity indep_var_value ) const
-{
-  double cdf;
-  
-  if( indep_var_value <= this->getLowerBoundOfIndepVar() )
-    cdf = 0.0;
-  else if( indep_var_value >= this->getUpperBoundOfIndepVar() )
-    cdf = 1.0;
-  else
-  {
-    boost::function<double (double x)> pdf_wrapper = 
-      boost::bind<double>( 
-	&UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::evaluatePDF,
-	boost::cref( *this ),
-	boost::bind<IndepQuantity>( 
-		     QuantityTraits<IndepQuantity>::initializeQuantity, _1 ) );
-
-    double abs_error, cdf;
-
-    Utility::GaussKronrodQuadratureKernel quadrature_kernel( 1e-3 );
-
-    quadrature_kernel.integrateAdaptively<15>( 
-			     pdf_wrapper,
-			     getRawQuantity( this->getLowerBoundOfIndepVar() ),
-			     getRawQuantity( indep_var_value ),
-			     cdf,
-			     abs_error );
-
-    // Check for rounding error
-    if( cdf > 1.0 )
-      cdf = 1.0;
-  }
-
-  // Make sure the cdf is valid
-  testPostcondition( cdf >= 0.0 );
-  testPostcondition( cdf <= 1.0 );
-
-  return cdf;
-}
 
 // Test if the distribution is tabular
 template<typename IndependentUnit, typename DependentUnit>

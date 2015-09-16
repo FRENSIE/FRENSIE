@@ -37,6 +37,12 @@ private:
   // The distribution multiplier unit traits
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<N,-1>::type>::type> DistMultiplierUnitTraits;
 
+  // The distribution multiplier quantity type
+  typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
+
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
@@ -65,12 +71,6 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
-
-  //! The distribution multiplier quantity type
-  typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
-
-  //! The distribution normalization quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
   
   //! Default constructor
   UnitAwarePowerDistribution();
@@ -101,9 +101,6 @@ public:
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value) const;
 
-  //! Evaluate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
-
   //! Return a random sample from the distribution
   IndepQuantity sample() const;
 
@@ -113,12 +110,6 @@ public:
 
   //! Return a random sample and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
-
-  //! Return the multiplier
-  DistMultiplierQuantity getMultiplier() const;
-
-  //! Return the normalization constant
-  DistNormQuantity getNormConstant() const;
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
