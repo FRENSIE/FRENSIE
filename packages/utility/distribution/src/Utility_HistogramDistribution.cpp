@@ -158,7 +158,7 @@ double HistogramDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
 
-  this->sample();
+  return this->sample();
 }
 
 // Return a random sample and bin index from the distribution
