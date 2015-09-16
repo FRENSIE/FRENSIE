@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodQuadratureKernel.hpp
+//! \file   Utility_GaussKronrodQuadratureSet.hpp
 //! \author Alex Robinson
-//! \brief  Gauss-Kronrod quadrature kernel
+//! \brief  Gauss-Kronrod quadrature gkq_set
 //!
 //---------------------------------------------------------------------------//
 
@@ -19,24 +19,24 @@
 
 namespace Utility{
 
-//! The Gauss-Kronrod quadrature kernel
-class GaussKronrodQuadratureKernel
+//! The Gauss-Kronrod quadrature gkq_set
+class GaussKronrodQuadratureSet
 {
 
 public:
 
-  //! Allow the kernel to throw exceptions (default is no)
+  //! Allow the gkq_set to throw exceptions (default is no)
   static void throwExceptions( const bool allow_throw );
   
   
   //! Constructor
-  GaussKronrodQuadratureKernel( const double relative_error_tol,
+  GaussKronrodQuadratureSet( const double relative_error_tol,
 				const double absolute_error_tol = 0.0,
 				const size_t subinterval_limit = 1000,
 				const size_t work_space_size = 1000 );
 
   //! Destructor
-  ~GaussKronrodQuadratureKernel();
+  ~GaussKronrodQuadratureSet();
 
   //! Integrate the function
   template<typename Functor>
@@ -130,12 +130,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_GaussKronrodQuadratureKernel_def.hpp"
+#include "Utility_GaussKronrodQuadratureSet_def.hpp"
 
 //---------------------------------------------------------------------------//
 
 #endif // end UTILITY_GUASS_KRONROD_QUADRATURE_KERNEL_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodQuadratureKernel.hpp
+// end Utility_GaussKronrodQuadratureSet.hpp
 //---------------------------------------------------------------------------//
