@@ -49,10 +49,11 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   testStaticPrecondition( N > 0 );
   // Make sure that the values are valid
   testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  testPrecondition( !IQT::isnaninf( min_indep_limit ) );
-  testPrecondition( !IQT::isnaninf( max_indep_limit ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( min_indep_limit ) );
+  testPrecondition( !QuantityTraits<InputIndepQuantity>::isnaninf( max_indep_limit ) );
   // Make sure that the min value is greater than or equal to zero
-  testPrecondition( min_indep_limit >= IQT::zero() );
+  testPrecondition( min_indep_limit >= 
+		    QuantityTraits<InputIndepQuantity>::zero() );
   // Make sure that the max value is greater than the min value
   testPrecondition( max_indep_limit > min_indep_limit );
 
@@ -89,9 +90,16 @@ UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit>::UnitAwarePowerDistr
   testPrecondition( dist_instance.d_max_indep_limit > 
 		    dist_instance.d_min_indep_limit );
 
+  typedef typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
+
+  typedef typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
+
   // Calculate the scaled multiplier (for complex units, boost::units has
   // problems doing the conversion so we will do it manually)
-  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*DepQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/PowerDistributionTraits<N>::powN( IndepQuantity( QuantityTraits<typename UnitAwarePowerDistribution<N,InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
+  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*
+    DepQuantity( QuantityTraits<InputDepQuantity>::one() )/
+    PowerDistributionTraits<N>::powN( 
+		  IndepQuantity( QuantityTraits<InputIndepQuantity>::one() ) );
 
   this->initializeDistribution();
 }
