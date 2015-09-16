@@ -15,6 +15,7 @@
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 int main( int argc, char** argv )
@@ -33,120 +34,11 @@ int main( int argc, char** argv )
       dimension_ordering_result;
 
     dimension_ordering[0] = MonteCarlo::ENERGY_DIMENSION;
-    
-    Teuchos::Array<double> energy_bins( 111 ),
-      energy_bins_result;
-    energy_bins[0] = 1e-11;
-    energy_bins[1] = 1.2589e-11;
-    energy_bins[2] = 1.5849e-11;
-    energy_bins[3] = 1.9953e-11;
-    energy_bins[4] = 2.5119e-11;
-    energy_bins[5] = 3.1623e-11;
-    energy_bins[6] = 3.9811e-11;
-    energy_bins[7] = 5.0119e-11; 
-    energy_bins[8] = 6.3096e-11; 
-    energy_bins[9] = 7.9433e-11; 
-    energy_bins[10] = 1e-10; 
-    energy_bins[11] = 1.2589e-10;
-    energy_bins[12] = 1.5849e-10; 
-    energy_bins[13] = 1.9953e-10; 
-    energy_bins[14] = 2.5119e-10; 
-    energy_bins[15] = 3.1623e-10; 
-    energy_bins[16] = 3.9811e-10; 
-    energy_bins[17] = 5.0119e-10;
-    energy_bins[18] = 6.3096e-10; 
-    energy_bins[19] = 7.9433e-10; 
-    energy_bins[20] = 1e-09; 
-    energy_bins[21] = 1.2589e-09; 
-    energy_bins[22] = 1.5849e-09; 
-    energy_bins[23] = 1.9953e-09;
-    energy_bins[24] = 2.5119e-09; 
-    energy_bins[25] = 3.1623e-09; 
-    energy_bins[26] = 3.9811e-09; 
-    energy_bins[27] = 5.0119e-09; 
-    energy_bins[28] = 6.3096e-09; 
-    energy_bins[29] = 7.9433e-09;
-    energy_bins[30] = 1e-08; 
-    energy_bins[31] = 1.2589e-08; 
-    energy_bins[32] = 1.5849e-08; 
-    energy_bins[33] = 1.9953e-08; 
-    energy_bins[34] = 2.5119e-08; 
-    energy_bins[35] = 3.1623e-08;
-    energy_bins[36] = 3.9811e-08; 
-    energy_bins[37] = 5.0119e-08; 
-    energy_bins[38] = 6.3096e-08; 
-    energy_bins[39] = 7.9433e-08; 
-    energy_bins[40] = 1e-07; 
-    energy_bins[41] = 1.2589e-07;
-    energy_bins[42] = 1.5849e-07; 
-    energy_bins[43] = 1.9953e-07; 
-    energy_bins[44] = 2.5119e-07; 
-    energy_bins[45] = 3.1623e-07; 
-    energy_bins[46] = 3.9811e-07; 
-    energy_bins[47] = 5.0119e-07;
-    energy_bins[48] = 6.3096e-07; 
-    energy_bins[49] = 7.9433e-07; 
-    energy_bins[50] = 1e-06; 
-    energy_bins[51] = 1.2589e-06; 
-    energy_bins[52] = 1.5849e-06; 
-    energy_bins[53] = 1.9953e-06;
-    energy_bins[54] = 2.5119e-06; 
-    energy_bins[55] = 3.1623e-06; 
-    energy_bins[56] = 3.9811e-06; 
-    energy_bins[57] = 5.0119e-06; 
-    energy_bins[58] = 6.3096e-06; 
-    energy_bins[59] = 7.9433e-06;
-    energy_bins[60] = 1e-05; 
-    energy_bins[61] = 1.2589e-05; 
-    energy_bins[62] = 1.5849e-05; 
-    energy_bins[63] = 1.9953e-05; 
-    energy_bins[64] = 2.5119e-05; 
-    energy_bins[65] = 3.1623e-05;
-    energy_bins[66] = 3.9811e-05; 
-    energy_bins[67] = 5.0119e-05; 
-    energy_bins[68] = 6.3096e-05; 
-    energy_bins[69] = 7.9433e-05; 
-    energy_bins[70] = 0.0001; 
-    energy_bins[71] = 0.00012589;
-    energy_bins[72] = 0.00015849; 
-    energy_bins[73] = 0.00019953; 
-    energy_bins[74] = 0.00025119; 
-    energy_bins[75] = 0.00031623; 
-    energy_bins[76] = 0.00039811; 
-    energy_bins[77] = 0.00050119;
-    energy_bins[78] = 0.00063096; 
-    energy_bins[79] = 0.00079433; 
-    energy_bins[80] = 0.001; 
-    energy_bins[81] = 0.0012589; 
-    energy_bins[82] = 0.0015849; 
-    energy_bins[83] = 0.0019953;
-    energy_bins[84] = 0.0025119; 
-    energy_bins[85] = 0.0031623; 
-    energy_bins[86] = 0.0039811; 
-    energy_bins[87] = 0.0050119; 
-    energy_bins[88] = 0.0063096; 
-    energy_bins[89] = 0.0079433; 
-    energy_bins[90] = 0.01;
-    energy_bins[91] = 0.012589; 
-    energy_bins[92] = 0.015849; 
-    energy_bins[93] = 0.019953; 
-    energy_bins[94] = 0.025119; 
-    energy_bins[95] = 0.031623; 
-    energy_bins[96] = 0.039811; 
-    energy_bins[97] = 0.050119;
-    energy_bins[98] = 0.063096; 
-    energy_bins[99] = 0.079433; 
-    energy_bins[100] = 0.1; 
-    energy_bins[101] = 0.12589; 
-    energy_bins[102] = 0.15849; 
-    energy_bins[103] = 0.19953; 
-    energy_bins[104] = 0.25119; 
-    energy_bins[105] = 0.31623;
-    energy_bins[106] = 0.39811; 
-    energy_bins[107] = 0.50119; 
-    energy_bins[108] = 0.63096; 
-    energy_bins[109] = 0.79433; 
-    energy_bins[110] = 1.0;
+
+    Utility::ArrayString energy_bin_string( "{1e-11, 109l, 1.0}" );
+
+    Teuchos::Array<double> energy_bins, energy_bins_result;
+    energy_bins = energy_bin_string.getConcreteArray<double>();
     
     Teuchos::Array<Utility::Pair<double,double> > raw_bin_data( 110 ),
       raw_bin_data_result;

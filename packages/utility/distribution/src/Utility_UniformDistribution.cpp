@@ -109,7 +109,7 @@ double UniformDistribution::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  this->sampleWithRandomNumber( random_number );
+  return this->sampleWithRandomNumber( random_number );
 }
 
 //! Return a random sample from the corresponding CDF and record the number of trials
