@@ -13,7 +13,7 @@ for pid in $(pidof -x $0); do
 	exit 0
     fi
 done
-
+ 
 # Load the user environment variables
 source $HOME/.bashrc
 
