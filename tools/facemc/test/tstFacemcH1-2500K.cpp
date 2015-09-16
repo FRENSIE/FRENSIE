@@ -84,14 +84,14 @@ int main( int argc, char** argv )
     raw_bin_data[39]( 9851, 9851 ); 
     raw_bin_data[40]( 14675, 14675 );
     raw_bin_data[41]( 21187, 21187 ); 
-    raw_bin_data[42]( 29736, 29736 ); 
-    raw_bin_data[43]( 39653, 39653 ); 
+    raw_bin_data[42]( 29734, 29734 ); 
+    raw_bin_data[43]( 39654, 39654 ); 
     raw_bin_data[44]( 50267, 50267 );
-    raw_bin_data[45]( 59184, 59184 ); 
-    raw_bin_data[46]( 64131, 64131 ); 
-    raw_bin_data[47]( 62341, 62341 ); 
-    raw_bin_data[48]( 52699, 52699 );
-    raw_bin_data[49]( 38400, 38400 ); 
+    raw_bin_data[45]( 59181, 59181 ); 
+    raw_bin_data[46]( 64133, 64133 ); 
+    raw_bin_data[47]( 62339, 62339 ); 
+    raw_bin_data[48]( 52702, 52702 );
+    raw_bin_data[49]( 38401, 38401 ); 
     raw_bin_data[50]( 22795, 22795 ); 
     raw_bin_data[51]( 11215, 11215 ); 
     raw_bin_data[52]( 4830, 4830 );
@@ -104,8 +104,8 @@ int main( int argc, char** argv )
     raw_bin_data[59]( 1852, 1852 ); 
     raw_bin_data[60]( 1891, 1891 ); 
     raw_bin_data[61]( 1896, 1896 ); 
-    raw_bin_data[62]( 1821, 1821 );
-    raw_bin_data[63]( 1883, 1883 ); 
+    raw_bin_data[62]( 1820, 1820 );
+    raw_bin_data[63]( 1884, 1884 ); 
     raw_bin_data[64]( 1914, 1914 ); 
     raw_bin_data[65]( 1781, 1781 ); 
     raw_bin_data[66]( 1866, 1866 ); 
@@ -143,14 +143,14 @@ int main( int argc, char** argv )
     raw_bin_data[98]( 3067, 3067 ); 
     raw_bin_data[99]( 3330, 3330 ); 
     raw_bin_data[100]( 3959, 3959 ); 
-    raw_bin_data[101]( 4470, 4470 ); 
-    raw_bin_data[102]( 4949, 4949 );
+    raw_bin_data[101]( 4469, 4469 ); 
+    raw_bin_data[102]( 4950, 4950 );
     raw_bin_data[103]( 5865, 5865 ); 
     raw_bin_data[104]( 6770, 6770 ); 
     raw_bin_data[105]( 7790, 7790 ); 
     raw_bin_data[106]( 9232, 9232 ); 
-    raw_bin_data[107]( 10558, 10558 ); 
-    raw_bin_data[108]( 12040, 12040 ); 
+    raw_bin_data[107]( 10557, 10557 ); 
+    raw_bin_data[108]( 12041, 12041 ); 
     raw_bin_data[109]( 13510, 13510 );
     
     Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 110 ),
@@ -197,7 +197,7 @@ int main( int argc, char** argv )
     processed_bin_data[39]( 0.009851, 0.0100255940870501 ); 
     processed_bin_data[40]( 0.014675, 0.00819408936435729 );
     processed_bin_data[41]( 0.021187, 0.00679696652580367 ); 
-    processed_bin_data[42]( 0.029736, 0.00571220368311622 );
+    processed_bin_data[42]( 0.029734, 0.00571220368311622 );
     processed_bin_data[43]( 0.039653, 0.00492125724327767 ); 
     processed_bin_data[44]( 0.050267, 0.00434669613415872 );
     processed_bin_data[45]( 0.059184, 0.00398703630561573 ); 
