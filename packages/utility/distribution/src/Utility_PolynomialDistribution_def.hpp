@@ -173,43 +173,13 @@ UnitAwarePolynomialDistribution::evaluate(
 
 // Evaluate the PDF
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
-UnitAwarePolynomialDistribution::evaluatePDF( 
- const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value) const
+UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::DepQuantity
+UnitAwarePolynomialDistribution::evaluatePDF( const double indep_var_value) const
 {
-  DepQuantity pdf_value = DQT::zero();
-  
-  for( unsigned i = 0u; i < d_terms.size(); ++i )
-  {
-    if( d_terms[i].second )
-    {
-      pdf_value += d_terms[i].second->evaluatePDF( indep_var_value )/
-	d_terms[i].second->getNormConstant();
-    }
-  }
-  
-  return pdf_value*d_norm_constant;
+  return this->evaluate( indep_var_value )*d_norm_constant;
 }
 
-// Evaluate the CDF
-template<typename IndependentUnit, typename DependentUnit>
-double
-UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::evaluateCDF( 
-  const typename UnitAwarePolynomialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
-{
-  DistNormQuantity cdf_value = DNQT::zero();
-
-  for( unsigned i = 0; i < d_terms.size(); ++i )
-  {
-    if( d_terms[i].second )
-    {
-      cdf_value += d_terms[i].second->evaluateCDF( indep_var_value )/
-	d_terms[i].second->getNormConstant();
-    }
-  }
-
-  return cdf_value*d_norm_constant;
-}
+  // Evaluate the CDF
 
 // Return a random sample from the distribution
 /*! \details The probability mixing technique is used to sample from the
