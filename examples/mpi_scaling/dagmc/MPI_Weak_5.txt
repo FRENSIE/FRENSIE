@@ -1,13 +1,49 @@
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
+Requested faceting tolerance: 0.001
 Requested faceting tolerance: 0.001
 Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
+Read 2 ACIS Entities from the input file
+Read 2 ACIS Entities from the input file
 
+
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 Read 2 ACIS Entities from the input file
 ERROR: Attribute type -1 not recognized.
@@ -19,7 +55,29 @@ ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
 
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+
+Constructed 2 Volumes: 1, 4
+Constructed 2 Volumes: 1, 4
+Constructed 2 Volumes: 1, 4
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
@@ -27,66 +85,8 @@ ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 
 Constructed 2 Volumes: 1, 4
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-
-Constructed 2 Volumes: 1, 4
-Requested faceting tolerance: 0.001
-Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
-
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
 Requested faceting tolerance: 0.001
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-
-Constructed 2 Volumes: 1, 4
-Requested faceting tolerance: 0.001
-Read 2 ACIS Entities from the input file
-
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-
-Constructed 2 Volumes: 1, 4
-Read 2 ACIS Entities from the input file
 
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
@@ -127,27 +127,27 @@ Constructed 2 Volumes: 1, 4
 Using faceting tolerance: 0.001
 Using faceting tolerance: 0.001
 Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
 The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
 The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
 Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
-Starting simulation ... Using faceting tolerance: 0.001
-Using faceting tolerance: 0.001
-Using faceting tolerance: 0.001
 The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
-The implicit complement bounds 13 surfaces
-The implicit complement's total surface area = 162.556
-The implicit complement bounds 13 surfaces
-The implicit complement's total surface area = 162.556
-The implicit complement bounds 13 surfaces
-The implicit complement's total surface area = 162.556
-done.
+Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 5000000
-Simulation Time (s): 880.303
+Simulation Time (s): 882.643
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -390,12 +390,12 @@ Response Function: default
 Surface 1 Total Data: 
 --------
 Response Function: default
-0.673712 0.000311228 1.09819e-07 11727.7
+0.673712 0.000311228 1.09819e-07 11696.6
 
 All Surfaces Total Data: 
 --------
 Response Function: default
-0.673712 0.000311228 1.09819e-07 11727.7
+0.673712 0.000311228 1.09819e-07 11696.6
 
 //---------------------------------------------------------------------------//
 
@@ -637,10 +637,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.923174 0.000409663 1.51836e-06 6768.85
+0.923174 0.000409663 1.51836e-06 6750.9
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.923174 0.000409663 1.51836e-06 6768.85
+0.923174 0.000409663 1.51836e-06 6750.9
 

@@ -1,10 +1,27 @@
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Requested faceting tolerance: 0.001
+Read 2 ACIS Entities from the input file
+
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+ERROR: Attribute type -1 not recognized.
+
+Constructed 2 Volumes: 1, 4
 Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
-Read 2 ACIS Entities from the input file
-
 
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
@@ -20,38 +37,21 @@ ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-
-ERROR: Attribute type -1 not recognized.
-ERROR: Attribute type -1 not recognized.
-Constructed 2 Volumes: 1, 4
 ERROR: Attribute type -1 not recognized.
 
 Constructed 2 Volumes: 1, 4
 Using faceting tolerance: 0.001
-Using faceting tolerance: 0.001
-The implicit complement bounds 13 surfaces
-The implicit complement's total surface area = 162.556
 The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
 Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+Using faceting tolerance: 0.001
+The implicit complement bounds 13 surfaces
+The implicit complement's total surface area = 162.556
 Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 1000000
-Simulation Time (s): 850.216
+Simulation Time (s): 855.51
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -294,12 +294,12 @@ Response Function: default
 Surface 1 Total Data: 
 --------
 Response Function: default
-0.673536 0.000696205 5.47827e-07 2426.59
+0.673536 0.000696205 5.47827e-07 2411.57
 
 All Surfaces Total Data: 
 --------
 Response Function: default
-0.673536 0.000696205 5.47827e-07 2426.59
+0.673536 0.000696205 5.47827e-07 2411.57
 
 //---------------------------------------------------------------------------//
 
@@ -541,10 +541,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.92237 0.000915902 7.57081e-06 1402.08
+0.92237 0.000915902 7.57081e-06 1393.4
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.92237 0.000915902 7.57081e-06 1402.08
+0.92237 0.000915902 7.57081e-06 1393.4
 

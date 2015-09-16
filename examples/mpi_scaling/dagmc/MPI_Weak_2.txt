@@ -1,6 +1,6 @@
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Requested faceting tolerance: 0.001
 Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
@@ -34,13 +34,13 @@ ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
+
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
 ERROR: Attribute type -1 not recognized.
+Constructed 2 Volumes: 1, 4
 
-
-Constructed 2 Volumes: 1, 4Constructed 2 Volumes: 1, 4
-
+Constructed 2 Volumes: 1, 4
 Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
 
@@ -69,13 +69,13 @@ The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
 Using faceting tolerance: 0.001
 Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
-Starting simulation ... The implicit complement bounds 13 surfaces
+The implicit complement bounds 13 surfaces
 The implicit complement's total surface area = 162.556
-done.
+Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 2000000
-Simulation Time (s): 866.31
+Simulation Time (s): 857.971
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -318,12 +318,12 @@ Response Function: default
 Surface 1 Total Data: 
 --------
 Response Function: default
-0.673886 0.0004919 2.75171e-07 4770.61
+0.673886 0.0004919 2.75171e-07 4816.97
 
 All Surfaces Total Data: 
 --------
 Response Function: default
-0.673886 0.0004919 2.75171e-07 4770.61
+0.673886 0.0004919 2.75171e-07 4816.97
 
 //---------------------------------------------------------------------------//
 
@@ -565,10 +565,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.923266 0.000647586 3.78205e-06 2752.53
+0.923266 0.000647586 3.78205e-06 2779.28
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.923266 0.000647586 3.78205e-06 2752.53
+0.923266 0.000647586 3.78205e-06 2779.28
 
