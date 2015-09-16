@@ -41,7 +41,7 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
 	  cm_scattering_distribution,
 	  const double A,
 	  const double kT )
-  : d_kernel( 1e-6 ),
+  : d_gkq_set( 1e-6 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
@@ -63,7 +63,7 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
   
   double error;
   
-  d_kernel.integrateAdaptively<15>( 
+  d_gkq_set.integrateAdaptively<15>( 
 		    integrand,
 		    zero_temp_elastic_cross_section->getLowerBoundOfIndepVar(),
 		    zero_temp_elastic_cross_section->getUpperBoundOfIndepVar(),
@@ -87,7 +87,7 @@ double FreeGasElasticSAlphaBetaFunction::getTemperature() const
   return d_kT;
 }
 
-// Evaluate the kernel factor integrand
+// Evaluate the gkq_set factor integrand
 double FreeGasElasticSAlphaBetaFunction::evaluateIntegrand(
 						     const double alpha,
 						     const double beta,
@@ -190,8 +190,8 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   testPrecondition( E > 0.0 );
   testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
 
-  // Force the integration kernel to throw exceptions
-  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+  // Force the integration gkq_set to throw exceptions
+  Utility::GaussKronrodQuadratureSet::throwExceptions( true );
 
   double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT);
@@ -201,7 +201,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   // Test for special condition (alpha = 0.0)
   // Note: alpha = 0.0 can only occur when beta = 0.0. The S(alpha,beta)
   // function has an integrable singularity at alpha = 0.0. As alpha
-  // aproaches 0.0, the integration kernel will likely fail - use the
+  // aproaches 0.0, the integration gkq_set will likely fail - use the
   // approximate form for S(alpha,beta) when this occurs
   if( alpha >= alpha_min && alpha <= alpha_max )
   {
@@ -221,7 +221,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       this->findLimits( alpha, beta, E, lower_limit, upper_limit );
       
       try{
-	d_kernel.integrateAdaptively<15>( integrand,
+	d_gkq_set.integrateAdaptively<15>( integrand,
 					  lower_limit,
 					  upper_limit,
 					  value,
