@@ -105,9 +105,6 @@ public:
   //! Return a random sample and record the number of trials
   IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Return the normalization constant
-  DistNormQuantity getNormConstant() const;
-
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
 
