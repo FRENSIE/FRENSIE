@@ -169,6 +169,22 @@ ADD_UNINSTALL_TARGET()
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
+
+  # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
+  DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
+  STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+  
+  IF(NOT BUILDNAME_PREFIX)
+    SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
+  ENDIF()
+  
+  SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
+
+  UNSET(ID)
+  UNSET(VERSION)
+  UNSET(BUILD_TYPE)
+  
+  # Initialize CTest
   INCLUDE(CTest)
 ELSE()
   ENABLE_TESTING()
