@@ -6,7 +6,7 @@
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <ParameterList name="Bins">
-      <Parameter name="Energy Bins" type="Array" value="{1e-11, 109l, 1.0}"/>
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
     </ParameterList>
   </ParameterList>
 

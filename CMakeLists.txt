@@ -169,7 +169,27 @@ ADD_UNINSTALL_TARGET()
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
+
+  # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
+  DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
+  STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+  
+  IF(NOT BUILDNAME_PREFIX)
+    SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
+  ENDIF()
+  
+  SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
+
+  UNSET(ID)
+  UNSET(VERSION)
+  UNSET(BUILD_TYPE)
+  
+  # Initialize CTest
   INCLUDE(CTest)
+
+  # Configure the CTestCustom.cake file for extended output for dashboard
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+    ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
@@ -183,14 +203,10 @@ ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
 
-# Add custom build ctest target for continuous integration tests
+# Add additional testing targets for convenience
 ADD_CUSTOM_TARGET(test-fast 
   COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 ADD_CUSTOM_TARGET(test-facemc
   COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Configure the CTestCustom.cake file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
-  ${CMAKE_BINARY_DIR}/CTestCustom.cmake)

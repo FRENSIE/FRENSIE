@@ -23,6 +23,11 @@ DOXYGEN_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/doxygen")
 FRENSIE_SRC=$(python $ABSPATHEXE "../src")
 FRENSIE_INSTALL=$(python $ABSPATHEXE "../frensie_install")
 
+# Get system details for dashboard
+DISTRO="$(lsb_release -i -s)"
+VERSION="$(lsb_release -r -s)"
+DISTRO_VERSION=${DISTRO}-${VERSION}
+
 # No longer needed after this point.
 # Move lower if $ABSPATHEXE needs to be used below this.
 rm "__abspath.py"
@@ -57,6 +62,7 @@ cmake \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
     -D MCNP_DATA_DIR:PATH=$MCNP_DATA_PATH \
     -D SETUP_DASHBOARD_CLIENT:BOOL=OFF \
+    -D BUILDNAME_PREFIX:STRING=$DISTRO_VERSION \
     $EXTRA_ARGS \
     $FRENSIE_SRC
 

@@ -7,7 +7,7 @@
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <ParameterList name="Bins">
       <Parameter name="Energy Bins" type="Array" 
-		 value="{1e-11, 1e-3, 122l, 10.0}"/>
+		 value="{1e-11, 2l, 10.0}"/>
     </ParameterList>
   </ParameterList>
 </ParameterList>

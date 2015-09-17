@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Set the Continuous Integration Build Directory
-CI_BUILD_DIR=${CMAKE_BINARY_DIR}
+# Set the Nightly Integration Build Directory
+NIGHTLY_BUILD_DIR=${CMAKE_BINARY_DIR}
 
 ##---------------------------------------------------------------------------##
 ## Don't modify anything below this line!
@@ -13,10 +13,10 @@ for pid in $(pidof -x $0); do
 	exit 0
     fi
 done
-
+ 
 # Load the user environment variables
 source $HOME/.bashrc
 
-cd $CI_BUILD_DIR
+cd $NIGHTLY_BUILD_DIR
 
-ctest -D Continuous -E Facemc
+ctest -D Nightly -E Facemc

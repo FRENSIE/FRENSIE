@@ -62,8 +62,6 @@ ENDIF()
 IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
   ADD_TEST(HybridParallelParticleBank_2_2_test
     ${MPIEXEC} -n 2 tstParticleBank --threads=2)
-  ADD_TEST(HybridParallelParticleBank_4_4_test
-    ${MPIEXEC} -n 4 tstParticleBank --threads=4)
 ENDIF()
 
 ADD_EXECUTABLE(tstSimulationProperties 
