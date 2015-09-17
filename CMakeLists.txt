@@ -186,6 +186,10 @@ IF(${SETUP_DASHBOARD_CLIENT})
   
   # Initialize CTest
   INCLUDE(CTest)
+
+  # Configure the CTestCustom.cake file for extended output for dashboard
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+    ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
@@ -199,14 +203,10 @@ ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
 
-# Add custom build ctest target for continuous integration tests
+# Add additional testing targets for convenience
 ADD_CUSTOM_TARGET(test-fast 
   COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 ADD_CUSTOM_TARGET(test-facemc
   COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Configure the CTestCustom.cake file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
-  ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
