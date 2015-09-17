@@ -972,7 +972,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials;
+  unsigned trials = 0u;
 
   // First bin
   quantity<MegaElectronVolt> sample = 
