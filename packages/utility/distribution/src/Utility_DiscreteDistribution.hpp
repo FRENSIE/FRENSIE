@@ -188,15 +188,13 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementati
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
   
-  typename Teuchos::Array<Pair<IndepQuantity,double> >::const_iterator sample =
-    Search::binaryUpperBound<SECOND>( d_distribution.begin(),
-				      d_distribution.end(),
-				      random_number );
-
   // Get the bin index sampled
-  sampled_bin_index = std::distance( d_distribution.begin(), sample );
+  sampled_bin_index = 
+    Search::binaryUpperBoundIndex<SECOND>( d_distribution.begin(),
+					   d_distribution.end(),
+					   random_number );
 
-  return sample->first;
+  return d_distribution[sampled_bin_index].first;
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
