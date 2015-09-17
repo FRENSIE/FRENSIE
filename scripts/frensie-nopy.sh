@@ -24,12 +24,14 @@ MCNP_DATA_PATH=$HOME/
 FRENSIE_SRC=$HOME/
 FRENSIE_INSTALL=$HOME/
 
-# No longer needed after this point.
-# Move lower if $ABSPATHEXE needs to be used below this.
-rm "__abspath.py"
+# Get system details for dashboard
+DISTRO="$(lsb_release -i -s)"
+VERSION="$(lsb_release -r -s)"
+DISTRO_VERSION=${DISTRO}-${VERSION}
+
+##---------------------------------------------------------------------------##
 
 source ~/.bashrc
-`python ../FRENSIE/scripts/prefix.py ../deps/install`
 
 cmake --version
 
@@ -58,6 +60,7 @@ cmake \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
     -D MCNP_DATA_DIR:PATH=$MCNP_DATA_PATH \
     -D SETUP_DASHBOARD_CLIENT:BOOL=OFF \
+    -D BUILDNAME_PREFIX:STRING=$DISTRO_VERSION \
     $EXTRA_ARGS \
     $FRENSIE_SRC
 
