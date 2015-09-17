@@ -19,4 +19,10 @@ source $HOME/.bashrc
 
 cd $NIGHTLY_BUILD_DIR
 
-ctest -D NightlyMemCheck -E Facemc
+ctest -D NightlyStart \
+      -D NightlyUpdate \
+      -D NightlyConfigure \
+      -D NightlyBuild \
+      -D NightlyMemCheck \
+      -D NightlySubmit \
+      -E Facemc
