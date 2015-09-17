@@ -30,7 +30,6 @@ public:
   typedef AnalogElasticElectronScatteringDistribution::ElasticDistribution
             ElasticDistribution;    
 
-
   //! Create a elastic distributions ( both Analog and Screened Rutherford ) 
   static void createHardElasticDistributions(
 	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
@@ -51,6 +50,8 @@ public:
   static void createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
+	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
 	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
     const double upper_cutoff_angle = 1.0e-6 );
 
@@ -68,13 +69,6 @@ protected:
         const std::vector<double> angular_energy_grid, 
         ElasticDistribution& scattering_function );
 
-  //! Create the elastic cutoff pdf function
-  static void createCutoffPDFFunction(
-        const AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
-                scattering_function,
-        const double upper_cutoff_angle,
-        Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >&
-                elastic_cutoff_pdf_function );
 /*
   //! Create the screened Rutherford parameter array
   static void createScreenedRutherfordParameterArray(

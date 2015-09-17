@@ -43,11 +43,12 @@ public:
   //!  third = normalization constant
   typedef Teuchos::Array<Utility::Trip<double,double,double> > ParameterArray;
 
-  typedef Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> > ElasticTabularDistribution;
+  typedef Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>
+            ElasticDistribution;    
 
   //! Constructor from ACE table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ElasticTabularDistribution& elastic_cutoff_pdf,
+    const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number,
     const double upper_cutoff_angle = 1.0e-6 );
 
@@ -60,23 +61,30 @@ public:
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle ) const;
+
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle ) const;
+
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& scattering_angle ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
-                              double& scattering_angle_cosine,
+                              double& scattering_angle,
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
@@ -141,8 +149,8 @@ private:
   // Flag to indicate that tabulated screened rutherford parameters are used
   bool d_using_endl_tables;
 
-  // Distribution of the elastic scattering pdf value at the cutoff angle
-  ElasticTabularDistribution d_elastic_cutoff_pdf;
+  // Analog elastic scattering distribution
+  ElasticDistribution d_elastic_cutoff_distribution;
 
   // Screened Rutherford energy depended paramters: Moliere's screening constant and normalization constant
   ParameterArray d_screened_rutherford_parameters;

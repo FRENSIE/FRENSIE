@@ -39,7 +39,66 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
   // Make sure the lower cutoff angle is valid
   testPrecondition( lower_cutoff_angle >= 0.0 );
-  testPrecondition( lower_cutoff_angle < 2.0 );
+  testPrecondition( lower_cutoff_angle <= 2.0 );
+}
+
+// Evaluate the distribution
+double AnalogElasticElectronScatteringDistribution::evaluate( 
+                            const double incoming_energy,
+                            const double scattering_angle ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle >= 0.0 );
+  testPrecondition( scattering_angle <= 2.0 );
+
+  if ( d_angle_is_used_as_independent_variable )
+  {  
+    return MonteCarlo::evaluateTwoDDistributionCorrelated( 
+                         incoming_energy,
+                         scattering_angle,
+                         d_elastic_scattering_distribution );
+  }
+  else
+  {
+    double scattering_angle_cosine = 1.0L - scattering_angle;
+    return MonteCarlo::evaluateTwoDDistributionCorrelated( 
+                         incoming_energy,
+                         scattering_angle_cosine,
+                         d_elastic_scattering_distribution );
+  }
+}
+
+// Evaluate the distribution
+double AnalogElasticElectronScatteringDistribution::evaluate( 
+                            const unsigned incoming_energy_bin,
+                            const double scattering_angle ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy_bin < 
+                    d_elastic_scattering_distribution.size() );
+  testPrecondition( incoming_energy_bin >= 0 );
+  testPrecondition( scattering_angle >= 0.0 );
+  testPrecondition( scattering_angle <= 2.0 );
+
+  double pdf;
+
+  if ( d_angle_is_used_as_independent_variable )
+  { 
+    pdf = 
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate( 
+        scattering_angle );
+  }
+  else
+  {
+    double scattering_angle_cosine = 1.0L - scattering_angle;
+
+    pdf = 
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate( 
+        scattering_angle_cosine );
+  }
+
+  return pdf;
 }
 
 // Evaluate the PDF
@@ -49,15 +108,17 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= d_lower_cutoff_angle );
+  testPrecondition( scattering_angle >= 0.0 );
   testPrecondition( scattering_angle <= 2.0 );
 
   if ( d_angle_is_used_as_independent_variable )
   {  
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+    double pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
                          incoming_energy,
                          scattering_angle,
                          d_elastic_scattering_distribution );
+
+    return pdf;
   }
   else
   {

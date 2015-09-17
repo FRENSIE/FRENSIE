@@ -56,14 +56,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
                                           angular_energy_grid,
                                           screened_rutherford_parameters );
 */
-  // Create the elastic cutoff pdf function
-  Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >
-    elastic_cutoff_pdf_function;
-
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffPDFFunction(
-        scattering_function,
-        screened_rutherford_upper_cutoff_angle,
-        elastic_cutoff_pdf_function );
 
   // Get the atomic number 
   const int atomic_number = raw_electroatom_data.getAtomicNumber();
@@ -77,7 +69,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                elastic_cutoff_pdf_function,
+                analog_elastic_distribution,
                 atomic_number,
                 screened_rutherford_upper_cutoff_angle ) );
 }
@@ -117,53 +109,39 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
+	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
 	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
     const double upper_cutoff_angle )
 {
+/*
   // Get the energy grid
   std::vector<double> angular_energy_grid = 
     raw_electroatom_data.getElasticAngularEnergyGrid();
 
   // Get size of paramters
   int size = angular_energy_grid.size();
-/*
+
   // Get the screened rutherford parmaters
   ParameterArray screened_rutherford_parameters( size );
 
   createScreenedRutherfordParameterArray( raw_electroatom_data,
                                           angular_energy_grid,
                                           screened_rutherford_parameters );
-*/
-  // Create the scattering function
-  ElasticDistribution scattering_function(size);
 
-  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction( 
-		raw_electroatom_data, 
-        angular_energy_grid,
-		scattering_function );
-
-  // Create the elastic cutoff pdf function
-  Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >
-    elastic_cutoff_pdf_function;
-
-  ElasticElectronScatteringDistributionNativeFactory::createCutoffPDFFunction(
-        scattering_function,
-        upper_cutoff_angle,
-        elastic_cutoff_pdf_function );
-
-  // Get the atomic number 
-  const int atomic_number = raw_electroatom_data.getAtomicNumber();
-/*
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 screened_rutherford_parameters,
                 upper_cutoff_angle ) );
 */
+  // Get the atomic number 
+  const int atomic_number = raw_electroatom_data.getAtomicNumber();
+
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                elastic_cutoff_pdf_function,
+                analog_elastic_distribution,
                 atomic_number,
                 upper_cutoff_angle ) );
 }
@@ -241,36 +219,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
   }
 }
 */
-
-// Create the elastic cutoff pdf function
-void ElasticElectronScatteringDistributionNativeFactory::createCutoffPDFFunction(
-        const AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
-                scattering_function,
-        const double upper_cutoff_angle,
-        Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >&
-                elastic_cutoff_pdf_function )
-{
-  // function size
-  int size = scattering_function.size();
-
-  // Generate the angular energy grid and cutoff pdf
-  Teuchos::Array<double> energy_grid(size), cutoff_pdf(size);
-  
-  for( unsigned n = 0; n < scattering_function.size(); ++n )
-  {
-    energy_grid[n] = scattering_function[n].first;
-
-    cutoff_pdf[n] = 
-        scattering_function[n].second->evaluatePDF( upper_cutoff_angle );    
-  }  
-
-  elastic_cutoff_pdf_function.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
-		 energy_grid,
-		 cutoff_pdf,
-         false ) );
-}
-
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

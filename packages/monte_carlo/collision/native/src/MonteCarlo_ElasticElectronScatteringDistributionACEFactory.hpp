@@ -25,6 +25,8 @@ class ElasticElectronScatteringDistributionACEFactory
 
 public:
 
+  typedef AnalogElasticElectronScatteringDistribution::ElasticDistribution
+            ElasticDistribution; 
 
   //! Create a elastic distributions ( both Analog and Screened Rutherford ) 
   static void createHardElasticDistributions(
@@ -46,6 +48,8 @@ public:
   static void createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
+	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle = 1.0e-6 );
 
@@ -60,16 +64,8 @@ protected:
   //! Create the elastic scattering function
   static void createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
+        ElasticDistribution& 
             scattering_function );
-
-  //! Create the elastic cutoff pdf function
-  static void createCutoffPDFFunction(
-        Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >&
-                elastic_cutoff_pdf_function,
-        const AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
-                scattering_function,
-        const double upper_cutoff_angle );
 };
 
 } // end MonteCarlo namespace

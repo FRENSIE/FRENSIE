@@ -36,6 +36,75 @@ double angle_cutoff = 1.0e-6;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution, 
+                   evaluate )
+{
+  // Set energy in MeV and angle cosine 
+  double energy = 1.0e-3;
+  double scattering_angle = 1.0; // angle cosine = 0.0
+
+  // Calculate the pdf
+  double pdf_value = 
+    ace_elastic_distribution->evaluate( energy, 
+                                        scattering_angle );
+
+  // Test 1 energy 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
+
+
+  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  pdf_value = 
+    ace_elastic_distribution->evaluate( energy, 
+                                        scattering_angle );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 8.772194880275E+00, 1e-12 );
+
+  // Test with a different energy
+  energy = 1.00E+05;
+
+  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  pdf_value = 
+    ace_elastic_distribution->evaluate( energy, 
+                                        scattering_angle );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 4.48786781766095E+05, 1e-15 );
+
+  // Set energy in MeV and angle cosine 
+  unsigned energy_bin = 1;
+  scattering_angle = 1.0; // angle cosine = 0.0;
+
+  // Calculate the pdf
+  pdf_value = 
+    ace_elastic_distribution->evaluate( energy_bin, 
+                                        scattering_angle );
+
+  // Test 1 energy_bin 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
+
+
+  scattering_angle = 0.02; // angle cosine = 9.800000000000E-01;
+  pdf_value = 
+    ace_elastic_distribution->evaluate( energy_bin, 
+                                        scattering_angle );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 8.772194880275E+00, 1e-12 );
+
+
+  energy_bin = 13;
+  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  pdf_value = 
+    ace_elastic_distribution->evaluate( energy_bin, 
+                                        scattering_angle );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 4.48786781766095E+05, 1e-15 );
+
+}
+
 // Check that the pdf can be evaluated
 TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution, 
                    evaluatePDF )

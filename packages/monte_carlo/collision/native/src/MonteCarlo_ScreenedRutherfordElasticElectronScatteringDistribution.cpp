@@ -41,10 +41,10 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_para
 
 // Constructor without tabulated energy paramters
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ElasticTabularDistribution& d_elastic_cutoff_pdf,
+    const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number,
     const double upper_cutoff_angle )
-  : d_elastic_cutoff_pdf( d_elastic_cutoff_pdf ),
+  : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
     d_upper_cutoff_angle( upper_cutoff_angle ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
@@ -52,7 +52,7 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
                               d_atomic_number*d_atomic_number )
 {
   // Make sure the array is valid
-  testPrecondition( !d_elastic_cutoff_pdf.is_null() );
+  testPrecondition( d_elastic_cutoff_distribution.size() > 1 );
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
@@ -77,6 +77,53 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
 
   d_using_endl_tables = true;
 }
+
+// Evaluate the distribution at the given energy and scattering angle (units of pi)
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
+        const double incoming_energy,
+        const double scattering_angle ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle >= 0.0 );
+  testPrecondition( scattering_angle <= d_upper_cutoff_angle );
+
+  if ( d_using_endl_tables )
+  {
+    ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
+    double interpolation_fraction;
+
+    this->findLowerAndUpperBinBoundary( incoming_energy, 
+                                        lower_bin_boundary, 
+                                        upper_bin_boundary,
+                                        interpolation_fraction );
+
+    double lower_pdf = lower_bin_boundary->third/( 
+                        ( scattering_angle + lower_bin_boundary->second )*
+                        ( scattering_angle + lower_bin_boundary->second ) );
+
+    double upper_pdf = upper_bin_boundary->third/( 
+                         ( scattering_angle + upper_bin_boundary->second )*
+                         ( scattering_angle + upper_bin_boundary->second ) );
+
+    // Linearly interpolate between the upper and lower pdf values
+    return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
+  }
+  else
+  {
+    double cutoff_pdf = 
+        d_elastic_cutoff_distribution->evaluate( incoming_energy, 1.0e-6 );
+
+    double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
+   
+    double pdf = cutoff_pdf*
+            ( d_upper_cutoff_angle + eta )*( d_upper_cutoff_angle + eta )/(
+            ( scattering_angle + eta )*( scattering_angle + eta ) );
+
+    return pdf;
+  }
+}
+
 
 // Evaluate the PDF at the given energy and scattering angle (units of pi)
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF( 
@@ -111,13 +158,56 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
   }
   else
   {
-    double cutoff_pdf = d_elastic_cutoff_pdf->evaluate( incoming_energy );
+    double cutoff_pdf = 
+        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 1.0e-6 );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    return cutoff_pdf*
+    double pdf = cutoff_pdf*
             ( d_upper_cutoff_angle + eta )*( d_upper_cutoff_angle + eta )/(
             ( scattering_angle + eta )*( scattering_angle + eta ) );
+
+    return pdf;
+  }
+}
+
+// Evaluate the integrated PDF at the given energy
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF( 
+        const double incoming_energy ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  if ( d_using_endl_tables )
+  {
+    ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
+    double interpolation_fraction;
+
+    this->findLowerAndUpperBinBoundary( incoming_energy, 
+                                        lower_bin_boundary, 
+                                        upper_bin_boundary,
+                                        interpolation_fraction );
+
+    double lower_value = d_upper_cutoff_angle*lower_bin_boundary->third/( 
+                        ( lower_bin_boundary->second )*
+                        ( d_upper_cutoff_angle + lower_bin_boundary->second ) );
+
+    double upper_value = d_upper_cutoff_angle*upper_bin_boundary->third/( 
+                        ( upper_bin_boundary->second )*
+                        ( d_upper_cutoff_angle + upper_bin_boundary->second ) );
+
+    // Linearly interpolate between the upper and lower values
+    return interpolation_fraction*(upper_value - lower_value) + lower_value;
+  }
+  else
+  {
+    double cutoff_pdf = 
+        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 1.0e-6 );
+
+    double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
+   
+    return cutoff_pdf*d_upper_cutoff_angle*
+            ( d_upper_cutoff_angle + eta )/( eta );
   }
 }
 

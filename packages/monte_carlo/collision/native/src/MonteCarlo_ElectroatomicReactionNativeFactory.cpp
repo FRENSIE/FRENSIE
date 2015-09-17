@@ -84,6 +84,15 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
+  // Create the analog elastic scattering distribution
+  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> 
+    analog_distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    analog_distribution,
+    raw_electroatom_data,
+    lower_cutoff_angle ); 
+
 
   // Create the screened Rutherford elastic scattering distribution
   Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution> 
@@ -91,6 +100,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
   ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     distribution,
+    analog_distribution,
     raw_electroatom_data,
     upper_cutoff_angle ); 
 

@@ -141,6 +141,32 @@ double sampleTwoDDistributionIndependent(
     return lower_bin_boundary->second->sample();
 }
 
+// Evaluate a correlated value from a two dimensional distribution
+double evaluateTwoDDistributionCorrelated( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+				dependent_distribution,
+				lower_bin_boundary,
+				upper_bin_boundary,
+				interpolation_fraction );
+  
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return evaluateCorrelated( upper_bin_boundary->second,
+                               lower_bin_boundary->second,
+                               interpolation_fraction,
+                               dependent_variable );
+  }
+  else
+    return lower_bin_boundary->second->evaluate( dependent_variable );
+}
+
 // Evaluate a correlated PDF from a two dimensional distribution
 double evaluateTwoDDistributionCorrelatedPDF( 
     const double independent_variable,
@@ -288,6 +314,23 @@ double evaluateCorrelatedPDF(
 
   double lower_pdf = 
     lower_distribution->evaluatePDF( independent_value );
+
+  // Linearly interpolate between the upper and lower pdf values
+  return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
+}
+
+// Evaluate a correlated value
+double evaluateCorrelated(
+    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const double interpolation_fraction,
+    const double independent_value )
+{
+  double upper_pdf = 
+    upper_distribution->evaluate( independent_value );
+
+  double lower_pdf = 
+    lower_distribution->evaluate( independent_value );
 
   // Linearly interpolate between the upper and lower pdf values
   return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;

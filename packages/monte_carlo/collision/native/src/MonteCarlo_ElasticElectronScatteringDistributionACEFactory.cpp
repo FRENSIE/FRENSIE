@@ -34,8 +34,7 @@ void ElasticElectronScatteringDistributionACEFactory::createHardElasticDistribut
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
 
   // Create the scattering function
-  AnalogElasticElectronScatteringDistribution::ElasticDistribution 
-        scattering_function(size);
+  ElasticDistribution scattering_function(size);
 
   ElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
 							  raw_electroatom_data, 
@@ -51,19 +50,10 @@ void ElasticElectronScatteringDistributionACEFactory::createHardElasticDistribut
   // Upper cutoff angle for the screened Rutherford distribution
   double screened_rutherford_upper_cutoff_angle = 1.0e-6;
 
-  // Create the elastic cutoff pdf function
-  Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >
-    elastic_cutoff_pdf_function;
-
-  ElasticElectronScatteringDistributionACEFactory::createCutoffPDFFunction(
-        elastic_cutoff_pdf_function,
-        scattering_function,
-        screened_rutherford_upper_cutoff_angle );
-
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                elastic_cutoff_pdf_function,
+                analog_elastic_distribution,
                 atomic_number,
                 screened_rutherford_upper_cutoff_angle ) );
 }
@@ -80,8 +70,7 @@ void ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistrib
   int size = raw_electroatom_data.extractELASIBlock().size()/3;
 
   // Create the scattering function
-  AnalogElasticElectronScatteringDistribution::ElasticDistribution 
-        scattering_function(size);
+  ElasticDistribution scattering_function(size);
 
   ElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
 							  raw_electroatom_data, 
@@ -99,36 +88,18 @@ void ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistrib
 void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
+	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle )
 {
-  // Extract the number of tabulated distributions
-  int size = raw_electroatom_data.extractELASIBlock().size()/3;
-
-  // Create the scattering function
-  AnalogElasticElectronScatteringDistribution::ElasticDistribution 
-        scattering_function(size);
-
-  ElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
-							  raw_electroatom_data, 
-							  scattering_function );
-
   // Get the atomic number 
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
-
-  // Create the elastic cutoff pdf function
-  Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >
-    elastic_cutoff_pdf_function;
-
-  ElasticElectronScatteringDistributionACEFactory::createCutoffPDFFunction(
-        elastic_cutoff_pdf_function,
-        scattering_function,
-        upper_cutoff_angle );
 
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                elastic_cutoff_pdf_function,
+                analog_elastic_distribution,
                 atomic_number,
                 upper_cutoff_angle ) );
 }
@@ -187,8 +158,7 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionACEFactory::getAngul
 // Create the scattering function
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,      
-        AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
-                                                        scattering_function )
+        ElasticDistribution& scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
@@ -220,35 +190,6 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
-}
-
-// Create the elastic cutoff pdf function
-void ElasticElectronScatteringDistributionACEFactory::createCutoffPDFFunction(
-        Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >&
-                elastic_cutoff_pdf_function,
-        const AnalogElasticElectronScatteringDistribution::ElasticDistribution& 
-                scattering_function,
-        const double upper_cutoff_angle )
-{
-  // function size
-  int size = scattering_function.size();
-
-  // Generate the angular energy grid and cutoff pdf
-  Teuchos::Array<double> energy_grid(size), cutoff_pdf(size);
-  
-  for( unsigned n = 0; n < scattering_function.size(); ++n )
-  {
-    energy_grid[n] = scattering_function[n].first;
-
-    cutoff_pdf[n] = 
-        scattering_function[n].second->evaluatePDF( 1.0 - upper_cutoff_angle );    
-  }  
-
-  elastic_cutoff_pdf_function.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
-		 energy_grid,
-		 cutoff_pdf,
-         false ) );
 }
 
 } // end MonteCarlo namespace

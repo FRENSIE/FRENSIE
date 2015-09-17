@@ -128,7 +128,7 @@ int main( int argc, char** argv )
   
   // Create the data generator
   if( data_file_type == "ACE" )
-  {/*
+  {
     Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
         new Data::ENDLFileHandler( data_file_path ) );
 
@@ -159,7 +159,7 @@ int main( int argc, char** argv )
 				            subshell_incoherent_evaluation_tol,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
-					    grid_distance_tol ) );*/
+					    grid_distance_tol ) );
   }
   else
   {

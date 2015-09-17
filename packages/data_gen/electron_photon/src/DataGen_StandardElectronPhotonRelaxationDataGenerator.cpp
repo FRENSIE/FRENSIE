@@ -1113,14 +1113,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 
   std::cout << "done." << std::endl;
 
-
+/*
   // Set the screened Rutherford cross section data
   setScreenedRutherfordData( cutoff_elastic_cross_section, 
                              total_elastic_cross_section,
                              elastic_energy_grid, 
                              elastic_pdf,
                              data_container );
-
+*/
   // Create the union energy grid
   std::cout << " Creating union energy grid";
   std::cout.flush();

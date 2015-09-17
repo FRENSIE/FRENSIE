@@ -167,6 +167,20 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedPD
 }
 
 //---------------------------------------------------------------------------//
+// Check the correlated value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelated )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelated( 
+                                                   energy,  
+                                                   independent_value,
+                                                   twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
 // Check the correlation sample for two bins with random number
 TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSampleWithRandomNumber )
 {
@@ -255,6 +269,21 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedPDF )
                                                    independent_value );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-12  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelated )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateCorrelated( 
+                                                   twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction,
+                                                   independent_value );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-12  );
 }
 
 //---------------------------------------------------------------------------//

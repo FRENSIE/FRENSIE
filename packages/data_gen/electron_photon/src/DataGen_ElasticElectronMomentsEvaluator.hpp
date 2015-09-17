@@ -12,14 +12,7 @@
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
 #include <boost/multiprecision/cpp_dec_float.hpp>
-/*
-// Std Lib Includes
-#include <limits>
 
-// Boost Includes
-#include <boost/distribution.hpp>
-#include <boost/bind.hpp>
-*/
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
@@ -29,7 +22,7 @@
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
-#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 
 
@@ -49,8 +42,6 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::EvaluatedElectronDataContainer& native_eedl_data,
-    const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
-                               elastic_distribution,
     const double& cutoff_angle = 1.0e-6 );
 
   //! Destructor
@@ -58,18 +49,18 @@ public:
   { /* ... */ }
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
+  double evaluateLegendreExpandedRutherford( const double scattering_angle,
                                         const double incoming_energy, 
                                         const int polynomial_order = 0) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
-  double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
+  double evaluateLegendreExpandedPDF( const double scattering_angle,
                                       const double incoming_energy, 
                                       const int polynomial_order = 0) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDFAtEnergyBin( 
-                                const double scattering_angle_cosine,
+                                const double scattering_angle,
                                 const unsigned incoming_energy_bin, 
                                 const int polynomial_order = 0) const;
 
@@ -87,20 +78,27 @@ public:
             const int n,
             const double precision ) const;
 
-  //! Evaluate the nth normalized moment of the screened Rutherford peak distribution 
-  void evaluateNormalizedScreenedRutherfordMoment( 
-            Utility::long_float rutherford_moments,
+  //! Evaluate the nth cross section moment of the screened Rutherford peak distribution 
+  void evaluateScreenedRutherfordMoment( 
+            Utility::long_float& rutherford_moments,
             const double energy,
             const int n ) const;
 
 private:
 
-  // The forward reaction data
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_elastic_reaction;
+  // The analog reaction
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_analog_reaction;
 
-  // The knock on energy distribution
-  Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
-                                         d_elastic_distribution;
+  // The screened Rutherford reaction
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_rutherford_reaction;
+
+  // The analog distribution
+  Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+    d_rutherford_distribution;
+
+  // The screened Rutherford distribution
+  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    d_analog_distribution;
 
   // The raw ace electron data extractor
   Data::EvaluatedElectronDataContainer d_native_eedl_data;
@@ -111,8 +109,11 @@ private:
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
-  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
+  // The angle cutoff between the distrubution and screened Rutherford scattering
   static double s_rutherford_cutoff_angle;
+
+  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
+  static double s_rutherford_cutoff_angle_cosine;
 };
 
 } // end DataGen namespace
