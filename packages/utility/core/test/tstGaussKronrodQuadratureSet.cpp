@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstGaussKronrodQuadratureKernel.cpp
+//! \file   tstGaussKronrodQuadratureSet.cpp
 //! \author Alex Robinson
-//! \brief  Gauss-Kronrod quadrature kernel unit tests.
+//! \brief  Gauss-Kronrod quadrature gkq_set unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,7 +18,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functors
@@ -81,40 +81,40 @@ double inv_sqrt_abs_x( const double x )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureSet,
 				   integrate,
 				   Functor )
 {
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12 );
   
   double result, absolute_error;
   size_t evals;
 
   Functor functor_instance;
 
-  kernel.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
+  gkq_set.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
 
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodQuadratureKernel, integrate );
+UNIT_TEST_INSTANTIATION( GaussKronrodQuadratureSet, integrate );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureSet,
 				   integrateAdaptively,
 				   Functor )
 {
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12 );
 
   double result, absolute_error;
 
   Functor functor_instance;
 
   // Test the 15-point rule
-  kernel.integrateAdaptively<15>( functor_instance, 
+  gkq_set.integrateAdaptively<15>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 21-point rule
-  kernel.integrateAdaptively<21>( functor_instance, 
+  gkq_set.integrateAdaptively<21>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -136,7 +136,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 31-point rule
-  kernel.integrateAdaptively<31>( functor_instance, 
+  gkq_set.integrateAdaptively<31>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 41-point rule
-  kernel.integrateAdaptively<41>( functor_instance, 
+  gkq_set.integrateAdaptively<41>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -158,7 +158,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 51-point rule
-  kernel.integrateAdaptively<51>( functor_instance, 
+  gkq_set.integrateAdaptively<51>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -169,20 +169,20 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodQuadratureKernel, integrateAdaptively );
+UNIT_TEST_INSTANTIATION( GaussKronrodQuadratureSet, integrateAdaptively );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over a semi-infinite interval
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 		   integrateSemiInfiniteIntervalUpper )
 {
   boost::function<double (double x)> function_wrapper = exp_neg_x;
   
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12 );
 
   double result, absolute_error;
 
-  kernel.integrateSemiInfiniteIntervalUpper( function_wrapper,
+  gkq_set.integrateSemiInfiniteIntervalUpper( function_wrapper,
 					     0.0,
 					     result,
 					     absolute_error );
@@ -194,16 +194,16 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over a semi-infinite interval
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 		   integrateSemiInfiniteIntervalLower )
 {
   boost::function<double (double x)> function_wrapper = exp;
 
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12 );
 
   double result, absolute_error;
 
-  kernel.integrateSemiInfiniteIntervalLower( function_wrapper,
+  gkq_set.integrateSemiInfiniteIntervalLower( function_wrapper,
 					     0.0,
 					     result,
 					     absolute_error );
@@ -215,17 +215,17 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over an infinite interval
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 		   integrateInfiniteInterval )
 {
   boost::function<double (double x)> function_wrapper = 
     boost::bind( exp_neg_abs_x, _1, 1.0 );
 
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12 );
 
   double result, absolute_error;
 
-  kernel.integrateInfiniteInterval( function_wrapper,
+  gkq_set.integrateInfiniteInterval( function_wrapper,
 				    result,
 				    absolute_error );
 
@@ -236,16 +236,16 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 		   integrateAdaptivelyWynnEpsilon_basic )
 {
   boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
 
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 100000, 100000 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12, 0.0, 100000, 100000 );
 
   double result, absolute_error;
 
-  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
 					 0.0,
 					 1.0,
 					 result,
@@ -255,7 +255,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
   TEST_FLOATING_EQUALITY( result, 2.0, tol );
 
-  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
 					 -1.0,
 					 0.0,
 					 result,
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 		   integrateAdaptivelyWynnEpsilon_advanced )
 {
   boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
@@ -278,11 +278,11 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
   points_of_interest[1] = 0.0; // integrable singularity
   points_of_interest[2] = 1.0;
 
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 100000, 100000 );
+  Utility::GaussKronrodQuadratureSet gkq_set( 1e-12, 0.0, 100000, 100000 );
 
   double result, absolute_error;
 
-  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
 					 points_of_interest(),
 					 result,
 					 absolute_error );
@@ -293,5 +293,5 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 }
 
 //---------------------------------------------------------------------------//
-// end tstGaussKronrodQuadratureKernel.cpp
+// end tstGaussKronrodQuadratureSet.cpp
 //---------------------------------------------------------------------------//
