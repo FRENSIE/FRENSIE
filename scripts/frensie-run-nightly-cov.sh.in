@@ -19,4 +19,8 @@ source $HOME/.bashrc
 
 cd $NIGHTLY_BUILD_DIR
 
+# Run a nightly build
 ctest -D Nightly -E Facemc
+
+# Submit a second time to ensure that the coverage results are uploaded
+ctest -D NightlySubmit
