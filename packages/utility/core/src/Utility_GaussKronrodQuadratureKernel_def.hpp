@@ -199,13 +199,13 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
 			       &result,
 			       &absolute_error );
 
+    // Deallocate workspace
+    gsl_integration_workspace_free( workspace );
+
     // Verify success
     TEST_FOR_EXCEPTION( status != GSL_SUCCESS,
 			Utility::GSLException,
 			gsl_strerror( status ) );
-    
-    // Deallocate workspace
-    gsl_integration_workspace_free( workspace );
   }
   else if( lower_limit == upper_limit )
   {
@@ -404,13 +404,13 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
 				       &result,
 				       &absolute_error );
 
+    // Deallocate workspace
+    gsl_integration_workspace_free( workspace );
+
     // Verify success
     TEST_FOR_EXCEPTION( status != GSL_SUCCESS,
 			Utility::GSLException,
 			gsl_strerror( status ) );
-    
-    // Deallocate workspace
-    gsl_integration_workspace_free( workspace );
   }
   else if( lower_limit == upper_limit )
   {
@@ -477,13 +477,13 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
 				       &result,
 				       &absolute_error );
 
+    // Deallocate workspace
+    gsl_integration_workspace_free( workspace );
+
     // Verify success
     TEST_FOR_EXCEPTION( status != GSL_SUCCESS,
 			Utility::GSLException,
 			gsl_strerror( status ) );
-    
-    // Deallocate workspace
-    gsl_integration_workspace_free( workspace );
   }
   else if( points_of_interest.front() == points_of_interest.back() )
   {
