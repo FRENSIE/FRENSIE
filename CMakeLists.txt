@@ -169,7 +169,7 @@ ADD_UNINSTALL_TARGET()
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
-
+  
   # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
   DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
   STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
@@ -186,6 +186,9 @@ IF(${SETUP_DASHBOARD_CLIENT})
   
   # Initialize CTest
   INCLUDE(CTest)
+
+  # Set the valgrind supressions file
+  SET(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_SOURCE_DIR}/valgrind/frensie-deps.supp CACHE STRING "File that contains suppressions for the memory checker" FORCE)
 
   # Configure the CTestCustom.cake file for extended output for dashboard
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
