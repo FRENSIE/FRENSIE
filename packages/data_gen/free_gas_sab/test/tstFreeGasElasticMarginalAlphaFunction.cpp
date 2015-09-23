@@ -221,7 +221,7 @@ int main( int argc, char** argv )
 			 new MonteCarlo::NuclearScatteringAngularDistribution(
 							      distribution ) );
 
-  // Initialize the kernel factor
+  // Initialize the gkq_set factor
   alpha_function.reset( new DataGen::FreeGasElasticMarginalAlphaFunction(
 						    cross_section, 
 						    scattering_distribution,

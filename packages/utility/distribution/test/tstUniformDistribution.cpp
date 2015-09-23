@@ -834,7 +834,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_energy,
 				      si_amount,
 				      cgs_energy,
-				      si_amount )
+				      si_amount );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_energy,
@@ -846,7 +846,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_length,
 				      si_energy,
 				      cgs_length,
-				      cgs_energy )
+				      cgs_energy );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_length,
@@ -858,7 +858,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_length,
 				      si_mass,
 				      cgs_length,
-				      cgs_mass )
+				      cgs_mass );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_length,
@@ -870,7 +870,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_length,
 				      void,
 				      cgs_length,
-				      void )
+				      void );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_length,
@@ -882,7 +882,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      void,
 				      si_mass,
 				      void,
-				      cgs_mass )
+				      cgs_mass );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      void,
@@ -894,7 +894,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_length,
 				      si_dimensionless,
 				      cgs_length,
-				      cgs_dimensionless )
+				      cgs_dimensionless );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_length,
@@ -906,7 +906,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      si_dimensionless,
 				      si_length,
 				      cgs_dimensionless,
-				      cgs_length )
+				      cgs_length );
 TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareUniformDistribution,
 				      explicit_conversion,
 				      cgs_dimensionless,
