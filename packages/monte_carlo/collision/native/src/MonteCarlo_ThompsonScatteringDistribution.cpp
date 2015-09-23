@@ -43,9 +43,6 @@ void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl(
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
   
   this->sampleAndRecordTrialsBasicImpl( incoming_energy,
 					scattering_angle_cosine,

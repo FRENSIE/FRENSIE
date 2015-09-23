@@ -2,7 +2,7 @@
 //!
 //! \file   tstFreeGasElasticScatteringKernelFactor.cpp
 //! \author Alex Robinson
-//! \brief  Free gas elastic scattering kernel factor unit tests
+//! \brief  Free gas elastic scattering gkq_set factor unit tests
 //!
 //---------------------------------------------------------------------------//
 

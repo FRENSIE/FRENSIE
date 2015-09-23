@@ -1,27 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodQuadratureKernel.cpp
+//! \file   Utility_GaussKronrodQuadratureSet.cpp
 //! \author Alex Robinson
-//! \brief  Gauss-Kronrod quadrature kernel
+//! \brief  Gauss-Kronrod quadrature gkq_set
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 // Initialize static member data
-gsl_error_handler_t* GaussKronrodQuadratureKernel::default_gsl_error_handler =
+gsl_error_handler_t* GaussKronrodQuadratureSet::default_gsl_error_handler =
   NULL;
 
-// Allow the kernel to throw exceptions
-void GaussKronrodQuadratureKernel::throwExceptions( const bool allow_throw )
+// Allow the gkq_set to throw exceptions
+void GaussKronrodQuadratureSet::throwExceptions( const bool allow_throw )
 {
   if( allow_throw )
   {
-    GaussKronrodQuadratureKernel::default_gsl_error_handler = 
+    GaussKronrodQuadratureSet::default_gsl_error_handler = 
       gsl_set_error_handler_off();
   }
   else if( default_gsl_error_handler )
@@ -30,7 +30,7 @@ void GaussKronrodQuadratureKernel::throwExceptions( const bool allow_throw )
 }
 
 // Constructor
-GaussKronrodQuadratureKernel::GaussKronrodQuadratureKernel( 
+GaussKronrodQuadratureSet::GaussKronrodQuadratureSet( 
 				              const double relative_error_tol,
 					      const double absolute_error_tol,
 				              const size_t subinterval_limit,
@@ -51,11 +51,11 @@ GaussKronrodQuadratureKernel::GaussKronrodQuadratureKernel(
 }
 
 // Destructor
-GaussKronrodQuadratureKernel::~GaussKronrodQuadratureKernel()
+GaussKronrodQuadratureSet::~GaussKronrodQuadratureSet()
 { /* ... */ }
 
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodQuadratureKernel.cpp
+// end Utility_GaussKronrodQuadratureSet.cpp
 //---------------------------------------------------------------------------//
