@@ -1,21 +1,28 @@
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
 WARNING: Parameter "Termination Cell Synonym" graveyard   [unused] is unused
 WARNING: Parameter "Material Synonym" mat   [unused] is unused
 WARNING: Parameter "Density Synonym" rho   [unused] is unused
 WARNING: Parameter "Estimator Synonym" estimator   [unused] is unused
 Warning: Surface estimators are not supported by the Root geometry handler. Estimator 1 will be ignored.
 Loading ACE cross section table 1001.74c (H-1_2500.0K_v7) ... done.
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
 Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 6000000
-Simulation Time (s): 337.695
+Simulation Time (s): 325.646
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -259,10 +266,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.922717 0.000373786 1.26162e-06 21194.9
+0.922717 0.000373786 1.26162e-06 21979.1
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.922717 0.000373786 1.26162e-06 21194.9
+0.922717 0.000373786 1.26162e-06 21979.1
 

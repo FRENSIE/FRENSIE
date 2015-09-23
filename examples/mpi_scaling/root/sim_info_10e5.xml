@@ -1,4 +1,5 @@
 <ParameterList name="Simulation Info">
   <Parameter name="Histories" type="unsigned int" value="10000000"/>
   <Parameter name="Mode" type="string" value="Neutron"/>
+  <Parameter name="Ideal Batches Per Processor" type="unsigned int" value="1"/>
 </ParameterList>

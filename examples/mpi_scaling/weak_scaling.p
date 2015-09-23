@@ -1,9 +1,9 @@
 dagmc_mpi = "dagmc/MPI_Weak_Summary.txt"
 root_mpi = "root/MPI_Weak_Summary.txt"
-dagmc_openmp = "dagmc/OpenMP_Strong_Summary.txt"
+dagmc_openmp = "dagmc/OpenMP_Weak_Summary.txt"
 #
 set term postscript landscape enhanced color "Helvetica" 14
-set output "strong_scaling_comparison.ps"
+set output "weak_scaling_comparison.ps"
 #
 set tmargin at screen 0.98
 set bmargin at screen 0.05
@@ -13,7 +13,7 @@ set rmargin at screen 0.98
 unset title
 unset label
 #
-set title "Weak Scaling Comparison Study - Hydrogen Sphere"
+set title "Weak Scaling Comparison Study - Single Batch"
 set xlabel "Number of Processes"
 set ylabel "Computer Time (s)"
 #

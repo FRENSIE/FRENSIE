@@ -1,7 +1,7 @@
 #!/usr/local/bin/python
 
 # File prefix
-file_prefix = "MPI_Strong_"
+file_prefix = "MPI_Weak_"
 
 # File suffix
 file_suffix = ".txt"
