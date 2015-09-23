@@ -13,7 +13,7 @@ set rmargin at screen 0.98
 unset title
 unset label
 #
-set title "Weak Scaling Comparison Study - Hydrogen Sphere"
+set title "Strong Scaling Comparison Study - Single Batch"
 set xlabel "Number of Processes"
 set ylabel "Computer Time (s)"
 #

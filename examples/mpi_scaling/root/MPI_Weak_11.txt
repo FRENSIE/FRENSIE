@@ -1,15 +1,27 @@
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 2!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 3!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 1!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 4!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 10!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 7!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 0!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
-Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 11!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 5!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 6!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 7!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 8!
 Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 9!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 10!
+Teuchos::GlobalMPISession::GlobalMPISession(): started processor with name Denali and rank 11!
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
 WARNING: Parameter "Termination Cell Synonym" graveyard   [unused] is unused
 WARNING: Parameter "Material Synonym" mat   [unused] is unused
 WARNING: Parameter "Density Synonym" rho   [unused] is unused
@@ -20,7 +32,7 @@ Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 11000000
-Simulation Time (s): 511.917
+Simulation Time (s): 515.146
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -264,10 +276,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.922658 0.000276039 6.85045e-07 25636.6
+0.922658 0.000276039 6.85045e-07 25475.9
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.922658 0.000276039 6.85045e-07 25636.6
+0.922658 0.000276039 6.85045e-07 25475.9
 

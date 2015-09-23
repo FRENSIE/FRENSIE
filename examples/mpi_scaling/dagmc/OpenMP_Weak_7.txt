@@ -1,3 +1,4 @@
+WARNING: Parameter "Ideal Batches Per Processor" 1   [unused] is unused
 Requested faceting tolerance: 0.001
 Read 2 ACIS Entities from the input file
 
@@ -26,7 +27,7 @@ Starting simulation ... done.
 Exporting simulation data ... done.
 !!!Particle Simulation Finished!!!
 Number of histories completed: 7000000
-Simulation Time (s): 1117.28
+Simulation Time (s): 1157.69
 Previous Simulation Time (s): 0
 
 Estimators: 
@@ -269,12 +270,12 @@ Response Function: default
 Surface 1 Total Data: 
 --------
 Response Function: default
-0.673569 0.000263121 7.82952e-08 12927.9
+0.673569 0.000263121 7.82952e-08 12476.6
 
 All Surfaces Total Data: 
 --------
 Response Function: default
-0.673569 0.000263121 7.82952e-08 12927.9
+0.673569 0.000263121 7.82952e-08 12476.6
 
 //---------------------------------------------------------------------------//
 
@@ -516,10 +517,10 @@ Response Function: default
 Cell 1 Total Data: 
 --------
 Response Function: default
-0.923208 0.000346197 1.07976e-06 7467.78
+0.923208 0.000346197 1.07976e-06 7207.1
 
 All Cells Total Data: 
 --------
 Response Function: default
-0.923208 0.000346197 1.07976e-06 7467.78
+0.923208 0.000346197 1.07976e-06 7207.1
 

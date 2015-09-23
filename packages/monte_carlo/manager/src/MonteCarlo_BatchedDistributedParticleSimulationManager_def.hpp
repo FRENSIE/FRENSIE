@@ -32,13 +32,15 @@ BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,Estima
       const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned long long number_of_histories,
+	    const unsigned number_of_batches_per_processor,
 	    const unsigned long long start_history,
 	    const unsigned long long previously_completed_histories,
 	    const double previous_run_time )
   : ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>( number_of_histories, start_history, 0ull, previous_run_time ),
     d_comm( comm ),
     d_root_process( root_process ),
-    d_initial_histories_completed( previously_completed_histories )
+    d_initial_histories_completed( previously_completed_histories ),
+    d_number_of_batches_per_processor( number_of_batches_per_processor )
 {
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
@@ -125,7 +127,8 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     Teuchos::rcp_dynamic_cast<const Teuchos::MpiComm<unsigned long long> >( 
 								      d_comm );
   // The number of batches that need to be run
-  unsigned long long number_of_batches = 25*mpi_comm->getSize();
+  unsigned long long number_of_batches = 
+                         d_number_of_batches_per_processor*mpi_comm->getSize();
   
   // The size of each batch (except possibly the last batch)
   unsigned long long batch_size = 

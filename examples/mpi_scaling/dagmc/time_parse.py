@@ -21,7 +21,7 @@ for i in range(0, len(core_numbers)):
     found_time = False;
     time = "";
     
-    for x in range (0, 50): 
+    for x in range (0, 500): 
         line = input_file.readline()
         
         if (len(line) > 1 and line.split()[0] == "Simulation"):
