@@ -19,6 +19,9 @@ cd $NIGHTLY_BUILD_DIR
 # Prevent this script from having multiple instances running
 prevent_multiple_instances
 
+# Enter the process queue
+enter_frensie_run_process_queue
+
 # Wait until all critical processes have completed (allows for script queuing)
 wait_for_frensie_critical_procs
 

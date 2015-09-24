@@ -27,3 +27,27 @@ function prevent_multiple_instances() {
 	fi
     done
 }
+
+# enter process queue (assumes that processes are ids are incremented)
+function enter_process_queue() {
+    min_pid=1000000000
+    
+    for pid in $(pgrep -d " " "$1"); do
+	if [ "$min_pid" -gt "$pid" ]; then
+    	    min_pid=$pid
+    	fi
+    done
+	    
+    #echo "min:$min_pid this:$$"
+
+    if [ $min_pid != $$ ]; then
+	#echo "$$ still in queue"
+	sleep 5
+    	enter_process_queue "$1"
+    fi
+}
+
+# enter the frensie-run process queue
+function enter_frensie_run_process_queue() {
+    enter_process_queue "frensie-run-"
+}
