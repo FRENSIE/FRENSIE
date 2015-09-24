@@ -16,6 +16,9 @@ source ${CMAKE_CURRENT_SOURCE_DIR}
 # Move to the build directory
 cd $NIGHTLY_BUILD_DIR
 
+# Enter the process queue
+enter_frensie_run_process_queue
+
 # Wait until all critical processes have completed (allows for script queuing)
 wait_for_frensie_critical_procs
 
