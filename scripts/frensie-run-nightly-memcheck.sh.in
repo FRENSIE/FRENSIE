@@ -11,7 +11,7 @@ NIGHTLY_BUILD_DIR=${CMAKE_BINARY_DIR}
 source $HOME/.bashrc
 
 # Load the FRENSIE variables/functions
-source ${CMAKE_CURRENT_SOURCE_DIR}
+source ${CMAKE_CURRENT_SOURCE_DIR}/frensie.bash
 
 # Move to the build directory
 cd $NIGHTLY_BUILD_DIR
