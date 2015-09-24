@@ -183,12 +183,12 @@ IF(${SETUP_DASHBOARD_CLIENT})
   UNSET(ID)
   UNSET(VERSION)
   UNSET(BUILD_TYPE)
-  
-  # Initialize CTest
-  INCLUDE(CTest)
 
   # Set the valgrind supressions file
   SET(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_SOURCE_DIR}/valgrind/frensie-deps.supp CACHE STRING "File that contains suppressions for the memory checker" FORCE)
+  
+  # Initialize CTest
+  INCLUDE(CTest)
 
   # Configure the CTestCustom.cake file for extended output for dashboard
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
