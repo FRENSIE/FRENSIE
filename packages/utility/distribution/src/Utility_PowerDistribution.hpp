@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Utility_PowerDistribution.hpp
-//! \author Alex Robinon
+//! \author Alex Robinson
 //! \brief  Power distribution class declaration
 //!
 //---------------------------------------------------------------------------//
