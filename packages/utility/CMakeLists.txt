@@ -1,9 +1,10 @@
 # Set up the utility package directory hierarchy
-ADD_SUBDIRECTORY(core)
 INCLUDE_DIRECTORIES(core/src)
 
 ADD_SUBDIRECTORY(units)
 INCLUDE_DIRECTORIES(units/src)
+
+ADD_SUBDIRECTORY(core)
 
 ADD_SUBDIRECTORY(hdf5)
 INCLUDE_DIRECTORIES(hdf5/src)

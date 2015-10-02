@@ -9,6 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/units/systems/si.hpp>
+#include <boost/units/systems/cgs.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -22,6 +27,14 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+
+using boost::units::quantity;
+using namespace Utility::Units;
+namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -31,6 +44,11 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
+
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -49,9 +67,10 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the distribution
-template<typename InterpolationPolicy>
-void initializeDistribution()
+template<typename InterpolationPolicy, typename BaseDistribution>
+void initialize( Teuchos::RCP<BaseDistribution>& dist )
 {
+  // Use the basic constructor
   Teuchos::Array<double> independent_values( 4 );
   independent_values[0] = 1e-3;
   independent_values[1] = 1e-2;
@@ -64,10 +83,9 @@ void initializeDistribution()
   dependent_values[2] = 1.0;
   dependent_values[3] = 1e-1;
 
-  tab_distribution.reset(new Utility::TabularDistribution<InterpolationPolicy>(
+  dist.reset(new Utility::UnitAwareTabularDistribution<InterpolationPolicy,typename BaseDistribution::IndepUnit, typename BaseDistribution::DepUnit>(
 							  independent_values,
 							  dependent_values ) );
-  distribution = tab_distribution;
 }
 
 //---------------------------------------------------------------------------//
@@ -78,7 +96,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   evaluate,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 1e-3 ), 1e2 );
@@ -91,12 +109,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareTabularDistribution,
+				   evaluate,
+				   InterpolationPolicy )
+{
+  initialize<InterpolationPolicy>( unit_aware_distribution );
+
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ), 
+		       0.0*si::mole );
+}
+
+UNIT_TEST_INSTANTIATION( UnitAwareTabularDistribution, evaluate );
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated 
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
 				   evaluatePDF,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 1e-3 ), 
@@ -122,7 +154,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   evaluateCDF,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( tab_distribution );
 
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ), 
@@ -148,7 +180,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sample,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -178,7 +210,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sampleAndRecordTrials,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -213,7 +245,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sampleAndRecordBinIndex,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -247,7 +279,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sampleWithRandomNumber,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
   TEST_EQUALITY_CONST( sample, 1e-3 );
@@ -264,7 +296,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sampleInSubrange,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( tab_distribution );
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -294,7 +326,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
                                    sampleWithRandomNumberInSubrange,
                                    InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( tab_distribution );
 
   double sample = 
     tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
@@ -308,13 +340,76 @@ UNIT_TEST_INSTANTIATION( TabularDistribution,
 			 sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
+// Check that a distribution can be constructed from a cdf
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+				   cdf_constructor,
+				   InterpolationPolicy )
+{
+  Teuchos::Array<double> indep_values( 4 ), cdf_values( 4 );
+  indep_values[0] = 1e-3;
+  indep_values[1] = 1e-2;
+  indep_values[2] = 1e-1;
+  indep_values[3] = 1.0;
+
+  cdf_values[0] = 0.0;
+  cdf_values[1] = 0.495;
+  cdf_values[2] = 0.99;
+  cdf_values[3] = 1.485;
+  
+  Teuchos::RCP<Utility::TabularOneDDistribution> 
+    dist_from_cdf( new Utility::TabularDistribution<InterpolationPolicy>( 
+								indep_values,
+								cdf_values,
+								true ) );
+
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluate( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluate( 1e-3 ), 55.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluate( 1e-2 ), 55.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluate( 1e-1 ), 5.5, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluate( 1.0 ), 0.55, 1e-15 );
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluate( 2.0 ), 0.0 );
+
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluatePDF( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluatePDF( 1e-3 ), 
+			  37.03703703703703,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluatePDF( 1e-2 ), 
+			  37.03703703703703,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluatePDF( 1e-1 ), 
+			  3.703703703703703,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluatePDF( 1.0 ), 
+			  0.37037037037037046,
+			  1e-15 );
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluatePDF( 2.0 ), 0.0 );
+
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluateCDF( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluateCDF( 1e-3 ), 
+			  0.0000000000, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluateCDF( 1e-2 ), 
+			  0.33333333333, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluateCDF( 1e-1 ), 
+			  0.66666666667, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( dist_from_cdf->evaluateCDF( 1.0 ), 
+			  1.0000000000, 
+			  1e-10 );
+  TEST_EQUALITY_CONST( dist_from_cdf->evaluateCDF( 2.0 ), 1.0 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, cdf_constructor );
+
+//---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   getUpperBoundOfIndepVar,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
@@ -328,7 +423,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   getLowerBoundOfIndepVar,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), 1e-3 );
 }
@@ -341,7 +436,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   getDistributionType,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_EQUALITY_CONST( distribution->getDistributionType(), 
 		       Utility::TABULAR_DISTRIBUTION );
@@ -355,7 +450,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   isTabular,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_ASSERT( distribution->isTabular() );
 }
@@ -368,7 +463,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   isContinuous,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   TEST_ASSERT( distribution->isContinuous() );
 }
@@ -381,7 +476,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   toParameterList,
 				   InterpolationPolicy )
 {
-  initializeDistribution<InterpolationPolicy>();
+  initialize<InterpolationPolicy>( distribution );
 
   typedef Utility::TabularDistribution<InterpolationPolicy> Distribution;
 
