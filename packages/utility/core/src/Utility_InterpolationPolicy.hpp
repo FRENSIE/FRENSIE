@@ -36,12 +36,12 @@ struct LogLog
   typedef LogDepVarProcessingTag DepVarProcessingTag;
   
   //! Interpolate between two points
-  template<typename T>
-  static T interpolate( const T indep_var_0,
-			const T indep_var_1,
-			const T indep_var,
-			const T dep_var_0,
-			const T dep_var_1 );
+  template<typename IndepType, typename DepType>
+  static IndepType interpolate( const IndepType indep_var_0,
+				const IndepType indep_var_1,
+				const IndepType indep_var,
+				const DepType dep_var_0,
+				const DepType dep_var_1 );
   
   //! Interpolate between two processed points
   template<typename T>
@@ -51,12 +51,13 @@ struct LogLog
 			const T processed_slope );
 
   //! Interpolate between two points and return the processed value
-  template<typename T>
-  static T interpolateAndProcess( const T indep_var_0,
-				  const T indep_var_1,
-				  const T indep_var,
-				  const T dep_var_0,
-				  const T dep_var_1 );
+  template<typename IndepType, typename DepType>
+  static typename QuantityTraits<IndepType>::RawType 
+  interpolateAndProcess( const IndepType indep_var_0,
+			 const IndepType indep_var_1,
+			 const IndepType indep_var,
+			 const DepType dep_var_0,
+			 const DepType dep_var_1 );
 
   //! Interpolate between two processed points and return the processed value
   template<typename T>
@@ -67,11 +68,13 @@ struct LogLog
 
   //! Process the independent value
   template<typename T>
-  static T processIndepVar( const T indep_var );
+  static typename QuantityTraits<T>::RawType  
+  processIndepVar( const T indep_var );
 
   //! Process the dependent value
   template<typename T>
-  static T processDepVar( const T dep_var );
+  static typename QuantityTraits<T>::RawType  
+  processDepVar( const T dep_var );
 
   //! Recover the processed independent value
   template<typename T>

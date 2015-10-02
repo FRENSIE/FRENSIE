@@ -31,7 +31,10 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution()
 
 // Constructor
 /*! \details The independent values are assumed to be sorted (lowest to 
- * highest).
+ * highest). If cdf values are provided a pdf will be calculated. Because
+ * information is lost when converting from a pdf to a cdf, the pdf becomes
+ * ambiguous. Evaluate the resulting distribution with caution (there will
+ * be no difference when sampling from the distribution)!
  */ 
 template<typename InterpolationPolicy>
 TabularDistribution<InterpolationPolicy>::TabularDistribution( 
@@ -39,8 +42,9 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
 			      const Teuchos::Array<double>& dependent_values,
                   const bool interpret_dependent_values_as_cdf )
   : d_distribution( independent_values.size() ),
-    d_norm_constant( 0.0 )
+    d_norm_constant( DNQT::zero() )
 {
+<<<<<<< HEAD
   if( interpret_dependent_values_as_cdf )
   {
     // Make sure that for n bin boundaries there are n bin values
@@ -81,6 +85,65 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
         d_distribution[j].third /= d_norm_constant;
       }
     }
+=======
+  // Make sure there is at lease one bin
+  testPrecondition( independent_values.size() > 1 );
+  testPrecondition( dependent_values.size() == independent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
+
+  this->initializeDistribution( independent_values,
+				dependent_values,
+				interpret_dependent_values_as_cdf );
+}
+
+// CDF constructor
+/*! \details The independent values are assumed to be sorted (lowest to 
+ * highest). Because information is lost when converting from a pdf to a cdf, 
+ * the pdf becomes ambiguous. Evaluate the resulting distribution with caution 
+ * (there will be no difference when sampling from the distribution)!
+ */ 
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename InputIndepQuantity>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( 
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<double>& cdf_values )
+  : d_distribution( independent_values.size() ),
+    d_norm_constant( 0.0 )
+{
+  // Make sure there is at lease one bin
+  testPrecondition( independent_values.size() > 1 );
+  testPrecondition( cdf_values.size() == independent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
+  // Make sure that the cdf is valid
+  testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
+					     cdf_values.end() ) );
+
+  this->initializeDistributionFromCDF( independent_values, cdf_values );
+}
+
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<InputDepQuantity>& dependent_values )
+  : d_distribution( independent_values.size() ),
+    d_norm_constant( 0.0 )
+{
+  // Make sure there is at lease one bin
+  testPrecondition( independent_values.size() > 1 );
+  testPrecondition( dependent_values.size() == independent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
+>>>>>>> Working on refactoring the TabularDistribution class.
 
     // Calculate the slopes of the PDF
     DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
@@ -92,6 +155,7 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
 }
 
 // Copy constructor
+<<<<<<< HEAD
 template<typename InterpolationPolicy>
 TabularDistribution<InterpolationPolicy>::TabularDistribution(
 		const TabularDistribution<InterpolationPolicy>& dist_instance )
@@ -100,6 +164,72 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
 {
   // Make sure the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
+=======
+/*! \details Just like boost::units::quantity objects, the unit-aware 
+ * distribution can be explicitly cast to a distribution with compatible
+ * units. If the units are not compatible, this function will not compile. Note
+ * that this allows distributions to be scaled safely (unit conversions 
+ * are completely taken care of by boost::units)!
+ */
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename InputIndepUnit, typename InputDepUnit>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution(
+ const UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance )
+  : d_distribution(),
+    d_norm_constant()
+{
+  // Make sure the distribution is valid
+  testPrecondition( dist_instance.d_distribution.size() > 0 );
+  
+  typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
+
+  typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
+
+  // Reconstruct the original input distribution
+  Teuchos::Array<InputIndepQuantity> input_indep_values;
+  Teuchos::Array<InputDepQuantity> input_dep_values;
+
+  dist_instance.reconstructOriginalDistribution( input_indep_values,
+						 input_dep_values );
+
+  this->initializeDistribution( input_indep_values, input_dep_values );
+}
+
+// Copy constructor (copying from unitless distribution only)
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
+{
+  // Make sure the distribution is valid
+  testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
+
+  // Reconstruct the original input distribution
+  Teuchos::Array<double> input_indep_values, input_dep_values;
+
+  unitless_dist_instance.reconstructOriginalDistribution( input_indep_values,
+							  input_dep_values );
+
+  this->initializeDistribution( input_indep_values, input_dep_values, false );
+}
+
+// Construct distribution from a unitless dist. (potentially dangerous)
+/*! \details Constructing a unit-aware distribution from a unitless 
+ * distribution is potentially dangerous. By forcing users to construct objects
+ * using this method instead of a standard constructor we are trying to make
+ * sure users are aware of the danger. This is designed to mimic the interface 
+ * of the boost::units::quantity, which also has to deal with this issue. 
+ */
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_distribution )
+{
+  return ThisType( unitless_distribution, 0 );
+>>>>>>> Working on refactoring the TabularDistribution class.
 }
 
 // Assignment operator
@@ -125,6 +255,7 @@ template<typename InterpolationPolicy>
 double TabularDistribution<InterpolationPolicy>::evaluate( 
 					   const double indep_var_value ) const
 {
+<<<<<<< HEAD
   return evaluatePDF( indep_var_value )*d_norm_constant;
 }
 
@@ -137,11 +268,17 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
     return 0.0;
   else if( indep_var_value > d_distribution.back().first )
     return 0.0;
+=======
+  if( indep_var_value < d_distribution.front().first )
+    return DQT::zero();
+  else if( indep_var_value > d_distribution.back().first )
+    return DQT::zero();
+>>>>>>> Working on refactoring the TabularDistribution class.
   else if( indep_var_value == d_distribution.back().first )
     return d_distribution.back().third;
   else
   {
-    DistributionArray::const_iterator start, end, lower_bin_boundary,
+    typename DistributionArray::const_iterator start, end, lower_bin_boundary,
       upper_bin_boundary;
     start = d_distribution.begin();
     end = d_distribution.end();
@@ -153,17 +290,35 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
     
+<<<<<<< HEAD
     double lower_indep_value = lower_bin_boundary->first;
     double lower_pdf_value = lower_bin_boundary->third;
     double upper_indep_value = upper_bin_boundary->first;
     double upper_pdf_value = upper_bin_boundary->third;
+=======
+    IndepQuantity lower_indep_value = lower_bin_boundary->first;
+    DepQuantity lower_dep_value = lower_bin_boundary->third;
+    IndepQuantity upper_indep_value = upper_bin_boundary->first;
+    DepQuantity upper_dep_value = upper_bin_boundary->third;
+>>>>>>> Working on refactoring the TabularDistribution class.
     
     return InterpolationPolicy::interpolate( lower_indep_value,
 					     upper_indep_value,
 					     indep_var_value,
-					     lower_pdf_value,
-					     upper_pdf_value );
+					     lower_dep_value,
+					     upper_dep_value );
   }
+}
+
+// Evaluate the PDF
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::InverseIndepQuantity
+UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::evaluatePDF( 
+ const typename UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
+{
+  return this->evaluate( indep_var_value )*d_norm_constant;
 }
 
 // Evaluate the CDF
@@ -177,7 +332,7 @@ double TabularDistribution<InterpolationPolicy>::evaluateCDF(
     return 1.0;
   else
   {
-    DistributionArray::const_iterator start, end, lower_bin_boundary;
+    typename DistributionArray::const_iterator start, end, lower_bin_boundary;
     start = d_distribution.begin();
     end = d_distribution.end();
 
@@ -187,8 +342,14 @@ double TabularDistribution<InterpolationPolicy>::evaluateCDF(
 
     double indep_diff = indep_var_value - lower_bin_boundary->first;
 
+<<<<<<< HEAD
     return lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
            indep_diff*indep_diff/2.0 * lower_bin_boundary->fourth;
+=======
+    return (lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
+	    indep_diff*indep_diff*lower_bin_boundary->fourth/2.0)*
+      d_norm_constant;
+>>>>>>> Working on refactoring the TabularDistribution class.
   }
 }
 
@@ -278,13 +439,17 @@ double TabularDistribution<InterpolationPolicy>::sampleImplementation(
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
-  DistributionArray::const_iterator start, end, lower_bin_boundary;
+  // Scale the random number
+  UnnormCDFQuantity scaled_random_number = random_number*
+    d_distribution.back().second;
+
+  typename DistributionArray::const_iterator start, end, lower_bin_boundary;
   start = d_distribution.begin();
   end = d_distribution.end();
 
   lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
 							 end,
-							 random_number );
+							 scaled_random_number);
 
   // Calculate the sampled bin index
   sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
@@ -292,10 +457,18 @@ double TabularDistribution<InterpolationPolicy>::sampleImplementation(
   // Calculate the sampled independent value
   double sample;
   
+<<<<<<< HEAD
   double indep_value = lower_bin_boundary->first;
   double cdf_diff = random_number - lower_bin_boundary->second;
   double pdf_value = lower_bin_boundary->third;
   double slope = lower_bin_boundary->fourth;
+=======
+  IndepQuantity indep_value = lower_bin_boundary->first;
+  UnnormCDFQuantity cdf_diff = 
+    scaled_random_number - lower_bin_boundary->second;
+  DepQuantity pdf_value = lower_bin_boundary->third;
+  SlopeQuantity slope = lower_bin_boundary->fourth;
+>>>>>>> Working on refactoring the TabularDistribution class.
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
   if( slope != 0.0 )
@@ -452,9 +625,17 @@ void TabularDistribution<InterpolationPolicy>::fromStream( std::istream& is )
 }
 
 // Method for testing if two objects are equivalent
+<<<<<<< HEAD
 template<typename InterpolationPolicy>
 bool TabularDistribution<InterpolationPolicy>::isEqual( 
 		  const TabularDistribution<InterpolationPolicy>& other ) const
+=======
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::isEqual( 
+ const UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>& other ) const
+>>>>>>> Working on refactoring the TabularDistribution class.
 {
   return d_distribution == other.d_distribution && 
     d_norm_constant == other.d_norm_constant;
@@ -464,7 +645,93 @@ bool TabularDistribution<InterpolationPolicy>::isEqual(
 template<typename InterpolationPolicy>
 void TabularDistribution<InterpolationPolicy>::initializeDistribution(
 			      const Teuchos::Array<double>& independent_values,
+<<<<<<< HEAD
 			      const Teuchos::Array<double>& dependent_values )
+=======
+			      const Teuchos::Array<double>& dependent_values,
+			      const bool interpret_dependent_values_as_cdf )
+{
+  // Make sure there is at least one bin
+  testPrecondition( independent_values.size() > 1 );
+  testPrecondition( dependent_values.size() == independent_values.size() );
+  
+  // Convert the raw independent values to quantities
+  Teuchos::Array<IndepQuantity> independent_quantities;
+
+  this->convertUnitlessValues( independent_values, independent_quantities );
+
+  if( interpret_dependent_values_as_cdf )
+  {
+    this->initializeDistributionFromCDF( independent_quantities, 
+					 dependent_values );
+  }
+  else
+  {
+    // Convert the raw dependent values to quantities
+    Teuchos::Array<DepQuantity> dependent_quantities;
+
+    this->convertUnitlessValues( dependent_values, dependent_quantities );
+
+    this->initializeDistribution( independent_quantities, 
+				  dependent_quantities );
+  }
+}
+
+// Initialize the distribution from a cdf
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename InputIndepQuantity>
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<double>& cdf_values )
+{
+  // Make sure that there is at least one bin
+  testPrecondition( independent_values.size() > 1 );
+  // Make sure that for n bin boundaries there are n bin values
+  testPrecondition( independent_values.size() == cdf_values.size() );
+  // Make sure that the cdf is valid
+  testPrecondition( cdf_values[0] == 0.0 );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
+  // Make sure that the bin values are sorted
+  testPrecondition( Sort::isSortedAscending( cdf_values.begin(), 
+					     cdf_values.end() ) );
+
+  // Resize the distribution
+  d_distribution.resize( independent_values.size() );
+
+  // Set the first bin boundary
+  d_distribution[0].first = IndepQuantity( independent_values[0] );
+  setQuantity( d_distribution[0].second, cdf_values[0] );
+  
+  // Assign the distribution
+  for( unsigned i = 0; i < independent_values.size(); ++i )
+  {
+    d_distribution[i].first = independent_values[i];
+    
+    setQuantity( d_distribution[i].second, cdf_values[i] );
+  }
+
+  DataProcessor::calculateContinuousPDF<FIRST,THIRD,SECOND>( d_distribution );
+
+  // Set normalization constant
+  d_norm_constant = 1.0/d_distribution.back().second;
+
+  // Calculate the slopes of the PDF
+  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
+}
+
+// Initialize the distribution
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution( 
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<InputDepQuantity>& dependent_values )
+>>>>>>> Working on refactoring the TabularDistribution class.
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
@@ -480,17 +747,87 @@ void TabularDistribution<InterpolationPolicy>::initializeDistribution(
   // Assign the raw distribution data
   for( unsigned i = 0; i < independent_values.size(); ++i )
   {
+<<<<<<< HEAD
     d_distribution[i].first = independent_values[i];
     d_distribution[i].third = dependent_values[i];
+=======
+    d_distribution[i].first = IndepQuantity( independent_values[i] );
+    d_distribution[i].third = DepQuantity( dependent_values[i] );
+>>>>>>> Working on refactoring the TabularDistribution class.
   }
 
   // Create a CDF from the raw distribution data
   d_norm_constant = 
+<<<<<<< HEAD
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>(d_distribution);
+=======
+    DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>( d_distribution,
+							       false );
+>>>>>>> Working on refactoring the TabularDistribution class.
 
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
 }
+<<<<<<< HEAD
+=======
+
+// Reconstruct original distribution
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
+			 Teuchos::Array<IndepQuantity>& independent_values,
+			 Teuchos::Array<DepQuantity>& dependent_values ) const
+{
+  // Resize the arrays
+  independent_values.resize( d_distribution.size() );
+  dependent_values.resize( d_distribution.size() );
+
+  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  {
+    independent_values[i] = d_distribution[i].first;
+    
+    dependent_values[i] = d_distribution[i].third;
+  }
+}
+
+// Reconstruct original distribution w/o units
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
+			       Teuchos::Array<double>& independent_values,
+			       Teuchos::Array<double>& dependent_values ) const
+{
+  // Resize the arrays
+  independent_values.resize( d_distribution.size() );
+  dependent_values.resize( d_distribution.size() );
+
+  for( unsigned i = 0u; i < d_distribution.size(); ++i )
+  {
+    independent_values[i] = getRawQuantity( d_distribution[i].first );
+    
+    dependent_values[i] = getRawQuantity( d_distribution[i].third );
+  }
+}
+
+// Convert the unitless values to the correct units
+template<typename InterpolationPolicy, 
+	 typename IndependentUnit,
+	 typename DependentUnit>
+template<typename Quantity>
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::convertUnitlessValues( 
+		                 const Teuchos::Array<double>& unitless_values,
+				 Teuchos::Array<Quantity>& quantities )
+{
+  // Resize the quantity array
+  quantities.resize( unitless_values.size() );
+
+  // Copy the bin boundaries
+  for( unsigned i = 0u; i < unitless_values.size(); ++i )
+    setQuantity( quantities[i], unitless_values[i] );
+}
+>>>>>>> Working on refactoring the TabularDistribution class.
 				       			    
 } // end Utility namespace
 

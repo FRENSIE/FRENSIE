@@ -26,6 +26,38 @@ class TabularDistribution : public TabularOneDDistribution,
 	  public ParameterListCompatibleObject<TabularDistribution<InterpolationPolicy> >
 {
 
+<<<<<<< HEAD
+=======
+private:
+
+  // The unnormalized cdf quantity
+  typedef typename QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
+
+  // The slope unit traits
+  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> SlopeUnitTraits;
+
+  // The slope quantity
+  typedef typename SlopeUnitTraits::template GetQuantityType<double>::type SlopeQuantity;
+
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+  
+  // Typedef for QuantityTraits<DistNormQuantity>
+  typedef QuantityTraits<DistNormQuantity> DNQT;
+
+>>>>>>> Working on refactoring the TabularDistribution class.
 public:
 
   //! Default constructor
@@ -48,7 +80,11 @@ public:
   double evaluate( const double indep_var_value ) const;
   
   //! Evaluate the PDF
+<<<<<<< HEAD
   double evaluatePDF( const double indep_var_value ) const;
+=======
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+>>>>>>> Working on refactoring the TabularDistribution class.
 
   //! Evaluate the CDF
   double evaluateCDF( const double indep_var_value ) const;
@@ -57,7 +93,11 @@ public:
   double sample() const;
 
   //! Return a random sample and record the number of trials
+<<<<<<< HEAD
   double sampleAndRecordTrials( unsigned& trials ) const;
+=======
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+>>>>>>> Working on refactoring the TabularDistribution class.
 
   //! Return a random sample and bin index from the distribution
   double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
@@ -97,7 +137,40 @@ private:
 
   // Initialize the distribution
   void initializeDistribution(const Teuchos::Array<double>& independent_values,
+<<<<<<< HEAD
 			      const Teuchos::Array<double>& dependent_values );
+=======
+			      const Teuchos::Array<double>& dependent_values,
+			      const bool interpret_dependent_values_as_cdf );
+
+  // Initialize the distribution from a cdf
+  template<typename InputIndepQuantity>
+  void initializeDistributionFromCDF(
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<double>& cdf_values );
+
+  // Initialize the distribution
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  void initializeDistribution( 
+		  const Teuchos::Array<InputIndepQuantity>& independent_values,
+		  const Teuchos::Array<InputDepQuantity>& dependent_values );
+
+  // Reconstruct original distribution
+  void reconstructOriginalDistribution(
+			 Teuchos::Array<IndepQuantity>& independent_values,
+			 Teuchos::Array<DepQuantity>& dependent_values ) const;
+
+  // Reconstruct original distribution w/o units
+  void reconstructOriginalUnitlessDistribution(
+			      Teuchos::Array<double>& independent_values,
+			      Teuchos::Array<double>& dependent_values ) const;
+
+  // Convert the unitless values to the correct units
+  template<typename Quantity>
+  static void convertUnitlessValues( 
+		                 const Teuchos::Array<double>& unitless_values,
+				 Teuchos::Array<Quantity>& quantitites );
+>>>>>>> Working on refactoring the TabularDistribution class.
 
   // Return a random sample using the random number and record the bin index
   double sampleImplementation( double random_number,
@@ -107,8 +180,14 @@ private:
   static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf, 
+<<<<<<< HEAD
   // fourth = slope)
   typedef Teuchos::Array<Quad<double,double,double,double> > DistributionArray;
+=======
+  // fourth = pdf slope): both the pdf and cdf are left unnormalized to
+  // prevent altering the grid with log interpolation
+  typedef Teuchos::Array<Quad<IndepQuantity,UnnormCDFQuantity,DepQuantity,SlopeQuantity> > DistributionArray;
+>>>>>>> Working on refactoring the TabularDistribution class.
   DistributionArray d_distribution;
 
   // The normalization constant
