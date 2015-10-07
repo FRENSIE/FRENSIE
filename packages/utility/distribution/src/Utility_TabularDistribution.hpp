@@ -17,128 +17,66 @@
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_QuantityTraits.hpp"
-#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
-/*! The interpolated distribution class declaration
- * \ingroup one_d_distributions
- */
-template<typename InterpolationPolicy, 
-	 typename IndependentUnit, 
-	 typename DependentUnit>
-class UnitAwareTabularDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
-				     public ParameterListCompatibleObject<UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> >
+//! The interpolated distribution class declaration
+template<typename InterpolationPolicy>
+class TabularDistribution : public TabularOneDDistribution,
+	  public ParameterListCompatibleObject<TabularDistribution<InterpolationPolicy> >
 {
-
-private:
-
-  // The pdf slope unit traits
-  typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-2>::type> PDFSlopeUnitTraits;
-
-  // The pdf slope quantity
-  typedef typename PDFSlopeUnitTraits::template GetQuantityType<double>::type PDFSlopeQuantity;
-
-  // The distribution normalization quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
-
-  // Typedef for QuantityTraits<double>
-  typedef QuantityTraits<double> QT;
-
-  // Typedef for QuantityTraits<IndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
-
-  // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
-
-  // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
 
-  //! This distribution type
-  typedef UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit> ThisType;
-
-  //! The independent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
-
-  //! The inverse independent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
-
-  //! The dependent quantity type
-  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
-
   //! Default constructor
-  UnitAwareTabularDistribution();
-  
-  //! Basic constructor (potentially dangerous)
-  UnitAwareTabularDistribution( 
-			const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values,
-			const bool interpret_dependent_values_as_cdf = false );
-
-  //! CDF constructor
-  template<typename InputIndepQuantity>
-  UnitAwareTabularDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values );
+  TabularDistribution();
 
   //! Constructor
-  template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareTabularDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values );
+  TabularDistribution( const Teuchos::Array<double>& independent_values,
+		               const Teuchos::Array<double>& dependent_values,
+                       const bool interpret_dependent_values_as_cdf = false );
 
   //! Copy constructor
-  template<typename InputIndepUnit, typename InputDepUnit>
-  UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>& dist_instance );
-
-  //! Construct distribution from a unitless dist. (potentially dangerous)
-  static UnitAwareTabularDistribution fromUnitlessDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_distribution );
+  TabularDistribution( 
+	       const TabularDistribution<InterpolationPolicy>& dist_instance );
 
   //! Assignment operator
-  UnitAwareTabularDistribution& operator=( 
-			   const UnitAwareTabularDistribution& dist_instance );
-
-  //! Destructor
-  ~UnitAwareTabularDistribution()
-  { /* ... */ }
+  TabularDistribution<InterpolationPolicy>& operator=( 
+	       const TabularDistribution<InterpolationPolicy>& dist_instance );
 
   //! Evaluate the distribution
-  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
+  double evaluate( const double indep_var_value ) const;
   
   //! Evaluate the PDF
-  InverseIndepuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+  double evaluatePDF( const double indep_var_value ) const;
 
   //! Evaluate the CDF
-  double evaluateCDF( const IndepQuantity indep_var_value ) const;
+  double evaluateCDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  IndepQuantity sample() const;
+  double sample() const;
 
   //! Return a random sample and record the number of trials
-  IndepQuanity sampleAndRecordTrials( unsigned& trials ) const;
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample and bin index from the distribution
-  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+  double sampleWithRandomNumber( const double random_number ) const;
 
   //! Return a random sample from the distribution in a subrange
-  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+  double sampleInSubrange( const double max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
-				     const double random_number,
-				     const IndepQuantity max_indep_var ) const;
+  double sampleWithRandomNumberInSubrange( const double random_number,
+					   const double max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
-  IndepQuantity getUpperBoundOfIndepVar() const;
+  double getUpperBoundOfIndepVar() const;
   
   //! Return the lower bound of the distribution independent variable
-  IndepQuantity getLowerBoundOfIndepVar() const;
+  double getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -153,75 +91,29 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UnitAwareTabularDistribution& other ) const;
-
-protected:
-
-  //! Copy constructor (copying from unitless distribution only)
-  UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int );
+  bool isEqual( const TabularDistribution<InterpolationPolicy>& other ) const;
 
 private:
 
   // Initialize the distribution
   void initializeDistribution(const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf );
-
-  // Initialize the distribution from a cdf
-  template<typename InputIndepQuantity>
-  void initializeDistributionFromCDF(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values );
-
-  // Initialize the distribution
-  template<typename InputIndepQuantity, typename InputDepQuantity>
-  void initializeDistribution( 
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<InputDepQuantity>& dependent_values );
-
-  // Reconstruct original distribution
-  void reconstructOriginalDistribution(
-			 Teuchos::Array<IndepQuantity>& independent_values,
-			 Teuchos::Array<DepQuantity>& dependent_values ) const;
-
-  // Reconstruct original distribution w/o units
-  void reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& independent_values,
-			      Teuchos::Array<double>& dependent_values ) const;
-
-  // Convert the unitless values to the correct units
-  template<typename Quantity>
-  static void convertUnitlessValues( 
-		                 const Teuchos::Array<double>& unitless_values,
-				 const Teuchos::Array<Quantity>& quantitites );
+			      const Teuchos::Array<double>& dependent_values );
 
   // Return a random sample using the random number and record the bin index
-  IndepQuantity sampleImplementation( double random_number,
-				      unsigned& sampled_bin_index ) const;
-
-  // All possible instantiations are friends
-  template<typename FriendInterpolationPolicy,
-	   typename FriendIndepUnit,
-	   typename FriendDepUnit>
-  friend class UnitAwareTabularDistribution;
+  double sampleImplementation( double random_number,
+			       unsigned& sampled_bin_index ) const;
 
   // The distribution type
   static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;
 
   // The distribution (first = indep_var, second = cdf, third = pdf, 
-  // fourth = pdf slope)
-  typedef Teuchos::Array<Quad<IndepQuantity,double,InverseIndepQuantity,PDFSlopeQuantity> > DistributionArray;
+  // fourth = slope)
+  typedef Teuchos::Array<Quad<double,double,double,double> > DistributionArray;
   DistributionArray d_distribution;
 
   // The normalization constant
-  DistNormQuantity d_norm_constant;
+  double d_norm_constant;
 };
-
-/*! The tabular distribution (unit-agnostic)
- * \ingroup one_d_distributions
- */
-template<typename InterpolationPolicy> using TabularDistribution = 
-  UnitAwareTabularDistribution<InterpolationPolicy,void,void>;
 
 } // end Utility namespace
 
@@ -245,32 +137,6 @@ public:
   }
   static std::string concreteName( 
 	    const Utility::TabularDistribution<InterpolationPolicy>& instance )
-  {
-    return name();
-  }
-};
-
-/*! \brief Type name traits partial specialization for the 
- * Utility::UnitAwareTabularDistribution
- *
- * \details The name function will set the type name that must be used in
- * xml files
- */
-template<typename InterpolationPolicy, typename U, typename V>
-class TypeNameTraits<Utility::UnitAwareTabularDistribution<InterpolationPolicy,U,V> >
-{
-  public:
-  static std::string name()
-  {
-    std::ostringstream iss;
-    iss << "Unit-Aware Tabular " << InterpolationPolicy::name() 
-	<< " Distribution (" 
-	<< Utility::UnitTraits<U>::symbol() << ","
-	<< Utility::UnitTraits<V>::symbol() << ")";
-    
-    return iss.str();
-  }
-  static std::string concreteName( const Utility::UnitAwareTabularDistribution<InterpolationPolicy,U,V>& instance )
   {
     return name();
   }
