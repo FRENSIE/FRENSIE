@@ -24,7 +24,7 @@ namespace Utility{
  * made for types of interest.
  * \ingroup quantity_traits
  */
-  template<typename T, typename Enabled = void>
+template<typename T, typename Enabled = void>
 struct QuantityTraits
 {
   //! The unit type
@@ -49,7 +49,11 @@ struct QuantityTraits
   static inline QuantityType one()
   { return UndefinedTraits<T>::notDefined(); }
 
-  //! Get the nan quantity
+  //! Get the inf quantity (only available for floating point quantities)
+  static inline QuantityType inf()
+  { return UndefinedTraits<T>::notDefined(); }
+
+  //! Get the nan quantity (only available for floating point quantities)
   static inline QuantityType nan()
   { return UndefinedTraits<T>::notDefined(); }
 
@@ -65,7 +69,8 @@ struct QuantityTraits
   static inline QuantityType imag( const QuantityType& a )
   { return UndefinedTraits<T>::notDefined(); }
 
-  //! Test if the quantity is a nan or inf
+  /*! \brief Test if the quantity is a nan or inf (only available for floating point quantities)
+   */
   static inline bool isnaninf( const QuantityType& a )
   { return UndefinedTraits<T>::notDefined(); }
 
@@ -91,6 +96,15 @@ struct QuantityTraits
 				  const RawType& raw_quantity )
   { UndefinedTraits<T>::notDefined(); }
 };
+
+/*! The QuantityTraitsHelper for all types.
+ * \details Specialized this struct to add functions/typedefs when T has
+ * certain properties (e.g. floating point).
+ * \ingroup quantity_traits
+ */
+template<typename T, typename Enabled = void>
+struct QuantityTraitsHelper
+{ /* ... */ };
 
 /*! This function allows access to the sqrt QuantityTraits function
  * \ingroup quantity_traits
