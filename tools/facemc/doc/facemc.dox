@@ -726,7 +726,9 @@
  *    <ul>
  *     <li>\code
  *         <Parameter name="example a" type="Exponential Distribution" value="{2,3}"/>
- *         <Parameter name="example b" type="Exponential Distribution" value="{3}"/>
+ *         <Parameter name="example b" type="Exponential Distribution" value="{2,3,1}"/>
+ *         <Parameter name="example c" type="Exponential Distribution" value="{2,3,1,10}"/>
+ *
  *          \endcode</li>
  *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
  *     <li>The value attribute specifies the constant multiplier \f$a\f$ 
@@ -734,7 +736,9 @@
  *         be positive.</li>
  *     <li>The default value of \f$a\f$ is 1.0.</li>
  *     <li>For sampling distributions, the \f$a\f$ value will be
- *         replaced by a normalization constant. </li></ul></li>
+ *         replaced by a normalization constant. 
+ *     <li>The distribution can be truncated by specifying a lower cutoff and 
+ *         an upper cutoff (the default range is [0,inf)).</li></ul></li>
  *   <li><b>Histogram distribution</b>
  *    <ul>
  *     <li>\code
@@ -1416,7 +1420,7 @@
  *      of the \ref one_d_distributions "one-dimensional distributions".
  *      <ul>
  *       <li>\code
- *           <Parameter name="Energy Distribution" type="Exponential Distribution" value="{0.5}"/>
+ *           <Parameter name="Energy Distribution" type="Exponential Distribution" value="{1.0,0.5}"/>
  *           \endcode</li>
  *      </ul></li>
  * </ol>

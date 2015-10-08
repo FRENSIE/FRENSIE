@@ -61,7 +61,7 @@ private:
 
 public:
 
-  // This distribution type
+  //! This distribution type
   typedef UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type

@@ -3,6 +3,10 @@
   <Parameter name="Exponential Distribution A" type="Exponential Distribution"
 	     value="{pi,3}"/>
   <Parameter name="Exponential Distribution B" type="Exponential Distribution"
-	     value="{pi}"/>
+	     value="{pi,3,1}"/>
+  <Parameter name="Exponential Distribution C" type="Exponential Distribution"
+	     value="{pi,3,1,2}"/>
+  <Parameter name="Exponential Distribution D" type="Exponential Distribution"
+	     value="{pi,3,1,inf}"/>
 
 </ParameterList>
