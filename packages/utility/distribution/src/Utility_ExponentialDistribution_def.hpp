@@ -47,10 +47,12 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_upper_limit( IQT::inf() )
 {
   // Make sure the multipliers are valid
-  testPrecondition( !DQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !IIQT::isnaninf( exponent_multiplier ) );
+  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
+  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
+  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
+  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
   // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > IIQT::zero() );
+  testPrecondition( exponent_multiplier > InputIIQT::zero() );
 
   // Initialize the distribution
   this->initialize();
@@ -77,12 +79,15 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
     d_upper_limit( upper_limit )
 {
   // Make sure the multipliers are valid
-  testPrecondition( !DQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !IIQT::isnaninf( exponent_multiplier ) );
+  remember( typedef QuantityTraits<InputIndepQuantity> InputIQT );
+  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
+  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
+  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
+  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
   // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > IIQT::zero() );
+  testPrecondition( exponent_multiplier > InputIIQT::zero() );
   // Make sure the limits are valid
-  testPrecondition( lower_limit >= IQT::zero() );
+  testPrecondition( lower_limit >= InputIQT::zero() );
   testPrecondition( upper_limit > lower_limit );
 
   // Initialize the distribution
@@ -195,9 +200,9 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::evaluate(
  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_lower_limit )
-    return 0.0;
+    return DQT::zero();
   else if( indep_var_value > d_upper_limit )
-    return 0.0;
+    return DQT::zero();
   else
     return d_constant_multiplier*exp( -d_exponent_multiplier*indep_var_value );
 }
@@ -211,9 +216,9 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_lower_limit )
-    return 0.0;
+    return IIQT::zero();
   else if( indep_var_value > d_upper_limit )
-    return 0.0;
+    return IIQT::zero();
   else
     return d_exponent_multiplier*exp( -d_exponent_multiplier*indep_var_value )/
       (d_exp_lower_limit - d_exp_upper_limit);
