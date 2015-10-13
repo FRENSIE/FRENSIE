@@ -55,6 +55,36 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_basic_static )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[2] = 0.5;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double sample = Utility::ExponentialDistribution::sample( 3.0 );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = Utility::ExponentialDistribution::sample( 3.0 );
+  TEST_FLOATING_EQUALITY( sample, 11.5131919974469596, 1e-15 );
+  
+  sample = Utility::ExponentialDistribution::sample( 3.0 );
+  TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_static )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( ExponentialDistribution, sample )
 {
   std::vector<double> fake_stream( 3 );
@@ -180,6 +210,17 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   Utility::ExponentialDistribution read_distribution = 
     test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution A" );
 
+  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 1.0 );
+  TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ), 
+			  exp( -3.0 ), 
+			  1e-15 );
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(),
+		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
+  
+  read_distribution = 
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution B" );
+
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ),
 		       Utility::PhysicalConstants::pi );
   TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ),
@@ -190,7 +231,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
   
   read_distribution = 
-    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution B" );
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution C" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ),
@@ -201,7 +242,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 1.0 );
 
   read_distribution = 
-    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution C" );
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution D" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ),
@@ -211,7 +252,7 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 1.0 );
 
   read_distribution = 
-    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution B" );
+    test_dists_list->get<Utility::ExponentialDistribution>( "Exponential Distribution E" );
 
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( read_distribution.evaluate( 1.0 ),

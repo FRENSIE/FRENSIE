@@ -220,7 +220,58 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
 }
 
 // Return a sample from the distribution
-/*! \details x = -ln(rnd)/m
+/* \details x = -ln(rnd)/m
+ */
+template<typename IndependentUnit, typename DependentUnit> 
+typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample( 
+  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity exponent_multiplier )
+{
+  // Make sure that the exponent multiplier is positive
+  testPrecondition( exponent_multiplier > IIQT::zero() );
+  
+  return -log( 1.0 - RandomNumberGenerator::getRandomNumber<double>() )/
+    exponent_multiplier;
+}
+
+// Return a sample from the distribution
+/* \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
+ */
+template<typename IndependentUnit, typename DependentUnit> 
+typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample( 
+  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity exponent_multiplier,
+  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity lower_limit,
+  const typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity upper_limit )
+{
+  // Make sure that the exponent multiplier is positive
+  testPrecondition( exponent_multiplier > IIQT::zero() );
+  // Make sure the limits are valid
+  testPrecondition( lower_limit >= IQT::zero() );
+  testPrecondition( upper_limit > lower_limit );
+  
+  double exp_upper_limit;
+
+  if( upper_limit < IQT::inf() )
+    exp_upper_limit = exp( -exponent_multiplier*upper_limit );
+  else
+    exp_upper_limit = 0.0;
+  
+  double exp_lower_limit;
+  
+  if( lower_limit > IQT::zero() )
+    exp_lower_limit = exp( -exponent_multiplier*lower_limit );
+  else
+    exp_lower_limit = 1.0;
+  
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  
+  return -log( random_number*(exp_upper_limit - exp_lower_limit) +
+	       exp_lower_limit )/exponent_multiplier;
+}
+
+// Return a sample from the distribution
+/*! \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
  */
 template<typename IndependentUnit, typename DependentUnit> 
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
@@ -279,8 +330,8 @@ template<typename IndependentUnit, typename DependentUnit>
 void 
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << getRawQuantity( d_constant_multiplier ) 
-     << "," << getRawQuantity( d_exponent_multiplier ) 
+  os << "{" << getRawQuantity( d_exponent_multiplier )
+     << "," << getRawQuantity( d_constant_multiplier )  
      << "," << getRawQuantity( d_lower_limit )
      << ",";
 
@@ -321,31 +372,15 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
   
-  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 4,
+  TEST_FOR_EXCEPTION( distribution.size() < 1 || distribution.size() > 4,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the exponential distribution cannot be "
 		      "constructed because the representation is not valid "
 		      "(either two, three or four values may be specified)!" );
 
-  // Extract the constant multiplier
-  {
-    std::istringstream iss( distribution[0] );
-    double raw_constant_multiplier;
-
-    Teuchos::extractDataFromISS( iss, raw_constant_multiplier );
-    
-    d_constant_multiplier = DQT::initializeQuantity( raw_constant_multiplier );
-
-    TEST_FOR_EXCEPTION( DQT::isnaninf( d_constant_multiplier ),
-			InvalidDistributionStringRepresentation,
-			"Error: the exponential distribution cannot be "
-			"constructed because of an invalid constant "
-			"multiplier " << d_constant_multiplier );
-  }
-
   // Extract the exponent multiplier
   {
-    std::istringstream iss( distribution[1] );
+    std::istringstream iss( distribution[0] );
     double raw_exponent_multiplier;
     
     Teuchos::extractDataFromISS( iss, raw_exponent_multiplier );
@@ -358,6 +393,25 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::fromStream
 			"constructed because of an invalid exponent "
 			"multiplier " << d_exponent_multiplier );
   }
+
+  // Extract the constant multiplier
+  if( distribution.size() > 1 )
+  {
+    std::istringstream iss( distribution[1] );
+    double raw_constant_multiplier;
+
+    Teuchos::extractDataFromISS( iss, raw_constant_multiplier );
+    
+    d_constant_multiplier = DQT::initializeQuantity( raw_constant_multiplier );
+
+    TEST_FOR_EXCEPTION( DQT::isnaninf( d_constant_multiplier ),
+			InvalidDistributionStringRepresentation,
+			"Error: the exponential distribution cannot be "
+			"constructed because of an invalid constant "
+			"multiplier " << d_constant_multiplier );
+  }
+  else 
+    d_constant_multiplier = DQT::one();
 
   // Extract the lower limit
   if( distribution.size() > 2 )
@@ -429,12 +483,15 @@ template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize()
 {
   // Calculate the exponential of the lower and upper bounds
-  d_exp_lower_limit = exp( d_exponent_multiplier*d_lower_limit );
-
   if( d_upper_limit < IQT::inf() )
     d_exp_upper_limit = exp( d_exponent_multiplier*d_upper_limit );
   else
     d_exp_upper_limit = 0.0;
+
+  if( d_lower_limit > IQT::zero() )
+    d_exp_lower_limit = exp( d_exponent_multiplier*d_lower_limit );
+  else
+    d_exp_lower_limit = 1.0;
 }
 
 } // end Utility namespace
