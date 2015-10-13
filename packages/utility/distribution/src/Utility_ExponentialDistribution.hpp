@@ -103,6 +103,14 @@ public:
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
+  static IndepQuantity sample( const InverseIndepQuantity exponent_multiplier);
+
+  //! Return a random sample from the distribution
+  static IndepQuantity sample( const InverseIndepQuantity exponent_multiplier,
+			       const IndepQuantity lower_limit,
+			       const IndepQuantity upper_limit = IQT::inf() );
+
+  //! Return a random sample from the distribution
   IndepQuantity sample() const;
 
   //! Return a random sample and record the number of trials
