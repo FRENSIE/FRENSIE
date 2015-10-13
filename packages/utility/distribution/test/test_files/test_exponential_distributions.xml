@@ -11,4 +11,20 @@
   <Parameter name="Exponential Distribution E" type="Exponential Distribution"
 	     value="{3,pi,1,inf}"/>
 
+  <Parameter name="Unit-Aware Exponential Distribution A" 
+	     type="Unit-Aware Exponential Distribution (cm,mol)"
+	     value="{3}"/>
+  <Parameter name="Unit-Aware Exponential Distribution B"
+	     type="Unit-Aware Exponential Distribution (cm,mol)"
+	     value="{3,pi}"/>
+  <Parameter name="Unit-Aware Exponential Distribution C"
+	     type="Unit-Aware Exponential Distribution (cm,mol)"
+	     value="{3,pi,1}"/>
+  <Parameter name="Unit-Aware Exponential Distribution D"
+	     type="Unit-Aware Exponential Distribution (cm,mol)"
+	     value="{3,pi,1,2}"/>
+  <Parameter name="Unit-Aware Exponential Distribution E" 
+	     type="Unit-Aware Exponential Distribution (cm,mol)"
+	     value="{3,pi,1,inf}"/>
+
 </ParameterList>

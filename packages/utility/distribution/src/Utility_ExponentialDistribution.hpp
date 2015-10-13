@@ -24,7 +24,7 @@ namespace Utility{
  * exponent is always assumed to be negative).
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareExponentialDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
 					 public ParameterListCompatibleObject<UnitAwareExponentialDistribution<IndependentUnit,DependentUnit> >
 {
