@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp
-//! \author Alex Robinson, Alex Bennett
+//! \author Alex Robinson, Alex Bennett, Eli Moll
 //! \brief  Nuclear scattering energy distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
@@ -28,48 +28,80 @@ public:
 
   //! Create the energy distribution
   static void createDistribution( 
-	    const Teuchos::ArrayView<const double>& dlw_block_array,
-	    const unsigned dlw_block_array_start_index,
-	    const std::string& table_name,
-	    const unsigned reaction,
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
             Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
 
   //! Create the Ace law 44 coupled energy-angle distribution
   template<typename ScatteringDistributionBaseType>
   static void createAceLaw44Distribution(
                   const double atomic_weight_ratio,
-		  const Teuchos::ArrayView<const double>& dlw_block_array,
-		  const unsigned dlw_block_array_start_index,
-		  const std::string& table_name,
-		  const unsigned reaction,
-		  const bool is_cm_distribution,
+		const Teuchos::ArrayView<const double>& dlw_block_array,
+		const unsigned dlw_block_array_start_index,
+		const std::string& table_name,
+		const unsigned reaction,
+		const bool is_cm_distribution,
                   Teuchos::RCP<ScatteringDistributionBaseType>& distribution );
 
 private:
 
   // Create a Ace Law 1 energy distribution
   static void createAceLaw1EnergyDistribution( 
-	    const Teuchos::ArrayView<const double>& dlw_block_array,
-	    const unsigned dlw_block_array_start_index,
-	    const std::string& table_name,
-	    const unsigned reaction,
-	    Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
 
   // Create a Law 3 energy distribution
   static void createAceLaw3EnergyDistribution(
-	    const Teuchos::ArrayView<const double>& dlw_block_array,
-	    const unsigned dlw_block_array_start_index,
-	    const std::string& table_name,
-	    const unsigned reaction,
-	    Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
 
   // Create a Law 4 energy distribution
   static void createAceLaw4EnergyDistribution(
-	    const Teuchos::ArrayView<const double>& dlw_block_array,
-	    const unsigned dlw_block_array_start_index,
-	    const std::string& table_name,
-	    const unsigned reaction,
-	    Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+
+  // Create a Law 5 energy distribution
+  static void createAceLaw5EnergyDistribution(
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+
+  // Create a Law 7 energy distribution
+  static void createAceLaw7EnergyDistribution(
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+
+  // Create a Law 9 energy distribution
+  static void createAceLaw9EnergyDistribution(
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
+
+  // Create a Law 11 energy distribution
+  static void createAceLaw11EnergyDistribution(
+	  const Teuchos::ArrayView<const double>& dlw_block_array,
+	  const unsigned dlw_block_array_start_index,
+	  const std::string& table_name,
+	  const unsigned reaction,
+	  Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution );
 
   // Constructor
   NuclearScatteringEnergyDistributionACEFactory();
