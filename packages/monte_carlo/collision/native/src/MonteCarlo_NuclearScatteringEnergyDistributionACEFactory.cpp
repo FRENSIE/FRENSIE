@@ -71,6 +71,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 				     distribution );
     break;
     
+  case 5u:
+    createAceLaw5EnergyDistribution( dlw_block_array,
+				     dlw_block_array_start_index,
+				     table_name,
+				     reaction,
+				     distribution );
+    
   default:
     // This law is not currently supported
     TEST_FOR_EXCEPTION( true,
@@ -259,6 +266,265 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
       new AceLaw4NuclearScatteringEnergyDistribution( energy_distribution ) );
 }
 
+// Create a AceLaw 5 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+{
+  // Verify that it is law 5
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 5,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << " in ACE table "
+           	      << table_name << " should be law 5!\n" );
+           	      
+  // Start index for ldat data
+  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+
+  // Verify that only one law is present
+  TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+         	      std::runtime_error,
+         	      "Error: MT# " << reaction << " in ACE table "
+         	      << table_name << " has multiple interpolation schemes "
+         	      " with it, which is not currently supported!\n" );
+
+  // Number of incident energies
+  double incoming_energies = dlw_block_array[ldat_start_index + 1];  
+   
+  // Array of incoming energies
+  Teuchos::Array<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
+                                                                     incoming_energies);
+                                                                
+  // Array of Tabulated energy functions
+  Teuchos::Array<double> tabulated_energy_function_array = dlw_block_array(
+                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+                                                  
+  // Number of probabilistic functions tabulated
+  double prob_function_number = dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
+  
+  // Array of probabilistic functions
+  Teuchos::Array<double> probabilistic_function_array = dlw_block_array(
+                                  ldat_start_index + 4 + incoming_energies*2, 
+                                                        prob_function_number );
+                                                        
+  // Bin width for probabilistic function
+  double prob_bin_width = (probabilistic_function_array.back() - 
+    probabilistic_function_array.front())/(prob_function_number - 1);
+  
+  // Initialize the probabilistic function array
+  AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+     probabilistic_distribution( prob_function_number ); 
+  
+  // Update random_variables_array
+  for(int i = 0; i != prob_function_number; i++)
+  {
+    probabilistic_distribution[i].first = prob_bin_width*i;
+    probabilistic_distribution[i].second = probabilistic_function_array[i];
+  }                                                   
+                                                                   
+  // Initialize the energy distribution array
+  AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution( incoming_energies );
+     
+  // Loop through incoming energies
+  for(int i = 0; i != incoming_energies; i++)
+  {
+    energy_distribution[i].first = incoming_energies_array[i];
+    energy_distribution[i].second = tabulated_energy_function_array[i];
+  }
+  
+  distribution.reset( 
+    new AceLaw5NuclearScatteringEnergyDistribution( energy_distribution,
+                                             probabilistic distribution ) );
+}
+
+// Create a AceLaw 7 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+{
+  // Verify that it is law 7
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 7,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << " in ACE table "
+           	      << table_name << " should be law 7!\n" );
+           	      
+  // Start index for ldat data
+  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+
+  // Verify that only one law is present
+  TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+         	      std::runtime_error,
+         	      "Error: MT# " << reaction << " in ACE table "
+         	      << table_name << " has multiple interpolation schemes "
+         	      " with it, which is not currently supported!\n" );
+
+  // Number of incident energies
+  double incoming_energies = dlw_block_array[ldat_start_index + 1];  
+   
+  // Array of incoming energies
+  Teuchos::Array<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
+                                                                     incoming_energies);
+                                                                
+  // Array of Tabulated energy functions
+  Teuchos::Array<double> tabulated_energy_function_array = dlw_block_array(
+                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+
+  // Initialize the energy distribution array
+  AceLaw7NuclearScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution( incoming_energies );
+     
+  // Loop through incoming energies
+  for(int i = 0; i != incoming_energies; i++)
+  {
+    energy_distribution[i].first = incoming_energies_array[i];
+    energy_distribution[i].second = tabulated_energy_function_array[i];
+  }
+              
+  // Restriction energy
+  double restriction_energy = dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
+  
+  distribution.reset( 
+    new AceLaw7NuclearScatteringEnergyDistribution( energy_distribution,
+                                                    restriction_energy ) );
+}
+
+// Create a AceLaw 9 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+{
+  // Verify that it is law 9
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 9,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << " in ACE table "
+           	      << table_name << " should be law 9!\n" );
+           	      
+  // Start index for ldat data
+  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+
+  // Verify that only one law is present
+  TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+         	      std::runtime_error,
+         	      "Error: MT# " << reaction << " in ACE table "
+         	      << table_name << " has multiple interpolation schemes "
+         	      " with it, which is not currently supported!\n" );
+
+  // Number of incident energies
+  double incoming_energies = dlw_block_array[ldat_start_index + 1];  
+   
+  // Array of incoming energies
+  Teuchos::Array<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
+                                                                     incoming_energies);
+                                                                
+  // Array of Tabulated energy functions
+  Teuchos::Array<double> tabulated_energy_function_array = dlw_block_array(
+                  ldat_start_index + 2 + incoming_energies, incoming_energies );
+
+  // Initialize the energy distribution array
+  AceLaw9NuclearScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution( incoming_energies );
+     
+  // Loop through incoming energies
+  for(int i = 0; i != incoming_energies; i++)
+  {
+    energy_distribution[i].first = incoming_energies_array[i];
+    energy_distribution[i].second = tabulated_energy_function_array[i];
+  }
+                 
+  // Restriction energy
+  double restriction_energy = dlw_block_array[ldat_start_index + 3 + incoming_energies*2];
+  
+  distribution.reset( 
+    new AceLaw9NuclearScatteringEnergyDistribution( energy_distribution,
+                                                    restriction_energy ) );
+}
+ 
+// Create a AceLaw 11 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+{
+  // Verify that it is law 11
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 11,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << " in ACE table "
+           	      << table_name << " should be law 11!\n" );
+           	      
+  // Start index for ldat data
+  int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+
+  // Verify that only one law is present
+  TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+         	      std::runtime_error,
+         	      "Error: MT# " << reaction << " in ACE table "
+         	      << table_name << " has multiple interpolation schemes "
+         	      " with it, which is not currently supported!\n" );
+
+  // Number of incident energies (a)
+  double incoming_energies_a = dlw_block_array[ldat_start_index + 1];  
+   
+  // Array of incoming energies (a)
+  Teuchos::Array<double> incoming_energies_array_a = dlw_block_array( ldat_start_index + 2,
+                                                                     incoming_energies_a);
+                                                                
+  // Array of Tabulated energy functions (a)
+  Teuchos::Array<double> tabulated_a = dlw_block_array(
+                  ldat_start_index + 2 + incoming_energies_a, incoming_energies_a );
+                  
+  // Number of incident energies (b)             
+  double incoming_energies_b = dlw_block_array[ldat_start_index + 4 + 2*incoming_energies_a];
+  
+  // Array of incoming energies (b)
+  Teuchos::Array<double> incoming_energies_array_b = dlw_block_array( 
+          ldat_start_index + 5 + 2*incoming_energies_a, incoming_energies_b );
+          
+  // Array of Tabulated energy functions (b)
+  Teuchos::Array<double> tabulated_b = dlw_block_array( 
+          ldat_start_index + 5 + 2*incoming_energies_a + incoming_energies_b, incoming_energies_b );
+                  
+  // Restriction energy
+  double restriction_energy = dlw_block_array[ldat_start_index + 6 + 2*incoming_energies_a + 2*incoming_energies_b];
+
+  // Initialize the energy distribution array (a)
+  AceLaw11NuclearScatteringEnergyDistribution::EnergyDistribution 
+     a_distribution( incoming_energies_a );
+     
+  // Loop through incoming energies (a)
+  for(int i = 0; i != incoming_energies_a; i++)
+  {
+    a_distribution[i].first = incoming_energies_array_a[i];
+    a_distribution[i].second = tabulated_a[i];
+  }
+
+  // Initialize the energy distribution array (b)
+  AceLaw11NuclearScatteringEnergyDistribution::EnergyDistribution 
+     b_distribution( incoming_energies_b );
+     
+  // Loop through incoming energies (b)
+  for(int i = 0; i != incoming_energies_b; i++)
+  {
+    b_distribution[i].first = incoming_energies_array_b[i];
+    b_distribution[i].second = tabulated_b[i];
+  }
+  
+  distribution.reset( 
+    new AceLaw11NuclearScatteringEnergyDistribution( a_distribution,
+                                                     b_distribution,
+                                                     restriction_energy ) );
+}
+                  
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
