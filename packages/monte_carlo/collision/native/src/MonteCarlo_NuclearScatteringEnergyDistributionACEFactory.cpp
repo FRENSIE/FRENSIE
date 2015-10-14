@@ -18,6 +18,10 @@
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw5NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw7NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw9NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 
@@ -337,11 +341,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
   
   distribution.reset( 
     new AceLaw5NuclearScatteringEnergyDistribution( energy_distribution,
-                                             probabilistic distribution ) );
+                                             probabilistic_distribution ) );
 }
 
 // Create a AceLaw 7 energy distribution
-void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw7EnergyDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
@@ -395,7 +399,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
 }
 
 // Create a AceLaw 9 energy distribution
-void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw9EnergyDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
@@ -449,7 +453,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribut
 }
  
 // Create a AceLaw 11 energy distribution
-void NuclearScatteringEnergyDistributionACEFactory::createAceLaw5EnergyDistribution(
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw11EnergyDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,

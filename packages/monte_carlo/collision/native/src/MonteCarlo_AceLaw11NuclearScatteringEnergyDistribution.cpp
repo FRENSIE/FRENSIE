@@ -13,12 +13,12 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AceLaw9NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_MaxwellFissionDistribution.hpp"
+#include "Utility_WattDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -38,7 +38,7 @@ AceLaw11NuclearScatteringEnergyDistribution::AceLaw11NuclearScatteringEnergyDist
 }
 
 // Sample a scattering energy
-double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw11NuclearScatteringEnergyDistribution::sampleEnergy( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -49,7 +49,7 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
   double a_sampled;
   double b_sampled;
   
-  // Check if energy is outside the (a) grid
+  // Sample the distribution of a(E)
   if( energy >= d_a_distribution.front().first and 
       energy <= d_a_distribution.back().first )
   {
@@ -85,7 +85,8 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
     a_sampled = d_a_distribution.back().second;
   }
   
-  // Check if energy is outside the (b) grid
+  
+  // Sample the distribution of b(E)
   if( energy >= d_b_distribution.front().first and 
       energy <= d_b_distribution.back().first )
   {

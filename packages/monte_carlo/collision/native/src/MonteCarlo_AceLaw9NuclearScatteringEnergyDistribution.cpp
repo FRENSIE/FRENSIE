@@ -18,7 +18,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_MaxwellFissionDistribution.hpp"
+#include "Utility_EvaporationDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -35,7 +35,7 @@ AceLaw9NuclearScatteringEnergyDistribution::AceLaw9NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw9NuclearScatteringEnergyDistribution::sampleEnergy( 
 						    const double energy ) const
 {
   // Make sure the energy is valid

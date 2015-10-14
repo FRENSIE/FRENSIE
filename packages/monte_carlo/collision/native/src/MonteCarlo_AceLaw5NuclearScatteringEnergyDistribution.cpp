@@ -34,7 +34,7 @@ AceLaw5NuclearScatteringEnergyDistribution::AceLaw5NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw5NuclearScatteringEnergyDistribution::sampleEnergy( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -52,8 +52,8 @@ double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy(
   double probabilistic_sample;
   
   // Check that the random number falls within the grid
-  if( random_num >= d_probabilistic_function.front().first and
-      random_num <= d_probabilistic_function.back().first )
+  if( random_number >= d_probabilistic_function.front().first and
+      random_number <= d_probabilistic_function.back().first )
   {
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
