@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 
-     Utility::EvaporationDistribution::sample( energy_distribution[0].first, 
+     Utility::EvaporationDistribution::sample( 0.5, 
                                                energy_distribution[0].second,
                                                restriction_energy ));
 }
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 
-     Utility::EvaporationDistribution::sample( energy_distribution[1].first, 
+     Utility::EvaporationDistribution::sample( 3.0, 
                                                energy_distribution[1].second,
                                                restriction_energy ));
 }

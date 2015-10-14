@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
                                                        restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 
-     Utility::WattDistribution::sample( a_distribution[0].first, 
+     Utility::WattDistribution::sample( 0.5, 
                                         a_distribution[0].second,
                                         b_distribution[0].second,
                                         restriction_energy ));
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( AceLaw11NuclearScatteringEnergyDistribution,
                                                        restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 
-     Utility::WattDistribution::sample( a_distribution[1].first, 
+     Utility::WattDistribution::sample( 3.0, 
                                         a_distribution[1].second,
                                         b_distribution[1].second,
                                         restriction_energy ));                                                      
