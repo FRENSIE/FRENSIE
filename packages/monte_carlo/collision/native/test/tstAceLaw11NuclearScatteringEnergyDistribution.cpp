@@ -18,7 +18,7 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-
+#include "Utility_WattDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.

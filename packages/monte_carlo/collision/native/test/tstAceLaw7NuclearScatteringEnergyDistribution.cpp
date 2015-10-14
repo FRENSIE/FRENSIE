@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_AceLaw5NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw7NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_MaxwellFissionDistribution.hpp"
 
