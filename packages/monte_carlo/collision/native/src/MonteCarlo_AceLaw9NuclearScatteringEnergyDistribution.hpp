@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -29,16 +30,15 @@ class AceLaw9NuclearScatteringEnergyDistribution : public NuclearScatteringEnerg
 public:
 
   //! Typedef for the energy distribution
-  typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::TabularOneDDistribution> > >
-                                                        EnergyDistribution;
+  typedef Teuchos::Array<Utility::Pair<double,double> > EnergyDistribution;
 
   //! Constructor
-  AceLaw7NuclearScatteringEnergyDistribution(
+  AceLaw9NuclearScatteringEnergyDistribution(
                                           EnergyDistribution& energy_distribution,
                                           double restriction_energy);
 
   //! Destructor
-  ~AceLaw7NuclearScatteringEnergyDistribution()
+  ~AceLaw9NuclearScatteringEnergyDistribution()
   { /* ... */ }
 
   //! Sample a scattering energy

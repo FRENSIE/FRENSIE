@@ -35,7 +35,7 @@ AceLaw7NuclearScatteringEnergyDistribution::AceLaw7NuclearScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw1NuclearScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw7NuclearScatteringEnergyDistribution::sampleEnergy( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
