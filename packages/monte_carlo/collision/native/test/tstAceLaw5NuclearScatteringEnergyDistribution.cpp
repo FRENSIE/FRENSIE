@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
 
    MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution distribution( energy_distribution, probabilistic_function );
 
-   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 1.50)
+   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 3.0)
 }
 
 //---------------------------------------------------------------------------//
@@ -131,43 +131,6 @@ TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution,
    MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution distribution( energy_distribution, probabilistic_function );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 1.0)
-}
-
-//---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw5NuclearScatteringEnergyDistribution, 
-		   sampleProb_upper_bound )
-{
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     energy_distribution;
-
-   energy_distribution.resize(2);
-
-   energy_distribution[0].first = 1.0;
-   energy_distribution[0].second = 1.0;
-   
-   energy_distribution[1].first = 2.0;
-   energy_distribution[1].second = 2.0;
-   
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution::EnergyDistribution 
-     probabilistic_function;   
-     
-   probabilistic_function.resize(2);
-
-   probabilistic_function[0].first = 0.0;
-   probabilistic_function[0].second = 1.0;
-   
-   probabilistic_function[1].first = 1.0;
-   probabilistic_function[1].second = 2.0;
-
-   // Create the fake stream
-   std::vector<double> fake_stream( 1 );
-   fake_stream[0] = 1.0;
-
-   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-   MonteCarlo::AceLaw5NuclearScatteringEnergyDistribution distribution( energy_distribution, probabilistic_function );
-
-   TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 4.00)
 }
 
 //---------------------------------------------------------------------------//
