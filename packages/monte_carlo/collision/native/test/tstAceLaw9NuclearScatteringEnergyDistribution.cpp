@@ -32,12 +32,10 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
-   energy_distribution[0].second.resize(1);
-   energy_distribution[0].second[0] = 1.0;
+   energy_distribution[0].second = 1.0;
    
    energy_distribution[1].first = 2.0;
-   energy_distribution[1].second.resize(1);
-   energy_distribution[1].second[0] = 2.0;
+   energy_distribution[1].second = 2.0;
    
    double restriction_energy = 1.5;
 
@@ -59,12 +57,10 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
-   energy_distribution[0].second.resize(1);
-   energy_distribution[0].second[0] = 1.0;
+   energy_distribution[0].second = 1.0;
    
    energy_distribution[1].first = 2.0;
-   energy_distribution[1].second.resize(1);
-   energy_distribution[1].second[0] = 2.0;
+   energy_distribution[1].second = 2.0;
    
    double restriction_energy = 1.5;
 
@@ -86,12 +82,10 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    energy_distribution.resize(2);
 
    energy_distribution[0].first = 1.0;
-   energy_distribution[0].second.resize(1);
-   energy_distribution[0].second[0] = 1.0;
+   energy_distribution[0].second = 1.0;
    
    energy_distribution[1].first = 2.0;
-   energy_distribution[1].second.resize(1);
-   energy_distribution[1].second[0] = 2.0;
+   energy_distribution[1].second = 2.0;
    
    double restriction_energy = 1.5;
 
