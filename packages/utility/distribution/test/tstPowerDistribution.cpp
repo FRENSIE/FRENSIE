@@ -249,19 +249,19 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( UnitAwarePowerDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<cgs::length> sample = 
-    Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>::sample(
+    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, 0.0*cgs::centimeter );
 
   sample = 
-    Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>::sample(
+    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
   TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u))*cgs::centimeter );
 
   sample = 
-    Utility::UnitAwarePowerDistribution<N,cgs::length,si::amount>::sample(
+    Utility::UnitAwarePowerDistribution<N,cgs::length>::sample(
 							 0.0*cgs::centimeter,
 						         1.0*cgs::centimeter );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*cgs::centimeter, 1e-15 );
