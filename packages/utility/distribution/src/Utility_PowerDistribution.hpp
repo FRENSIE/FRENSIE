@@ -21,7 +21,7 @@ namespace Utility{
 /*! Power distribution class
  * \ingroup one_d_distributions
  */
-template<unsigned N, typename IndependentUnit, typename DependentUnit>
+template<unsigned N, typename IndependentUnit, typename DependentUnit = void>
 class UnitAwarePowerDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
 				   public ParameterListCompatibleObject<UnitAwarePowerDistribution<N,IndependentUnit,DependentUnit> >
 {

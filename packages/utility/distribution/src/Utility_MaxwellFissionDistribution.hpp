@@ -26,7 +26,7 @@ namespace Utility{
 /*! The unit-aware Maxwell fission distribution class
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareMaxwellFissionDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
 					    public ParameterListCompatibleObject<UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit> >
 {
