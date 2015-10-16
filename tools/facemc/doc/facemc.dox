@@ -823,12 +823,12 @@
  *          <Parameter name="example e" type="Power 10 Distribution" value="{1.0,1.5,5.5}"/>
  *          <Parameter name="example f" type="Power 10 Distribution" value="{1.5,5.5}"/>
  *          \endcode</li>
- *      <li>Models the power function \f$c x^N\f$ for \f$x \in [a,b]\f$, where
+ *      <li>Models the power function \f$a x^N\f$ for \f$x \in [b,c]\f$, where
  *          \f$N\f$ is the desired power.</li>
  *       <li>The type attribute specifies the power \f$N\f$.</li>
- *       <li>The value attribute specifies the constant multiplier \f$c\f$
- *           (optional), the minimum \f$x\f$ value \f$a\f$ and the 
- *           maximum \f$x\f$ value \f$b\f$ respectively. The limits must be 
+ *       <li>The value attribute specifies the constant multiplier \f$a\f$
+ *           (optional), the minimum \f$x\f$ value \f$b\f$ and the 
+ *           maximum \f$x\f$ value \f$c\f$ respectively. The limits must be 
  *           strictly positive.</li>
  *       <li>The default value of \f$c\f$ is 1.0.
  *       <li>For sampling distributions, the constant multiplier \f$c\f$ will
