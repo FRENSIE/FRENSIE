@@ -9,9 +9,6 @@
 #ifndef UTILITY_EXPONENTIAL_DISTRIBUTION_HPP
 #define UTILITY_EXPONENTIAL_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
@@ -203,7 +200,7 @@ public:
   }
 };
 
-/*! Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the 
  * Utility::UnitAwareExponentialDistribution
  *
  * \details The name function will set the type name that must be used in
