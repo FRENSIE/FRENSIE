@@ -791,14 +791,20 @@
  *          <Parameter name="example a" type="Normal Distribution" value="{0,1,-inf,inf}"/>
  *          <Parameter name="example b" type="Normal Distribution" value="{0,1}"/>
  *          <Parameter name="example c" type="Normal Distribution" value="{1.5,0.25,-10,10}"/>
+ *          <Parameter name="example a" type="Normal Distribution" value="{0,1,-inf,inf,0.5}"/>
  *          \endcode</li>
- *      <li>Models a Gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
- *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
- *          deviation \f$\sigma\f$ of the Gaussian. The standard deviation must
- *          be strictly greater than zero.
- *      <li>The distribution can be truncated by specifying a lower cutoff and 
- *          an upper cutoff. The special values of "-inf" and "inf" can be used
- *          to essentially provide no cutoff values.</li></ul></li>
+ *      <li>Models a Gaussian function \f$c\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$ for \f$x \in [a,b]\f$</li>
+ *      <li>The value attribute specifies the mean \f$\mu\f$, standard
+ *          deviation \f$\sigma\f$ (must be strictly greater than zero), the
+ *          lower bound of the independent variable \f$a\f$ (optional), the
+ *          upper bound of the independent variable \f$b\f$ (optional) and the
+ *          constant multiplier \f$c\f$ (optional).
+ *      <li>The special values of "-inf" and "inf" can be used
+ *          for the bounds to essentially provide no cutoff values (these
+ *          are the default values).</li>
+ *      <li>The default multiplier \f$c\f$ is 1.0. For sampling distributions
+ *          this value will be replaced by 
+ *          \f$\frac{1.0}{\sigma \sqrt{2\pi}}\f$.</li></ul></li>
  *    <li><b>Polynomial Distribution</b>
  *     <ul>
  *      <li>\code
