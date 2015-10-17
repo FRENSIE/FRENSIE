@@ -61,7 +61,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
 			      const InputIndepQuantityA mean,
 			      const InputIndepQuantityB standard_deviation,
 			      const InputIndepQuantityC min_independent_value,
-			      const InputIndepQuanttiyC max_independent_value )
+			      const InputIndepQuantityC max_independent_value )
   : d_constant_multiplier( constant_multiplier ),
     d_mean( mean ),
     d_standard_deviation( standard_deviation ),
@@ -98,7 +98,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistr
     d_min_independent_value( dist_instance.d_min_independent_value ),
     d_max_independent_value( dist_instance.d_max_independent_value )
 {
-  remember( typedef QuantityTraits<typename UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>::IndepQuanity> InputIQT );
+  remember( typedef QuantityTraits<typename UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity> InputIQT );
   remember( typedef QuantityTraits<typename UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>::DepQuantity> InputDQT );
   // Make sure that the values are valid
   testPrecondition( !InputDQT::isnaninf( dist_instance.d_constant_multiplier ) );
@@ -169,7 +169,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::operator=(
 
 // Evaluate the distribution
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::DepQuantity 
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::DepQuantity 
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluate( const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_min_independent_value )
@@ -179,7 +179,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluate( const Unit
   else
   {
     double argument = -(indep_var_value-d_mean)*(indep_var_value-d_mean)/
-      (2*d_standard_deviation*d_standard_deviation);
+      (2.0*d_standard_deviation*d_standard_deviation);
     
     return d_constant_multiplier*exp( argument );
   }
@@ -187,7 +187,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluate( const Unit
 
 // Evaluate the PDF
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_min_independent_value )
@@ -197,7 +197,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const U
   else
   {
     double argument = -(indep_var_value-d_mean)*(indep_var_value-d_mean)/
-      (2*d_standard_deviation*d_standard_deviation);
+      (2.0*d_standard_deviation*d_standard_deviation);
   
     return UnitAwareNormalDistribution::constant_norm_factor*exp( argument )/
       d_standard_deviation;
@@ -206,7 +206,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::evaluatePDF( const U
 
 // Return a random sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
-inline UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+inline typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample(
 			            const IndepQuantity mean,
 				    const IndepQuantity standard_deviation,
@@ -215,7 +215,8 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample(
 {
   unsigned number_of_trials;
 
-  return ThisType::sampleAndRecordTrials( mean, 
+  return ThisType::sampleAndRecordTrials( number_of_trials,
+					  mean, 
 					  standard_deviation,
 					  min_independent_value,
 					  max_independent_value );
@@ -223,7 +224,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample(
 
 // Return a random sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   return ThisType::sample( d_mean, 
@@ -234,7 +235,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sample() const
 
 // Return a random sample from the distribution
 template<typename IndependentUnit, typename DependentUnit>
-inline UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+inline typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
 				    unsigned& trials,
 			            const IndepQuantity mean,
@@ -280,7 +281,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrial
 
 // Return a random sample from the corresponding CDF and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   return ThisType::sampleAndRecordTrials( trials, 
@@ -292,7 +293,7 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrial
 
 // Return the upper bound of the distribution independent variable
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
   return d_max_independent_value;
@@ -300,8 +301,8 @@ UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndep
 
 // Return the lower bound of the distribution independent variable
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-fUnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
+typename UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
   return d_min_independent_value;
 }
@@ -327,9 +328,9 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::toStream( std::
 {
   os << "{" << getRawQuantity( d_mean ) 
      << "," << getRawQuantity( d_standard_deviation ) 
-     << "," << getRawQuantity( d_constant_multiplier )
      << "," << getRawQuantity( d_min_independent_value ) 
-     << "," << getRawQuantity( d_max_independent_value ) << "}";
+     << "," << getRawQuantity( d_max_independent_value ) 
+     << "," << getRawQuantity( d_constant_multiplier ) << "}";
 }
 
 // Method for initializing the object from an input stream
@@ -415,25 +416,6 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
 		      "Error: the normal distribution cannot be constructed "
 		      "because of an invalid standard deviation "
 		      << d_standard_deviation );
-  
-  // Set the distribution multiplier
-  if( distribution.size() > 2 )
-  {
-    TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " -0123456789.e") <
-			distribution[2].size(),
-			InvalidDistributionStringRepresentation,
-			"Error: the normal distribution cannot be "
-			"constructed because of an multiplier "
-			<< distribution[2] );
-    std::istringstream entry_iss( distribution[2] );
-
-    double raw_constant_multiplier;
-    Teuchos::extractDataFromISS( entry_iss, raw_constant_multiplier );
-
-    setQuantity( d_constant_multiplier, raw_constant_multiplier );
-  }
-  else
-    d_constant_multiplier = DQT::one();
 
   TEST_FOR_EXCEPTION( d_constant_multiplier == DQT::zero(),
 		      InvalidDistributionStringRepresentation,
@@ -442,19 +424,19 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
 		      << d_constant_multiplier );
 
   // Set the min independent value
-  if( distribution.size() > 3 )
+  if( distribution.size() > 2 )
   {
-    if( distribution[3].compare( "-inf" ) == 0 )
+    if( distribution[2].compare( "-inf" ) == 0 )
       d_min_independent_value = -IQT::inf();
     else
     {
-      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " -0123456789.e")<
-			  distribution[3].size(),
+      TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " -0123456789.e")<
+			  distribution[2].size(),
 			  InvalidDistributionStringRepresentation,
 			  "Error: the normal distribution cannot be "
 			  "constructed because of an invalid min independent "
-			  "value " << distribution[3] );
-      std::istringstream entry_iss( distribution[3] );
+			  "value " << distribution[2] );
+      std::istringstream entry_iss( distribution[2] );
       
       double raw_min_independent_value;
       Teuchos::extractDataFromISS( entry_iss, raw_min_independent_value );
@@ -466,19 +448,19 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
     d_min_independent_value = -IQT::inf();
 
   // Set the max independent value
-  if( distribution.size() > 4 )
+  if( distribution.size() > 3 )
   {
-    if( distribution[4].compare( "inf" ) == 0 )
+    if( distribution[3].compare( "inf" ) == 0 )
       d_max_independent_value = IQT::inf();
     else
     {
-      TEST_FOR_EXCEPTION( distribution[4].find_first_not_of( " -0123456789.e")<
-			  distribution[4].size(),
+      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " -0123456789.e")<
+			  distribution[3].size(),
 			  InvalidDistributionStringRepresentation,
 			  "Error: the normal distribution cannot be "
 			  "constructed because of an invalid max independent "
-			  " value " << distribution[4] );
-      std::istringstream entry_iss( distribution[4] );
+			  " value " << distribution[3] );
+      std::istringstream entry_iss( distribution[3] );
       
       double raw_max_independent_value;
       Teuchos::extractDataFromISS( entry_iss, raw_max_independent_value );
@@ -494,6 +476,25 @@ void UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::fromStream( std
 		      "Error: the normal distribution cannot be "
 		      "constructed because the max independent value is not "
 		      "greater than the min independent value!" );
+
+  // Set the distribution multiplier
+  if( distribution.size() > 4 )
+  {
+    TEST_FOR_EXCEPTION( distribution[4].find_first_not_of( " -0123456789.e") <
+			distribution[4].size(),
+			InvalidDistributionStringRepresentation,
+			"Error: the normal distribution cannot be "
+			"constructed because of an invalid multiplier "
+			<< distribution[4] );
+    std::istringstream entry_iss( distribution[4] );
+
+    double raw_constant_multiplier;
+    Teuchos::extractDataFromISS( entry_iss, raw_constant_multiplier );
+
+    setQuantity( d_constant_multiplier, raw_constant_multiplier );
+  }
+  else
+    d_constant_multiplier = DQT::one();
 }
 
 // Method for testing if two objects are equivalent

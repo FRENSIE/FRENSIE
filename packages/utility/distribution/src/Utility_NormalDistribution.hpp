@@ -21,7 +21,7 @@ namespace Utility{
 //! Normal distribution class
 template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
-				    public ParameterListCompatibleObject<NormalDistribution<IndependentUnit,DependentUnit>
+				    public ParameterListCompatibleObject<UnitAwareNormalDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
@@ -73,7 +73,7 @@ public:
 			      const InputIndepQuantityA mean,
 			      const InputIndepQuantityB standard_deviation,
 			      const InputIndepQuantityC min_independent_value,
-			      const InputIndepQuanttiyC max_independent_value =
+			      const InputIndepQuantityC max_independent_value =
 			      QuantityTraits<InputIndepQuantityC>::inf() );
 			      
 
