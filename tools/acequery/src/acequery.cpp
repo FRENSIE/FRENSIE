@@ -100,12 +100,58 @@ int main( int argc, char** argv )
 				       ace_file_handler.getTableXSSArray() ) );
     }
 
-    std::cout << "ACE table name: " << data_table_name << std::endl;
-    std::cout << "Neutron MT Numbers: " << data_extractor->extractMTRBlock() 
-	      << std::endl;
-    std::cout << "Photon Production MT Numbers: " 
-	      << data_extractor->extractMTRPBlock() << std::endl;
+    std::cout << "ACE table name: " << data_table_name << "\n" << std::endl;
+
+    Teuchos::ArrayView<const double> MTRBlock = 
+                                             data_extractor->extractMTRBlock();
+
+    std::cout << "Neutron MT Numbers: \n\n";
+    for ( int i = 0; i < MTRBlock.size(); ++i )
+    {
+      if ( i != MTRBlock.size() - 1 )
+      {
+        std::cout << int (MTRBlock[i]) << ", ";
+      }
+      else
+      {
+        std::cout << int (MTRBlock[i]);
+      }
+    }
+    std::cout << std::endl;
+
+    Teuchos::ArrayView<const double> MTRPBlock =
+                                            data_extractor->extractMTRPBlock();
+
+    std::cout << "\nPhoton Production MT Numbers: \n\n";
+    for ( int i = 0; i < MTRPBlock.size(); ++i )
+    {
+      if ( i != MTRPBlock.size() - 1 )
+      {
+        std::cout << int (MTRPBlock[i]) << ", ";
+      }
+      else
+      {
+        std::cout << int (MTRPBlock[i]);
+      }
+    }
+    std::cout << std::endl;
     
+    Teuchos::ArrayRCP<double> AceLaws = data_extractor->extractAceLaws();
+    
+    std::cout << "\nAce Laws (MT Number): \n\n";
+    for ( int i = 0; i < AceLaws.size(); ++i )
+    {
+      if ( i != AceLaws.size() - 1 )
+      {
+        std::cout << int (AceLaws[i]) << " (" << int (MTRBlock[i]) << "), ";
+      }
+      else
+      {
+        std::cout << int (AceLaws[i]) << " (" << int (MTRBlock[i]) << ")";
+      }
+    }
+    std::cout << std::endl;
+
   }
   else
   {
