@@ -781,10 +781,19 @@
  *         <Parameter name="example a" type="Maxwell Fission Distribution" value="{1.0,1.0,0.1}"/>
  *         <Parameter name="example b" type="Maxwell Fission Distribution" value="{3.0,2.0,1.0}"/>
  *         <Parameter name="example c" type="Maxwell Fission Distribution" value="{1.0,1.0,0.0}"/>
+ *         <Parameter name="example d" type="Maxwell Fission Distribution" value="{1.0,1.0,0.0,0.5}"/>
  *         \endcode</li>
- *     <li> Models a Maxwell fission spectrum \f$C\sqrt{E_{out}}e^{-E_{out}/T(E_{in})}\f$ where \f$C^{-1}=T^{3/2}[(\frac{\sqrt{\pi}}{2})erf(\sqrt{\frac{E_{in}-U}{T}})-\sqrt{\frac{E_{in}-U}{T}}e^{-(E_{in}-U)/T}]\f$.</li>
- *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the nuclear temperature \f$T(E_{in})\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
- *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$T(E_{in})\f$, and 0.0 for \f$U\f$.</li></ul></li>
+ *     <li>Models a Maxwell fission spectrum \f$c\sqrt{x}e^{-x/T(E_{in})}\f$ 
+ *         for \f$x \in [0,E_{in}-U]\f$.</li>
+ *     <li>The value attribute specifies the incident energy \f$E_{in}\f$, the 
+ *         nuclear temperature \f$T(E_{in})\f$, the restriction energy \f$U\f$,
+ *         and the constant multiplier \f$c\f$ (optional).</li>
+ *     <li>The incident neutron energy and nuclear temperature must be strictly
+ *         positive.</li>
+ *     <li>The default values are 1.0 for \f$E_{in}\f$, 1.0 for 
+ *         \f$T(E_{in})\f$, 0.0 for \f$U\f$ and 1.0 for \f$c\f$.</li>
+ *     <li>For sampling distributions the constant multiplier \f$c\f$ will be
+ *         replaced with \f$C^{-1}=T^{3/2}[(\frac{\sqrt{\pi}}{2})erf(\sqrt{\frac{E_{in}-U}{T}})-\sqrt{\frac{E_{in}-U}{T}}e^{-(E_{in}-U)/T}]\f$.</li></ul></li>
  *   <li><b>Watt distribution</b>
  *    <ul>
  *     <li>\code
