@@ -799,10 +799,20 @@
  *     <li>\code
  *         <Parameter name="example a" type="Watt Distribution" value="{1.0,1.0,1.0,0.1}"/>
  *         <Parameter name="example b" type="Watt Distribution" value="{3.0,2.0,1.0,0.0}"/>
+ *         <Parameter name="example c" type="Watt Distribution" value="{3.0,2.0,1.0,0.0,0.5}"/>
  *         \endcode</li>
- *     <li> Models a Watt spectrum \f$Ce^{-E_{out}/a(E_{in})}sinh\sqrt{b(E_{in})E_{out}}\f$ where \f$C^{-1}=\frac{1}{2}\sqrt{\frac{\pi a^{3}b}{4}}exp(\frac{ab}{4})[erf(\sqrt{\frac{E_{in}-U}{a}}-\sqrt{\frac{ab}{4}})+erf(\sqrt{\frac{E_{in}-U}{a}}+\sqrt{\frac{ab}{4}})]-aexp[-\frac{E_{in}-U}{a}]sinh\sqrt{b(E_{in}-U)}\f$.</li>
- *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the isotope and energy dependent paramters \f$a\f$ and \f$b\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
- *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$a\f$, 1.0 for \f$b\f$ and 0.0 for \f$U\f$.</li></ul></li>
+ *     <li>Models a Watt spectrum \f$ce^{-x/a(E_{in})}sinh\sqrt{b(E_{in})x}\f$
+ *         for \f$x \in [0,E_{in}-U]\f$.</li>
+ *     <li>The value attribute specifies the incident energy \f$E_{in}\f$, the 
+ *         isotope and energy dependent paramters \f$a\f$ and \f$b\f$, the 
+ *         restriction energy \f$U\f$, and the constant multiplier \f$c\f$
+ *         (optional).</li>
+ *     <li>The incident neutron energy and nuclear temperature must
+ *         be strictly positive.</li>
+ *     <li>The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$a\f$, 1.0 
+ *         for \f$b\f$, 0.0 for \f$U\f$, and 1.0 for \f$c\f$.</li>
+ *     <li>For sampling distributions the constant multiplier c will be 
+ *         replaced with \f$C^{-1}=\frac{1}{2}\sqrt{\frac{\pi a^{3}b}{4}}exp(\frac{ab}{4})[erf(\sqrt{\frac{E_{in}-U}{a}}-\sqrt{\frac{ab}{4}})+erf(\sqrt{\frac{E_{in}-U}{a}}+\sqrt{\frac{ab}{4}})]-aexp[-\frac{E_{in}-U}{a}]sinh\sqrt{b(E_{in}-U)}\f$.</li></ul></li>
  *    <li><b>Normal distribution</b>
  *     <ul>
  *      <li>\code

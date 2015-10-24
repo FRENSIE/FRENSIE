@@ -79,7 +79,8 @@ public:
 			const IndepQuantity incident_energy = IQT::one(),
 			const IndepQuantity a_parameter = IQT::one(),
 			const InverseIndepQuantity b_parameter = IIQT::one(),
-			const IndepQuantity restriction_energy = IQT::zero() );
+			const IndepQuantity restriction_energy = IQT::zero(),
+			const double constant_multiplier = 1.0 );
 
   //! Constructor
   template<typename InputIndepQuantityA,
@@ -90,7 +91,8 @@ public:
 			    const InputIndepQuantityA incident_energy,
 			    const InputIndepQuantityB a_parameter,
 			    const InputInverseIndepQuantity b_parameter,
-			    const InputIndepQuantityC restriction_energy );
+			    const InputIndepQuantityC restriction_energy,
+			    const double constant_multiplier = 1.0 );
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
