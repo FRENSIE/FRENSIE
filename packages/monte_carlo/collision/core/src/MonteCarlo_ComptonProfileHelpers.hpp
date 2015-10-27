@@ -26,6 +26,7 @@ void createFullProfileFromHalfProfile(
 			      const ProfileIterator half_profile_end,
 			      STLCompliantArrayA& full_momentum_grid,
 			      STLCompliantArrayB& full_profile,
+			      const bool extend_if_possible = false,
 			      const bool doubled_half_profile = true );
 
 //! Convert the momentum grid from me*e^2/h_bar to me*c units	     

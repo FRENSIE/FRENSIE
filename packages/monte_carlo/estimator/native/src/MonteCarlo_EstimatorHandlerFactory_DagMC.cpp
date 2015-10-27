@@ -51,10 +51,13 @@ const std::string EstimatorHandlerFactory<moab::DagMC>::cell_collision_flux_name
 const std::string EstimatorHandlerFactory<moab::DagMC>::tet_mesh_track_length_flux_name = 
   "Tet Mesh Track-Length Flux";
 
+std::ostream* EstimatorHandlerFactory<moab::DagMC>::s_os_warn = NULL;
+
 // Initialize the estimator handler using DagMC
 void EstimatorHandlerFactory<moab::DagMC>::initializeHandler(
 				 const Teuchos::ParameterList& response_reps,
-				 const Teuchos::ParameterList& estimator_reps )
+				 const Teuchos::ParameterList& estimator_reps,
+				 std::ostream& os_warn )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   // Create the response functions
@@ -320,7 +323,7 @@ void EstimatorHandlerFactory<moab::DagMC>::initializeHandler(
     estimator_id_type_map.erase( id );
     estimator_id_ptype_map.erase( id );
 
-    estimator_rep.unused( std::cout );
+    estimator_rep.unused( *s_os_warn );
     
     ++it;
   }
@@ -1446,7 +1449,7 @@ void EstimatorHandlerFactory<moab::DagMC>::assignBinsToEstimator(
     ++it;
   }
 
-  bins.unused( std::cout );
+  bins.unused( *s_os_warn );
       
 }
 

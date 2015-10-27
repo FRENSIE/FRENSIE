@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_InverseLengthConversionPolicy.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -84,12 +84,12 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+  Utility::GaussKronrodQuadratureSet quadrature_gkq_set( precision );
 
   const double min_scattering_angle_cosine = 
     calculateMinScatteringAngleCosine( incoming_energy, max_energy );
 
-  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
+  quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     min_scattering_angle_cosine,
 					     1.0,
 					     integrated_cs,

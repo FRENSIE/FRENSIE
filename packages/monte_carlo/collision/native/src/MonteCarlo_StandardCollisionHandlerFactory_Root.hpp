@@ -39,7 +39,8 @@ class StandardCollisionHandlerFactory<Geometry::Root> : public CollisionHandlerF
 public:
 
   // Constructor
-  StandardCollisionHandlerFactory()
+  StandardCollisionHandlerFactory( std::ostream* os_warn = &std::cerr )
+    : CollisionHandlerFactory( os_warn )
   { /* ... */ }
 
   // Destructor

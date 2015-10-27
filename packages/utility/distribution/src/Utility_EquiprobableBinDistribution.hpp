@@ -21,9 +21,12 @@
 
 namespace Utility{
 
-//! The equiprobable bin distribution class
-  class EquiprobableBinDistribution : public TabularOneDDistribution,
-	       public ParameterListCompatibleObject<EquiprobableBinDistribution>
+/*! The unit-aware equiprobable bin distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+					     public ParameterListCompatibleObject<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
@@ -33,57 +36,74 @@ private:
 
 public:
 
+  //! The independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+  
   //! Default constructor
-  EquiprobableBinDistribution();
+  UnitAwareEquiprobableBinDistribution();
+
+  //! Basic constructor (potentially dangerous)
+  explicit UnitAwareEquiprobableBinDistribution( const Teuchos::Array<double>& bin_boundaries);
 
   //! Constructor
-  EquiprobableBinDistribution( const Teuchos::Array<double>& bin_boundaries);
+  template<typename InputIndepQuantity>
+  explicit UnitAwareEquiprobableBinDistribution( const Teuchos::Array<InputIndepQuantity>& bin_boundaries );
 
   //! Copy constructor
-  EquiprobableBinDistribution(
-			    const EquiprobableBinDistribution& dist_instance );
+  UnitAwareEquiprobableBinDistribution(
+		   const UnitAwareEquiprobableBinDistribution& dist_instance );
+
+  //! Copy constructor (copying from unitless distribution only)
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEquiprobableBinDistribution );
 
   //! Assignment operator
-  EquiprobableBinDistribution& operator=(
-		            const EquiprobableBinDistribution& dist_instance );
+  UnitAwareEquiprobableBinDistribution& operator=(
+		   const UnitAwareEquiprobableBinDistribution& dist_instance );
 
   //! Destructor
-  ~EquiprobableBinDistribution()
+  ~UnitAwareEquiprobableBinDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the CDF
-  double evaluateCDF( const double indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
-
-  //! Return a random sample from the distribution and the sampled index 
-  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
 
-  //! Return a random sample from the distribution in a subrange
-  double sampleInSubrange( const double max_indep_var ) const;
+  //! Return a random sample and sampled index from the corresponding CDF
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the corresponding CDF in a subrange
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  double sampleWithRandomNumberInSubrange( const double random_number,
-					   const double max_indep_var ) const;
+  IndepQuantity sampleWithRandomNumberInSubrange( 
+				     const double random_number,
+				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
-  //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  //! Return a random sample from the distribution and the sampled index 
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -98,24 +118,34 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const EquiprobableBinDistribution& other ) const;
+  bool isEqual( const UnitAwareEquiprobableBinDistribution& other ) const;
 
 private:
 
   // Return a random sample using the random number and record the bin index
-  double sampleImplementation( double random_number,
-			       unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleImplementation( double random_number,
+				      unsigned& sampled_bin_index ) const;
+
+  // Initialize the distribution
+  void initializeDistribution( const Teuchos::Array<double>& bin_boundaries );
+
+  // Initialize the distribution
+  template<typename InputIndepQuantity>
+  void initializeDistribution(
+		    const Teuchos::Array<InputIndepQuantity>& bin_boundaries );
 
   // The disribution type
   static const OneDDistributionType distribution_type = 
     EQUIPROBABLE_BIN_DISTRIBUTION;
 
   // The distribution
-  Teuchos::Array<double> d_bin_boundaries;
+  Teuchos::Array<IndepQuantity> d_bin_boundaries;
 };
 
 // Return a random sample using the random number and record the bin index
-inline double EquiprobableBinDistribution::sampleImplementation( 
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
 				            double random_number,
 				            unsigned& sampled_bin_index ) const
 {
@@ -133,9 +163,11 @@ inline double EquiprobableBinDistribution::sampleImplementation(
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
-inline double EquiprobableBinDistribution::sampleWithRandomNumberInSubrange( 
-					     const double random_number,
-					     const double max_indep_var ) const
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+     const double random_number,
+     const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -151,6 +183,11 @@ inline double EquiprobableBinDistribution::sampleWithRandomNumberInSubrange(
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
+
+/*! The equiprobable bin distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
   
 } // end Utility namespace
 
@@ -177,7 +214,38 @@ public:
   }
 };
 
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareEquiprobableBinDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U,typename V>
+class TypeNameTraits<Utility::UnitAwareEquiprobableBinDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Equiprobable Bin Distribution (" +
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+		  const Utility::UnitAwareEquiprobableBinDistribution<U,V>& instance )
+  {
+    return name();
+  }
+};
+
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_EquiprobableBinDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
