@@ -78,6 +78,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TWOBS_DISTRIBUTION );
+	
 }
 
 //---------------------------------------------------------------------------//
@@ -500,6 +501,16 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFun
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TABULAR_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of batches per processor can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfBatchesPerProcessor )
+{
+  MonteCarlo::SimulationProperties::setNumberOfBatchesPerProcessor( 25 );
+  
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getNumberOfBatchesPerProcessor(),
+    25 );
 }
 
 //---------------------------------------------------------------------------//

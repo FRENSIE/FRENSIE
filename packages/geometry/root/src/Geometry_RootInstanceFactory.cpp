@@ -18,10 +18,17 @@
 
 namespace Geometry{
 
+// Initialize the static member data
+std::ostream* RootInstanceFactory::s_os_warn = NULL;
+
 // Initialize Root
 void RootInstanceFactory::initializeRoot( 
-				       const Teuchos::ParameterList& geom_rep )
+				       const Teuchos::ParameterList& geom_rep,
+				       std::ostream& os_warn )
 {
+  // Set the warning output stream
+  s_os_warn = &os_warn;
+
   // Validate the geometry representation
   RootInstanceFactory::validateGeometryRep( geom_rep );
 
@@ -32,7 +39,7 @@ void RootInstanceFactory::initializeRoot(
   Geometry::Root::initialize( root_file_name );
 
   // Print unused parameters
-  geom_rep.unused( std::cerr );
+  geom_rep.unused( *s_os_warn );
 
 }
 

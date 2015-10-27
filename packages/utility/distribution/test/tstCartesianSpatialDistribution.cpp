@@ -65,8 +65,7 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, evaluate )
   point[0] = 1.0;
   point[1] = 1.0;
   point[2] = 1.0;
-  TEST_EQUALITY_CONST( spatial_distribution->evaluate( point ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( spatial_distribution->evaluate( point ), 0.25 );
 
   point[0] = 1.0;
   point[1] = 3.0;

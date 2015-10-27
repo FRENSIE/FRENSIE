@@ -26,6 +26,14 @@
 
 namespace MonteCarlo{
 
+// Constructor
+CollisionHandlerFactory::CollisionHandlerFactory( std::ostream* os_warn )
+  : d_os_warn( os_warn )
+{
+  // Make sure the output stream is valid
+  testPrecondition( os_warn != NULL );
+}
+
 // Initialize the collision handler
 /*! \details Make sure the simulation properties have been set 
  * (in MonteCarlo::SimulationProperties) before running this factory
@@ -34,7 +42,7 @@ namespace MonteCarlo{
 void CollisionHandlerFactory::initializeHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
-		     const std::string& cross_sections_xml_directory ) const
+		     const std::string& cross_sections_xml_directory )
 {
   // Validate the materials
   Teuchos::ParameterList::ConstIterator it = material_reps.begin();
@@ -106,21 +114,20 @@ void CollisionHandlerFactory::initializeHandler(
   {
   case NEUTRON_MODE:
   {
-    CollisionHandlerFactory::createNeutronMaterials(
-						  cross_sections_table_info,
-						  cross_sections_xml_directory,
-						  material_id_fraction_map,
-						  material_id_component_map,
-						  aliases,
-						  cell_id_mat_id_map,
-						  cell_id_density_map,
-						  false,
-						  false );
+    this->createNeutronMaterials( cross_sections_table_info,
+				  cross_sections_xml_directory,
+				  material_id_fraction_map,
+				  material_id_component_map,
+				  aliases,
+				  cell_id_mat_id_map,
+				  cell_id_density_map,
+				  false,
+				  false );
     break;
   }
   case PHOTON_MODE:
   {
-    CollisionHandlerFactory::createPhotonMaterials(
+    this->createPhotonMaterials( 
 		     cross_sections_table_info,
 		     cross_sections_xml_directory,
 		     material_id_fraction_map,
@@ -139,21 +146,20 @@ void CollisionHandlerFactory::initializeHandler(
   }
   case NEUTRON_PHOTON_MODE:
   {
-    std::cerr << "Warning: Neutron-Photon mode is not fully supported!" 
+    *d_os_warn << "Warning: Neutron-Photon mode is not fully supported!" 
 	      << std::endl;
     
-    CollisionHandlerFactory::createNeutronMaterials(
-						  cross_sections_table_info,
-						  cross_sections_xml_directory,
-						  material_id_fraction_map,
-						  material_id_component_map,
-						  aliases,
-						  cell_id_mat_id_map,
-						  cell_id_density_map,
-						  false,
-						  true );
+    this->createNeutronMaterials( cross_sections_table_info,
+				  cross_sections_xml_directory,
+				  material_id_fraction_map,
+				  material_id_component_map,
+				  aliases,
+				  cell_id_mat_id_map,
+				  cell_id_density_map,
+				  false,
+				  true );
 
-    CollisionHandlerFactory::createPhotonMaterials(
+    this->createPhotonMaterials(
 		     cross_sections_table_info,
 		     cross_sections_xml_directory,
 		     material_id_fraction_map,
@@ -172,7 +178,7 @@ void CollisionHandlerFactory::initializeHandler(
   }
   case ELECTRON_MODE:
   {
-    CollisionHandlerFactory::createElectronMaterials(
+    this->createElectronMaterials(
 		     cross_sections_table_info,
 		     cross_sections_xml_directory,
 		     material_id_fraction_map,
@@ -336,7 +342,8 @@ void CollisionHandlerFactory::createNeutronMaterials(
 				  cross_sections_table_info,
 				  nuclide_aliases,
 				  use_unresolved_resonance_data,
-				  use_photon_production_data );
+				  use_photon_production_data,
+				  d_os_warn );
 
   boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
 
@@ -405,7 +412,8 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					incoherent_model,
 					kahn_sampling_cutoff_energy,
 					use_detailed_pair_production_data,
-					use_atomic_relaxation_data );
+					use_atomic_relaxation_data,
+					d_os_warn );
     
     photoatom_factory.createPhotoatomMap( photoatom_map );
   }
@@ -457,7 +465,8 @@ void CollisionHandlerFactory::createElectronMaterials(
 					  electroatom_aliases,
                                           atomic_relaxation_model_factory,
                                           photon_distribution_function,
-                                          use_atomic_relaxation_data );
+                                          use_atomic_relaxation_data,
+					  d_os_warn );
     
   electroatom_factory.createElectroatomMap( electroatom_map );
 

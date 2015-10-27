@@ -104,22 +104,11 @@ void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 						this->getAtomicWeightRatio() );
 
   // Rotate the direction through the sampled angles
-  double outgoing_particle_direction[3];
-  
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-					      scattering_angle_cosine,
-					      this->sampleAzimuthalAngle(),
-					      incoming_particle.getDirection(),
-					      outgoing_particle_direction );
+  outgoing_particle.rotateDirection( scattering_angle_cosine,
+				     this->sampleAzimuthalAngle() );
 
   // Set the new energy
   outgoing_particle.setEnergy( outgoing_energy );
-  
-  // Set the new direction
-  outgoing_particle.setDirection( outgoing_particle_direction );
-  // outgoing_particle.setDirection( incoming_particle.getDirection() );
-  // outgoing_particle.rotateDirection( scattering_angle_cosine, 
-  // 				     sampleAzimuthalAngle() );
 }
 
 } // End MonteCarlo namespace

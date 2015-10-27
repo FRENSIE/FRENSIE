@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <ostream>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -31,8 +32,7 @@ class CollisionHandlerFactory
 public:
 
   //! Constructor
-  CollisionHandlerFactory()
-  { /* ... */ }
+  CollisionHandlerFactory( std::ostream* os_warn );
 
   //! Destructor
   virtual ~CollisionHandlerFactory()
@@ -42,7 +42,7 @@ public:
   void initializeHandler( 
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
-		     const std::string& cross_sections_xml_directory ) const;
+		     const std::string& cross_sections_xml_directory );
 
 protected:
 
@@ -78,7 +78,7 @@ protected:
                     Teuchos::Array<std::string> >& material_id_component_map );
 
   //! Create the neutron materials
-  static void createNeutronMaterials( 
+  void createNeutronMaterials( 
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -94,7 +94,7 @@ protected:
    const bool use_photon_production_data );
    
   //! Create the photon materials
-  static void createPhotonMaterials(
+  void createPhotonMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -116,7 +116,7 @@ protected:
    const bool use_photonuclear_data );
 
   //! Create the electron materials
-  static void createElectronMaterials(
+  void createElectronMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -168,6 +168,9 @@ private:
 
   // Assignment operator
   CollisionHandlerFactory& operator=( CollisionHandlerFactory& copy );
+
+  // The warning output stream
+  std::ostream* d_os_warn;
 };
 
 //! The invalid material representation error

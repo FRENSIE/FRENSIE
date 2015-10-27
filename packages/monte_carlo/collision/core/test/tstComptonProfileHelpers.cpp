@@ -36,12 +36,52 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   
   Teuchos::Array<double> full_momentum_grid, full_profile;
 
+  // Check that the grid can be preserved
   MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
 						half_momentum_grid.end(),
 						half_profile.begin(),
 						half_profile.end(),
 						full_momentum_grid,
 						full_profile,
+						false,
+						false );
+
+  TEST_EQUALITY_CONST( full_momentum_grid.size(), 5 );
+  TEST_EQUALITY_CONST( full_momentum_grid.front(), -100.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid.back(), 100.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[1], -10.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[3], 10.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[2], 0.0 );
+
+  TEST_EQUALITY_CONST( full_profile.size(), 5 );
+  
+  TEST_FLOATING_EQUALITY( full_profile.front(),
+			  5.177281263934e-11,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile.back(),
+			  5.177281263934e-11,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[1],
+			  1.63283486016400008e-06,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[3],
+			  1.63283486016400008e-06,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[2],
+			  1.69058145887700007,
+			  1e-12 );
+
+  full_momentum_grid.clear();
+  full_profile.clear();
+
+  // Check that the grid can be extended
+  MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
+						half_momentum_grid.end(),
+						half_profile.begin(),
+						half_profile.end(),
+						full_momentum_grid,
+						full_profile,
+						true,
 						false );
 
   TEST_EQUALITY_CONST( full_momentum_grid.size(), 7 );
@@ -56,8 +96,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   TEST_EQUALITY_CONST( full_momentum_grid[3], 0.0 );
 
   TEST_EQUALITY_CONST( full_profile.size(), 7 );
-  std::cout.precision( 18 );
-  std::cout << full_profile.front() << std::endl;
+  
   TEST_FLOATING_EQUALITY( full_profile.front(),
 			  7.2908632235832003e-13,
 			  1e-12 );
@@ -98,12 +137,48 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   
   Teuchos::Array<double> full_momentum_grid, full_profile;
 
+  // Check that the grid can be preserved
   MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
 						half_momentum_grid.end(),
 						half_profile.begin(),
 						half_profile.end(),
 						full_momentum_grid,
 						full_profile,
+						false,
+						true );
+
+  TEST_EQUALITY_CONST( full_momentum_grid.size(), 5 );
+  TEST_EQUALITY_CONST( full_momentum_grid.front(), -100.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid.back(), 100.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[1], -10.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[3], 10.0 );
+  TEST_EQUALITY_CONST( full_momentum_grid[2], 0.0 );
+
+  TEST_EQUALITY_CONST( full_profile.size(), 5 );
+  TEST_FLOATING_EQUALITY( full_profile.front(),
+			  5.177281263934e-11/2,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile.back(),
+			  5.177281263934e-11/2,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[1],
+			  1.63283486016400008e-06/2,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[3],
+			  1.63283486016400008e-06/2,
+			  1e-12 );
+  TEST_FLOATING_EQUALITY( full_profile[2],
+			  1.69058145887700007/2,
+			  1e-12 );
+  
+  // Check that the grid can be extended
+  MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
+						half_momentum_grid.end(),
+						half_profile.begin(),
+						half_profile.end(),
+						full_momentum_grid,
+						full_profile,
+						true,
 						true );
 
   TEST_EQUALITY_CONST( full_momentum_grid.size(), 7 );

@@ -71,7 +71,47 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
 {
-  return 0.0;
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy < incoming_energy );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  const double multiplier = this->evaluateMultiplier(incoming_energy,
+						     outgoing_energy,
+						     scattering_angle_cosine);
+  
+  const double electron_momentum_projection = 
+    calculateElectronMomentumProjection( incoming_energy,
+					 outgoing_energy,
+					 scattering_angle_cosine );
+
+  double compton_profile_terms = 0.0;				       
+
+  for( unsigned i = 0; i < d_old_subshell_binding_energy.size(); ++i )
+  {
+    if( incoming_energy >= d_old_subshell_binding_energy[i] )
+    {
+      // Half profiles are multiplied by 2 two keep them normalized - divide
+      // by two after evaluating the profile.
+      if( d_half_profiles )
+      {
+	compton_profile_terms += 
+	  d_electron_momentum_distribution[i]->evaluate( 
+				      fabs( electron_momentum_projection ) )/2;
+      }
+      else
+      {
+	compton_profile_terms +=
+	  d_electron_momentum_distribution[i]->evaluate(
+					        electron_momentum_projection );
+      }
+    }
+  }
+
+  return multiplier*compton_profile_terms;
 }
     
 // Evaluate the subshell distribution
@@ -81,7 +121,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshe
 				          const double scattering_angle_cosine,
 					  const SubshellType subshell ) const
 {
-  return 0.0;
+  
 }
 
 // Evaluate the PDF
@@ -158,8 +198,13 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
   // Record if a valid Doppler broadening energy is calculated
   bool valid_doppler_broadening = false;
 
-  while( true )
+  // Record the number of iterations
+  unsigned iterations = 0u;
+
+  while( iterations < 1000 )
   {
+    ++iterations;
+    
     // Sample the shell that is interacted with
     unsigned compton_shell_index;
     double subshell_binding_energy;
@@ -176,14 +221,16 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 
     // Compton scattering can only occur if there is enough energy to release
     // the electron from its shell
-    if( energy_max <= 0.0 )
-    {
-      valid_doppler_broadening = false;
+    // if( energy_max <= 0.0 )
+    // {
+    //   valid_doppler_broadening = false;
 
-      ++trials;
+    //   ++trials;
       
-      break;
-    }
+    //   break;
+    // }
+    if( energy_max <= 0.0 )
+      continue;
 
     // Calculate the maximum electron momentum projection
     double pz_max = calculateMaxElectronMomentumProjection( 
@@ -193,14 +240,16 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 
     // If using a half profile, make sure the maximum electron momentum 
     // projection is positive (why? - pz_max >= -1.0 is acceptable...)
+    // if( pz_max < compton_profile.getLowerBoundOfIndepVar() )
+    // {
+    //   valid_doppler_broadening = false;
+
+    //   ++trials;
+
+    //   break;
+    // }
     if( pz_max < compton_profile.getLowerBoundOfIndepVar() )
-    {
-      valid_doppler_broadening = false;
-
-      ++trials;
-
-      break;
-    }
+      continue;
 
     double pz_table_max = compton_profile.getUpperBoundOfIndepVar();
     
@@ -223,26 +272,40 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 						      scattering_angle_cosine,
 						      energetically_possible );
     
+    // if( !energetically_possible || outgoing_energy < 0.0 )
+    // {
+    //   valid_doppler_broadening = false;
+
+    //   ++trials;
+
+    //   break;
+    // }
     if( !energetically_possible || outgoing_energy < 0.0 )
-    {
-      valid_doppler_broadening = false;
+      continue;
+    // else
+    // {
+    //   if( outgoing_energy == 0.0 )
+    // 	outgoing_energy = std::numeric_limits<double>::min();
+      
+    //   valid_doppler_broadening = true;
+      
+    //   ++trials;
 
-      ++trials;
-
-      break;
-    }
+    //   break;
+    // }
     else
     {
       if( outgoing_energy == 0.0 )
 	outgoing_energy = std::numeric_limits<double>::min();
       
       valid_doppler_broadening = true;
-      
-      ++trials;
 
       break;
     }
   }
+
+  // Increment the number of trials
+  trials += iterations;
 
   // reset the outgoing energy to the Compton line energy
   if( !valid_doppler_broadening ) 

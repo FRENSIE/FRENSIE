@@ -17,7 +17,7 @@
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -34,8 +34,8 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
   testPrecondition( kahn_sampling_cutoff_energy >= 
 		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
-  // Force the quadrature kernel to throw exceptions
-  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+  // Force the quadrature gkq_set to throw exceptions
+  Utility::GaussKronrodQuadratureSet::throwExceptions( true );
 }
 
 // Evaluate the PDF

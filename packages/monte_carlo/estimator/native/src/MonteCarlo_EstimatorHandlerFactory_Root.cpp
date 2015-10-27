@@ -51,11 +51,17 @@ const std::string EstimatorHandlerFactory<Geometry::Root>::cell_collision_flux_n
 const std::string EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name = 
   "Tet Mesh Track-Length Flux";
 
+std::ostream* EstimatorHandlerFactory<Geometry::Root>::s_os_warn = NULL;
+
 // Initialize the estimator handler using Root
 void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
 				 const Teuchos::ParameterList& response_reps,
-				 const Teuchos::ParameterList& estimator_reps )
+				 const Teuchos::ParameterList& estimator_reps,
+				 std::ostream& os_warn )
 {
+  // Set the warning output stream
+  s_os_warn = &os_warn;
+  
   // Create the response functions
   boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> > 
     response_id_map;
@@ -242,7 +248,7 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
       }
       else
       {
-        std::cerr << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+        *s_os_warn << "Warning: Estimator type: " << estimator_id_type_map[id] <<
                   " is not a valid estimator type for the Root geometry " <<
                   "handler. Therefore, estimator " << id << " will be ignored." <<
                   std::endl;
@@ -263,16 +269,16 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
       if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceFluxEstimator( estimator_id_type_map[id] ) || 
           EstimatorHandlerFactory<Geometry::Root>::isSurfaceCurrentEstimator( estimator_id_type_map[id] ) )
       {
-        std::cerr << "Warning: Surface estimators are not supported by the "
+        *s_os_warn << "Warning: Surface estimators are not supported by the "
                   "Root geometry handler. Estimator " << id << " will be " <<
                   "ignored." << std::endl;
       }
       else
       {
-        std::cerr << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+        *s_os_warn << "Warning: Estimator type: " << estimator_id_type_map[id] <<
                   " is not a valid estimator type for the Root geometry " <<
-                  "handler. Therefore, estimator " << id << " will be ignored." <<
-                  std::endl;
+                  "handler. Therefore, estimator " << id << " will be ignored."
+	       << std::endl;
       }
 
       estimator_id_surfaces_map.erase( id );
@@ -285,7 +291,7 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
     else if( estimator_id_type_map[id] == 
 	     EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name )
     {
-      std::cout << "Warning: Root does not currently support the tetrahedral " <<
+      *s_os_warn << "Warning: Root does not currently support the tetrahedral " <<
                    "mesh track length flux estimator. As such, estimator " <<
                    id << " will not be implemented." << std::endl;
     }
@@ -294,7 +300,7 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
     estimator_id_type_map.erase( id );
     estimator_id_ptype_map.erase( id );
 
-    estimator_rep.unused( std::cout );
+    estimator_rep.unused( *s_os_warn );
     
     ++it;
   }
@@ -1083,7 +1089,7 @@ void EstimatorHandlerFactory<Geometry::Root>::assignBinsToEstimator(
     ++it;
   }
 
-  bins.unused( std::cout );
+  bins.unused( *s_os_warn );
       
 }
 

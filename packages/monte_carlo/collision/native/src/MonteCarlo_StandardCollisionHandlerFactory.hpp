@@ -38,7 +38,8 @@ class StandardCollisionHandlerFactory : public CollisionHandlerFactory
 public:
 
   // Constructor
-  StandardCollisionHandlerFactory()
+  StandardCollisionHandlerFactory( std::ostream* os_warn = &std::cerr ) 
+    : CollisionHandlerFactory( os_warn )
   { /* ... */ }
 
   // Destructor
@@ -64,9 +65,9 @@ protected:
 //! Helper function for creating a collision handler instance
 template<typename GeometryHandler>
 inline Teuchos::RCP<CollisionHandlerFactory> 
-getCollisionHandlerFactoryInstance()
+getCollisionHandlerFactoryInstance( std::ostream* os_warn = &std::cerr )
 {
-  return Teuchos::rcp( new StandardCollisionHandlerFactory<GeometryHandler>() );
+  return Teuchos::rcp( new StandardCollisionHandlerFactory<GeometryHandler>( os_warn ) );
 }
 
 } // end MonteCarlo namespace

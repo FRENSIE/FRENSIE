@@ -72,6 +72,9 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
+	
+	TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getNumberOfBatchesPerProcessor(),
+	  25 );
 }
 
 //---------------------------------------------------------------------------//

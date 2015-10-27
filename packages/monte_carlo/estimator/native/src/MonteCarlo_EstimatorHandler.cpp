@@ -128,24 +128,24 @@ void EstimatorHandler::exportEstimatorData(
   
   // Initialize the HDF5 file
   EstimatorHDF5FileHandler hdf5_file_handler( data_file_name );
-
+  
   // Set the simulation time
   hdf5_file_handler.setSimulationTime( end_time - start_time );
-
+  
   Estimator::setStartTime( start_time );
   Estimator::setEndTime( end_time );
   
   // Set the last history simulated
   hdf5_file_handler.setLastHistorySimulated( last_history_number );
-
+  
   // Set the number of histories simulated
   hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
-
+  
   Estimator::setNumberOfHistories( histories_completed );
-
+  
   // Export the data in each estimator
   EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
-
+  
   while( it != EstimatorHandler::master_array.end() )
   {
     (*it)->exportData( hdf5_file_handler, process_data );
