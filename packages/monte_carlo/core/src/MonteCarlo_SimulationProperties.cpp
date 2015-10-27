@@ -99,6 +99,9 @@ bool SimulationProperties::photonuclear_interaction_mode_on = false;
 BremsstrahlungAngularDistributionType 
   SimulationProperties::bremsstrahlung_angular_distribution_function = 
                              TWOBS_DISTRIBUTION;
+                             
+// The ideal number of batches per processor
+unsigned SimulationProperties::number_of_batches_per_processor = 25;
 
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
@@ -262,6 +265,13 @@ void SimulationProperties::setBremsstrahlungAngularDistributionFunction(
                           const BremsstrahlungAngularDistributionType function )
 {
   SimulationProperties::bremsstrahlung_angular_distribution_function = function;
+}
+
+// Set the ideal number of batches per processor for an MPI configuration
+void SimulationProperties::setNumberOfBatchesPerProcessor( 
+                                                       const unsigned batches )
+{
+  SimulationProperties::number_of_batches_per_processor = batches;
 }
 
 } // end MonteCarlo namespace

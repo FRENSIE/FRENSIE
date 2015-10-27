@@ -119,6 +119,9 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 				     neutron_velocity[1]/cm_neutron_speed,
 				     neutron_velocity[2]/cm_neutron_speed};
 
+   // Eliminate roundoff errors from the previous division operation
+   Utility::normalizeDirection( cm_neutron_direction );
+
    // Sample the CM scattering angle cosine
    double cm_scattering_angle_cosine = 
      d_angular_scattering_distribution->sampleAngleCosine( 
@@ -133,7 +136,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 						sampleAzimuthalAngle(),
 						cm_neutron_direction,
 						cm_outgoing_neutron_direction);
-
+   
    neutron_velocity[0] = cm_neutron_speed*cm_outgoing_neutron_direction[0];
    neutron_velocity[1] = cm_neutron_speed*cm_outgoing_neutron_direction[1];
    neutron_velocity[2] = cm_neutron_speed*cm_outgoing_neutron_direction[2];

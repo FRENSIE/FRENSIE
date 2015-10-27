@@ -42,10 +42,10 @@ ParticleSimulationManager<GeometryHandler,
 			  SourceHandler,
 			  EstimatorHandler,
 			  CollisionHandler>::ParticleSimulationManager( 
-				const unsigned number_of_histories,
-				const unsigned start_history,
-				const unsigned previously_completed_histories,
-				const double previous_run_time )
+		       const unsigned long long number_of_histories,
+		       const unsigned long long start_history,
+		       const unsigned long long previously_completed_histories,
+		       const double previous_run_time )
   : d_start_history( start_history ),
     d_history_number_wall( start_history + number_of_histories ),
     d_histories_completed( previously_completed_histories ),
@@ -142,15 +142,41 @@ void ParticleSimulationManager<GeometryHandler,
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Set the start time
-  d_start_time = Utility::GlobalOpenMPSession::getTime();
+  this->setStartTime( Utility::GlobalOpenMPSession::getTime() );
 
+  // Simulate the batch
+  this->runSimulationBatch( d_start_history, d_history_number_wall );
+    
+  // Set the end time
+  this->setEndTime( Utility::GlobalOpenMPSession::getTime() );
+
+  std::cout << "done." << std::endl;
+}
+
+// Run the simulation batch
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::runSimulationBatch( 
+                            const unsigned long long batch_start_history, 
+			    const unsigned long long batch_end_history )
+{
+  // Make sure the history range is valid
+  testPrecondition( batch_start_history <= batch_end_history );
+  testPrecondition( batch_start_history >= d_start_history );
+  testPrecondition( batch_end_history <= d_history_number_wall );
+  
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   { 
     // Create a bank for each thread
     ParticleBank bank;
 
     #pragma omp for
-    for( unsigned history = d_start_history; history < d_history_number_wall; ++history )
+    for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -213,11 +239,6 @@ void ParticleSimulationManager<GeometryHandler,
       }
     }
   }
-    
-  // Set the end time
-  d_end_time = Utility::GlobalOpenMPSession::getTime();
-
-  std::cout << "done." << std::endl;
 }
 
 // Set the number of particle histories to simulate
@@ -385,6 +406,89 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Indicate that this particle history is complete
   GMI::newRay();
+}
+
+// Return the number of histories
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+unsigned long long  ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::getNumberOfHistories() const
+{
+  return d_history_number_wall - d_start_history;
+}
+
+// Return the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+unsigned long long  ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::getNumberOfHistoriesCompleted() const
+{
+  return d_histories_completed;
+}
+
+// Increment the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::incrementHistoriesCompleted( 
+					   const unsigned long long histories )
+{
+  d_histories_completed += histories;
+}
+
+// Set the number of histories completed
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::setHistoriesCompleted( 
+					   const unsigned long long histories )
+{
+  d_histories_completed = histories;
+}
+
+// Set the start time
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::setStartTime( const double start_time )
+{
+  d_start_time = start_time;
+}
+  
+// Set the end time
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::setEndTime( const double end_time )
+{
+  // Make sure the end time is valid
+  testPrecondition( end_time >= d_start_time );
+  
+  d_end_time = end_time;
 }
 
 // Set the number of particle histories to simulate

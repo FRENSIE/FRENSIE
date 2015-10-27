@@ -31,7 +31,8 @@ public:
   //! Initialize the estimator handler
   static void initializeHandler(
 			        const Teuchos::ParameterList& response_reps,
-				    const Teuchos::ParameterList& estimator_reps );
+				const Teuchos::ParameterList& estimator_reps,
+				std::ostream& os_warn = std::cerr );
 
 private:
 

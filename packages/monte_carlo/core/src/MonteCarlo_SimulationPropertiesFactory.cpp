@@ -53,6 +53,16 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   
   SimulationProperties::setNumberOfHistories( 
 				 properties.get<unsigned int>( "Histories" ) );
+				 
+	// Get the number of batches per processor - optional
+	if( properties.isParameter( "Ideal Batches Per Processor" ) )
+	{
+	  unsigned int number_of_batches_per_processor = 
+	    properties.get<unsigned int>( "Ideal Batches Per Processor" );
+	    
+	  SimulationProperties::setNumberOfBatchesPerProcessor( 
+	                                          number_of_batches_per_processor );
+	}
 
   // Get the angle cosine cutoff value for surface flux estimators - optional
   if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )

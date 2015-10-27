@@ -27,8 +27,13 @@ ElectroatomFactory::ElectroatomFactory(
 		  atomic_relaxation_model_factory,
 		  const BremsstrahlungAngularDistributionType 
 		  photon_distribution_function,
-		  const bool use_atomic_relaxation_data )
+		  const bool use_atomic_relaxation_data,
+		  std::ostream* os_message )
+  : d_os_message( os_message )
 {
+  // Make sure the message stream is valid
+  testPrecondition( os_message != NULL );
+  
   // Create each electroatom in the set
   boost::unordered_set<std::string>::const_iterator electroatom_name = 
     electroatom_aliases.begin();
@@ -166,8 +171,8 @@ void ElectroatomFactory::createElectroatomFromACETable(
 			    << electroatom_alias <<
 			    " is invalid! Please fix this entry." );
   
-  std::cout << "Loading ACE electroatomic cross section table "
-	    << electroatomic_table_name << " (" << electroatom_alias << ") ... ";
+  *d_os_message << "Loading ACE electroatomic cross section table "
+		<< electroatomic_table_name << " (" << electroatom_alias << ") ... ";
 
   // Check if the table has already been loaded
   if( d_electroatomic_table_name_map.find( electroatomic_table_name ) ==
@@ -215,7 +220,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
 
-  std::cout << "done." << std::endl;
+  *d_os_message << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

@@ -9,6 +9,10 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/units/systems/si.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -22,6 +26,13 @@
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+
+using boost::units::quantity;
+using namespace Utility::Units;
+namespace si = boost::units::si;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -31,6 +42,11 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
+
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -72,6 +88,27 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluate )
   TEST_EQUALITY_CONST( distribution->evaluate( 14.0 ), 1.0/32 );
   TEST_EQUALITY_CONST( distribution->evaluate( 15.0 ), 1.0/32 );
   TEST_EQUALITY_CONST( distribution->evaluate( 16.0 ), 1.0/32 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 17.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluate )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*MeV ), 
+		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ), 
+		       2.5*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*MeV ), 
+		       0.25/0.9*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*MeV ), 
+		       0.0625*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*MeV ), 
+		       0.05*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 10.0*MeV ), 
+		       0.05*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 11.0*MeV ), 
+		       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
@@ -115,6 +152,26 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware PDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluatePDF )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*MeV ), 
+		       0.0/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*MeV ), 
+		       2.5/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.1*MeV ), 
+		       0.25/0.9/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*MeV ), 
+		       0.0625/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 5.0*MeV ), 
+		       0.05/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 10.0*MeV ), 
+		       0.05/MeV );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 11.0*MeV ), 
+		       0.0/MeV );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluateCDF )
 {
@@ -155,6 +212,26 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, evaluateCDF )
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 15.0 ), 31.0/32 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 16.0 ), 32.0/32 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 17.0 ), 32.0/32 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware CDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( -1.0*MeV ), 
+		       0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.0*MeV ), 
+		       0.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 0.1*MeV ), 
+		       0.25 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 1.0*MeV ), 
+		       0.5 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 5.0*MeV ), 
+		       0.75 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 10.0*MeV ), 
+		       1.0 );
+  TEST_EQUALITY_CONST( unit_aware_tab_distribution->evaluateCDF( 11.0*MeV ), 
+		       1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -456,6 +533,57 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sample )
 
   sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 16.0, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, sample )
+{
+  std::vector<double> fake_stream( 9 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.125;
+  fake_stream[2] = 0.25;
+  fake_stream[3] = 0.375;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 0.625;
+  fake_stream[6] = 0.75;
+  fake_stream[7] = 0.875;
+  fake_stream[8] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // First bin
+  quantity<MegaElectronVolt> sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+
+  // Second bin
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+
+  // Third bin
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+
+  // Fourth bin
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 5.0*MeV );
+
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 7.5*MeV );
+
+  sample = unit_aware_distribution->sample();
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*MeV, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -827,6 +955,70 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordTrials )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+		   sampleAndRecordTrials )
+{
+  std::vector<double> fake_stream( 9 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.125;
+  fake_stream[2] = 0.25;
+  fake_stream[3] = 0.375;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 0.625;
+  fake_stream[6] = 0.75;
+  fake_stream[7] = 0.875;
+  fake_stream[8] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned trials = 0u;
+
+  // First bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+  
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  // Second bin
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+  TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
+
+  // Third bin
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+  TEST_EQUALITY_CONST( 5.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+  TEST_EQUALITY_CONST( 6.0/trials, 1.0 );
+
+  // Fourth bin
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 5.0*MeV );
+  TEST_EQUALITY_CONST( 7.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 7.5*MeV );
+  TEST_EQUALITY_CONST( 8.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*MeV, 1e-14 );
+  TEST_EQUALITY_CONST( 9.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
 {
@@ -1195,6 +1387,70 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleAndRecordBinIndex )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+		   sampleAndRecordBinIndex )
+{
+  std::vector<double> fake_stream( 9 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.125;
+  fake_stream[2] = 0.25;
+  fake_stream[3] = 0.375;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 0.625;
+  fake_stream[6] = 0.75;
+  fake_stream[7] = 0.875;
+  fake_stream[8] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned bin_index;
+
+  // First bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+
+  // Second bin
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+  TEST_EQUALITY_CONST( bin_index, 1.0 );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+  TEST_EQUALITY_CONST( bin_index, 1.0 );
+
+  // Third bin
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+  TEST_EQUALITY_CONST( bin_index, 2.0 );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+  TEST_EQUALITY_CONST( bin_index, 2.0 );
+
+  // Fourth bin
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 5.0*MeV );
+  TEST_EQUALITY_CONST( bin_index, 3.0 );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 7.5*MeV );
+  TEST_EQUALITY_CONST( bin_index, 3.0 );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*MeV, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 3.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
 {
@@ -1427,6 +1683,44 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleWithRandomNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+		   sampleWithRandomNumber )
+{
+  // First bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.125 );
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+
+  // Second bin
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.25 );
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.375 );
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+
+  // Third bin
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.5 );
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.625 );
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+
+  // Fourth bin
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.75 );
+  TEST_EQUALITY_CONST( sample, 5.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.875 );
+  TEST_EQUALITY_CONST( sample, 7.5*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0-1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 10.0*MeV, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleInSubrange )
 {
@@ -1494,6 +1788,49 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, sampleInSubrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, sampleInSubrange )
+{
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0/6;
+  fake_stream[2] = 2.0/6;
+  fake_stream[3] = 3.0/6;
+  fake_stream[4] = 4.0/6;
+  fake_stream[5] = 5.0/6;
+  fake_stream[6] = 1.0-1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // First bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+
+  // Second bin
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+
+  // Third bin
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleInSubrange( 5.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*MeV, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, 
 		   sampleWithRandomNumberInSubrange )
@@ -1545,12 +1882,62 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+		   sampleWithRandomNumberInSubrange )
+{
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0/6;
+  fake_stream[2] = 2.0/6;
+  fake_stream[3] = 3.0/6;
+  fake_stream[4] = 4.0/6;
+  fake_stream[5] = 5.0/6;
+  fake_stream[6] = 1.0-1e-15;
+
+  // First bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.0*MeV );
+  
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 1.0/6, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.05*MeV );
+
+  // Second bin
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 2.0/6, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.1*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 3.0/6, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 0.55*MeV );
+
+  // Third bin
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 4.0/6, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 1.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 5.0/6, 5.0*MeV );
+  TEST_EQUALITY_CONST( sample, 3.0*MeV );
+
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 1.0-1e-15, 5.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 5.0*MeV, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be 
 // returned
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, 
 		   getUpperBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 16.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the upper bound of the unit-aware distribution independent 
+// variable can be returned
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, 
+		   getUpperBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+		       10.0*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -1563,6 +1950,16 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the lower bound of the unit-aware distribution independent 
+// variable can be returned
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
+		   getLowerBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+		       0.0*MeV );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 		   getDistributionType )
@@ -1572,10 +1969,26 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution,
+		   getDistributionType )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
+		       Utility::EQUIPROBABLE_BIN_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isTabular )
 {
   TEST_ASSERT( distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, isTabular )
+{
+  TEST_ASSERT( unit_aware_distribution->isTabular() );
 }		   
 
 //---------------------------------------------------------------------------//
@@ -1583,6 +1996,13 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isTabular )
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, isContinuous )
 {
   TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is continuous
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, isContinuous )
+{
+  TEST_ASSERT( unit_aware_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1617,22 +2037,155 @@ TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, toParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, toParameterList )
+{
+  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
+  
+  Teuchos::RCP<UnitAwareEquiprobableBinDistribution> 
+    true_distribution = Teuchos::rcp_dynamic_cast<UnitAwareEquiprobableBinDistribution>( unit_aware_distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<UnitAwareEquiprobableBinDistribution>( 
+							  "test distribution",
+							  *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile(parameter_list,
+				       "unit_aware_equiprobable_bin_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "unit_aware_equiprobable_bin_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<UnitAwareEquiprobableBinDistribution> 
+    copy_distribution( new UnitAwareEquiprobableBinDistribution );
+
+  *copy_distribution = 
+    read_parameter_list->get<UnitAwareEquiprobableBinDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be read from and xml file
 TEUCHOS_UNIT_TEST( EquiprobableBinDistribution, fromParameterList )
 {
-  Utility::EquiprobableBinDistribution distribution = 
+  Utility::EquiprobableBinDistribution read_distribution = 
     test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 
 		       2*Utility::PhysicalConstants::pi );
 
-  distribution = 
+  read_distribution = 
     test_dists_list->get<Utility::EquiprobableBinDistribution>( "Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 1.0 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be read from and xml file
+TEUCHOS_UNIT_TEST( UnitAwareEquiprobableBinDistribution, fromParameterList )
+{
+  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
+  
+  UnitAwareEquiprobableBinDistribution read_distribution = 
+    test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution A" );
+
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 10.0*MeV );
+
+  read_distribution = 
+    test_dists_list->get<UnitAwareEquiprobableBinDistribution>( "Unit-Aware Distribution B" );
+
+  TEST_EQUALITY_CONST( read_distribution.getLowerBoundOfIndepVar(), 0.001*MeV );
+  TEST_EQUALITY_CONST( read_distribution.getUpperBoundOfIndepVar(), 20.0*MeV );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be constructed from a unitless
+// distribution
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareEquiprobableBinDistribution,
+				   unitless_copy_constructor,
+				   IndepUnit,
+				   DepUnit )
+{
+  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
+    IndepQuantity;
+  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::type
+    DepQuantity;
+  
+  Utility::UnitAwareEquiprobableBinDistribution<IndepUnit,DepUnit> 
+    unit_aware_dist_copy( 
+     *Teuchos::rcp_dynamic_cast<Utility::EquiprobableBinDistribution>(distribution) );
+
+  IndepQuantity indep_quantity = 
+    Utility::QuantityTraits<IndepQuantity>::initializeQuantity( -16.0 );
+  DepQuantity dep_quantity = 
+    Utility::QuantityTraits<DepQuantity>::initializeQuantity( 1.0/32 );
+
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+  
+  Utility::setQuantity( indep_quantity, 0.0 );
+  Utility::setQuantity( dep_quantity, 1.0/16 );
+  
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+
+  Utility::setQuantity( indep_quantity, 16.0 );
+  Utility::setQuantity( dep_quantity, 1.0/32 );
+  
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+}
+
+typedef si::energy si_energy;
+typedef si::length si_length;
+typedef si::area si_area;
+typedef si::mass si_mass;
+typedef si::time si_time;
+typedef si::amount si_amount;
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_length,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      si_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_energy,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_area,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      si_energy );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      void,
+				      si_energy );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEquiprobableBinDistribution,
+				      unitless_copy_constructor,
+				      void,
+				      void );
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -1659,6 +2212,8 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::EquiprobableBinDistribution );
+  typedef Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount> UnitAwareEquiprobableBinDistribution;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareEquiprobableBinDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
@@ -1703,6 +2258,19 @@ int main( int argc, char** argv )
 	  new Utility::EquiprobableBinDistribution( bin_boundaries ) );
   
   distribution = tab_distribution;
+
+  // Initialize the unit-aware distribution
+  Teuchos::Array<quantity<KiloElectronVolt> > bin_boundary_quantities( 5 );
+  bin_boundary_quantities[0] = 0.0*keV;
+  bin_boundary_quantities[1] = 1e2*keV;
+  bin_boundary_quantities[2] = 1e3*keV;
+  bin_boundary_quantities[3] = 5e3*keV;
+  bin_boundary_quantities[4] = 1e4*keV;
+
+  unit_aware_tab_distribution.reset(
+   new Utility::UnitAwareEquiprobableBinDistribution<MegaElectronVolt,si::amount>( bin_boundary_quantities ) );
+
+  unit_aware_distribution = unit_aware_tab_distribution;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
