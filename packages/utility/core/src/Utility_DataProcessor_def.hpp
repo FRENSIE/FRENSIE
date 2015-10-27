@@ -426,7 +426,7 @@ double DataProcessor::calculateContinuousCDF( Array &data )
   }
   
   // Return the normalization constant
-  return cdf_max;
+  return 1.0/cdf_max;
 }
 
 /*! \details This function calculates a discrete CDF from an array of discrete
