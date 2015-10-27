@@ -10,8 +10,9 @@
 #define MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonProductionDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
 namespace MonteCarlo{
@@ -28,11 +29,12 @@ private:
 public:
 
   //! Constructor
-  PhotonProductionReaction( const NuclearReactionType base_reaction_type,
-			    const unsigned photon_production_id,
-			    const double temperature,
-			    const Teuchos::RCP<PhotonProductionDistribution>&
-			    photon_production_distribution );
+  PhotonProductionReaction( 
+   const NuclearReactionType base_reaction_type,
+   const unsigned photon_production_id,
+   const double temperature,
+   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
+   photon_production_distribution );
 
   //! Destructor
   virtual ~PhotonProductionReaction()
@@ -71,7 +73,8 @@ private:
   double d_temperature;
 
   // The photon production distribution (energy and angle)
-  Teuchos::RCP<PhotonProductionDistribution> d_photon_production_distribution; 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> > 
+  d_photon_production_distribution; 
 };
 
 // Return the base nuclear reaction type
