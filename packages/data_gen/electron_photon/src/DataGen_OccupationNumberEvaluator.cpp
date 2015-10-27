@@ -21,7 +21,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
@@ -50,8 +50,8 @@ OccupationNumberEvaluator::OccupationNumberEvaluator(
   testPrecondition( compton_profile.size() == 
 		    electron_momentum_projections.size() );
 
-  // Force the quadrature kernel throw exceptions
-  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+  // Force the quadrature gkq_set throw exceptions
+  Utility::GaussKronrodQuadratureSet::throwExceptions( true );
   
   // Store the profile in a tabular distribution for quick interpolation
   d_compton_profile.reset( new Utility::TabularDistribution<Utility::LogLin>(
@@ -109,12 +109,12 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
 
     double abs_error;
     
-    Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+    Utility::GaussKronrodQuadratureSet quadrature_gkq_set( precision );
 
     if( electron_momentum_projection < 
 	d_compton_profile->getUpperBoundOfIndepVar() )
     {
-      quadrature_kernel.integrateAdaptively<15>(
+      quadrature_gkq_set.integrateAdaptively<15>(
 				  compton_profile_wrapper,
 				  d_compton_profile->getLowerBoundOfIndepVar(),
 				  electron_momentum_projection,
@@ -123,7 +123,7 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
     }
     else
     {
-      quadrature_kernel.integrateAdaptively<15>(
+      quadrature_gkq_set.integrateAdaptively<15>(
 				  compton_profile_wrapper,
 				  d_compton_profile->getLowerBoundOfIndepVar(),
 				  d_compton_profile->getUpperBoundOfIndepVar(),

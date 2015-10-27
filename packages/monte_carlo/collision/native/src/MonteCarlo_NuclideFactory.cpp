@@ -27,8 +27,13 @@ NuclideFactory::NuclideFactory(
 		     const Teuchos::ParameterList& cross_section_table_info,
 		     const boost::unordered_set<std::string>& nuclide_aliases,
 		     const bool use_unresolved_resonance_data,
-		     const bool use_photon_production_data )
+		     const bool use_photon_production_data,
+		     std::ostream* os_message )
+  : d_os_message( os_message )
 { 
+  // Make sure the message output stream is valid
+  testPrecondition( os_message != NULL );
+  
   // Create each nuclide in the set
   boost::unordered_set<std::string>::const_iterator nuclide_name = 
     nuclide_aliases.begin();
@@ -114,8 +119,8 @@ void NuclideFactory::createNuclideFromACETable(
 			    const bool use_photon_production_data )
 {
   // Load the cross section data with the specified format
-  std::cout << "Loading ACE cross section table " 
-	    << nuclear_table_name << " (" << nuclide_alias << ") ... ";
+  *d_os_message << "Loading ACE cross section table " 
+		<< nuclear_table_name << " (" << nuclide_alias << ") ... ";
   
   // The ACE table reader
   Data::ACEFileHandler ace_file_handler( ace_file_path,
@@ -144,7 +149,7 @@ void NuclideFactory::createNuclideFromACETable(
 				    use_unresolved_resonance_data,
 				    use_photon_production_data );
   
-  std::cout << "done." << std::endl;
+  *d_os_message << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

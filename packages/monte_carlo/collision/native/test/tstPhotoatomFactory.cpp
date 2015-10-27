@@ -50,8 +50,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       false,
-					       false,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       false ) );
 
@@ -249,8 +249,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       false,
-					       false,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       false ) );
 
@@ -266,7 +266,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "/home/alexr/research/transport/src/packages/monte_carlo/collision/native/test/test_files//test_epr_82_native.xml" );
+  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+	       atom->getAtomName().size() );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -400,15 +401,15 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
   photoatom_aliases.insert( "Pb" );
   
   photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
-					       atomic_relaxation_model_factory,
-					       100,
-					       false,
-					       true,
-					       false,
-					       false ) );
+		 cross_sections_xml_directory,
+		 cross_section_table_info,
+		 photoatom_aliases,
+		 atomic_relaxation_model_factory,
+		 100,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 false ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
@@ -568,20 +569,21 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 7 );
+  std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.9; // select the incoherent reaction
   fake_stream[1] = 0.001; // sample from first term of koblinger's method
   fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[3] = 0.5; // accept x in scattering function rejection loop
   fake_stream[4] = 0.005; // select first shell for collision
   fake_stream[5] = 6.427713151861e-01; // select pz = 40.0
-  fake_stream[6] = 0.25; // select energy loss
+  fake_stream[6] = 0.005; // select first shell for collision
+  fake_stream[7] = 0.25; // select energy loss
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   atom->collideAnalogue( photon, bank );
-
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -596,15 +598,15 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   photoatom_aliases.insert( "Pb-Native" );
   
   photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
-					       atomic_relaxation_model_factory,
-					       100,
-					       false,
-					       true,
-					       false,
-					       false ) );
+		   cross_sections_xml_directory,
+		   cross_section_table_info,
+		   photoatom_aliases,
+		   atomic_relaxation_model_factory,
+		   100,
+		   MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		   3.0,
+		   false,
+		   false ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
@@ -618,7 +620,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "/home/alexr/research/transport/src/packages/monte_carlo/collision/native/test/test_files//test_epr_82_native.xml" );
+  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+	       atom->getAtomName().size() );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -756,15 +759,15 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   photoatom_aliases.insert( "Pb-Native" );
   
   photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
-					       cross_sections_xml_directory,
-					       cross_section_table_info,
-					       photoatom_aliases,
-					       atomic_relaxation_model_factory,
-					       100,
-					       true,
-					       false,
-					       false,
-					       false ) );
+					  cross_sections_xml_directory,
+					  cross_section_table_info,
+					  photoatom_aliases,
+					  atomic_relaxation_model_factory,
+					  100,
+					  MonteCarlo::IMPULSE_INCOHERENT_MODEL,
+					  3.0,
+					  false,
+					  false ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
@@ -778,7 +781,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "/home/alexr/research/transport/src/packages/monte_carlo/collision/native/test/test_files//test_epr_82_native.xml" );
+  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+	       atom->getAtomName().size() );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -932,8 +936,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       true,
-					       true,
+					       MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       false ) );
 
@@ -949,7 +953,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "/home/alexr/research/transport/src/packages/monte_carlo/collision/native/test/test_files//test_epr_82_native.xml" );
+  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+	       atom->getAtomName().size() );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -1129,8 +1134,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       false,
-					       false,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       true ) );
 
@@ -1311,8 +1316,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       false,
-					       false,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       true ) );
 
@@ -1328,7 +1333,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
   // Test the photoatom properties
-  TEST_EQUALITY_CONST( atom->getAtomName(), "/home/alexr/research/transport/src/packages/monte_carlo/collision/native/test/test_files//test_epr_82_native.xml" );
+  TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
+	       atom->getAtomName().size() );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -1463,8 +1469,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 					       photoatom_aliases,
 					       atomic_relaxation_model_factory,
 					       100,
-					       false,
-					       true,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
 					       false,
 					       true ) );
 

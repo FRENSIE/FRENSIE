@@ -144,9 +144,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
+{  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_simple_source_xml_file",

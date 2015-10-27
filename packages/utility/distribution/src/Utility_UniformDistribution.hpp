@@ -11,68 +11,129 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
-//! Uniform distribution class
-class UniformDistribution : public OneDDistribution,
-			    public ParameterListCompatibleObject<UniformDistribution>
+/*! The unit-aware uniform distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
   
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
 
+  //! This distribution type
+  typedef UnitAwareUniformDistribution<IndependentUnit,DependentUnit> ThisType;
+
+  //! The independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
   //! Default constructor
-  UniformDistribution();
+  UnitAwareUniformDistribution();
  
   //! Constructor
-  UniformDistribution( const double min_independent_value, 
-		       const double max_independent_value,
-		       const double dependent_value );
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareUniformDistribution(const InputIndepQuantity& min_independent_value,
+			       const InputIndepQuantity& max_independent_value,
+			       const InputDepQuantity& dependent_value );
 
   //! Copy constructor
-  UniformDistribution( const UniformDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareUniformDistribution( const UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
+
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareUniformDistribution fromUnitlessDistribution( const UnitAwareUniformDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  UniformDistribution& operator=( const UniformDistribution& dist_instance );
+  UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );
   
   //! Destructor
-  ~UniformDistribution()
+  ~UnitAwareUniformDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;  
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;  
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
+
+  //! Evaluate the CDF
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
+  IndepQuantity sample() const;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  static IndepQuantity sample( const IndepQuantity min_independent_value,
+			       const IndepQuantity max_independent_value );
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample from the corresponding CDF and record the number of trials
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+
+  //! Return a random sample from the distribution and record the number of trials
+  static IndepQuantity sampleAndRecordTrials( 
+			        const IndepQuantity min_independent_value,
+			        const IndepQuantity max_independent_value,
+				unsigned& trials );
+
+  //! Return a random sample from the distribution at the given CDF value
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  static IndepQuantity sampleWithRandomNumber( 
+				const IndepQuantity min_independent_value,
+				const IndepQuantity max_independent_value,
+				const double random_number );
+
+  //! Return a random sample and sampled index from the corresponding CDF
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the corresponding CDF in a subrange
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
+
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  IndepQuantity sampleWithRandomNumberInSubrange( 
+				     const double random_number,
+				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  // Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -81,25 +142,42 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UniformDistribution& other ) const;
+  bool isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const;
+
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareUniformDistribution( const UnitAwareUniformDistribution<void,void>& unitless_dist_instance, int );
 
 private:
+
+  // Calculate the PDF value
+  void calculatePDFValue();
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareUniformDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
 
   // The min independent value
-  double d_min_independent_value;
+  IndepQuantity d_min_independent_value;
   
   // The max independent value
-  double d_max_independent_value;
+  IndepQuantity d_max_independent_value;
 
   // The uniform distribution dependent value
-  double d_dependent_value;
+  DepQuantity d_dependent_value;
 
   // The uniform distribution PDF value
-  double d_pdf_value;
+  InverseIndepQuantity d_pdf_value;
 };
+
+/*! The uniform distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
 } // end Utility namespace
 
@@ -125,7 +203,38 @@ public:
   }
 };
 
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareUniformDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U, typename V>
+class TypeNameTraits<Utility::UnitAwareUniformDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Uniform Distribution (" + 
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+		   const Utility::UnitAwareUniformDistribution<U,V>& instance )
+  {
+    return name();
+  }
+};
+
 } // end Teuchos namespace 
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_UniformDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_HPP
 

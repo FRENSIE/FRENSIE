@@ -58,6 +58,12 @@ public:
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const = 0;
 
+  //! Simulate the reaction and track the number of sampling trials
+  virtual void react( PhotonState& photon, 
+		      ParticleBank& bank,
+		      SubshellType& shell_of_interaction,
+		      unsigned& trials ) const;
+
 protected:
 
   //! Return the head of the energy grid
@@ -69,6 +75,17 @@ inline bool PhotoatomicReaction::isEnergyGridShared(
 			      const PhotoatomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
+}
+
+// Simulate the reaction and track the number of sampling trials
+inline void PhotoatomicReaction::react( PhotonState& photon, 
+					ParticleBank& bank,
+					SubshellType& shell_of_interaction,
+					unsigned& trials ) const
+{
+  ++trials;
+
+  this->react( photon, bank, shell_of_interaction );
 }
 
 } // end MonteCarlo namespace

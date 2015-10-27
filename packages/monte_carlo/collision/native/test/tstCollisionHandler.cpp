@@ -658,8 +658,8 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::CollisionHandler::collideWithCellMaterial( photon, bank, true );
-
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -782,15 +782,15 @@ int main( int argc, char** argv )
 				new MonteCarlo::AtomicRelaxationModelFactory );
     
     MonteCarlo::PhotoatomFactory photoatom_factory( 
-					  test_cross_sections_xml_directory,
-					  cross_section_table_info,
-					  atom_aliases,
-					  atomic_relaxation_model_factory,
-					  1000,
-					  false,
-					  true,
-					  false,
-					  true );
+		 test_cross_sections_xml_directory,
+		 cross_section_table_info,
+		 atom_aliases,
+		 atomic_relaxation_model_factory,
+		 1000,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 true );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       photoatom_map;

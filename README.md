@@ -12,7 +12,7 @@ depends on is listed below.
 4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM) - only with Cubit
 5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
 6. [LAPACK 3.5.0](http://www.netlib.org/lapack/)
-7. [Trilinos 11.10.2](http://trilinos.org/)
+7. [Trilinos 11.12.1](http://trilinos.org/)
 8. [ODEPACK](http://computation.llnl.gov/casc/odepack/)
 9. [Boost 1.56.0](http://www.boost.org/)
 10. [GSL 1.16](http://www.gnu.org/software/gsl/)
@@ -140,11 +140,11 @@ are described.
 15. run `exec bash`
 
 ### Building Trilinos 
-1. download the [Trilinos 11.10.2 source](http://trilinos.org/download/)
-2. move the trilinos-11.10.2-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
+1. download the [Trilinos 11.12.1 source](http://trilinos.org/download/)
+2. move the trilinos-11.12.1-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
 3. move to the trilinos directory
-4. run `tar -xvf trilinos-11.10.2-Source.tar.gz`
-5. run `ln -s trilinos-11.10.2.Source src`
+4. run `tar -xvf trilinos-11.12.1-Source.tar.gz`
+5. run `ln -s trilinos-11.12.1.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
 8. copy `FRENSIE/scripts/trilinos.sh` into the build directory 

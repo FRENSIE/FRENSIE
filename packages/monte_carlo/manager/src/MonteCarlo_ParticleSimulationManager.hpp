@@ -34,7 +34,7 @@ template<typename GeometryHandler,
 class ParticleSimulationManager : public SimulationManager
 {
 
-private:
+protected:
 
   // Typedef for geometry module interface
   typedef Geometry::ModuleInterface<GeometryHandler> GMI;
@@ -52,26 +52,52 @@ public:
 
   //! Constructor 
   ParticleSimulationManager( 
-			  const unsigned number_of_histories,
-			  const unsigned start_history = 0u,
-			  const unsigned previously_completed_histories = 0u,
-			  const double previous_run_time = 0.0 );
+		const unsigned long long number_of_histories,
+		const unsigned long long start_history = 0ull,
+		const unsigned long long previously_completed_histories = 0ull,
+		const double previous_run_time = 0.0 );
 
   //! Destructor
-  ~ParticleSimulationManager()
+  virtual ~ParticleSimulationManager()
   { /* ... */ }
 
   //! Run the simulation set up by the user
-  void runSimulation();
+  virtual void runSimulation();
 
   //! Print the data in all estimators to the desired stream
-  void printSimulationSummary( std::ostream &os ) const;
+  virtual void printSimulationSummary( std::ostream &os ) const;
 
   //! Export the simulation data (to an hdf5 file)
-  void exportSimulationData( const std::string& data_file_name ) const;
+  virtual void exportSimulationData( const std::string& data_file_name ) const;
 
   // Signal handler
-  void signalHandler(int signal);
+  virtual void signalHandler(int signal);
+
+protected:
+
+  //! Run the simulation batch
+  void runSimulationBatch( const unsigned long long start_history, 
+			   const unsigned long long end_history );
+
+  //! Return the number of histories
+  unsigned long long getNumberOfHistories() const;
+
+  //! Return the number of histories completed
+  unsigned long long getNumberOfHistoriesCompleted() const;
+
+  //! Increment the number of histories completed
+  void incrementHistoriesCompleted( const unsigned long long histories = 1ull );
+  //! Set the number of histories completed
+  void setHistoriesCompleted( const unsigned long long histories );
+
+  //! Set the start time
+  void setStartTime( const double start_time );
+  
+  //! Set the end time
+  void setEndTime( const double end_time );
+
+  //! Print simulation state info in collision handler
+  void printSimulationStateInfo();
 
 private:
 
@@ -85,17 +111,14 @@ private:
   void ignoreParticle( ParticleStateType& particle,
 		       ParticleBank& particle_bank ) const;
 
-  // Print simulation state info in collision handler
-  void printSimulationStateInfo();
-
   // Starting history
-  unsigned d_start_history;
+  unsigned long long d_start_history;
   
   // Number of particle histories to simulate
-  unsigned d_history_number_wall;
+  unsigned long long d_history_number_wall;
 
   // Number of histories completed
-  unsigned d_histories_completed;
+  unsigned long long d_histories_completed;
 
   // Flag for ending simulation early
   bool d_end_simulation;

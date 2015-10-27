@@ -15,6 +15,8 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_DefaultSerialComm.hpp>
 
 // FRENSIE Includes
 #include "facemcCore.hpp"
@@ -28,8 +30,6 @@ Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
  */
 int facemcCore( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -140,17 +140,27 @@ int facemcCore( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
+  // Create the default communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
+  
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
+  else
+    comm.reset( new Teuchos::SerialComm<unsigned long long>() );
+
   // Create the simulation manager
-  facemc_manager = 
-    MonteCarlo::ParticleSimulationManagerFactory::createManager( 
-						*simulation_info,
-						*geometry_definition,
-						*source_definition,
-						*response_function_definitions,
-						*estimator_definitions,
-						*material_definitions,
-						*cross_sections_table_info,
-						cross_section_directory );
+  facemc_manager =
+    MonteCarlo::ParticleSimulationManagerFactory::createManager(
+                                                *simulation_info,
+                                                *geometry_definition,
+                                                *source_definition,
+                                                *response_function_definitions,
+                                                *estimator_definitions,
+                                                *material_definitions,
+                                                *cross_sections_table_info,
+                                                cross_section_directory,
+                                                comm );
+
 
   // Run the simulation
   facemc_manager->runSimulation();
@@ -162,15 +172,20 @@ int facemcCore( int argc, char** argv )
   facemc_manager->printSimulationSummary( *out );
   
   // Create a parameter list with all inputs for continue runs
-  Teuchos::ParameterList master_list( "continue_run_info" );
-  master_list.set( "simulation_info", *simulation_info );
-  master_list.set( "geometry_definition", *geometry_definition );
-  master_list.set( "source_definition", *source_definition );
-  master_list.set( "response_function_definitions", *response_function_definitions );
-  master_list.set( "estimator_definitions", *estimator_definitions );
-  master_list.set( "material_definitions", *material_definitions );
-
-  Teuchos::writeParameterListToXmlFile( master_list, "continue_run_info.xml" );
+  if( comm->getRank() == 0 )
+  {
+    Teuchos::ParameterList master_list( "continue_run_info" );
+    master_list.set( "simulation_info", *simulation_info );
+    master_list.set( "geometry_definition", *geometry_definition );
+    master_list.set( "source_definition", *source_definition );
+    master_list.set( "response_function_definitions", *response_function_definitions );
+    master_list.set( "estimator_definitions", *estimator_definitions );
+    master_list.set( "material_definitions", *material_definitions );
+    
+    Teuchos::writeParameterListToXmlFile( master_list, "continue_run.xml" );
+  }
+  
+  comm->barrier();
   
   return 0;
 }
