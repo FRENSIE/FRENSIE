@@ -33,6 +33,8 @@ ADD_SUBDIRECTORY(xsdirtoxml)
 
 ADD_SUBDIRECTORY(listcs)
 
+ADD_SUBDIRECTORY(acequery)
+
 ADD_SUBDIRECTORY(facemc)
 
 ADD_SUBDIRECTORY(epr_generator)
