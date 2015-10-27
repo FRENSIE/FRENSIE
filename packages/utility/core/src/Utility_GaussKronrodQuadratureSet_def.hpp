@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodQuadratureKernel_def.hpp
+//! \file   Utility_GaussKronrodQuadratureSet_def.hpp
 //! \author Alex Robinson
-//! \brief  Gauss-Kronrod quadrature kernel
+//! \brief  Gauss-Kronrod quadrature gkq_set
 //!
 //---------------------------------------------------------------------------//
 
@@ -26,7 +26,7 @@ namespace Utility{
 
 // AdaptiveQuadraturePointTraits specialization for 15-point rule
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<15>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<15>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -37,7 +37,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<15>
   
 // AdaptiveQuadraturePointTraits specialization for 21-point rule
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<21>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<21>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -48,7 +48,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<21>
 
 // AdaptiveQuadraturePointTraits specialization for 31-point rule
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<31>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<31>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -59,7 +59,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<31>
 
 // AdaptiveQuadraturePointTraits specialization for 41-point rule
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<41>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<41>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -70,7 +70,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<41>
 
 // AdaptiveQuadraturePointTraits specialization for 51-point rule
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<51>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<51>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -81,7 +81,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<51>
 
 // AdaptiveQuadraturePointTraits specialization for 61-point rule 
 template<>
-struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<61>
+struct GaussKronrodQuadratureSet::AdaptiveQuadraturePointTraits<61>
 {
   //! Valid rule
   static const bool valid_rule = true;
@@ -92,7 +92,7 @@ struct GaussKronrodQuadratureKernel::AdaptiveQuadraturePointTraits<61>
 
 // Function wrapper for evaluating the functor
 template<typename Functor>
-double GaussKronrodQuadratureKernel::functorWrapper( const double x, 
+double GaussKronrodQuadratureSet::functorWrapper( const double x, 
 						     void* indirected_functor )
 {
   // Make sure the functor is valid
@@ -111,7 +111,7 @@ double GaussKronrodQuadratureKernel::functorWrapper( const double x,
  * the QNG algorithm details in the GNU Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrate( 
+void GaussKronrodQuadratureSet::integrate( 
 				       Functor& integrand, 
 				       double lower_limit, 
 				       double upper_limit,
@@ -128,7 +128,7 @@ void GaussKronrodQuadratureKernel::integrate(
   // Create the GSL function
   gsl_function gsl_function_wrapper;
   gsl_function_wrapper.function = 
-    &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    &GaussKronrodQuadratureSet::functorWrapper<Functor>;
   gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
 
   // Integrate the function
@@ -160,7 +160,7 @@ void GaussKronrodQuadratureKernel::integrate(
  * Library documentation.
  */ 
 template<int Points, typename Functor>
-void GaussKronrodQuadratureKernel::integrateAdaptively(
+void GaussKronrodQuadratureSet::integrateAdaptively(
 						 Functor& integrand, 
 						 double lower_limit, 
 						 double upper_limit,
@@ -184,7 +184,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
     // Create the GSL function
     gsl_function gsl_function_wrapper;
     gsl_function_wrapper.function = 
-      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+      &GaussKronrodQuadratureSet::functorWrapper<Functor>;
     gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
     
     int status = gsl_integration_qag( 
@@ -230,7 +230,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
  * Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalUpper( 
+void GaussKronrodQuadratureSet::integrateSemiInfiniteIntervalUpper( 
 				                 Functor& integrand, 
 						 double lower_limit, 
 						 double& result,
@@ -242,7 +242,7 @@ void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalUpper(
   // Create the GSL function
   gsl_function gsl_function_wrapper;
   gsl_function_wrapper.function = 
-    &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    &GaussKronrodQuadratureSet::functorWrapper<Functor>;
   gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
 
   // Just-in-time workspace allocation
@@ -278,7 +278,7 @@ void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalUpper(
  * Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalLower( 
+void GaussKronrodQuadratureSet::integrateSemiInfiniteIntervalLower( 
 				                 Functor& integrand, 
 						 double upper_limit, 
 						 double& result,
@@ -290,7 +290,7 @@ void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalLower(
   // Create the GSL function
   gsl_function gsl_function_wrapper;
   gsl_function_wrapper.function = 
-    &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    &GaussKronrodQuadratureSet::functorWrapper<Functor>;
   gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
 
   // Just-in-time workspace allocation
@@ -326,7 +326,7 @@ void GaussKronrodQuadratureKernel::integrateSemiInfiniteIntervalLower(
  * QAGI algorithm details in the GNU Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrateInfiniteInterval( 
+void GaussKronrodQuadratureSet::integrateInfiniteInterval( 
 				                 Functor& integrand, 
 						 double& result,
 				                 double& absolute_error ) const
@@ -334,7 +334,7 @@ void GaussKronrodQuadratureKernel::integrateInfiniteInterval(
   // Create the GSL function
   gsl_function gsl_function_wrapper;
   gsl_function_wrapper.function = 
-    &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    &GaussKronrodQuadratureSet::functorWrapper<Functor>;
   gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
 
   // Just-in-time workspace allocation
@@ -369,7 +369,7 @@ void GaussKronrodQuadratureKernel::integrateInfiniteInterval(
  * See QAGS algorithm details in the GNU Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
+void GaussKronrodQuadratureSet::integrateAdaptivelyWynnEpsilon(
 						 Functor& integrand, 
 						 double lower_limit, 
 						 double upper_limit,
@@ -391,7 +391,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
     // Create the GSL function
     gsl_function gsl_function_wrapper;
     gsl_function_wrapper.function = 
-      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+      &GaussKronrodQuadratureSet::functorWrapper<Functor>;
     gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
     
     int status = gsl_integration_qags( &gsl_function_wrapper,
@@ -439,7 +439,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
  * details in GNU Scientific Library documentation.
  */ 
 template<typename Functor>
-void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
+void GaussKronrodQuadratureSet::integrateAdaptivelyWynnEpsilon(
 			  Functor& integrand, 
 			  const Teuchos::ArrayView<double>& points_of_interest,
 			  double& result,
@@ -464,7 +464,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
     // Create the GSL function
     gsl_function gsl_function_wrapper;
     gsl_function_wrapper.function = 
-      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+      &GaussKronrodQuadratureSet::functorWrapper<Functor>;
     gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
     
     int status = gsl_integration_qagp( &gsl_function_wrapper,
@@ -504,5 +504,5 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
 #endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodQuadratureKernel_def.hpp
+// end Utility_GaussKronrodQuadratureSet_def.hpp
 //---------------------------------------------------------------------------//

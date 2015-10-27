@@ -169,6 +169,12 @@ public:
   //! Return the bremsstrahlung photon angular distribution function
   static BremsstrahlungAngularDistributionType 
           getBremsstrahlungAngularDistributionFunction();
+          
+  //! Set the number of batches for an MPI configuration
+  static void setNumberOfBatchesPerProcessor( const unsigned batches_per_processor );
+  
+  //! Return the number of batches for an MPI configuration
+  static unsigned getNumberOfBatchesPerProcessor();
 
 private:
 
@@ -251,6 +257,9 @@ private:
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   static BremsstrahlungAngularDistributionType 
            bremsstrahlung_angular_distribution_function;
+           
+  // The number of batches to run for MPI configuration
+  static unsigned number_of_batches_per_processor; 
 };
 
 // Return the particle mode type
@@ -408,6 +417,12 @@ inline BremsstrahlungAngularDistributionType
   SimulationProperties::getBremsstrahlungAngularDistributionFunction()
 {
   return SimulationProperties::bremsstrahlung_angular_distribution_function;
+}
+
+// Return the number of batches for an MPI configuration
+inline unsigned SimulationProperties::getNumberOfBatchesPerProcessor()
+{
+  return SimulationProperties::number_of_batches_per_processor;
 }
 
 } // end MonteCarlo namespace

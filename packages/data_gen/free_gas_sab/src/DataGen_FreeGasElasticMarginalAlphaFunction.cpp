@@ -28,7 +28,7 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
 	  const double kT,
 	  const double beta,
 	  const double E )
-  : d_kernel( 1e-4 ),
+  : d_gkq_set( 1e-4 ),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,
@@ -111,7 +111,7 @@ double FreeGasElasticMarginalAlphaFunction::evaluateCDF( const double alpha )
   // Calculate the cdf value
   double cdf_value, cdf_value_error;
 
-  d_kernel.integrateAdaptively<15>( *this,
+  d_gkq_set.integrateAdaptively<15>( *this,
 				    lower_cdf_point->first,
 				    alpha,
 				    cdf_value,
@@ -145,7 +145,7 @@ void FreeGasElasticMarginalAlphaFunction::updateCachedValues()
   boost::function<double (double alpha)> sab_function_wrapper = 
     boost::bind<double>( d_sab_function, _1, d_beta, d_E );
 
-  d_kernel.integrateAdaptively<15>( sab_function_wrapper,
+  d_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
 				    d_alpha_min,
 				    d_alpha_max,
 				    d_norm_constant,

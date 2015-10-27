@@ -207,6 +207,14 @@ are described.
 10. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
 
+### Building ROOT
+1. download the appropriate [ROOT 6.04/02 Binaries](https://root.cern.ch/content/release-60402)
+2. move the binary file to the root directory (e.g. software/root)
+3. move to the root directory
+4. run 'tar -xvf root_v6.04.02*'
+5. update the 'export PATH' line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:absolute-path-to_software/root/bin:$PATH`
+6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/gsl/bin:absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
+
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
 

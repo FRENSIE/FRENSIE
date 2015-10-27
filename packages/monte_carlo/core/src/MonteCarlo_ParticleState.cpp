@@ -205,7 +205,7 @@ void ParticleState::rotateDirection( const double polar_angle_cosine,
 							 azimuthal_angle,
 							 this->getDirection(),
 							 outgoing_direction );
-
+  
   this->setDirection( outgoing_direction );
 }
 

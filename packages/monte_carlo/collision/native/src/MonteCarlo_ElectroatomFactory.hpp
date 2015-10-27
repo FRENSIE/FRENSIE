@@ -43,7 +43,8 @@ public:
 		  atomic_relaxation_model_factory,
 		  const BremsstrahlungAngularDistributionType 
 		  photon_distribution_function,
-		  const bool use_atomic_relaxation_data );
+		  const bool use_atomic_relaxation_data,
+		  std::ostream* os_message = &std::cout );
 
   //! Destructor
   ~ElectroatomFactory()
@@ -74,6 +75,9 @@ private:
   // The table map
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >
   d_electroatomic_table_name_map;
+  
+  // The message output stream
+  std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

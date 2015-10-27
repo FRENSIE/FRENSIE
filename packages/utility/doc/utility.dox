@@ -29,7 +29,7 @@
  *  <li>interpolation (Utility::InterpolationPolicy)</li>
  *  <li>linearized grid generation (Utility::LinearGridGenerator)</li>
  *  <li>ODE solving (Utility::ODESolver)</li>
- *  <li>numerical quadrature (Utility::GaussKronrodQuadratureKernel)</li>
+ *  <li>numerical quadrature (Utility::GaussKronrodQuadratureSet)</li>
  *  <li>efficient integer exponentiation (Utility::ExponentiationAlgorithms)</li>
  *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
  *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>

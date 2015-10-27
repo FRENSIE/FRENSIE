@@ -43,7 +43,8 @@ public:
   //! Initialize the estimator handler using DagMC
   static void initializeHandler(
 			        const Teuchos::ParameterList& response_reps,
-				      const Teuchos::ParameterList& estimator_reps );
+				const Teuchos::ParameterList& estimator_reps,
+				std::ostream& os_warn = std::cerr );
 
 private:
 
@@ -241,6 +242,9 @@ private:
 
   // The tet mesh track-length flux estimator name
   static const std::string tet_mesh_track_length_flux_name;
+
+  // The warning output stream
+  static std::ostream* s_os_warn;
 };
 
 // Test if an estimator type is a cell pulse height estimator
