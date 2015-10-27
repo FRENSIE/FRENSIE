@@ -17,6 +17,5 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   ENDIF()
  
 ELSE()
-  MESSAGE(WARNING "The facemc executable cannot be built without enabling the ")
-  MESSAGE(WARNING "DagMC or the Root geometry handler!")
+  MESSAGE(WARNING "The facemc executable cannot be built without enabling the DagMC or the Root geometry handler!")
 ENDIF()
