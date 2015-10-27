@@ -146,8 +146,6 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createPointDistribution )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
   

@@ -1,0 +1,17 @@
+<ParameterList name="Geometry">
+
+  <Parameter name="Handler" type="string" value="DagMC"/>
+  <Parameter name="CAD File" type="string" 
+	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_advanced_geom.sat"/>
+  <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
+  <Parameter name="Termination Cell Synonym" type="string" value="graveyard"/>
+  <Parameter name="Material Synonym" type="string" value="mat"/>
+  <Parameter name="Density Synonym" type="string" value="rho"/>
+  <Parameter name="Estimator Synonym" type="string" value="tally"/>
+  <Parameter name="Surface Current Synonym" type="string" value="surf.cur"/>
+  <Parameter name="Surface Flux Synonym" type="string" value="surf.flux"/>
+  <Parameter name="Cell Pulse Height Synonym" type="string" value="c.pulse"/>
+  <Parameter name="Cell Track-Length Flux Synonym" type="string" value="c.tl.f"/>
+  <Parameter name="Cell Collision Flux Synonym" type="string" value="c.c.f"/>
+
+</ParameterList>

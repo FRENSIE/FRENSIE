@@ -48,12 +48,13 @@ void CollisionHandlerFactory::createMaterialNameDataMaps(
 			"Error: " << cell_id_mat_id_it->second.size() << 
 			" materials set to cell "
 			<< cell_id_mat_id_it->first << "!" );
+	
     TEST_FOR_EXCEPTION( cell_id_density_map.find( cell_id_mat_id_it->first )->second.size() > 1,
 			InvalidMaterialRepresentation,
-			"Error: " << cell_id_mat_id_it->second.size() << 
+			"Error: " << cell_id_density_map.find( cell_id_mat_id_it->first )->second.size() << 
 			" densities set to cell "
 			<< cell_id_mat_id_it->first << "!" );
-    
+
     Teuchos::RCP<std::istringstream> 
       iss( new std::istringstream( cell_id_mat_id_it->second[0] ) );
 

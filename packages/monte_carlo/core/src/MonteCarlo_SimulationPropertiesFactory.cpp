@@ -53,6 +53,35 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   
   SimulationProperties::setNumberOfHistories( 
 				 properties.get<unsigned int>( "Histories" ) );
+				 
+	// Get the number of batches per processor - optional
+	if( properties.isParameter( "Ideal Batches Per Processor" ) )
+	{
+	  unsigned int number_of_batches_per_processor = 
+	    properties.get<unsigned int>( "Ideal Batches Per Processor" );
+	    
+	  SimulationProperties::setNumberOfBatchesPerProcessor( 
+	                                          number_of_batches_per_processor );
+	}
+
+  // Get the angle cosine cutoff value for surface flux estimators - optional
+  if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )
+  {
+    double cutoff = 
+      properties.get<double>( "Surface Flux Angle Cosine Cutoff" );
+
+    TEST_FOR_EXCEPTION( cutoff < 0.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+                        "be a positive number!" );
+
+    TEST_FOR_EXCEPTION( cutoff > 1.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+			"be less than 1.0!" );
+
+    SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
+  }
   
   // Get the free gas thermal treatment temperature threshold - optional
   if( properties.isParameter( "Free Gas Threshold" ) )
@@ -181,6 +210,27 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the kahn sampling cutoff energy - optional
+  if( properties.isParameter( "Kahn Sampling Cutoff Energy" ) )
+  {
+    double energy = properties.get<double>( "Kahn Sampling Cutoff Energy" );
+
+    if( energy >= SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
+    {
+      SimulationProperties::setKahnSamplingCutoffEnergy( energy );
+    }
+    else
+    {
+      std::cerr << "Warning: the Kahn sampling cutoff energy must be greater "
+		<< "than "
+		<< SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+		<< " MeV. The default value of "
+		<< SimulationProperties::getKahnSamplingCutoffEnergy()
+		<< " MeV will be used instead of " << energy << "." 
+		<< std::endl;
+    }
+  }
+
   // Get the number of photon hash grid bins - optional
   if( properties.isParameter( "Photon Hash Grid Bins" ) )
   {
@@ -203,18 +253,27 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       SimulationProperties::setImplicitCaptureModeOn();
   }
 
-  // Get the impulse approximation mode - optional
-  if( properties.isParameter( "Impulse Approximation" ) )
+  // Get the incohernt scattering model - optional
+  if( properties.isParameter( "Incoherent Photon Scattering Model" ) )
   {
-    if( properties.get<bool>( "Impulse Approximation" ) )
-      SimulationProperties::setImpulseApproximationModeOn();
-  }
+    std::string model_name = 
+      properties.get<std::string>( "Incoherent Photon Scattering Model" );
 
-  // Get the photon Doppler broadening mode - optional
-  if( properties.isParameter( "Photon Doppler Broadening" ) )
-  {
-    if( !properties.get<bool>( "Photon Doppler Broadening" ) )
-      SimulationProperties::setPhotonDopplerBroadeningModeOff();
+    IncoherentModelType model;
+    
+    try{
+      model = convertStringToIncoherentModelTypeEnum( model_name );
+    }
+    catch( std::logic_error )
+    {
+      model = SimulationProperties::getIncoherentModelType();
+      
+      std::cerr << "Warning: incohernt photon scattering model "
+		<< model_name << " is unknown. The default model "
+		<< model << " will be used instead." << std::endl;
+    }
+
+    SimulationProperties::setIncoherentModelType( model );
   }
 
   // Get the atomic relaxation mode - optional

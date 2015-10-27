@@ -23,8 +23,11 @@ enum ParticleType{
   NEUTRON,
   ELECTRON,
   ADJOINT_PHOTON,
+  ADJOINT_PHOTON_PROBE,
   ADJOINT_NEUTRON,
+  ADJOINT_NEUTRON_PROBE,
   ADJOINT_ELECTRON,
+  ADJOINT_ELECTRON_PROBE,
   UNKNOWN_PARTICLE,
   PARTICLE_end
 };
@@ -64,9 +67,6 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
 {
   static inline H5::EnumType dataType()
   {
-    // Make sure all particle types will be converted
-    testPrecondition( MonteCarlo::PARTICLE_end == 7 );
-    
     H5::EnumType hdf5_particle_type( sizeof( MonteCarlo::ParticleType ) );
 
     MonteCarlo::ParticleType particle_type = MonteCarlo::PHOTON;

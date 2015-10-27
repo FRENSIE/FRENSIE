@@ -9,9 +9,9 @@ ENDIF()
 
 SET(SUBPACKAGE_LIB_NAME monte_carlo_collision_native)
 
-# Create the utilitycore library
+# Create the monte carlo collision native library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${MONTE_CARLO_COLLISION_NATIVE_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} utility_dist data_ace data_native monte_carlo_core)
+TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} ${ROOT} utility_dist data_ace data_native monte_carlo_core monte_carlo_collision_core)
 IF(FRENSIE_ENABLE_DAGMC)
   TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_dagmc)
 ENDIF()

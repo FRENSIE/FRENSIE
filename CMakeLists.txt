@@ -18,6 +18,9 @@ INCLUDE(Macros)
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
+# Enable C++11 standard support
+ENABLE_CXX11_STANDARD_SUPPORT()
+
 # Load the patch files
 SET(TEUCHOS_TWO_D_ARRAY_PATCH 
   ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
@@ -101,6 +104,21 @@ ELSE()
   MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
 ENDIF()
 
+# Enable ROOT Support
+IF(${FRENSIE_ENABLE_ROOT})
+  IF(ROOT_PREFIX)
+    ENABLE_ROOT_SUPPORT()
+  ELSE()
+    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
+  ENDIF()
+ENDIF()
+
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
+
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})
   SET(HAVE_${PROJECT_NAME}_DBC "1")
@@ -151,7 +169,27 @@ ADD_UNINSTALL_TARGET()
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
+
+  # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
+  DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
+  STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
+  
+  IF(NOT BUILDNAME_PREFIX)
+    SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
+  ENDIF()
+  
+  SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
+
+  UNSET(ID)
+  UNSET(VERSION)
+  UNSET(BUILD_TYPE)
+  
+  # Initialize CTest
   INCLUDE(CTest)
+
+  # Configure the CTestCustom.cake file for extended output for dashboard
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+    ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
@@ -165,14 +203,10 @@ ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
 
-# Add custom build ctest target for continuous integration tests
+# Add additional testing targets for convenience
 ADD_CUSTOM_TARGET(test-fast 
-  COMMAND ctest -E verification
+  COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-ADD_CUSTOM_TARGET(test-slow
-  COMMAND ctest -R verification
+ADD_CUSTOM_TARGET(test-facemc
+  COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-
-# Configure the CTestCustom.cake file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
-  ${CMAKE_BINARY_DIR}/CTestCustom.cmake)

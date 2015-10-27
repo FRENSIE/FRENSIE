@@ -193,7 +193,7 @@ int main( int argc, char** argv )
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::OneDDistribution> > >
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     elastic_scattering_distribution( size );
   
   for( unsigned n = 0; n < size; ++n )

@@ -12,6 +12,10 @@
 // Std Lib Includes
 #include <string>
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_ScalarTraits.hpp>
@@ -1110,6 +1114,127 @@ struct ComparePolicy<Quad<T,T2,T3,T4> >
 							    tol );
   }
 };
+
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * const boost::units::quantity.
+ * \ingroup compare_policy
+ */
+template<typename Unit, typename T>
+struct ComparePolicy<const boost::units::quantity<Unit,T> >
+{
+  typedef const T scalarType;
+
+  static inline bool compare(const boost::units::quantity<Unit,T>& first_value,
+			     const std::string& first_name,
+			     const boost::units::quantity<Unit,T>& second_value,
+			     const std::string& second_name,
+			     Teuchos::FancyOStream &out,
+			     const int index = -1,
+			     const scalarType tol = 0.0 )
+  {
+    bool success = true;
+      
+    if( tol == 0.0 )
+    {
+      // Array Element Compare
+      if( index >= 0 )
+      {
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": ";
+	if( first_value != second_value )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+	if( first_value != second_value )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+    }
+    else
+    {
+      double err = relError( first_value.value(), second_value.value() );
+      
+      // Array Element Compare
+      if( index >= 0 )
+      {
+	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << first_value << "," << second_value << ") = " << err
+	    << " <= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	    << "\n= relErr(" << first_value << "," << second_value << ") = "
+	    << err << "\n<= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+    }
+    
+    return success;
+  }
+};
+
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * boost::units::quantity.
+ * \ingroup compare_policy
+ */
+template<typename Unit, typename T>
+struct ComparePolicy<boost::units::quantity<Unit,T> >
+{
+  typedef T scalarType;
+
+  static inline bool compare(const boost::units::quantity<Unit,T>& first_value,
+			     const std::string& first_name,
+			     const boost::units::quantity<Unit,T>& second_value,
+			     const std::string& second_name,
+			     Teuchos::FancyOStream &out,
+			     const int index = -1,
+			     const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const boost::units::quantity<Unit,T> >::compare( 
+							    first_value,
+							    first_name,
+							    second_value,
+							    second_name,
+							    out,
+							    index,
+							    tol );
+  }
+};									 
 
 } // end Policy namespace
 

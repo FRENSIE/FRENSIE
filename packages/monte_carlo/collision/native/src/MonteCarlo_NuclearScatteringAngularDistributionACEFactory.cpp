@@ -17,14 +17,14 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
+#include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Initialize the static member data
-Teuchos::RCP<Utility::OneDDistribution> 
+Teuchos::RCP<Utility::TabularOneDDistribution> 
 NuclearScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
@@ -69,7 +69,7 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 	and_block_array( distribution_index, 33 );
 
       angular_distribution[i].second.reset( 
-	 new Utility::ThirtyTwoEquiprobableBinDistribution( bin_boundaries ) );
+	 new Utility::EquiprobableBinDistribution( bin_boundaries ) );
     }
 
     // Tabular distribution

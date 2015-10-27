@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_VOID_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
 #define MONTE_CARLO_VOID_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
 
+// FRENSIE Includes
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
+
 namespace MonteCarlo{
 
 //! The void Compton profile subshell-to-index converter
@@ -33,14 +36,14 @@ public:
 };
 
 // Convert a subshell enum to a compton profile subshell index
-unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex( 
+inline unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex( 
 					    const SubshellType subshell ) const
 {
   return (unsigned)subshell - 1u;
 }
 
 // Test if a subshell enum is valid
-bool VoidComptonProfileSubshellConverter::isSubshellValid( 
+inline bool VoidComptonProfileSubshellConverter::isSubshellValid( 
 					    const SubshellType subshell ) const
 {
   return true;

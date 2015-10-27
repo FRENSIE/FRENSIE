@@ -29,9 +29,7 @@ NormalDistribution::NormalDistribution( const double mean,
   : d_mean( mean ),
     d_standard_deviation( standard_deviation ),
     d_min_independent_value( min_independent_value ),
-    d_max_independent_value( max_independent_value ),
-    d_trials( 0u ),
-    d_samples( 0u )
+    d_max_independent_value( max_independent_value )
 {
   // Make sure that the values are valid
   testPrecondition( !ST::isnaninf( mean ) );
@@ -48,9 +46,7 @@ NormalDistribution::NormalDistribution(
   : d_mean( dist_instance.d_mean ),
     d_standard_deviation( dist_instance.d_standard_deviation ),
     d_min_independent_value( dist_instance.d_min_independent_value ),
-    d_max_independent_value( dist_instance.d_max_independent_value ),
-    d_trials( dist_instance.d_trials ),
-    d_samples( dist_instance.d_samples )
+    d_max_independent_value( dist_instance.d_max_independent_value )
 {
   // Make sure that the values are valid
   testPrecondition( !ST::isnaninf( dist_instance.d_mean ) );
@@ -69,8 +65,6 @@ NormalDistribution& NormalDistribution::operator=(
     d_standard_deviation = dist_instance.d_standard_deviation;
     d_min_independent_value = dist_instance.d_min_independent_value;
     d_max_independent_value = dist_instance.d_max_independent_value;
-    d_trials = dist_instance.d_trials;
-    d_samples = dist_instance.d_samples;
   }
 
   return *this;
@@ -99,36 +93,19 @@ double NormalDistribution::evaluatePDF( const double indep_var_value ) const
   }
 }
 
-// Return a sample from the distribution
-double NormalDistribution::sample()
-{
-  unsigned number_of_trials;
-
-  double normal_sample = sample( number_of_trials );
-
-  // Update the efficiency counters
-  d_trials += number_of_trials;
-  ++d_samples;
-
-  return normal_sample;
-}
-
 // Return a random sample from the distribution
 double NormalDistribution::sample() const
 {
   unsigned number_of_trials;
 
-  return sample( number_of_trials );
+  return this->sampleAndRecordTrials( number_of_trials );
 }
 
-// Sample a value from the distribution, count the number of trials
-double NormalDistribution::sample( unsigned& number_of_trials ) const
+// Return a random sample from the corresponding CDF and record the number of trials
+double NormalDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   double random_number_1, random_number_2;
   double x, y, sample;
-  
-  // Set the number of trials to zero
-  number_of_trials = 0u;
   
   while( true )
   {
@@ -136,6 +113,8 @@ double NormalDistribution::sample( unsigned& number_of_trials ) const
     // of Monte Carlo" (1954)
     while( true )
     {
+      ++trials;
+       
       random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
       random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
       
@@ -143,12 +122,7 @@ double NormalDistribution::sample( unsigned& number_of_trials ) const
       y = -log( random_number_2 );
       
       if( 0.5*(x - 1)*(x - 1) <= y )
-      {
-	++number_of_trials;
-	break;
-      }
-      else
-	++number_of_trials;
+      	break;
     }
 
     if( RandomNumberGenerator::getRandomNumber<double>() < 0.5 )
@@ -163,18 +137,6 @@ double NormalDistribution::sample( unsigned& number_of_trials ) const
   }
   
   return sample;
-}
-
-// Return the sampling efficiency from the distribution
-/*! \details The sampling efficiency will only be correct if the non-const 
- * sample member function is called exclusively.
- */ 
-double NormalDistribution::getSamplingEfficiency() const
-{
-  if( d_trials > 0u )
-    return static_cast<double>(d_samples)/d_trials;
-  else
-    return 0.0;
 }
 
 // Return the upper bound of the distribution independent variable
@@ -193,6 +155,12 @@ double NormalDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType NormalDistribution::getDistributionType() const
 {
   return NormalDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+bool NormalDistribution::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

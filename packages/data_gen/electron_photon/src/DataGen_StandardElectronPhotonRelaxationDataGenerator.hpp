@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
-#include "DataGen_SubshellIncoherentCrossSectionEvaluator.hpp"
+#include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -119,7 +119,7 @@ private:
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator> > >& evaluators ) const;
+     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
   void initializePhotonUnionEnergyGrid( 
@@ -136,7 +136,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
 	     const std::list<double>& union_energy_grid,
-	     const Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator>&
+	     const Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
 	     original_cross_section,
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const;

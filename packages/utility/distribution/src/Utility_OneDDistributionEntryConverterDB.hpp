@@ -26,7 +26,7 @@
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
+#include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
 
@@ -49,14 +49,14 @@ public:
   //! Get the OneDDistribution from the given parameter entry
   static Teuchos::RCP<OneDDistribution> convertEntry(
 		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
-
-  //! Standard initialization
-  static void standardInitialization();
   
 private:
 
   // Constructor
   OneDDistributionEntryConverterDB();
+
+  // Initialize the class
+  static bool initialize();
 
   // Typedef for the converter map
   typedef boost::unordered_map<std::string,
@@ -64,6 +64,9 @@ private:
   ConverterMap;
 
   static ConverterMap master_map;
+
+  // Records if the class has been initialized
+  static const bool initialized;
 };
 
 } // end Utility namespace
@@ -86,7 +89,7 @@ private:
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LogLin>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LinLog>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LogLog>);\
-  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(ThirtyTwoEquiprobableBinDistribution); \
+  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(EquiprobableBinDistribution); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(UniformDistribution);	\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(PolynomialDistribution)
 

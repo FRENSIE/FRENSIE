@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardAdjointIncoherentGridGenerator.hpp"
+#include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UniformDistribution.hpp"
@@ -57,7 +58,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator,
   
   Teuchos::Array<double> max_energy_grid, cross_section;
   
-  double max_energy_of_max_cs = DataGen::AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 0.1 );
+  double max_energy_of_max_cs = 
+    DataGen::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 0.1 );
 
   // Generate a lin-lin max energy grid at E = 0.1
   linlinlin_grid_generator_free->generate( max_energy_grid, 
@@ -77,15 +79,16 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator,
   TEST_EQUALITY_CONST( cross_section.size(), 43 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  2.54954929162927856e-32/1e-24, 
+				  2.54954928358413249e-08,
 				  1e-15 );
+  
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-				  7.01697560627867675e-25/1e-24,
-				  1e-12 );
+				  0.701697560627866257,
+				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
 		     cross_section[cross_section.size()-2],
-		     7.01697560627867675e-25/1e-24,
-		     1e-12 );		       
+		     0.701697560627866257,
+		     1e-15 );		       
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -108,16 +111,17 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator,
 		 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 40 );
   
+  
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  2.54954929162928617e-32/1e-24, 
-				  1e-12 );
+				  2.54954928358413249e-08,
+				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-				  7.01697560627867675e-25/1e-24,
-				  1e-12 );
+				  0.701697560627866257,
+				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
 		     cross_section[cross_section.size()-2],
-		     7.01697560627867675e-25/1e-24,
-		     1e-12 );
+		     0.701697560627866257,
+		     1e-15 );
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -137,10 +141,10 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator,
   TEST_EQUALITY_CONST( cross_section.size(), 64 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  2.54954932195035997e-33/1e-24, 
+				  2.54954930897518544e-09,
 				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
-				  3.97416434130254732e-25/1e-24,
+				  0.397416434130255625,
 				  1e-12 );
 
   max_energy_grid.clear();
@@ -161,10 +165,10 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator,
   TEST_EQUALITY_CONST( cross_section.size(), 35 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  2.54954932195035997e-33/1e-24, 
+				  2.54954930897518544e-09,
 				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-				  3.97416434130254732e-25/1e-24,
+				  0.397416434130255625,
 				  1e-15 );
 
   max_energy_grid.clear();
@@ -183,7 +187,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   
   Teuchos::Array<double> max_energy_grid, cross_section;
 
-  double max_energy_of_max_cs = DataGen::AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 0.1 );
+  double max_energy_of_max_cs = 
+    DataGen::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 0.1 );
 
   // Generate a lin-lin max energy grid at E = 0.1
   linlinlin_grid_generator_h->generate( max_energy_grid,
@@ -203,14 +208,14 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   TEST_EQUALITY_CONST( cross_section.size(), 36 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465456839e-37/1e-24, 
+				  1.28144457314458103e-12,
 				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-				  7.01235561105173864e-25/1e-24,
-				  1e-12 );
+				  0.70123552310933901,
+				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
 		     cross_section[cross_section.size()-2],
-		     7.01235561105173864e-25/1e-24,
+		     0.70123552310933901,
 		     1e-12 );		       
 
   max_energy_grid.clear();
@@ -221,7 +226,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
 					cross_section,
 					0.1 );
 
-  TEST_EQUALITY_CONST( max_energy_grid.size(), 263 );
+  TEST_EQUALITY_CONST( max_energy_grid.size(), 255 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
   				  0.1*(1.0+nudge_factor), 
   				  1e-15 );
@@ -232,18 +237,18 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   		 max_energy_grid[max_energy_grid.size()-2],
 		 max_energy_of_max_cs,
   		 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 263 );
+  TEST_EQUALITY_CONST( cross_section.size(), 255 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465460475e-37/1e-24, 
-				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  7.01235561105173864e-25/1e-24,
-  				  1e-12 );
+				  1.28144457314458103e-12,
+				  1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
+				  0.70123552310933901,
+  				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
   		     cross_section[cross_section.size()-2],
-  		     7.01235561105173864e-25/1e-24,
-  		     1e-12 );
+		     0.70123552310933901,
+  		     1e-15 );
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -253,7 +258,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
 					cross_section,
 					0.1 );
   						  
-  TEST_EQUALITY_CONST( max_energy_grid.size(), 354 );
+  TEST_EQUALITY_CONST( max_energy_grid.size(), 356 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
   				  0.1*(1.0+nudge_factor), 
   				  1e-15 );
@@ -265,17 +270,18 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   		 max_energy_of_max_cs,
   		 1e-15 );
   
-  TEST_EQUALITY_CONST( cross_section.size(), 354 );
+  TEST_EQUALITY_CONST( cross_section.size(), 356 );
+  
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465460475e-37/1e-24,
-  				  1e-12 );
+				  1.28144457314458103e-12,
+  				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  7.01235561105173864e-25/1e-24,
-  				  1e-12 );
+				  0.70123552310933901,
+				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
   		     cross_section[cross_section.size()-2],
-  		     7.01235561105173864e-25/1e-24,
-  		     1e-12 );
+		     0.70123552310933901,
+  		     1e-15 );
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -295,10 +301,10 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   TEST_EQUALITY_CONST( cross_section.size(), 62 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24, 
+				  1.28233099739908285e-12,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+				  0.397416434130255625,
   				  1e-12 );
 
   max_energy_grid.clear();
@@ -319,10 +325,10 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   TEST_EQUALITY_CONST( cross_section.size(), 33 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24, 
+				  1.28233099739908285e-12,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+				  0.397416434130255625,
   				  1e-15 );
 
   max_energy_grid.clear();
@@ -333,7 +339,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
 					cross_section,
 					1.0 );
   
-  TEST_EQUALITY_CONST( max_energy_grid.size(), 371 );
+  TEST_EQUALITY_CONST( max_energy_grid.size(), 367 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
 				  1.0*(1.0+nudge_factor),
   				  1e-15 );
@@ -341,13 +347,13 @@ TEUCHOS_UNIT_TEST( StandardAdjointIncoherentGridGenerator, generate_single_h )
   				  20.2, 
   				  1e-15 );
   
-  TEST_EQUALITY_CONST( cross_section.size(), 371 );
-  
+  TEST_EQUALITY_CONST( cross_section.size(), 367 );
+
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24,
+				  1.28233099739908285e-12,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+				  0.397416434130255625,
   				  1e-15 );
 
   max_energy_grid.clear();
@@ -516,18 +522,9 @@ int main( int argc, char** argv )
     Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
     Teuchos::Array<double> scattering_func_vals( 
 			     jince_block( scatt_func_size, scatt_func_size ) );
-
-    for( unsigned i = 0; i < scatt_func_size; ++i )
-      recoil_momentum[i] *= 1e8; // convert from inverse Angstrom to inverse cm
-
-    if( recoil_momentum.front() == 0.0 )
-      recoil_momentum.front() = 1e-30;
-    
-    if( scattering_func_vals.front() == 0.0 )
-      scattering_func_vals.front() = 1e-30;
     
     Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-		   new Utility::TabularDistribution<Utility::LogLog>(
+		   new Utility::TabularDistribution<Utility::LinLin>(
 			   recoil_momentum,
 			   scattering_func_vals ) );
     
@@ -568,15 +565,10 @@ int main( int argc, char** argv )
 
     Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
 
-    for( unsigned i = 0; i < scatt_func_size; ++i )
-      recoil_momentum[i] *= 1e8; // convert from inverse Angstrom to inverse cm
-
     Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-		   new Utility::TabularDistribution<Utility::LogLog>(
+		   new Utility::TabularDistribution<Utility::LinLin>(
 			   recoil_momentum,
 			   jince_block( scatt_func_size, scatt_func_size ) ) );
-    Teuchos::ArrayView<const double> func = 
-      jince_block( scatt_func_size, scatt_func_size );
     
     logloglog_grid_generator_pb.reset( new DataGen::StandardAdjointIncoherentGridGenerator<Utility::LogLogLog>( 
 						       scattering_function ) );

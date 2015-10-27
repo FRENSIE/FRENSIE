@@ -134,13 +134,12 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     if( cutoff_cdf_value > random_number )
     {
       scattering_angle_cosine = 
-        d_elastic_scattering_distribution.front().second->sample( cutoff_cdf_value );
+        d_elastic_scattering_distribution.front().second->sampleInSubrange( 
+						       s_cutoff_angle_cosine );
     }
     // Sample from the analytical function
     else
-    {
       scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
-    }
   }
   // Energy is above the highest grid point
   else if( energy >= d_elastic_scattering_distribution.back().first )
@@ -155,13 +154,12 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     if( cutoff_cdf_value > random_number )
     {
       scattering_angle_cosine = 
-        d_elastic_scattering_distribution.back().second->sample( cutoff_cdf_value );
+        d_elastic_scattering_distribution.back().second->sampleInSubrange( 
+						       s_cutoff_angle_cosine );
     }
     // Sample from the analytical function
     else
-    {
       scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
-    }
   }
   // Energy is inbetween two grid point
   else
