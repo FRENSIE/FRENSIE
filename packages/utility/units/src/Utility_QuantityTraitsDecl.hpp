@@ -36,6 +36,9 @@ struct QuantityTraits
   //! The quantity type
   typedef T QuantityType;
 
+  //! Used to check if the quantity is a floating point quantity
+  typedef boost::is_floating_point<T> is_floating_point;
+  
   //! The quantity raised to power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType

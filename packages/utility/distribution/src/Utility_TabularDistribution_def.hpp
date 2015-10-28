@@ -135,7 +135,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 		  const Teuchos::Array<InputIndepQuantity>& independent_values,
 		  const Teuchos::Array<InputDepQuantity>& dependent_values )
   : d_distribution( independent_values.size() ),
-    d_norm_constant( 0.0 )
+    d_norm_constant( DNQT::zero() )
 {
   // Make sure there is at lease one bin
   testPrecondition( independent_values.size() > 1 );
@@ -471,14 +471,30 @@ double TabularDistribution<InterpolationPolicy>::sampleImplementation(
 >>>>>>> Working on refactoring the TabularDistribution class.
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
-  if( slope != 0.0 )
+  if( slope != QuantityTraits<SlopeQuantity>::zero() )
   {
+<<<<<<< HEAD
     sample = indep_value + 
       (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+=======
+    typedef typename QuantityTraits<DepQuantity>::template GetQuantityToPowerType<2>::type DepQuantitySqr;
+
+    DepQuantitySqr term_1 = pdf_value*pdf_value;
+    DepQuantitySqr term_2( 2.0*slope*cdf_diff );
+    
+    IndepQuantity term_3((Utility::sqrt( term_1 + term_2 ) - pdf_value)/slope);
+    
+    sample = indep_value + term_3;
+      
+>>>>>>> Finished refactoring the TabularDistribution. In now supports boost units.
   }
   // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
   else
-    sample =  indep_value + cdf_diff/pdf_value;
+  {
+    IndepQuantity term_2( cdf_diff/pdf_value );
+    
+    sample =  indep_value + term_2;
+  }
 
   // Make sure the sample is valid
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
