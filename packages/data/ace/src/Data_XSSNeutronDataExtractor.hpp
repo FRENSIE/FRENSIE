@@ -201,6 +201,9 @@ public:
 
   //! Extract the DNED (delayed neutron DLW) block from the XSS array
   Teuchos::ArrayView<const double> extractDNEDBlock() const;
+  
+  //! Extract the Ace Laws used for each MT Number from the XSS array
+  Teuchos::ArrayRCP<double> extractAceLaws() const;
 
 private:
 
