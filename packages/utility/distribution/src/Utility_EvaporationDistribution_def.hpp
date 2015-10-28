@@ -25,20 +25,24 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution(
   const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
-  const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+  const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
+  const double constant_multiplier )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( DMQT::one() ),
+    d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !IQT::isnaninf( incident_energy ) );
   testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
   testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature are positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
+  // Make sure the constant multiplier is positive
+  testPrecondition( constant_multiplier > 0.0 );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
@@ -57,22 +61,26 @@ template<typename InputIndepQuantityA,
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution( 
 				 const InputIndepQuantityA incident_energy,
 				 const InputIndepQuantityB nuclear_temperature,
-				 const InputIndepQuantityC restriction_energy )
+				 const InputIndepQuantityC restriction_energy,
+				 const double constant_multiplier )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( DMQT::one() ),
+    d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( incident_energy ) );
   testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( nuclear_temperature ) );
   testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
+  testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature are positive
   testPrecondition( incident_energy > 
 		    QuantityTraits<InputIndepQuantityA>::zero() );
   testPrecondition( nuclear_temperature > 
 		    QuantityTraits<InputIndepQuantityB>::zero() );
+  // Make sure that the constant multiplier is positive
+  testPrecondition( constant_multiplier > 0.0 );
 
   // Calculate the normalization constant
   this->calculateNormalizationConstant();
