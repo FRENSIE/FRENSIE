@@ -18,7 +18,7 @@ set ylabel "Current Spectrum"
 set logscale x
 #set logscale y
 set format x ""
-#set format y "%3.2f"
+set format y "%2.1e"
 #set format y "10^{%L}"
 set grid
 #set xrange[0.0718:0.1]

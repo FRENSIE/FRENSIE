@@ -12,46 +12,91 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_SearchAlgorithms.hpp"
-#include "Utility_ContractException.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
-//! Histogram distribution class
-class HistogramDistribution : public TabularOneDDistribution,
-			      public ParameterListCompatibleObject<HistogramDistribution>
+/*! The unit-aware histogram distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+				       public ParameterListCompatibleObject<UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
+
+  // Typedef for QuantityTraits<DistNormQuantity>
+  typedef QuantityTraits<DistNormQuantity> DNQT;
 
 public:
 
+  //! This distribution type
+  typedef UnitAwareHistogramDistribution<IndependentUnit,DependentUnit> ThisType;
+
+  //! The independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
   //! Default constructor
-  HistogramDistribution();
+  UnitAwareHistogramDistribution();
 
-  //! Constructor (data owning)
-  HistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
-			             const Teuchos::Array<double>& bin_values,
-                         const bool interpret_dependent_values_as_cdf = false );
+  //! Basic constructor (potentially dangerous)
+  UnitAwareHistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
+				  const Teuchos::Array<double>& bin_values,
+				  const bool interpret_dependent_values_as_cdf = false );
 
+  //! CDF constructor
+  template<typename InputIndepQuantity>
+  UnitAwareHistogramDistribution( 
+		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
+		      const Teuchos::Array<double>& cdf_values );
+
+  //! Constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareHistogramDistribution( 
+		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
+		      const Teuchos::Array<InputDepQuantity>& bin_values );
+  
   //! Copy constructor
-  HistogramDistribution( const HistogramDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareHistogramDistribution( const UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
+
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareHistogramDistribution fromUnitlessDistribution( const UnitAwareHistogramDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  HistogramDistribution& operator=( 
-				  const HistogramDistribution& dist_instance );
+  UnitAwareHistogramDistribution& operator=( 
+			 const UnitAwareHistogramDistribution& dist_instance );
 
   //! Destructor
-  ~HistogramDistribution()
+  ~UnitAwareHistogramDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -101,7 +146,12 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const HistogramDistribution& other ) const;
+  bool isEqual( const UnitAwareHistogramDistribution& other ) const;
+
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareHistogramDistribution( const UnitAwareHistogramDistribution<void,void>& unitless_dist_instance, int );
   
 private:
 
@@ -113,6 +163,10 @@ private:
   double sampleImplementation( double random_number,
 			       unsigned& sampled_bin_index ) const;
 
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareHistogramDistribution;
+
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
 
@@ -123,45 +177,6 @@ private:
   // The normalization constant
   double d_norm_constant;
 };
-
-// Return a random sample using the random number and record the bin index
-inline double HistogramDistribution::sampleImplementation( 
-					    double random_number,
-					    unsigned& sampled_bin_index ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  
-  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
-    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
-                                     d_distribution.end(),
-                                     random_number );
-
-  sampled_bin_index = std::distance( d_distribution.begin(), bin );
-
-  return bin->first + (random_number - bin->third)/bin->second;
-}
-
-// Return a sample from the distribution at the given CDF value in a subrange
-inline double HistogramDistribution::sampleWithRandomNumberInSubrange( 
-					     const double random_number,
-					     const double max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the maximum indep var is valid
-  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-  
-  // Compute the scaled random number
-  double scaled_random_number = 
-    random_number*this->evaluateCDF( max_indep_var );
-
-  unsigned dummy_index;
-    
-  return this->sampleImplementation( scaled_random_number, dummy_index );
-}
 
 } // end Utility namespace
 
@@ -182,6 +197,32 @@ public:
   }
   static std::string concreteName( 
 			       const Utility::HistogramDistribution& instance )
+  {
+    return name();
+  }
+};
+
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareHistogramDistribution
+ *
+ * \details The name function will set the type name that must be used in 
+ * xml files
+ */
+template<typename U, typename V>
+class TypeNameTraits<Utility::UnitAwareHistogramDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    std::ostringstream iss;
+    iss << "Unit-Aware Histogram Distribution ("
+	<< Utility::UnitTraits<U>::symbol() << ","
+	<< Utility::UnitTraits<V>::symbol() << ")";
+
+    return iss.str();
+  }
+  static std::string concreteName(
+		 const Utility::UnitAwareHistogramDistribution<U,V>& instance )
   {
     return name();
   }

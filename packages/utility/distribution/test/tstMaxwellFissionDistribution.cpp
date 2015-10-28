@@ -279,14 +279,14 @@ TEUCHOS_UNIT_TEST( UnitAwareMaxwellFissionDistribution,
   nuclear_temperature = 0.1*MeV;
   restriction_energy = 0.01*MeV;
 
-  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,void>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt>::sample( incident_energy, nuclear_temperature, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.20924646054839*MeV, 1e-13 );
   
   incident_energy = 0.75*MeV;
   nuclear_temperature = 0.5*MeV;
   restriction_energy = 0.25*MeV;
 
-  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, nuclear_temperature, restriction_energy );
+  sample = Utility::UnitAwareMaxwellFissionDistribution<MegaElectronVolt>::sample( incident_energy, nuclear_temperature, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.41023025568120*MeV, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

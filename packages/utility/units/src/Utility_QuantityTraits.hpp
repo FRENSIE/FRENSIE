@@ -17,6 +17,9 @@
 #include <boost/units/io.hpp>
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/mpl/and.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -26,11 +29,34 @@
 
 namespace Utility{
 
-/*! The partial specialization of QuantityTraits for boost::units::quantity
+/*! \brief The QuantityTraitsHelper partial specialization for floating point 
+ * boost::units::quantity
  * \ingroup quantity_traits
  */
 template<typename Unit, typename T>
-struct QuantityTraits<boost::units::quantity<Unit,T> >
+struct QuantityTraitsHelper<boost::units::quantity<Unit,T>,typename boost::enable_if<boost::is_floating_point<T> >::type>
+{
+private:
+  typedef boost::units::quantity<Unit,T> QuantityType;
+  typedef T RawType;
+
+public:
+  static inline QuantityType inf()
+  { return QuantityType::from_value( std::numeric_limits<RawType>::infinity() ); }
+
+  static inline QuantityType nan()
+  { return QuantityType::from_value( Teuchos::ScalarTraits<RawType>::nan() ); }
+
+  static inline bool isnaninf( const QuantityType& a )
+  { return Teuchos::ScalarTraits<RawType>::isnaninf( a.value() ); }
+};
+
+/*! \brief The partial specialization of QuantityTraits for arithmetic 
+ * boost::units::quantity
+ * \ingroup quantity_traits
+ */
+template<typename Unit, typename T>
+struct QuantityTraits<boost::units::quantity<Unit,T>, typename boost::enable_if<boost::is_arithmetic<T> >::type> : public QuantityTraitsHelper<boost::units::quantity<Unit,T> >
 {
   typedef Unit UnitType;
   typedef T RawType;
@@ -48,9 +74,6 @@ struct QuantityTraits<boost::units::quantity<Unit,T> >
   static inline QuantityType one()
   { return QuantityType::from_value( RawType(1) ); }
 
-  static inline QuantityType nan()
-  { return QuantityType::from_value( Teuchos::ScalarTraits<RawType>::nan() ); }
-
   static inline QuantityType conjugate( const QuantityType& a )
   { return QuantityType::from_value( Teuchos::ScalarTraits<RawType>::conjugate( a.value() ) ); }
 
@@ -59,9 +82,6 @@ struct QuantityTraits<boost::units::quantity<Unit,T> >
 
   static inline QuantityType imag( const QuantityType& a )
   { return QuantityType::from_value( Teuchos::ScalarTraits<RawType>::imag( a.value() ) ); }
-
-  static inline bool isnaninf( const QuantityType& a )
-  { return Teuchos::ScalarTraits<RawType>::isnaninf( a.value() ); }
 
   //! Possible bug in boost::units::sqrt
   static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity )
@@ -87,13 +107,35 @@ struct QuantityTraits<boost::units::quantity<Unit,T> >
   { quantity = QuantityType::from_value( raw_quantity ); }
 };
 
+/*! \brief The QuantityTraitsHelper partial specialization for floating point 
+  types (no units).
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct QuantityTraitsHelper<T,typename boost::enable_if<boost::is_floating_point<T> >::type>
+{
+private:
+  typedef T QuantityType;
+
+public:
+
+  static inline QuantityType inf()
+  { return std::numeric_limits<QuantityType>::infinity(); }
+
+  static inline QuantityType nan()
+  { return Teuchos::ScalarTraits<QuantityType>::nan(); }
+
+  static inline bool isnaninf( const QuantityType& a )
+  { return Teuchos::ScalarTraits<QuantityType>::isnaninf(a); }
+};
+
 /*! The specialization of QuantityTraits for all arithmetic types (no units).
  *
  * Note that having no units is different from a dimensionless unit.
  * \ingroup quantity_traits
  */
 template<typename T>
-struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::type>
+struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::type> : public QuantityTraitsHelper<T>
 {
   typedef void Unit;
   typedef T RawType;
@@ -109,9 +151,6 @@ struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::typ
   static inline QuantityType one()
   { return RawType(1); }
 
-  static inline QuantityType nan()
-  { return Teuchos::ScalarTraits<QuantityType>::nan(); }
-
   static inline QuantityType conjugate( const QuantityType& a )
   { return Teuchos::ScalarTraits<QuantityType>::conjugate(a); }
 
@@ -120,9 +159,6 @@ struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::typ
 
   static inline QuantityType imag( const QuantityType& a )
   { return Teuchos::ScalarTraits<QuantityType>::imag(a); }
-
-  static inline bool isnaninf( const QuantityType& a )
-  { return Teuchos::ScalarTraits<QuantityType>::isnaninf(a); }
 
   static inline QuantityType sqrt( const QuantityType quantity )
   { return std::sqrt( quantity ); }

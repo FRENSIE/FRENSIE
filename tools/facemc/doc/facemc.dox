@@ -725,16 +725,24 @@
  *   <li><b>Exponential distribution</b>
  *    <ul>
  *     <li>\code
- *         <Parameter name="example a" type="Exponential Distribution" value="{2,3}"/>
- *         <Parameter name="example b" type="Exponential Distribution" value="{3}"/>
+ *         <Parameter name="example a" type="Exponential Distribution" value="{2}"/>
+ *         <Parameter name="example b" type="Exponential Distribution" value="{2,3}"/>
+ *         <Parameter name="example c" type="Exponential Distribution" value="{2,3,1}"/>
+ *         <Parameter name="example d" type="Exponential Distribution" value="{2,3,1,10}"/>
+ *
  *          \endcode</li>
- *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
- *     <li>The value attribute specifies the constant multiplier \f$a\f$ 
- *         (optional) and the exponent multiplier \f$b\f$, which should always 
- *         be positive.</li>
- *     <li>The default value of \f$a\f$ is 1.0.</li>
- *     <li>For sampling distributions, the \f$a\f$ value will be
- *         replaced by a normalization constant. </li></ul></li>
+ *     <li>Models an exponentially decaying function 
+ *         \f$b*\exp(-a*x), x \in [c,d]\f$</li>
+ *     <li>The value attribute specifies the decay consant \f$a\f$, which
+ *         should always be positive, the constant multiplier \f$b\f$ 
+ *         (optional), the lower bound of the independent variable
+ *         \f$c\f$ (optional), which must be greater than or equal to zero, and
+ *         the upper bound of the independent variable \f$d\f$ (optional).</li>
+ *     <li>The default value of \f$b\f$ is 1.0.</li>
+ *     <li>The default value of \f$c\f$ is 0.0.</li>
+ *     <li>The default value of \f$d\f$ is inf.</li>
+ *     <li>For sampling distributions, the \f$b\f$ value will be
+ *         replaced by a normalization constant.</li></ul></li>
  *   <li><b>Histogram distribution</b>
  *    <ul>
  *     <li>\code
@@ -754,43 +762,77 @@
  *         <Parameter name="example a" type="Evaporation Distribution" value="{1.0,1.0,0.1}"/>
  *         <Parameter name="example b" type="Evaporation Distribution" value="{3.0,2.0,1.0}"/>
  *         <Parameter name="example c" type="Evaporation Distribution" value="{1.0,1.0,0.0}"/>
+ *         <Parameter name="example d" type="Evaporation Distribution" value="{1.0,1.0,0.0,0.5}"/>
  *         \endcode</li>
- *     <li> Models an evaporation distribution \f$CE_{out}e^{-E_{out}/T(E_{in})}\f$ where \f$C^{-1}=T^{2}[1-e^{-(E_{in}-U)/T}(1+(E_{in}-U)/T)]\f$.</li>
- *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the nuclear temperature \f$T(E_{in})\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
- *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$T(E_{in})\f$, and 0.0 for \f$U\f$.</li></ul></li>
+ *     <li> Models an evaporation distribution \f$cxe^{-x/T(E_{in})}\f$ for 
+ *          \f$x \in [0,E_{in}-U]\f$.</li>
+ *     <li>The value attribute specifies the incident energy \f$E_{in}\f$, 
+ *         the nuclear temperature \f$T(E_{in})\f$, the restriction energy 
+ *         \f$U\f$, and the constant multiplier \f$c\f$ (optional).</li>
+ *     <li>The incident neutron energy \f$E_{in}\f$ and nuclear temperature 
+ *         \f$T(E_{in})\f$ must be strictly positive.</li>
+ *     <li>The default values are 1.0 for \f$E_{in}\f$, 1.0 for 
+ *         \f$T(E_{in})\f$, 0.0 for \f$U\f$, and 1.0 for \f$c\f$.</li>
+ *     <li>For sampling distributions the constant multiplier \f$c\f$ will be 
+ *         replaced with \f$C^{-1}=T^{2}[1-e^{-(E_{in}-U)/T}(1+(E_{in}-U)/T)]\f$.</li></ul></li> 
  *   <li><b>Maxwell Fission distribution</b>
  *    <ul>
  *     <li>\code
  *         <Parameter name="example a" type="Maxwell Fission Distribution" value="{1.0,1.0,0.1}"/>
  *         <Parameter name="example b" type="Maxwell Fission Distribution" value="{3.0,2.0,1.0}"/>
  *         <Parameter name="example c" type="Maxwell Fission Distribution" value="{1.0,1.0,0.0}"/>
+ *         <Parameter name="example d" type="Maxwell Fission Distribution" value="{1.0,1.0,0.0,0.5}"/>
  *         \endcode</li>
- *     <li> Models a Maxwell fission spectrum \f$C\sqrt{E_{out}}e^{-E_{out}/T(E_{in})}\f$ where \f$C^{-1}=T^{3/2}[(\frac{\sqrt{\pi}}{2})erf(\sqrt{\frac{E_{in}-U}{T}})-\sqrt{\frac{E_{in}-U}{T}}e^{-(E_{in}-U)/T}]\f$.</li>
- *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the nuclear temperature \f$T(E_{in})\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
- *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$T(E_{in})\f$, and 0.0 for \f$U\f$.</li></ul></li>
+ *     <li>Models a Maxwell fission spectrum \f$c\sqrt{x}e^{-x/T(E_{in})}\f$ 
+ *         for \f$x \in [0,E_{in}-U]\f$.</li>
+ *     <li>The value attribute specifies the incident energy \f$E_{in}\f$, the 
+ *         nuclear temperature \f$T(E_{in})\f$, the restriction energy \f$U\f$,
+ *         and the constant multiplier \f$c\f$ (optional).</li>
+ *     <li>The incident neutron energy and nuclear temperature must be strictly
+ *         positive.</li>
+ *     <li>The default values are 1.0 for \f$E_{in}\f$, 1.0 for 
+ *         \f$T(E_{in})\f$, 0.0 for \f$U\f$ and 1.0 for \f$c\f$.</li>
+ *     <li>For sampling distributions the constant multiplier \f$c\f$ will be
+ *         replaced with \f$C^{-1}=T^{3/2}[(\frac{\sqrt{\pi}}{2})erf(\sqrt{\frac{E_{in}-U}{T}})-\sqrt{\frac{E_{in}-U}{T}}e^{-(E_{in}-U)/T}]\f$.</li></ul></li>
  *   <li><b>Watt distribution</b>
  *    <ul>
  *     <li>\code
  *         <Parameter name="example a" type="Watt Distribution" value="{1.0,1.0,1.0,0.1}"/>
  *         <Parameter name="example b" type="Watt Distribution" value="{3.0,2.0,1.0,0.0}"/>
+ *         <Parameter name="example c" type="Watt Distribution" value="{3.0,2.0,1.0,0.0,0.5}"/>
  *         \endcode</li>
- *     <li> Models a Watt spectrum \f$Ce^{-E_{out}/a(E_{in})}sinh\sqrt{b(E_{in})E_{out}}\f$ where \f$C^{-1}=\frac{1}{2}\sqrt{\frac{\pi a^{3}b}{4}}exp(\frac{ab}{4})[erf(\sqrt{\frac{E_{in}-U}{a}}-\sqrt{\frac{ab}{4}})+erf(\sqrt{\frac{E_{in}-U}{a}}+\sqrt{\frac{ab}{4}})]-aexp[-\frac{E_{in}-U}{a}]sinh\sqrt{b(E_{in}-U)}\f$.</li>
- *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the isotope and energy dependent paramters \f$a\f$ and \f$b\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
- *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$a\f$, 1.0 for \f$b\f$ and 0.0 for \f$U\f$.</li></ul></li>
+ *     <li>Models a Watt spectrum \f$ce^{-x/a(E_{in})}sinh\sqrt{b(E_{in})x}\f$
+ *         for \f$x \in [0,E_{in}-U]\f$.</li>
+ *     <li>The value attribute specifies the incident energy \f$E_{in}\f$, the 
+ *         isotope and energy dependent paramters \f$a\f$ and \f$b\f$, the 
+ *         restriction energy \f$U\f$, and the constant multiplier \f$c\f$
+ *         (optional).</li>
+ *     <li>The incident neutron energy and nuclear temperature must
+ *         be strictly positive.</li>
+ *     <li>The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$a\f$, 1.0 
+ *         for \f$b\f$, 0.0 for \f$U\f$, and 1.0 for \f$c\f$.</li>
+ *     <li>For sampling distributions the constant multiplier c will be 
+ *         replaced with \f$C^{-1}=\frac{1}{2}\sqrt{\frac{\pi a^{3}b}{4}}exp(\frac{ab}{4})[erf(\sqrt{\frac{E_{in}-U}{a}}-\sqrt{\frac{ab}{4}})+erf(\sqrt{\frac{E_{in}-U}{a}}+\sqrt{\frac{ab}{4}})]-aexp[-\frac{E_{in}-U}{a}]sinh\sqrt{b(E_{in}-U)}\f$.</li></ul></li>
  *    <li><b>Normal distribution</b>
  *     <ul>
  *      <li>\code
  *          <Parameter name="example a" type="Normal Distribution" value="{0,1,-inf,inf}"/>
  *          <Parameter name="example b" type="Normal Distribution" value="{0,1}"/>
  *          <Parameter name="example c" type="Normal Distribution" value="{1.5,0.25,-10,10}"/>
+ *          <Parameter name="example a" type="Normal Distribution" value="{0,1,-inf,inf,0.5}"/>
  *          \endcode</li>
- *      <li>Models a Gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
- *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
- *          deviation \f$\sigma\f$ of the Gaussian. The standard deviation must
- *          be strictly greater than zero.
- *      <li>The distribution can be truncated by specifying a lower cutoff and 
- *          an upper cutoff. The special values of "-inf" and "inf" can be used
- *          to essentially provide no cutoff values.</li></ul></li>
+ *      <li>Models a Gaussian function \f$c\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$ for \f$x \in [a,b]\f$</li>
+ *      <li>The value attribute specifies the mean \f$\mu\f$, standard
+ *          deviation \f$\sigma\f$ (must be strictly greater than zero), the
+ *          lower bound of the independent variable \f$a\f$ (optional), the
+ *          upper bound of the independent variable \f$b\f$ (optional) and the
+ *          constant multiplier \f$c\f$ (optional).
+ *      <li>The special values of "-inf" and "inf" can be used
+ *          for the bounds to essentially provide no cutoff values (these
+ *          are the default values).</li>
+ *      <li>The default multiplier \f$c\f$ is 1.0. For sampling distributions
+ *          this value will be replaced by 
+ *          \f$\frac{1.0}{\sigma \sqrt{2\pi}}\f$.</li></ul></li>
  *    <li><b>Polynomial Distribution</b>
  *     <ul>
  *      <li>\code
@@ -815,12 +857,12 @@
  *          <Parameter name="example e" type="Power 10 Distribution" value="{1.0,1.5,5.5}"/>
  *          <Parameter name="example f" type="Power 10 Distribution" value="{1.5,5.5}"/>
  *          \endcode</li>
- *      <li>Models the power function \f$c x^N\f$ for \f$x \in [a,b]\f$, where
+ *      <li>Models the power function \f$a x^N\f$ for \f$x \in [b,c]\f$, where
  *          \f$N\f$ is the desired power.</li>
  *       <li>The type attribute specifies the power \f$N\f$.</li>
- *       <li>The value attribute specifies the constant multiplier \f$c\f$
- *           (optional), the minimum \f$x\f$ value \f$a\f$ and the 
- *           maximum \f$x\f$ value \f$b\f$ respectively. The limits must be 
+ *       <li>The value attribute specifies the constant multiplier \f$a\f$
+ *           (optional), the minimum \f$x\f$ value \f$b\f$ and the 
+ *           maximum \f$x\f$ value \f$c\f$ respectively. The limits must be 
  *           strictly positive.</li>
  *       <li>The default value of \f$c\f$ is 1.0.
  *       <li>For sampling distributions, the constant multiplier \f$c\f$ will
@@ -1416,7 +1458,7 @@
  *      of the \ref one_d_distributions "one-dimensional distributions".
  *      <ul>
  *       <li>\code
- *           <Parameter name="Energy Distribution" type="Exponential Distribution" value="{0.5}"/>
+ *           <Parameter name="Energy Distribution" type="Exponential Distribution" value="{1.0,0.5}"/>
  *           \endcode</li>
  *      </ul></li>
  * </ol>
