@@ -37,7 +37,7 @@ public:
 	 const Teuchos::ArrayView<const double>& yield_energy_grid,
 	 const Teuchos::ArrayView<const double>& yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
-	 const Teuchos::RCP<PhotonProductionDistribution>& 
+	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 	 photon_production_distribution );
 
   //! Destructor

@@ -39,8 +39,8 @@ public:
 
   //! Constructor
   NuclearScatteringDistributionACEFactory(
-			     const std::string& table_name,
-			     const double atomic_weight_ratio,
+			    const std::string& table_name,
+			    const double atomic_weight_ratio,
 			    const Teuchos::ArrayView<const double> mtr_block,
 			    const Teuchos::ArrayView<const double> tyr_block,
 			    const Teuchos::ArrayView<const double> land_block,
