@@ -37,7 +37,7 @@ public:
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<PhotonProductionDistribution>& 
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 		   photon_production_distribution );
 
   //! Return the threshold energy

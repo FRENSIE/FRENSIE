@@ -162,7 +162,8 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
        	      reaction_type,
-	      energy_distribution );
+	          energy_distribution,
+	          d_atomic_weight_ratio );
   
       // Test that law 3 distributions are always in the CM system
       if( energy_distribution->getLaw() == 3 )

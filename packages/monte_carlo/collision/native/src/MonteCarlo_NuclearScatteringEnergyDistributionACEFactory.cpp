@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.cpp
-//! \author Alex Robinson, Alex Bennett
+//! \author Alex Robinson, Alex Bennett, Eli Moll
 //! \brief  Nuclear scattering energy distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
@@ -17,6 +17,7 @@
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw2NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw5NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw7NuclearScatteringEnergyDistribution.hpp"
@@ -33,7 +34,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
 	     const unsigned reaction,
-	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution,
+	     const double atomic_weight_ratio )
 {
   // Make sure the dlw block array is valid
   testPrecondition( dlw_block_array.size() > 0 );
@@ -57,6 +59,15 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 				     table_name,
 				     reaction,
 				     distribution );
+    break;
+    
+  case 2u:
+    createAceLaw2EnergyDistribution ( dlw_block_array,
+                     dlw_block_array_start_index,
+                     table_name,
+                     reaction,
+                     distribution,
+                     atomic_weight_ratio );
     break;
 
   case 3u:
@@ -144,6 +155,34 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     // Create the equiprobable bin scattering energy distriubtion (law 1)
     distribution.reset( 
 	       new AceLaw1NuclearScatteringEnergyDistribution( energy_grid ) );
+}
+
+// Create an AceLaw 2 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw2EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution,
+	     const double atomic_weight_ratio )
+{
+  // Verify that the law is Ace Law 2
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 2,
+           	          std::runtime_error,
+           	          "Error: MT# " << reaction << " in ACE table "
+           	          << table_name << " should be law 2!\n" );
+           	          
+  // Start index for ldat data
+  int LP = 
+    (int)dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index - 1];
+  double EG = 
+    dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index];
+  
+  // Create the discrete photon distribution
+  distribution.reset(
+    new AceLaw2NuclearScatteringEnergyDistribution( LP,
+                                                    EG,
+                                                    atomic_weight_ratio ) );  
 }
 
 // Create a AceLaw 3 energy distribution

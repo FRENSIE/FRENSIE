@@ -18,7 +18,7 @@ PhotonProductionReaction::PhotonProductionReaction(
 			      const NuclearReactionType base_reaction_type,
 			      const unsigned photon_production_id,
 			      const double temperature,
-		              const Teuchos::RCP<PhotonProductionDistribution>&
+		        const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 			      photon_production_distribution )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
@@ -46,9 +46,11 @@ double PhotonProductionReaction::getTemperature() const
 void PhotonProductionReaction::react( const NeutronState& neutron, 
 				      ParticleBank& bank ) const
 {
-  Teuchos::RCP<PhotonState> new_photon;
-
-  d_photon_production_distribution->createPhoton( neutron, new_photon );
+  Teuchos::RCP<PhotonState> new_photon(
+			   new PhotonState( neutron, true, false ) );
+				   
+  d_photon_production_distribution->scatterParticle( neutron, *new_photon,
+					this->getTemperature() );
 
   bank.push( new_photon );
 }
