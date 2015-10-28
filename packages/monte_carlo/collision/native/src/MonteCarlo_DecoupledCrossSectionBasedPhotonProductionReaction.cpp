@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CrossSectionBasedPhotonProductionReaction.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  The photon production reaction with cross section data class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_CrossSectionBasedPhotonProductionReaction.hpp"
+#include "MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Constructor
-CrossSectionBasedPhotonProductionReaction::CrossSectionBasedPhotonProductionReaction(
+DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPhotonProductionReaction(
 		   const NuclearReactionType base_reaction_type,
 		   const unsigned photon_production_id,
 		   const double temperature,
@@ -31,7 +31,7 @@ CrossSectionBasedPhotonProductionReaction::CrossSectionBasedPhotonProductionReac
 			      photon_production_distribution ),
     d_threshold_energy_index( threshold_energy_index ),
     d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section )
+    d_cross_section( cross_section ),
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 1 );
@@ -42,7 +42,7 @@ CrossSectionBasedPhotonProductionReaction::CrossSectionBasedPhotonProductionReac
 }
 
 // Return the cross section at a given energy
-double CrossSectionBasedPhotonProductionReaction::getCrossSection( 
+double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( 
 						    const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() &&
@@ -73,5 +73,5 @@ double CrossSectionBasedPhotonProductionReaction::getCrossSection(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CrossSectionBasedPhotonProductionReaction.cpp
+// end MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.cpp
 //---------------------------------------------------------------------------//

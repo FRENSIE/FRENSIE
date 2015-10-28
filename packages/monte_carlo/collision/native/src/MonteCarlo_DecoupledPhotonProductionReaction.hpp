@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_PhotonProductionReaction.hpp
-//! \author Alex Robinson
-//! \brief  The photon production reaction base class declaration
+//! \file   MonteCarlo_DecoupledPhotonProductionReaction.hpp
+//! \author Alex Robinson, Eli Moll
+//! \brief  The decoupled photon production reaction base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HPP
-#define MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HPP
+#ifndef MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_HPP
+#define MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
@@ -92,8 +92,8 @@ inline unsigned PhotonProductionReaction::getPhotonProductionId() const
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HP
+#endif // end MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_HP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonProductionReaction.hpp
+// end MonteCarlo_DecoupledPhotonProductionReaction.hpp
 //---------------------------------------------------------------------------//

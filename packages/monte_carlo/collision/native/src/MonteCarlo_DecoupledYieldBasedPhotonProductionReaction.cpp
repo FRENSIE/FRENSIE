@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_YieldBasePhotonProductionReaction.cpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_DecoupledYieldBasePhotonProductionReaction.cpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  The photon production reaction with yield data definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_YieldBasedPhotonProductionReaction.hpp"
+#include "MonteCarlo_DecoupledYieldBasedPhotonProductionReaction.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Constructor
-YieldBasedPhotonProductionReaction::YieldBasedPhotonProductionReaction(
+DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProductionReaction(
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
@@ -49,7 +49,7 @@ YieldBasedPhotonProductionReaction::YieldBasedPhotonProductionReaction(
 /*! \details The photon production cross section is the base cross section
  * multiplied by the yield.
  */
-double YieldBasedPhotonProductionReaction::getCrossSection( 
+double DecoupledYieldBasedPhotonProductionReaction::getCrossSection( 
 						    const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() &&
@@ -82,5 +82,5 @@ double YieldBasedPhotonProductionReaction::getCrossSection(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_YieldBasedPhotonProductionReaction.cpp
+// end MonteCarlo_DecoupledYieldBasedPhotonProductionReaction.cpp
 //---------------------------------------------------------------------------//
