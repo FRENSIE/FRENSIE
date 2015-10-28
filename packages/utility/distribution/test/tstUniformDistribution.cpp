@@ -218,17 +218,17 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sample_static )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   quantity<si::energy> sample = 
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+    Utility::UnitAwareUniformDistribution<si::energy>::sample( 
 					        0.0*si::joule, 1.0*si::joule );
   TEST_EQUALITY_CONST( sample, 0.0*si::joule );
 
   sample = 
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+    Utility::UnitAwareUniformDistribution<si::energy>::sample( 
 					        0.0*si::joule, 1.0*si::joule );
   TEST_EQUALITY_CONST( sample, 0.5*si::joule );
   
   sample = 
-    Utility::UnitAwareUniformDistribution<si::energy,si::amount>::sample( 
+    Utility::UnitAwareUniformDistribution<si::energy>::sample( 
 					        0.0*si::joule, 1.0*si::joule );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
 
