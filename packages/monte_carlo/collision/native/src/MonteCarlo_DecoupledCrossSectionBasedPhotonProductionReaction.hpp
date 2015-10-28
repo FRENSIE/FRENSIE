@@ -1,25 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CrossSectionBasedPhotonProductionReaction.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  The photon production reaction with cross section data class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
-#define MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#ifndef MONTE_CARLO_DECOUPLED_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#define MONTE_CARLO_DECOUPLED_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonProductionReaction.hpp"
+#include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 
 namespace MonteCarlo{
 
 //! The photon production reaction with cross section data (MFTYPE=13)
-class CrossSectionBasedPhotonProductionReaction : public PhotonProductionReaction
+class DecoupledCrossSectionBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
 {
  
 private:
@@ -30,7 +30,7 @@ private:
 public:
 
   // Constructor
-  CrossSectionBasedPhotonProductionReaction(
+  DecoupledCrossSectionBasedPhotonProductionReaction(
 		   const NuclearReactionType base_reaction_type,
 		   const unsigned photon_production_id,
 		   const double temperature,
@@ -38,7 +38,7 @@ public:
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
-		   photon_production_distribution );
+		   photon_production_distribution);
 
   //! Return the threshold energy
   double getThesholdEnergy() const;
@@ -60,7 +60,7 @@ private:
 
 // Return the threshold energy
 inline double 
-CrossSectionBasedPhotonProductionReaction::getThesholdEnergy() const
+DecoupledCrossSectionBasedPhotonProductionReaction::getThesholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
 }
@@ -68,8 +68,8 @@ CrossSectionBasedPhotonProductionReaction::getThesholdEnergy() const
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#endif // end MONTE_CARLO_DECOUPLED_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CrossSectionBasedPhotonProductionReaction.hpp
+// end MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp
 //---------------------------------------------------------------------------//

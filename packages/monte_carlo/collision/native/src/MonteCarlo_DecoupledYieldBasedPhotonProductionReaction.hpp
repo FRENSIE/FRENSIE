@@ -1,25 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_YieldBasePhotonProductionReaction.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_DecoupledYieldBasePhotonProductionReaction.hpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  The photon production reaction with yield data declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
-#define MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#ifndef MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#define MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonProductionReaction.hpp"
+#include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
 #include "MonteCarlo_NuclearReaction.hpp"
 
 namespace MonteCarlo{
 
 //! THe photon production reaction with yield data (for MFTYPE=12 or MFTYPE=16)
-class YieldBasedPhotonProductionReaction : public PhotonProductionReaction
+class DecoupledYieldBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
 {
 
 private:
@@ -30,7 +30,7 @@ private:
 public:
 
   //! Constructor 
-  YieldBasedPhotonProductionReaction(
+  DecoupledYieldBasedPhotonProductionReaction(
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
@@ -63,15 +63,15 @@ private:
 };
 
 // Return the threshold energy
-inline double YieldBasedPhotonProductionReaction::getThresholdEnegy() const
+inline double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnegy() const
 {
   return d_yield_energy_grid[0];
 }
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#endif // end MONTE_CARLO_DECOUPLED_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_YieldBasedPhotonProductionReaction.hpp
+// end MonteCarlo_DecoupledYieldBasedPhotonProductionReaction.hpp
 //---------------------------------------------------------------------------//

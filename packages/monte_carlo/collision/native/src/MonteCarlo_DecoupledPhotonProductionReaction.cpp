@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonProductionReaction.cpp
-//! \author Alex Robinson
-//! \brief  The photon production reaction base class definition
+//! \file   MonteCarlo_DecoupledPhotonProductionReaction.cpp
+//! \author Alex Robinson, Eli Moll
+//! \brief  The decoupled photon production reaction base class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -19,7 +19,8 @@ PhotonProductionReaction::PhotonProductionReaction(
 			      const unsigned photon_production_id,
 			      const double temperature,
 		        const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
-			      photon_production_distribution )
+			      photon_production_distribution,
+			      const Teuchos::RCP<NuclearReaction>& total_reaction )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
@@ -58,5 +59,5 @@ void PhotonProductionReaction::react( const NeutronState& neutron,
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonProductionReaction.cpp
+// end MonteCarlo_DecoupledPhotonProductionReaction.cpp
 //---------------------------------------------------------------------------//
