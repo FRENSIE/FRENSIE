@@ -253,6 +253,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   testPrecondition( !IQT::isnaninf( incident_energy ) );
   testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
   testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
@@ -278,7 +279,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
     term_2 = log(random_number_2)*arg*arg;
     
     sample = -nuclear_temperature * ( term_1 + term_2 );
-  
+     
     if( sample <= (incident_energy - restriction_energy) )
       break;
   }
