@@ -83,6 +83,7 @@ double AceLaw9NuclearScatteringEnergyDistribution::sampleEnergy(
                                               energy, 
                                               T,
                                               d_restriction_energy );
+                                              
   }
   else
   {  

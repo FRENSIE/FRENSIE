@@ -28,20 +28,24 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMaxwellFissionDistribution(
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
   const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
-  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
+  const double constant_multiplier )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( DMQT::one() ),
+    d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !IQT::isnaninf( incident_energy ) );
   testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
   testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
+  // Make sure that the constant multiplier is positive
+  testPrecondition( constant_multiplier > 0.0 );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
@@ -60,22 +64,26 @@ template<typename InputIndepQuantityA,
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMaxwellFissionDistribution(
 				const InputIndepQuantityA incident_energy,
 				const InputIndepQuantityB nuclear_temperature,
-				const InputIndepQuantityC restriction_energy )
+				const InputIndepQuantityC restriction_energy,
+				const double constant_multiplier )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
     d_restriction_energy( restriction_energy ),
-    d_multiplier( DMQT::one() ),
+    d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
     d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !QuantityTraits<InputIndepQuantityA>::isnaninf( incident_energy ) );
   testPrecondition( !QuantityTraits<InputIndepQuantityB>::isnaninf( nuclear_temperature ) );
   testPrecondition( !QuantityTraits<InputIndepQuantityC>::isnaninf( restriction_energy ) );
+  testPrecondition( !QT::isnaninf( constant_multiplier ) );
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( incident_energy > 
 		    QuantityTraits<InputIndepQuantityA>::zero() );
   testPrecondition( nuclear_temperature > 
 		    QuantityTraits<InputIndepQuantityB>::zero() );
+  // Make sure that the constant multiplier is positive
+  testPrecondition( constant_multiplier > 0.0 );
 
   // Calculate the norm constant 
   this->calculateNormalizationConstant();
@@ -253,6 +261,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   testPrecondition( !IQT::isnaninf( incident_energy ) );
   testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
   testPrecondition( !IQT::isnaninf( restriction_energy ) );
+  
   // Make sure that incident energy and nuclear temperature is positive
   testPrecondition( incident_energy > IQT::zero() );
   testPrecondition( nuclear_temperature > IQT::zero() );
@@ -278,7 +287,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
     term_2 = log(random_number_2)*arg*arg;
     
     sample = -nuclear_temperature * ( term_1 + term_2 );
-  
+     
     if( sample <= (incident_energy - restriction_energy) )
       break;
   }

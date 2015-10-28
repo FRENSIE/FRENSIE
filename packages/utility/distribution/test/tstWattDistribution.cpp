@@ -233,16 +233,16 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
+  Utility::UnitAwareWattDistribution<MegaElectronVolt>::IndepQuantity incident_energy, a_parameter, restriction_energy, sample;
   
-  Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount>::InverseIndepQuantity b_parameter;
+  Utility::UnitAwareWattDistribution<MegaElectronVolt>::InverseIndepQuantity b_parameter;
 
   incident_energy = 0.5*MeV;
   a_parameter = 0.2*MeV;
   b_parameter = 0.3/MeV;
   restriction_energy = 0.4*MeV;
 
-  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.07927727029875*MeV, 1e-13 );
     
   incident_energy = 0.3*MeV;
@@ -250,7 +250,7 @@ TEUCHOS_UNIT_TEST( UnitAwareWattDistribution,
   b_parameter = 0.1/MeV;
   restriction_energy = 0.25*MeV;
 
-  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt,si::amount>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
+  sample = Utility::UnitAwareWattDistribution<MegaElectronVolt>::sample( incident_energy, a_parameter, b_parameter, restriction_energy );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.04844237604136*MeV, 1e-13 );
   
   Utility::RandomNumberGenerator::unsetFakeStream();

@@ -1,21 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramDistribution.cpp
+//! \file   Utility_HistogramDistribution_def.pp
 //! \author Alex Robinson
 //! \brief  Histogram distribution class definition.
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef UTILITY_HISTOGRAM_DISTRIBUTION_DEF_HPP
+#define UTILITY_HISTOGRAM_DISTRIBUTION_DEF_HPP
+
 // Std Lib Includes
 #include <limits>
 
 // FRENSIE Includes
-#include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -194,6 +198,50 @@ double HistogramDistribution::sampleInSubrange(
 
   return this->sampleWithRandomNumberInSubrange( random_number,
 						 max_indep_var );
+}
+
+/*! The histogram distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
+
+// Return a random sample using the random number and record the bin index
+inline double UnitAwareHistogramDistribution::sampleImplementation( 
+					    double random_number,
+					    unsigned& sampled_bin_index ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  
+  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
+    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
+                                     d_distribution.end(),
+                                     random_number );
+
+  sampled_bin_index = std::distance( d_distribution.begin(), bin );
+
+  return bin->first + (random_number - bin->third)/bin->second;
+}
+
+// Return a sample from the distribution at the given CDF value in a subrange
+inline double UnitAwareHistogramDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  
+  // Compute the scaled random number
+  double scaled_random_number = 
+    random_number*this->evaluateCDF( max_indep_var );
+
+  unsigned dummy_index;
+    
+  return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
 // Return the upper bound of the distribution independent variable
@@ -386,5 +434,5 @@ void HistogramDistribution::initializeDistribution(
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramDistribution.cpp
+// end Utility_HistogramDistribution_def.hpp
 //---------------------------------------------------------------------------//

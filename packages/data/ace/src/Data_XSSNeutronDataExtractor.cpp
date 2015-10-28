@@ -396,6 +396,43 @@ XSSNeutronDataExtractor::extractDNEDBlock() const
     return Teuchos::ArrayView<const double>();
 }
 
+// Extract the Ace Laws from the XSS array
+Teuchos::ArrayRCP<double>
+XSSNeutronDataExtractor::extractAceLaws() const
+{
+	Teuchos::ArrayRCP<double> AceLaws;
+		
+  if( d_nxs[4] != 0 )
+  {
+		Teuchos::ArrayView<const double> LDLWBlock = 
+		                               XSSNeutronDataExtractor::extractLDLWBlock();
+		                               
+		Teuchos::ArrayView<const double> MTRBlock = 
+		                               XSSNeutronDataExtractor::extractMTRBlock();
+		                                 
+		AceLaws.resize( LDLWBlock.size() );
+		                              
+		for ( int i = 0; i < LDLWBlock.size(); ++i )
+		{
+		  if (d_xss[ int(LDLWBlock[i]) + int(d_jxs[10]) -1] == 0)
+		  {
+		    AceLaws[i] = d_xss[ int(LDLWBlock[i]) + int(d_jxs[10]) ];
+		  }
+		  else
+		  {
+		    std::cerr << "Error: More than one ACE Law found for MT number " <<
+		    int(MTRBlock[i]) << ". This is not currently supported!" << std::endl;
+		  }
+		}
+		
+		return AceLaws;
+  }
+  else
+  {
+    return AceLaws;
+  }
+}
+
 } // end Data namespace
 
 //---------------------------------------------------------------------------//

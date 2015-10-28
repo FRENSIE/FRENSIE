@@ -22,7 +22,7 @@ namespace Utility{
 /*! The unit-aware uniform distribution class
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
 {
