@@ -29,6 +29,18 @@
 
 namespace MonteCarlo{
 
+// Basic Constructor
+template<typename IncomingParticleType, typename OutgoingParticleType>
+NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					OutgoingParticleType>::NuclearScatteringDistributionACEFactory( 
+                                          const std::string& table_name,
+					  const double atomic_weight_ratio,
+					  const bool explicit_elastic )
+  : d_table_name( table_name ),
+    d_atomic_weight_ratio( atomic_weight_ratio ),
+    d_explicit_elastic( explicit_elastic )
+{ /* ... */ }
+
 // Constructor
 /*! \details The ArrayView objects are based by value so that data extractor
  * class extract member functions can be used directly in the constructor. 
@@ -54,6 +66,25 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
   : d_table_name( table_name ),
     d_atomic_weight_ratio( atomic_weight_ratio ),
     d_explicit_elastic( explicit_elastic )
+{
+  initializeReactionOrderingMap( mtr_block, tyr_block );
+  initializeReactionRefFrameMap( mtr_block, tyr_block );
+  initializeReactionAngularDistStartIndexMap( land_block );
+  initializeReactionAngularDistMap( land_block, and_block );
+  initializeReactionEnergyDistStartIndexMap( ldlw_block );
+  initializeReactionEnergyDistMap( ldlw_block, dlw_block );
+}
+
+// Initialize the factory
+template<typename IncomingParticleType, typename OutgoingParticleType>
+void NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					     OutgoingParticleType>::initialize(
+		   const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> tyr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block )
 {
   initializeReactionOrderingMap( mtr_block, tyr_block );
   initializeReactionRefFrameMap( mtr_block, tyr_block );
