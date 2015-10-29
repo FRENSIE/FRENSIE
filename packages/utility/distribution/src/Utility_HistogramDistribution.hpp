@@ -32,6 +32,9 @@ class UnitAwareHistogramDistribution : public UnitAwareTabularOneDDistribution<I
 
 private:
 
+  // The unnormalized cdf quantity
+  typedef typename QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity>::template GetQuantityToPowerType<-1>::type UnnormCDFQuantity;
+
   // The distribution normalization quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
 
@@ -100,38 +103,39 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the CDF
-  double evaluateCDF( const double indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample and bin index from the distribution
-  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
 
   //! Return a random sample from the corresponding CDF in a subrange
-  double sampleInSubrange( const double max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a sample from the distribution at the given CDF value in a subrange
-  double sampleWithRandomNumberInSubrange( const double random_number,
-					   const double max_indep_var ) const;
+  IndepQuanttiy sampleWithRandomNumberInSubrange( 
+				     const double random_number,
+				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -157,7 +161,36 @@ private:
 
   // Initialize the distribution
   void initializeDistribution( const Teuchos::Array<double>& bin_boundaries,
-			                   const Teuchos::Array<double>& bin_values );
+			       const Teuchos::Array<double>& bin_values,
+			       const bool interpret_dependent_values_as_cdf );
+
+  // Initialize the distribution from a cdf
+  template<typename InputIndepQuantity>
+  void initializeDistributionFromCDF(
+		  const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
+		  const Teuchos::Array<double>& cdf_values );
+
+  // Initialize the distribution
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  void initializeDistribution( 
+		  const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
+		  const Teuchos::Array<InputDepQuantity>& bin_values );
+
+  // Reconstruct original distribution
+  void reconstructOriginalDistribution(
+			 Teuchos::Array<IndepQuantity>& bin_boundaries,
+			 Teuchos::Array<DepQuantity>& bin_values ) const;
+
+  // Reconstruct original distribution w/o units
+  void reconstructOriginalUnitlessDistribution(
+			      Teuchos::Array<double>& bin_boundaries,
+			      Teuchos::Array<double>& bin_values ) const;
+
+  // Convert the unitless values to the correct units
+  template<typename Quantity>
+  static void convertUnitlessValues( 
+		                 const Teuchos::Array<double>& unitless_values,
+				 Teuchos::Array<Quantity>& quantitites );
 
   // Return a random sample using the random number and record the bin index
   double sampleImplementation( double random_number,
@@ -172,11 +205,17 @@ private:
 
   // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
   // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
-  Teuchos::Array<Trip<double,double,double> > d_distribution;
+  typedef Teuchos::Array<Trip<IndepQuantity,DepQuantity,UnnormCDFQuantity> > DistributionArray;
+  DistributionArray d_distribution;
   
   // The normalization constant
-  double d_norm_constant;
+  DistNormQuantity d_norm_constant;
 };
+
+/*! The histogram distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareHistogramDistribution<void,void> HistogramDistribution;
 
 } // end Utility namespace
 
@@ -229,6 +268,14 @@ public:
 };
 
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template includes.
+//---------------------------------------------------------------------------//
+
+#include "Utility_HistogramDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_HISTOGRAM_DISTRIBUTION_HPP
 

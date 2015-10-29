@@ -31,9 +31,10 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 // Basic constructor (potentially dangerous)
 /*! \details The independent values are assumed to be sorted (lowest to 
  * highest). If cdf values are provided a pdf will be calculated. Because
- * information is lost when converting from a pdf to a cdf, the pdf becomes
- * ambiguous. Evaluate the resulting distribution with caution (there will
- * be no difference when sampling from the distribution)!
+ * information is lost when converting from a pdf to a cdf, only a first order
+ * approximation of the pdf will be calculated. Evaluate the resulting 
+ * distribution with caution (there will be no difference when sampling from 
+ * the distribution)!
  */ 
 template<typename InterpolationPolicy, 
 	 typename IndependentUnit,
@@ -60,8 +61,9 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 // CDF constructor
 /*! \details The independent values are assumed to be sorted (lowest to 
  * highest). Because information is lost when converting from a pdf to a cdf, 
- * the pdf becomes ambiguous. Evaluate the resulting distribution with caution 
- * (there will be no difference when sampling from the distribution)!
+ * only a first order approximation of the pdf will be calculated. Evaluate the
+ * resulting distribution with caution (there will be no difference when 
+ * sampling from the distribution)!
  */ 
 template<typename InterpolationPolicy, 
 	 typename IndependentUnit,
@@ -86,6 +88,7 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   this->initializeDistributionFromCDF( independent_values, cdf_values );
 }
 
+// Constructor
 template<typename InterpolationPolicy, 
 	 typename IndependentUnit,
 	 typename DependentUnit>
@@ -144,6 +147,8 @@ template<typename InterpolationPolicy,
 	 typename IndependentUnit,
 	 typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( const UnitAwareTabularDistribution<InterpolationPolicy,void,void>& unitless_dist_instance, int )
+  : d_distribution(),
+    d_norm_constant()
 {
   // Make sure the distribution is valid
   testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
