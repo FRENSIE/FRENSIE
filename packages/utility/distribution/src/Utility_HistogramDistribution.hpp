@@ -127,7 +127,7 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a sample from the distribution at the given CDF value in a subrange
-  IndepQuanttiy sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange( 
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
 
@@ -190,11 +190,11 @@ private:
   template<typename Quantity>
   static void convertUnitlessValues( 
 		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantitites );
+				 Teuchos::Array<Quantity>& quantities );
 
   // Return a random sample using the random number and record the bin index
-  double sampleImplementation( double random_number,
-			       unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleImplementation( double random_number,
+				      unsigned& sampled_bin_index ) const;
 
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>

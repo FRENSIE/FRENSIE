@@ -30,7 +30,9 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 
 // Basic constructor (potentially dangerous)
 /*! \details The bin boundaries are assumed to be sorted (lowest to 
- * highest). If cdf values are provided a pdf will be calculated.
+ * highest). If cdf values are provided a pdf will be calculated. Note that
+ * the first cdf value, which is always zero, should not be passed (N-1 cdf
+ * values for N bin boundaries).
  */ 
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogramDistribution( 
@@ -46,7 +48,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
 					     bin_boundaries.end() ) );
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() == bin_values.size() - 1 );
+  testPrecondition( bin_boundaries.size() - 1 == bin_values.size() );
   
   this->initializeDistribution( bin_boundaries, 
 				bin_values, 
@@ -55,7 +57,8 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
 
 // CDF constructor
 /*! \details The bin boundaries are assumed to be sorted (lowest to highest).
- * A pdf will be calculated from the cdf.
+ * A pdf will be calculated from the cdf. Note that the first cdf value, which 
+ * is always zero, should not be passed (N-1 cdf values for N bin boundaries).
  */
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
@@ -74,7 +77,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
 					     cdf_values.end() ) );
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() == bin_values.size() - 1 );
+  testPrecondition( bin_boundaries.size() == cdf_values.size() - 1 );
 
   this->initializeDistributionFromCDF( bin_boundaries, cdf_values );
 }
@@ -116,9 +119,9 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   // Make sure that the distribution is valid
   testPrecondition( dist_instance.d_distribution.size() > 0 );
 
-  typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
+  typedef typename UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity InputIndepQuantity;
 
-  typedef typename UnitAwareTabularDistribution<InterpolationPolicy,InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
+  typedef typename UnitAwareHistogramDistribution<InputIndepUnit,InputDepUnit>::DepQuantity InputDepQuantity;
 
   // Reconstruct the original input distribution
   Teuchos::Array<InputIndepQuantity> input_bin_boundaries;
@@ -127,7 +130,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 						 input_bin_values );
 
-  this->initializeDistribution( input_bin_values, input_dep_values );
+  this->initializeDistribution( input_bin_boundaries, input_bin_values );
 }
 
 // Copy constructor (copying from unitless distribution only)
@@ -146,7 +149,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   unitless_dist_instance.reconstructOriginalDistribution( input_bin_boundaries,
 							  input_bin_values );
 
-  this->initializeDistribution( input_indep_values, input_dep_values, false );
+  this->initializeDistribution( input_bin_boundaries, input_bin_values, false );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -171,7 +174,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator=(
   const UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure that the distribution is valid
-  testPrecondition( unitless_dist_instance.d_distribution.size() > 0 );
+  testPrecondition( dist_instance.d_distribution.size() > 0 );
   
   if( this != &dist_instance )
   {
@@ -186,7 +189,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::operator=(
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::DepQuantity  
 UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::evaluate( 
- const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::DepQuantity indep_var_value ) const
+ const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value < d_distribution.front().first )
     return DQT::zero();
@@ -285,7 +288,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomN
 // Return a random sample from the corresponding CDF in a subrange
 template<typename IndependentUnit, typename DependentUnit>
 typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareHistogramDistribution::sampleInSubrange( 
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleInSubrange( 
    const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the maximum indep var is valid
@@ -300,7 +303,7 @@ UnitAwareHistogramDistribution::sampleInSubrange(
 // Return a random sample using the random number and record the bin index
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
 					    double random_number,
 					    unsigned& sampled_bin_index ) const
 {
@@ -309,7 +312,7 @@ UnitAwareUnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleIm
   testPrecondition( random_number <= 1.0 );
 
   UnnormCDFQuantity scaled_random_number = 
-    random_number*d_distribution.back().third
+    random_number*d_distribution.back().third;
   
   typename DistributionArray::const_iterator bin = 
     Search::binaryLowerBound<THIRD>( d_distribution.begin(),
@@ -325,7 +328,7 @@ UnitAwareUnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleIm
 // Return a sample from the distribution at the given CDF value in a subrange
 template<typename IndependentUnit, typename DependentUnit>
 inline typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareUnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
   const double random_number,
   const typename UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
@@ -488,8 +491,8 @@ bool UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::isEqual(
 template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution( 
 				  const Teuchos::Array<double>& bin_boundaries,
-				  const Teuchos::Array<double>& bin_values,
-				  const bool interpret_dependent_value_as_cdf )
+				 const Teuchos::Array<double>& bin_values,
+				 const bool interpret_dependent_values_as_cdf )
 {
   // Make sure that the bin boundaries are sorted
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(), 
@@ -500,14 +503,14 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
 
   // Convert the raw independent values to quantities
-  Teuchos::Array<IndepQuantity> independent_quantities;
+  Teuchos::Array<IndepQuantity> bin_boundary_quantities;
 
-  this->convertUnitlessValues( independent_values, independent_quantities );
+  this->convertUnitlessValues( bin_boundaries, bin_boundary_quantities );
 
   if( interpret_dependent_values_as_cdf )
   {
-    this->initializeDistributionFromCDF( independent_quantities,
-					 dependent_values );
+    this->initializeDistributionFromCDF( bin_boundary_quantities,
+					 bin_values );
   }
   else
   {
@@ -516,13 +519,13 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 
     this->convertUnitlessValues( bin_values, bin_quantities );
     
-    this->initializeDistribution( independent_quantities,
-				  dependent_quantities );
+    this->initializeDistribution( bin_boundary_quantities,
+				  bin_quantities );
   }
 }
 
 // Initialize the distribution from a cdf
-template<typename IndepedentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
 		     const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
@@ -532,12 +535,12 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(), 
 					     bin_boundaries.end() ) );
   // Make sure that the bin values are sorted
-  testPrecondition( Sort::isSortedAscending( bin_values.begin(), 
-					     bin_values.end() ) );
+  testPrecondition( Sort::isSortedAscending( cdf_values.begin(), 
+					     cdf_values.end() ) );
   // Make sure there is at least one bin
   testPrecondition( bin_boundaries.size() > 1 );
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
+  testPrecondition( bin_boundaries.size()-1 == cdf_values.size() );
 
   // Resize the distribution
   d_distribution.resize( bin_boundaries.size() );
@@ -550,7 +553,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
     for( unsigned i = 1; i < bin_boundaries.size(); ++i )
     {
       d_distribution[i].first = IndepQuantity( bin_boundaries[i] );
-      setQuantity( d_distribution[i].third, bin_values[i-1] );
+      setQuantity( d_distribution[i].third, cdf_values[i-1] );
 
       // Calculate the pdf from the cdf
       d_distribution[i-1].second = 
@@ -567,7 +570,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 }
 
 // Initialize the distribution
-template<typename IndepedentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantity, typename InputDepQuantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDistribution( 
 		      const Teuchos::Array<InputIndepQuantity>& bin_boundaries,
@@ -592,7 +595,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 
     // Assign the bin PDF value
     if( i < bin_boundaries.size() - 1 )
-      d_distribution[i].second = IndepQuantity( bin_values[i] );
+      d_distribution[i].second = DepQuantity( bin_values[i] );
     else 
       d_distribution[i].second = DepQuantity( bin_values[i-1] );
     
@@ -610,17 +613,10 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
 
   // Assign the normalization constant
   d_norm_constant = 1.0/d_distribution.back().third;
-
-  // Normalize the PDF and CDF
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-  {
-    d_distribution[i].second /= d_norm_constant;
-    d_distribution[i].third /= d_norm_constant;
-  }
 }
 
 // Reconstruct original distribution
-template<typename IndepedentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructOriginalDistribution(
 			 Teuchos::Array<IndepQuantity>& bin_boundaries,
 			 Teuchos::Array<DepQuantity>& bin_values ) const
@@ -639,10 +635,10 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 }
 
 // Reconstruct original distribution w/o units
-template<typename IndepedentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructOriginalUnitlessDistribution(
-			      Teuchos::Array<double>& independent_values,
-			      Teuchos::Array<double>& dependent_values ) const
+			      Teuchos::Array<double>& bin_boundaries,
+			      Teuchos::Array<double>& bin_values ) const
 {
   // Resize the arrays
   bin_boundaries.resize( d_distribution.size() );
@@ -658,11 +654,11 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::reconstructO
 }
 
 // Convert the unitless values to the correct units
-template<typename IndepedentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 template<typename Quantity>
 void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitlessValues( 
 		                 const Teuchos::Array<double>& unitless_values,
-				 Teuchos::Array<Quantity>& quantitites )
+				 Teuchos::Array<Quantity>& quantities )
 {
   // Resize the quantity array
   quantities.resize( unitless_values.size() );
@@ -673,6 +669,8 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::convertUnitl
 }
 
 } // end Utility namespace
+
+#endif // end UTILITY_HISTOGRAM_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_HistogramDistribution_def.hpp
