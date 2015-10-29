@@ -1136,47 +1136,47 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, sampleInSubrange )
   // PDF Histogram: test max independent value 2nd bin
   quantity<MegaElectronVolt> sample = 
     unit_aware_tab_pdf_distribution->sampleInSubrange( -1.0*MeV );
-  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
 
-  sample = tab_pdf_distribution->sampleInSubrange( -1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 ); 
+  sample = unit_aware_tab_pdf_distribution->sampleInSubrange( -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.5*MeV, 1e-14 ); 
 
-  sample = tab_pdf_distribution->sampleInSubrange( -1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  sample = unit_aware_tab_pdf_distribution->sampleInSubrange( -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
   
   // PDF Histogram: test max independent value 3rd bin
-  sample = tab_pdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+  sample = unit_aware_tab_pdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
 
-  sample = tab_pdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 ); 
+  sample = unit_aware_tab_pdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 ); 
 
-  sample = tab_pdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  sample = unit_aware_tab_pdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // CDF Histogram: test max independent value 2nd bin
-  sample = tab_cdf_distribution->sampleInSubrange( -1.0 );
-  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
 
-  sample = tab_cdf_distribution->sampleInSubrange( -1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.5*MeV, 1e-14 );
 
-  sample = tab_cdf_distribution->sampleInSubrange( -1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
   
   // CDF Histogram: test max independent value 3rd bin
-  sample = tab_cdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
 
-  sample = tab_cdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
 
-  sample = tab_cdf_distribution->sampleInSubrange( 1.0 );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  sample = unit_aware_tab_cdf_distribution->sampleInSubrange( 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -1227,6 +1227,66 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sampleWithRandomNumberInSubrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled from a subrange
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, 
+		   sampleWithRandomNumberInSubrange )
+{
+  // PDF Histogram: test max independent value 2nd bin
+  quantity<MegaElectronVolt> sample = 
+    unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+							       0.0, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
+
+  sample = unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+							       0.5, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.5*MeV, 1e-14 ); 
+
+  sample = 
+    unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+						       1.0 - 1e-15, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
+  
+  // PDF Histogram: test max independent value 3rd bin
+  sample = unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+								0.0, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
+
+  sample = unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+								0.5, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 ); 
+
+  sample = unit_aware_tab_pdf_distribution->sampleWithRandomNumberInSubrange( 
+							1.0 - 1e-15, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-14 );
+
+  // CDF Histogram: test max independent value 2nd bin
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+							       0.0, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
+
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+							       0.5, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.5*MeV, 1e-14 );
+
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+						       1.0 - 1e-15, -1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
+  
+  // Test max independent value 3rd bin
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+							        0.0, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -2.0*MeV, 1e-14 );
+
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+								0.5, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, -1.0*MeV, 1e-14 );
+
+  sample = unit_aware_tab_cdf_distribution->sampleWithRandomNumberInSubrange( 
+							1.0 - 1e-15, 1.0*MeV );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*MeV, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
 TEUCHOS_UNIT_TEST( HistogramDistribution, getUpperBoundOfIndepVar )
@@ -1236,12 +1296,34 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, getUpperBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the upper bound of the unit-aware distribution independent 
+// variable can be returned
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, getUpperBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_pdf_distribution->getUpperBoundOfIndepVar(), 
+		       2.0*MeV );
+  TEST_EQUALITY_CONST( unit_aware_cdf_distribution->getUpperBoundOfIndepVar(),
+		       2.0*MeV );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the lower bound of the distribution dependent variable can be
 // returned
 TEUCHOS_UNIT_TEST( HistogramDistribution, getLowerBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( pdf_distribution->getLowerBoundOfIndepVar(), -2.0 );
   TEST_EQUALITY_CONST( cdf_distribution->getLowerBoundOfIndepVar(), -2.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the lower bound of the unit-aware distribution dependent variable
+// can be returned
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, getLowerBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_pdf_distribution->getLowerBoundOfIndepVar(), 
+		       -2.0*MeV );
+  TEST_EQUALITY_CONST( unit_aware_cdf_distribution->getLowerBoundOfIndepVar(),
+		       -2.0*MeV );
 }
 
 //---------------------------------------------------------------------------//
@@ -1256,6 +1338,17 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type can be returned
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( unit_aware_pdf_distribution->getDistributionType(),
+		       Utility::HISTOGRAM_DISTRIBUTION );
+
+  TEST_EQUALITY_CONST( unit_aware_cdf_distribution->getDistributionType(),
+		       Utility::HISTOGRAM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is tabular
 TEUCHOS_UNIT_TEST( HistogramDistribution, isTabular )
 {
@@ -1263,10 +1356,24 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, isTabular )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is tabular
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, isTabular )
+{
+  TEST_ASSERT( unit_aware_pdf_distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is continuous
 TEUCHOS_UNIT_TEST( HistogramDistribution, isContinuous )
 {
   TEST_ASSERT( pdf_distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is continuous
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, isContinuous )
+{
+  TEST_ASSERT( unit_aware_pdf_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1300,6 +1407,39 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, toParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, toParameterList )
+{
+  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
+    UnitAwareHistogramDistribution;
+  
+  Teuchos::RCP<UnitAwareHistogramDistribution> true_distribution =
+  Teuchos::rcp_dynamic_cast<UnitAwareHistogramDistribution>( unit_aware_pdf_distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<UnitAwareHistogramDistribution>( "test distribution", 
+						      *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"unit_aware_histogram_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "unit_aware_histogram_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<UnitAwareHistogramDistribution> 
+    copy_distribution( new UnitAwareHistogramDistribution );
+
+  *copy_distribution = 
+    read_parameter_list->get<UnitAwareHistogramDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( HistogramDistribution, fromParameterList )
 {
@@ -1316,6 +1456,256 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, fromParameterList )
   TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
   TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( UnitAwareHistogramDistribution, fromParameterList )
+{
+  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
+    UnitAwareHistogramDistribution;
+  
+  UnitAwareHistogramDistribution distribution = 
+    test_dists_list->get<UnitAwareHistogramDistribution>( "Unit-Aware Histogram Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -2.0*MeV );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi*MeV );
+
+  distribution = 
+    test_dists_list->get<UnitAwareHistogramDistribution>( "Unit-Aware Histogram Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*MeV );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0*MeV );
+}
+
+//---------------------------------------------------------------------------//
+// Check that distributions can be scaled
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareHistogramDistribution,
+				   explicit_conversion,
+				   IndepUnitA,
+				   DepUnitA,
+				   IndepUnitB,
+				   DepUnitB )
+{
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
+  
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
+  
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
+
+  // Copy from unitless distribution to distribution type A
+  Utility::UnitAwareHistogramDistribution<IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareHistogramDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::HistogramDistribution>( pdf_distribution ) );
+
+  // Copy from distribution type A to distribution type B
+  Utility::UnitAwareHistogramDistribution<IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
+
+  IndepQuantityA indep_quantity_a = 
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1.0/6);
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
+
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 1.0/3.0 );
+  Utility::setQuantity( dep_quantity_a, 2.0 );			
+
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-6 );
+}
+
+typedef si::energy si_energy;
+typedef cgs::energy cgs_energy;
+typedef si::amount si_amount;
+typedef si::length si_length;
+typedef cgs::length cgs_length;
+typedef si::mass si_mass;
+typedef cgs::mass cgs_mass;
+typedef si::dimensionless si_dimensionless;
+typedef cgs::dimensionless cgs_dimensionless;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_length,
+				      cgs_energy,
+				      cgs_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_length,
+				      si_energy,
+				      si_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_mass,
+				      cgs_energy,
+				      cgs_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_mass,
+				      si_energy,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_dimensionless,
+				      cgs_energy,
+				      cgs_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_dimensionless,
+				      si_energy,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      void,
+				      cgs_energy,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      void,
+				      si_energy,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      KiloElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      MegaElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      MegaElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      KiloElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareHistogramDistribution,
+				      explicit_conversion,
+				      void,
+				      MegaElectronVolt,
+				      void,
+				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -1342,6 +1732,9 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::HistogramDistribution );
+  typedef Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>
+    UnitAwareHistogramDistribution;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareHistogramDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
