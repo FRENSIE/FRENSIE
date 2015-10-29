@@ -38,10 +38,11 @@ public:
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
-		   photon_production_distribution);
+		   photon_production_distribution,
+		   const Teuchos::RCP<NuclearReaction>& total_reaction );
 
   //! Return the threshold energy
-  double getThesholdEnergy() const;
+  double getThresholdEnergy() const;
 
   //! Return the crosss section at a given energy
   double getCrossSection( const double energy ) const;
@@ -60,7 +61,7 @@ private:
 
 // Return the threshold energy
 inline double 
-DecoupledCrossSectionBasedPhotonProductionReaction::getThesholdEnergy() const
+DecoupledCrossSectionBasedPhotonProductionReaction::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
 }

@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "MonteCarlo_NeutronFissionReaction.hpp"
@@ -40,7 +40,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 { 
   // Create the scattering distribution factory
-  NeutronNuclearScatteringDistributionACEFactory 
+  PhotonProductionNuclearScatteringDistributionACEFactory 
     scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
 			     raw_nuclide_data );
@@ -391,6 +391,33 @@ void NuclearReactionACEFactory::createReactionCrossSectionMap(
     }
 
     ++reaction;
+  }
+}
+
+// Get the reaction from a reaction type 
+void NuclearReactionACEFactory::getReactionFromReactionType( 
+                               NuclearReactionType reaction_type, 
+                               Teuchos::RCP<NuclearReaction>& base_reaction )
+{ 
+  // Check for the reaction amongst the absorptions, scatters, and fissions
+  if ( d_absorption_reactions.find(reaction_type) != d_absorption_reactions.end() )
+  {
+    base_reaction = d_absorption_reactions[reaction_type];
+  }
+  else if ( d_scattering_reactions.find(reaction_type) != d_scattering_reactions.end() )
+  {
+    base_reaction = d_scattering_reactions[reaction_type];
+  }
+  else if ( d_fission_reactions.find(reaction_type) != d_fission_reactions.end() )
+  {
+    base_reaction = d_fission_reactions[reaction_type];
+  }
+  else
+  {
+    THROW_EXCEPTION(std::runtime_error, "Error: photon production requested "
+                    "MT number " << (int)reaction_type << " which was not "
+                    "found amongst the neutron absorption, scattering, or "
+                    "fission reactions.");
   }
 }
 

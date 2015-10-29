@@ -24,11 +24,13 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 	 const Teuchos::ArrayView<const double>& yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
 	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
-	 photon_production_distribution )
+	 photon_production_distribution,
+	 const Teuchos::RCP<NuclearReaction>& total_reaction )
   : PhotonProductionReaction( base_reaction_type,
 			      photon_production_id,
 			      temperature,
-			      photon_production_distribution ),
+			      photon_production_distribution,
+			      total_reaction ),
     d_yield_energy_grid( yield_energy_grid ),
     d_yield( yield ),
     d_base_reaction( base_reaction )

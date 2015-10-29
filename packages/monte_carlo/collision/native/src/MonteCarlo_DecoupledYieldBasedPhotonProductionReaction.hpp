@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
 
-//! THe photon production reaction with yield data (for MFTYPE=12 or MFTYPE=16)
+//! The photon production reaction with yield data (for MFTYPE=12 or MFTYPE=16)
 class DecoupledYieldBasedPhotonProductionReaction : public DecoupledPhotonProductionReaction
 {
 
@@ -38,14 +38,15 @@ public:
 	 const Teuchos::ArrayView<const double>& yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
 	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
-	 photon_production_distribution );
+	 photon_production_distribution,
+	 const Teuchos::RCP<NuclearReaction>& total_reaction );
 
   //! Destructor
-  ~YieldBasedPhotonProductionReaction()
+  ~DecoupledYieldBasedPhotonProductionReaction()
   { /* ... */ }
   
   //! Return the threshold energy
-  double getThresholdEnegy() const;
+  double getThresholdEnergy() const;
 
   //! Return the cross section at a given energy
   double getCrossSection( const double energy ) const;
@@ -63,7 +64,7 @@ private:
 };
 
 // Return the threshold energy
-inline double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnegy() const
+inline double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnergy() const
 {
   return d_yield_energy_grid[0];
 }
