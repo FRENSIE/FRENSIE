@@ -591,7 +591,7 @@ void UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::initializeDi
   for( unsigned i = 0; i < bin_boundaries.size(); ++i )
   {
     // Assign the min and max bin boundaries (respectively)
-    d_distribution[i].first = bin_boundaries[i];
+    d_distribution[i].first = IndepQuantity( bin_boundaries[i] );
 
     // Assign the bin PDF value
     if( i < bin_boundaries.size() - 1 )
