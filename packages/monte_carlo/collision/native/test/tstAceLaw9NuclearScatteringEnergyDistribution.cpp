@@ -39,6 +39,12 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    
    double restriction_energy = 1.5;
 
+   // Create the fake stream
+   std::vector<double> fake_stream( 1 );
+   fake_stream[0] = 0.5;
+
+   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 
@@ -64,6 +70,12 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    
    double restriction_energy = 1.5;
 
+   // Create the fake stream
+   std::vector<double> fake_stream( 1 );
+   fake_stream[0] = 0.5;
+
+   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
    TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 
@@ -88,6 +100,12 @@ TEUCHOS_UNIT_TEST( AceLaw9NuclearScatteringEnergyDistribution,
    energy_distribution[1].second = 2.0;
    
    double restriction_energy = 1.5;
+
+   // Create the fake stream
+   std::vector<double> fake_stream( 1 );
+   fake_stream[0] = 0.5;
+
+   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
    MonteCarlo::AceLaw9NuclearScatteringEnergyDistribution distribution( energy_distribution, restriction_energy );
 
