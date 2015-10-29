@@ -18,8 +18,6 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/mpl/and.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -61,6 +59,7 @@ struct QuantityTraits<boost::units::quantity<Unit,T>, typename boost::enable_if<
   typedef Unit UnitType;
   typedef T RawType;
   typedef boost::units::quantity<Unit,T> QuantityType;
+  typedef boost::is_floating_point<T> is_floating_point;
 
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
@@ -140,6 +139,7 @@ struct QuantityTraits<T,typename boost::enable_if<boost::is_arithmetic<T> >::typ
   typedef void Unit;
   typedef T RawType;
   typedef T QuantityType;
+  typedef boost::is_floating_point<T> is_floating_point;
 
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType

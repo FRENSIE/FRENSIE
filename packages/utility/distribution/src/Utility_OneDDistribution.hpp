@@ -60,6 +60,12 @@ protected:
 
 public:
 
+  //! The independent unit type
+  typedef IndependentUnit IndepUnit;
+
+  //! The dependent unit type
+  typedef DependentUnit DepUnit;
+
   //! The independent quantity type
   typedef typename IndepUnitTraits::template GetQuantityType<double>::type IndepQuantity;
 
