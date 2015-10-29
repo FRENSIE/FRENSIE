@@ -77,7 +77,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
 					     cdf_values.end() ) );
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() == cdf_values.size() - 1 );
+  testPrecondition( bin_boundaries.size() - 1 == cdf_values.size() );
 
   this->initializeDistributionFromCDF( bin_boundaries, cdf_values );
 }
@@ -97,7 +97,7 @@ UnitAwareHistogramDistribution<IndependentUnit,DependentUnit>::UnitAwareHistogra
   testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
 					     bin_boundaries.end() ) );
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size() == bin_values.size() - 1 );
+  testPrecondition( bin_boundaries.size() - 1 == bin_values.size() );
 
   this->initializeDistribution( bin_boundaries, bin_values );
 }

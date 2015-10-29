@@ -9,6 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/units/systems/si.hpp>
+#include <boost/units/systems/cgs.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -23,6 +28,14 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+
+using boost::units::quantity;
+using namespace Utility::Units;
+namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -33,8 +46,19 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 Teuchos::RCP<Utility::OneDDistribution> pdf_distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_pdf_distribution;
 
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_pdf_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_tab_pdf_distribution;
+
+
 Teuchos::RCP<Utility::OneDDistribution> cdf_distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_cdf_distribution;
+
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_cdf_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<MegaElectronVolt,si::amount> >
+  unit_aware_tab_cdf_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -715,35 +739,87 @@ int main( int argc, char** argv )
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
   // Create a distribution using the standard constructor
-  Teuchos::Array<double> bin_boundaries( 4 );
-  bin_boundaries[0] = -2.0;
-  bin_boundaries[1] = -1.0;
-  bin_boundaries[2] = 1.0;
-  bin_boundaries[3] = 2.0;
+  {
+    Teuchos::Array<double> bin_boundaries( 4 );
+    bin_boundaries[0] = -2.0;
+    bin_boundaries[1] = -1.0;
+    bin_boundaries[2] = 1.0;
+    bin_boundaries[3] = 2.0;
   
-  Teuchos::Array<double> bin_values( 3 );
-  bin_values[0] = 2.0;
-  bin_values[1] = 1.0;
-  bin_values[2] = 2.0;
-  
-  tab_pdf_distribution.reset( 
+    Teuchos::Array<double> bin_values( 3 );
+    bin_values[0] = 2.0;
+    bin_values[1] = 1.0;
+    bin_values[2] = 2.0;
+    
+    tab_pdf_distribution.reset( 
 			   new Utility::HistogramDistribution( bin_boundaries,
 							       bin_values) );
 
-  pdf_distribution = tab_pdf_distribution;
+    pdf_distribution = tab_pdf_distribution;
+  }
 
   // Create a distribution using the cdf constructor
-  Teuchos::Array<double> cdf_values( 3 );
-  cdf_values[0] = 2.0;
-  cdf_values[1] = 4.0;
-  cdf_values[2] = 6.0;
-  
-  tab_cdf_distribution.reset( 
+  {
+    Teuchos::Array<double> bin_boundaries( 4 );
+    bin_boundaries[0] = -2.0;
+    bin_boundaries[1] = -1.0;
+    bin_boundaries[2] = 1.0;
+    bin_boundaries[3] = 2.0;
+    
+    Teuchos::Array<double> cdf_values( 3 );
+    cdf_values[0] = 2.0;
+    cdf_values[1] = 4.0;
+    cdf_values[2] = 6.0;
+    
+    tab_cdf_distribution.reset( 
 			  new Utility::HistogramDistribution( bin_boundaries,
 							      cdf_values,
                                                               true ) );
   
-  cdf_distribution = tab_cdf_distribution;
+    cdf_distribution = tab_cdf_distribution;
+  }
+
+  // Create a unit-aware distribution using the standard constructor
+  {
+    Teuchos::Array<quantity<MegaElectronVolt> > bin_boundaries( 4 );
+    bin_boundaries[0] = -2.0*MeV;
+    bin_boundaries[1] = -1.0*MeV;
+    bin_boundaries[2] = 1.0*MeV;
+    bin_boundaries[3] = 2.0*MeV;
+  
+    Teuchos::Array<quantity<si::amount> > bin_values( 3 );
+    bin_values[0] = 2.0*si::mole;
+    bin_values[1] = 1.0*si::mole;
+    bin_values[2] = 2.0*si::mole;
+    
+    unit_aware_tab_pdf_distribution.reset( 
+      new Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>(
+								bin_boundaries,
+								bin_values) );
+
+    unit_aware_pdf_distribution = unit_aware_tab_pdf_distribution;
+  }
+
+  // Create a unit-aware distribution using the cdf constructor
+  {
+    Teuchos::Array<quantity<MegaElectronVolt> > bin_boundaries( 4 );
+    bin_boundaries[0] = -2.0*MeV;
+    bin_boundaries[1] = -1.0*MeV;
+    bin_boundaries[2] = 1.0*MeV;
+    bin_boundaries[3] = 2.0*MeV;
+    
+    Teuchos::Array<double> cdf_values( 3 );
+    cdf_values[0] = 2.0;
+    cdf_values[1] = 4.0;
+    cdf_values[2] = 6.0;
+    
+    unit_aware_tab_cdf_distribution.reset( 
+      new Utility::UnitAwareHistogramDistribution<MegaElectronVolt,si::amount>(
+								bin_boundaries,
+								cdf_values ) );
+  
+    unit_aware_cdf_distribution = unit_aware_tab_cdf_distribution;
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
