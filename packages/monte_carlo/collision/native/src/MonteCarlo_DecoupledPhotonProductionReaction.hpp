@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearReaction.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -18,7 +19,7 @@
 namespace MonteCarlo{
 
 //! The photon production (resulting from neutron absorption) reaction
-class PhotonProductionReaction 
+class DecoupledPhotonProductionReaction 
 {
 
 private:
@@ -29,15 +30,16 @@ private:
 public:
 
   //! Constructor
-  PhotonProductionReaction( 
+  DecoupledPhotonProductionReaction( 
    const NuclearReactionType base_reaction_type,
    const unsigned photon_production_id,
    const double temperature,
    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
-   photon_production_distribution );
+   photon_production_distribution,
+   const Teuchos::RCP<NuclearReaction>& total_reaction );
 
   //! Destructor
-  virtual ~PhotonProductionReaction()
+  virtual ~DecoupledPhotonProductionReaction()
   { /* ... */ }
 
   //! Return the base nuclear reaction type
@@ -75,17 +77,20 @@ private:
   // The photon production distribution (energy and angle)
   Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> > 
   d_photon_production_distribution; 
+  
+  // The total reaction class
+  const Teuchos::RCP<NuclearReaction>& d_total_reaction;
 };
 
 // Return the base nuclear reaction type
 inline NuclearReactionType 
-PhotonProductionReaction::getBaseReactionType() const
+DecoupledPhotonProductionReaction::getBaseReactionType() const
 {
   return d_base_reaction_type;
 }
 			   
 // Return the photon production id for the base reaction type
-inline unsigned PhotonProductionReaction::getPhotonProductionId() const
+inline unsigned DecoupledPhotonProductionReaction::getPhotonProductionId() const
 {
   return d_photon_production_id;
 }

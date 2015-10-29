@@ -100,6 +100,11 @@ protected:
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >& 
    reaction_cross_section );
+   
+   //! Get the reaction associated with an Reaction Type
+   static void getReactionFromReactionType( 
+                               NuclearReactionType reaction_type, 
+                               Teuchos::RCP<NuclearReaction>& base_reaction );
 
 private:
 

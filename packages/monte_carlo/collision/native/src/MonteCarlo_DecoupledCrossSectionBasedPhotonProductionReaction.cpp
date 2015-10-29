@@ -12,6 +12,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
+#include "MonteCarlo_NuclearReactionHelper.hpp"
 
 namespace MonteCarlo{
 
@@ -24,11 +25,13 @@ DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPho
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
-		   photon_production_distribution )
+		   photon_production_distribution,
+		   const Teuchos::RCP<NuclearReaction>& total_reaction )
   : PhotonProductionReaction( base_reaction_type,
 			      photon_production_id,
 			      temperature,
-			      photon_production_distribution ),
+			      photon_production_distribution,
+			      total_reaction ),
     d_threshold_energy_index( threshold_energy_index ),
     d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
@@ -42,32 +45,12 @@ DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPho
 }
 
 // Return the cross section at a given energy
-double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( 
-						    const double energy ) const
+double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( const double energy ) 
 {
-  if( energy >= this->getThresholdEnergy() &&
-      energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    unsigned energy_index = 
-      Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
-					      d_incoming_energy_grid.end(),
-					      energy );
-    unsigned cs_index = energy_index - d_threshold_energy_index;
-    
-    return Utility::LinLin::interpolate(d_incoming_energy_grid[energy_index],
-					d_incoming_energy_grid[energy_index+1],
-					energy,
-					d_cross_section[cs_index],
-					d_cross_section[cs_index+1] );
-  }
-  else if( energy < this->getThresholdEnergy() )
-    return 0.0;
-  else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    return d_cross_section[d_cross_section.size()-1];
-  }
-  else // energy > this->getThresholdEnergy()
-    return 0.0;
+  return getCrossSection( energy,
+                          d_incoming_energy_grid,
+                          d_cross_section,
+                          threshold_energy_index );
 }
 
 } // end MonteCarlo namespace
