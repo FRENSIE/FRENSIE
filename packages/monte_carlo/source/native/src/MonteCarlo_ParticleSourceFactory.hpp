@@ -19,6 +19,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_DistributedSource.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 namespace MonteCarlo{
 
@@ -38,14 +40,16 @@ public:
 
   //! Create the particle source represented by the parameter list
   virtual Teuchos::RCP<ParticleSource>
-  createSource( const Teuchos::ParameterList& source_rep ) = 0;
+  createSource( const Teuchos::ParameterList& source_rep,
+		const ParticleModeType& particle_mode ) = 0;
 
 protected:
 
   // Create the particle source represented by the parameter list
   template<typename GeometryHandler>
   static Teuchos::RCP<ParticleSource>
-  createSourceImpl( const Teuchos::ParameterList& source_rep );
+  createSourceImpl( const Teuchos::ParameterList& source_rep,
+		    const ParticleModeType& particle_mode );
 
 private:
 
