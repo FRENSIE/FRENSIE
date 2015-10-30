@@ -26,7 +26,8 @@ namespace MonteCarlo{
 template<typename GeometryHandler>
 Teuchos::RCP<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
-				     const Teuchos::ParameterList& source_rep )
+				     const Teuchos::ParameterList& source_rep,
+		    		     const ParticleModeType& particle_mode )
 {
   // Get the number of parameters in the list
   unsigned num_params = source_rep.numParams();
