@@ -173,6 +173,24 @@ ADD_EXECUTABLE(tstNeutronMaterial
 TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
+ADD_EXECUTABLE(tstPhotonuclearNeutronScatteringDistributionACEFactory
+	tstPhotonuclearNeutronScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearNeutronScatteringDistributionACEFactory
+ monte_carlo_collision_native)
+ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory_test tstPhotonuclearNeutronScatteringDistributionACEFactory --test_basic_h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --test_basic_h2_ace_table=1002.24u )
+
+ADD_EXECUTABLE(tstPhotonuclearScatteringDistributionACEFactory
+	tstPhotonuclearScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearScatteringDistributionACEFactory
+ monte_carlo_collision_native)
+ADD_TEST(PhotonuclearScatteringDistributionACEFactory_test tstPhotonuclearScatteringDistributionACEFactory --test_basic_c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u )
+
+ADD_EXECUTABLE(tstPhotonuclearReaction
+               tstPhotonuclearReaction.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
+  monte_carlo_collision_native)
+ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
+
 ADD_EXECUTABLE(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution
   tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
@@ -498,4 +516,3 @@ IF(FRENSIE_ENABLE_DAGMC)
   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode_DagMC monte_carlo_collision_native)
   ADD_TEST(CollisionModuleInterface_NativeElectronMode_DagMC_test tstCollisionModuleInterface_NativeElectronMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
-

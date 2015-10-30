@@ -31,6 +31,9 @@ public:
   // Typedef for the photon tag
   struct PhotonTag ParticleTag;
 
+  //! The particle state type (for compile time usage)
+  static const ParticleType type = PHOTON;
+
   //! Constructor
   PhotonState( const ParticleState::historyNumberType history_number );
 

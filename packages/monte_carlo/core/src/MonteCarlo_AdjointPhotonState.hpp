@@ -26,6 +26,9 @@ public:
   // Typedef for the adjoint photon tag
   struct AdjointPhotonTag ParticleTag;
 
+  //! The particle state type (for compile time usage)
+  static const ParticleType type = ADJOINT_PHOTON;
+
   //! Constructor
   AdjointPhotonState( const ParticleState::historyNumberType history_number );
 
