@@ -26,8 +26,7 @@ PhotonuclearScatteringDistributionACEFactory::PhotonuclearScatteringDistribution
 		       const Data::XSSPhotonuclearDataExtractor& raw_nuclide_data )
   : NuclearScatteringDistributionACEFactory<MonteCarlo::PhotonState,MonteCarlo::PhotonState>( 
 					   table_name,
-					   atomic_weight_ratio,		       
-					   true )
+					   atomic_weight_ratio )
 {
   // Make sure secondary particle has data
   testPrecondition( raw_nuclide_data.hasSecondaryParticleType(2) );

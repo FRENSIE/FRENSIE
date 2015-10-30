@@ -31,7 +31,7 @@
 namespace MonteCarlo{
 
 //! The scattering distribution factory class
-class PhotonuclearNeutronScatteringDistributionACEFactory : public NuclearScatteringDistributionACEFactory<MonteCarlo::PhotonState,MonteCarlo::NeutronState>
+class PhotonuclearNeutronScatteringDistributionACEFactory : public NuclearScatteringDistributionACEFactory<PhotonState,NeutronState>
 {
   
 public:
