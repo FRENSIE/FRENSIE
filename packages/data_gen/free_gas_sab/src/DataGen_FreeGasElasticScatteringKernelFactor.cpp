@@ -2,7 +2,7 @@
 //!
 //! \file   DataGen_FreeGasElasticScatteringKernelFactor.cpp
 //! \author Alex Robinson
-//! \brief  Free gas elastic scattering kernel factor def.
+//! \brief  Free gas elastic scattering gkq_set factor def.
 //!
 //---------------------------------------------------------------------------//
 
@@ -42,7 +42,7 @@ FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
 	  const double alpha,
 	  const double beta,
 	  const double E )
-  : d_kernel( 1e-6 ),
+  : d_gkq_set( 1e-6 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
@@ -159,7 +159,7 @@ double FreeGasElasticScatteringKernelFactor::getIntegratedValue(
   
   this->findLimits( lower_limit, upper_limit );
   
-  d_kernel.integrateAdaptively<15>( *this, 
+  d_gkq_set.integrateAdaptively<15>( *this, 
 				    lower_limit,
 				    upper_limit,
 				    integrated_value,

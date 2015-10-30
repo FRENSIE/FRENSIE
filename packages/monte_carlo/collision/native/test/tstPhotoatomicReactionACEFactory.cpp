@@ -39,11 +39,12 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		   createIncoherentReaction_no_doppler )
 {
   MonteCarlo::PhotoatomicReactionACEFactory::createIncoherentReaction(
-						           *xss_data_extractor,
-							   energy_grid,
-							   grid_searcher,
-							   reaction,
-							   false );
+					      *xss_data_extractor,
+					      energy_grid,
+					      grid_searcher,
+					      reaction,
+					      MonteCarlo::WH_INCOHERENT_MODEL,
+					      3.0 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -75,11 +76,12 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		   createIncoherentReaction_doppler )
 {
   MonteCarlo::PhotoatomicReactionACEFactory::createIncoherentReaction(
-						           *xss_data_extractor,
-							   energy_grid,
-							   grid_searcher,
-							   reaction,
-							   true );
+		 *xss_data_extractor,
+		 energy_grid,
+		 grid_searcher,
+		 reaction,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0 );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

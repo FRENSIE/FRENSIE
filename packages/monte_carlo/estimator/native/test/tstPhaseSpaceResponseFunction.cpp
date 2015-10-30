@@ -288,8 +288,8 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, evaluate )
 
   initializeCartesianResponseFunction( false );
   
-  TEST_FLOATING_EQUALITY( response_function->evaluate( particle ), 
-			  pow( 2*Utility::PhysicalConstants::pi, -1.5 ),
+  TEST_FLOATING_EQUALITY( response_function->evaluate( particle ),
+			  1.0,
 			  1e-15 );
   
   initializeCylindricalResponseFunction( false );

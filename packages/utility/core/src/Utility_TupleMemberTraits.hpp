@@ -9,6 +9,9 @@
 #ifndef UTILITY_TUPLE_MEMBER_TRAITS_HPP
 #define UTILITY_TUPLE_MEMBER_TRAITS_HPP
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+
 // FRENSIE Includes
 #include "Utility_TupleMemberTraitsDecl.hpp"
 #include "Utility_Tuple.hpp"
@@ -65,6 +68,36 @@ struct TupleMemberTraits<Tuple,FOURTH>
   { return tuple.fourth; }
   static inline void set( Tuple &tuple, const tupleMemberType &value )
   { tuple.fourth = value; }
+};
+
+/*! The partial specialization of the TupleMemberTraits for 
+ * boost::units::quantity and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<typename Unit, typename T>
+struct TupleMemberTraits<boost::units::quantity<Unit,T>,FIRST>
+{
+  typedef boost::units::quantity<Unit,T> tupleMemberType;
+  static inline tupleMemberType get( const tupleMemberType& quantity )
+  { return quantity; }
+  static inline void set( tupleMemberType& quantity,
+			  const tupleMemberType& new_quantity )
+  { quantity = new_quantity; }
+};
+
+/*! The partial specialization of the TupleMemberTraits for
+ * const boost::units::quantity and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<typename Unit, typename T>
+struct TupleMemberTraits<const boost::units::quantity<Unit,T>,FIRST>
+{
+  typedef const boost::units::quantity<Unit,T> tupleMemberType;
+  static inline tupleMemberType get( const tupleMemberType& quantity )
+  { return quantity; }
+  static inline void set( tupleMemberType& quantity,
+			  const tupleMemberType& new_quantity )
+  { /* ... */ }
 };
 
 /*! The specialization of the TupleMemberTraits for double and FIRST

@@ -72,6 +72,33 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
 
+  MonteCarlo::PhotonState particle_gen_a_copy( particle_gen_a );
+  
+  TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
+		 particle_gen_a.getXPosition() );
+  TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
+		 particle_gen_a.getYPosition() );
+  TEST_EQUALITY( particle_gen_a_copy.getZPosition(), 
+		 particle_gen_a.getZPosition() );
+  TEST_EQUALITY( particle_gen_a_copy.getXDirection(), 
+		 particle_gen_a.getXDirection() );
+  TEST_EQUALITY( particle_gen_a_copy.getYDirection(), 
+		 particle_gen_a.getYDirection() );
+  TEST_EQUALITY( particle_gen_a_copy.getZDirection(), 
+		 particle_gen_a.getZDirection() );
+  TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
+		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_a_copy.getSpeed(),
+		 particle_gen_a.getSpeed() );
+  TEST_EQUALITY( particle_gen_a_copy.getTime(),
+		 particle_gen_a.getTime() );
+  TEST_EQUALITY( particle_gen_a_copy.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() );
+  TEST_EQUALITY( particle_gen_a_copy.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() );
+  TEST_EQUALITY( particle_gen_a_copy.getWeight(),
+		 particle_gen_a.getWeight() );
+
   // Create a second generation particle with the same collision number
   MonteCarlo::PhotonState particle_gen_b( particle_gen_a, true );
 

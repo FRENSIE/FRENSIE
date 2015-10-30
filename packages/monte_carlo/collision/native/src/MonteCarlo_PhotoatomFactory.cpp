@@ -29,11 +29,16 @@ PhotoatomFactory::PhotoatomFactory(
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
 		    const unsigned hash_grid_bins,
-		    const bool use_impulse_approximation_data,
-		    const bool use_doppler_broadening_data,
+		    const IncoherentModelType incoherent_model,
+		    const double kahn_sampling_cutoff_energy,
 		    const bool use_detailed_pair_production_data,
-		    const bool use_atomic_relaxation_data )
+		    const bool use_atomic_relaxation_data,
+		    std::ostream* os_message )
+  : d_os_message( os_message )
 {
+  // Make sure the message output stream is valid
+  testPrecondition( os_message != NULL );
+  
   // Create each photoatom in the set
   boost::unordered_set<std::string>::const_iterator photoatom_name = 
     photoatom_aliases.begin();
@@ -65,8 +70,8 @@ PhotoatomFactory::PhotoatomFactory(
 				   atomic_weight,
 				   atomic_relaxation_model_factory,
 				   hash_grid_bins,
-				   use_impulse_approximation_data,
-				   use_doppler_broadening_data,
+				   incoherent_model,
+				   kahn_sampling_cutoff_energy,
 				   use_detailed_pair_production_data,
 				   use_atomic_relaxation_data );
     }
@@ -78,8 +83,8 @@ PhotoatomFactory::PhotoatomFactory(
 				      atomic_weight,
 				      atomic_relaxation_model_factory,
 				      hash_grid_bins,
-				      use_impulse_approximation_data,
-				      use_doppler_broadening_data,
+				      incoherent_model,
+				      kahn_sampling_cutoff_energy,
 				      use_detailed_pair_production_data,
 				      use_atomic_relaxation_data );
     }
@@ -122,19 +127,13 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
-			  const bool use_impulse_approximation_data,
-			  const bool use_doppler_broadening_data,
+			  const IncoherentModelType incoherent_model,
+			  const double kahn_sampling_cutoff_energy,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data )
 {
-  std::cout << "Loading ACE photoatomic cross section table "
-	    << photoatomic_table_name << " (" << photoatom_alias << ") ... ";
-
-  if( use_impulse_approximation_data )
-  {
-    std::cout << "Warning: impulse approximation data is not available in "
-	      << photoatomic_table_name << std::endl;
-  }
+  *d_os_message << "Loading ACE photoatomic cross section table "
+		<< photoatomic_table_name << " (" << photoatom_alias << ") ... ";
 
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( photoatomic_table_name ) ==
@@ -170,7 +169,8 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 					  atomic_relaxation_model,
 					  photoatom,
 					  hash_grid_bins,
-					  use_doppler_broadening_data,
+					  incoherent_model,
+					  kahn_sampling_cutoff_energy,
 					  use_detailed_pair_production_data,
 					  use_atomic_relaxation_data );
 
@@ -184,7 +184,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
       d_photoatomic_table_name_map[photoatomic_table_name];
   }
 
-  std::cout << "done." << std::endl;
+  *d_os_message << "done." << std::endl;
 }
 
 // Create a photoatom from a Native table
@@ -196,12 +196,12 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
-			  const bool use_impulse_approximation_data,
-			  const bool use_doppler_broadening_data,
+			  const IncoherentModelType incoherent_model,
+			  const double kahn_sampling_cutoff_energy,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data )
 {
-  std::cout << "Loading native photoatomic cross section table "
+  *d_os_message << "Loading native photoatomic cross section table "
 	    << photoatom_alias << " ... ";
   
   // Check if the table has already been loaded
@@ -230,8 +230,8 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 					     atomic_relaxation_model,
 					     photoatom,
 					     hash_grid_bins,
-					     use_impulse_approximation_data,
-					     use_doppler_broadening_data,
+					     incoherent_model,
+					     kahn_sampling_cutoff_energy,
 					     use_detailed_pair_production_data,
 					     use_atomic_relaxation_data );
 
@@ -245,7 +245,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
       d_photoatomic_table_name_map[native_file_path];
   }
 
-  std::cout << "done." << std::endl;
+  *d_os_message << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

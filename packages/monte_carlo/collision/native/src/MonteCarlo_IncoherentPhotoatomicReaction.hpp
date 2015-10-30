@@ -25,47 +25,22 @@ class IncoherentPhotoatomicReaction : public StandardPhotoatomicReaction<InterpP
 
 public:
 
-  //! Basic constructor without doppler broadening
+  //! Basic constructor
   IncoherentPhotoatomicReaction( 
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
-    const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
+              const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	      const Teuchos::ArrayRCP<const double>& cross_section,
+	      const unsigned threshold_energy_index,
+              const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	      scattering_distribution );
 
-  //! Constructor without doppler broadening
+  //! Constructor
   IncoherentPhotoatomicReaction( 
-    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-    const Teuchos::ArrayRCP<const double>& cross_section,
-    const unsigned threshold_energy_index,
-    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
- 
-  //! Basic constructor for doppler broadening
-  IncoherentPhotoatomicReaction( 
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_binding_energies,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
-      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-      const IncoherentPhotonScatteringDistribution::ElectronMomentumDistArray&
-      electron_momentum_dist_array );
-
-  //! Constructor for doppler broadening
-  IncoherentPhotoatomicReaction( 
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_binding_energies,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
-      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-      const IncoherentPhotonScatteringDistribution::ElectronMomentumDistArray&
-      electron_momentum_dist_array );
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+       scattering_distribution  );
 
   //! Destructor
   ~IncoherentPhotoatomicReaction()
@@ -85,7 +60,8 @@ public:
 private:
 
   // The incoherent scattering distribution
-  IncoherentPhotonScatteringDistribution d_scattering_distribution;
+  Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
+  d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace
