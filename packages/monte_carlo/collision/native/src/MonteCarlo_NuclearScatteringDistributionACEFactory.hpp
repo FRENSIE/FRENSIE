@@ -22,12 +22,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
 
 namespace MonteCarlo{
 
 //! The nuclear scattering distribution factory base class
 template<typename IncomingParticleType, typename OutgoingParticleType>
-class NuclearScatteringDistributionACEFactory
+class NuclearScatteringDistributionACEFactory : private NuclearScatteringDistributionACEFactoryHelper<IncomingParticleType,OutgoingParticleType>
 {
 
 public:
@@ -46,8 +47,17 @@ public:
 			    const Teuchos::ArrayView<const double> land_block,
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block,
-			    const bool explicit_elastic = false );
+			    const Teuchos::ArrayView<const double> dlw_block );
+
+  //! Constructor (no TYR block)
+  NuclearScatteringDistributionACEFactory(
+			    const std::string& table_name,
+			    const double atomic_weight_ratio,
+			    const Teuchos::ArrayView<const double> mtr_block,
+			    const Teuchos::ArrayView<const double> land_block,
+			    const Teuchos::ArrayView<const double> and_block,
+			    const Teuchos::ArrayView<const double> ldlw_block,
+			    const Teuchos::ArrayView<const double> dlw_block );
 
   //! Destructor
   virtual ~NuclearScatteringDistributionACEFactory()
@@ -66,6 +76,25 @@ public:
 			  Teuchos::RCP<DistributionType>& distribution ) const;
 
 protected:
+
+  //! Basic Constructor
+  NuclearScatteringDistributionACEFactory( const std::string& table_name,
+					  const double atomic_weight_ratio );
+
+  //! Initialize the factory
+  void initialize( const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> tyr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block );
+
+  //! Initialize the factory (no TYR block)
+  void initialize( const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block );
   
   // Returns a map of the reaction types (MT #s) and their AND block ordering
   const boost::unordered_map<unsigned,unsigned>& 
@@ -135,9 +164,6 @@ private:
 
   // The atomic weight ratio
   double d_atomic_weight_ratio;
-
-  // Specifies whether elastic scattering is specified explicitly
-  bool d_explicit_elastic;
 
   // A map of the reaction types (MT #s) and their AND block ordering
   boost::unordered_map<unsigned,unsigned> d_reaction_ordering;

@@ -31,6 +31,9 @@ public:
   // Typedef for the electron tag
   typedef ElectronTag ParticleTag;
 
+  //! The particle state type (for compile time usage)
+  static const ParticleType type = ELECTRON;
+
   //! Constructor
   ElectronState( const ParticleState::historyNumberType history_number );
 
