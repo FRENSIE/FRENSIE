@@ -8,10 +8,10 @@
 	     value="{-pi/2}"/>
 
   <Parameter name="Unit-Aware Delta Distribution A" 
-	     type="Unit-Aware Delta Distribution (s,m)"
+	     type="Unit-Aware Delta Distribution (s)"
 	     value="{3}"/>
   <Parameter name="Unit-Aware Delta Distribution B"
-	     type="Unit-Aware Delta Distribution (s,m)"
+	     type="Unit-Aware Delta Distribution (s)"
 	     value="{2*pi}"/>
 
 </ParameterList>
