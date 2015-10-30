@@ -32,12 +32,12 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 		    Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
-						typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::OutgoingParticleState,
 						LabSystemConversionPolicy> 
     AceLaw44NuclearScatteringDistributionLab;
 
   typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
-						typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::OutgoingParticleState,
 						CMSystemConversionPolicy> 
     AceLaw44NuclearScatteringDistributionCM;
 						

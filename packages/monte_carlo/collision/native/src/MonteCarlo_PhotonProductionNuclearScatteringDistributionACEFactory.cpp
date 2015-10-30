@@ -28,12 +28,10 @@ PhotonProductionNuclearScatteringDistributionACEFactory::PhotonProductionNuclear
 					   table_name,
 					   atomic_weight_ratio,
 					   raw_nuclide_data.extractMTRPBlock(),
-					   Teuchos::ArrayView<const double> tyrp_block( Teuchos::Array<double>( mtrp_block.size(), -1.0 ) ),
 					   raw_nuclide_data.extractLANDPBlock(),
 					   raw_nuclide_data.extractANDPBlock(),
 					   raw_nuclide_data.extractLDLWPBlock(),
-					   raw_nuclide_data.extractDLWPBlock(),
-					   false )
+					   raw_nuclide_data.extractDLWPBlock() )
 { /* ... */ }
 
 } // end MonteCarlo namespace

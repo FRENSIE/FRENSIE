@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_NuclearReactionHelper.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -63,7 +64,7 @@ double NuclearReaction::getCrossSection( const double energy ) const
   return getCrossSection( energy,
                           d_incoming_energy_grid,
                           d_cross_section,
-                          threshold_energy_index );
+                          d_threshold_energy_index );
 }
 
 } // end MonteCarlo namespace

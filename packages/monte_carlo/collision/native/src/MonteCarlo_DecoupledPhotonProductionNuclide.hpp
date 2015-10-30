@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionReaction.hpp"
+#include "MonteCarlo_Nuclide.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{

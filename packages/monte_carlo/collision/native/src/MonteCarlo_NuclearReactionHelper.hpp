@@ -26,14 +26,14 @@ double getCrossSection(
               const double energy,
               const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
               const Teuchos::ArrayRCP<const double>& cross_section,
-              const unsigned threshold_energy_index ) const;
+              const unsigned threshold_energy_index );
 
 // Return the cross section at a given energy
 inline double getCrossSection( 
-              const double energy
+              const double energy,
               const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
               const Teuchos::ArrayRCP<const double>& cross_section,
-              const unsigned threshold_energy_index ) const
+              const unsigned threshold_energy_index )
 {
   if( energy >= incoming_energy_grid[threshold_energy_index] &&
       energy < incoming_energy_grid[incoming_energy_grid.size()-1] )

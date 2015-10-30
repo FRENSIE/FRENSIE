@@ -26,7 +26,7 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 	 photon_production_distribution,
 	 const Teuchos::RCP<NuclearReaction>& total_reaction )
-  : PhotonProductionReaction( base_reaction_type,
+  : DecoupledPhotonProductionReaction( base_reaction_type,
 			      photon_production_id,
 			      temperature,
 			      photon_production_distribution,

@@ -9,6 +9,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclideACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_DecoupledPhotonProductionReactionACEFactory.hpp"
+#include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
 
 namespace MonteCarlo{
 

@@ -211,7 +211,6 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     {
       this->createElasticScatteringDistribution( 
 		       distribution,
-		       d_table_name,
 		       d_reaction_cm_scattering.find( reaction_type )->second,
 		       d_atomic_weight_ratio,
 		       angular_distribution );
@@ -246,7 +245,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
       if( d_reaction_cm_scattering.find( reaction_type )->second )
       {
 	distribution.reset(
-			   new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,CMSystemConversionPolicy>( 
+			   new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,CMSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
@@ -254,7 +253,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
       else
       {
 	distribution.reset(
-			   new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,LabSystemConversionPolicy>( 
+			   new IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType,LabSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
@@ -266,12 +265,12 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   {
     NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
               d_atomic_weight_ratio,
-     	      d_reaction_energy_dist.find( reaction_type )->second,
-     	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	      d_table_name,
-     	      reaction_type,
-	      d_reaction_cm_scattering.find( reaction_type )->second,
-     	      distribution );
+     	        d_reaction_energy_dist.find( reaction_type )->second,
+     	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
+	            d_table_name,
+     	        reaction_type,
+	            d_reaction_cm_scattering.find( reaction_type )->second,
+     	        distribution );
   }
 }
 
