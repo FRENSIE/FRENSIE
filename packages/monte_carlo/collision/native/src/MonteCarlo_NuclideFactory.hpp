@@ -36,7 +36,8 @@ public:
 		  const Teuchos::ParameterList& cross_section_table_info,
 		  const boost::unordered_set<std::string>& nuclide_aliases,
 		  const bool use_unresolved_resonance_data,
-		  const bool use_photon_production_data );
+		  const bool use_photon_production_data,
+		  std::ostream* os_message = &std::cout );
 
   //! Destructor
   ~NuclideFactory()
@@ -66,6 +67,9 @@ private:
 
   // The nuclide id map
   boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;
+
+  // The message output stream
+  std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

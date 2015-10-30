@@ -10,12 +10,12 @@
 #define MONTE_CARLO_PHOTON_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MasslessParticleState.hpp"
 
 namespace MonteCarlo{
 
 //! The photon state class
-class PhotonState : public ParticleState
+class PhotonState : public MasslessParticleState
 {
 
 private:
@@ -31,11 +31,19 @@ public:
   // Typedef for the photon tag
   struct PhotonTag ParticleTag;
 
+  //! The particle state type (for compile time usage)
+  static const ParticleType type = PHOTON;
+
   //! Constructor
   PhotonState( const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
   PhotonState( const ParticleState& existing_base_state,
+	       const bool increment_generation_number = false,
+	       const bool reset_collision_number = false );
+
+  //! Copy constructor (with possible creation of new generation)
+  PhotonState( const PhotonState& existing_base_state,
 	       const bool increment_generation_number = false,
 	       const bool reset_collision_number = false );
 
@@ -46,16 +54,8 @@ public:
   ~PhotonState()
   { /* ... */ }
 
-  //! Return the speed of the particle (cm/s)
-  double getSpeed() const;
-
   //! Print the photon state
   void print( std::ostream& os ) const;
-
-private:
-  
-  //! Calculate the time to traverse a distance
-  ParticleState::timeType calculateTraversalTime( const double distance) const;
 };
 
 } // end MonteCarlo namespace

@@ -55,36 +55,37 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_h )
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -1.0 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  2.22639294755139392e-09/norm_constant, 
+				  2.24058571809771121e-09, 
 				  1e-12 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.561986437562962e-09/norm_constant,
+				  4.59106809380969272e-09,
 				  1e-12 );
 
   compton_profile_value =
     occupation_number_h_k->evaluateComptonProfile( 0.0 );
-
+  
   TEST_FLOATING_EQUALITY( compton_profile_value, 
-			  115.83526012799598/norm_constant, 1e-12 );
+			  116.573683816875374,
+			  1e-12 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.561986437562962e-09/norm_constant,
+				  4.59106809380969272e-09,
 				  1e-12 );
   
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 1.0 );
   
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  2.22639294755139392e-09/norm_constant, 
+				  2.24058571809771121e-09,
 				  1e-12 );
 
   compton_profile_value =
@@ -108,37 +109,37 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -1.0 );
-
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  5.20373615890446367e-02/norm_constant, 
+  
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
+				  0.0506148938250740796,
 				  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  0.26118480303735186/norm_constant,
+				  0.254045181704302958,
 				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_k->evaluateComptonProfile( 0.0 );
-
+  
   TEST_FLOATING_EQUALITY( compton_profile_value, 
-			  1.3083852583290587/norm_constant, 
+			  1.2726198595992575,
 			  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  0.26118480303735186/norm_constant,
+				  0.254045181704303014,
 				  1e-12 );
   
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 1.0 );
   
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  5.20373615890446367e-02/norm_constant, 
+				  0.0506148938250740796,
 				  1e-12 );
 
   compton_profile_value =
@@ -156,37 +157,38 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -1.0 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  1.55571233220910706e-06/norm_constant, 
+				  1.56879966373411526e-06,
 				  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.269136342282414e-05/norm_constant,
+				  4.3050501185942021e-05,
 				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_p3->evaluateComptonProfile( 0.0 );
-
+  
   TEST_FLOATING_EQUALITY( compton_profile_value, 
-			  110.18902693969845/norm_constant, 
+			  111.115981250606566,
 			  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 0.5837882030079395 );
-
+  
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.269136342282414e-05/norm_constant,
+				  4.3050501185942021e-05,
 				  1e-12 );
   
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 1.0 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
-				  1.55571233220910706e-06/norm_constant, 
+  std::cout.precision( 18 );
+  std::cout << compton_profile_value << std::endl;
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
+				  1.56879966373411526e-06,
 				  1e-12 );
 
   compton_profile_value =

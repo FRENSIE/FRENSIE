@@ -159,6 +159,157 @@ TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, extractIXSBlock )
 
 }
 
+// Check that the secondarySecondaryParticleType can make accurate assessments
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor, hasSecondaryParticleType )
+{
+  // True Positive
+  TEST_ASSERT( h2_xss_data_extractor->hasSecondaryParticleType(1) );
+  TEST_ASSERT( h2_xss_data_extractor->hasSecondaryParticleType(9) );
+
+  // True Negative
+  TEST_ASSERT( !h2_xss_data_extractor->hasSecondaryParticleType(2) );
+}
+
+/* Check that the XSSPhotonuclearDataExtractor can extract the PXS data block
+   for a given secondary partcle type. This test also ensures that all secondary
+   particle types can be correctly located and extracted.
+*/
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPXSBlock )
+{
+  Teuchos::ArrayView<const double> pxs_block_1 =
+    h2_xss_data_extractor->extractPXSBlock(1);
+
+  Teuchos::ArrayView<const double> pxs_block_9 =
+    h2_xss_data_extractor->extractPXSBlock(9);
+ 
+  Teuchos::ArrayView<const double> pxs_block_2 =
+    h2_xss_data_extractor->extractPXSBlock(2);
+
+ // True Positive
+  TEST_EQUALITY( pxs_block_1.front() , 1 );
+  TEST_EQUALITY( pxs_block_1.back()  , 3.549e-4 );  
+
+  TEST_EQUALITY( pxs_block_9.front() , 1 );
+  TEST_EQUALITY( pxs_block_9.back()  , 3.549e-4 );
+
+  // True Negative
+  TEST_EQUALITY( pxs_block_2.size() , 0 );
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the PHN data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractPHNBlock )
+{
+  Teuchos::ArrayView<const double> phn_block_1 =
+    h2_xss_data_extractor->extractPHNBlock(1);
+
+  TEST_EQUALITY( phn_block_1.front() , 1 );
+  TEST_EQUALITY( phn_block_1.back()  , 1.386196e1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the MTRP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractMTRPBlock )
+{
+  Teuchos::ArrayView<const double> mtrp_block_1 =
+    h2_xss_data_extractor->extractMTRPBlock(1);
+
+  TEST_EQUALITY( mtrp_block_1.front() , 50 );
+  TEST_EQUALITY( mtrp_block_1.back()  , 50 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the TYRP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractTYRPBlock )
+{
+  Teuchos::ArrayView<const double> tyrp_block_1 =
+    h2_xss_data_extractor->extractTYRPBlock(1);
+
+  TEST_EQUALITY( tyrp_block_1.front() , -1 );
+  TEST_EQUALITY( tyrp_block_1.back()  , -1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the LSIGP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLSIGPBlock )
+{
+  Teuchos::ArrayView<const double> lsigp_block_1 =
+    h2_xss_data_extractor->extractLSIGPBlock(1);
+
+  TEST_EQUALITY( lsigp_block_1.front() , 1 );
+  TEST_EQUALITY( lsigp_block_1.back()  , 1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the SIGP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractSIGPBlock )
+{
+  Teuchos::ArrayView<const double> sigp_block_1 =
+    h2_xss_data_extractor->extractSIGPBlock(1);
+
+  TEST_EQUALITY( sigp_block_1.front() , 6 );
+  TEST_EQUALITY( sigp_block_1.back()  , 1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the LANDP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLANDPBlock )
+{
+  Teuchos::ArrayView<const double> landp_block_1 =
+    h2_xss_data_extractor->extractLANDPBlock(1);
+
+  TEST_EQUALITY( landp_block_1.front() , 1 );
+  TEST_EQUALITY( landp_block_1.back()  , 1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the ANDP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractANDPBlock )
+{
+  Teuchos::ArrayView<const double> ANDP_block_1 =
+    h2_xss_data_extractor->extractANDPBlock(1);
+
+  TEST_EQUALITY( ANDP_block_1.front() , 35 );
+  TEST_EQUALITY( ANDP_block_1.back()  , 1 );  
+
+}
+
+// Check that the XSSPhotonuclearDataExtractor can extract the LDLWP data block for a given secondary partcle type
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractLDLWPBlock )
+{
+  Teuchos::ArrayView<const double> ldlwp_block_1 =
+    h2_xss_data_extractor->extractLDLWPBlock(1);
+
+  TEST_EQUALITY( ldlwp_block_1.front() , 1 );
+  TEST_EQUALITY( ldlwp_block_1.back()  , 1 );  
+
+}
+
+/* Check that the XSSPhotonuclearDataExtractor can extract the DLWP data block
+   for a given secondary partcle type. This test also ensures that all secondary
+   particle types can be correctly located and extracted.
+*/
+TEUCHOS_UNIT_TEST( XSSPhotonuclearDataExtractor , extractDLWPBlock )
+{
+  Teuchos::ArrayView<const double> dlwp_block_1 =
+    h2_xss_data_extractor->extractDLWPBlock(1);
+
+  Teuchos::ArrayView<const double> dlwp_block_9 =
+    h2_xss_data_extractor->extractDLWPBlock(9);
+ 
+  Teuchos::ArrayView<const double> dlwp_block_2 =
+    h2_xss_data_extractor->extractDLWPBlock(2);
+
+ // True Positive
+  TEST_EQUALITY( dlwp_block_1.front() , 0 );
+  TEST_EQUALITY( dlwp_block_1.back()  , 6.66255e-1 );  
+
+  TEST_EQUALITY( dlwp_block_9.front() , 0 );
+  TEST_EQUALITY( dlwp_block_9.back()  , 6.66255e-1 );
+
+  // True Negative
+  TEST_EQUALITY( dlwp_block_2.size() , 0 );
+}
+
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//

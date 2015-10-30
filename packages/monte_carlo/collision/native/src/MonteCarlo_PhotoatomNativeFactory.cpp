@@ -24,8 +24,8 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 Teuchos::RCP<PhotoatomCore>& photoatom_core,
 	 const unsigned hash_grid_bins,
-	 const bool use_impulse_approximation_data,
-	 const bool use_doppler_broadening_data,
+	 const IncoherentModelType incoherent_model,
+	 const double kahn_sampling_cutoff_energy,
 	 const bool use_detailed_pair_production_data,
 	 const bool use_atomic_relaxation_data )
 {
@@ -48,34 +48,22 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 						     hash_grid_bins ) );
 
   // Create the incoherent scattering reaction(s)
-  if( use_impulse_approximation_data )
   {
     Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> > reaction_pointers;
 
-    PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
+    PhotoatomicReactionNativeFactory::createIncoherentReactions(
 						 raw_photoatom_data,
 						 energy_grid,
 						 grid_searcher,
 						 reaction_pointers,
-						 use_doppler_broadening_data );
+						 incoherent_model,
+						 kahn_sampling_cutoff_energy );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
       scattering_reactions[reaction_pointers[i]->getReactionType()] = 
 	reaction_pointers[i];
     }
-  }
-  else
-  {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
-
-    PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
-						 raw_photoatom_data,
-						 energy_grid,
-						 grid_searcher,
-						 reaction_pointer,
-						 use_doppler_broadening_data );
   }
 
   // Create the coherent scattering reaction
@@ -169,8 +157,8 @@ void PhotoatomNativeFactory::createPhotoatom(
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 Teuchos::RCP<Photoatom>& photoatom,
 	 const unsigned hash_grid_bins,
-	 const bool use_impulse_approximation_data,
-	 const bool use_doppler_broadening_data,
+	 const IncoherentModelType incoherent_model,
+	 const double kahn_sampling_cutoff_energy,
 	 const bool use_detailed_pair_production_data,
 	 const bool use_atomic_relaxation_data )
 {
@@ -186,8 +174,8 @@ void PhotoatomNativeFactory::createPhotoatom(
 					     atomic_relaxation_model,
 					     core,
 					     hash_grid_bins,
-					     use_impulse_approximation_data,
-					     use_doppler_broadening_data,
+					     incoherent_model,
+					     kahn_sampling_cutoff_energy,
 					     use_detailed_pair_production_data,
 					     use_atomic_relaxation_data );
 

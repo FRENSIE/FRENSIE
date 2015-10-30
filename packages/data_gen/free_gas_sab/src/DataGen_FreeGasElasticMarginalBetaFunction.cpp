@@ -30,8 +30,8 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
 	  const double A,
 	  const double kT,
 	  const double E )
-  : d_alpha_kernel( 1e-4, 0.0, 10000, 10000 ),
-    d_beta_kernel( 1e-4, 0.0, 10000, 10000 ),
+  : d_alpha_gkq_set( 1e-4, 0.0, 10000, 10000 ),
+    d_beta_gkq_set( 1e-4, 0.0, 10000, 10000 ),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,
@@ -102,7 +102,7 @@ double FreeGasElasticMarginalBetaFunction::evaluateCDF( const double beta )
   // Calculate the cdf value
   double cdf_value, cdf_value_error;
 
-  d_beta_kernel.integrateAdaptively<15>( *this,
+  d_beta_gkq_set.integrateAdaptively<15>( *this,
 					 lower_cdf_point->first,
 					 beta,
 					 cdf_value,
@@ -130,7 +130,7 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   boost::function<double (double beta)> d_integrated_sab_function = 
     boost::bind<double>( &FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction, boost::ref( *this ), _1 );
   
-  d_beta_kernel.integrateAdaptively<15>( d_integrated_sab_function,
+  d_beta_gkq_set.integrateAdaptively<15>( d_integrated_sab_function,
   					 400.0,
   					 540.0,
   					 d_norm_constant,
@@ -139,7 +139,7 @@ void FreeGasElasticMarginalBetaFunction::updateCachedValues()
   // Teuchos::Tuple<double,3> points_of_interest = 
   //   Teuchos::tuple( d_beta_min, 515.0, -d_beta_min );
   
-  // d_beta_kernel.integrateAdaptivelyWynnEpsilon( d_integrated_sab_function,
+  // d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( d_integrated_sab_function,
   // 						points_of_interest(),
   // 						d_norm_constant,
   // 						norm_constant_error );
@@ -173,7 +173,7 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   boost::function<double (double alpha)> sab_function_wrapper = 
     boost::bind<double>( boost::ref( d_sab_function ), _1, beta, d_E );
   
-  // d_alpha_kernel.integrateAdaptively<15>( sab_function_wrapper,
+  // d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
   // 					  alpha_min,
   // 					  alpha_max,
   // 					  function_value,
@@ -184,14 +184,14 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
     Teuchos::Tuple<double,3> points_of_interest = 
       Teuchos::tuple( alpha_min, -beta, alpha_max );
     std::cout << points_of_interest() << std::endl;
-    d_beta_kernel.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
+    d_beta_gkq_set.integrateAdaptivelyWynnEpsilon( sab_function_wrapper,
 						  points_of_interest(),
 						  function_value,
 						  function_value_error );
   }
   else
   {
-    d_alpha_kernel.integrateAdaptively<15>( sab_function_wrapper,
+    d_alpha_gkq_set.integrateAdaptively<15>( sab_function_wrapper,
 					    alpha_min,
 					    alpha_max,
 					    function_value,

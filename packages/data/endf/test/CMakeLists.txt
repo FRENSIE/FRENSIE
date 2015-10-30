@@ -2,7 +2,7 @@ ADD_EXECUTABLE(tstEndfFissionYieldsHelpers
   tstEndfFissionYieldsHelpers.cpp )
 TARGET_LINK_LIBRARIES(tstEndfFissionYieldsHelpers data_endf)
 ADD_TEST(ENDFFissionYieldsHelpers_test tstEndfFissionYieldsHelpers
---test_endf_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/U-235.txt")
+--test_endf_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/U_235.txt")
 
 ADD_EXECUTABLE(tstEndfFissionYieldsFileHandler 
   tstEndfFissionYieldsFileHandler.cpp )

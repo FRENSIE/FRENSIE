@@ -17,11 +17,11 @@ namespace Utility{
 // Initialize static member data
 const Teuchos::RCP<Utility::OneDDistribution> 
 DirectionalDistributionFactory::s_default_mu_dist( 
-				new Utility::UniformDistribution( -1, 1, 2 ) );
+			     new Utility::UniformDistribution( -1., 1., 2. ) );
 
 const Teuchos::RCP<Utility::OneDDistribution>
 DirectionalDistributionFactory::s_default_theta_dist(
-   new Utility::UniformDistribution( 0, 2*PhysicalConstants::pi, 1 ) );
+   new Utility::UniformDistribution( 0., 2*PhysicalConstants::pi, 1. ) );
 
 const Teuchos::RCP<Utility::SphericalDirectionalDistribution>
 DirectionalDistributionFactory::s_isotropic_directional_dist(

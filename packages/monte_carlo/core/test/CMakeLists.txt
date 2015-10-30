@@ -16,6 +16,18 @@ ADD_EXECUTABLE(tstPhotonState
 TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
 ADD_TEST(PhotonState_test tstPhotonState)
 
+ADD_EXECUTABLE(tstAdjointPhotonState
+  tstAdjointPhotonState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
+ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
+
+ADD_EXECUTABLE(tstAdjointPhotonProbeState
+  tstAdjointPhotonProbeState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
+ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
+
 ADD_EXECUTABLE(tstNeutronState
   tstNeutronState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -50,21 +62,7 @@ ENDIF()
 IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
   ADD_TEST(HybridParallelParticleBank_2_2_test
     ${MPIEXEC} -n 2 tstParticleBank --threads=2)
-  ADD_TEST(HybridParallelParticleBank_4_4_test
-    ${MPIEXEC} -n 4 tstParticleBank --threads=4)
 ENDIF()
-
-ADD_EXECUTABLE(tstStandardComptonProfileSubshellConverter
-  tstStandardComptonProfileSubshellConverter.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardComptonProfileSubshellConverter monte_carlo_core)
-ADD_TEST(StandardComptonProfileSubshellConverter_test tstStandardComptonProfileSubshellConverter)
-
-ADD_EXECUTABLE(tstComptonProfileHelpers
-  tstComptonProfileHelpers.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstComptonProfileHelpers monte_carlo_core)
-ADD_TEST(ComptonProfileHelpers_test tstComptonProfileHelpers)
 
 ADD_EXECUTABLE(tstSimulationProperties 
   tstSimulationProperties.cpp

@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
+#include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -101,6 +102,7 @@ TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, react_ace )
 
   TEST_EQUALITY_CONST( photon.getEnergy(), 20.0 );
   TEST_ASSERT( photon.getZDirection() < 1.0 );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_ASSERT( bank.empty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
@@ -185,6 +187,11 @@ int main( int argc, char** argv )
                              new Utility::TabularDistribution<Utility::LogLog>(
                                                        recoil_momentum_squared,
 						       form_factor_squared ) );
+
+  // Create the coherent scattering distribution
+  Teuchos::RCP<const MonteCarlo::CoherentScatteringDistribution> distribution(
+		       new MonteCarlo::EfficientCoherentScatteringDistribution(
+							       form_factor ) );
   
   // Create the reaction
   ace_coherent_reaction.reset(
@@ -192,7 +199,7 @@ int main( int argc, char** argv )
 						      energy_grid,
 						      coherent_cross_section,
 						      coherent_threshold_index,
-						      form_factor ) );
+						      distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

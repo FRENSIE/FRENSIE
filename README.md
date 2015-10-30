@@ -12,7 +12,7 @@ depends on is listed below.
 4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM) - only with Cubit
 5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
 6. [LAPACK 3.5.0](http://www.netlib.org/lapack/)
-7. [Trilinos 11.10.2](http://trilinos.org/)
+7. [Trilinos 11.12.1](http://trilinos.org/)
 8. [ODEPACK](http://computation.llnl.gov/casc/odepack/)
 9. [Boost 1.56.0](http://www.boost.org/)
 10. [GSL 1.16](http://www.gnu.org/software/gsl/)
@@ -140,11 +140,11 @@ are described.
 15. run `exec bash`
 
 ### Building Trilinos 
-1. download the [Trilinos 11.10.2 source](http://trilinos.org/download/)
-2. move the trilinos-11.10.2-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
+1. download the [Trilinos 11.12.1 source](http://trilinos.org/download/)
+2. move the trilinos-11.12.1-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
 3. move to the trilinos directory
-4. run `tar -xvf trilinos-11.10.2-Source.tar.gz`
-5. run `ln -s trilinos-11.10.2.Source src`
+4. run `tar -xvf trilinos-11.12.1-Source.tar.gz`
+5. run `ln -s trilinos-11.12.1.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
 8. copy `FRENSIE/scripts/trilinos.sh` into the build directory 
@@ -206,6 +206,14 @@ are described.
 9. run `make install`
 10. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
+
+### Building ROOT
+1. download the appropriate [ROOT 6.04/02 Binaries](https://root.cern.ch/content/release-60402)
+2. move the binary file to the root directory (e.g. software/root)
+3. move to the root directory
+4. run 'tar -xvf root_v6.04.02*'
+5. update the 'export PATH' line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:absolute-path-to_software/root/bin:$PATH`
+6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/gsl/bin:absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
