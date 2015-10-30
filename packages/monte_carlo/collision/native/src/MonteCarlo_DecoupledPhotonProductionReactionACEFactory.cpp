@@ -18,6 +18,7 @@
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_DecoupledYieldBasedPhotonProductionReaction.hpp"
 #include "MonteCarlo_DecoupledCrossSectionBasedPhotonProductionReaction.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"

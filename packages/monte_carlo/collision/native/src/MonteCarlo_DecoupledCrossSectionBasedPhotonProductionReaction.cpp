@@ -17,7 +17,7 @@
 namespace MonteCarlo{
 
 // Constructor
-DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPhotonProductionReaction(
+DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPhotonProductionReaction(
 		   const NuclearReactionType base_reaction_type,
 		   const unsigned photon_production_id,
 		   const double temperature,
@@ -27,14 +27,14 @@ DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPho
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 		   photon_production_distribution,
 		   const Teuchos::RCP<NuclearReaction>& total_reaction )
-  : PhotonProductionReaction( base_reaction_type,
+  : DecoupledPhotonProductionReaction( base_reaction_type,
 			      photon_production_id,
 			      temperature,
 			      photon_production_distribution,
 			      total_reaction ),
     d_threshold_energy_index( threshold_energy_index ),
     d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
+    d_cross_section( cross_section )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 1 );
@@ -45,7 +45,7 @@ DecopledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPho
 }
 
 // Return the cross section at a given energy
-double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( const double energy ) 
+double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( const double energy ) const
 {
   return getCrossSection( energy,
                           d_incoming_energy_grid,
