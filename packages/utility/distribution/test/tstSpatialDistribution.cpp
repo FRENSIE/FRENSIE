@@ -34,7 +34,7 @@
 TEUCHOS_UNIT_TEST( SpatialDistribution, hasSameBounds )
 {
   Teuchos::RCP<Utility::OneDDistribution> delta_dist(
-					 new Utility::DeltaDistribution( 1 ) );
+					new Utility::DeltaDistribution( 1. ) );
   Teuchos::RCP<Utility::OneDDistribution> discrete_dist(
 	new Utility::DiscreteDistribution( Teuchos::tuple( -1.0, 0.0, 1.0 ),
 					   Teuchos::tuple( 1.0, 1.0, 1.0 ) ) );

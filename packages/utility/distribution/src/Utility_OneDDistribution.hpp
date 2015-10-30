@@ -37,7 +37,7 @@ namespace Utility{
  * double respectively.
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareOneDDistribution
 {
 
