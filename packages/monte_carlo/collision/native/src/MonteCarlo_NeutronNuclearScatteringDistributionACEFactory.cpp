@@ -31,8 +31,7 @@ NeutronNuclearScatteringDistributionACEFactory::NeutronNuclearScatteringDistribu
 					   raw_nuclide_data.extractLANDBlock(),
 					   raw_nuclide_data.extractANDBlock(),
 					   raw_nuclide_data.extractLDLWBlock(),
-					   raw_nuclide_data.extractDLWBlock(),
-					   false )
+					   raw_nuclide_data.extractDLWBlock() )
 { /* ... */ }
 
 } // end MonteCarlo namespace

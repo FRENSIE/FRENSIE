@@ -31,6 +31,9 @@ public:
   // Typedef for the neutron tag
   typedef NeutronTag ParticleTag;
 
+  //! The particle state type (for compile time usage)
+  static const ParticleType type = NEUTRON;
+
   //! Constructor
   NeutronState( const ParticleState::historyNumberType history_number );
 
@@ -59,7 +62,6 @@ public:
 
   //! Print the neutron state
   void print( std::ostream& os ) const;
-
 };
 
 } // end MonteCarlo namespace
