@@ -40,7 +40,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 { 
   // Create the scattering distribution factory
-  PhotonProductionNuclearScatteringDistributionACEFactory 
+  NeutronNuclearScatteringDistributionACEFactory 
     scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
 			     raw_nuclide_data );
@@ -400,6 +400,7 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
                                Teuchos::RCP<NuclearReaction>& base_reaction )
 { 
   // Check for the reaction amongst the absorptions, scatters, and fissions
+  
   if ( d_absorption_reactions.find(reaction_type) != d_absorption_reactions.end() )
   {
     base_reaction = d_absorption_reactions[reaction_type];

@@ -47,10 +47,10 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
 // Return the cross section at a given energy
 double DecoupledCrossSectionBasedPhotonProductionReaction::getCrossSection( const double energy ) const
 {
-  return getCrossSection( energy,
+  return MonteCarlo::getCrossSection( energy,
                           d_incoming_energy_grid,
                           d_cross_section,
-                          threshold_energy_index );
+                          d_threshold_energy_index );
 }
 
 } // end MonteCarlo namespace

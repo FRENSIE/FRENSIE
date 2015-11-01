@@ -14,7 +14,7 @@
 namespace MonteCarlo{
 
 // Constructor
-DecoupledPhotonProductionReaction::PhotonProductionReaction(
+DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
 			      const NuclearReactionType base_reaction_type,
 			      const unsigned photon_production_id,
 			      const double temperature,
@@ -51,7 +51,7 @@ void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
 			   new PhotonState( neutron, true, false ) );
 	
 	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)		   
-	new_photon->setWeight( neutron->getWeight()*this->getCrossSection( neutron->getEnergy() )/d_total_reaction->getCrossSection( neutron->getEnergy() ) );
+	new_photon->setWeight( neutron.getWeight()*this->getCrossSection( neutron.getEnergy() )/d_total_reaction->getCrossSection( neutron.getEnergy() ) );
 				   
   d_photon_production_distribution->scatterParticle( neutron, *new_photon,
 					this->getTemperature() );

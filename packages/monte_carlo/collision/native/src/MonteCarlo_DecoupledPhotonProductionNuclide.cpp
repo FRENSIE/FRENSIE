@@ -38,7 +38,7 @@ DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::s
              isomer_number,
              atomic_weight_ratio,
              temperature,
-             energy_grid
+             energy_grid,
              standard_scattering_reactions,
              standard_absorption_reactions )
 {
@@ -106,7 +106,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
 			                                      NeutronState& neutron, 
 			                                      ParticleBank& bank ) const
 {
-  double partial_cross_section = 0.0
+  double partial_cross_section = 0.0;
   
   ConstPhotonProductionReactionMap::const_iterator nuclear_reaction, nuclear_reaction_end;
   
@@ -133,10 +133,10 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
 
 // Get total photon production cross section
 double DecoupledPhotonProductionNuclide::getTotalPhotonProductionCrossSection( 
-                                                   const double energy )
+                                                   const double energy ) const
 {
   // Loop over all photon production reactions to get total cross section
-  PhotonProductionReactionMap::const_iterator reaction_type_pointer, end_reaction_type_pointer;
+  ConstPhotonProductionReactionMap::const_iterator reaction_type_pointer, end_reaction_type_pointer;
 
   reaction_type_pointer = d_photon_production_reactions.begin();
   end_reaction_type_pointer = d_photon_production_reactions.end();

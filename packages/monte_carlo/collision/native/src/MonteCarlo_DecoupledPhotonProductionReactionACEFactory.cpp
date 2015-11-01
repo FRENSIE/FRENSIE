@@ -234,8 +234,7 @@ void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   
   while( reaction != end_reaction )
   {
-    NuclearReactionACEFactory::getReactionFromReactionType( reaction->second,
-                                                            base_reaction );
+    this->getReactionFromReactionType( reaction->second, base_reaction );
     base_reaction_map[reaction->second] = base_reaction;
   }
 }

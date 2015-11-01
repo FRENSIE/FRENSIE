@@ -101,8 +101,8 @@ protected:
    boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >& 
    reaction_cross_section );
    
-   //! Get the reaction associated with an Reaction Type
-   static void getReactionFromReactionType( 
+  //! Get the reaction associated with an Reaction Type
+  void getReactionFromReactionType( 
                                NuclearReactionType reaction_type, 
                                Teuchos::RCP<NuclearReaction>& base_reaction );
 
@@ -153,7 +153,6 @@ private:
     fission_neutron_multiplicity_distribution,
     const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
     delayed_neutron_emission_distribution );
-				    
 
   // A map of the scattering reactions
   boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >

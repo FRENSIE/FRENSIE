@@ -61,7 +61,7 @@ double NuclearReaction::getQValue() const
 // Return the cross section value at a given energy
 double NuclearReaction::getCrossSection( const double energy ) const
 {
-  return getCrossSection( energy,
+  return MonteCarlo::getCrossSection( energy,
                           d_incoming_energy_grid,
                           d_cross_section,
                           d_threshold_energy_index );
