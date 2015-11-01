@@ -21,6 +21,7 @@
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"

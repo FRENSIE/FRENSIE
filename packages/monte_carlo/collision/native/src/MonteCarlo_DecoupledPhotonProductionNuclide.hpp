@@ -72,7 +72,7 @@ private:
 				 ParticleBank& bank ) const;
 
   // Get total photon production cross section
-  double getTotalPhotonProductionCrossSection( const double energy );
+  double getTotalPhotonProductionCrossSection( const double energy ) const;
 
   // Store the reaction map of photon production reactions 
   ConstPhotonProductionReactionMap d_photon_production_reactions;
