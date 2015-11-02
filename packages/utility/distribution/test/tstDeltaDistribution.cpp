@@ -29,9 +29,10 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
 
 using boost::units::quantity;
-namespace si = boost::units::si;
+using namespace Utility::Units;
 namespace si = boost::units::si;
 namespace cgs = boost::units::cgs;
 
@@ -453,7 +454,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
     Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
 
   IndepQuantityB indep_quantity_b( indep_quantity_a );
-  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b =
+    Utility::QuantityTraits<InverseIndepQuantityB>::initializeQuantity( 1.0 );
   DepQuantityB dep_quantity_b( dep_quantity_a );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
@@ -478,7 +480,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
   Utility::setQuantity( dep_quantity_a, 0.0 );			
 
   indep_quantity_b = IndepQuantityB( indep_quantity_a );
-  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  Utility::setQuantity( inv_indep_quantity_b, 0.0 );
   dep_quantity_b = DepQuantityB( dep_quantity_a );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
@@ -515,6 +517,138 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
 				      si_amount,
 				      cgs_energy,
 				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_length,
+				      cgs_energy,
+				      cgs_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_length,
+				      si_energy,
+				      si_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_mass,
+				      cgs_energy,
+				      cgs_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_mass,
+				      si_energy,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_dimensionless,
+				      cgs_energy,
+				      cgs_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_dimensionless,
+				      si_energy,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      void,
+				      cgs_energy,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      void,
+				      si_energy,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      KiloElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
+				      MegaElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      MegaElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      KiloElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      void,
+				      MegaElectronVolt,
+				      void,
+				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
 // Custom main function
