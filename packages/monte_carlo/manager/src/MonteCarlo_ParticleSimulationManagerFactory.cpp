@@ -166,7 +166,7 @@ ParticleSimulationManagerFactory::createManager(
       StandardParticleSourceFactory<Geometry::Root>::getInstance();
   
     Teuchos::RCP<ParticleSource> source = 
-      source_factory->createSource( source_def );
+      source_factory->createSource( source_def, SimulationProperties::getParticleMode()  );
 
     setSourceHandlerInstance( source );
 

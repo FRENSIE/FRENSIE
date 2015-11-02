@@ -627,12 +627,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
   cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
-<<<<<<< HEAD
-  TEST_EQUALITY_CONST( atom->getAtomName(), cross_sections_xml_name );
-=======
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
->>>>>>> 60f96d96f4637660fc01cabea17ce63d27e8ec9c
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -795,12 +791,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
-<<<<<<< HEAD
-  TEST_EQUALITY_CONST( atom->getAtomName(), cross_sections_xml_name );
-=======
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
->>>>>>> 60f96d96f4637660fc01cabea17ce63d27e8ec9c
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -974,12 +966,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
-<<<<<<< HEAD
-  TEST_EQUALITY_CONST( atom->getAtomName(), cross_sections_xml_name );
-=======
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
->>>>>>> 60f96d96f4637660fc01cabea17ce63d27e8ec9c
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -1361,12 +1349,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
   cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
-<<<<<<< HEAD
-  TEST_EQUALITY_CONST( atom->getAtomName(), cross_sections_xml_name );
-=======
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
->>>>>>> 60f96d96f4637660fc01cabea17ce63d27e8ec9c
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 

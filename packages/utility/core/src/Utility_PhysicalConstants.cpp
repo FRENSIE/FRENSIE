@@ -20,9 +20,8 @@ const double PhysicalConstants::electron_rest_mass_energy = 0.51099891013;
 const double PhysicalConstants::neutron_rest_mass_energy = 939.56537821;
 const double PhysicalConstants::neutron_rest_mass_amu = 1.0086649160043;
 const double PhysicalConstants::classical_electron_radius = 2.8179403267e-13;
-const double PhysicalConstants::inverse_fine_structure_constant = 137.035999679;
-//const double PhysicalConstants::inverse_fine_structure_constant = 137.035999139;
-//const double PhysicalConstants::inverse_fine_structure_constant = 137.035999074;
+//! \todo update inverse fine structure constant and associated unit tests to newest version
+const double PhysicalConstants::inverse_fine_structure_constant = 137.035999074;
 const double PhysicalConstants::fine_structure_constant = 
                                             1.0/inverse_fine_structure_constant;
 const double PhysicalConstants::boltzmann_constant = 8.617332478e-11;
