@@ -698,11 +698,13 @@
  *   <ul>
  *    <li>\code
  *        <Parameter name="example" type="Delta Distribution" value="{0}"/>
+ *        <Parameter name="example" type="Delta Distribution" value="{0,0.5}"/>
  *        \endcode</li>
- *    <li>Models a delta function \f$\delta(x-a)\f$ or single point</li>
- *    <li>Should almost exclusively be used for sampling purposes</li>
+ *    <li>Models a delta function \f$c\delta(x-a)\f$ or single point.</li>
+ *    <li>Should almost exclusively be used for sampling purposes.</li>
  *    <li>The value attribute specifies the \f$a\f$ value of the delta 
- *        distribution</li></ul></li>
+ *        distribution and the constant multiplier \f$c\f$ (optional). 
+ *        </li></ul></li>
  *  <li><b>Discrete distribution</b>
  *   <ul>
  *    <li>\code
