@@ -12,6 +12,7 @@
 
 // Boost Includes
 #include <boost/units/systems/si.hpp>
+#include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
 // Trilinos Includes
@@ -31,6 +32,8 @@
 
 using boost::units::quantity;
 namespace si = boost::units::si;
+namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -44,10 +47,10 @@ Teuchos::RCP<Utility::TabularOneDDistribution>
 Teuchos::RCP<Utility::OneDDistribution>
   distribution( tab_distribution );
 
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::time> >
-  unit_aware_tab_distribution( new Utility::UnitAwareDeltaDistribution<si::time>( 3.0*si::seconds ) );
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::time,si::length> >
+  unit_aware_tab_distribution( new Utility::UnitAwareDeltaDistribution<si::time,si::length>( 3.0*si::seconds ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::time> >
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::time,si::length> >
   unit_aware_distribution( unit_aware_tab_distribution );
 
 //---------------------------------------------------------------------------//
@@ -66,11 +69,11 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, evaluate )
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, evaluate )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*si::seconds ), 
-		       0.0 );
+		       0.0*si::meters );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 3.0*si::seconds ), 
-		       1.0 );
+		       1.0*si::meters );
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 6.0*si::seconds ), 
-		       0.0 );
+		       0.0*si::meters );
 }
 
 //---------------------------------------------------------------------------//
@@ -346,7 +349,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, toParameterList )
 // Check that the unit-aware distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, toParameterList )
 {
-  typedef Utility::UnitAwareDeltaDistribution<si::time> UnitAwareDeltaDistribution;
+  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
   
   Teuchos::RCP<UnitAwareDeltaDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareDeltaDistribution>( unit_aware_distribution );
@@ -401,7 +404,7 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, fromParameterList )
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromParameterList )
 {
-  typedef Utility::UnitAwareDeltaDistribution<si::time> UnitAwareDeltaDistribution;
+  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
   
   UnitAwareDeltaDistribution xml_distribution = 
     test_dists_list->get<UnitAwareDeltaDistribution>( "Unit-Aware Delta Distribution A" );
@@ -417,57 +420,101 @@ TEUCHOS_UNIT_TEST( UnitAwareDeltaDistribution, fromParameterList )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a unit-aware distribution can be constructed from a unitless
-// distribution
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( UnitAwareDeltaDistribution,
-				   unitless_copy_constructor,
-				   IndepUnit )
+// Check that the distribution can be scaled
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareDeltaDistribution,
+				   explicit_conversion,
+				   IndepUnitA,
+				   DepUnitA,
+				   IndepUnitB,
+				   DepUnitB )
 {
-  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
-    IndepQuantity;
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
   
-  Utility::UnitAwareDeltaDistribution<IndepUnit> unit_aware_dist_copy = 
-    Utility::UnitAwareDeltaDistribution<IndepUnit>::fromUnitlessDistribution( 
-     *Teuchos::rcp_dynamic_cast<Utility::DeltaDistribution>(distribution) );
-
-  IndepQuantity indep_quantity = 
-    Utility::QuantityTraits<IndepQuantity>::initializeQuantity( -1.0 );
-
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ), 0.0 );
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
   
-  Utility::setQuantity( indep_quantity, 0.0 );
-    
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ), 1.0 );
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
-  Utility::setQuantity( indep_quantity, 1.0 );
-    
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ), 0.0 );
+  // Copy from unitless distribution to distribution type A
+  Utility::UnitAwareDeltaDistribution<IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareDeltaDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::DeltaDistribution>( distribution ) );
+
+  // Copy from distribution type A to distribution type B
+  Utility::UnitAwareDeltaDistribution<IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
+
+  IndepQuantityA indep_quantity_a = 
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 1.0 );
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 1.0 );
+
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 0.0 );
+  Utility::setQuantity( dep_quantity_a, 0.0 );			
+
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-6 );
 }
 
 typedef si::energy si_energy;
-typedef si::length si_length;
-typedef si::area si_area;
-typedef si::mass si_mass;
-typedef si::time si_time;
+typedef cgs::energy cgs_energy;
 typedef si::amount si_amount;
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      si_energy );
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      si_time );
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      si_area );
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( UnitAwareDeltaDistribution,
-				      unitless_copy_constructor,
-				      void );
+typedef si::length si_length;
+typedef cgs::length cgs_length;
+typedef si::mass si_mass;
+typedef cgs::mass cgs_mass;
+typedef si::dimensionless si_dimensionless;
+typedef cgs::dimensionless cgs_dimensionless;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareDeltaDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -495,7 +542,7 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::DeltaDistribution );
-  typedef Utility::UnitAwareDeltaDistribution<si::time> UnitAwareDeltaDistribution;
+  typedef Utility::UnitAwareDeltaDistribution<si::time,si::length> UnitAwareDeltaDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDeltaDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
