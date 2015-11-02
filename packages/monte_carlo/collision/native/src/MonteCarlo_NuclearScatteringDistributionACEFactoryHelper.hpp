@@ -30,9 +30,10 @@ public:
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution( 
 		      Teuchos::RCP<NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType> >& distribution,
+		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,
@@ -60,10 +61,11 @@ public:
   
   //! Create the elastic scattering distribution
   static void createElasticScatteringDistribution( 
-                      Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+          Teuchos::RCP<NuclearScatteringDistribution<ParticleType,ParticleType> >& distribution,
+          const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
   {
     THROW_EXCEPTION( std::logic_error,

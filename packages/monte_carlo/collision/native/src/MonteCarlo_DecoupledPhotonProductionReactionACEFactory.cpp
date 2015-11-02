@@ -152,7 +152,7 @@ void DecoupledPhotonProductionReactionACEFactory::createReactionOrderingMap(
 
 // Parse the SIGP to create the yield energy map, yield values, xs map, and 
 //   threshold energy map
-void parseSIGP(
+void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
   const Teuchos::ArrayView<const double>& lsigp_block,
   const Teuchos::ArrayView<const double>& sigp_block,
   const boost::unordered_map<unsigned,unsigned>& reaction_ordering,
