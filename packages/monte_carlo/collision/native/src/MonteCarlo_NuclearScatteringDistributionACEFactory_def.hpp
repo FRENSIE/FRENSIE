@@ -18,10 +18,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
-#include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -212,6 +213,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     {
       this->createElasticScatteringDistribution( 
 		       distribution,
+		       d_table_name,
 		       d_reaction_cm_scattering.find( reaction_type )->second,
 		       d_atomic_weight_ratio,
 		       angular_distribution );

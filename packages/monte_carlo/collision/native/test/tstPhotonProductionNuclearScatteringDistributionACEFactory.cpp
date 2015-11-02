@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronNuclearScatteringDistributionACEFactory.cpp
+//! \file   tstPhotonProductionNuclearScatteringDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Neutron-neutron scattering distribution factory unit tests
 //!
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonNuclearScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -23,7 +23,7 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestPhotonNuclearScatteringDistributionACEFactory : public MonteCarlo::PhotonNuclearScatteringDistributionACEFactory
+class TestPhotonProductionNuclearScatteringDistributionACEFactory : public MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
 {
 public:
   TestPhotonProductionNuclearScatteringDistributionACEFactory(
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
                                       ace_file_handler_h1->getTableJXSArray(),
                                       ace_file_handler_h1->getTableXSSArray()));
    
-//  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
+//  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
   neutron_distribution_factory_h1.reset( 
     new TestPhotonProductionNuclearScatteringDistributionACEFactory(
                              test_basic_h1_ace_table_name,
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( PhotonProductionNuclearScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhtonProductionNuclearScatteringDistributionACEFactory, 
 		   getReactionOrdering_o16 )
 {
 
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory,
    
 //  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
   neutron_distribution_factory_o16.reset( 
-    new TestNeutronNuclearScatteringDistributionACEFactory(
+    new TestPhotonProductionNuclearScatteringDistributionACEFactory(
 			     test_basic_o16_ace_table_name,
                              ace_file_handler_o16->getTableAtomicWeightRatio(),
 			                       *xss_data_extractor_o16 ) );

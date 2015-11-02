@@ -203,7 +203,7 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_NuclearScatteringDistributionACEFactoryHelper.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactory_def.hpp"
 
 //---------------------------------------------------------------------------//
 
