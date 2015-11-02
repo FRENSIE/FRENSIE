@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_PHOTON_MODE );
 
   TEST_ASSERT( !source.is_null() );
 

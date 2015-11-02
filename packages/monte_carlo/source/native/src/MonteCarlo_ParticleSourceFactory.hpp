@@ -57,6 +57,10 @@ private:
   static void validateSourceRep( const Teuchos::ParameterList& source_rep,
 				 const unsigned num_sources = 1u );
 
+  // Get the particle type enum
+  static ParticleType getParticleType( const Teuchos::ParameterList& source_rep,
+				       const ParticleModeType& particle_mode );
+
   // Validate the particle type name
   static void validateParticleTypeName( const std::string& particle_type_name);
 
@@ -64,12 +68,14 @@ private:
   template<typename GeometryHandler>
   static double 
   createDistributedSource(const Teuchos::ParameterList& source_rep,
+			  const ParticleModeType& particle_mode,
 			  Teuchos::RCP<ParticleSource>& source,
 			  const unsigned num_sources = 1u );
 
   // Create a state source
   static double
   createStateSource( const Teuchos::ParameterList& source_rep,
+		     const ParticleModeType& particle_mode,
 		     Teuchos::RCP<ParticleSource>& source,
 		     const unsigned num_sources = 1u );
 
@@ -77,6 +83,7 @@ private:
   template<typename GeometryHandler>
   static void
   createCompoundSource( const Teuchos::ParameterList& compound_source,
+			const ParticleModeType& particle_mode,
 			Teuchos::RCP<ParticleSource>& source );
 
   // The default time distribution

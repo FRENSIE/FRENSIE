@@ -58,13 +58,15 @@ ParticleSourceFactory::createSourceImpl(
     {
       ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							            sub_source,
+								    particle_mode,	
 								    source );
     }
     else
-      ParticleSourceFactory::createStateSource( sub_source, source );
+      ParticleSourceFactory::createStateSource( sub_source, particle_mode, source );
   }
   else
     ParticleSourceFactory::createCompoundSource<GeometryHandler>( source_rep, 
+								  particle_mode,
 								  source );
   
   // Make sure the source has been created
@@ -80,6 +82,7 @@ ParticleSourceFactory::createSourceImpl(
 template<typename GeometryHandler>
 double ParticleSourceFactory::createDistributedSource(
 				      const Teuchos::ParameterList& source_rep,
+			  	      const ParticleModeType& particle_mode,
 				      Teuchos::RCP<ParticleSource>& source,
 				      const unsigned num_sources )
 {
@@ -150,15 +153,15 @@ double ParticleSourceFactory::createDistributedSource(
   }
   else // use the default time distribution
     time_distribution = s_default_time_dist;
-
+/*
   // Extract the particle type
   std::string particle_type_name = 
     source_rep.get<std::string>( "Particle Type" );
 
   ParticleSourceFactory::validateParticleTypeName( particle_type_name );
-
-  ParticleType particle_type = 
-    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+*/
+  ParticleType particle_type = getParticleType( source_rep, particle_mode );
+//    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
   
   // Create the new source
   Teuchos::RCP<DistributedSource> source_tmp( new DistributedSource( 
@@ -303,6 +306,7 @@ double ParticleSourceFactory::createDistributedSource(
 template<typename GeometryHandler>
 void ParticleSourceFactory::createCompoundSource(
 				      const Teuchos::ParameterList& source_rep,
+			  	      const ParticleModeType& particle_mode,
 				      Teuchos::RCP<ParticleSource>& source )
 {
   unsigned num_sources = source_rep.numParams();
@@ -323,6 +327,7 @@ void ParticleSourceFactory::createCompoundSource(
       source_weights[source_index] = 
 	ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							 sub_source,
+							 particle_mode,
 							 sources[source_index],
 							 num_sources );
     }
@@ -330,6 +335,7 @@ void ParticleSourceFactory::createCompoundSource(
     {
       source_weights[source_index] = 
 	ParticleSourceFactory::createStateSource( sub_source,
+						  particle_mode,
 						  sources[source_index],
 						  num_sources );
     }
