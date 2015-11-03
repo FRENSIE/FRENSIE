@@ -164,39 +164,6 @@ public:
   { /* ... */ }
 };
 
-/*! Macro for defining the unitless copy constructor
- *
- * \details This is a convenience macro for defining the unitless copy
- * constructor, which is a bit messy to define properly (and safely!!!). This
- * constructor will be defined inline as it is a template function. Place it
- * in the same location of the header file as you would any other public
- * constructor. It will only compile if the members packDataInString and 
- * unpackDataFromString are defined for the distribution class of interest 
- * (see ParameterListCompatibleObject). The constructor defined relies on 
- * SFINAE and the Boost disable_if object to prevent a duplicate copy 
- * constructor when the distribution template parameters are both void 
- * (unitless distribution). It also ensures that units can only be added to 
- * completely unitless distributions and not removed (one-way construction)
- * so that we don't undermine the safety provided by keeping track of units
- * in the first place.
- * \ingroup one_d_distributions
- */
-#define UNITLESS_COPY_CONSTRUCTOR( Distribution, DistIndepUnit, DistDepUnit ) \
-template<typename InputIndepUnit, typename InputDepUnit> \
-Distribution( const Distribution<InputIndepUnit,InputDepUnit>& unitless_dist_instance,	\
-  typename boost::disable_if<boost::mpl::or_<boost::mpl::and_<typename boost::is_same<DistIndepUnit,void>::type,typename boost::is_same<DistDepUnit,void>::type>,boost::mpl::not_<typename boost::is_same<InputIndepUnit,void>::type>,boost::mpl::not_<typename boost::is_same<InputDepUnit,void>::type> > >::type* dummy = 0 ) \
-{ this->unpackDataFromString( unitless_dist_instance.packDataInString() ); } \
-void __need_semicolin__() const
-
-/*! Macro for defining the default unitless copy constructor
- *
- * \details This macro is the same as the ENABLE_UNITLESS_COPY_CONSTRUCTOR
- * macro except that default template parameters are used.
- * \ingroup one_d_distributions
- */
-#define UNITLESS_COPY_CONSTRUCTOR_DEFAULT( Distribution ) \
-  UNITLESS_COPY_CONSTRUCTOR( Distribution, IndependentUnit, DependentUnit )
-
 /*! Macro for restricting distribution units to a certain dimension
  *
  * \details Certain distributions only make sense when defined on a certain
