@@ -17,24 +17,35 @@
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 /*! The unit-aware equiprobable bin distribution class
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit = void>
 class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 					     public ParameterListCompatibleObject<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
+
+  //! This distribution type
+  typedef UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -56,11 +67,12 @@ public:
   explicit UnitAwareEquiprobableBinDistribution( const Teuchos::Array<InputIndepQuantity>& bin_boundaries );
 
   //! Copy constructor
+  template<typename InputIndepUnit, typename InputDepUnit>
   UnitAwareEquiprobableBinDistribution(
-		   const UnitAwareEquiprobableBinDistribution& dist_instance );
+      const UnitAwareEquiprobableBinDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
-  //! Copy constructor (copying from unitless distribution only)
-  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEquiprobableBinDistribution );
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareEquiprobableBinDistribution fromUnitlessDistribution( const UnitAwareEquiprobableBinDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
   UnitAwareEquiprobableBinDistribution& operator=(
@@ -120,6 +132,11 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareEquiprobableBinDistribution& other ) const;
 
+protected:
+  
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareEquiprobableBinDistribution( const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int );
+
 private:
 
   // Return a random sample using the random number and record the bin index
@@ -134,6 +151,10 @@ private:
   void initializeDistribution(
 		    const Teuchos::Array<InputIndepQuantity>& bin_boundaries );
 
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareEquiprobableBinDistribution;
+
   // The disribution type
   static const OneDDistributionType distribution_type = 
     EQUIPROBABLE_BIN_DISTRIBUTION;
@@ -141,48 +162,6 @@ private:
   // The distribution
   Teuchos::Array<IndepQuantity> d_bin_boundaries;
 };
-
-// Return a random sample using the random number and record the bin index
-template<typename IndependentUnit, typename DependentUnit>
-inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
-				            double random_number,
-				            unsigned& sampled_bin_index ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-
-  double bin_location = random_number*(d_bin_boundaries.size()-1);
-  
-  sampled_bin_index = (unsigned)floor(bin_location);
-  
-  return d_bin_boundaries[sampled_bin_index] + 
-    (bin_location - sampled_bin_index)*(d_bin_boundaries[sampled_bin_index+1]-
-					d_bin_boundaries[sampled_bin_index]);
-}
-
-// Return a random sample from the distribution at the given CDF value in a subrange
-template<typename IndependentUnit, typename DependentUnit>
-inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
-     const double random_number,
-     const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_bin_boundaries.front() );
-
-  // Compute the scaled random number
-  double scaled_random_number = 
-    random_number*this->evaluateCDF( max_indep_var );
-
-  unsigned dummy_index;
-
-  return this->sampleImplementation( scaled_random_number, dummy_index );
-}
 
 /*! The equiprobable bin distribution (unit-agnostic)
  * \ingroup one_d_distributions
@@ -231,7 +210,7 @@ public:
       Utility::UnitTraits<V>::symbol() + ")";
   }
   static std::string concreteName(
-		  const Utility::UnitAwareEquiprobableBinDistribution<U,V>& instance )
+	   const Utility::UnitAwareEquiprobableBinDistribution<U,V>& instance )
   {
     return name();
   }
