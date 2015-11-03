@@ -76,6 +76,8 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
                                              bank, 
                                              shell_of_interaction);
 */
+  electron.incrementCollisionNumber();
+  
   shell_of_interaction = UNKNOWN_SUBSHELL;
 
   THROW_EXCEPTION( std::logic_error, 

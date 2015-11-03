@@ -236,6 +236,19 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     ++electroatomic_reaction;
   }
 
+  // Note: the absorption cross section is calculated at run time. However, 
+  // it's possible that roundoff from interpolation can cause a small 
+  // difference between the calculated absorption cross section and 
+  // the sum of the stored cross sections. This test ensures that a valid 
+  // reaction is always sampled.
+  if( electroatomic_reaction == d_core.getAbsorptionReactions().end() )
+  {
+    electroatomic_reaction = d_core.getAbsorptionReactions().begin();
+
+    std::advance( electroatomic_reaction,
+		  d_core.getAbsorptionReactions().size()-1 );
+  }
+
   // Make sure a reaction was selected
   testPostcondition( electroatomic_reaction != 
                        d_core.getAbsorptionReactions().end() );
@@ -270,6 +283,19 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
       break;
 
     ++electroatomic_reaction;
+  }
+
+  // Note: the total cross section is calculated at run time. However, 
+  // it's possible that roundoff from interpolation can cause a small 
+  // difference between the calculated total cross section and 
+  // the sum of the stored cross sections. This test ensures that a valid 
+  // reaction is always sampled.
+  if( electroatomic_reaction == d_core.getScatteringReactions().end() )
+  {
+    electroatomic_reaction = d_core.getScatteringReactions().begin();
+
+    std::advance( electroatomic_reaction,
+		  d_core.getScatteringReactions().size()-1 );
   }
 
   // Make sure the reaction was found

@@ -21,6 +21,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -103,7 +104,7 @@ int main( int argc, char** argv )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   setSourceHandlerInstance( source );
 
