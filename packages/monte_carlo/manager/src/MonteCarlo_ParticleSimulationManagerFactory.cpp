@@ -108,8 +108,8 @@ ParticleSimulationManagerFactory::createManager(
     Teuchos::RCP<ParticleSourceFactory> source_factory =
       StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-    Teuchos::RCP<ParticleSource> source = 
-      source_factory->createSource( source_def );
+  Teuchos::RCP<ParticleSource> source = 
+    source_factory->createSource( source_def, SimulationProperties::getParticleMode() );
 
     setSourceHandlerInstance( source );
 
@@ -166,7 +166,7 @@ ParticleSimulationManagerFactory::createManager(
       StandardParticleSourceFactory<Geometry::Root>::getInstance();
   
     Teuchos::RCP<ParticleSource> source = 
-      source_factory->createSource( source_def );
+      source_factory->createSource( source_def, SimulationProperties::getParticleMode()  );
 
     setSourceHandlerInstance( source );
 
