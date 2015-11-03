@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <string>
 
+// FRENSIE Includes
+#include "MonteCarlo_ParticleType.hpp"
+
 namespace MonteCarlo{
 
 //! The particle transport mode enumeration
@@ -30,6 +33,10 @@ enum ParticleModeType
 
 //! Test if the particle mode type name is valid
 bool isValidParticleModeTypeName( const std::string& particle_mode_type_name );
+
+//! Test if the source particle type is compatible with the particle mode type
+bool isParticleModeTypeCompatible( const ParticleModeType particle_mode,
+				   const ParticleType particle_type );
 
 //! Convert the particle mode type name to a ParticleModeType enum
 ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(

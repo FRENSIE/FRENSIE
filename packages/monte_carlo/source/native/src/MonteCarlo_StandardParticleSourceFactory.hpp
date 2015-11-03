@@ -30,7 +30,8 @@ public:
 
   //! Create the particle source represented by the parameter list
   Teuchos::RCP<ParticleSource>
-  createSource( const Teuchos::ParameterList& source_rep );
+  createSource( const Teuchos::ParameterList& source_rep,
+		const ParticleModeType& particle_mode );
 
 private:
 
@@ -60,9 +61,10 @@ StandardParticleSourceFactory<GeometryHandler>::getInstance()
 template<typename GeometryHandler>
 inline Teuchos::RCP<ParticleSource>
 StandardParticleSourceFactory<GeometryHandler>::createSource( 
-				     const Teuchos::ParameterList& source_rep )
+				     const Teuchos::ParameterList& source_rep,
+				     const ParticleModeType& particle_mode )
 {
-  return ParticleSourceFactory::createSourceImpl<GeometryHandler>(source_rep);
+  return ParticleSourceFactory::createSourceImpl<GeometryHandler>(source_rep, particle_mode );
 } 
 
 } // end MonteCarlo namespace

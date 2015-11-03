@@ -138,9 +138,9 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                                double& photon_energy  ) const 
 {
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta = Utility::calculateDimensionlessRelativisticSpeed( 
-                  Utility::PhysicalConstants::electron_rest_mass_energy,
-                  incoming_electron_energy );
+  double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared( 
+                          Utility::PhysicalConstants::electron_rest_mass_energy,
+                          incoming_electron_energy ) );
 
   double scaled_random_number = 
     2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -204,28 +204,7 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                       x );
 
     // Normalized the rejection function
-    if( g_x_min < g_x_mid )
-    {
-      if( g_x_mid < g_x_max )
-      {  
-        g /= g_x_max;
-      }
-      else 
-      {
-        g /= g_x_mid;
-      }
-    }
-    else
-    {
-      if( g_x_min < g_x_max )
-      {  
-        g /= g_x_max;
-      }
-      else 
-      {
-        g /= g_x_min;
-      }
-    }
+    g /= std::max( std::max( g_x_min, g_x_max ), g_x_mid );
  
     // Apply rejection scheme
     rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
