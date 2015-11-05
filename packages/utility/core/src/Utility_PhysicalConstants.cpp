@@ -24,6 +24,7 @@ const double PhysicalConstants::classical_electron_radius = 2.8179403267e-13;
 const double PhysicalConstants::inverse_fine_structure_constant = 137.035999074;
 const double PhysicalConstants::fine_structure_constant = 
                                             1.0/inverse_fine_structure_constant;
+const double PhysicalConstants::atomic_momentum = 1.992851882e-24;
 const double PhysicalConstants::boltzmann_constant = 8.617332478e-11;
 
 } // end Utility namespace

@@ -63,3 +63,39 @@ ADD_EXECUTABLE(tstShakeUnit
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstShakeUnit utility_core)
 ADD_TEST(ShakeUnit_test tstShakeUnit)
+
+ADD_EXECUTABLE(tstAtomicMomentumUnit 
+  tstAtomicMomentumUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAtomicMomentumUnit utility_core)
+ADD_TEST(AtomicMomentumUnit_test tstAtomicMomentumUnit)
+
+ADD_EXECUTABLE(tstMeCMomentumUnit 
+  tstMeCMomentumUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMeCMomentumUnit utility_core)
+ADD_TEST(MeCMomentumUnit_test tstMeCMomentumUnit)
+
+ADD_EXECUTABLE(tstMomentumConversion 
+  tstMomentumConversion.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMomentumConversion utility_core)
+ADD_TEST(MomentumConversion_test tstMomentumConversion)
+
+ADD_EXECUTABLE(tstInverseAtomicMomentumUnit 
+  tstInverseAtomicMomentumUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInverseAtomicMomentumUnit utility_core)
+ADD_TEST(InverseAtomicMomentumUnit_test tstInverseAtomicMomentumUnit)
+
+ADD_EXECUTABLE(tstInverseMeCMomentumUnit 
+  tstInverseMeCMomentumUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInverseMeCMomentumUnit utility_core)
+ADD_TEST(InverseMeCMomentumUnit_test tstInverseMeCMomentumUnit)
+
+ADD_EXECUTABLE(tstInverseMomentumConversion 
+  tstInverseMomentumConversion.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInverseMomentumConversion utility_core)
+ADD_TEST(InverseMomentumConversion_test tstInverseMomentumConversion)
