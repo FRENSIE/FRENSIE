@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{

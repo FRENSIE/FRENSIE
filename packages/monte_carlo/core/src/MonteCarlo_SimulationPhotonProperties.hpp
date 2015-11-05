@@ -118,69 +118,69 @@ private:
 };
 
 // Return the minimum photon energy (MeV)
-inline double SimulationProperties::getMinPhotonEnergy()
+inline double SimulationPhotonProperties::getMinPhotonEnergy()
 {
-  return SimulationProperties::min_photon_energy;
+  return SimulationPhotonProperties::min_photon_energy;
 }
 
 // Return the absolute minimum photon energy (MeV)
-inline double SimulationProperties::getAbsoluteMinPhotonEnergy()
+inline double SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
 {
-  return SimulationProperties::absolute_min_photon_energy;
+  return SimulationPhotonProperties::absolute_min_photon_energy;
 }
   
 // Return the maximum photon energy (MeV) - cannot be set at runtime
-inline double SimulationProperties::getMaxPhotonEnergy()
+inline double SimulationPhotonProperties::getMaxPhotonEnergy()
 {
-  return SimulationProperties::max_photon_energy;
+  return SimulationPhotonProperties::max_photon_energy;
 }
 
 // Return the absolute maximum photon energy (MeV)
-inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
+inline double SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy()
 {
-  return SimulationProperties::absolute_max_photon_energy;
+  return SimulationPhotonProperties::absolute_max_photon_energy;
 }
 
 // Return the Kahn sampling cutoff energy (MeV)
-inline double SimulationProperties::getKahnSamplingCutoffEnergy()
+inline double SimulationPhotonProperties::getKahnSamplingCutoffEnergy()
 {
-  return SimulationProperties::kahn_sampling_cutoff_energy;
+  return SimulationPhotonProperties::kahn_sampling_cutoff_energy;
 }
 
 // Return the absolute min Kahn sampling cutoff energy (MeV)
-inline double SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+inline double SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
 {
-  return SimulationProperties::absolute_min_kahn_sampling_cutoff_energy;
+  return SimulationPhotonProperties::absolute_min_kahn_sampling_cutoff_energy;
 }
 
 // Get the number of photon hash grid bins
-inline unsigned SimulationProperties::getNumberOfPhotonHashGridBins()
+inline unsigned SimulationPhotonProperties::getNumberOfPhotonHashGridBins()
 {
-  return SimulationProperties::num_photon_hash_grid_bins;
+  return SimulationPhotonProperties::num_photon_hash_grid_bins;
 }
 
 // Return the incohernt model
-inline IncoherentModelType SimulationProperties::getIncoherentModelType()
+inline IncoherentModelType SimulationPhotonProperties::getIncoherentModelType()
 {
-  return SimulationProperties::incoherent_model_type;
+  return SimulationPhotonProperties::incoherent_model_type;
 }
 
 // Return if atomic relaxation mode is on
-inline bool SimulationProperties::isAtomicRelaxationModeOn()
+inline bool SimulationPhotonProperties::isAtomicRelaxationModeOn()
 {
-  return SimulationProperties::atomic_relaxation_mode_on;
+  return SimulationPhotonProperties::atomic_relaxation_mode_on;
 }
 
 // Return if detailed pair production mode is on
-inline bool SimulationProperties::isDetailedPairProductionModeOn()
+inline bool SimulationPhotonProperties::isDetailedPairProductionModeOn()
 {
-  return SimulationProperties::detailed_pair_production_mode_on;
+  return SimulationPhotonProperties::detailed_pair_production_mode_on;
 }
 
 // Return if photonuclear interaction mode is on
-inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
+inline bool SimulationPhotonProperties::isPhotonuclearInteractionModeOn()
 {
-  return SimulationProperties::photonuclear_interaction_mode_on;
+  return SimulationPhotonProperties::photonuclear_interaction_mode_on;
 }
 
 } // end MonteCarlo namespace
