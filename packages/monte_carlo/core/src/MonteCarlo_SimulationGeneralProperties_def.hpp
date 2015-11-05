@@ -13,6 +13,9 @@
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{

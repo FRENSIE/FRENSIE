@@ -70,33 +70,33 @@ private:
 };
 
 // Return the free gas thermal treatment temperature threshold
-inline double SimulationProperties::getFreeGasThreshold()
+inline double SimulationNeutronProperties::getFreeGasThreshold()
 {
-  return SimulationProperties::free_gas_threshold;
+  return SimulationNeutronProperties::free_gas_threshold;
 }
 
 // Return the minimum neutron energy (MeV)
-inline double SimulationProperties::getMinNeutronEnergy()
+inline double SimulationNeutronProperties::getMinNeutronEnergy()
 {
-  return SimulationProperties::min_neutron_energy;
+  return SimulationNeutronProperties::min_neutron_energy;
 }
 
 // Return the absolute min neutron energy (MeV)
-inline double SimulationProperties::getAbsoluteMinNeutronEnergy()
+inline double SimulationNeutronProperties::getAbsoluteMinNeutronEnergy()
 {
-  return SimulationProperties::absolute_min_neutron_energy;
+  return SimulationNeutronProperties::absolute_min_neutron_energy;
 }
 
 // Return the maximum neutron energy (MeV) - cannot be set at runtime
-inline double SimulationProperties::getMaxNeutronEnergy()
+inline double SimulationNeutronProperties::getMaxNeutronEnergy()
 {
-  return SimulationProperties::max_neutron_energy;
+  return SimulationNeutronProperties::max_neutron_energy;
 }
 
 // Return the absolute maximum neutron energy (MeV)
-inline double SimulationProperties::getAbsoluteMaxNeutronEnergy()
+inline double SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy()
 {
-  return SimulationProperties::absolute_max_neutron_energy;
+  return SimulationNeutronProperties::absolute_max_neutron_energy;
 }
 
 } // end MonteCarlo namespace

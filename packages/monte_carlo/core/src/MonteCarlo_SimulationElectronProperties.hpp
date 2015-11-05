@@ -70,40 +70,52 @@ private:
   // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
 
+  // The atomic relaxation mode (true = on - default, false = off)
+  static bool atomic_relaxation_mode_on;
+
+  // The detailed pair production mode (true = on, false = off - default)
+  static bool detailed_pair_production_mode_on;
+
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   static BremsstrahlungAngularDistributionType 
            bremsstrahlung_angular_distribution_function;
 };
 
 // Return the minimum electron energy (MeV)
-inline double SimulationProperties::getMinElectronEnergy()
+inline double SimulationElectronProperties::getMinElectronEnergy()
 {
-  return SimulationProperties::min_electron_energy;
+  return SimulationElectronProperties::min_electron_energy;
 }
 
 // Return the absolute minimum electron energy (MeV)
-inline double SimulationProperties::getAbsoluteMinElectronEnergy()
+inline double SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 {
-  return SimulationProperties::absolute_min_electron_energy;
+  return SimulationElectronProperties::absolute_min_electron_energy;
 }
   
 // Return the maximum electron energy (MeV) - cannot be set at runtime
-inline double SimulationProperties::getMaxElectronEnergy()
+inline double SimulationElectronProperties::getMaxElectronEnergy()
 {
-  return SimulationProperties::max_electron_energy;
+  return SimulationElectronProperties::max_electron_energy;
 }
 
 // Return the absolute maximum electron energy (MeV)
-inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
+inline double SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
 {
-  return SimulationProperties::absolute_max_electron_energy;
+  return SimulationElectronProperties::absolute_max_electron_energy;
+}
+
+// Return if atomic relaxation mode is on
+inline bool SimulationElectronProperties::isAtomicRelaxationModeOn()
+{
+  return SimulationElectronProperties::atomic_relaxation_mode_on;
 }
 
 // Return if detailed bremsstrahlung mode is on
 inline BremsstrahlungAngularDistributionType 
-  SimulationProperties::getBremsstrahlungAngularDistributionFunction()
+  SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction()
 {
-  return SimulationProperties::bremsstrahlung_angular_distribution_function;
+  return SimulationElectronProperties::bremsstrahlung_angular_distribution_function;
 }
 
 } // end MonteCarlo namespace

@@ -89,39 +89,39 @@ private:
 };
 
 // Return the particle mode type
-inline ParticleModeType SimulationProperties::getParticleMode()
+inline ParticleModeType SimulationGeneralProperties::getParticleMode()
 {
-  return SimulationProperties::particle_mode;
+  return SimulationGeneralProperties::particle_mode;
 }
 
 //! Return the number of histories to run
-inline unsigned long long SimulationProperties::getNumberOfHistories()
+inline unsigned long long SimulationGeneralProperties::getNumberOfHistories()
 {
-  return SimulationProperties::number_of_histories;
+  return SimulationGeneralProperties::number_of_histories;
 }
 
 // Return the angle cosine cutoff value for surface flux estimators
-inline double SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
+inline double SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
 {
-  return SimulationProperties::surface_flux_estimator_angle_cosine_cutoff;
+  return SimulationGeneralProperties::surface_flux_estimator_angle_cosine_cutoff;
 }
 
 //! Return if warnings should be printed
-inline bool SimulationProperties::displayWarnings()
+inline bool SimulationGeneralProperties::displayWarnings()
 {
-  return SimulationProperties::display_warnings;
+  return SimulationGeneralProperties::display_warnings;
 }
 
 // Return if implicit capture mode has been set
-inline bool SimulationProperties::isImplicitCaptureModeOn()
+inline bool SimulationGeneralProperties::isImplicitCaptureModeOn()
 {
-  return SimulationProperties::implicit_capture_mode_on;
+  return SimulationGeneralProperties::implicit_capture_mode_on;
 }
 
 // Return the number of batches for an MPI configuration
-inline unsigned SimulationProperties::getNumberOfBatchesPerProcessor()
+inline unsigned SimulationGeneralProperties::getNumberOfBatchesPerProcessor()
 {
-  return SimulationProperties::number_of_batches_per_processor;
+  return SimulationGeneralProperties::number_of_batches_per_processor;
 }
 
 } // end MonteCarlo namespace

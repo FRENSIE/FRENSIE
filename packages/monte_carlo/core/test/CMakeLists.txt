@@ -70,6 +70,30 @@ ADD_EXECUTABLE(tstSimulationProperties
 TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
 ADD_TEST(SimulationProperties_test tstSimulationProperties)
 
+ADD_EXECUTABLE(tstSimulationGeneralProperties 
+  tstSimulationGeneralProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationGeneralProperties monte_carlo_core)
+ADD_TEST(SimulationGeneralProperties_test tstSimulationGeneralProperties)
+
+ADD_EXECUTABLE(tstSimulationNeutronProperties 
+  tstSimulationNeutronProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationNeutronProperties monte_carlo_core)
+ADD_TEST(SimulationNeutronProperties_test tstSimulationNeutronProperties)
+
+ADD_EXECUTABLE(tstSimulationPhotonProperties 
+  tstSimulationPhotonProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
+ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
+
+ADD_EXECUTABLE(tstSimulationElectronProperties 
+  tstSimulationElectronProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationElectronProperties monte_carlo_core)
+ADD_TEST(SimulationElectronProperties_test tstSimulationElectronProperties)
+
 ADD_EXECUTABLE(tstSimulationPropertiesFactory 
   tstSimulationPropertiesFactory.cpp)
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
