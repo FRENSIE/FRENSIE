@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_AtomUnit.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 using namespace Utility::Units;
 using boost::units::quantity;
@@ -41,7 +42,9 @@ TEUCHOS_UNIT_TEST( AtomUnit, initialize_from_si )
 {
   quantity<Atom> amount( 1.0*si::mole );
 
-  TEST_FLOATING_EQUALITY( amount.value(), 6.022140857e23, 1e-15 );
+  TEST_FLOATING_EQUALITY( amount.value(), 
+			  Utility::PhysicalConstants::avogadro_constant, 
+			  1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -50,7 +53,9 @@ TEUCHOS_UNIT_TEST( AtomUnit, initialize_si )
 {
   quantity<si::amount> amount( 1.0*atom );
 
-  TEST_FLOATING_EQUALITY( amount.value(), 1.0/6.022140857e23, 1e-15 );
+  TEST_FLOATING_EQUALITY( amount.value(), 
+			  1.0/Utility::PhysicalConstants::avogadro_constant, 
+			  1e-15 );
 }
 
 //---------------------------------------------------------------------------//

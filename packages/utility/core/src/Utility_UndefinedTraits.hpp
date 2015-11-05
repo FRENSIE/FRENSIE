@@ -16,8 +16,6 @@ namespace Utility{
  * \ingroup hdf5_type_traits
  * \ingroup compare_policy
  * \ingroup tuple_traits
- * \ingroup quantity_traits
- * \ingroup unit_traits
  */
 template<typename T>
 struct UndefinedTraits

@@ -9,14 +9,21 @@
 #ifndef UTILITY_QUANTITY_TRAITS_DECL_HPP
 #define UTILITY_QUANTITY_TRAITS_DECL_HPP
 
-// FRENSIE Includes
-#include "Utility_UndefinedTraits.hpp"
-
 /*! \defgroup quantity_traits Quantity Traits
  * \ingroup traits
  */
 
 namespace Utility{
+
+/*! A struct designed to give a compile time error for quantity traits
+ * \ingroup quantity_traits
+ */
+template<typename T>
+struct UndefinedQuantityTraits
+{
+  //! This function should not compile if there is any attempt to instantiate!
+  static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
+};
 
 /*! The default quantity traits implementation
  *
@@ -46,62 +53,62 @@ struct QuantityTraits
 
   //! Get the zero quantity
   static inline QuantityType zero()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the one quantity
   static inline QuantityType one()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the inf quantity (only available for floating point quantities)
   static inline QuantityType inf()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the nan quantity (only available for floating point quantities)
   static inline QuantityType nan()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the conjugate of a quantity
   static inline QuantityType conjugate( const QuantityType& a )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the real part of the quantity
   static inline QuantityType real( const QuantityType& a )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the imaginary part of the quantity
   static inline QuantityType imag( const QuantityType& a )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   /*! \brief Test if the quantity is a nan or inf (only available for floating point quantities)
    */
   static inline bool isnaninf( const QuantityType& a )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take the square root of a quantity (possible bug in boost::units::sqrt)
   static inline typename GetQuantityToPowerType<1,2>::type sqrt( const QuantityType& quantity )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Take a quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
   
   //! Initialize a quantity (potentially dangerous!)
   static inline QuantityType initializeQuantity( const RawType& raw_quantity )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Get the raw value of a quantity
   static inline const RawType& getRawQuantity( const QuantityType& quantity )
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedQuantityTraits<T>::notDefined(); }
 
   //! Set the value of a quantity (potentially dangerous!)
   static inline void setQuantity( QuantityType& quantity,
 				  const RawType& raw_quantity )
-  { UndefinedTraits<T>::notDefined(); }
+  { UndefinedQuantityTraits<T>::notDefined(); }
 };
 
 /*! The QuantityTraitsHelper for all types.
- * \details Specialized this struct to add functions/typedefs when T has
+ * \details Specialize this struct to add functions/typedefs when T has
  * certain properties (e.g. floating point).
  * \ingroup quantity_traits
  */
