@@ -16,7 +16,7 @@
 #include <boost/units/io.hpp>
 
 // FRENSIE Includes
-#include "Utility_PhysicalConstants.hpp"
+#include "Utility_RawPhysicalConstants.hpp"
 
 namespace Utility{
 
@@ -38,8 +38,8 @@ BOOST_UNITS_STATIC_CONSTANT( atom, Atom );
 
 } // end Utility namespace
 
-BOOST_UNITS_DEFINE_CONVERSION_FACTOR( Utility::Units::AtomBaseUnit, boost::units::si::amount, double, 1.0/Utility::PhysicalConstants::avogadro_constant );
-BOOST_UNITS_DEFINE_CONVERSION_FACTOR( boost::units::si::amount, Utility::Units::AtomBaseUnit, double, Utility::PhysicalConstants::avogadro_constant );
+BOOST_UNITS_DEFINE_CONVERSION_FACTOR( Utility::Units::AtomBaseUnit, boost::units::si::amount, double, 1.0/Utility::RawPhysicalConstants::avogadro_constant );
+BOOST_UNITS_DEFINE_CONVERSION_FACTOR( boost::units::si::amount, Utility::Units::AtomBaseUnit, double, Utility::RawPhysicalConstants::avogadro_constant );
 
 BOOST_UNITS_DEFAULT_CONVERSION( Utility::Units::AtomBaseUnit, boost::units::si::amount );
 
