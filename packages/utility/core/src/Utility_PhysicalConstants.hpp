@@ -50,6 +50,9 @@ public:
   //! The fine structure constant (unitless)
   static const double fine_structure_constant;
 
+  //! The atomic momentum (kg-m/s)
+  static const double atomic_momentum;
+
   //! The boltzmann constant (MeV/K)
   static const double boltzmann_constant;
 };
