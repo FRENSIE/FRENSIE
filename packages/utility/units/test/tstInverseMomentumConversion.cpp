@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "Utility_InverseMomentumUnits.hpp"
+#include "Utility_RawPhysicalConstants.hpp"
 
 using namespace Utility::Units;
 using boost::units::quantity;
@@ -32,13 +33,14 @@ TEUCHOS_UNIT_TEST( InverseMomentumConversion, convert )
   quantity<InverseMeCMomentum>
     inverse_mec_momentum_q( 1.0*inverse_atomic_momentum );
 
-  TEST_FLOATING_EQUALITY( inverse_atomic_momentum_q.value(), 
-			  Utility::PhysicalConstants::fine_structure_constant,
-			  1e-15 );
   TEST_FLOATING_EQUALITY( 
-		   inverse_mec_momentum_q.value(),
-		   Utility::PhysicalConstants::inverse_fine_structure_constant,
-		   1e-15 );
+			inverse_atomic_momentum_q.value(), 
+			Utility::RawPhysicalConstants::fine_structure_constant,
+			1e-15 );
+  TEST_FLOATING_EQUALITY( 
+		inverse_mec_momentum_q.value(),
+		Utility::RawPhysicalConstants::inverse_fine_structure_constant,
+		1e-15 );
 }
 
 //---------------------------------------------------------------------------//

@@ -99,3 +99,9 @@ ADD_EXECUTABLE(tstInverseMomentumConversion
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstInverseMomentumConversion utility_units)
 ADD_TEST(InverseMomentumConversion_test tstInverseMomentumConversion)
+
+ADD_EXECUTABLE(tstAtomicMassUnit 
+  tstAtomicMassUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAtomicMassUnit utility_units)
+ADD_TEST(AtomicMassUnit_test tstAtomicMassUnit)

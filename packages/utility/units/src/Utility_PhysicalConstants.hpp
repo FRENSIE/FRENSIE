@@ -1,60 +1,65 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_PhyscialConstants.hpp
+//! \file   Utility_PhysicalConstants.hpp
 //! \author Alex Robinson
-//! \brief  Decl. of class that stores a variety of physical constants
+//! \brief  Decl. of class that stores a variety of physical constants w/units
 //!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_PHYSICAL_CONSTANTS_HPP
 #define UTILITY_PHYSICAL_CONSTANTS_HPP
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+#include <boost/units/systems/cgs/velocity.hpp>
+#include <boost/units/systems/cgs/time.hpp>
+#include <boost/units/systems/cgs/length.hpp>
+#include <boost/units/systems/si/temperature.hpp>
+
+// FRENSIE Includes
+#include "Utility_RawPhysicalConstants.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_AtomicMassUnit.hpp"
+#include "Utility_UnitTraits.hpp"
+
 namespace Utility{
 
-//! Physical constants class
-class PhysicalConstants
+//! The physical constants class
+class PhysicalConstants : public RawPhysicalConstants
 {
+private:
+
+  // The MeV-s unit
+  typedef UnitTraits<Units::MegaElectronVolt>::template GetMultipliedUnitType<boost::units::cgs::time>::type MeVSecond;
+
+  // The MeV/K unit
+  typedef UnitTraits<Units::MegaElectronVolt>::template GetMultipliedUnitType<UnitTraits<boost::units::si::temperature>::InverseUnit>::type MeVPerK;
 
 public:
 
-  //! Pi
-  static const double pi;
-
   //! The speed of light (cm/s)
-  static const double speed_of_light;
+  static const boost::units::quantity<boost::units::cgs::velocity> speed_of_light_q;
 
   //! Planck's constant (MeV-s)
-  static const double planck_constant;
+  static const boost::units::quantity<MeVSecond> planck_constant_q;
 
-  //! Planck's constant by pi (MeV-s)
-  static const double h_bar;
-
-  //! Avogadro constant (mol)
-  static const double avogadro_constant;
+  //! Plank's constant by pi (MeV-s)
+  static const boost::units::quantity<MeVSecond> h_bar_q;
 
   //! Rest mass energy of electron (MeV)
-  static const double electron_rest_mass_energy;
+  static const boost::units::quantity<Units::MegaElectronVolt> electron_rest_mass_energy_q;
 
   //! Rest mass energy of neutron (MeV)
-  static const double neutron_rest_mass_energy;
+  static const boost::units::quantity<Units::MegaElectronVolt> neutron_rest_mass_energy_q;
 
-  //! Rest mass of neutron (amu)
-  static const double neutron_rest_mass_amu;
+  //! The rest mass of neutron (amu)
+  static const boost::units::quantity<Units::AtomicMass> neutron_rest_mass_amu_q;
 
   //! The classical electron radius (cm)
-  static const double classical_electron_radius;
-
-  //! The inverse fine structure constant (unitless)
-  static const double inverse_fine_structure_constant;
-
-  //! The fine structure constant (unitless)
-  static const double fine_structure_constant;
-
-  //! The atomic momentum (kg-m/s)
-  static const double atomic_momentum;
+  static const boost::units::quantity<boost::units::cgs::length> classical_electron_radius_q;
 
   //! The boltzmann constant (MeV/K)
-  static const double boltzmann_constant;
+  static const boost::units::quantity<MeVPerK> boltzmann_constant_q;
 };
 
 } // end Utility namespace

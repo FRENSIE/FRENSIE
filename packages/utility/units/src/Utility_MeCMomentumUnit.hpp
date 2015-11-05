@@ -16,7 +16,7 @@
 #include <boost/units/conversion.hpp>
 
 // FRENSIE Includes
-#include "Utility_PhysicalConstants.hpp"
+#include "Utility_RawPhysicalConstants.hpp"
 
 namespace Utility{
 
@@ -38,9 +38,9 @@ BOOST_UNITS_STATIC_CONSTANT( mec_momentum, MeCMomentum );
 
 } // end Utility namespace
 
-BOOST_UNITS_DEFINE_CONVERSION_FACTOR( Utility::Units::MeCMomentumBaseUnit, boost::units::si::momentum, double, Utility::PhysicalConstants::atomic_momentum/Utility::PhysicalConstants::fine_structure_constant );
+BOOST_UNITS_DEFINE_CONVERSION_FACTOR( Utility::Units::MeCMomentumBaseUnit, boost::units::si::momentum, double, Utility::RawPhysicalConstants::atomic_momentum/Utility::RawPhysicalConstants::fine_structure_constant );
 
-BOOST_UNITS_DEFINE_CONVERSION_FACTOR( boost::units::si::momentum, Utility::Units::MeCMomentumBaseUnit, double, Utility::PhysicalConstants::fine_structure_constant/Utility::PhysicalConstants::atomic_momentum );
+BOOST_UNITS_DEFINE_CONVERSION_FACTOR( boost::units::si::momentum, Utility::Units::MeCMomentumBaseUnit, double, Utility::RawPhysicalConstants::fine_structure_constant/Utility::RawPhysicalConstants::atomic_momentum );
 
 BOOST_UNITS_DEFAULT_CONVERSION( Utility::Units::MeCMomentumBaseUnit, boost::units::si::momentum );
 

@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_PhysicalConstants.cpp
 //! \author Alex Robinson
-//! \brief  Def. of class that stores a variety of physical constants.
+//! \brief  Def. of class that stores a variety of physical constants w/units
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,21 +11,42 @@
 
 namespace Utility{
 
-const double PhysicalConstants::pi = 3.14159265358979323846;
-const double PhysicalConstants::speed_of_light = 29979245800;
-const double PhysicalConstants::planck_constant = 4.13566751691e-21;
-const double PhysicalConstants::h_bar = 6.5821192815e-22;
-const double PhysicalConstants::avogadro_constant = 6.0221412927e23;
-const double PhysicalConstants::electron_rest_mass_energy = 0.51099891013;
-const double PhysicalConstants::neutron_rest_mass_energy = 939.56537821;
-const double PhysicalConstants::neutron_rest_mass_amu = 1.0086649160043;
-const double PhysicalConstants::classical_electron_radius = 2.8179403267e-13;
-//! \todo update inverse fine structure constant and associated unit tests to newest version
-const double PhysicalConstants::inverse_fine_structure_constant = 137.035999074;
-const double PhysicalConstants::fine_structure_constant = 
-                                            1.0/inverse_fine_structure_constant;
-const double PhysicalConstants::atomic_momentum = 1.992851882e-24;
-const double PhysicalConstants::boltzmann_constant = 8.617332478e-11;
+// The speed of light (cm/s)
+const boost::units::quantity<boost::units::cgs::velocity> PhysicalConstants::speed_of_light_q = 
+  Utility::RawPhysicalConstants::speed_of_light*
+  boost::units::cgs::centimeter/boost::units::cgs::second;
+
+// Planck's constant (MeV-s)
+const boost::units::quantity<PhysicalConstants::MeVSecond> PhysicalConstants::planck_constant_q = 
+  Utility::RawPhysicalConstants::planck_constant*
+  Units::MeV*boost::units::cgs::second;
+
+// Plank's constant by pi (MeV-s)
+const boost::units::quantity<PhysicalConstants::MeVSecond> PhysicalConstants::h_bar_q = 
+  Utility::RawPhysicalConstants::h_bar*
+  Units::MeV*boost::units::cgs::second;
+
+// Rest mass energy of electron (MeV)
+const boost::units::quantity<Units::MegaElectronVolt> PhysicalConstants::electron_rest_mass_energy_q = 
+  Utility::RawPhysicalConstants::electron_rest_mass_energy*Units::MeV;
+
+// Rest mass energy of neutron (MeV)
+const boost::units::quantity<Units::MegaElectronVolt> PhysicalConstants::neutron_rest_mass_energy_q = 
+  Utility::RawPhysicalConstants::neutron_rest_mass_energy*Units::MeV;
+
+// The rest mass of neutron (amu)
+const boost::units::quantity<Units::AtomicMass> PhysicalConstants::neutron_rest_mass_amu_q = 
+  Utility::RawPhysicalConstants::neutron_rest_mass_amu*Units::amu;
+
+// The classical electron radius (cm)
+const boost::units::quantity<boost::units::cgs::length> PhysicalConstants::classical_electron_radius_q = 
+  Utility::RawPhysicalConstants::classical_electron_radius*
+  boost::units::cgs::centimeter;
+
+// The boltzmann constant (MeV/K)
+const boost::units::quantity<PhysicalConstants::MeVPerK> PhysicalConstants::boltzmann_constant_q =
+  Utility::RawPhysicalConstants::boltzmann_constant*
+  Units::MeV/boost::units::si::kelvin;
 
 } // end Utility namespace
 
