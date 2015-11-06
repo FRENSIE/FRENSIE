@@ -65,14 +65,14 @@ void NuclideACEFactory::createNuclide(
 					        temperature,
 					        energy_grid.getConst(),
 					        raw_nuclide_data ); 
-					        
+				        
 		// Create the photon production reactions 
 		DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
 		                                               photon_production_reactions;
 		                                               
 		photon_production_reaction_factory.createPhotonProductionReactions( 
 		                                             photon_production_reactions );
-  
+   
     nuclide.reset( new DecoupledPhotonProductionNuclide( nuclide_alias,
 			        atomic_number,
 			        atomic_mass_number,
