@@ -17,7 +17,10 @@
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
@@ -25,7 +28,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+
 
 
 namespace MonteCarlo{
@@ -58,7 +61,7 @@ ParticleSimulationManager<GeometryHandler,
   testPrecondition( number_of_histories > 0 );
 
   // Assign the functions based on the mode
-  ParticleModeType mode = SimulationProperties::getParticleMode();
+  ParticleModeType mode = SimulationGeneralProperties::getParticleMode();
   
   switch( mode )
   {
@@ -273,7 +276,7 @@ void ParticleSimulationManager<GeometryHandler,
   double cell_total_macro_cross_section;
 
   // Check if the particle energy is below the cutoff
-  if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
   
   while( !particle.isLost() && !particle.isGone() )
@@ -389,7 +392,7 @@ void ParticleSimulationManager<GeometryHandler,
   	ray_start_point[2] = particle.getZPosition();
 
   	// Make sure the energy is above the cutoff
-  	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  	if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
   	  particle.setAsGone();
 
   	// This subtrack is finished

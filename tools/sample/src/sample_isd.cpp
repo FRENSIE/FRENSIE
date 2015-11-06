@@ -24,7 +24,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -70,7 +70,7 @@ int main( int argc, char** argv )
 
   // The kahn rejection sampling cutoff energy
   double kahn_cutoff_energy = 
-    MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy();
+    MonteCarlo::SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy();
 
   // The number of threads
   int threads = 1;
@@ -156,11 +156,11 @@ int main( int argc, char** argv )
 
   // Check if the kahn cutoff energy is valid
   if( kahn_cutoff_energy < 
-      MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
+      MonteCarlo::SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
   {
     std::cerr << "Error: the Kahn rejection cutoff energy must not be less "
 	      << "than "
-	      << MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+	      << MonteCarlo::SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
 	      << "!" << std::endl;
 
     return 1;

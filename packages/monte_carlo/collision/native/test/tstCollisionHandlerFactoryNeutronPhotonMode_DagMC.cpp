@@ -24,7 +24,7 @@
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
 					Teuchos::inoutArg(material_reps) );
 
   // Set the particle mode to NEUTRON_PHOTON_MODE
-  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE);
+  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE);
 
   MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
 					   material_reps,

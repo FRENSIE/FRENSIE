@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSimulationPropertiesFactory.cpp
-//! \author Alex Robinson
-//! \brief  Simulation properties factory unit tests
+//! \file   tstSimulationGeneralPropertiesFactory.cpp
+//! \author Alex Robinson, Luke Kersting
+//! \brief  Simulation general properties factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationGeneralPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,14 +29,24 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
-		   initializeSimulationProperties )
+TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
+		   initializeSimulationGeneralProperties )
 {
-  MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
-								  properties );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+  Teuchos::ParameterList general_properties = 
+      properties.get<Teuchos::ParameterList>( "General Properties" );
+
+  MonteCarlo::SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties( 
+						general_properties );
+
+  TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
+		      10 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.1 );
+  TEST_ASSERT( !MonteCarlo::SimulationGeneralProperties::displayWarnings() );
+  TEST_ASSERT( MonteCarlo::SimulationGeneralProperties::isImplicitCaptureModeOn() );	
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getNumberOfBatchesPerProcessor(),
+	  25 );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,5 +93,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstSimulationPropertiesFactory.cpp
+// end tstSimulationGeneralPropertiesFactory.cpp
 //---------------------------------------------------------------------------//

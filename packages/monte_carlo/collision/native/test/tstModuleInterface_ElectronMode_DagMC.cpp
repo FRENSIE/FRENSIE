@@ -21,7 +21,7 @@
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_CollisionModuleInterface_Native.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -283,7 +283,7 @@ int main( int argc, char** argv )
     Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
     // Initialize the particle mode
-    MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
+    MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
     
     // Initialize the random number generator
     Utility::RandomNumberGenerator::createStreams();

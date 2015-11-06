@@ -64,12 +64,6 @@ IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
     ${MPIEXEC} -n 2 tstParticleBank --threads=2)
 ENDIF()
 
-ADD_EXECUTABLE(tstSimulationProperties 
-  tstSimulationProperties.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
-ADD_TEST(SimulationProperties_test tstSimulationProperties)
-
 ADD_EXECUTABLE(tstSimulationGeneralProperties 
   tstSimulationGeneralProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -98,6 +92,26 @@ ADD_EXECUTABLE(tstSimulationPropertiesFactory
   tstSimulationPropertiesFactory.cpp)
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationGeneralPropertiesFactory 
+  tstSimulationGeneralPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationGeneralPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationGeneralPropertiesFactory_test tstSimulationGeneralPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationNeutronPropertiesFactory 
+  tstSimulationNeutronPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationNeutronPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationNeutronPropertiesFactory_test tstSimulationNeutronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationPhotonPropertiesFactory 
+  tstSimulationPhotonPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationPhotonPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationPhotonPropertiesFactory_test tstSimulationPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationElectronPropertiesFactory 
+  tstSimulationElectronPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationElectronPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationElectronPropertiesFactory_test tstSimulationElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
 
 ADD_EXECUTABLE(tstParticleModeType 
   tstParticleModeType.cpp
