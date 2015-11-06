@@ -79,7 +79,7 @@ private:
   d_photon_production_distribution; 
   
   // The total reaction class
-  const Teuchos::RCP<NuclearReaction>& d_total_reaction;
+  const Teuchos::RCP<NuclearReaction>& d_total_neutron_reaction;
 };
 
 // Return the base nuclear reaction type
@@ -92,7 +92,7 @@ DecoupledPhotonProductionReaction::getBaseReactionType() const
 // Return the photon production id for the base reaction type
 inline unsigned DecoupledPhotonProductionReaction::getPhotonProductionId() const
 {
-  return d_photon_production_id;
+  return d_photon_production_id/1000u;
 }
 
 } // end MonteCarlo namespace

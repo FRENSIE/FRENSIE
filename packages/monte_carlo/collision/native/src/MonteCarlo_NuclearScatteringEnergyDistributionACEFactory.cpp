@@ -25,6 +25,8 @@
 #include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_DeltaDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -260,7 +262,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
        int interpolation_flag = dlw_block_array[distribution_index];
 
        // Check if discrete lines are present 
-       TEST_FOR_EXCEPTION( interpolation_flag > 10,
+       TEST_FOR_EXCEPTION( interpolation_flag < 10 && interpolation_flag > 2,
            	        std::runtime_error,
            	        "Error: MT# " << reaction << "in ACE table "
            	        << table_name << " has discrete lines in continuous"
@@ -272,10 +274,10 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
          dlw_block_array( distribution_index + 2, number_points_distribution );
 
        Teuchos::ArrayView<const double> pdf;
+       Teuchos::ArrayView<const double> cdf;
 
-       switch( interpolation_flag )
+       if( interpolation_flag == 1) // histogram interpolation
        {
-       case 1: // histogram interpolation
          pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
            		     number_points_distribution - 1 );
 
@@ -283,19 +285,36 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
            	      new Utility::HistogramDistribution( outgoing_energy_grid,
            						  pdf ) );
 
-         break;
- 
-       case 2: // Linear-Linear interpolation
+      }
+      else if ( interpolation_flag == 2 ) // lin-lin interpolation
+      {
          pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
            		     number_points_distribution );
 
          energy_distribution[i].second.reset( 
            		     new Utility::TabularDistribution<Utility::LinLin>(
            					 outgoing_energy_grid, pdf ) );
-
-         break;
- 
-       default:
+       }
+      else if ( interpolation_flag >= 10 )
+      {
+        if ( number_points_distribution == 1 )
+        {
+          energy_distribution[i].second.reset(
+                   new Utility::DeltaDistribution( outgoing_energy_grid[0] ) );
+        }
+        else
+        {
+          cdf = dlw_block_array( distribution_index + 2 + 
+                    2*number_points_distribution, number_points_distribution );
+                    
+          energy_distribution[i].second.reset(
+                   new Utility::DiscreteDistribution( outgoing_energy_grid,
+                                                      cdf,
+                                                      true ) );
+        }
+      }
+      else
+      {
          THROW_EXCEPTION( std::runtime_error,
 			  "Unknown interpolation flag in table "
 			  << table_name << 

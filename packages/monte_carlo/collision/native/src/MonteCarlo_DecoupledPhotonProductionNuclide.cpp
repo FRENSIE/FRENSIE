@@ -68,36 +68,40 @@ double DecoupledPhotonProductionNuclide::getPhotonProductionCrossSection(
 void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron, 
 			       ParticleBank& bank ) const
 {
+  NeutronState neutron_copy = neutron;
+  
   // Call the base class implementation for the neutron
   Nuclide::collideAnalogue( neutron, bank );
   
   // Sample photon production stochastically
   double total_cross_section = getTotalPhotonProductionCrossSection( 
-                                                        neutron.getEnergy() );
+                                                    neutron_copy.getEnergy() );
   
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
     
-  samplePhotonProductionReaction( scaled_random_number, neutron, bank );
+  samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
 // Collide with a neutron and survival bias
 void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutron, 
 				   ParticleBank& bank) const
 {  
+  NeutronState neutron_copy = neutron;
+
   // Call the base class implementation for the neutron
   Nuclide::collideSurvivalBias( neutron, bank );
   
   // Sample photon production stochastically
   double total_cross_section = getTotalPhotonProductionCrossSection( 
-                                                        neutron.getEnergy() );
+                                                    neutron_copy.getEnergy() );
   
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
     
-  samplePhotonProductionReaction( scaled_random_number, neutron, bank );
+  samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
 // Sample a decoupled photon production reaction
@@ -150,6 +154,8 @@ double DecoupledPhotonProductionNuclide::getTotalPhotonProductionCrossSection(
 
     ++reaction_type_pointer;
   }
+  
+  return total_cross_section;
 }
 
 } // end MonteCarlo namespace

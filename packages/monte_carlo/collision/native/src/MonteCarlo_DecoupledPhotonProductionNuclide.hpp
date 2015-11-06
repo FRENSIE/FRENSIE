@@ -39,7 +39,8 @@ public:
                    Teuchos::RCP<const DecoupledPhotonProductionReaction> > ConstPhotonProductionReactionMap;
 
   //! Constructor
-  DecoupledPhotonProductionNuclide( const std::string& name,
+  DecoupledPhotonProductionNuclide( 
+     const std::string& name,
 	   const unsigned atomic_number,
 	   const unsigned atomic_mass_number,
 	   const unsigned isomer_number,
@@ -63,6 +64,9 @@ public:
 
   //! Collide with a neutron and survival bias
   void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const;
+
+  // Get total photon production cross section
+  double getTotalPhotonProductionCrossSection( const double energy ) const;
   
 private:
 
@@ -70,9 +74,6 @@ private:
   void samplePhotonProductionReaction( const double scaled_random_number,
 				 NeutronState& neutron, 
 				 ParticleBank& bank ) const;
-
-  // Get total photon production cross section
-  double getTotalPhotonProductionCrossSection( const double energy ) const;
 
   // Store the reaction map of photon production reactions 
   ConstPhotonProductionReactionMap d_photon_production_reactions;
