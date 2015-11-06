@@ -31,8 +31,8 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
   testPrecondition( photon_production_distribution.get() != NULL );
   
   // Make sure the total reaction is valid
-  testPrecondition( total_reaction.get() != NULL );
-  testPrecondition( total_reaction->getReactionType() == N__TOTAL_REACTION );
+  testPrecondition( d_total_neutron_reaction.get() != NULL );
+  testPrecondition( d_total_neutron_reaction->getReactionType() == N__TOTAL_REACTION );
 }
 
 // Return the photon production reaction id
@@ -47,6 +47,19 @@ double DecoupledPhotonProductionReaction::getTemperature() const
   return d_temperature;
 }
 
+// Return the total neutron reaction cross section
+double DecoupledPhotonProductionReaction::getTotalCrossSection( 
+                                                   const double energy ) const
+{
+  TEST_FOR_EXCEPTION( 
+       d_total_neutron_reaction->getReactionType() != N__TOTAL_REACTION,
+       std::runtime_error,
+       "Error: the total neutron reaction was found to have type " << 
+       d_total_neutron_reaction->getReactionType() << " != 1 ");
+       
+  return d_total_neutron_reaction->getCrossSection( energy );
+} 
+
 // Simulate the reaction
 void DecoupledPhotonProductionReaction::react( const NeutronState& neutron, 
 				      ParticleBank& bank ) const
@@ -55,11 +68,11 @@ void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
 			   new PhotonState( neutron, true, false ) );
 
 	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)		   
-	new_photon->setWeight( neutron.getWeight()*(this->getCrossSection( neutron.getEnergy() ))/d_total_neutron_reaction->getCrossSection( neutron.getEnergy() ) );
+	new_photon->setWeight( neutron.getWeight()*(this->getCrossSection( neutron.getEnergy() ))/this->getTotalCrossSection( neutron.getEnergy() ) );
 
   d_photon_production_distribution->scatterParticle( neutron, *new_photon,
 					this->getTemperature() );
-
+					
   bank.push( new_photon );
 }
 

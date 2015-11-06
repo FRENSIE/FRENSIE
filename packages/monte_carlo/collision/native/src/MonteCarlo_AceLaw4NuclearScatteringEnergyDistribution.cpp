@@ -58,7 +58,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   // Check if energy is outside the grid
   if( energy >= d_energy_distribution.front().first and 
       energy <= d_energy_distribution.back().first )
-  {  
+  { 
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
     lower_bin_boundary = d_energy_distribution.begin();
@@ -115,6 +115,14 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
 	(energy_upper - energy_lower) / 
 	(upper_bin_boundary->second->getUpperBoundOfIndepVar() - 
 	 lower_bin_boundary->second->getLowerBoundOfIndepVar());
+    }
+    else if( energy_upper == energy_lower )
+    {
+      // This is a rare case that occurs when two delta distributions at
+      // neighboring neutron energies produce photons of the same energy.
+      // An example case can be seen in MT-102001 in H-1_250.0K-v8
+      
+      outgoing_energy = energy_lower;
     }
     else
     {
