@@ -53,6 +53,9 @@ public:
   
   //! Return the temperature (in MeV) at which the reaction occurs
   double getTemperature() const;
+  
+  //! Return the total neutron cross section
+  double getTotalCrossSection( const double energy ) const;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
@@ -79,7 +82,7 @@ private:
   d_photon_production_distribution; 
   
   // The total reaction class
-  const Teuchos::RCP<NuclearReaction>& d_total_neutron_reaction;
+  const Teuchos::RCP<NuclearReaction> d_total_neutron_reaction;
 };
 
 // Return the base nuclear reaction type

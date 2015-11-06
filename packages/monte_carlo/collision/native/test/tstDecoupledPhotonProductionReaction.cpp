@@ -171,8 +171,14 @@ TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReaction, react )
   
   nuclear_reaction->react( *neutron, bank );
 
+  int bank_size = 1;
+  if ( !neutron->isGone() )
+  {
+    ++bank_size;
+  }
+
   // Photon produced (note that this is not linked to a neuton destruction)
-  TEST_EQUALITY_CONST( bank.size(), 2 );     
+  TEST_EQUALITY_CONST( bank.size(), bank_size );     
 }
 
 //---------------------------------------------------------------------------//

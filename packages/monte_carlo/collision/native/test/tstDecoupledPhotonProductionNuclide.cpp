@@ -73,8 +73,24 @@ void initializeDecoupledPhotonProductionNuclide( Teuchos::RCP<MonteCarlo::Decoup
 
   MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
-
-  nuclide.reset( new MonteCarlo::DecoupledPhotonProductionNuclide( 
+  
+  if( ace_table_name == "1001.70c" )
+  {
+    nuclide.reset( new MonteCarlo::DecoupledPhotonProductionNuclide( 
+				 ace_table_name,
+				 1u,
+				 1u,
+				 0u,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+				 standard_scattering_reactions,
+				 standard_absorption_reactions,
+				 standard_photon_production_reactions ) );
+  }
+  else
+  {
+    nuclide.reset( new MonteCarlo::DecoupledPhotonProductionNuclide( 
 				 ace_table_name,
 				 8u,
 				 16u,
@@ -85,6 +101,7 @@ void initializeDecoupledPhotonProductionNuclide( Teuchos::RCP<MonteCarlo::Decoup
 				 standard_scattering_reactions,
 				 standard_absorption_reactions,
 				 standard_photon_production_reactions ) );
+  }
 }
   
 //---------------------------------------------------------------------------//
@@ -177,8 +194,7 @@ TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_H1, collideAnalogue )
   MonteCarlo::ParticleBank bank;
 
   h1_nuclide->collideAnalogue( neutron, bank );
-
-  TEST_EQUALITY_CONST( neutron.getWeight(), 1.0 );
+  
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
   std::cout << neutron << std::endl;
@@ -186,7 +202,7 @@ TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_H1, collideAnalogue )
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with a nuclide
-TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
+TEUCHOS_UNIT_TEST( DecoupledPhotonProductionNuclide_H1, collideSurvivalBias)
 {
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -198,6 +214,7 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, collideSurvivalBias)
   h1_nuclide->collideSurvivalBias( neutron, bank );
 
   TEST_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
+  
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
   std::cout << neutron << std::endl;

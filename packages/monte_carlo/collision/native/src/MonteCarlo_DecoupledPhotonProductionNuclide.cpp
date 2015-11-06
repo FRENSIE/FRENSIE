@@ -100,7 +100,7 @@ void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutro
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
-    
+  
   samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
@@ -130,7 +130,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
   
   // Make sure a reaction was selected
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
-
+  
   // Undergo the reaction selected
   nuclear_reaction->second->react( neutron, bank );
 }
