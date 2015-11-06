@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -22,7 +22,7 @@ void IncoherentPhotonScatteringDistributionFactory::createKleinNishinaDistributi
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   incoherent_distribution.reset( new KleinNishinaPhotonScatteringDistribution( 
 					       kahn_sampling_cutoff_energy ) );

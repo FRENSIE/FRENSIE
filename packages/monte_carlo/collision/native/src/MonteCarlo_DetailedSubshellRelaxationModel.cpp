@@ -8,7 +8,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_DiscreteDistribution.hpp"
@@ -113,7 +114,7 @@ void DetailedSubshellRelaxationModel::generateFluorescencePhoton(
   testPrecondition( new_photon_energy > 0.0 );
 
   // Only generate the photon if it is above the cutoff energy
-  if( new_photon_energy >= SimulationProperties::getMinPhotonEnergy() )
+  if( new_photon_energy >= SimulationPhotonProperties::getMinPhotonEnergy() )
   {
     Teuchos::RCP<ParticleState> fluorescence_photon( 
 				     new PhotonState( particle, true, true ) );
@@ -143,7 +144,7 @@ void DetailedSubshellRelaxationModel::generateAugerElectron(
   // table
   testPrecondition( new_electron_energy >= 0.0 );
 
-  if( new_electron_energy >= SimulationProperties::getMinElectronEnergy() )
+  if( new_electron_energy >= SimulationElectronProperties::getMinElectronEnergy() )
   {
     Teuchos::RCP<ParticleState> auger_electron( 
 				   new ElectronState( particle, true, true ) );
