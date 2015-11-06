@@ -74,9 +74,10 @@ protected:
     boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map );   
                        
   //! Construct the base reaction map 
-  void constructBaseReactionMap(
+  void constructBaseReactionMap( 
   boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map );                     
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
+  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map  );                     
                        
 private:
 

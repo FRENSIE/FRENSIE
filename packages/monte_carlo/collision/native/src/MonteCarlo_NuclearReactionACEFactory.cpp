@@ -400,7 +400,6 @@ void NuclearReactionACEFactory::getReactionFromReactionType(
                                Teuchos::RCP<NuclearReaction>& base_reaction )
 { 
   // Check for the reaction amongst the absorptions, scatters, and fissions
-  
   if ( d_absorption_reactions.find(reaction_type) != d_absorption_reactions.end() )
   {
     base_reaction = d_absorption_reactions[reaction_type];

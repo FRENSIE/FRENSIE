@@ -25,10 +25,14 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
     d_photon_production_distribution( photon_production_distribution ),
-    d_total_reaction( total_reaction )
+    d_total_neutron_reaction( total_reaction )
 { 
   // Make sure the photon production distribution is valid
   testPrecondition( photon_production_distribution.get() != NULL );
+  
+  // Make sure the total reaction is valid
+  testPrecondition( total_reaction.get() != NULL );
+  testPrecondition( total_reaction->getReactionType() == N__TOTAL_REACTION );
 }
 
 // Return the photon production reaction id
@@ -49,10 +53,10 @@ void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
 {
   Teuchos::RCP<PhotonState> new_photon(
 			   new PhotonState( neutron, true, false ) );
-	
+
 	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)		   
-	new_photon->setWeight( neutron.getWeight()*this->getCrossSection( neutron.getEnergy() )/d_total_reaction->getCrossSection( neutron.getEnergy() ) );
-				   
+	new_photon->setWeight( neutron.getWeight()*(this->getCrossSection( neutron.getEnergy() ))/d_total_neutron_reaction->getCrossSection( neutron.getEnergy() ) );
+
   d_photon_production_distribution->scatterParticle( neutron, *new_photon,
 					this->getTemperature() );
 

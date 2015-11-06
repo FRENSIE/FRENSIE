@@ -10,6 +10,11 @@ ADD_EXECUTABLE(tstNuclearScatteringDistribution
 TARGET_LINK_LIBRARIES(tstNuclearScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(NuclearScatteringDistribution_test tstNuclearScatteringDistribution)
 
+ADD_EXECUTABLE(tstNuclearScatteringDistributionPhotonProduction
+  tstNuclearScatteringDistributionPhotonProduction.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearScatteringDistributionPhotonProduction monte_carlo_collision_native)
+ADD_TEST(NuclearScatteringDistributionPhotonProduction_test tstNuclearScatteringDistributionPhotonProduction)
+
 ADD_EXECUTABLE(tstElasticNeutronNuclearScatteringDistribution
   tstElasticNeutronNuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstElasticNeutronNuclearScatteringDistribution monte_carlo_collision_native)
@@ -127,6 +132,21 @@ ADD_EXECUTABLE(tstNuclearReaction
 TARGET_LINK_LIBRARIES(tstNuclearReaction monte_carlo_collision_native)
 ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
+ADD_EXECUTABLE(tstDecoupledPhotonProductionReaction
+  tstDecoupledPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionReaction_test tstDecoupledPhotonProductionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstDecoupledYieldBasedPhotonProductionReaction
+  tstDecoupledYieldBasedPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledYieldBasedPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledYieldBasedPhotonProductionReaction_test tstDecoupledYieldBasedPhotonProductionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstDecoupledCrossSectionBasedPhotonProductionReaction
+  tstDecoupledCrossSectionBasedPhotonProductionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledCrossSectionBasedPhotonProductionReaction monte_carlo_collision_native)
+ADD_TEST(DecoupledCrossSectionBasedPhotonProductionReaction_test tstDecoupledCrossSectionBasedPhotonProductionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
 ADD_EXECUTABLE(tstNeutronScatteringReaction
   tstNeutronScatteringReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction monte_carlo_collision_native)
@@ -147,10 +167,20 @@ ADD_EXECUTABLE(tstNuclearReactionACEFactory
 TARGET_LINK_LIBRARIES(tstNuclearReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
+ADD_EXECUTABLE(tstDecoupledPhotonProductionReactionACEFactory
+  tstDecoupledPhotonProductionReactionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionReactionACEFactory_test tstDecoupledPhotonProductionReactionACEFactory --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+
 ADD_EXECUTABLE(tstNuclide
   tstNuclide.cpp)
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+
+ADD_EXECUTABLE(tstDecoupledPhotonProductionNuclide
+  tstDecoupledPhotonProductionNuclide.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionNuclide monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionNuclide_test tstDecoupledPhotonProductionNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
 ADD_EXECUTABLE(tstCrossSectionsXMLProperties
   tstCrossSectionsXMLProperties.cpp)
