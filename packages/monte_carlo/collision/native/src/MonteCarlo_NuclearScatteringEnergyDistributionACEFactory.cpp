@@ -284,12 +284,11 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
          energy_distribution[i].second.reset( 
            	      new Utility::HistogramDistribution( outgoing_energy_grid,
            						  pdf ) );
-
       }
       else if ( interpolation_flag == 2 ) // lin-lin interpolation
       {
-         pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
-           		     number_points_distribution );
+         pdf = dlw_block_array( distribution_index + 2 + 
+                   number_points_distribution, number_points_distribution );
 
          energy_distribution[i].second.reset( 
            		     new Utility::TabularDistribution<Utility::LinLin>(
@@ -306,11 +305,40 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
         {
           cdf = dlw_block_array( distribution_index + 2 + 
                     2*number_points_distribution, number_points_distribution );
-                    
-          energy_distribution[i].second.reset(
+          
+          // Version 8 of ENDF has the energy distributions in reverse order
+          if( outgoing_energy_grid.begin() < outgoing_energy_grid.end() )
+          {
+            std::vector<double> outgoing_energy_grid_reverse_vector;
+            std::vector<double> cdf_reverse_vector;                                            
+             
+            for( int j = 0; j < cdf.size(); ++j )
+            {
+              outgoing_energy_grid_reverse_vector.push_back(
+                outgoing_energy_grid[outgoing_energy_grid.size()-1-j] );
+                
+              cdf_reverse_vector.push_back( 1.0 - cdf[cdf.size()-1-j] );
+            }
+            
+            Teuchos::ArrayView<const double> outgoing_energy_grid_reverse( 
+                                         outgoing_energy_grid_reverse_vector );
+            
+            Teuchos::ArrayView<const double> cdf_reverse( cdf_reverse_vector );
+            
+            energy_distribution[i].second.reset(
+                   new Utility::DiscreteDistribution( 
+                                                  outgoing_energy_grid_reverse,
+                                                  cdf_reverse,
+                                                  true ) ); 
+          }
+          else
+          {                    
+            energy_distribution[i].second.reset(
                    new Utility::DiscreteDistribution( outgoing_energy_grid,
                                                       cdf,
                                                       true ) );
+          }
+          
         }
       }
       else

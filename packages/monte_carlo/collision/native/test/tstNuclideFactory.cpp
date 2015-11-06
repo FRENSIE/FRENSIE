@@ -50,7 +50,7 @@ void initializeNuclideFactory()
 					     cross_section_table_info,
 					     nuclide_aliases,
 					     false,
-					     false ) );
+					     true ) );
 }
 
 //---------------------------------------------------------------------------//
