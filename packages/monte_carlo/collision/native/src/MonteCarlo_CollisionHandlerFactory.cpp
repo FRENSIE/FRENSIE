@@ -146,9 +146,6 @@ void CollisionHandlerFactory::initializeHandler(
   }
   case NEUTRON_PHOTON_MODE:
   {
-    *d_os_warn << "Warning: Neutron-Photon mode is not fully supported!" 
-	      << std::endl;
-    
     this->createNeutronMaterials( cross_sections_table_info,
 				  cross_sections_xml_directory,
 				  material_id_fraction_map,
