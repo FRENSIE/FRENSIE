@@ -78,6 +78,22 @@ ParticleSimulationManager<GeometryHandler,
 					    _2 );		   
     break;
   }
+  case NEUTRON_PHOTON_MODE:
+  {
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<NeutronState>,
+                                            boost::cref( *this ),
+                                            _1,
+                                            _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
+                                           boost::cref( *this ),
+                                           _1,
+                                           _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+                                             boost::cref( *this ),
+                                             _1,
+                                             _2 );
+    break;
+  }
   case PHOTON_MODE:
   {
     d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
@@ -112,8 +128,8 @@ ParticleSimulationManager<GeometryHandler,
   }
   default:
     THROW_EXCEPTION( std::runtime_error,
-		     "Error: particle mode " << mode << " is not currently "
-		     << "supported by the particle simulation manager." );
+   		     "Error: particle mode " << mode << " is not currently "
+   		     << "supported by the particle simulation manager." );
   }
 }
 
