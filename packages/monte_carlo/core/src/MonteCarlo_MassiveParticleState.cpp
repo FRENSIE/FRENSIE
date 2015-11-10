@@ -14,6 +14,12 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+MassiveParticleState::MassiveParticleState()
+  : ParticleState(),
+    d_speed( 0.0 )
+{ /* ... */ }
+
 // Constructor
 MassiveParticleState::MassiveParticleState( 
 					const historyNumberType history_number,
@@ -64,17 +70,6 @@ MassiveParticleState::MassiveParticleState(
     Utility::calculateRelativisticSpeed( new_rest_mass_energy,
 					 this->getEnergy() );
   }
-}
-
-// Core constructor
-MassiveParticleState::MassiveParticleState( const ParticleStateCore& core,
-					    const double new_rest_mass_energy )
-  : ParticleState( core ),
-    d_speed( Utility::calculateRelativisticSpeed( new_rest_mass_energy,
-						  core.energy ) )
-{
-  // Make sure the new rest mass energy is valid
-  testPrecondition( new_rest_mass_energy > 0.0 );
 }
 
 // Set the energy of the particle (MeV)

@@ -13,6 +13,11 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+ElectronState::ElectronState()
+  : MassiveParticleState()
+{ /* ... */ }
+
 // Constructor
 ElectronState::ElectronState( 
 		        const ParticleState::historyNumberType history_number )
@@ -41,15 +46,6 @@ ElectronState::ElectronState( const ParticleState& existing_base_state,
 			 reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-ElectronState::ElectronState( const ParticleStateCore& core )
-  : MassiveParticleState(core,
-			 Utility::PhysicalConstants::electron_rest_mass_energy)
-{
-  // Make sure the core is a electron core
-  testPrecondition( core.particle_type == ELECTRON );
-}
-
 // Assignment operator
 ElectronState& ElectronState::operator=( 
 				   const ElectronState& existing_electron_state )
@@ -68,7 +64,7 @@ void ElectronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Electron" << std::endl;
 
-  this->printImplementation( os );
+  this->printImplementation<ElectronState>( os );
 }			    
 
 } // end MonteCarlo namespace

@@ -15,7 +15,8 @@
 namespace MonteCarlo{
 
 /*! The adjoint photon probe state class
- * \details The probe state get killed when its energy changes.
+ * \details The probe state get killed when its energy changes (after being
+ * activated).
  */
 class AdjointPhotonProbeState : public AdjointPhotonState
 {
@@ -27,6 +28,9 @@ public:
 
   // Typedef for the adjoint photon probe tag
   struct AdjointPhotonProbeTag ParticleTag;
+
+  //! Default constructor
+  AdjointPhotonProbeState();
 
   //! Constructor
   AdjointPhotonProbeState( 
@@ -41,9 +45,6 @@ public:
   AdjointPhotonProbeState( const AdjointPhotonProbeState& existing_base_state,
 			   const bool increment_generation_number = false,
 			   const bool reset_collision_number = false );
-
-  //! Core constructor
-  AdjointPhotonProbeState( const ParticleStateCore& core );
 
   //! Destructor
   ~AdjointPhotonProbeState()
@@ -65,6 +66,17 @@ public:
   void print( std::ostream& os ) const;
 
 private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AdjointPhotonState);
+    ar & BOOST_SERIALIZATION_NVP( d_active );
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 
   // Flag that indicates if the probe is active
   bool d_active;

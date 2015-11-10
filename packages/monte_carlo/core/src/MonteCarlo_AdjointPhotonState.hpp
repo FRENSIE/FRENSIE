@@ -29,6 +29,9 @@ public:
   //! The particle state type (for compile time usage)
   static const ParticleType type = ADJOINT_PHOTON;
 
+  //! Default constructor
+  AdjointPhotonState();
+
   //! Constructor
   AdjointPhotonState( const ParticleState::historyNumberType history_number );
 
@@ -41,9 +44,6 @@ public:
   AdjointPhotonState( const AdjointPhotonState& existing_base_state,
 		      const bool increment_generation_number = false,
 		      const bool reset_collision_number = false );
-
-  //! Core constructor
-  AdjointPhotonState( const ParticleStateCore& core );
 
   //! Destructor
   virtual ~AdjointPhotonState()
@@ -70,9 +70,23 @@ protected:
   //! Probe core constructor
   AdjointPhotonState( const ParticleStateCore& core,
 		      const ParticleType probe_type );
+
+private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MasslessParticleState);
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonState, 0 );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
 

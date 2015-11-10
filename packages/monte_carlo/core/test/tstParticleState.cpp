@@ -9,6 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+#include <boost/serialization/base_object.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
@@ -23,6 +28,9 @@
 class TestParticleState : public MonteCarlo::ParticleState
 {
 public:
+
+  TestParticleState()
+  { /* ... */ }
   
   TestParticleState( const unsigned long long history_number )
   : MonteCarlo::ParticleState( history_number, MonteCarlo::PHOTON )
@@ -37,10 +45,6 @@ public:
 			     reset_collision_number )
   { /* ... */ }
 
-  TestParticleState( const MonteCarlo::ParticleStateCore& core )
-    : MonteCarlo::ParticleState( core )
-  { /* ... */ }
-
   ~TestParticleState()
   { /* ... */ }
 
@@ -52,10 +56,20 @@ public:
   { return 1.0; }
 
   void print( std::ostream& os ) const
-  { printImplementation( os ); }
+  { printImplementation<TestParticleState>( os ); }
 
 private:
   TestParticleState( const TestParticleState& state );
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & boost::serialization::make_nvp("ParticleState",boost::serialization::base_object<MonteCarlo::ParticleState>(*this));
+  }
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 //---------------------------------------------------------------------------//
@@ -415,23 +429,45 @@ TEUCHOS_UNIT_TEST( ParticleState, ray )
 }
 
 //---------------------------------------------------------------------------//
-// Export a particle state core
-TEUCHOS_UNIT_TEST( ParticleState, exportCore )
+// Archive a particle state
+TEUCHOS_UNIT_TEST( ParticleState, archive )
 {
-  TestParticleState particle( 1ull );
-  particle.setPosition( 1.0, 1.0, 1.0 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
-  particle.setEnergy( 1.0 );
-  particle.setTime( 0.5 );
-  particle.incrementCollisionNumber();
-  particle.setWeight( 0.25 );
+  // Create and archive a particle
+  {
+    TestParticleState particle( 1ull );
+    particle.setPosition( 1.0, 1.0, 1.0 );
+    particle.setDirection( 0.0, 0.0, 1.0 );
+    particle.setEnergy( 1.0 );
+    particle.setTime( 0.5 );
+    particle.incrementCollisionNumber();
+    particle.setWeight( 0.25 );
+  
+    std::ofstream ofs( "test_particle_state_archive.xml" );
 
-  MonteCarlo::ParticleStateCore test_core = particle.exportCore();
-  
-  // Verify that a core copy has been made
-  test_core.x_position = 2.0;
-  
-  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
+    boost::archive::xml_oarchive ar(ofs);
+    ar << BOOST_SERIALIZATION_NVP( particle );
+  }
+
+  // Load the archived particle
+  TestParticleState loaded_particle;
+
+  std::ifstream ifs( "test_particle_state_archive.xml" );
+
+  boost::archive::xml_iarchive ar(ifs);
+  ar >> boost::serialization::make_nvp( "particle", loaded_particle );
+
+  TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
 }
 
 
@@ -515,37 +551,6 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
 
   TEST_ASSERT( !particle_gen_2b.isGone() );
   TEST_ASSERT( !particle_gen_2b.isLost() );
-}
-
-//---------------------------------------------------------------------------//
-// Core constructor
-TEUCHOS_UNIT_TEST( ParticleState, core_constructor )
-{
-  MonteCarlo::ParticleStateCore core( 1ull, 
-				  MonteCarlo::NEUTRON, 
-				  1.0, 1.0, 1.0,
-				  0.0, 1.0, 0.0,
-				  2.0,
-				  0.5,
-				  1u,
-				  2u,
-				  0.25 );
-
-  TestParticleState particle( core );
-
-  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::NEUTRON );
-  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getYDirection(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getEnergy(), 2.0 );
-  TEST_EQUALITY_CONST( particle.getTime(), 0.5 );
-  TEST_EQUALITY_CONST( particle.getCollisionNumber(), 1u );
-  TEST_EQUALITY_CONST( particle.getGenerationNumber(), 2u );
-  TEST_EQUALITY_CONST( particle.getWeight(), 0.25 );
 }
 
 //---------------------------------------------------------------------------//

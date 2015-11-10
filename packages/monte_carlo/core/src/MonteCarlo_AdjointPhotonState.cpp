@@ -13,6 +13,11 @@
 namespace MonteCarlo{
 
 // Constructor
+AdjointPhotonState::AdjointPhotonState()
+  : MasslessParticleState()
+{ /* ... */ }
+
+// Constructor
 AdjointPhotonState::AdjointPhotonState( 
 		        const ParticleState::historyNumberType history_number )
   : MasslessParticleState( history_number, ADJOINT_PHOTON )
@@ -40,14 +45,6 @@ AdjointPhotonState::AdjointPhotonState(
 			   reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-AdjointPhotonState::AdjointPhotonState( const ParticleStateCore& core )
-  : MasslessParticleState( core )
-{
-  // Make sure the core is an adjoint photon core
-  testPrecondition( core.particle_type == ADJOINT_PHOTON );
-}
-
 // Probe constructor
 AdjointPhotonState::AdjointPhotonState( 
 			 const ParticleState::historyNumberType history_number,
@@ -67,12 +64,6 @@ AdjointPhotonState::AdjointPhotonState(
 			   reset_collision_number )
 { /* ... */ }
 
-// Probe core constructor
-AdjointPhotonState::AdjointPhotonState( const ParticleStateCore& core,
-					const ParticleType probe_type )
-  : MasslessParticleState( core )
-{ /* ... */ }
-
 // Check if this is a probe
 bool AdjointPhotonState::isProbe() const
 {
@@ -84,7 +75,7 @@ void AdjointPhotonState::print( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Photon" << std::endl;
   
-  this->printImplementation( os );
+  this->printImplementation<AdjointPhotonState>( os );
 }
 
 } // end MonteCarl namespace

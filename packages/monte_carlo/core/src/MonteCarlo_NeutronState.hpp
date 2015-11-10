@@ -34,6 +34,9 @@ public:
   //! The particle state type (for compile time usage)
   static const ParticleType type = NEUTRON;
 
+  //! Default constructor
+  NeutronState();
+
   //! Constructor
   NeutronState( const ParticleState::historyNumberType history_number );
 
@@ -47,9 +50,6 @@ public:
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
-  //! Core constructor
-  NeutronState( const ParticleStateCore& core );
-
   //! Assignment operator
   NeutronState& operator=( const NeutronState& existing_neutron_state );
 
@@ -62,9 +62,23 @@ public:
 
   //! Print the neutron state
   void print( std::ostream& os ) const;
+
+private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::NeutronState, 0 );
 
 #endif // end MonteCarlo_NEUTRON_STATE_HPP
 

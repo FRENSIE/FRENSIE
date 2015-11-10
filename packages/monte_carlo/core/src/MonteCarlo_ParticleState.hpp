@@ -11,6 +11,9 @@
 
 // Boost Includes
 #include <boost/shared_ptr.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/assume_abstract.hpp>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -34,22 +37,31 @@ class ParticleState : public Utility::PrintableObject
 public:
 
   //! Typedef for pointer
-  typedef Teuchos::RCP<ParticleState> pointerType;
+  typedef boost::shared_ptr<ParticleState> pointerType;
 
   //! Typedef for history number type
-  typedef ParticleStateCore::historyNumberType historyNumberType;
+  typedef unsigned long long historyNumberType;
 
+  //! Typedef for position type
+  typedef double positionType;
+
+  //! Typedef for direction type
+  typedef double directionType;
+  
   //! Typedef for energy type
-  typedef ParticleStateCore::energyType energyType;
+  typedef double energyType;
 
   //! Typedef for time type
-  typedef ParticleStateCore::timeType timeType;
+  typedef double timeType;
 
   //! Typedef for collision number type;
-  typedef ParticleStateCore::collisionNumberType collisionNumberType;
+  typedef unsigned collisionNumberType;
 
   //! Typedef for generation number type
-  typedef ParticleStateCore::generationNumberType generationNumberType;
+  typedef unsigned generationNumberType;
+  
+  //! Typedef for weight type
+  typedef double weightType;
 
 private:
   
@@ -57,6 +69,9 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
+
+  //! Default constructor
+  ParticleState();
   
   //! Constructor
   ParticleState( const historyNumberType history_number,
@@ -67,9 +82,6 @@ public:
 		 const ParticleType new_type,
 		 const bool increment_generation_number,
 		 const bool reset_collision_number );
-
-  //! Core constructor
-  ParticleState( const ParticleStateCore& core );
 
   //! Destructor
   virtual ~ParticleState()
@@ -188,15 +200,13 @@ public:
   //! Spawn a ray that can be used for ray tracing
   const Geometry::Ray& ray() const;
 
-  //! Export the core (creating a copy of it)
-  ParticleStateCore exportCore() const;
-
 protected:
 
   //! Calculate the time to traverse a distance
   virtual timeType calculateTraversalTime( const double distance ) const = 0;
 
-  //! Print method implementation 
+  //! Print method implementation
+  template<typename DerivedType>
   void printImplementation( std::ostream& os ) const;
 
 private:
@@ -204,8 +214,45 @@ private:
   // Copy constructor
   ParticleState( const ParticleState& state );
 
-  // The particle state core
-  ParticleStateCore d_core;
+  // Save the state to an archive
+  template<typename Archive>
+  void save( Archive& ar, const unsigned version ) const;
+
+  // Load the data from an archive
+  template<typename Archive>
+  void load( Archive& ar, const unsigned version );
+
+  BOOST_SERIALIZATION_SPLIT_MEMBER();
+  
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // The history number
+  historyNumberType d_history_number;
+
+  // The particle type
+  ParticleType d_particle_type;
+
+  // Position of the particle
+  positionType d_position[3];
+
+  // Direction of the particle
+  directionType d_direction[3];
+  
+  // Energy of the particle (MeV)
+  energyType d_energy;
+
+  // Time of the particle (s)
+  timeType d_time;
+
+  // Collision number of the particle
+  collisionNumberType d_collision_number;
+
+  // The generation number of the particle
+  generationNumberType d_generation_number;
+
+  // The weight of the particle
+  weightType d_weight;
 
   // The current cell handle
   Geometry::ModuleTraits::InternalCellHandle d_cell;
@@ -235,7 +282,7 @@ inline void ParticleState::setDirection( const double direction[3] )
 // Return the energy of the particle
 inline ParticleState::energyType ParticleState::getEnergy() const
 {
-  return d_core.energy;
+  return d_energy;
 }
 
 // Spawn a ray that can be used for ray tracing
@@ -245,6 +292,17 @@ inline const Geometry::Ray& ParticleState::ray() const
 }
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::ParticleState );
+BOOST_CLASS_VERSION( MonteCarlo::ParticleState, 0 );
+
+//---------------------------------------------------------------------------//
+// Template includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ParticleState_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_PARTICLE_STATE_HPP
 
