@@ -21,8 +21,7 @@ namespace Utility{
 template<typename T>
 Measurement<T>::Measurement( const Measurement<T>::ValueType& value, 
 			     const Measurement<T>::ValueType& uncertainty )
-  : PrintableObject( "", false ),
-    d_value( value ),
+  : d_value( value ),
     d_uncertainty( uncertainty )
 { 
   // Make sure the value is valid
@@ -35,8 +34,7 @@ Measurement<T>::Measurement( const Measurement<T>::ValueType& value,
 // Copy constructor
 template<typename T>
 Measurement<T>::Measurement( const Measurement<T>& other_measurement )
-  : PrintableObject( "", false ),
-    d_value( other_measurement.d_value ),
+  : d_value( other_measurement.d_value ),
     d_uncertainty( other_measurement.d_uncertainty )
 {
   // Make sure the other measurement is valid

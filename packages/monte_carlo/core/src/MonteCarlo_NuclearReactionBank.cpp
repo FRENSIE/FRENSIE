@@ -26,14 +26,14 @@ NuclearReactionBank::NuclearReactionBank(
 }
 
 // Push a neutron to the bank
-void NuclearReactionBank::push( const Teuchos::RCP<NeutronState>& neutron,
+void NuclearReactionBank::push( const boost::shared_ptr<NeutronState>& neutron,
 				const NuclearReactionType reaction )
 {
   if( d_nuclear_reaction_banks.find( reaction ) != 
       d_nuclear_reaction_banks.end() )
     d_nuclear_reaction_banks[reaction].push_front( neutron );
   else
-    ParticleBank::push( Teuchos::rcp_dynamic_cast<ParticleState>( neutron ) );
+    ParticleBank::push( neutron );
 }
 
 } // end MonteCarlo namespace

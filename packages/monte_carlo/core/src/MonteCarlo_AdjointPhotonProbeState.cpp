@@ -13,6 +13,12 @@
 namespace MonteCarlo{
 
 // Constructor
+AdjointPhotonProbeState::AdjointPhotonProbeState()
+  : AdjointPhotonState(),
+    d_active( false )
+{ /* ... */ }
+
+// Constructor
 AdjointPhotonProbeState::AdjointPhotonProbeState( 
 		       const ParticleState::historyNumberType history_number )
   : AdjointPhotonState( history_number, ADJOINT_PHOTON_PROBE ),
@@ -42,16 +48,6 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 			reset_collision_number ),
     d_active( false )
 { /* ... */ }
-
-// Core constructor
-AdjointPhotonProbeState::AdjointPhotonProbeState( 
-					        const ParticleStateCore& core )
-  : AdjointPhotonState( core, ADJOINT_PHOTON_PROBE ),
-    d_active( false )
-{
-  // Make sure the core is an adjoint photon probe core
-  testPrecondition( core.particle_type == ADJOINT_PHOTON_PROBE );
-}
 
 // Set the energy of the particle (MeV)
 /*! \details An active probe particle gets killed when its energy changes. A
@@ -99,7 +95,7 @@ void AdjointPhotonProbeState::print( std::ostream& os ) const
 
   os << "Adjoint Photon Probe" << std::endl;
   
-  this->printImplementation( os );
+  this->printImplementation<AdjointPhotonProbeState>( os );
 }
 
 } // end MonteCarlo namespace

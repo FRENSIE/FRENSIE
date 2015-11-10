@@ -14,6 +14,11 @@
 namespace MonteCarlo{
 
 // Constructor
+NeutronState::NeutronState()
+  : MassiveParticleState()
+{ /* ... */ }
+
+// Constructor
 NeutronState::NeutronState( 
 		        const ParticleState::historyNumberType history_number )
   : MassiveParticleState( history_number, NEUTRON )
@@ -41,15 +46,6 @@ NeutronState::NeutronState( const NeutronState& existing_state,
 			  reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-NeutronState::NeutronState( const ParticleStateCore& core )
-  : MassiveParticleState(core, 
-			 Utility::PhysicalConstants::neutron_rest_mass_energy )
-{
-  // Make sure the core is a neutron core
-  testPrecondition( core.particle_type == NEUTRON );
-}
-
 // Assignment operator
 NeutronState& NeutronState::operator=( 
 				   const NeutronState& existing_neutron_state )
@@ -68,7 +64,7 @@ void NeutronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Neutron" << std::endl;
 
-  this->printImplementation( os );
+  this->printImplementation<NeutronState>( os );
 }
 
 } // end MonteCarlo namespace

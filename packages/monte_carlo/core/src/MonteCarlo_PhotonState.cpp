@@ -14,6 +14,11 @@
 namespace MonteCarlo{
 
 // Constructor
+PhotonState::PhotonState()
+  : MasslessParticleState()
+{ /* ... */ }
+
+// Constructor
 PhotonState::PhotonState(const ParticleState::historyNumberType history_number)
   : MasslessParticleState( history_number, PHOTON )
 { /* ... */ }
@@ -38,20 +43,12 @@ PhotonState::PhotonState( const PhotonState& existing_base_state,
 			   reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-PhotonState::PhotonState( const ParticleStateCore& core )
-  : MasslessParticleState( core )
-{
-  // Make sure the core is a photon core
-  testPrecondition( core.particle_type == PHOTON );
-}
-
 // Print the photon state
 void PhotonState::print( std::ostream& os ) const
 {
   os << "Particle Type: Photon" << std::endl;
   
-  this->printImplementation( os );
+  this->printImplementation<PhotonState>( os );
 }
 
 } // end MonteCarlo namespace
