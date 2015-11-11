@@ -57,8 +57,11 @@ public:
   ~ElectronState()
   { /* ... */ }
 
-  // Return the rest mass energy of the electron (MeV)
+  //! Return the rest mass energy of the electron (MeV)
   double getRestMassEnergy() const;
+
+  //! Clone the particle state (do not use to generate new particles!)
+  pointerType clone() const;
 
   //! Print the electron state
   void print( std::ostream& os ) const;
@@ -79,6 +82,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ElectronState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::ElectronState, "ElectronState" );
 
 #endif // end MonteCarlo_ELECTRON_STATE_HPP
 

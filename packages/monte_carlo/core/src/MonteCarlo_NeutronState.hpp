@@ -60,6 +60,9 @@ public:
   //! Return the rest mass energy of the neutron (MeV)
   double getRestMassEnergy() const;
 
+  //! Clone the particle state (do not use to generate new particles!)
+  pointerType clone() const;
+
   //! Print the neutron state
   void print( std::ostream& os ) const;
 
@@ -79,6 +82,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::NeutronState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::NeutronState, "NeutronState" );
 
 #endif // end MonteCarlo_NEUTRON_STATE_HPP
 

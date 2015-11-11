@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -43,6 +44,12 @@ PhotonState::PhotonState( const PhotonState& existing_base_state,
 			   reset_collision_number )
 { /* ... */ }
 
+// Clone the particle state (do not use to generate new particles!)
+ParticleState::pointerType PhotonState::clone() const
+{
+  return pointerType( new PhotonState( *this, false, false ) );
+}
+
 // Print the photon state
 void PhotonState::print( std::ostream& os ) const
 {
@@ -52,6 +59,9 @@ void PhotonState::print( std::ostream& os ) const
 }
 
 } // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::PhotonState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::PhotonState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonState.cpp

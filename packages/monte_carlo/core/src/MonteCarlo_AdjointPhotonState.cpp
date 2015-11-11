@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonState.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -70,6 +71,12 @@ bool AdjointPhotonState::isProbe() const
   return false;
 }
 
+//! Clone the particle state (do not use to generate new particles!)
+ParticleState::pointerType AdjointPhotonState::clone() const
+{
+  return pointerType( new AdjointPhotonState( *this, false, false ) );
+}
+
 // Print the adjoint photon state
 void AdjointPhotonState::print( std::ostream& os ) const
 {
@@ -78,7 +85,10 @@ void AdjointPhotonState::print( std::ostream& os ) const
   this->printImplementation<AdjointPhotonState>( os );
 }
 
-} // end MonteCarl namespace
+} // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::AdjointPhotonState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointPhotonState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointPhotonState.cpp

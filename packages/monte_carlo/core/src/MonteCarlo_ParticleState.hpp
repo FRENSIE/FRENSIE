@@ -14,6 +14,7 @@
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/export.hpp>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -21,7 +22,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_ParticleStateCore.hpp"
 #include "Geometry_Ray.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_PrintableObject.hpp"
@@ -86,6 +86,9 @@ public:
   //! Destructor
   virtual ~ParticleState()
   { /* ... */ }
+
+  //! Clone the particle state (do not use to generate new particles!)
+  virtual pointerType clone() const = 0;
 
   //! Return the history number
   historyNumberType getHistoryNumber() const;
@@ -211,7 +214,7 @@ protected:
 
 private:
 
-  // Copy constructor
+  //! Copy constructor
   ParticleState( const ParticleState& state );
 
   // Save the state to an archive

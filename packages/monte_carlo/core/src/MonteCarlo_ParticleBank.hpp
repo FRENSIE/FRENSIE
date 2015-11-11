@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <deque>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
