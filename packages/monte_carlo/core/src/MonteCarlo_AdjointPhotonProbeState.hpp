@@ -62,6 +62,9 @@ public:
   //! Returns if the probe is active
   bool isActive() const;
 
+  //! Clone the particle state (do not use to generate new particles!)
+  pointerType clone() const;
+
   //! Print the adjoint photon state
   void print( std::ostream& os ) const;
 
@@ -83,6 +86,10 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonProbeState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonProbeState, 
+			 "AdjointPhotonProbeState" );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 

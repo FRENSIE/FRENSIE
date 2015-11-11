@@ -54,6 +54,9 @@ public:
   ~PhotonState()
   { /* ... */ }
 
+  //! Clone the particle state (do not use to generate new particles!)
+  pointerType clone() const;
+
   //! Print the photon state
   void print( std::ostream& os ) const;
 
@@ -73,6 +76,7 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::PhotonState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::PhotonState, "PhotonState" );
 
 #endif // end MONTE_CARLO_PHOTON_STATE_HPP
 

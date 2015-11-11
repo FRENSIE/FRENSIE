@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -59,6 +60,12 @@ double NeutronState::getRestMassEnergy() const
   return Utility::PhysicalConstants::neutron_rest_mass_energy;
 }
 
+// Clone the particle state (do not use to generate new particles!)
+ParticleState::pointerType NeutronState::clone() const
+{
+  return pointerType( new NeutronState( *this, false, false ) );
+}
+
 // Print the neutron state
 void NeutronState::print( std::ostream& os ) const
 {
@@ -68,6 +75,9 @@ void NeutronState::print( std::ostream& os ) const
 }
 
 } // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::NeutronState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::NeutronState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronState.cpp

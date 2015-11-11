@@ -93,6 +93,36 @@ TEUCHOS_UNIT_TEST( NeutronState, advance )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a neutron state can be cloned
+TEUCHOS_UNIT_TEST( NeutronState, clone )
+{
+  MonteCarlo::ParticleState::pointerType particle(
+				        new MonteCarlo::NeutronState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  MonteCarlo::ParticleState::pointerType particle_clone = particle->clone();
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::NEUTRON );
+}
+
+//---------------------------------------------------------------------------//
 // Archive a neutron state
 TEUCHOS_UNIT_TEST( NeutronState, archive )
 {

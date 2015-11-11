@@ -52,6 +52,9 @@ public:
   //! Check if this is a probe
   virtual bool isProbe() const;
 
+  //! Clone the particle state (do not use to generate new particles!)
+  virtual pointerType clone() const;
+
   //! Print the adjoint photon state
   virtual void print( std::ostream& os ) const;
 
@@ -66,10 +69,6 @@ protected:
 		      const ParticleType probe_type,
 		      const bool increment_generation_number,
 		      const bool reset_collision_number );
-
-  //! Probe core constructor
-  AdjointPhotonState( const ParticleStateCore& core,
-		      const ParticleType probe_type );
 
 private:
 
@@ -87,6 +86,8 @@ private:
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::AdjointPhotonState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointPhotonState, 
+			 "AdjointPhotonState" );
 
 #endif // end MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
 
