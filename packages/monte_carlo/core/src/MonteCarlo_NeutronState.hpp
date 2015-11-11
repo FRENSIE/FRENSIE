@@ -50,9 +50,6 @@ public:
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
-  //! Assignment operator
-  NeutronState& operator=( const NeutronState& existing_neutron_state );
-
   //! Destructor
   ~NeutronState()
   { /* ... */ }
@@ -61,7 +58,7 @@ public:
   double getRestMassEnergy() const;
 
   //! Clone the particle state (do not use to generate new particles!)
-  pointerType clone() const;
+  ParticleState* clone() const;
 
   //! Print the neutron state
   void print( std::ostream& os ) const;

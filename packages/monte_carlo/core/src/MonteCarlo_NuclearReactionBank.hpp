@@ -34,13 +34,13 @@ public:
   NuclearReactionBank( const Teuchos::Array<NuclearReactionType>& reactions );
 
   //! Push a neutron to the bank
-  void push( const boost::shared_ptr<NeutronState>& neutron,
+  void push( const NeutronState& neutron,
 	     const NuclearReactionType reaction );
 
 private:
 
   // The nuclear reactions of interest
-  boost::unordered_map<NuclearReactionType,std::list<boost::shared_ptr<ParticleState> > > d_nuclear_reaction_banks;
+  boost::unordered_map<NuclearReactionType,std::list<boost::scoped_ptr<ParticleState> > > d_nuclear_reaction_banks;
 };
 
 } // end MonteCarlo namespace

@@ -10,7 +10,6 @@
 #define MONTE_CARLO_PARTICLE_STATE_HPP
 
 // Boost Includes
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/version.hpp>
 #include <boost/serialization/assume_abstract.hpp>
@@ -35,9 +34,6 @@ class ParticleState : public Utility::PrintableObject
 {
 
 public:
-
-  //! Typedef for pointer
-  typedef boost::shared_ptr<ParticleState> pointerType;
 
   //! Typedef for history number type
   typedef unsigned long long historyNumberType;
@@ -87,8 +83,12 @@ public:
   virtual ~ParticleState()
   { /* ... */ }
 
-  //! Clone the particle state (do not use to generate new particles!)
-  virtual pointerType clone() const = 0;
+  /*! Clone the particle state (do not use to generate new particles!)
+   * \details This method returns a heap-allocated pointer. It is only safe
+   * to call this method inside of a smart pointer constructor or reset
+   * method.
+   */
+  virtual ParticleState* clone() const = 0;
 
   //! Return the history number
   historyNumberType getHistoryNumber() const;
@@ -216,6 +216,9 @@ private:
 
   //! Copy constructor
   ParticleState( const ParticleState& state );
+
+  //! Assignment operator
+  ParticleState& operator=( const ParticleState& state );
 
   // Save the state to an archive
   template<typename Archive>

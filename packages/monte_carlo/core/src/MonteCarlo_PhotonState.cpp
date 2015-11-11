@@ -45,9 +45,9 @@ PhotonState::PhotonState( const PhotonState& existing_base_state,
 { /* ... */ }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState::pointerType PhotonState::clone() const
+ParticleState* PhotonState::clone() const
 {
-  return pointerType( new PhotonState( *this, false, false ) );
+  return new PhotonState( *this, false, false );
 }
 
 // Print the photon state

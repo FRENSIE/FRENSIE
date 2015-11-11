@@ -47,13 +47,6 @@ ElectronState::ElectronState( const ParticleState& existing_base_state,
 			 reset_collision_number )
 { /* ... */ }
 
-// Assignment operator
-ElectronState& ElectronState::operator=( 
-				   const ElectronState& existing_electron_state )
-{
-  MassiveParticleState::operator=( existing_electron_state );
-}
-
 // Return the rest mass energy of the electron (MeV)
 double ElectronState::getRestMassEnergy() const
 {
@@ -61,9 +54,9 @@ double ElectronState::getRestMassEnergy() const
 }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState::pointerType ElectronState::clone() const
+ParticleState* ElectronState::clone() const
 {
-  return pointerType( new ElectronState( *this, false, false ) );
+  return new ElectronState( *this, false, false );
 }
 
 // Print the electron state
