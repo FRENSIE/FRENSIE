@@ -10,6 +10,7 @@
 #include <iostream>
 
 // Boost Includes
+#include <boost/shared_ptr.hpp>
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
 
@@ -96,7 +97,7 @@ TEUCHOS_UNIT_TEST( ElectronState, advance )
 // Check that the electron state can be cloned
 TEUCHOS_UNIT_TEST( ElectronState, clone )
 {
-  MonteCarlo::ParticleState::pointerType particle(
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
 				       new MonteCarlo::ElectronState( 0ull ) );
   particle->setPosition( 1.0, 1.0, 1.0 );
   particle->setDirection( 0.0, 0.0, 1.0 );
@@ -104,7 +105,8 @@ TEUCHOS_UNIT_TEST( ElectronState, clone )
   particle->setTime( 0.5 );
   particle->setWeight( 0.25 );
   
-  MonteCarlo::ParticleState::pointerType particle_clone = particle->clone();
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+							   particle->clone() );
   
   TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );

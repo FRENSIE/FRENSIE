@@ -47,13 +47,6 @@ NeutronState::NeutronState( const NeutronState& existing_state,
 			  reset_collision_number )
 { /* ... */ }
 
-// Assignment operator
-NeutronState& NeutronState::operator=( 
-				   const NeutronState& existing_neutron_state )
-{
-  MassiveParticleState::operator=( existing_neutron_state );
-}
-
 // Return the rest mass energy of the neutron (MeV)
 double NeutronState::getRestMassEnergy() const
 {
@@ -61,9 +54,9 @@ double NeutronState::getRestMassEnergy() const
 }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState::pointerType NeutronState::clone() const
+ParticleState* NeutronState::clone() const
 {
-  return pointerType( new NeutronState( *this, false, false ) );
+  return new NeutronState( *this, false, false );
 }
 
 // Print the neutron state

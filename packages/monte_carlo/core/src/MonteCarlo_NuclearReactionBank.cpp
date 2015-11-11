@@ -26,12 +26,12 @@ NuclearReactionBank::NuclearReactionBank(
 }
 
 // Push a neutron to the bank
-void NuclearReactionBank::push( const boost::shared_ptr<NeutronState>& neutron,
+void NuclearReactionBank::push( const NeutronState& neutron,
 				const NuclearReactionType reaction )
 {
   if( d_nuclear_reaction_banks.find( reaction ) != 
       d_nuclear_reaction_banks.end() )
-    d_nuclear_reaction_banks[reaction].push_front( neutron );
+    d_nuclear_reaction_banks[reaction].emplace_back( neutron.clone() );
   else
     ParticleBank::push( neutron );
 }

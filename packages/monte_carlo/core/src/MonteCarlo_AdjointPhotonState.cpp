@@ -72,9 +72,9 @@ bool AdjointPhotonState::isProbe() const
 }
 
 //! Clone the particle state (do not use to generate new particles!)
-ParticleState::pointerType AdjointPhotonState::clone() const
+ParticleState* AdjointPhotonState::clone() const
 {
-  return pointerType( new AdjointPhotonState( *this, false, false ) );
+  return new AdjointPhotonState( *this, false, false );
 }
 
 // Print the adjoint photon state

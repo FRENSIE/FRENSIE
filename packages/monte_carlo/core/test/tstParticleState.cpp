@@ -55,8 +55,8 @@ public:
 						  const double distance ) const
   { return 1.0; }
 
-  MonteCarlo::ParticleState::pointerType clone() const
-  { return MonteCarlo::ParticleState::pointerType(); }
+  MonteCarlo::ParticleState* clone() const
+  { return NULL; }
 
   void print( std::ostream& os ) const
   { printImplementation<TestParticleState>( os ); }

@@ -50,9 +50,6 @@ public:
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
-  //! Assignment operator
-  ElectronState& operator=( const ElectronState& existing_electron_state );
-
   //! Destructor
   ~ElectronState()
   { /* ... */ }
@@ -61,7 +58,7 @@ public:
   double getRestMassEnergy() const;
 
   //! Clone the particle state (do not use to generate new particles!)
-  pointerType clone() const;
+  ParticleState* clone() const;
 
   //! Print the electron state
   void print( std::ostream& os ) const;
