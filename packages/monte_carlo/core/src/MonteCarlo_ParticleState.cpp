@@ -87,6 +87,22 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
     d_collision_number = 0u;
 }
 
+// Clone the particle state but change the history number
+/*! \details This method returns a heap-allocated pointer. It is only safe
+ * to call this method inside of a smart pointer constructor or reset method.
+ * The clone will only need a new history number in very rare circumstances
+ * (e.g. state source).
+ */
+ParticleState* ParticleState::clone( 
+	      const ParticleState::historyNumberType new_history_number ) const
+{
+  ParticleState* clone_state = this->clone();
+  
+  clone_state->d_history_number = new_history_number;
+
+  return clone_state;
+}
+
 // Return the history number
 ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 {
