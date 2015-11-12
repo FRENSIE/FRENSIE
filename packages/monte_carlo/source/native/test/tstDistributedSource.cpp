@@ -208,26 +208,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   source->sampleParticleState( bank, 0 );
   
-  MonteCarlo::ParticleState::pointerType particle = bank.top();
+  MonteCarlo::ParticleState& particle = bank.top();
   
-  TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
-  TEST_COMPARE( particle->getXPosition(), >=, -2.0 );
-  TEST_COMPARE( particle->getXPosition(), <=, 2.0 );
-  TEST_COMPARE( particle->getYPosition(), >=, -2.0 );
-  TEST_COMPARE( particle->getYPosition(), <=, 2.0 );
-  TEST_COMPARE( particle->getZPosition(), >=, -2.0 );
-  TEST_COMPARE( particle->getZPosition(), <=, 2.0 );
-  TEST_COMPARE( particle->getXDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getXDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getYDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getYDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getZDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getZDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getEnergy(), >=, 1e-3 );
-  TEST_COMPARE( particle->getEnergy(), <=, 1.0 );
-  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
+  TEST_COMPARE( particle.getXPosition(), >=, -2.0 );
+  TEST_COMPARE( particle.getXPosition(), <=, 2.0 );
+  TEST_COMPARE( particle.getYPosition(), >=, -2.0 );
+  TEST_COMPARE( particle.getYPosition(), <=, 2.0 );
+  TEST_COMPARE( particle.getZPosition(), >=, -2.0 );
+  TEST_COMPARE( particle.getZPosition(), <=, 2.0 );
+  TEST_COMPARE( particle.getXDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getXDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getYDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getYDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getZDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getZDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getEnergy(), >=, 1e-3 );
+  TEST_COMPARE( particle.getEnergy(), <=, 1.0 );
+  TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( DistributedSource, 
@@ -260,19 +260,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   source->sampleParticleState( bank, 0 );
 
-  MonteCarlo::ParticleState::pointerType particle = bank.top();
+  MonteCarlo::ParticleState& particle = bank.top();
   
-  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
-  TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getZDirection(), -1.0 );
-  TEST_EQUALITY_CONST( particle->getXPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getYPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getZPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getEnergy(), 1e-3 );
-  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
-  TEST_FLOATING_EQUALITY( particle->getWeight(), 0.3378378378375, 1e-9 );
+  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
+  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getZDirection(), -1.0 );
+  TEST_EQUALITY_CONST( particle.getXPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getEnergy(), 1e-3 );
+  TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
+  TEST_FLOATING_EQUALITY( particle.getWeight(), 0.3378378378375, 1e-9 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -293,26 +293,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   source->sampleParticleState( bank, 0 );
 
-  MonteCarlo::ParticleState::pointerType particle = bank.top();
+  MonteCarlo::ParticleState& particle = bank.top();
   
-  TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
-  TEST_COMPARE( particle->getXPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle->getXPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle->getYPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle->getYPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle->getZPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle->getZPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle->getXDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getXDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getYDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getYDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getZDirection(), >=, -1.0 );
-  TEST_COMPARE( particle->getZDirection(), <=, 1.0 );
-  TEST_COMPARE( particle->getEnergy(), >=, 1e-3 );
-  TEST_COMPARE( particle->getEnergy(), <=, 1.0 );
-  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
+  TEST_COMPARE( particle.getXPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle.getXPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle.getYPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle.getYPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle.getZPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle.getZPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle.getXDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getXDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getYDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getYDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getZDirection(), >=, -1.0 );
+  TEST_COMPARE( particle.getZDirection(), <=, 1.0 );
+  TEST_COMPARE( particle.getEnergy(), >=, 1e-3 );
+  TEST_COMPARE( particle.getEnergy(), <=, 1.0 );
+  TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( DistributedSource, 

@@ -40,12 +40,6 @@ ADD_EXECUTABLE(tstParticleBank
 TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 
-ADD_EXECUTABLE(tstParticleStateCollection
-  tstParticleStateCollection.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleStateCollection monte_carlo_core)
-ADD_TEST(ParticleStateCollection_test tstParticleStateCollection)
-
 ADD_EXECUTABLE(tstSimulationProperties 
   tstSimulationProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

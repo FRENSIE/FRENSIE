@@ -90,6 +90,9 @@ public:
    */
   virtual ParticleState* clone() const = 0;
 
+  //! Clone the particle state but change the history number
+  ParticleState* clone( const historyNumberType new_history_number ) const;
+
   //! Return the history number
   historyNumberType getHistoryNumber() const;
 

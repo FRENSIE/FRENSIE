@@ -172,26 +172,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CompoundSource,
   
   source->sampleParticleState( bank, 0 );
 
-  TEST_ASSERT( bank.top()->getParticleType() == MonteCarlo::PHOTON ||
-	       bank.top()->getParticleType() == MonteCarlo::NEUTRON );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
-  TEST_COMPARE( bank.top()->getXPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getXPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getYPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getYPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getZPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getZPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getXDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getXDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getYDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getYDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getZDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getZDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getEnergy(), >=, 1e-3 );
-  TEST_ASSERT( bank.top()->getEnergy() <= 1.0 ||
-	       bank.top()->getEnergy() == 14.1 );
-  TEST_EQUALITY_CONST( bank.top()->getTime(), 0.0 );
-  TEST_EQUALITY_CONST( bank.top()->getWeight(), 1.0 );
+  TEST_ASSERT( bank.top().getParticleType() == MonteCarlo::PHOTON ||
+	       bank.top().getParticleType() == MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0 );
+  TEST_COMPARE( bank.top().getXPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getXPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getYPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getYPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getZPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getZPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getXDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getXDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getYDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getYDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getZDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getZDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getEnergy(), >=, 1e-3 );
+  TEST_ASSERT( bank.top().getEnergy() <= 1.0 ||
+	       bank.top().getEnergy() == 14.1 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( CompoundSource, sampleParticleState );

@@ -107,6 +107,37 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, clone )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the state can be cloned with a new history number
+TEUCHOS_UNIT_TEST( AdjointPhotonState, clone_new_hist )
+{
+  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+				  new MonteCarlo::AdjointPhotonState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+						    particle->clone( 10ull ) );
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::ADJOINT_PHOTON );
+}
+
+//---------------------------------------------------------------------------//
 // Archive an adjoint photon state
 TEUCHOS_UNIT_TEST( AdjointPhotonState, archive )
 {

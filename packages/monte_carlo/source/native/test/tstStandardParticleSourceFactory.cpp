@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }						
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }	
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }
