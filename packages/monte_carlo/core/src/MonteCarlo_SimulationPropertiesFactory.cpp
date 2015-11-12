@@ -20,7 +20,8 @@ namespace MonteCarlo{
 
 //! Initialize the simulation properties
 void SimulationPropertiesFactory::initializeSimulationProperties( 
-				    const Teuchos::ParameterList& properties )
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn )
 {  
   // Get the particle mode - required
   TEST_FOR_EXCEPTION( !properties.isParameter( "Mode" ),
@@ -119,7 +120,7 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       general_properties );
   }
   
-  properties.unused( std::cerr );
+  properties.unused( *os_warn );
 }
 
 } // end MonteCarlo namespace

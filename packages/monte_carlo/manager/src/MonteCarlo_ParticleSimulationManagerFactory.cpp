@@ -80,7 +80,8 @@ ParticleSimulationManagerFactory::createManager(
 		      "Error: the general properties must be specified!" );
   
   // Initialize the simulation properties
-  SimulationPropertiesFactory::initializeSimulationProperties(simulation_info);
+  SimulationPropertiesFactory::initializeSimulationProperties( simulation_info,
+							       out.get() );
 
   // Determine which geometry handler has been requested
   std::string geom_handler_name;
