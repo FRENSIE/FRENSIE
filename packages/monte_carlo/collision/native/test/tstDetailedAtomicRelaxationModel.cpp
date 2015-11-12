@@ -63,35 +63,35 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   TEST_EQUALITY_CONST( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
   
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
   
   bank.pop();
   
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

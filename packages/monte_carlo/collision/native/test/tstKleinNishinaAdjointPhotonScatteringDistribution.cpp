@@ -310,8 +310,8 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 0.08 );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 0.08 );
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(), 
 			  29.993834199062107,
 			  1e-14 );
 
@@ -326,9 +326,9 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(),
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  1.3851251716307225,
 			  1e-15 );
 
@@ -343,16 +343,16 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 				      shell_of_interaction );
 
   TEST_EQUALITY_CONST( bank.size(), 2 );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(),
+  TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(),
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.3987875470381571,
 			  1e-15 );
   
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.0 );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(),
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.0 );
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(),
 			  0.20172576376840526,
 			  1e-15 );
 }

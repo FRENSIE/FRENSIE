@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_2BS_ace )
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
-  TEST_ASSERT( !bank.empty() );
+  TEST_ASSERT( !bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
@@ -216,7 +216,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction,
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
-  TEST_ASSERT( !bank.empty() );
+  TEST_ASSERT( !bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
@@ -236,7 +236,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_basic_ace )
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
-  TEST_ASSERT( !bank.empty() );
+  TEST_ASSERT( !bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 

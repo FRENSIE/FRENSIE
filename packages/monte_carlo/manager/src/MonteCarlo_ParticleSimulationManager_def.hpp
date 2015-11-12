@@ -194,36 +194,36 @@ void ParticleSimulationManager<GeometryHandler,
 	  typename GMI::InternalCellHandle start_cell;
 	  
 	  try{
-	    start_cell = GMI::findCellContainingPoint( bank.top()->ray() );
+	    start_cell = GMI::findCellContainingPoint( bank.top().ray() );
 	  }
 	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 	  
-	  bank.top()->setCell( start_cell );
+	  bank.top().setCell( start_cell );
 	  
-	  EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
+	  EMI::updateEstimatorsFromParticleGenerationEvent( bank.top() );
 	}
 	
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  switch( bank.top()->getParticleType() )
+	  switch( bank.top().getParticleType() )
 	  {
 	  case NEUTRON: 
-	    d_simulate_neutron( dynamic_cast<NeutronState&>( *bank.top() ),
+	    d_simulate_neutron( dynamic_cast<NeutronState&>( bank.top() ),
 				bank );
 	    break;
 	  case PHOTON:
-	    d_simulate_photon( dynamic_cast<PhotonState&>( *bank.top() ),
+	    d_simulate_photon( dynamic_cast<PhotonState&>( bank.top() ),
 			       bank );
 	    break;
 	  case ELECTRON:
-	    d_simulate_electron( dynamic_cast<ElectronState&>( *bank.top() ),
+	    d_simulate_electron( dynamic_cast<ElectronState&>( bank.top() ),
 	    			 bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
 			     "Error: particle type "
-			     << bank.top()->getParticleType() <<
+			     << bank.top().getParticleType() <<
 			     " is not currently supported!" );
 	  }
   

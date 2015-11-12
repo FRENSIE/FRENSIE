@@ -100,20 +100,20 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
   TEST_EQUALITY_CONST( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
 
   bank.pop();
 
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
   
   bank.pop();
   
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
   
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -184,20 +184,20 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
   TEST_EQUALITY_CONST( bank.size(), 3 );
 
   // K non-radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 5.71919999999999998e-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 5.71919999999999998e-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
 
   bank.pop();
 
   // L1 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.584170000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
   
   bank.pop();
   
   // L2 radiative transition
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
