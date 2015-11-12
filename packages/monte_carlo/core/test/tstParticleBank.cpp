@@ -8,13 +8,16 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Boost Includes
 #include <boost/archive/xml_oarchive.hpp>
 #include <boost/archive/xml_iarchive.hpp>
+#include <boost/shared_ptr.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
@@ -80,6 +83,56 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
 }
 
 //---------------------------------------------------------------------------//
+// Check that particle smart pointers can be pushed to the bank
+TEUCHOS_UNIT_TEST( ParticleBank, push_smart_ptr )
+{
+  MonteCarlo::ParticleBank bank;
+  
+  TEST_ASSERT( bank.isEmpty() );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  {
+    Teuchos::RCP<MonteCarlo::ParticleState> photon( 
+					 new MonteCarlo::PhotonState( 0ull ) );
+    
+    bank.push( photon );
+  }
+
+  TEST_ASSERT( !bank.isEmpty() );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  
+  {
+    boost::shared_ptr<MonteCarlo::NeutronState> neutron( 
+					new MonteCarlo::NeutronState( 0ull ) );
+
+    bank.push( neutron );
+  }
+
+  TEST_ASSERT( !bank.isEmpty() );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+
+  {
+    std::shared_ptr<MonteCarlo::NeutronState> neutron( 
+					new MonteCarlo::NeutronState( 1ull ) );
+
+    bank.push( neutron, MonteCarlo::N__N_ELASTIC_REACTION ); 
+  }
+  
+  TEST_ASSERT( !bank.isEmpty() );
+  TEST_EQUALITY_CONST( bank.size(), 3 );
+  
+  {
+    std::shared_ptr<MonteCarlo::ElectronState> electron( 
+				       new MonteCarlo::ElectronState( 2ull ) );
+
+    bank.push( electron );
+  }
+   
+  TEST_ASSERT( !bank.isEmpty() );
+  TEST_EQUALITY_CONST( bank.size(), 4 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that that the top element of the bank can be accessed
 TEUCHOS_UNIT_TEST( ParticleBank, top )
 {
@@ -113,6 +166,55 @@ TEUCHOS_UNIT_TEST( ParticleBank, pop )
   bank.pop();
   
   TEST_ASSERT( bank.isEmpty() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the top particle can be removed from the bank and stored
+TEUCHOS_UNIT_TEST( ParticleBank, pop_store )
+{
+  MonteCarlo::ParticleBank bank;
+
+  {
+    std::shared_ptr<MonteCarlo::ParticleState> particle;
+    
+    particle.reset( new MonteCarlo::PhotonState( 0ull ) );
+    
+    bank.push( particle );
+    
+    particle.reset( new MonteCarlo::NeutronState( 1ull ) );
+    
+    bank.push( particle );
+    
+    particle.reset( new MonteCarlo::ElectronState( 2ull ) );
+
+    bank.push( particle );
+  }
+
+  TEST_EQUALITY_CONST( bank.size(), 3 );
+  
+  std::shared_ptr<MonteCarlo::ParticleState> particle_1;
+
+  bank.pop( particle_1 );
+
+  TEST_EQUALITY_CONST( particle_1->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle_1->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_2;
+
+  bank.pop( particle_2 );
+
+  TEST_EQUALITY_CONST( particle_2->getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( particle_2->getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+
+  Teuchos::RCP<MonteCarlo::ParticleState> particle_3;
+
+  bank.pop( particle_3 );
+
+  TEST_EQUALITY_CONST( particle_3->getHistoryNumber(), 2ull );
+  TEST_EQUALITY_CONST( particle_3->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//

@@ -58,8 +58,17 @@ public:
   //! Access the top element
   const ParticleState& top() const; 
 
+  //! Push a particle to the bank
+  template<template<typename> class SmartPointer, typename State>
+  void push( SmartPointer<State>& particle );
+
   //! Insert a particle to the bank
   virtual void push( const ParticleState& particle );
+
+  //! Push a neutron into the bank after an interaction
+  template<template<typename> class SmartPointer>
+  void push( SmartPointer<NeutronState>& neutron,
+	     const NuclearReactionType reaction );
 
   //! Insert a neutron into the bank after an interaction
   virtual void push( const NeutronState& neutron,
@@ -67,6 +76,10 @@ public:
   
   //! Pop the top particle from bank
   void pop();
+
+  //! Pop the top particle from the bank and store it in the smart pointer
+  template<template<typename> class SmartPointer>
+  void pop( SmartPointer<ParticleState>& particle );
 
   //! Check if the bank is sorted
   virtual bool isSorted( const CompareFunctionType& compare_function );
@@ -111,6 +124,14 @@ inline const ParticleState& ParticleBank::dereference(
 } // end MonteCarlo namespace
 
 BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ParticleBank_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MonteCarlo_PARTICLE_BANK_HPP
 
