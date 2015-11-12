@@ -85,7 +85,7 @@ bool AdjointPhotonProbeState::isActive() const
 }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState* AdjointPhotonProbeState::clone() const
+AdjointPhotonProbeState* AdjointPhotonProbeState::clone() const
 {
   return new AdjointPhotonProbeState( *this, false, false );
 }

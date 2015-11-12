@@ -63,7 +63,7 @@ public:
   bool isActive() const;
 
   //! Clone the particle state (do not use to generate new particles!)
-  ParticleState* clone() const;
+  AdjointPhotonProbeState* clone() const;
 
   //! Print the adjoint photon state
   void print( std::ostream& os ) const;

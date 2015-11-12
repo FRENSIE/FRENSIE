@@ -55,7 +55,7 @@ public:
   { /* ... */ }
 
   //! Clone the particle state (do not use to generate new particles!)
-  ParticleState* clone() const;
+  PhotonState* clone() const;
 
   //! Print the photon state
   void print( std::ostream& os ) const;

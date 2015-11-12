@@ -58,7 +58,7 @@ public:
   double getRestMassEnergy() const;
 
   //! Clone the particle state (do not use to generate new particles!)
-  ParticleState* clone() const;
+  ElectronState* clone() const;
 
   //! Print the electron state
   void print( std::ostream& os ) const;

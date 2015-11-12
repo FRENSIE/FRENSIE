@@ -54,7 +54,7 @@ double NeutronState::getRestMassEnergy() const
 }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState* NeutronState::clone() const
+NeutronState* NeutronState::clone() const
 {
   return new NeutronState( *this, false, false );
 }
