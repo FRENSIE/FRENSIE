@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
@@ -457,7 +457,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   }
     
   // Make sure the tet has been found
-  if( tet_handle == 0 && SimulationProperties::displayWarnings() )
+  if( tet_handle == 0 && SimulationGeneralProperties::displayWarnings() )
   {
     #pragma omp critical( point_in_tet_warning_message )
     {

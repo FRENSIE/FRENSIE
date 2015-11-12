@@ -18,7 +18,10 @@
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -36,7 +39,7 @@ CollisionHandlerFactory::CollisionHandlerFactory( std::ostream* os_warn )
 
 // Initialize the collision handler
 /*! \details Make sure the simulation properties have been set 
- * (in MonteCarlo::SimulationProperties) before running this factory
+ * (in MonteCarlo::SimulationGeneralProperties etc) before running this factory
  * method. The properties can influence how this factory method behaves.
  */
 void CollisionHandlerFactory::initializeHandler(
@@ -110,7 +113,7 @@ void CollisionHandlerFactory::initializeHandler(
 					    new AtomicRelaxationModelFactory );
 
   // Load the cross section data
-  switch( SimulationProperties::getParticleMode() )
+  switch( SimulationGeneralProperties::getParticleMode() )
   {
   case NEUTRON_MODE:
   {
@@ -136,12 +139,12 @@ void CollisionHandlerFactory::initializeHandler(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::getIncoherentModelType(),
-		     SimulationProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationProperties::isDetailedPairProductionModeOn(),
-		     SimulationProperties::isAtomicRelaxationModeOn(),
-		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
+		     SimulationPhotonProperties::getIncoherentModelType(),
+		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
+		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
+		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
+		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
     break;
   }
   case NEUTRON_PHOTON_MODE:
@@ -168,12 +171,12 @@ void CollisionHandlerFactory::initializeHandler(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::getIncoherentModelType(),
-		     SimulationProperties::getKahnSamplingCutoffEnergy(),
-		     SimulationProperties::isDetailedPairProductionModeOn(),
-		     SimulationProperties::isAtomicRelaxationModeOn(),
-		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+		     SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
+		     SimulationPhotonProperties::getIncoherentModelType(),
+		     SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
+		     SimulationPhotonProperties::isDetailedPairProductionModeOn(),
+		     SimulationPhotonProperties::isAtomicRelaxationModeOn(),
+		     SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
     break;
   }
   case ELECTRON_MODE:
@@ -187,13 +190,13 @@ void CollisionHandlerFactory::initializeHandler(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-		     SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
-		     SimulationProperties::isAtomicRelaxationModeOn() );
+		     SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
+		     SimulationElectronProperties::isAtomicRelaxationModeOn() );
     break;
   }
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: " << SimulationProperties::getParticleMode() <<
+		     "Error: " << SimulationGeneralProperties::getParticleMode() <<
 		     " is not currently supported!" );
   }	    
 }

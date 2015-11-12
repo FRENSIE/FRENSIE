@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSimulationPropertiesFactory.cpp
-//! \author Alex Robinson
-//! \brief  Simulation properties factory unit tests
+//! \file   tstSimulationPhotonPropertiesFactory.cpp
+//! \author Alex Robinson, Luke Kersting
+//! \brief  Simulation photon properties factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,8 +16,8 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
+#include "MonteCarlo_SimulationPhotonPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,14 +29,30 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
-		   initializeSimulationProperties )
+TEUCHOS_UNIT_TEST( SimulationPhotonPropertiesFactory,
+		   initializeSimulationPhotonProperties )
 {
-  MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
-								  properties );
+  Teuchos::ParameterList photon_properties = 
+      properties.get<Teuchos::ParameterList>( "Photon Properties" );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+  MonteCarlo::SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties( 
+						photon_properties );
+
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMinPhotonEnergy(),
+		       1e-2 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getMaxPhotonEnergy(),
+		       10.0 );
+  TEST_EQUALITY_CONST( 
+	       MonteCarlo::SimulationPhotonProperties::getKahnSamplingCutoffEnergy(),
+	       2.5 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationPhotonProperties::getNumberOfPhotonHashGridBins(),
+		       500 );
+  TEST_EQUALITY_CONST( 
+	       MonteCarlo::SimulationPhotonProperties::getIncoherentModelType(),
+	       MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
+  TEST_ASSERT( !MonteCarlo::SimulationPhotonProperties::isAtomicRelaxationModeOn() );
+  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isDetailedPairProductionModeOn() );
+  TEST_ASSERT( MonteCarlo::SimulationPhotonProperties::isPhotonuclearInteractionModeOn() );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,5 +99,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstSimulationPropertiesFactory.cpp
+// end tstSimulationPhotonPropertiesFactory.cpp
 //---------------------------------------------------------------------------//
