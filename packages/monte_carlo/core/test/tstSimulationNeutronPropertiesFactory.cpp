@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSimulationPropertiesFactory.cpp
-//! \author Alex Robinson
-//! \brief  Simulation properties factory unit tests
+//! \file   tstSimulationNeutronPropertiesFactory.cpp
+//! \author Alex Robinson, Luke Kersting
+//! \brief  Simulation neutron properties factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,8 +16,8 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
+#include "MonteCarlo_SimulationNeutronPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,14 +29,24 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
-		   initializeSimulationProperties )
+TEUCHOS_UNIT_TEST( SimulationNeutronPropertiesFactory,
+		   initializeSimulationNeutronProperties )
 {
-  MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
+  Teuchos::ParameterList neutron_properties = 
+      properties.get<Teuchos::ParameterList>( "Neutron Properties" );
+
+  MonteCarlo::SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( 
+						neutron_properties );
+
+  MonteCarlo::SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( 
 								  properties );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
+		       600.0 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
+		       1e-2 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
+		       10.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,5 +93,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstSimulationPropertiesFactory.cpp
+// end tstSimulationNeutronPropertiesFactory.cpp
 //---------------------------------------------------------------------------//

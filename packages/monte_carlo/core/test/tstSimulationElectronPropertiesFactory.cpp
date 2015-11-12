@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSimulationPropertiesFactory.cpp
-//! \author Alex Robinson
-//! \brief  Simulation properties factory unit tests
+//! \file   tstSimulationElectronPropertiesFactory.cpp
+//! \author Alex Robinson, Luke Kersting
+//! \brief  Simulation electron properties factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,8 +16,8 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationElectronPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,14 +29,24 @@ Teuchos::ParameterList properties;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
-TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
-		   initializeSimulationProperties )
+TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
+		   initializeSimulationElectronProperties )
 {
-  MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
-								  properties );
+  Teuchos::ParameterList electron_properties = 
+      properties.get<Teuchos::ParameterList>( "Electron Properties" );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_PHOTON_MODE );
+  MonteCarlo::SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
+						electron_properties );
+
+
+  TEST_EQUALITY_CONST(MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
+		      1e-2 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
+		       10.0 );
+  TEST_ASSERT( !MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -83,5 +93,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstSimulationPropertiesFactory.cpp
+// end tstSimulationElectronPropertiesFactory.cpp
 //---------------------------------------------------------------------------//

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -47,7 +47,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 {
   // Use the target-at-rest kinematics
   if( incoming_neutron.getEnergy() > 
-      SimulationProperties::getFreeGasThreshold()*temperature &&
+      SimulationNeutronProperties::getFreeGasThreshold()*temperature &&
       this->getAtomicWeightRatio() > 1.0 )
   {
     double A = this->getAtomicWeightRatio();

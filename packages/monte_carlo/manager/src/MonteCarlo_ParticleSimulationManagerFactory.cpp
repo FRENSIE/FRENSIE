@@ -20,7 +20,7 @@
 #include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_StandardParticleSourceFactory.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
@@ -75,10 +75,9 @@ ParticleSimulationManagerFactory::createManager(
   else
     out.reset( &std::cerr, false );
   
-  TEST_FOR_EXCEPTION( !simulation_info.isParameter( "Histories" ),
+  TEST_FOR_EXCEPTION( !simulation_info.isParameter( "General Properties" ),
 		      InvalidSimulationInfo,
-		      "Error: the number of histories to run must be "
-		      "specified!" );
+		      "Error: the general properties must be specified!" );
   
   // Initialize the simulation properties
   SimulationPropertiesFactory::initializeSimulationProperties(simulation_info);
@@ -109,7 +108,7 @@ ParticleSimulationManagerFactory::createManager(
       StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<ParticleSource> source = 
-    source_factory->createSource( source_def, SimulationProperties::getParticleMode() );
+    source_factory->createSource( source_def, SimulationGeneralProperties::getParticleMode() );
 
     setSourceHandlerInstance( source );
 
@@ -135,7 +134,7 @@ ParticleSimulationManagerFactory::createManager(
                                        CollisionHandler>(
 			       comm,
 			       0,
-                               SimulationProperties::getNumberOfHistories() ) );
+                               SimulationGeneralProperties::getNumberOfHistories() ) );
     }
     else
     {   
@@ -144,7 +143,7 @@ ParticleSimulationManagerFactory::createManager(
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
-                             SimulationProperties::getNumberOfHistories() ) );
+                             SimulationGeneralProperties::getNumberOfHistories() ) );
     }
     
     #else
@@ -166,7 +165,7 @@ ParticleSimulationManagerFactory::createManager(
       StandardParticleSourceFactory<Geometry::Root>::getInstance();
   
     Teuchos::RCP<ParticleSource> source = 
-      source_factory->createSource( source_def, SimulationProperties::getParticleMode()  );
+      source_factory->createSource( source_def, SimulationGeneralProperties::getParticleMode()  );
 
     setSourceHandlerInstance( source );
 
@@ -191,7 +190,7 @@ ParticleSimulationManagerFactory::createManager(
                                        CollisionHandler>(
                               comm,
 			      0,
-                              SimulationProperties::getNumberOfHistories() ) );
+                              SimulationGeneralProperties::getNumberOfHistories() ) );
     }
     else
     {
@@ -200,7 +199,7 @@ ParticleSimulationManagerFactory::createManager(
                                        ParticleSource,
                                        EstimatorHandler,
                                        CollisionHandler>(
-                               SimulationProperties::getNumberOfHistories() ) );
+                               SimulationGeneralProperties::getNumberOfHistories() ) );
     }      
 
     #else

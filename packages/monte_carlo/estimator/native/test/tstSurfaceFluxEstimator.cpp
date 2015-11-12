@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -697,7 +697,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     estimator_2_base->setParticleTypes( particle_types );
 
     // Set the angle cosine cutoff
-    MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
+    MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
 									 0.1 );
   }
 

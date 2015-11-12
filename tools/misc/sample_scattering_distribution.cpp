@@ -23,7 +23,7 @@
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 // Transparent NeutronNuclearScatteringDistributionACEFactory
@@ -151,7 +151,7 @@ int main( int argc, char** argv )
     scattering_reactions.find( reaction )->second;
 
   // Turn off free gas treatment
-  MonteCarlo::SimulationProperties::setFreeGasThreshold( 1e-11 );
+  MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( 1e-11 );
 
   MonteCarlo::NeutronState neutron( 0ull );
   MonteCarlo::ParticleBank bank;

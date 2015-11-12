@@ -1,4 +1,8 @@
 <ParameterList name="Simulation Info">
-  <Parameter name="Histories" type="unsigned int" value="10000000"/>
+
+  <ParameterList name="General Properties">
+    <Parameter name="Histories" type="unsigned int" value="10000000"/>
+  </ParameterList>
+
   <Parameter name="Mode" type="string" value="Neutron"/>
 </ParameterList>

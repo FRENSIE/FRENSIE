@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_DistributedSource.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_ParticleModeType.hpp"
 
 namespace MonteCarlo{
