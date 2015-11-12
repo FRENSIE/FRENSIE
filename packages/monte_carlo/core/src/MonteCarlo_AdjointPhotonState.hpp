@@ -53,7 +53,7 @@ public:
   virtual bool isProbe() const;
 
   //! Clone the particle state (do not use to generate new particles!)
-  virtual ParticleState* clone() const;
+  virtual AdjointPhotonState* clone() const;
 
   //! Print the adjoint photon state
   virtual void print( std::ostream& os ) const;

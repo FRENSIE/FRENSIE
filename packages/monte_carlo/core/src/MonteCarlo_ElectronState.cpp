@@ -54,7 +54,7 @@ double ElectronState::getRestMassEnergy() const
 }
 
 // Clone the particle state (do not use to generate new particles!)
-ParticleState* ElectronState::clone() const
+ElectronState* ElectronState::clone() const
 {
   return new ElectronState( *this, false, false );
 }
