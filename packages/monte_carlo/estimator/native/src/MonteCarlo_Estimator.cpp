@@ -45,7 +45,7 @@ void Estimator::setEndTime( const double end_time )
 // Constructor
   Estimator::Estimator( const Estimator::idType id,
 			const double multiplier )
-  : PrintableObject( "//---------------------------------------------------------------------------//\n" ),
+  : PrintableObject(),
     d_id( id ),
     d_multiplier( multiplier ),
     d_has_uncommitted_history_contribution( 1, false ),

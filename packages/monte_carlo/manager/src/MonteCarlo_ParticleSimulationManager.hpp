@@ -166,14 +166,14 @@ private:
   {									\
     std::cout << exception.what() << std::endl;				\
     std::cout << "Lost particle info: " << std::endl;			\
-    std::cout << " History: " << bank.top()->getHistoryNumber() << std::endl; \
-    std::cout << " Cell: " << bank.top()->getCell() << std::endl;	\
-    std::cout << " Position: " << bank.top()->getXPosition() << " ";	\
-    std::cout << bank.top()->getYPosition() << " ";			\
-    std::cout << bank.top()->getZPosition() << std::endl;		\
-    std::cout << " Direction: " << bank.top()->getXDirection() << " ";	\
-    std::cout << bank.top()->getYDirection() << " ";			\
-    std::cout << bank.top()->getZDirection() << std::endl;		\
+    std::cout << " History: " << bank.top().getHistoryNumber() << std::endl; \
+    std::cout << " Cell: " << bank.top().getCell() << std::endl;	\
+    std::cout << " Position: " << bank.top().getXPosition() << " ";	\
+    std::cout << bank.top().getYPosition() << " ";			\
+    std::cout << bank.top().getZPosition() << std::endl;		\
+    std::cout << " Direction: " << bank.top().getXDirection() << " ";	\
+    std::cout << bank.top().getYDirection() << " ";			\
+    std::cout << bank.top().getZDirection() << std::endl;		\
     bank.pop();								\
     continue;								\
   }
