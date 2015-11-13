@@ -148,7 +148,10 @@ ParticleSimulationManagerFactory::createManager(
     }
     
     #else
-      return Teuchos::RCP<SimulationManager>();
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: DagMC was requested but has not been "
+                       "enabled in the build options. Please rebuild"
+                       " with FRENSIE_ENABLE_DAGMC:BOOL = ON" );
     #endif // end HAVE_FRENSIE_DAGMC
   }
   else if( geom_handler_name == "ROOT" )
@@ -204,7 +207,10 @@ ParticleSimulationManagerFactory::createManager(
     }      
 
     #else
-      return Teuchos::RCP<SimulationManager>();
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: ROOT has been requested but was not enabled in"
+                       " the build options. Please rebuild with "
+                       "FRENSIE_ENABLE_ROOT:BOOL = ON" );
     #endif // end HAVE_FRENSIE_ROOT
   }
 }
