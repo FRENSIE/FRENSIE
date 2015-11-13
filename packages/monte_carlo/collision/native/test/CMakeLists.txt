@@ -182,6 +182,11 @@ ADD_EXECUTABLE(tstDecoupledPhotonProductionNuclide
 TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionNuclide monte_carlo_collision_native)
 ADD_TEST(DecoupledPhotonProductionNuclide_test tstDecoupledPhotonProductionNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
+ADD_EXECUTABLE(tstDecoupledPhotonProductionO16Nuclide
+  tstDecoupledPhotonProductionO16Nuclide.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledPhotonProductionO16Nuclide monte_carlo_collision_native)
+ADD_TEST(DecoupledPhotonProductionNuclide_test tstDecoupledPhotonProductionO16Nuclide --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+
 ADD_EXECUTABLE(tstCrossSectionsXMLProperties
   tstCrossSectionsXMLProperties.cpp)
 TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties monte_carlo_collision_native)

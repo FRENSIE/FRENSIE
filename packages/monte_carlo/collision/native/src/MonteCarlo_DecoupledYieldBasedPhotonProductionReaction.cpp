@@ -40,8 +40,10 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
   testPrecondition( Utility::Sort::isSortedAscending( 
 						     yield_energy_grid.begin(),
 					           yield_energy_grid.end() ) );
+					           
   // Make sure the yield array is valid
   testPrecondition( yield.size() == yield_energy_grid.size() );
+  
   // Make sure the base reaction is valid
   testPrecondition( base_reaction.get() != NULL );
   testPrecondition( base_reaction->getReactionType() == base_reaction_type );
@@ -54,7 +56,7 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
 double DecoupledYieldBasedPhotonProductionReaction::getCrossSection( 
 						    const double energy ) const
 {
-  if( energy >= this->getThresholdEnergy() &&
+  if( energy >= d_yield_energy_grid[0] &&
       energy < d_yield_energy_grid.back() )
   {
     unsigned yield_index = 
@@ -71,7 +73,7 @@ double DecoupledYieldBasedPhotonProductionReaction::getCrossSection(
 
     return d_base_reaction->getCrossSection( energy )*yield;
   }
-  else if( energy < this->getThresholdEnergy() )
+  else if( energy < d_yield_energy_grid[0] )
     return 0.0;
   else if( energy == d_yield_energy_grid.back() )
   {
