@@ -40,6 +40,7 @@ DecoupledCrossSectionBasedPhotonProductionReaction::DecoupledCrossSectionBasedPh
   testPrecondition( incoming_energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( incoming_energy_grid.begin(),
 					     incoming_energy_grid.end() ) );
+					     
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 1 );
 }
