@@ -175,6 +175,11 @@ TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
   monte_carlo_collision_native)
 ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
 
+ADD_EXECUTABLE(tstStandardComptonProfile
+  tstStandardComptonProfile.cpp)
+TARGET_LINK_LIBRARIES(tstStandardComptonProfile monte_carlo_collision_native)
+ADD_TEST(StandardComptonProfile_test tstStandardComptonProfile)
+
 ADD_EXECUTABLE(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution
   tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
