@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_DECOUPLED_PHOTON_PRODUCTION_REACTION_ACE_FACTORY_HPP
 
+// Standard Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -18,6 +21,7 @@
 #include "MonteCarlo_PhotonProductionNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -110,7 +114,7 @@ private:
   // A map of the photon production reactions
   boost::unordered_map<unsigned,Teuchos::RCP<DecoupledPhotonProductionReaction> >
   d_photon_production_reactions;
-  
+
   // A map of the nuclear reaction type to associated array of TabularDistributions
   boost::unordered_map<NuclearReactionType,Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > >
   d_mt_yield_distributions;
