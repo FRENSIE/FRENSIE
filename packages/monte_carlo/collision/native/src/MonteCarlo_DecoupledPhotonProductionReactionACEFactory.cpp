@@ -22,6 +22,7 @@
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace MonteCarlo{
 
@@ -85,6 +86,16 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
                                                     base_reaction_type_map,
                                                     base_reaction_map,
                                                     yield_energy_map );
+                                                    
+  // Construct a map of photon MT numbers to yield distributions
+  DecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions(
+                                                        yield_energy_map,
+                                                        yield_values_map );
+
+  // Construct a map of photon MT numbers to yield distributions
+  DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
+                                                      base_reaction_type_map,
+                                                      yield_energy_map );
 
   // Construct the total neutron cross section
   DecoupledPhotonProductionReactionACEFactory::createTotalReaction(
@@ -95,8 +106,6 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
   // Create the yield based photon production reactions
   initializeYieldBasedPhotonProductionReactions( base_reaction_type_map,
 	                                               temperature,
-	                                               yield_energy_map,
-	                                               yield_values_map,
 	                                               base_reaction_map,
 	                                               photon_production_dist_factory );
 	     
@@ -248,12 +257,59 @@ void DecoupledPhotonProductionReactionACEFactory::constructBaseReactionMap(
   }
 }
 
+// Construct a map of photon MT numbers to yield distributions
+void DecoupledPhotonProductionReactionACEFactory::constructMTPYieldDistributions(
+	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
+	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map )
+{
+  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+    iter_reaction, end_reaction;
+  iter_reaction = yield_energy_map.begin();
+  end_reaction = yield_energy_map.end();
+  
+  while( iter_reaction != end_reaction )
+  {
+    unsigned reaction_type = iter_reaction->first;
+    
+    std::shared_ptr<Utility::OneDDistribution> tabular_yield_pointer( 
+        new Utility::TabularDistribution<Utility::LinLin>( 
+                              yield_energy_map.find(reaction_type)->second,
+                              yield_values_map.find(reaction_type)->second ) );
+                                          
+    d_mtp_yield_distributions_map[reaction_type] = tabular_yield_pointer;
+		  
+	  ++iter_reaction;
+  }
+}
+
+// Construct a map of base reaction types to yield distribution arrays
+void DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
+       const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+       const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map )
+{
+  boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >::const_iterator
+    iter_reaction, end_reaction;
+  iter_reaction = yield_energy_map.begin();
+  end_reaction = yield_energy_map.end();
+  
+  while( iter_reaction != end_reaction )
+  {
+    unsigned reaction_type = iter_reaction->first;
+    
+    NuclearReactionType base_reaction_type = 
+                            base_reaction_type_map.find(reaction_type)->second;
+                                          
+    d_mt_yield_distributions[base_reaction_type].push_back(
+                  d_mtp_yield_distributions_map.find(reaction_type)->second );
+		  
+	  ++iter_reaction;
+  }
+}
+
 // Initialize the yield based photon production reactions
 void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProductionReactions( 
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
 	     const double temperature,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map,
 	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )	
 {
@@ -280,8 +336,8 @@ void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProd
 		  base_reaction_type_map.find(reaction_type)->second,
 		  reaction_type,
 		  temperature,
-		  yield_energy_map.find(reaction_type)->second,
-		  yield_values_map.find(reaction_type)->second,
+		  d_mt_yield_distributions[base_reaction_type_map.find(reaction_type)->second],
+		  d_mtp_yield_distributions_map[reaction_type],
 		  base_reaction_map.find(base_reaction_type_map.find(reaction_type)->second)->second,
 		  photon_production_distribution,
 		  d_total_reaction ) );  

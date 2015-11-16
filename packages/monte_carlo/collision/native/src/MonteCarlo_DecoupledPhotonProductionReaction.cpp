@@ -20,12 +20,14 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
 			      const double temperature,
 		        const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 			      photon_production_distribution,
-			      const Teuchos::RCP<NuclearReaction>& total_reaction )
+			      const Teuchos::RCP<NuclearReaction>& total_reaction,
+   Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
     d_photon_production_distribution( photon_production_distribution ),
-    d_total_neutron_reaction( total_reaction )
+    d_total_neutron_reaction( total_reaction ),
+    d_total_mt_yield_array( total_mt_yield_array )
 { 
   // Make sure the photon production distribution is valid
   testPrecondition( photon_production_distribution.get() != NULL );

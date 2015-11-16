@@ -15,6 +15,8 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -36,7 +38,8 @@ public:
    const double temperature,
    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
    photon_production_distribution,
-   const Teuchos::RCP<NuclearReaction>& total_reaction );
+   const Teuchos::RCP<NuclearReaction>& total_reaction,
+   Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
 
   //! Destructor
   virtual ~DecoupledPhotonProductionReaction()
@@ -70,6 +73,10 @@ private:
 
   // The base nuclear reaction type
   NuclearReactionType d_base_reaction_type;
+  
+  // The array of all yield distributions
+  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > 
+    d_total_mt_yield_array;
 
   // The photon production id
   unsigned d_photon_production_id;
