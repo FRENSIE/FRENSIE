@@ -49,6 +49,16 @@ DecoupledYieldBasedPhotonProductionReaction::DecoupledYieldBasedPhotonProduction
   testPrecondition( base_reaction->getReactionType() == base_reaction_type );
 }
 
+// Return the base reaction cross section at a given energy
+/*! \details The photon production cross section is the base cross section
+ * multiplied by the yield.
+ */
+double DecoupledYieldBasedPhotonProductionReaction::getBaseReactionCrossSection( 
+						    const double energy ) const
+{
+  return d_base_reaction->getCrossSection( energy );
+}
+
 // Return the cross section at a given energy
 /*! \details The photon production cross section is the base cross section
  * multiplied by the yield.
@@ -70,7 +80,7 @@ double DecoupledYieldBasedPhotonProductionReaction::getCrossSection(
 				    energy,
 				    d_yield[yield_index],
 				    d_yield[yield_index+1] );
-
+    
     return d_base_reaction->getCrossSection( energy )*yield;
   }
   else if( energy < d_yield_energy_grid[0] )

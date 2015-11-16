@@ -173,13 +173,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw2EnergyDistribut
            	          std::runtime_error,
            	          "Error: MT# " << reaction << " in ACE table "
            	          << table_name << " should be law 2!\n" );
-           	          
+
   // Start index for ldat data
   int LP = 
     (int)dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index - 1];
   double EG = 
     dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index];
-  
+
   // Create the discrete photon distribution
   distribution.reset(
     new AceLaw2NuclearScatteringEnergyDistribution( LP,

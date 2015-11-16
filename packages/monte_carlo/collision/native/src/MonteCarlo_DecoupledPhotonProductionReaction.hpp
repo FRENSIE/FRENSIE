@@ -60,6 +60,9 @@ public:
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
 
+  //! Return the base reaction cross section at a given enery
+  virtual double getBaseReactionCrossSection( const double energy ) const = 0;
+
   //! Return the cross section at a given energy
   virtual double getCrossSection( const double energy ) const = 0;
 
