@@ -130,7 +130,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
   
   // Make sure a reaction was selected
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
-  
+
   // Undergo the reaction selected
   nuclear_reaction->second->react( neutron, bank );
 }

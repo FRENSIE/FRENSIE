@@ -44,6 +44,9 @@ public:
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
+  //! Return the base reaction cross section at a given enery
+  double getBaseReactionCrossSection( const double energy ) const;
+
   //! Return the crosss section at a given energy
   double getCrossSection( const double energy ) const;
 
