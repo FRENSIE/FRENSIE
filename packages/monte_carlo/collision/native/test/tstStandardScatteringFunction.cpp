@@ -25,8 +25,6 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_InverseAngstromUnit.hpp"
 #include "Utility_InverseCentimeterUnit.hpp"
-#include "Utility_InverseAtomicMomentumUnit.hpp"
-#include "Utility_InverseMeCMomentumUnit.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//

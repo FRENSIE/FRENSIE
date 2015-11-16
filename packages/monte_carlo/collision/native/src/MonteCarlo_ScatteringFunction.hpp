@@ -9,9 +9,11 @@
 #ifndef MONTE_CARLO_SCATTERING_FUNCTION_HPP
 #define MONTE_CARLO_SCATTERING_FUNCTION_HPP
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+
 // FRENSIE Includes
 #include "Utility_InverseCentimeterUnit.hpp"
-#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -32,6 +34,9 @@ public:
   virtual ~ScatteringFunction()
   { /* ... */ }
 
+  //! Evaluate the scattering function
+  virtual double evaluate( const ArgumentQuantity argument ) const = 0;
+
   //! Return the max scattering function value
   virtual double getMaxValue() const = 0;
 
@@ -43,9 +48,6 @@ public:
   
   //! Return the upper bound of the argument
   virtual ArgumentQuantity getUpperBoundOfArgument() const = 0;
-
-  //! Evaluate the scattering function
-  virtual double evaluate( const ArgumentQuantity argument ) const = 0;
 };
 
 } // end MonteCarlo namespace

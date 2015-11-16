@@ -9,10 +9,12 @@
 #ifndef MONTE_CARLO_COMPTON_PROFILE_HPP
 #define MONTE_CARLO_COMPTON_PROFILE_HPP
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+
 // FRENSIE Includes
 #include "Utility_MeCMomentumUnit.hpp"
 #include "Utility_InverseMeCMomentumUnit.hpp"
-#include "Utility_QuantityTraits.hpp"
 
 namespace MonteCarlo{
 
