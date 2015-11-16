@@ -34,8 +34,8 @@ public:
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
 	 const double temperature,
-	 const Teuchos::ArrayView<const double>& yield_energy_grid,
-	 const Teuchos::ArrayView<const double>& yield,
+	 Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array,
+	 std::shared_ptr<Utility::OneDDistribution>& mtp_yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
 	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 	 photon_production_distribution,
@@ -53,11 +53,8 @@ public:
 
 private:
 
-  // The photon production yield energy grid
-  Teuchos::Array<double> d_yield_energy_grid;
-
-  // The photon production yield
-  Teuchos::Array<double> d_yield;
+  // The photon production yield distribution
+	std::shared_ptr<Utility::OneDDistribution> d_mtp_yield,
 
   // The base neutron absorption reaction
   Teuchos::RCP<NuclearReaction> d_base_reaction;
@@ -66,7 +63,7 @@ private:
 // Return the threshold energy
 inline double DecoupledYieldBasedPhotonProductionReaction::getThresholdEnergy() const
 {
-  return d_yield_energy_grid[0];
+  return d_mtp_yield->getLowerBoundOfIndepVar();
 }
 
 } // end MonteCarlo namespace

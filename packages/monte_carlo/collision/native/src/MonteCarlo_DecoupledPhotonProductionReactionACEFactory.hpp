@@ -78,15 +78,23 @@ protected:
   boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
   boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
   boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map  );                     
-                       
+
+  // Construct a map of photon MT numbers to yield distributions
+  void constructMTPYieldDistributions(
+	  const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
+	  const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map );
+
+  // Construct a map of base reaction types to yield distribution arrays
+  void constructMTYieldArrays(
+    const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
+    const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map );
+                                                                             
 private:
 
   // Initialize the yield based photon production reactions
   void initializeYieldBasedPhotonProductionReactions( 
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
 	     const double temperature,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
-	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_values_map,
 	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
 
@@ -99,9 +107,18 @@ private:
 	     const Teuchos::ArrayRCP<const double>& energy_grid,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
 
-  // A map of the yield based photon production reactions
+  // A map of the photon production reactions
   boost::unordered_map<unsigned,Teuchos::RCP<DecoupledPhotonProductionReaction> >
   d_photon_production_reactions;
+  
+  // A map of the nuclear reaction type to associated array of TabularDistributions
+  boost::unordered_map<NuclearReactionType,Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > >
+  d_mt_yield_distributions;
+  
+  // A map of photon production reaction MT numbers to shared pointers of 
+  //   Tabular distributions
+  boost::unordered_map<unsigned,std::shared_ptr<Utility::OneDDistribution> >
+  d_mtp_yield_distributions_map;
   
   // Total reaction 
   Teuchos::RCP<NuclearReaction> d_total_reaction;
