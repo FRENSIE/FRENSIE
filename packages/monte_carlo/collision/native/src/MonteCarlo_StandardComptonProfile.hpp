@@ -36,7 +36,7 @@ private:
 public:
 
   //! Constructor
-  StandardComptonProfile( const SmartPointer<Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile );
+  StandardComptonProfile( const SmartPointer<const Utility::UnitAwareTabularOneDDistribution<StoredMomentumUnit,StoredInverseMomentumUnit> >& raw_compton_profile );
 
   //! Destructor
   ~StandardComptonProfile()
