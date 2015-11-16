@@ -22,7 +22,7 @@ class ScatteringFunction
 public:
 
   //! The scattering function independent quantity type
-  typedef boost::units::quantity<Utility::InverseCentimeter> IndepQuantity;
+  typedef boost::units::quantity<Utility::Units::InverseCentimeter> ArgumentQuantity;
 
   //! Default constructor
   ScatteringFunction()
@@ -33,13 +33,19 @@ public:
   { /* ... */ }
 
   //! Return the max scattering function value
-  virtual double getMaxValue() = 0;
+  virtual double getMaxValue() const = 0;
 
   //! Return the min scattering function value
-  virtual double getMinValue() = 0;
+  virtual double getMinValue() const = 0;
+
+  //! Return the lower bound of the argument
+  virtual ArgumentQuantity getLowerBoundOfArgument() const = 0;
+  
+  //! Return the upper bound of the argument
+  virtual ArgumentQuantity getUpperBoundOfArgument() const = 0;
 
   //! Evaluate the scattering function
-  virtual double evaluate( const IndepQuantity argument ) = 0;
+  virtual double evaluate( const ArgumentQuantity argument ) const = 0;
 };
 
 } // end MonteCarlo namespace

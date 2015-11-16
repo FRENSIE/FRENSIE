@@ -136,8 +136,8 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  // Create the raw Compton profile
   {
-    // Create the raw Compton profile
     Teuchos::Array<double> momentums( 2 ), profile_vals( 2 );
     momentums[0] = 0.0;
     momentums[1] = Utility::PhysicalConstants::inverse_fine_structure_constant;

@@ -27,7 +27,7 @@ class StandardScatteringFunction : public ScatteringFunction
 private:
 
   //! The stored scattering function independent quantity type
-  typedef typename Utility::UnitAwareOneDDistribution<StoredArgUnit,void>::IndepQuantity StoredIndepQuantity;
+  typedef typename Utility::UnitAwareOneDDistribution<StoredArgUnit,void>::IndepQuantity StoredArgumentQuantity;
   
 public:
 
@@ -39,13 +39,19 @@ public:
   { /* ... */ }
 
   //! Return the max scattering function value
-  double getMaxValue();
+  double getMaxValue() const;
 
   //! Return the min scattering function value
-  double getMinValue();
+  double getMinValue() const;
+
+  //! Return the lower bound of the argument
+  ArgumentQuantity getLowerBoundOfArgument() const;
+  
+  //! Return the upper bound of the argument
+  ArgumentQuantity getUpperBoundOfArgument() const;
 
   //! Evaluate the scattering function
-  double evaluate( const IndepQuantity argument );
+  double evaluate( const ArgumentQuantity argument ) const;
 
 private:
 
