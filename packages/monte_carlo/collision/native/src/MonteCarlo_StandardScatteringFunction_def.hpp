@@ -23,28 +23,48 @@ StandardScatteringFunction<StoredArgUnit,SmartPointer>::StandardScatteringFuncti
 
 // Return the max scattering function value
 template<typename StoredArgUnit, template<typename> class SmartPointer>
-double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMaxValue()
+double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMaxValue() const
 {
-  return d_raw_scattering_function.evaluate( 
-			 d_raw_scattering_function.getUpperBoundOfIndepVar() );
+  return d_raw_scattering_function->evaluate( 
+			d_raw_scattering_function->getUpperBoundOfIndepVar() );
 }
 
 // Return the min scattering function value
 template<typename StoredArgUnit, template<typename> class SmartPointer>
-double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMinValue()
+double StandardScatteringFunction<StoredArgUnit,SmartPointer>::getMinValue() const
 {
-  return d_raw_scattering_function.evaluate(
-			 d_raw_scattering_function.getLowerBoundOfIndepVar() );
+  return d_raw_scattering_function->evaluate(
+			d_raw_scattering_function->getLowerBoundOfIndepVar() );
+}
+
+// Return the lower bound of the argument
+template<typename StoredArgUnit, template<typename> class SmartPointer>
+ScatteringFunction::ArgumentQuantity StandardScatteringFunction<StoredArgUnit,SmartPointer>::getLowerBoundOfArgument() const
+{
+  return ArgumentQuantity( 
+			d_raw_scattering_function->getLowerBoundOfIndepVar() );
+}
+
+// Return the upper bound of the argument
+template<typename StoredArgUnit, template<typename> class SmartPointer>
+ScatteringFunction::ArgumentQuantity StandardScatteringFunction<StoredArgUnit,SmartPointer>::getUpperBoundOfArgument() const
+{
+  return ArgumentQuantity(
+			d_raw_scattering_function->getUpperBoundOfIndepVar() );
 }
 
 // Evaluate the scattering function
 template<typename StoredArgUnit, template<typename> class SmartPointer>
-double StandardScatteringFunction<StoredArgUnit,SmartPointer>::evaluateScatteringFunction( const ScatteringFunction::IndepQuantity argument )
+double StandardScatteringFunction<StoredArgUnit,SmartPointer>::evaluate( 
+                    const ScatteringFunction::ArgumentQuantity argument ) const
 {
   // Convert the input argument to the stored argument
-  StoredIndepQuantity stored_argument( argument );
+  StoredArgumentQuantity stored_argument( argument );
 
-  return d_raw_scattering_function.evaluate( stored_argument );
+  if( stored_argument <= d_raw_scattering_function->getUpperBoundOfIndepVar() )
+    return d_raw_scattering_function->evaluate( stored_argument );
+  else
+    return this->getMaxValue();
 }
 
 } // end MonteCarlo namespace
