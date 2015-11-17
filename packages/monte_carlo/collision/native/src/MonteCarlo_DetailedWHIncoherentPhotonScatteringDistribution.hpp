@@ -33,10 +33,10 @@ public:
 
   //! Constructor
   DetailedWHIncoherentPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
-      const double kahn_sampling_cutoff_energy = 3.0 );
+	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
+	  const Teuchos::Array<double>& subshell_occupancies,
+	  const Teuchos::Array<SubshellType>& subshell_order,
+	  const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
   ~DetailedWHIncoherentPhotonScatteringDistribution()
