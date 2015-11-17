@@ -14,8 +14,8 @@ namespace MonteCarlo{
 
 // Constructor  
 DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHybridIncoherentPhotonScatteringDistribution( 
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::RCP<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>& 
+      const std::shared_ptr<const ScatteringFunction>& scattering_function,
+      const std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>& 
       doppler_broadened_energy_dist,
       const double kahn_sampling_cutoff_energy )
   : WHIncoherentPhotonScatteringDistribution( scattering_function,
