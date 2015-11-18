@@ -21,7 +21,7 @@ DecoupledPhotonProductionReaction::DecoupledPhotonProductionReaction(
 		        const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 			      photon_production_distribution,
 			      const Teuchos::RCP<NuclearReaction>& total_reaction,
-   Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
+            const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
   : d_base_reaction_type( base_reaction_type ),
     d_photon_production_id( photon_production_id ),
     d_temperature( temperature ),
@@ -62,6 +62,27 @@ double DecoupledPhotonProductionReaction::getTotalCrossSection(
   return d_total_neutron_reaction->getCrossSection( energy );
 } 
 
+// Return the total yield for this photon production reaction
+double DecoupledPhotonProductionReaction::getTotalYield(
+                                                   const double energy ) const
+{
+  if ( d_total_mt_yield_array.size() == 0 )
+  {
+    return 1.0;
+  }
+  else
+  {
+    double yield = 0.0;
+    
+    for ( int i = 0; i < d_total_mt_yield_array.size(); ++i )
+    {
+      yield += d_total_mt_yield_array[i]->evaluate( energy );
+    }
+    
+    return yield;
+  }
+}
+
 // Simulate the reaction
 void DecoupledPhotonProductionReaction::react( const NeutronState& neutron, 
 				      ParticleBank& bank ) const
@@ -70,7 +91,7 @@ void DecoupledPhotonProductionReaction::react( const NeutronState& neutron,
 			   new PhotonState( neutron, true, false ) );
 
 	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)		   
-	new_photon->setWeight( neutron.getWeight()*(this->getBaseReactionCrossSection( neutron.getEnergy() ))/this->getTotalCrossSection( neutron.getEnergy() ) );
+	new_photon->setWeight( neutron.getWeight()*(this->getBaseReactionCrossSection( neutron.getEnergy() )*this->getTotalYield( neutron.getEnergy() ))/this->getTotalCrossSection( neutron.getEnergy() ) );
 
   d_photon_production_distribution->scatterParticle( neutron, *new_photon,
 					this->getTemperature() );

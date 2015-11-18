@@ -56,7 +56,8 @@ public:
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >& 
 	  photon_production_distribution,
-	  const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction )
+	  const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction,
+	  const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
     : MonteCarlo::DecoupledCrossSectionBasedPhotonProductionReaction( base_reaction_type,
 			       photon_production_id,
 			       temperature,
@@ -64,7 +65,8 @@ public:
 			       incoming_energy_grid,
 			       cross_section,
 			       photon_production_distribution,
-			       total_reaction )
+			       total_reaction,
+			       total_mt_yield_array )
   { /* ... */ }
 
   ~TestDecoupledCrossSectionBasedPhotonProductionReaction()
@@ -140,7 +142,8 @@ void initializeDecoupledCrossSectionBasedPhotonProductionReaction(Teuchos::RCP<M
 				       energy_grid_rcp,
 				       xs_energy_values_rcp,
 				       photon_production_distribution,
-				       total_reaction ) );
+				       total_reaction,
+				       Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >() ) );
 }
 
 //---------------------------------------------------------------------------//

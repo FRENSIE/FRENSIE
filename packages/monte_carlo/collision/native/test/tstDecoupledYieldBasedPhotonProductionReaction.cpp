@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -41,35 +42,7 @@ Teuchos::RCP<MonteCarlo::NuclearReaction> base_reaction;
 
 Teuchos::RCP<MonteCarlo::NuclearReaction> total_reaction;
 
-//---------------------------------------------------------------------------//
-// Testing Structs.
-//---------------------------------------------------------------------------//
-class TestDecoupledYieldBasedPhotonProductionReaction : public MonteCarlo::DecoupledYieldBasedPhotonProductionReaction
-{
-public:
-  TestDecoupledYieldBasedPhotonProductionReaction(  
-	  const MonteCarlo::NuclearReactionType base_reaction_type,
-	  const unsigned photon_production_id,
-	  const double temperature,
-	  const Teuchos::ArrayView<const double>& yield_energy_grid,
-	  const Teuchos::ArrayView<const double>& yield,
-	  const Teuchos::RCP<MonteCarlo::NuclearReaction>& base_reaction,
-	  const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >& 
-	  photon_production_distribution,
-	  const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction )
-    : MonteCarlo::DecoupledYieldBasedPhotonProductionReaction( base_reaction_type,
-			       photon_production_id,
-			       temperature,
-			       yield_energy_grid,
-			       yield,
-			       base_reaction,
-			       photon_production_distribution,
-			       total_reaction )
-  { /* ... */ }
-
-  ~TestDecoupledYieldBasedPhotonProductionReaction()
-  { /* ... */ }
-};
+Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > d_total_mt_yield_array;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -133,14 +106,21 @@ void initializeDecoupledYieldBasedPhotonProductionReaction(Teuchos::RCP<MonteCar
                                               
   Teuchos::ArrayView<double> yield_energy_grid_av( yield_energy_grid );
   Teuchos::ArrayView<double> yield_energy_values_av( yield_energy_values );
+  
+  std::shared_ptr<Utility::OneDDistribution> d_mtp_yield( 
+        new Utility::TabularDistribution<Utility::LinLin>( 
+                              yield_energy_grid,
+                              yield_energy_values ) );
+                              
+  d_total_mt_yield_array.push_back( d_mtp_yield );
 
   // Create the nuclear reaction
-  nuclear_reaction.reset( new TestDecoupledYieldBasedPhotonProductionReaction( 
+  nuclear_reaction.reset( new MonteCarlo::DecoupledYieldBasedPhotonProductionReaction( 
 			         MonteCarlo::N__GAMMA_REACTION,
 			         reaction_type,
 				       ace_file_handler->getTableTemperature(),
-				       yield_energy_grid_av,
-				       yield_energy_values_av,
+				       d_total_mt_yield_array,
+				       d_mtp_yield,
 				       base_reaction,
 				       photon_production_distribution,
 				       total_reaction ) );

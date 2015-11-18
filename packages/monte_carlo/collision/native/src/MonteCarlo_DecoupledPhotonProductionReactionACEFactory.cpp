@@ -106,6 +106,7 @@ DecoupledPhotonProductionReactionACEFactory::DecoupledPhotonProductionReactionAC
   // Create the yield based photon production reactions
   initializeYieldBasedPhotonProductionReactions( base_reaction_type_map,
 	                                               temperature,
+	                                               yield_energy_map,
 	                                               base_reaction_map,
 	                                               photon_production_dist_factory );
 	     
@@ -310,6 +311,7 @@ void DecoupledPhotonProductionReactionACEFactory::constructMTYieldArrays(
 void DecoupledPhotonProductionReactionACEFactory::initializeYieldBasedPhotonProductionReactions( 
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
 	     const double temperature,
+	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
 	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory )	
 {
@@ -383,7 +385,8 @@ void DecoupledPhotonProductionReactionACEFactory::initializeCrossSectionBasedPho
 		  energy_grid,
 		  xs_based_map.find(reaction_type)->second,
 		  photon_production_distribution,
-		  d_total_reaction ) ); 
+		  d_total_reaction,
+		  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >() ) ); 
 		  
 	  ++iter_reaction;  
   }

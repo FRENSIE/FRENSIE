@@ -39,7 +39,8 @@ public:
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
 		   photon_production_distribution,
-		   const Teuchos::RCP<NuclearReaction>& total_reaction );
+		   const Teuchos::RCP<NuclearReaction>& total_reaction,
+		   const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
 
   //! Return the threshold energy
   double getThresholdEnergy() const;

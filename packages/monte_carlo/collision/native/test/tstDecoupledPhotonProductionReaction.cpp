@@ -40,6 +40,8 @@ Teuchos::RCP<MonteCarlo::DecoupledPhotonProductionReaction> nuclear_reaction;
 
 Teuchos::RCP<MonteCarlo::NuclearReaction> total_reaction;
 
+Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > d_total_mt_yield_array;
+
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
@@ -52,12 +54,14 @@ public:
       const double temperature,
       const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >&
         photon_production_distribution,
-      const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction )
+      const Teuchos::RCP<MonteCarlo::NuclearReaction>& total_reaction,
+      const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array )
     : MonteCarlo::DecoupledPhotonProductionReaction( base_reaction_type,
 			       photon_production_id,
 			       temperature,
 			       photon_production_distribution,
-			       total_reaction )
+			       total_reaction,
+			       total_mt_yield_array )
   { /* ... */ }
 
   ~TestDecoupledPhotonProductionReaction()
@@ -115,6 +119,22 @@ void initializeDecoupledPhotonProductionReaction(Teuchos::RCP<MonteCarlo::Decoup
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( xss_data_extractor->extractTotalCrossSection() );
 
+  // Construct the yield energy grid and yield data
+  std::vector<double> yield_energy_grid = { 1.00000000000E-11, 
+                                            2.00000000000E+01 };
+  std::vector<double> yield_energy_values = { 2.00000000000E+00,
+                                              2.00000000000E+00 };
+                                              
+  Teuchos::ArrayView<double> yield_energy_grid_av( yield_energy_grid );
+  Teuchos::ArrayView<double> yield_energy_values_av( yield_energy_values );
+  
+  std::shared_ptr<Utility::OneDDistribution> d_mtp_yield( 
+        new Utility::TabularDistribution<Utility::LinLin>( 
+                              yield_energy_grid,
+                              yield_energy_values ) );
+                              
+  d_total_mt_yield_array.push_back( d_mtp_yield );
+
   total_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction( 
                MonteCarlo::N__TOTAL_REACTION,
 			         ace_file_handler->getTableTemperature(),
@@ -128,7 +148,8 @@ void initializeDecoupledPhotonProductionReaction(Teuchos::RCP<MonteCarlo::Decoup
 			         reaction_type,
 				       ace_file_handler->getTableTemperature(),
 				       photon_production_distribution,
-				       total_reaction ) );
+				       total_reaction,
+				       d_total_mt_yield_array ) );
 }
 
 //---------------------------------------------------------------------------//
