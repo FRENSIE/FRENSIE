@@ -99,6 +99,7 @@ private:
   void initializeYieldBasedPhotonProductionReactions( 
        const boost::unordered_map<unsigned,NuclearReactionType>& base_reaction_type_map,
 	     const double temperature,
+	     const boost::unordered_map<unsigned,Teuchos::ArrayView<const double> >& yield_energy_map,
 	     const boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >& base_reaction_map,
 	     PhotonProductionNuclearScatteringDistributionACEFactory photon_production_dist_factory );
 

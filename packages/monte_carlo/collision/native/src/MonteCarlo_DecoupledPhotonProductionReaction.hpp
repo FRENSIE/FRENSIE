@@ -39,7 +39,7 @@ public:
    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
    photon_production_distribution,
    const Teuchos::RCP<NuclearReaction>& total_reaction,
-   Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
+   const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array );
 
   //! Destructor
   virtual ~DecoupledPhotonProductionReaction()
@@ -59,6 +59,9 @@ public:
   
   //! Return the total neutron cross section
   double getTotalCrossSection( const double energy ) const;
+  
+  //! Return the total yield
+  double getTotalYield( const double energy ) const;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
