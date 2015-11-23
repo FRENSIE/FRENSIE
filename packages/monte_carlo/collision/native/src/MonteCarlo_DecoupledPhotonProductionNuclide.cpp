@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <sstream>
 
+#include <iomanip>
+
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledPhotonProductionNuclide.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
@@ -76,11 +78,11 @@ void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron,
   // Sample photon production stochastically
   double total_cross_section = getTotalPhotonProductionCrossSection( 
                                                     neutron_copy.getEnergy() );
-  
+
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
-    
+
   samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
@@ -95,7 +97,7 @@ void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutro
   
   // Sample photon production stochastically
   double total_cross_section = getTotalPhotonProductionCrossSection( 
-                                                    neutron_copy.getEnergy() );
+                                                   neutron_copy.getEnergy() );
   
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
@@ -118,7 +120,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
   nuclear_reaction_end = d_photon_production_reactions.end();
   
   while( nuclear_reaction != nuclear_reaction_end )
-  {
+  { 
     partial_cross_section +=
       nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
       
@@ -127,7 +129,7 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
       
     ++nuclear_reaction;
   }
-  
+    
   // Make sure a reaction was selected
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
