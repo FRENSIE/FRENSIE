@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_LegendrePolynomial.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
@@ -168,7 +168,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
 
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
 
   // Calucuate the tabular and Rutherford component of the Legendre moment
   Utility::long_float tabular_moment,rutherford_moment;
@@ -201,7 +201,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
     {
       moment_k = 0.0;
       abs_error = 0.0;
-      quadrature_kernel.integrateAdaptively<61>(
+      quadrature_set.integrateAdaptively<61>(
 					distribution_wrapper,
 					*grid_point_minus_one,
 					*grid_point,
@@ -243,7 +243,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
 
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
 
   // Calucuate the tabular and Rutherford component of the Legendre moment
   Utility::long_float tabular_moment,rutherford_moment;
@@ -276,7 +276,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
     {
       moment_k = 0.0;
       abs_error = 0.0;
-      quadrature_kernel.integrateAdaptively<61>(
+      quadrature_set.integrateAdaptively<61>(
 					distribution_wrapper,
 					*grid_point_minus_one,
 					*grid_point,
@@ -354,7 +354,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   }
   else // Numerically integrate the moment
   {
-    Utility::GaussKronrodQuadratureKernel quadrature_kernel( 1e-13 );
+    Utility::GaussKronrodQuadratureSet quadrature_set( 1e-13 );
 
     double abs_error, moment_n;
 
@@ -378,7 +378,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
                          energy,
                          n );
 
-      quadrature_kernel.integrateAdaptively<61>(
+      quadrature_set.integrateAdaptively<61>(
 					wrapper,
                     0.0,
 					s_rutherford_cutoff_angle,

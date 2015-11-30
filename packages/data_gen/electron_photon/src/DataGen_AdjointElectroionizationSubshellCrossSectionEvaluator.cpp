@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
@@ -93,16 +93,16 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
 
     double abs_error;
     
-    Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+    Utility::GaussKronrodQuadratureSet quadrature_set( precision );
 
-    quadrature_kernel.integrateAdaptively<15>(
+    quadrature_set.integrateAdaptively<15>(
 					diff_adjoint_subshell_wrapper,
 					d_knock_on_distribution->getMinEnergy(),
 					d_knock_on_distribution->getMaxEnergy(),
 					cross_section,
 					abs_error );
 /*
-    quadrature_kernel.integrateAdaptively<15>(
+    quadrature_set.integrateAdaptively<15>(
 					diff_adjoint_subshell_wrapper,
 					d_knock_on_distribution.front().first,
 					d_knock_on_distribution.back().first,

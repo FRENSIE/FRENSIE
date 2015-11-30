@@ -298,20 +298,20 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 }
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD:packages/utility/core/test/tstGaussKronrodQuadratureKernel.cpp
+<<<<<<< HEAD:packages/utility/core/test/tstGaussKronrodQuadratureSet.cpp
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
                    integrateGaussLegendre )
 {
   boost::function<double (double x)> function_wrapper = f_x;
 
-  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 3, 3 );
+  Utility::GaussKronrodQuadratureSet set( 1e-12, 0.0, 3, 3 );
   
   Teuchos::Array<double> points( 3 ), weights( 3 );
 
   double result;
 
-  kernel.integrateGaussLegendre( function_wrapper, 1.0, 3.0, points, weights, result );
+  set.integrateGaussLegendre( function_wrapper, 1.0, 3.0, points, weights, result );
 
 
   TEST_FLOATING_EQUALITY( 1.2254, points[0], 1e-5 );
@@ -323,7 +323,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 }
 
 //---------------------------------------------------------------------------//
-// end tstGaussKronrodQuadratureKernel.cpp
+// end tstGaussKronrodQuadratureSet.cpp
 =======
 // end tstGaussKronrodQuadratureSet.cpp
 >>>>>>> abe0e3ece440537cb1540064cf8221bcf4835cf2:packages/utility/core/test/tstGaussKronrodQuadratureSet.cpp

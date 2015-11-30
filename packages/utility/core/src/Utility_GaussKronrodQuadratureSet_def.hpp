@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
-#define UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_SET_DEF_HPP
+#define UTILITY_GAUSS_KRONROD_QUADRATURE_SET_DEF_HPP
 
 // GSL Includes
 #include <gsl/gsl_errno.h>
@@ -510,7 +510,7 @@ void GaussKronrodQuadratureSet::integrateAdaptivelyWynnEpsilon(
  * GNU Scientific Library documentation.
  */ 
 template< typename Functor>
-void GaussKronrodQuadratureKernel::integrateGaussLegendre(
+void GaussKronrodQuadratureSet::integrateGaussLegendre(
 					Functor& integrand, 
 					double lower_limit, 
 					double upper_limit,
@@ -533,7 +533,7 @@ void GaussKronrodQuadratureKernel::integrateGaussLegendre(
     // Create the GSL function
     gsl_function gsl_function_wrapper;
     gsl_function_wrapper.function = 
-      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+      &GaussKronrodQuadratureSet::functorWrapper<Functor>;
     gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
   
     double point_i, weight_i;
@@ -571,7 +571,7 @@ void GaussKronrodQuadratureKernel::integrateGaussLegendre(
 
 } // end Utility namespace
 
-#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_SET_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodQuadratureSet_def.hpp

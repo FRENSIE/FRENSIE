@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+//#include "Utility_GaussKronrodQuadratureSet.hpp"
 
 namespace MonteCarlo{
 

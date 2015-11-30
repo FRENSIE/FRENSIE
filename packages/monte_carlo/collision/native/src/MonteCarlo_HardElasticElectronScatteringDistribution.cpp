@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+//#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_DirectionHelpers.hpp"
