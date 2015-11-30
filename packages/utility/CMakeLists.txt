@@ -1,4 +1,7 @@
 # Set up the utility package directory hierarchy
+ADD_SUBDIRECTORY(units)
+INCLUDE_DIRECTORIES(units/src)
+
 ADD_SUBDIRECTORY(core)
 INCLUDE_DIRECTORIES(core/src)
 

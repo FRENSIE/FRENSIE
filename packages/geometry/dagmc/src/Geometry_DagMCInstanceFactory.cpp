@@ -20,7 +20,8 @@ namespace Geometry{
 
 // Initialize DagMC
 void DagMCInstanceFactory::initializeDagMC( 
-				       const Teuchos::ParameterList& geom_rep )
+				        const Teuchos::ParameterList& geom_rep,
+					std::ostream& os_warn )
 {
   // Validate the geometry representation
   DagMCInstanceFactory::validateGeometryRep( geom_rep );
@@ -158,14 +159,23 @@ void DagMCInstanceFactory::initializeDagMC(
   Geometry::initializeDagMC( cad_file_name, properties, facet_tol );
 
   // Print the unused parameters
-  geom_rep.unused( std::cerr );
+  geom_rep.unused( os_warn );
 }
 
 // Validate a geometry representation
 void DagMCInstanceFactory::validateGeometryRep( 
 				       const Teuchos::ParameterList& geom_rep )
 {
-  testPrecondition( geom_rep.get<std::string>( "Handler" ) == "DagMC" );
+  TEST_FOR_EXCEPTION( !geom_rep.isParameter( "Handler" ),
+		      InvalidGeometryRepresentation,
+		      "Error: The geometry handler type has not been "
+		      "specified!" );
+
+  TEST_FOR_EXCEPTION( geom_rep.get<std::string>( "Handler" ) != "DagMC",
+		      InvalidGeometryRepresentation,
+		      "Error: The geometry handler type is "
+		      << geom_rep.get<std::string>( "Handler" ) <<
+		      " and not DagMC!" );
   
   TEST_FOR_EXCEPTION( !geom_rep.isParameter( "CAD File" ),
 		      InvalidGeometryRepresentation,

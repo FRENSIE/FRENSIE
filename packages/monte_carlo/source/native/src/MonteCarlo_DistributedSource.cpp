@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <limits>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_DistributedSource.hpp"
@@ -127,8 +128,9 @@ void DistributedSource::sampleParticleState( ParticleBank& bank,
 					     const unsigned long long history )
 {  
   // Initialize the particle
-  ParticleState::pointerType particle = 
-    ParticleStateFactory::createState( d_particle_type, history );
+  std::shared_ptr<ParticleState> particle;
+  
+  ParticleStateFactory::createState( particle, d_particle_type, history );
     
   // Initialize the particle weight
   particle->setWeight( 1.0 );
@@ -148,7 +150,7 @@ void DistributedSource::sampleParticleState( ParticleBank& bank,
   sampleParticleTime( *particle );
 
   // Add the particle to the bank
-  bank.push( particle );
+  bank.push( *particle );
 }
 
 // Get the sampling efficiency from the source distribution

@@ -152,22 +152,22 @@ ADD_EXECUTABLE(tstLegendrePolynomial
 TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
 ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
 
-ADD_EXECUTABLE(tstGaussKronrodQuadratureKernel 
-  tstGaussKronrodQuadratureKernel.cpp
+ADD_EXECUTABLE(tstGaussKronrodQuadratureSet 
+  tstGaussKronrodQuadratureSet.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureKernel utility_core)
-ADD_TEST(GaussKronrodQuadratureKernel_test tstGaussKronrodQuadratureKernel)
+TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureSet utility_core)
+ADD_TEST(GaussKronrodQuadratureSet_test tstGaussKronrodQuadratureSet)
 
-ADD_EXECUTABLE(tstGaussRadauQuadratureKernel 
-  tstGaussRadauQuadratureKernel.cpp
+ADD_EXECUTABLE(tstGaussRadauQuadratureSet 
+  tstGaussRadauQuadratureSet.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussRadauQuadratureKernel utility_core)
-ADD_TEST(GaussRadauQuadratureKernel_test tstGaussRadauQuadratureKernel)
+TARGET_LINK_LIBRARIES(tstGaussRadauQuadratureSet utility_core)
+ADD_TEST(GaussRadauQuadratureSet_test tstGaussRadauQuadratureSet)
 
-ADD_EXECUTABLE(tstGaussLegendreQuadratureKernel 
-  tstGaussLegendreQuadratureKernel.cpp )
-TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureKernel utility_core)
-ADD_TEST(GaussLegendreQuadratureKernel_test tstGaussLegendreQuadratureKernel)
+ADD_EXECUTABLE(tstGaussLegendreQuadratureSet 
+  tstGaussLegendreQuadratureSet.cpp )
+TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureSet utility_core)
+ADD_TEST(GaussLegendreQuadratureSet_test tstGaussLegendreQuadratureSet)
 
 ADD_EXECUTABLE(tstSloanRadauQuadrature 
   tstSloanRadauQuadrature.cpp)
@@ -195,9 +195,9 @@ ADD_EXECUTABLE(tstArrayString tstArrayString.cpp)
 TARGET_LINK_LIBRARIES(tstArrayString utility_core)
 ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
 
-ADD_EXECUTABLE(tstUnitConversionPolicy 
-  tstUnitConversionPolicy.cpp
+ADD_EXECUTABLE(tstMeasurement 
+  tstMeasurement.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstUnitConversionPolicy utility_core)
-ADD_TEST(UnitConversionPolicy_test tstUnitConversionPolicy)
+TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
+ADD_TEST(Measurement_test tstMeasurement)
 

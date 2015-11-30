@@ -301,7 +301,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Test 3
   TEST_FLOATING_EQUALITY( screening_factor, 4.1488769980623900E-14, 1e-12 );
-
 }
 
 //---------------------------------------------------------------------------//

@@ -9,6 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/shared_ptr.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
@@ -86,6 +91,112 @@ TEUCHOS_UNIT_TEST( ElectronState, advance )
                           1.7320508075688772 / ( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
                           ((1 + rest_mass) * (1 + rest_mass)))), 
                           1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron state can be cloned
+TEUCHOS_UNIT_TEST( ElectronState, clone )
+{
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
+				       new MonteCarlo::ElectronState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+							   particle->clone() );
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::ELECTRON );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron state can be cloned with a new history number
+TEUCHOS_UNIT_TEST( ElectronState, clone_new_hist )
+{
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
+				       new MonteCarlo::ElectronState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+						    particle->clone( 10ull ) );
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::ELECTRON );
+}
+
+//---------------------------------------------------------------------------//
+// Archive an electron state
+TEUCHOS_UNIT_TEST( ElectronState, archive )
+{
+  // Create and archive an electron
+  {
+    MonteCarlo::ElectronState particle( 1ull );
+    particle.setPosition( 1.0, 1.0, 1.0 );
+    particle.setDirection( 0.0, 0.0, 1.0 );
+    particle.setEnergy( 1.0 );
+    particle.setTime( 0.5 );
+    particle.incrementCollisionNumber();
+    particle.setWeight( 0.25 );
+
+    std::ofstream ofs( "test_electron_state_archive.xml" );
+
+    boost::archive::xml_oarchive ar(ofs);
+    ar << BOOST_SERIALIZATION_NVP( particle );
+  }
+  
+  // Load the archived particle
+  MonteCarlo::ElectronState loaded_particle;
+
+  std::ifstream ifs( "test_electron_state_archive.xml" );
+
+  boost::archive::xml_iarchive ar(ifs);
+  ar >> boost::serialization::make_nvp( "particle", loaded_particle );
+
+  TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( loaded_particle.getParticleType(), 
+		       MonteCarlo::ELECTRON );
 }
 
 //---------------------------------------------------------------------------//
@@ -181,37 +292,6 @@ TEUCHOS_UNIT_TEST( ElectronState, copy_constructor )
 		 particle_gen_b.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
-}
-
-//---------------------------------------------------------------------------//
-// Create new particles
-TEUCHOS_UNIT_TEST( ElectronState, core_constructor )
-{
-  MonteCarlo::ParticleStateCore core( 1ull, 
-				  MonteCarlo::ELECTRON, 
-				  1.0, 1.0, 1.0,
-				  0.0, 1.0, 0.0,
-				  2.0,
-				  0.5,
-				  1u,
-				  2u,
-				  0.25 );
-
-  MonteCarlo::ElectronState particle( core );
-
-  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getYDirection(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getEnergy(), 2.0 );
-  TEST_EQUALITY_CONST( particle.getTime(), 0.5 );
-  TEST_EQUALITY_CONST( particle.getCollisionNumber(), 1u );
-  TEST_EQUALITY_CONST( particle.getGenerationNumber(), 2u );
-  TEST_EQUALITY_CONST( particle.getWeight(), 0.25 );
 }
 
 //---------------------------------------------------------------------------//

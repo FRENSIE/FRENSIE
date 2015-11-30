@@ -36,16 +36,17 @@ public:
 
   //! Constructor
   ElectroatomFactory( 
-		    const std::string& cross_sections_xml_directory,
-		    const Teuchos::ParameterList& cross_section_table_info,
-            const boost::unordered_set<std::string>& electroatom_aliases,
-	        const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+		const std::string& cross_sections_xml_directory,
+		const Teuchos::ParameterList& cross_section_table_info,
+		const boost::unordered_set<std::string>& electroatom_aliases,
+		const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		        atomic_relaxation_model_factory,
-            const unsigned hash_grid_bins,
-		    const BremsstrahlungAngularDistributionType 
+		const unsigned hash_grid_bins,
+		const BremsstrahlungAngularDistributionType 
 		        photon_distribution_function,
-		    const bool use_atomic_relaxation_data,
-            const double cutoff_angle = 1.0e-6 );
+		const bool use_atomic_relaxation_data,
+		const double cutoff_angle = 1.0e-6,
+		std::ostream* os_message = &std::cout );
 
   //! Destructor
   ~ElectroatomFactory()
@@ -93,6 +94,9 @@ private:
   // The table map
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >
   d_electroatomic_table_name_map;
+  
+  // The message output stream
+  std::ostream* d_os_message;
 };
 
 } // end MonteCarlo namespace

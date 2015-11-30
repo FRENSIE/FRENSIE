@@ -11,81 +11,122 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
-//! Discrete distribution class
-class DiscreteDistribution : public TabularOneDDistribution,
-			     public ParameterListCompatibleObject<DiscreteDistribution>
+/*! The unit-aware discrete distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit,typename DependentUnit>
+class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+				      public ParameterListCompatibleObject<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
 
-  //! Default Constructor
-  DiscreteDistribution();
+  //! This distribution type
+  typedef UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> ThisType;
 
-  //! Constructor 
-  DiscreteDistribution( const Teuchos::Array<double>& independent_values,
+  //! The independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
+  //! Default Constructor
+  UnitAwareDiscreteDistribution();
+
+  //! Basic Constructor (potentially dangerous)
+  UnitAwareDiscreteDistribution(
+			const Teuchos::Array<double>& independent_values,
 			const Teuchos::Array<double>& dependent_values,
 			const bool interpret_dependent_values_as_cdf = false );
+
+  //! CDF constructor 
+  template<typename InputIndepQuantity>
+  UnitAwareDiscreteDistribution( 
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<double>& cdf_values );
+
+  //! Constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareDiscreteDistribution( 
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
+			
   
   //! Copy constructor
-  DiscreteDistribution( const DiscreteDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareDiscreteDistribution fromUnitlessDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_distribution );
+  
   //! Assignment operator
-  DiscreteDistribution& operator=( const DiscreteDistribution& dist_instance );
+  UnitAwareDiscreteDistribution& operator=( const UnitAwareDiscreteDistribution& dist_instance );
 
   //! Destructor
-  ~DiscreteDistribution()
+  ~UnitAwareDiscreteDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the CDF
-  double evaluateCDF( const double indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample and sampled index from the distribution
-  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
 
   //! Return a random sample from the distribution in a subrange
-  double sampleInSubrange( const double max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  double sampleWithRandomNumberInSubrange( const double random_number,
-					   const double max_indep_var ) const;
+  IndepQuantity sampleWithRandomNumberInSubrange( 
+				     const double random_number,
+				     const IndepQuantity max_indep_var ) const;
   
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -100,74 +141,78 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const DiscreteDistribution& other ) const;
+  bool isEqual( const UnitAwareDiscreteDistribution& other ) const;
+
+protected:
+  
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
 
 private:
 
   // Return a random sample using the random number and record the bin index
-  double sampleImplementation( double random_number,
-			       unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleImplementation( double random_number,
+				      unsigned& sampled_bin_index ) const;
 
   // Initialize the distribution
+  void initializeDistribution(
+			  const Teuchos::Array<double>& independent_values,
+			  const Teuchos::Array<double>& dependent_values,
+			  const bool interpret_dependent_values_as_cdf );
+
+  // Initialize the distribution from a cdf
+  template<typename InputIndepQuantity>
+  void initializeDistributionFromCDF(
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<double>& cdf_values );
+
+  // Initialize the distribution
+  template<typename InputIndepQuantity,typename InputDepQuantity>
   void initializeDistribution( 
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values );
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
+
+  // Reconstruct original distribution
+  void reconstructOriginalDistribution(
+		     Teuchos::Array<IndepQuantity>& independent_quantities,
+		     Teuchos::Array<DepQuantity>& dependent_quantities ) const;
+
+  // Reconstruct original distribution w/o units
+  void reconstructOriginalUnitlessDistribution(
+			      Teuchos::Array<double>& independent_values,
+			      Teuchos::Array<double>& dependent_values ) const;
+
+  // Convert the unitless values to the correct units
+  template<typename Quantity>
+  static void convertUnitlessValues( 
+		                 const Teuchos::Array<double>& unitless_values,
+				 Teuchos::Array<Quantity>& quantities );
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareDiscreteDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
   // The distribution (first = independent value, second = CDF)
-  Teuchos::Array<Pair<double,double> > d_distribution;
+  Teuchos::Array<Pair<IndepQuantity,double> > d_distribution;
 
   // The distribution normalization constant
-  double d_norm_constant;
+  DepQuantity d_norm_constant;
 };
 
-// Return a random sample using the random number and record the bin index
-inline double DiscreteDistribution::sampleImplementation( 
-					    double random_number,
-					    unsigned& sampled_bin_index ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  
-  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binaryUpperBound<SECOND>( d_distribution.begin(),
-				      d_distribution.end(),
-				      random_number );
-
-  // Get the bin index sampled
-  sampled_bin_index = std::distance( d_distribution.begin(), sample );
-
-  return sample->first;
-}
-
-// Return a random sample from the distribution at the given CDF value in a subrange
-inline double DiscreteDistribution::sampleWithRandomNumberInSubrange( 
-					     const double random_number,
-					     const double max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_distribution.front().first );
-
-  // Scale the random number to the cdf at the max indep var
-  double scaled_random_number = 
-    random_number*this->evaluateCDF( max_indep_var );
-
-  unsigned dummy_index;
-  
-  return this->sampleImplementation( scaled_random_number, dummy_index );
-}
+/*! The discrete distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::DiscreteDistribution
+/*! \brief Type name traits partial specialization for the 
+ * Utility::DiscreteDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
@@ -180,14 +225,45 @@ public:
   {
     return "Discrete Distribution";
   }
-  static std::string concreteName( 
-				const Utility::DiscreteDistribution& instance )
+  static std::string concreteName(
+		                const Utility::DiscreteDistribution& instance )
+  {
+    return name();
+  }
+};
+
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareDiscreteDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U,typename V>
+class TypeNameTraits<Utility::UnitAwareDiscreteDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Discrete Distribution (" +
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+		  const Utility::UnitAwareDiscreteDistribution<U,V>& instance )
   {
     return name();
   }
 };
 
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_DiscreteDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_DISCRETE_DISTRIBUTION_HPP
 

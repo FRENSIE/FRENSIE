@@ -16,8 +16,6 @@
 
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
-#include "Utility_TupleMemberTraits.hpp"
-#include "Utility_ArrayTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -369,12 +367,15 @@ template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
 	 typename Array>
-double DataProcessor::calculateContinuousCDF( Array &data )
+typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
+DataProcessor::calculateContinuousCDF( Array &data,
+				       const bool normalize )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
   typedef typename ArrayTraits<Array>::value_type Tuple;
+  typedef QuantityTraits<typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType> CDFQT;
   
   typename Array::iterator data_point_1, data_point_2;
   typename Array::iterator end = data.end();
@@ -386,7 +387,7 @@ double DataProcessor::calculateContinuousCDF( Array &data )
     cdf_value;
 
   // Initialize the CDF
-  set<cdfMember>( *data_point_1, 0 );
+  set<cdfMember>( *data_point_1, CDFQT::zero() );
   
   // Calculate the CDF
   // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x2)-PDF(x1))/(x2-x1)*(x-x1)^2
@@ -404,29 +405,78 @@ double DataProcessor::calculateContinuousCDF( Array &data )
     ++data_point_2;
   }
 
+  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max =
+    get<cdfMember>( data.back() );
+    
   // Normalize the CDF and PDF
-  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max,
-    cdf_norm_value;
-  cdf_max = get<cdfMember>( data.back() );
-  
-  typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
-    pdf_norm_value;
-  
-  data_point_1 = data.begin();
-  
-  while( data_point_1 != end )
+  if( normalize )
   {
-    cdf_norm_value = get<cdfMember>( *data_point_1 )/cdf_max;
-    set<cdfMember>( *data_point_1, cdf_norm_value );
+    typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType
+      cdf_norm_value;
+    
+    typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
+      pdf_norm_value;
+    
+    data_point_1 = data.begin();
+    
+    while( data_point_1 != end )
+    {
+      cdf_norm_value = 
+	get<cdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
+      set<cdfMember>( *data_point_1, cdf_norm_value );
+      
+      pdf_norm_value = 
+	get<pdfMember>( *data_point_1 )/getRawQuantity( cdf_max );
+      set<pdfMember>( *data_point_1, pdf_norm_value );
+      
+      ++data_point_1;
+    }
+  }
+   
+  // Return the normalization constant
+  return 1.0/cdf_max;
+}
 
-    pdf_norm_value = get<pdfMember>( *data_point_1 )/cdf_max;
-    set<pdfMember>( *data_point_1, pdf_norm_value );
+
+// Create a pdf from an array of data using a first order approximation
+template<TupleMember indepMember,
+	   TupleMember pdfMember,
+	   TupleMember cdfMember,
+	   typename Array>
+void DataProcessor::calculateContinuousPDF( Array &data )
+{
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
+  typedef typename ArrayTraits<Array>::value_type Tuple;
+  
+  typename Array::iterator data_point_1, data_point_2;
+  typename Array::iterator end = data.end();
+
+  data_point_1 = data.begin();
+  data_point_2 = data.begin() + 1;
+
+  // Calculate the slope of the cdf
+  typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
+    pdf_value = (get<cdfMember>( *data_point_2 ) - 
+		 get<cdfMember>( *data_point_1 ) )/
+    (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
+
+  // Initialize the PDF
+  set<pdfMember>( *data_point_1, pdf_value );
+  
+  // Calculate the PDF (slope of cdf)
+  while( data_point_2 != end )
+  {
+    pdf_value = (get<cdfMember>( *data_point_2 ) - 
+		 get<cdfMember>( *data_point_1 ) )/
+    (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ) );
+    
+    set<pdfMember>( *data_point_2, pdf_value );
     
     ++data_point_1;
+    ++data_point_2;
   }
-  
-  // Return the normalization constant
-  return cdf_max;
 }
 
 /*! \details This function calculates a discrete CDF from an array of discrete

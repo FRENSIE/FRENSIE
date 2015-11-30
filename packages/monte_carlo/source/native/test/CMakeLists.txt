@@ -1,6 +1,5 @@
  ADD_EXECUTABLE(tstStateSource
-  tstStateSource.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstStateSource.cpp)
 TARGET_LINK_LIBRARIES(tstStateSource monte_carlo_source_native)
 ADD_TEST(StateSource_test tstStateSource)
 

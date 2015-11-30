@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Set the Nightly Integration Build Directory
+NIGHTLY_BUILD_DIR=${CMAKE_BINARY_DIR}
+
+##---------------------------------------------------------------------------##
+## Don't modify anything below this line!
+##---------------------------------------------------------------------------##
+
+# Load the user environment variables
+source $HOME/.bashrc
+
+# Load the FRENSIE variables/functions
+source ${CMAKE_CURRENT_SOURCE_DIR}/frensie.bash
+
+# Move to the build directory
+cd $NIGHTLY_BUILD_DIR
+
+# Prevent this script from having multiple instances running
+prevent_multiple_instances
+
+# Enter the process_queue
+enter_frensie_run_process_queue
+
+# Wait until all critical processes have completed (allows for script queuing)
+wait_for_frensie_critical_procs
+
+# Run a nightly build with memory checking
+ctest -D NightlyStart \
+      -D NightlyUpdate \
+      -D NightlyConfigure \
+      -D NightlyBuild \
+      -D NightlyMemCheck \
+      -D NightlySubmit \
+      -E Facemc

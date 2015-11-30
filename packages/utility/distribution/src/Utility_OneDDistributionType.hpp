@@ -14,6 +14,9 @@
 
 namespace Utility{
 
+/*! The one-dimensional distribution types
+ * \ingroup one_d_distributions
+ */
 enum OneDDistributionType{
   DELTA_DISTRIBUTION,
   DISCRETE_DISTRIBUTION,

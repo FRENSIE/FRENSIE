@@ -267,7 +267,6 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   fake_stream[2] = 0.49; // Reject the angle
   fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
   fake_stream[4] = 0.48; // Accept the angle
-
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -327,9 +326,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.65383677217787E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.612270260118, 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.65383677217787E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.612270260118, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
 
 }
 
@@ -549,9 +548,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.51612969835718E-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0592724905908 , 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
 
 }
 
@@ -588,9 +587,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.65383677217787E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 1.479601055066E-02, 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.65383677217787E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 1.479601055066E-02, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
 
 }
 
@@ -627,9 +626,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.79788089586180000E-03, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945, 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 7.79788089586180000E-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.9999999986945, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
 }
 
 //---------------------------------------------------------------------------//

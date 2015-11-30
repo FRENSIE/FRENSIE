@@ -16,7 +16,7 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -35,7 +35,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
   MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
 								  properties );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
 		      10 );

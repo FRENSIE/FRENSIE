@@ -20,6 +20,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -58,7 +59,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   TEST_ASSERT( !source.is_null() );
 
@@ -72,7 +73,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }						
@@ -89,7 +90,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   TEST_ASSERT( !source.is_null() );
 
@@ -103,7 +104,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }	
@@ -120,7 +121,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_PHOTON_MODE );
 
   TEST_ASSERT( !source.is_null() );
 
@@ -134,7 +135,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }

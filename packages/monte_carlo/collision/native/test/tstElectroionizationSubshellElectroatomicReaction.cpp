@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_ASSERT( electron.getZDirection() < 1.0 );
-  TEST_ASSERT( !bank.empty() );
+  TEST_ASSERT( !bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 

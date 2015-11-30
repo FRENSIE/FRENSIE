@@ -595,7 +595,7 @@ TEUCHOS_UNIT_TEST( Photoatom, collideSurvivalBias )
   TEST_ASSERT( !photon->isGone() );
   TEST_FLOATING_EQUALITY( photon->getWeight(), 0.9999996542347203, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 2 );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 0.9999996542347203, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getWeight(), 0.9999996542347203, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

@@ -18,6 +18,9 @@
 // FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_DataProcessingPolicy.hpp"
+#include "Utility_TupleMemberTraits.hpp"
+#include "Utility_ArrayTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 /*! \defgroup data_proc Data Processing
  * 
@@ -92,7 +95,16 @@ public:
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Array>
-  static double calculateContinuousCDF( Array &data );
+  static typename QuantityTraits<typename TupleMemberTraits<typename ArrayTraits<Array>::value_type,cdfMember>::tupleMemberType>::template GetQuantityToPowerType<-1>::type
+  calculateContinuousCDF( Array &data, 
+			  const bool normalize = true );
+
+  //! Create a pdf from an array of data using a first order, lin. approx.
+  template<TupleMember indepMember,
+	   TupleMember pdfMember,
+	   TupleMember cdfMember,
+	   typename Array>
+  static void calculateContinuousPDF( Array &data );
 
   //! Create a discrete CDF from an array of data.
   template<TupleMember pdfMember,

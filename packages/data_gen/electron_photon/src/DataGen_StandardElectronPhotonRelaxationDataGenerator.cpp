@@ -262,6 +262,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 						  half_profile.end(),
 						  full_momentum_grid,
 						  full_profile,
+						  true,
 						  true );
     
     MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),

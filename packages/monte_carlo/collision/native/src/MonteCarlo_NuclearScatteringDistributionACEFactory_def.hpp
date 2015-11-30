@@ -20,7 +20,6 @@
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
-#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
@@ -29,15 +28,20 @@
 
 namespace MonteCarlo{
 
+// Basic Constructor
+template<typename IncomingParticleType, typename OutgoingParticleType>
+NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					OutgoingParticleType>::NuclearScatteringDistributionACEFactory( 
+                                          const std::string& table_name,
+					  const double atomic_weight_ratio )
+  : d_table_name( table_name ),
+    d_atomic_weight_ratio( atomic_weight_ratio )
+{ /* ... */ }
+
 // Constructor
 /*! \details The ArrayView objects are based by value so that data extractor
  * class extract member functions can be used directly in the constructor. 
  * Passing by reference would not allow this to be done.
- * \note In some ACE tables, an elastic scattering distribution is always
- * given and will therefore not appear in the mtr block (e.g. continuous-energy
- * neutron tables). Specify whether or not elastic scattering is explicitly
- * given in the mtr_block with the explicit_elastic boolean parameter. The
- * default assumption is that elastic scattering is implicitly given.
  */
 template<typename IncomingParticleType, typename OutgoingParticleType>
 NuclearScatteringDistributionACEFactory<IncomingParticleType,
@@ -49,14 +53,79 @@ NuclearScatteringDistributionACEFactory<IncomingParticleType,
 			    const Teuchos::ArrayView<const double> land_block,
 			    const Teuchos::ArrayView<const double> and_block,
 			    const Teuchos::ArrayView<const double> ldlw_block,
-			    const Teuchos::ArrayView<const double> dlw_block,
-			    const bool explicit_elastic )
+			    const Teuchos::ArrayView<const double> dlw_block )
   : d_table_name( table_name ),
-    d_atomic_weight_ratio( atomic_weight_ratio ),
-    d_explicit_elastic( explicit_elastic )
+    d_atomic_weight_ratio( atomic_weight_ratio )
+{
+  this->initialize( mtr_block,
+		    tyr_block,
+		    land_block,
+		    and_block,
+		    ldlw_block,
+		    dlw_block );
+}
+
+// Constructor (no TYR block)
+/*! \details The ArrayView objects are based by value so that data extractor
+ * class extract member functions can be used directly in the constructor. 
+ * Passing by reference would not allow this to be done. If the tyr block is
+ * not given, all reactions are assumed to take place in the lab system and
+ * the multiplicities are assumed to be one.
+ */
+template<typename IncomingParticleType, typename OutgoingParticleType>
+NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					OutgoingParticleType>::NuclearScatteringDistributionACEFactory(
+			    const std::string& table_name,
+			    const double atomic_weight_ratio,
+			    const Teuchos::ArrayView<const double> mtr_block,
+			    const Teuchos::ArrayView<const double> land_block,
+			    const Teuchos::ArrayView<const double> and_block,
+			    const Teuchos::ArrayView<const double> ldlw_block,
+			    const Teuchos::ArrayView<const double> dlw_block )
+  : d_table_name( table_name ),
+    d_atomic_weight_ratio( atomic_weight_ratio )
+{
+  this->initialize( mtr_block,
+		    land_block,
+		    and_block,
+		    ldlw_block,
+		    dlw_block );
+}
+
+// Initialize the factory
+template<typename IncomingParticleType, typename OutgoingParticleType>
+void NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					     OutgoingParticleType>::initialize(
+		   const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> tyr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block )
 {
   initializeReactionOrderingMap( mtr_block, tyr_block );
   initializeReactionRefFrameMap( mtr_block, tyr_block );
+  initializeReactionAngularDistStartIndexMap( land_block );
+  initializeReactionAngularDistMap( land_block, and_block );
+  initializeReactionEnergyDistStartIndexMap( ldlw_block );
+  initializeReactionEnergyDistMap( ldlw_block, dlw_block );
+}
+
+// Initialize the factory (no TYR block)
+template<typename IncomingParticleType, typename OutgoingParticleType>
+void NuclearScatteringDistributionACEFactory<IncomingParticleType,
+					     OutgoingParticleType>::initialize(
+		   const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block )
+{
+  // Create a ficticious TYR block (all multiplicity 1 in lab system)
+  Teuchos::Array<double> dummy_tyr_block( mtr_block.size(), 1.0 );
+  
+  initializeReactionOrderingMap( mtr_block, dummy_tyr_block );
+  initializeReactionRefFrameMap( mtr_block, dummy_tyr_block );
   initializeReactionAngularDistStartIndexMap( land_block );
   initializeReactionAngularDistMap( land_block, and_block );
   initializeReactionEnergyDistStartIndexMap( ldlw_block );
@@ -80,7 +149,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   }
 
   // Check if elastic scattering must be added
-  if( !d_explicit_elastic )
+  if( this->isElasticScatteringImplicit() )
     reactions.insert( 2 );
 }
 
@@ -93,7 +162,7 @@ bool NuclearScatteringDistributionACEFactory<IncomingParticleType,
   bool valid_reaction = false;
   
   // If elastic reaction and elastic is treated implicitly - true
-  if( !d_explicit_elastic && reaction == 2 )
+  if( this->isElasticScatteringImplicit() && reaction == 2 )
     valid_reaction = true;
   else
   {
@@ -138,19 +207,15 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
     }
 
     // Special Case: elastic scattering will have no energy distribution
-    if( !d_explicit_elastic && reaction_type == 2 )
+    if( this->isElasticScatteringImplicit() && reaction_type == 2 )
     {
-      TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find( 
-						      reaction_type )->second),
-			  std::runtime_error,
-			  "Error: elastic scattering in ACE table "
-			  << d_table_name << " is specified in the Lab "
-			  "system. Elastic scattering must always be in the "
-			  "CM system, which indicates that there is a problem "
-			  "in the ACE table!" );
-      distribution.reset( 
-	new ElasticNeutronNuclearScatteringDistribution( d_atomic_weight_ratio,
-							 angular_distribution ) );
+      this->createElasticScatteringDistribution( 
+		       distribution,
+		       d_table_name,
+		       d_reaction_cm_scattering.find( reaction_type )->second,
+		       d_atomic_weight_ratio,
+		       angular_distribution );
+      
     }
     // Create all other scattering distributions using the energy dist factory
     else
@@ -321,7 +386,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   }
 
   // Add the elastic scattering case (always CM) if elastic is implicit
-  if( !d_explicit_elastic )
+  if( this->isElasticScatteringImplicit() )
     d_reaction_cm_scattering[2u] = true;
 }
 
@@ -335,7 +400,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   
   // Add elastic scattering separately (always first in LAND block if
   // elastic scattering is implicit)
-  if( !d_explicit_elastic )
+  if( this->isElasticScatteringImplicit() )
   {
     d_reaction_angular_dist_start_index[2u] = 0;
 
@@ -383,7 +448,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   unsigned elastic_increment;
 
   // If elastic scattering is implicit, handle it separately
-  if( !d_explicit_elastic )
+  if( this->isElasticScatteringImplicit() )
   {
     d_reaction_angular_dist[2u] = 
       and_block( 0u, angular_dist_array_sizes[0] );

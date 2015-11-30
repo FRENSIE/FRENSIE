@@ -10,10 +10,17 @@
 #define MONTE_CARLO_PARTICLE_BANK_HPP
 
 // Std Lib Includes
-#include <deque>
+#include <memory>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Boost Includes
+#include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/serialization/version.hpp>
+#include <boost/serialization/list.hpp>
+#include <boost/serialization/singleton.hpp>
+#include <boost/serialization/extended_type_info.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -29,20 +36,8 @@ class ParticleBank
 
 public:
 
-  //! Type of the bank elements
-  typedef ParticleState::pointerType value_type;
-  
-  //! Type of the underlying container
-  typedef std::deque<value_type> container_type;
-
-  //! Bank element reference type
-  typedef value_type& reference;
-
-  //! Bank element constant reference type
-  typedef const value_type& const_reference;
-
-  //! The size type
-  typedef container_type::size_type size_type;
+  //! The compare function type
+  typedef boost::function<bool (const ParticleState&, const ParticleState&)> CompareFunctionType;
 
   //! Default Constructor
   ParticleBank();
@@ -52,34 +47,91 @@ public:
   { /* ... */ }
 
   //! Check if the bank is empty
-  bool empty() const;
+  bool isEmpty() const;
   
   //! The size of the bank
-  size_type size() const;
+  unsigned long long size() const;
 
   //! Access the top element
-  reference top();
+  ParticleState& top();
 
   //! Access the top element
-  const_reference top() const; 
+  const ParticleState& top() const; 
+
+  //! Push a particle to the bank
+  template<template<typename> class SmartPointer, typename State>
+  void push( SmartPointer<State>& particle );
 
   //! Insert a particle to the bank
-  virtual void push( const value_type& particle );
+  virtual void push( const ParticleState& particle );
+
+  //! Push a neutron into the bank after an interaction
+  template<template<typename> class SmartPointer>
+  void push( SmartPointer<NeutronState>& neutron,
+	     const NuclearReactionType reaction );
 
   //! Insert a neutron into the bank after an interaction
-  virtual void push( const value_type& neutron,
+  virtual void push( const NeutronState& neutron,
 		     const NuclearReactionType reaction );
   
-  //! Pop particle from bank
+  //! Pop the top particle from bank
   void pop();
+
+  //! Pop the top particle from the bank and store it in the smart pointer
+  template<template<typename> class SmartPointer>
+  void pop( SmartPointer<ParticleState>& particle );
+
+  //! Check if the bank is sorted
+  virtual bool isSorted( const CompareFunctionType& compare_function );
+
+  //! Sort the particle states
+  virtual bool sort( const CompareFunctionType& compare_function );
+
+  //! Merge the bank with another bank
+  virtual void merge( ParticleBank& other_bank,
+		      const CompareFunctionType& compare_function );
+
+  //! Splice the bank with another bank
+  virtual void splice( ParticleBank& other_bank );
 
 private:
 
+  // Dereference a smart ptr
+  static const ParticleState& dereference( 
+                               const std::shared_ptr<ParticleState>& pointer );
+
+  // Save the bank to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_NVP(d_particle_states);
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // A list of particle states 
-  container_type d_particle_states;
+  std::list<std::shared_ptr<ParticleState> > d_particle_states;
 };  
 
+// Dereference a smart pointer
+inline const ParticleState& ParticleBank::dereference( 
+                             const std::shared_ptr<ParticleState>& pointer )
+{
+  return *pointer;
+}
+
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ParticleBank, 0 );
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ParticleBank_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MonteCarlo_PARTICLE_BANK_HPP
 

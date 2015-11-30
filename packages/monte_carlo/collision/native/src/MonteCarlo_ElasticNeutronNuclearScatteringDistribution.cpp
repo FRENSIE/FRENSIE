@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -47,7 +47,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 {
   // Use the target-at-rest kinematics
   if( incoming_neutron.getEnergy() > 
-      SimulationProperties::getFreeGasThreshold()*temperature &&
+      SimulationNeutronProperties::getFreeGasThreshold()*temperature &&
       this->getAtomicWeightRatio() > 1.0 )
   {
     double A = this->getAtomicWeightRatio();
@@ -119,6 +119,9 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 				     neutron_velocity[1]/cm_neutron_speed,
 				     neutron_velocity[2]/cm_neutron_speed};
 
+   // Eliminate roundoff errors from the previous division operation
+   Utility::normalizeDirection( cm_neutron_direction );
+
    // Sample the CM scattering angle cosine
    double cm_scattering_angle_cosine = 
      d_angular_scattering_distribution->sampleAngleCosine( 
@@ -133,7 +136,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 						sampleAzimuthalAngle(),
 						cm_neutron_direction,
 						cm_outgoing_neutron_direction);
-
+   
    neutron_velocity[0] = cm_neutron_speed*cm_outgoing_neutron_direction[0];
    neutron_velocity[1] = cm_neutron_speed*cm_outgoing_neutron_direction[1];
    neutron_velocity[2] = cm_neutron_speed*cm_outgoing_neutron_direction[2];

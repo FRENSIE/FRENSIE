@@ -606,10 +606,10 @@ void HDF5FileHandler::writeValueToGroupAttribute(
   testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
-
+  
   // Create any parent groups that do not exist yet in the location path
   createParentGroups( group_location );
-    
+  
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
   try
