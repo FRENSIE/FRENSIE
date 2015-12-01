@@ -893,8 +893,8 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 		    1e-15 );
   TEST_FLOATING_EQUALITY(
 		     data_container.getImpulseApproxTotalCrossSection().back(),
-<<<<<<< HEAD
-		     3.13351484549591885e-01 );
+		     3.13351484549591885e-01,
+		     1e-15 );
 
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
@@ -1133,10 +1133,6 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
-=======
-		     3.13351484549591885e-01,
-		     1e-15 );
->>>>>>> abe0e3ece440537cb1540064cf8221bcf4835cf2
 		       
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );

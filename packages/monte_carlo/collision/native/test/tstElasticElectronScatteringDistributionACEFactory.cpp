@@ -178,6 +178,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 
   MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
                                                 ace_sr_elastic_distribution,
+                                                ace_analog_elastic_distribution,
                                                 *xss_data_extractor );
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );

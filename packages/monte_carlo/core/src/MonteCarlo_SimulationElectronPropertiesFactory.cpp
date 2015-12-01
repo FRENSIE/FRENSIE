@@ -88,6 +88,34 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
      SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction( 
                                                                      function );
   }
+
+  // Get the elastic cutoff angle cosine - optional
+  if( properties.isParameter( "Elastic Cutoff Angle" ) )
+  {
+    double cutoff_angle = 
+            properties.get<double>( "Elastic Cutoff Angle" );
+
+    if( cutoff_angle >= 0.0 && cutoff_angle <= 2.0 )
+    {
+      SimulationElectronProperties::setElasticCutoffAngle( cutoff_angle );
+    }
+    else
+    {
+      std::cerr << "Warning: the elastic cutoff angle must have a "
+		<< "value between 0 and 2. The default value of "
+		<< SimulationElectronProperties::getElasticCutoffAngle()
+		<< " will be used instead of " << cutoff_angle << "." 
+		<< std::endl;
+    }
+  }
+
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Electron Hash Grid Bins" ) )
+  {
+    unsigned bins = properties.get<unsigned>( "Electron Hash Grid Bins" );
+
+    SimulationElectronProperties::setNumberOfElectronHashGridBins( bins );
+  }
   
   properties.unused( std::cerr );
 }

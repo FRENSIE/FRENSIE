@@ -220,12 +220,14 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-                                                native_analog_elastic_distribution,
-                                                *data_container );
+                native_analog_elastic_distribution,
+                *data_container );
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-                                                native_sr_elastic_distribution,
-                                                *data_container );
+                native_sr_elastic_distribution,
+                native_analog_elastic_distribution,
+                *data_container );
+
   // Set fake random number stream
   std::vector<double> fake_stream( 4 );
   // Tabular

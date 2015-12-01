@@ -91,7 +91,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
     analog_distribution,
     raw_electroatom_data,
-    lower_cutoff_angle ); 
+    upper_cutoff_angle ); 
 
 
   // Create the screened Rutherford elastic scattering distribution

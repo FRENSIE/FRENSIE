@@ -47,6 +47,9 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
+  TEST_EQUALITY_CONST(  
+    MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
+	0.1 );
 }
 
 //---------------------------------------------------------------------------//

@@ -15,7 +15,8 @@
 namespace MonteCarlo{
 
 /*! The adjoint electron probe state class
- * \details The probe state get killed when its energy changes.
+ * \details The probe state get killed when its energy changes (after being
+ * activated).
  */
 class AdjointElectronProbeState : public AdjointElectronState
 {
@@ -27,6 +28,9 @@ public:
 
   // Typedef for the adjoint electron probe tag
   struct AdjointElectronProbeTag ParticleTag;
+
+  //! Default constructor
+  AdjointElectronProbeState();
 
   //! Constructor
   AdjointElectronProbeState( 
@@ -42,8 +46,6 @@ public:
 			   const bool increment_generation_number = false,
 			   const bool reset_collision_number = false );
 
-  //! Core constructor
-  AdjointElectronProbeState( const ParticleStateCore& core );
 
   //! Destructor
   ~AdjointElectronProbeState()
@@ -52,16 +54,43 @@ public:
   //! Set the energy of the particle (MeV)
   void setEnergy( const energyType energy );
 
+  //! Check if this is a probe
+  bool isProbe() const;
+
+  //! Activate the probe
+  void activate();
+
+  //! Returns if the probe is active
+  bool isActive() const;
+
+  //! Clone the particle state (do not use to generate new particles!)
+  AdjointElectronProbeState* clone() const;
+
   //! Print the adjoint electron state
   void print( std::ostream& os ) const;
 
 private:
 
-  // Flag that indicates if the initial energy has been set
-  bool d_initial_energy_set;
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AdjointElectronState);
+    ar & BOOST_SERIALIZATION_NVP( d_active );
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
+  // Flag that indicates if the probe is active
+  bool d_active;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::AdjointElectronProbeState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::AdjointElectronProbeState, 
+			 "AdjointElectronProbeState" );
 
 #endif // end MONTE_CARLO_ADJOINT_ELECTRON_PROBE_STATE_HPP
 

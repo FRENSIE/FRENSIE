@@ -218,9 +218,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.51612969835718E-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 1.51612969835718E-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0592724905908 , 1e-12 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1 );
 }
 
 //---------------------------------------------------------------------------//

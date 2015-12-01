@@ -23,22 +23,25 @@
 TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 {
   TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationElectronProperties::getAbsoluteMinElectronEnergy(),
-               1.5e-5 );
+	MonteCarlo::SimulationElectronProperties::getAbsoluteMinElectronEnergy(),
+	1.5e-5 );
   TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
-               1.5e-5 );
+	MonteCarlo::SimulationElectronProperties::getMinElectronEnergy(),
+	1.5e-5 );
   TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
-               20.0 );
+	MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
+	20.0 );
   TEST_EQUALITY_CONST(
-	      MonteCarlo::SimulationElectronProperties::getAbsoluteMaxElectronEnergy(),
-	      20.0 );
-  TEST_ASSERT( MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
+	MonteCarlo::SimulationElectronProperties::getAbsoluteMaxElectronEnergy(),
+	20.0 );
+  TEST_ASSERT( 
+	MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
   TEST_EQUALITY_CONST( 
-    MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TWOBS_DISTRIBUTION );
-	
+  TEST_EQUALITY_CONST( 
+	MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
+	1.0e-6 );	
 }
 
 //---------------------------------------------------------------------------//
@@ -124,6 +127,21 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungAngularDistrib
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TABULAR_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the elastic cutoff angle cosine can be set
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngle )
+{
+  TEST_EQUALITY( 
+        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
+        1.0e-6 );
+  
+  MonteCarlo::SimulationElectronProperties::setElasticCutoffAngle( 0.1 );
+
+  TEST_EQUALITY( 
+        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
+        0.1 );
 }
 
 //---------------------------------------------------------------------------//

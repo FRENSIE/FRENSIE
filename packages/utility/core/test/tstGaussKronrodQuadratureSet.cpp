@@ -298,7 +298,6 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 }
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD:packages/utility/core/test/tstGaussKronrodQuadratureSet.cpp
 // Check that functions can be integrated over [0,1]
 TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
                    integrateGaussLegendre )
@@ -324,7 +323,4 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureSet,
 
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodQuadratureSet.cpp
-=======
-// end tstGaussKronrodQuadratureSet.cpp
->>>>>>> abe0e3ece440537cb1540064cf8221bcf4835cf2:packages/utility/core/test/tstGaussKronrodQuadratureSet.cpp
 //---------------------------------------------------------------------------//

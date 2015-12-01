@@ -226,19 +226,11 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
     
-<<<<<<< HEAD
-    double lower_indep_value = lower_bin_boundary->first;
-    double lower_pdf_value = lower_bin_boundary->third;
-    double upper_indep_value = upper_bin_boundary->first;
-    double upper_pdf_value = upper_bin_boundary->third;
-   
-=======
     IndepQuantity lower_indep_value = lower_bin_boundary->first;
     DepQuantity lower_dep_value = lower_bin_boundary->third;
     IndepQuantity upper_indep_value = upper_bin_boundary->first;
     DepQuantity upper_dep_value = upper_bin_boundary->third;
     
->>>>>>> abe0e3ece440537cb1540064cf8221bcf4835cf2
     return InterpolationPolicy::interpolate( lower_indep_value,
 					     upper_indep_value,
 					     indep_var_value,

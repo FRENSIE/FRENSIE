@@ -508,11 +508,6 @@ int main( int argc, char** argv )
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
-/*	  new Utility::TabularDistribution<Utility::LinLin>(
-		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n] ),
-         true ) );
-*/
   }  
 
   // Get the atomic number 
@@ -520,10 +515,10 @@ int main( int argc, char** argv )
 
   // Create the distributions
   ace_elastic_distribution.reset(
-		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
-						    elastic_scattering_distribution,
-                            angle_cutoff,
-                            false ) );
+        new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+                elastic_scattering_distribution,
+                angle_cutoff,
+                false ) );
 
   // Clear setup data
   ace_file_handler.reset();

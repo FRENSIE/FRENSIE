@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SloanRadauQuadrature.hpp"
-//#include "Utility_GaussLegendreQuadratureSet.hpp"
+#include "Utility_GaussLegendreQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{

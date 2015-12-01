@@ -21,9 +21,9 @@ namespace MonteCarlo{
 // Create the hard elastic distributions ( both Analog and Screened Rutherford ) 
 void ElasticElectronScatteringDistributionACEFactory::createHardElasticDistributions(
 	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+                analog_elastic_distribution,
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
+                screened_rutherford_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double analog_lower_cutoff_angle )
 {

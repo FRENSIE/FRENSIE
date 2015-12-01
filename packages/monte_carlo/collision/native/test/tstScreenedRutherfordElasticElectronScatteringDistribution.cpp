@@ -381,31 +381,45 @@ int main( int argc, char** argv )
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
-/*	  new Utility::TabularDistribution<Utility::LinLin>(
-		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n] ),
-         true ) );
-*/
+
     cutoff_pdf[n] = 
         elastic_scattering_distribution[n].second->evaluatePDF( 
             angle_cosine_cutoff );    
   }  
 
   elastic_cutoff_pdf.reset(
-    new Utility::TabularDistribution<Utility::LinLin>(
-		 energy_grid,
-		 cutoff_pdf,
-         false ) );
+        new Utility::TabularDistribution<Utility::LinLin>(
+                energy_grid,
+                cutoff_pdf,
+                false ) );
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
-
+/*! \todo Double check if the entire analog distribution is needed or only the cutoff pdf values
   // Create the distributions
   ace_elastic_distribution.reset(
-		new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-						    elastic_cutoff_pdf,
-                            atomic_number,
-                            angle_cutoff ) );
+        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
+                elastic_cutoff_pdf,
+                atomic_number,
+                angle_cutoff ) );
+*/
+
+ Teuchos::RCP<MonteCarlo::AnalogElasticElectronScatteringDistribution> 
+    analog_distribution;
+
+  // Create the analog distribution
+  analog_distribution.reset(
+        new MonteCarlo::AnalogElasticElectronScatteringDistribution(
+                elastic_scattering_distribution,
+                angle_cutoff,
+                false ) );
+
+  // Create the screened Rutherford distribution
+  ace_elastic_distribution.reset(
+        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
+                analog_distribution,
+                atomic_number,
+                angle_cutoff ) );
 
   // Clear setup data
   ace_file_handler.reset();

@@ -8,15 +8,22 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronProbeState.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
+AdjointElectronProbeState::AdjointElectronProbeState()
+  : AdjointElectronState(),
+    d_active( false )
+{ /* ... */ }
+
+// Constructor
 AdjointElectronProbeState::AdjointElectronProbeState( 
 		       const ParticleState::historyNumberType history_number )
   : AdjointElectronState( history_number, ADJOINT_ELECTRON_PROBE ),
-    d_initial_energy_set( false )
+    d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -28,7 +35,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 			ADJOINT_ELECTRON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
-    d_initial_energy_set( true )
+    d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -40,41 +47,64 @@ AdjointElectronProbeState::AdjointElectronProbeState(
 			ADJOINT_ELECTRON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
-    d_initial_energy_set( true )
+    d_active( false )
 { /* ... */ }
 
-// Core constructor
-AdjointElectronProbeState::AdjointElectronProbeState( 
-					        const ParticleStateCore& core )
-  : AdjointElectronState( core, ADJOINT_ELECTRON_PROBE ),
-    d_initial_energy_set( true )
-{
-  // Make sure the core is an adjoint electron probe core
-  testPrecondition( core.particle_type == ADJOINT_ELECTRON_PROBE );
-}
 
 // Set the energy of the particle (MeV)
-/*! \details The probe particle gets killed when its energy changes. This
- * does not include the initial setting of the particles energy (either
- * from a copy constructor, core constructor or the basic constructor 
- * followed by the first call to setEnergy).
+/*! \details An active probe particle gets killed when its energy changes. A
+ * probe particle should only be activated after its initial energy has been
+ * set. 
  */
 void AdjointElectronProbeState::setEnergy( const energyType energy )
 {
   ParticleState::setEnergy( energy );
 
-  if( d_initial_energy_set )
+  if( d_active )
     this->setAsGone();
-  else
-    d_initial_energy_set = true;
 }
+
+// Check if this is a probe
+bool AdjointElectronProbeState::isProbe() const
+{
+  return true;
+}
+
+// Activate the probe
+/*! \details Once a probe has been activated the next call to set energy
+ * will cause is to be killed. 
+ */
+void AdjointElectronProbeState::activate()
+{
+  d_active = true;
+}
+
+// Returns if the probe is active
+bool AdjointElectronProbeState::isActive() const
+{
+  return d_active;
+}
+
+// Clone the particle state (do not use to generate new particles!)
+AdjointElectronProbeState* AdjointElectronProbeState::clone() const
+{
+  return new AdjointElectronProbeState( *this, false, false );
+}
+
 
 // Print the adjoint electron state
 void AdjointElectronProbeState::print( std::ostream& os ) const
 {
-  os << "Particle Type: Adjoint Electron Probe" << std::endl;
+  os << "Particle Type: ";
   
-  this->printImplementation( os );
+  if( d_active )
+    os << "Active ";
+  else
+    os << "Inactive ";
+
+  os << "Adjoint Electron Probe" << std::endl;
+  
+  this->printImplementation<AdjointElectronProbeState>( os );
 }
 
 } // end MonteCarlo namespace

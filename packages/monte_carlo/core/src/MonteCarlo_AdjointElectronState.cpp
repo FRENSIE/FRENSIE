@@ -8,9 +8,15 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronState.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Constructor
+AdjointElectronState::AdjointElectronState()
+  : MassiveParticleState()
+{ /* ... */ }
 
 // Constructor
 AdjointElectronState::AdjointElectronState( 
@@ -42,14 +48,6 @@ AdjointElectronState::AdjointElectronState(
                           reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-AdjointElectronState::AdjointElectronState( const ParticleStateCore& core )
-  : MassiveParticleState( core,
-                          Utility::PhysicalConstants::electron_rest_mass_energy )
-{
-  // Make sure the core is an adjoint electron core
-  testPrecondition( core.particle_type == ADJOINT_ELECTRON );
-}
 
 // Probe constructor
 AdjointElectronState::AdjointElectronState( 
@@ -71,17 +69,16 @@ AdjointElectronState::AdjointElectronState(
                           reset_collision_number )
 { /* ... */ }
 
-// Probe core constructor
-AdjointElectronState::AdjointElectronState( const ParticleStateCore& core,
-                                            const ParticleType probe_type )
-  : MassiveParticleState( core,
-                          Utility::PhysicalConstants::electron_rest_mass_energy )
-{ /* ... */ }
-
 // Check if this is a probe
 bool AdjointElectronState::isProbe() const
 {
   return false;
+}
+
+//! Clone the particle state (do not use to generate new particles!)
+AdjointElectronState* AdjointElectronState::clone() const
+{
+  return new AdjointElectronState( *this, false, false );
 }
 
 // Return the rest mass energy of the electron (MeV)
@@ -95,10 +92,13 @@ void AdjointElectronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Adjoint Electron" << std::endl;
   
-  this->printImplementation( os );
+  this->printImplementation<AdjointElectronState>( os );
 }
 
 } // end MonteCarl namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::AdjointElectronState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::AdjointElectronState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointElectronState.cpp

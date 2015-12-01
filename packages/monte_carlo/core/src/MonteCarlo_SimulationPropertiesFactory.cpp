@@ -120,26 +120,6 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       general_properties );
   }
 
-  // Get the elastic cutoff angle cosine - optional
-  if( properties.isParameter( "Elastic Cutoff Angle" ) )
-  {
-    double cutoff_angle = 
-            properties.get<double>( "Elastic Cutoff Angle" );
-
-    if( cutoff_angle >= 0.0 && cutoff_angle <= 2.0 )
-    {
-      SimulationProperties::setElasticCutoffAngle( cutoff_angle );
-    }
-    else
-    {
-      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
-		<< "value between -1 and 1. The default value of "
-		<< SimulationProperties::getElasticCutoffAngle()
-		<< " will be used instead of " << cutoff_angle << "." 
-		<< std::endl;
-    }
-  }
-  
   properties.unused( *os_warn );
 }
 

@@ -23,18 +23,17 @@ namespace MonteCarlo{
 
 // Constructor
 ElectroatomFactory::ElectroatomFactory(
-<<<<<<< HEAD
-		const std::string& cross_sections_xml_directory,
-		const Teuchos::ParameterList& cross_section_table_info,
-		const boost::unordered_set<std::string>& electroatom_aliases,
-	        const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-		        atomic_relaxation_model_factory,
-		const unsigned hash_grid_bins,
-		const BremsstrahlungAngularDistributionType 
-		        photon_distribution_function,
-		const bool use_atomic_relaxation_data,
-		const double cutoff_angle,
-		std::ostream* os_message )
+        const std::string& cross_sections_xml_directory,
+        const Teuchos::ParameterList& cross_section_table_info,
+        const boost::unordered_set<std::string>& electroatom_aliases,
+        const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+	        atomic_relaxation_model_factory,
+        const unsigned hash_grid_bins,
+        const BremsstrahlungAngularDistributionType 
+	        photon_distribution_function,
+        const bool use_atomic_relaxation_data,
+        const double cutoff_angle,
+        std::ostream* os_message )
   : d_os_message( os_message )
 {
   // Make sure the message stream is valid

@@ -56,6 +56,18 @@ public:
   static BremsstrahlungAngularDistributionType 
           getBremsstrahlungAngularDistributionFunction();
 
+  //! Set the elastic cutoff angle cosine (mu = 1.0e-6 by default)
+  static void setElasticCutoffAngle( const double cutoff_angle );
+
+  //! Return the elastic cutoff angle cosine
+  static double getElasticCutoffAngle();
+
+  //! Set the number of electron hash grid bins
+  static void setNumberOfElectronHashGridBins( const unsigned bins );
+
+  //! Return the number of electron hash grid bins
+  static unsigned getNumberOfElectronHashGridBins();
+
 private:
 
   // The absolute minimum electron energy
@@ -79,6 +91,12 @@ private:
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   static BremsstrahlungAngularDistributionType 
            bremsstrahlung_angular_distribution_function;
+
+  // The elastic cutoff angle cosine (mu = 1.0e-6 by default)
+  static double elastic_cutoff_angle;
+
+  // The number of electron hash grid bins
+  static unsigned num_electron_hash_grid_bins;
 };
 
 // Return the minimum electron energy (MeV)
@@ -116,6 +134,18 @@ inline BremsstrahlungAngularDistributionType
   SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction()
 {
   return SimulationElectronProperties::bremsstrahlung_angular_distribution_function;
+}
+
+// Return the elastic cutoff angle cosine
+inline double SimulationElectronProperties::getElasticCutoffAngle()
+{
+  return SimulationElectronProperties::elastic_cutoff_angle;
+}
+
+// Get the number of electron hash grid bins
+inline unsigned SimulationElectronProperties::getNumberOfElectronHashGridBins()
+{
+  return SimulationElectronProperties::num_electron_hash_grid_bins;
 }
 
 } // end MonteCarlo namespace

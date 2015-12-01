@@ -190,10 +190,10 @@ void CollisionHandlerFactory::initializeHandler(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-		     SimulationProperties::getNumberOfElectronHashGridBins(),
-		     SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
-		     SimulationProperties::isAtomicRelaxationModeOn(),
-		     SimulationProperties::getElasticCutoffAngle() );
+		     SimulationElectronProperties::getNumberOfElectronHashGridBins(),
+		     SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
+		     SimulationElectronProperties::isAtomicRelaxationModeOn(),
+		     SimulationElectronProperties::getElasticCutoffAngle() );
     break;
   }
   default:

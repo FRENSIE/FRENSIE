@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, react_ace )
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_ASSERT( electron.getZDirection() < 2.0 );
   TEST_ASSERT( electron.getZDirection() > 0.0 );
-  TEST_ASSERT( bank.empty() );
+  TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
