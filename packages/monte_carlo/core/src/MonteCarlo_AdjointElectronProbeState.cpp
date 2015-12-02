@@ -58,7 +58,7 @@ AdjointElectronProbeState::AdjointElectronProbeState(
  */
 void AdjointElectronProbeState::setEnergy( const energyType energy )
 {
-  ParticleState::setEnergy( energy );
+  MassiveParticleState::setEnergy( energy );
 
   if( d_active )
     this->setAsGone();
