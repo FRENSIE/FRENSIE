@@ -26,14 +26,14 @@ namespace MonteCarlo{
  * Otherwize a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatomCore(
-            const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            Teuchos::RCP<ElectroatomCore>& electroatom_core,
-	        const unsigned hash_grid_bins,
-            const BremsstrahlungAngularDistributionType 
-                    photon_distribution_function,
-            const bool use_atomic_relaxation_data,
-            const double cutoff_angle )
+        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+          Teuchos::RCP<ElectroatomCore>& electroatom_core,
+        const unsigned hash_grid_bins,
+        const BremsstrahlungAngularDistributionType 
+          photon_distribution_function,
+        const bool use_atomic_relaxation_data,
+        const double cutoff_angle )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -136,15 +136,15 @@ void ElectroatomNativeFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatom(
-	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-	    const std::string& electroatom_name,
+        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const std::string& electroatom_name,
         const double atomic_weight,
-	    const unsigned hash_grid_bins,
-	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    Teuchos::RCP<Electroatom>& electroatom,
+        const unsigned hash_grid_bins,
+        const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+          Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 
-                photon_distribution_function,
-	    const bool use_atomic_relaxation_data,
+          photon_distribution_function,
+        const bool use_atomic_relaxation_data,
         const double cutoff_angle )
 {
   // Make sure the atomic weight is valid

@@ -300,9 +300,9 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
-
+/*
   data_container.exportData( "/home/ljkerst/software/frensie/data/test_h_epr.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
+			     Utility::ArchivableObject::XML_ARCHIVE );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -626,10 +626,10 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 		    
   data_container.exportData( "test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
-
+/*
   data_container.exportData( "/home/ljkerst/software/frensie/data/test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
-
+*/
 }
 
 //---------------------------------------------------------------------------//

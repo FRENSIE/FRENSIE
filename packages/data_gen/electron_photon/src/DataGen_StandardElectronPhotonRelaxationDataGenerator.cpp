@@ -28,19 +28,19 @@ const double StandardElectronPhotonRelaxationDataGenerator::s_threshold_energy_n
 
 // Constructor
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator( 
-	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
-	   const double min_photon_energy,
-	   const double max_photon_energy,
-       const double min_electron_energy,
-       const double max_electron_energy,
-       const double cutoff_angle,
-	   const double occupation_number_evaluation_tolerance,
-	   const double subshell_incoherent_evaluation_tolerance,
-	   const double grid_convergence_tol,
-	   const double grid_absolute_diff_tol,
-	   const double grid_distance_tol )
+        const unsigned atomic_number,
+        const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+        const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
+        const double min_photon_energy,
+        const double max_photon_energy,
+        const double min_electron_energy,
+        const double max_electron_energy,
+        const double cutoff_angle,
+        const double occupation_number_evaluation_tolerance,
+        const double subshell_incoherent_evaluation_tolerance,
+        const double grid_convergence_tol,
+        const double grid_absolute_diff_tol,
+        const double grid_distance_tol )
   : ElectronPhotonRelaxationDataGenerator( atomic_number ),
     d_ace_epr_data( ace_epr_data ),
     d_eedl_file_handler( eedl_file_handler ),

@@ -27,10 +27,10 @@ ElectroatomFactory::ElectroatomFactory(
         const Teuchos::ParameterList& cross_section_table_info,
         const boost::unordered_set<std::string>& electroatom_aliases,
         const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-	        atomic_relaxation_model_factory,
+          atomic_relaxation_model_factory,
         const unsigned hash_grid_bins,
         const BremsstrahlungAngularDistributionType 
-	        photon_distribution_function,
+	  photon_distribution_function,
         const bool use_atomic_relaxation_data,
         const double cutoff_angle,
         std::ostream* os_message )
@@ -62,28 +62,28 @@ ElectroatomFactory::ElectroatomFactory(
     if( electroatom_file_type == CrossSectionsXMLProperties::ace_file )
     {
       createElectroatomFromACETable(  
-				   *electroatom_name,
-				   electroatom_file_path,
-				   electroatom_table_name,
-				   electroatom_file_start_line,
-				   atomic_weight,
-				   atomic_relaxation_model_factory,
-				   hash_grid_bins,
-                   photon_distribution_function,
-                   use_atomic_relaxation_data,
-                   cutoff_angle );
+                *electroatom_name,
+                electroatom_file_path,
+                electroatom_table_name,
+                electroatom_file_start_line,
+                atomic_weight,
+                atomic_relaxation_model_factory,
+                hash_grid_bins,
+                photon_distribution_function,
+                use_atomic_relaxation_data,
+                cutoff_angle );
     }
     else if( electroatom_file_type == CrossSectionsXMLProperties::native_file )
     {
       createElectroatomFromNativeTable( 
-				    *electroatom_name,
-				    electroatom_file_path,
-                    atomic_weight,
-				    atomic_relaxation_model_factory,
-				    hash_grid_bins,
-                    photon_distribution_function,  
-				    use_atomic_relaxation_data,
-                    cutoff_angle );
+                *electroatom_name,
+                electroatom_file_path,
+                atomic_weight,
+                atomic_relaxation_model_factory,
+                hash_grid_bins,
+                photon_distribution_function,  
+                use_atomic_relaxation_data,
+                cutoff_angle );
     }
     else
     {
@@ -116,18 +116,18 @@ void ElectroatomFactory::createElectroatomMap(
 
 // Create a electroatom from an ACE table
 void ElectroatomFactory::createElectroatomFromACETable(
-			  const std::string& electroatom_alias,
-			  const std::string& ace_file_path,
-			  const std::string& electroatomic_table_name,
-			  const int electroatomic_file_start_line,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins,
-              const BremsstrahlungAngularDistributionType 
-                photon_distribution_function,
-              const bool use_atomic_relaxation_data,
-              const double cutoff_angle )
+                const std::string& electroatom_alias,
+                const std::string& ace_file_path,
+                const std::string& electroatomic_table_name,
+                const int electroatomic_file_start_line,
+                const double atomic_weight,
+                const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+                  atomic_relaxation_model_factory,
+                const unsigned hash_grid_bins,
+                const BremsstrahlungAngularDistributionType 
+                  photon_distribution_function,
+                const bool use_atomic_relaxation_data,
+                const double cutoff_angle )
 {
   *d_os_message << "Loading ACE electroatomic cross section table "
 		<< electroatomic_table_name << " (" << electroatom_alias << ") ... ";
@@ -153,9 +153,9 @@ void ElectroatomFactory::createElectroatomFromACETable(
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
     
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
-						  xss_data_extractor,
-						  atomic_relaxation_model,
-			              use_atomic_relaxation_data );
+                                                xss_data_extractor,
+                                                atomic_relaxation_model,
+                                                use_atomic_relaxation_data );
 
     // Initialize the new electroatom
     Teuchos::RCP<Electroatom>& electroatom = d_electroatom_name_map[electroatom_alias];
@@ -187,16 +187,16 @@ void ElectroatomFactory::createElectroatomFromACETable(
 
 // Create a electroatom from a Native table
 void ElectroatomFactory::createElectroatomFromNativeTable(
-			  const std::string& electroatom_alias,
-			  const std::string& native_file_path,
-			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
-			    atomic_relaxation_model_factory,
-			  const unsigned hash_grid_bins, 
-              const BremsstrahlungAngularDistributionType 
-                photon_distribution_function,
-              const bool use_atomic_relaxation_data,
-              const double cutoff_angle )
+                const std::string& electroatom_alias,
+                const std::string& native_file_path,
+                const double atomic_weight,
+                const Teuchos::RCP<AtomicRelaxationModelFactory>&
+                  atomic_relaxation_model_factory,
+                const unsigned hash_grid_bins, 
+                const BremsstrahlungAngularDistributionType 
+                  photon_distribution_function,
+                const bool use_atomic_relaxation_data,
+                const double cutoff_angle )
 {
   std::cout << "Loading native electroatomic cross section table "
 	    << electroatom_alias << " ... ";
@@ -222,14 +222,14 @@ void ElectroatomFactory::createElectroatomFromNativeTable(
 
     // Create the new electroatom
     ElectroatomNativeFactory::createElectroatom( data_container,
-					     native_file_path,
-					     atomic_weight,
-                         hash_grid_bins, 
-					     atomic_relaxation_model,
-					     electroatom,
-					     photon_distribution_function,
-                         use_atomic_relaxation_data,
-                         cutoff_angle );
+                                                 native_file_path,
+                                                 atomic_weight,
+                                                 hash_grid_bins, 
+                                                 atomic_relaxation_model,
+                                                 electroatom,
+                                                 photon_distribution_function,
+                                                 use_atomic_relaxation_data,
+                                                 cutoff_angle );
 
     // Cache the new electroatom in the table name map
     d_electroatomic_table_name_map[native_file_path] = electroatom;
