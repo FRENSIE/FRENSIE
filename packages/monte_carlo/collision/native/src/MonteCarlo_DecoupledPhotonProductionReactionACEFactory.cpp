@@ -128,7 +128,7 @@ void DecoupledPhotonProductionReactionACEFactory::createPhotonProductionReaction
 			       d_photon_production_reactions.end() );
 }
 
-// Create the total reaction for yield based photon production 
+// Create the total reaction for weight normalization
 void DecoupledPhotonProductionReactionACEFactory::createTotalReaction(
                        const Teuchos::ArrayView<const double>& total_xs_block,
                        const Teuchos::ArrayRCP<const double>& energy_grid,

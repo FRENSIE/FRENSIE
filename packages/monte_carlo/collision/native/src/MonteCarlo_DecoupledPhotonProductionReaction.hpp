@@ -73,7 +73,9 @@ public:
   virtual double getCrossSection( const double energy ) const = 0;
 
   //! Simulate the reaction
-  virtual void react( const NeutronState& neutron, ParticleBank& bank ) const;
+  virtual void react( const NeutronState& neutron, 
+                      ParticleBank& bank,
+                      double total_photon_production_cross_section ) const;
 
 private:
 

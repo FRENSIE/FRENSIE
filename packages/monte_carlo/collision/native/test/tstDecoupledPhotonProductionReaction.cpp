@@ -79,7 +79,7 @@ public:
   double getCrossSection( const double energy ) const
   { /* ... */ }
 
-  void react( MonteCarlo::NeutronState& neutron, MonteCarlo::ParticleBank& bank ) const
+  void react( MonteCarlo::NeutronState& neutron, MonteCarlo::ParticleBank& bank, double total_pp_xs ) const
   { /* ... */ }
 };
 
@@ -194,7 +194,7 @@ TEUCHOS_UNIT_TEST( DecoupledPhotonProductionReaction, react )
 
   bank.push( neutron );
   
-  nuclear_reaction->react( *neutron, bank );
+  nuclear_reaction->react( *neutron, bank, 1.0 );
 
   int bank_size = 1;
   if ( !neutron->isGone() )
