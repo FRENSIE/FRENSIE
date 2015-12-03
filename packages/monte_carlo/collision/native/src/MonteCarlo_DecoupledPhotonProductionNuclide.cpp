@@ -134,7 +134,10 @@ void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
   // Undergo the reaction selected
-  nuclear_reaction->second->react( neutron, bank );
+  nuclear_reaction->second->react( 
+         neutron, 
+         bank,
+         getTotalPhotonProductionCrossSection( neutron.getEnergy() ) );
 }
 
 // Get total photon production cross section

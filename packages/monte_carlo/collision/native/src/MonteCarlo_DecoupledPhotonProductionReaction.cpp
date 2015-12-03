@@ -85,20 +85,19 @@ double DecoupledPhotonProductionReaction::getTotalYield(
 
 // Simulate the reaction
 void DecoupledPhotonProductionReaction::react( const NeutronState& neutron, 
-				      ParticleBank& bank ) const
+				      ParticleBank& bank,
+				      double total_photon_production_cross_section ) const
 {
   Teuchos::RCP<PhotonState> new_photon(
 			   new PhotonState( neutron, true, false ) );
 
 	// Adjust the photon weight as Wp = Wn * (sigma_gamma)/(sigma_total)		   
-	//new_photon->setWeight( neutron.getWeight()*(this->getBaseReactionCrossSection( neutron.getEnergy() )*this->getTotalYield( neutron.getEnergy() ))/this->getTotalCrossSection( neutron.getEnergy() ) );
-	
-	std::cout << neutron.getEnergy() << " " << this->getBaseReactionCrossSection( neutron.getEnergy() ) << " " << this->getTotalYield( neutron.getEnergy() ) << std::endl;
+	new_photon->setWeight( (neutron.getWeight()*total_photon_production_cross_section)/(this->getTotalCrossSection( neutron.getEnergy() ) ) );
 
   d_photon_production_distribution->scatterParticle( neutron, *new_photon,
 					this->getTemperature() );
 					
-  bank.push( new_photon );
+  bank.push( new_photon ); 
 }
 
 } // end MonteCarlo namespace
