@@ -46,7 +46,7 @@ ENDLFileHandler::ENDLFileHandler(
     d_current_line( 0 ),
     d_valid_file( false ),
     d_end_of_file( false )
-{ 
+{
   openENDLFile( file_name );
 }
 
@@ -54,7 +54,7 @@ ENDLFileHandler::ENDLFileHandler(
 ENDLFileHandler::~ENDLFileHandler()
 {
   if( fileIsOpenUsingFortran( d_endl_file_id ) )
-    closeFileUsingFortran( d_endl_file_id );
+       closeFileUsingFortran( d_endl_file_id );
 }
 
 // Open an ENDL library file

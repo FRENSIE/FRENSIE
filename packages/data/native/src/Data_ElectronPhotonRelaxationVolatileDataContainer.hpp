@@ -64,6 +64,45 @@ public:
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection;
   using ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection;
 
+  // Electron functions
+  using ElectronPhotonRelaxationDataContainer::setCutoffAngle;
+  using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAnglesAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDFAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAngles;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDF;
+  using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
+  using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergy;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDF;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungEnergyGrid;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonEnergy;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungPhotonPDF;
+  using ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyGrid;
+  using ElectronPhotonRelaxationDataContainer::setAtomicExcitationEnergyLoss;
+  using ElectronPhotonRelaxationDataContainer::setElectronEnergyGrid;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThresholdEnergyIndex;
+
   // Add the export member function to the public interface
   using ElectronPhotonRelaxationDataContainer::exportData;
 
