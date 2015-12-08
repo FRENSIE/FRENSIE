@@ -50,6 +50,7 @@ public:
   static const std::string atomic_weight_ratio_prop;
   static const std::string temperature_prop;
   static const std::string ace_file;
+  static const std::string endl_file;
   static const std::string native_file;
 
   //! Extract the table info from the photoatom table info parameter list
