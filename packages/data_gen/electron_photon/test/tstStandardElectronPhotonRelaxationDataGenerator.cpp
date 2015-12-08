@@ -24,6 +24,7 @@
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
+#include "Data_ENDLFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -34,6 +35,11 @@
 Teuchos::RCP<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
   data_generator_h, data_generator_c;
 
+Teuchos::RCP<Data::XSSEPRDataExtractor> 
+  h_xss_data_extractor, c_xss_data_extractor;
+
+std::string test_h_eedl_file_name, test_c_eedl_file_name;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -41,6 +47,25 @@ Teuchos::RCP<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_h )
 {
+  Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
+    new Data::ENDLFileHandler( test_h_eedl_file_name ) );
+
+    data_generator_h.reset( 
+        new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+                h_xss_data_extractor->extractAtomicNumber(),
+                h_xss_data_extractor,
+                eedl_file_handler,
+                0.001,
+                20.0,
+                1.0e-5,
+                1.0e+5,
+                1.0e-6,  
+                1e-4,
+                1e-3,
+                0.001,
+                1e-42,
+                1e-15) );
+
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
   data_generator_h->populateEPRDataContainer( data_container );
@@ -238,6 +263,201 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.59008691830915092e-02 );
 
+
+  std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 728 );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
+
+  // Check the elastic data
+  unsigned threshold = 
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  std::vector<double> cross_section = 
+    data_container.getCutoffElasticCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
+  threshold = 
+    data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 263 );
+
+  cross_section = 
+    data_container.getScreenedRutherfordElasticCrossSection();
+
+//  TEST_EQUALITY_CONST( cross_section.front(), 2.5745520470700284932 );
+//! \todo double check what the front cross section should be 
+  TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
+  std::vector<double> angular_grid = 
+    data_container.getElasticAngularEnergyGrid();
+
+  TEST_EQUALITY_CONST( angular_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( angular_grid.size(), 16 );
+
+  std::vector<double> elastic_angles = 
+    data_container.getAnalogElasticAngles(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
+
+  elastic_angles = 
+    data_container.getAnalogElasticAngles(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
+
+  std::vector<double> elastic_pdf = 
+    data_container.getAnalogElasticPDF(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
+
+  elastic_pdf = 
+    data_container.getAnalogElasticPDF(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 9.86945e+5 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 6.25670e-13 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
+
+  // Check the electroionization data
+  threshold = 
+    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u ); 
+
+  TEST_EQUALITY_CONST( threshold, 7 );
+
+  cross_section = 
+    data_container.getElectroionizationCrossSection( 1u );
+
+//  TEST_EQUALITY_CONST( cross_section.front(), 1.26041968911917554e+06 );
+//! \todo double check what the front cross section should be 
+  TEST_EQUALITY_CONST( cross_section.front(), 1.26041968911917577e+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
+  std::vector<double> electroionization_energy_grid =  
+    data_container.getElectroionizationEnergyGrid( 1u );
+
+  TEST_EQUALITY_CONST( electroionization_energy_grid.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
+
+  std::vector<double> electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 1u, 1.36100e-5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 2.79866e-9 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 2.79866e-8 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 2 );
+
+  electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 5.00000e+4 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 147 );
+
+  std::vector<double> electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 1u, 1.36100e-5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 3.97015e+7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 3.97015e+7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
+
+  electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.61897e+5 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 2.77550e-15 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 147 );
+
+  // Check the bremsstrahlung data
+  threshold = 
+    data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section = 
+    data_container.getBremsstrahlungCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
+  TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
+  std::vector<double> bremsstrahlung_energy_grid =  
+    data_container.getBremsstrahlungEnergyGrid();
+
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+
+  std::vector<double> bremsstrahlung_photon_energy =  
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 17 );
+
+  bremsstrahlung_photon_energy =  
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 111 );
+
+  std::vector<double> bremsstrahlung_photon_pdf =  
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 2.13940e+6 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 2.12245e+4 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
+
+  bremsstrahlung_photon_pdf =  
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),  3.65591e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.16344e-10 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 111 );
+
+  // Check the atomic excitation data
+  threshold = 
+    data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 7 );
+
+  cross_section = 
+    data_container.getAtomicExcitationCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 6.23029e+5 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.14416e+4 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
+  std::vector<double> atomic_excitation_energy_grid =  
+    data_container.getAtomicExcitationEnergyGrid();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 170 );
+
+  std::vector<double> atomic_excitation_energy_loss =  
+    data_container.getAtomicExcitationEnergyLoss();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
+
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -247,6 +467,26 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_c )
 {
+
+Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
+    new Data::ENDLFileHandler( test_c_eedl_file_name ) );
+
+    data_generator_c.reset( 
+		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
+				     c_xss_data_extractor->extractAtomicNumber(),
+				     c_xss_data_extractor,
+                     eedl_file_handler,
+				     0.001,
+				     20.0,
+                     1.0e-5,
+                     1.0e+5,
+                     1.0e-6,  
+				     1e-3,
+				     1e-3,
+				     0.001,
+				     1e-32,
+				     1e-16) );
+
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
   data_generator_c->populateEPRDataContainer( data_container );
@@ -659,6 +899,244 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.13351484549591885e-01,
 		     1e-15 );
+
+  std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 723 );
+
+  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
+
+  // Check the elastic data
+  unsigned threshold = 
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  std::vector<double> cross_section = 
+    data_container.getCutoffElasticCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 3.06351e+9 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 4.72309e-4, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  threshold = 
+    data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 276 );
+
+  cross_section = 
+    data_container.getScreenedRutherfordElasticCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 1.93634596180636436e+01 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.407220E+05-4.723090E-04 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  std::vector<double> angular_grid = 
+    data_container.getElasticAngularEnergyGrid();
+
+  TEST_EQUALITY_CONST( angular_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( angular_grid.size(), 16 );
+
+  std::vector<double> elastic_angles = 
+    data_container.getAnalogElasticAngles(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
+
+  elastic_angles = 
+    data_container.getAnalogElasticAngles(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
+
+  std::vector<double> elastic_pdf = 
+    data_container.getAnalogElasticPDF(1.0e-5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
+
+  elastic_pdf = 
+    data_container.getAnalogElasticPDF(1.0e+5);
+
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 9.868670E+05 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 1.693970E-11 );
+  TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
+
+  // Check the electroionization data
+  threshold = 
+    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u ); 
+
+  TEST_EQUALITY_CONST( threshold, 85 );
+
+  cross_section = 
+    data_container.getElectroionizationCrossSection( 1u );
+
+  TEST_EQUALITY_CONST( cross_section.front(), 1.10703713515228592e+04 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.338050E+04 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  std::vector<double> electroionization_energy_grid =  
+    data_container.getElectroionizationEnergyGrid( 1u );
+
+  TEST_EQUALITY_CONST( electroionization_energy_grid.front(), 2.910100E-04 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 7 );
+
+  std::vector<double> electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 1u, 2.910100E-04 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1.00000e-8 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 2 );
+
+  electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 5.00000e+4 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 128 );
+
+  std::vector<double> electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 1u, 2.910100E-04 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.111110E+07 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 1.111110E+07 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
+
+  electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 1u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 7.358100E+03 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 3.45597E-14 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 128 );
+
+
+  threshold = 
+    data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 4u ); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section = 
+    data_container.getElectroionizationCrossSection( 4u );
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.102930E+07 );
+  TEST_EQUALITY_CONST( cross_section.back(), 2.017010E+05 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  electroionization_energy_grid =  
+    data_container.getElectroionizationEnergyGrid( 4u );
+
+  TEST_EQUALITY_CONST( electroionization_energy_grid.front(), 8.980000E-06 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( electroionization_energy_grid.size(), 8 );
+
+  electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 4u, 8.980000E-06 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 2.550000E-09 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 2.550000E-08 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 2 );
+
+  electroionization_recoil_energy =  
+    data_container.getElectroionizationRecoilEnergy( 4u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.back(), 5.00000e+4 );
+  TEST_EQUALITY_CONST( electroionization_recoil_energy.size(), 143 );
+
+  electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 4u, 8.980000E-06 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 4.357300E+07 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 4.357300E+07 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 2 );
+
+  electroionization_recoil_pdf =  
+    data_container.getElectroionizationRecoilPDF( 4u, 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.120930E+05 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 1.515230E-15 );
+  TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 143 );
+
+  // Check the bremsstrahlung data
+  threshold = 
+    data_container.getBremsstrahlungCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section = 
+    data_container.getBremsstrahlungCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 6.031280E+02 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.697150E+01 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  std::vector<double> bremsstrahlung_energy_grid =  
+    data_container.getBremsstrahlungEnergyGrid();
+
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 9 );
+
+  std::vector<double> bremsstrahlung_photon_energy =  
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 17 );
+
+  bremsstrahlung_photon_energy =  
+    data_container.getBremsstrahlungPhotonEnergy( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 105 );
+
+  std::vector<double> bremsstrahlung_photon_pdf =  
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e-5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 2.134970E+06 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 2.136140E+04 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
+
+  bremsstrahlung_photon_pdf =  
+    data_container.getBremsstrahlungPhotonPDF( 1.00000e+5 );
+
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 3.649330E+05 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.638520E-09 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 105 );
+
+  // Check the atomic excitation data
+  threshold = 
+    data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(); 
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section = 
+    data_container.getAtomicExcitationCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 3.168630E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.198920E+05 );
+  TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
+
+  std::vector<double> atomic_excitation_energy_grid =  
+    data_container.getAtomicExcitationEnergyGrid();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.front(), 1.00000e-5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.back(), 1.00000e+5 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_grid.size(), 181 );
+
+  std::vector<double> atomic_excitation_energy_loss =  
+    data_container.getAtomicExcitationEnergyLoss();
+
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
+  TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
 		       
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
@@ -680,12 +1158,19 @@ int main( int argc, char** argv )
   clp.setOption( "test_h_ace_table",
 		 &test_h_ace_table_name,
 		 "Test ACE table name" );
+  clp.setOption( "test_h_eedl_file",
+		 &test_h_eedl_file_name,
+		 "Test EEDL file name" );
+
   clp.setOption( "test_c_ace_file",
 		 &test_c_ace_file_name,
 		 "Test ACE file name" );
   clp.setOption( "test_c_ace_table",
 		 &test_c_ace_table_name,
 		 "Test ACE table name" );
+  clp.setOption( "test_c_eedl_file",
+		 &test_c_eedl_file_name,
+		 "Test EEDL file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -705,23 +1190,11 @@ int main( int argc, char** argv )
 							 test_h_ace_table_name,
 							 1u ) );
 
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    h_xss_data_extractor.reset(
 				new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-
-    data_generator_h.reset( 
-		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
-				     xss_data_extractor->extractAtomicNumber(),
-				     xss_data_extractor,
-				     0.001,
-				     20.0,
-				     1e-4,
-				     1e-3,
-				     0.001,
-				     1e-42,
-				     1e-15 ) );
   }
 
   {
@@ -731,23 +1204,11 @@ int main( int argc, char** argv )
 							 test_c_ace_table_name,
 							 1u ) );
 
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    c_xss_data_extractor.reset(
 				new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-
-    data_generator_c.reset( 
-		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
-				     xss_data_extractor->extractAtomicNumber(),
-				     xss_data_extractor,
-				     0.001,
-				     20.0,
-				     1e-3,
-				     1e-3,
-				     0.001,
-				     1e-32,
-				     1e-16) );
   }
 
   // Run the unit tests

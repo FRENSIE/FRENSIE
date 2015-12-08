@@ -53,6 +53,21 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
 						   processed_cross_section ) );
 }
 
+// Extract electron cross section
+template<typename InterpPolicy>
+void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
+       std::vector<double>& raw_energy_grid,
+       std::vector<double>& raw_cross_section,        
+	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
+{
+  Teuchos::Array<double> processed_cross_section( raw_cross_section );
+  Teuchos::Array<double> energy_grid( raw_energy_grid );
+
+  cross_section.reset( new Utility::TabularDistribution<InterpPolicy>(
+						   energy_grid,
+						   processed_cross_section ) );
+}
+
 } // end DataGen namespace
 
 #endif // end DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_DEF_HPP

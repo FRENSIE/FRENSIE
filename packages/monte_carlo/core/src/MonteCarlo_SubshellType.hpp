@@ -71,6 +71,10 @@ SubshellType convertENDFDesignatorToSubshellEnum(
 SubshellType convertEADLDesignatorToSubshellEnum( 
 					      const unsigned eadl_designator );
 
+//! Convert an EADL designator to an ENDF designator
+unsigned convertEADLDesignatorToENDFDesignator( 
+					      const unsigned eadl_designator );
+
 //! Convert a Subshell enumeration to a string
 std::string convertSubshellEnumToString( const SubshellType subshell );
 
