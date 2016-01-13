@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
 

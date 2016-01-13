@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
@@ -29,7 +32,7 @@ class DopplerBroadenedPhotonEnergyDistribution
 public:
   
   //! The electron momentum distribution array (Compton Profiles)
-  typedef Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  typedef Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
   ElectronMomentumDistArray;
   
   //! Constructor

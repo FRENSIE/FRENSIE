@@ -25,7 +25,7 @@ DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScat
     d_subshell_order( subshell_order )
 {
   // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  testPrecondition( !scattering_function.get() );
   // Make sure the shell interaction data is valid
   testPrecondition( subshell_occupancies.size() > 0 );
   testPrecondition( subshell_occupancies.size() ==

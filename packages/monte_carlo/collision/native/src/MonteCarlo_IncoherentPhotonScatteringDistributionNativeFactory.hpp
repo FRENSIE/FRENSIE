@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -17,6 +20,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_ScatteringFunction.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -52,7 +56,7 @@ protected:
   //! Create a Doppler broadened hybrid incoherent distribution
   static void createDopplerBroadenedHybridDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,     
@@ -70,7 +74,7 @@ protected:
   static void createDopplerBroadenedSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
     const unsigned endf_subshell,
-    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
     incoherent_distribution,
@@ -80,8 +84,8 @@ private:
   
   //! Create the scattering function
   static void createScatteringFunction( 
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       std::shared_ptr<const ScatteringFunction>& scattering_function );
 };
 
 } // end MonteCarlo namespace

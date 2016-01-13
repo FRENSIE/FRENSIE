@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -27,11 +30,11 @@ public:
 
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
-		    const SubshellType interaction_subshell,
-		    const double num_electrons_in_subshell,
-		    const double binding_energy,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    compton_profile );
+		 const SubshellType interaction_subshell,
+		 const double num_electrons_in_subshell,
+		 const double binding_energy,
+		 const std::shared_ptr<const Utility::TabularOneDDistribution>&
+		 compton_profile );
 
   //! Destructor
   ~SubshellDopplerBroadenedPhotonEnergyDistribution()
@@ -86,7 +89,7 @@ private:
   double d_subshell_binding_energy;
 
   // The compton profile for the subshell
-  Teuchos::RCP<const Utility::TabularOneDDistribution> d_compton_profile;
+  std::shared_ptr<const Utility::TabularOneDDistribution> d_compton_profile;
 };
 
 } // end MonteCarlo namespace

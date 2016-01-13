@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -20,11 +21,13 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -336,13 +339,13 @@ int main( int argc, char** argv )
   Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
 							scatt_func_size ) );
 
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
-
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
 			                                  scat_func_values ) );
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_designators = 

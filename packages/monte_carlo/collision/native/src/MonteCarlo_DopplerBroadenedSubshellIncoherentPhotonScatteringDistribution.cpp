@@ -18,7 +18,7 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
     const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy )
@@ -31,7 +31,7 @@ DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadened
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
   // Make sure the Doppler broadened energy dist is valid
-  testPrecondition( !doppler_broadened_energy_dist.is_null() );
+  testPrecondition( !doppler_broadened_energy_dist.get() );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

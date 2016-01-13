@@ -347,7 +347,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
     
     // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
+    std::shared_ptr<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>( 
 						       compton_profile_grid_s1,
 						       compton_profile_s1 ) );
@@ -366,7 +366,7 @@ int main( int argc, char** argv )
 			  occupation_number_s1_dist,
 			  3.0 ) );
 
-    Teuchos::RCP<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
+    std::shared_ptr<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
       doppler_dist( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
 		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
 		    data_container.getSubshellOccupancy( 1 ),

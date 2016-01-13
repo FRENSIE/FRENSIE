@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -103,7 +104,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
     
     // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
+    std::shared_ptr<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>( 
 						       compton_profile_grid_s1,
 						       compton_profile_s1 ) );

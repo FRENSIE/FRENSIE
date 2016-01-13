@@ -18,18 +18,18 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhotonEnergyDistribution(
-		    const SubshellType interaction_subshell,
-		    const double num_electrons_in_subshell,
-		    const double binding_energy,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    compton_profile )
+		 const SubshellType interaction_subshell,
+		 const double num_electrons_in_subshell,
+		 const double binding_energy,
+		 const std::shared_ptr<const Utility::TabularOneDDistribution>&
+		 compton_profile )
   : d_interaction_subshell( interaction_subshell ),
     d_num_electrons_in_subshell( num_electrons_in_subshell ),
     d_subshell_binding_energy( binding_energy ),
     d_compton_profile( compton_profile )
 {
   // Make sure the Compton profile is valid
-  testPrecondition( !compton_profile.is_null() );
+  testPrecondition( !compton_profile.get() );
   testPrecondition( compton_profile->getLowerBoundOfIndepVar() >= -1.0 );
   testPrecondition( compton_profile->getLowerBoundOfIndepVar() <= 0.0 );
 }
