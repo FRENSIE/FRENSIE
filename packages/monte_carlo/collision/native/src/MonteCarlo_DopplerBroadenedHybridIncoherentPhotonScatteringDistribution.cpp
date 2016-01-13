@@ -23,9 +23,9 @@ DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHy
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
   // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  testPrecondition( !scattering_function.get() );
   // Make sure the Doppler broadened energy distribution is valid
-  testPrecondition( !doppler_broadened_energy_dist.is_null() );
+  testPrecondition( !doppler_broadened_energy_dist.get() );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

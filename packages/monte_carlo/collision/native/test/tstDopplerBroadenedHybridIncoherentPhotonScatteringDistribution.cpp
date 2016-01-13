@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,10 +25,12 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -348,13 +351,13 @@ int main( int argc, char** argv )
   Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
 							scatt_func_size ) );
 
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
-
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
 			                                  scat_func_values ) );
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_des = 
@@ -383,7 +386,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
     half_compton_profiles( lswd_block.size() );
   
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
@@ -410,7 +413,7 @@ int main( int argc, char** argv )
   }
 
   // Create the Doppler broadened distribution
-  Teuchos::RCP<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
+  std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
     doppler_dist( new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,

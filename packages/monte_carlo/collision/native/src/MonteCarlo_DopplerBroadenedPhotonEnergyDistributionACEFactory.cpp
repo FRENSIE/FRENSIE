@@ -23,7 +23,7 @@ namespace MonteCarlo{
 //! Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -42,7 +42,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 				    raw_photoatom_data.extractAtomicNumber() );
   
   // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -62,11 +62,11 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 // Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	  Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution( 
 							    raw_photoatom_data,
@@ -74,13 +74,13 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create a decoupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -92,7 +92,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    subshell_order );
 
   // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -112,11 +112,11 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 // Create a decoupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	  Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution( 
 							    raw_photoatom_data,
@@ -124,14 +124,14 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create a subshell Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  const unsigned endf_subshell,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -178,7 +178,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
-  Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile;
+  std::shared_ptr<const Utility::TabularOneDDistribution> compton_profile;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
 							    half_momentum_grid,
@@ -199,11 +199,11 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  const unsigned endf_subshell,
-	  Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution( 
 							    raw_photoatom_data,
@@ -212,7 +212,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create the subshell order array
@@ -237,7 +237,7 @@ DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
 	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	 const bool use_full_profile,
-	 Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >&
+	 Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >&
 	 compton_profiles )
 {
   Teuchos::ArrayView<const double> lswd_block = 
@@ -274,7 +274,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 			  Teuchos::Array<double>& raw_half_momentum_grid,
 			  Teuchos::Array<double>& raw_half_profile,
 			  const bool use_full_profile,
-                          Teuchos::RCP<const Utility::TabularOneDDistribution>&
+                          std::shared_ptr<const Utility::TabularOneDDistribution>&
 			  compton_profile_dist )
 {
   // Make sure the half grid and profile are valid

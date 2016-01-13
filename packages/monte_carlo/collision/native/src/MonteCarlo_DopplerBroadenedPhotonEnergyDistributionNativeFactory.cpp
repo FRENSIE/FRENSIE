@@ -23,7 +23,7 @@ namespace MonteCarlo{
 // Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+	 std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 	 doppler_broadened_dist )
 {
   // Extract the binding energies, occupancies and order
@@ -52,7 +52,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 				   new VoidComptonProfileSubshellConverter() );
 
   // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles( subshell_order.size() );
 
   Teuchos::Array<SubshellType> subshell_order_copy = subshell_order;
@@ -78,24 +78,24 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 // Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	 std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	 doppler_broadened_dist )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution( 
 							    raw_photoatom_data,
 							    dist );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
   
 // Create a subshell Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,
-	 Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+	 std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 	 doppler_broadened_dist )
 {
   // Convert the endf subshell to a subshell type
@@ -107,7 +107,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile
-  Teuchos::RCP<Utility::TabularOneDDistribution> compton_profile(
+  std::shared_ptr<Utility::TabularOneDDistribution> compton_profile(
        new Utility::TabularDistribution<Utility::LinLin>(
 	     raw_photoatom_data.getComptonProfileMomentumGrid( endf_subshell ),
 	     raw_photoatom_data.getComptonProfile( endf_subshell ) ) );
@@ -124,10 +124,10 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,
-	 Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+	 std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
 	 doppler_broadened_dist )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution( 
 							    raw_photoatom_data,
@@ -135,7 +135,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 							    dist );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 } // end MonteCarlo namespace
