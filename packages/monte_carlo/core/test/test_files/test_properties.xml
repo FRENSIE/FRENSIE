@@ -1,8 +1,7 @@
 <ParameterList name="Properties">
 
-  <Parameter name="Mode" type="string" value="Neutron-Photon"/>
-
   <ParameterList name="General Properties">
+    <Parameter name="Mode" type="string" value="Neutron-Photon"/>
     <Parameter name="Histories" type="unsigned int" value="10"/>
     <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.1"/>
     <Parameter name="Implicit Capture" type="bool" value="true"/>

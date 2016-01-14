@@ -17,7 +17,8 @@ namespace MonteCarlo{
 
 //! Initialize the simulation properties
 void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
-				    const Teuchos::ParameterList& properties )
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn )
 {  
   // Get the min electron energy - optional
   if( properties.isParameter( "Min Electron Energy" ) )
@@ -31,7 +32,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
       SimulationElectronProperties::setMinElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMinElectronEnergy() );
       
-      std::cerr << "Warning: the lowest supported electron energy is "
+      *os_warn << "Warning: the lowest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 		<< ". This value will be used instead of "
 		<< min_energy << "." << std::endl;
@@ -50,7 +51,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
       SimulationElectronProperties::setMaxElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMaxElectronEnergy() );
       
-      std::cerr << "Warning: the highest supported electron energy is "
+      *os_warn << "Warning: the highest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
 		<< ". This value will be used instead of "
 		<< max_energy << "." << std::endl;
@@ -89,7 +90,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
                                                                      function );
   }
   
-  properties.unused( std::cerr );
+  properties.unused( *os_warn );
 }
 
 } // end MonteCarlo namespace

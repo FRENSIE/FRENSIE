@@ -38,7 +38,9 @@ TEUCHOS_UNIT_TEST( SimulationGeneralPropertiesFactory,
 
   MonteCarlo::SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties( 
 						general_properties );
-
+  
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
+		       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationGeneralProperties::getNumberOfHistories(),
 		      10 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
