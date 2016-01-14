@@ -31,7 +31,7 @@ DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadened
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
   // Make sure the Doppler broadened energy dist is valid
-  testPrecondition( !doppler_broadened_energy_dist.get() );
+  testPrecondition( doppler_broadened_energy_dist.get() );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

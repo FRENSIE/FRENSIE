@@ -29,7 +29,7 @@ SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhoton
     d_compton_profile( compton_profile )
 {
   // Make sure the Compton profile is valid
-  testPrecondition( !compton_profile.get() );
+  testPrecondition( compton_profile.get() );
   testPrecondition( compton_profile->getLowerBoundOfIndepVar() >= -1.0 );
   testPrecondition( compton_profile->getLowerBoundOfIndepVar() <= 0.0 );
 }

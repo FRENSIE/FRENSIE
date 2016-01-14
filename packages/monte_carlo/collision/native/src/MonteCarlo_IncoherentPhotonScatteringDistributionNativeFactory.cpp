@@ -165,7 +165,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
     const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened distribution is valid
-  testPrecondition( !doppler_broadened_dist.get() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
@@ -231,7 +231,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
     const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened energy distribution is valid
-  testPrecondition( !doppler_broadened_dist.get() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
@@ -262,7 +262,10 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFuncti
 	const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function;
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseCentimeter,void> > raw_scattering_function(
+     new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseCentimeter,void>( 
+	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
+	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );
 
   scattering_function.reset(
 	     new StandardScatteringFunction<Utility::Units::InverseCentimeter>(

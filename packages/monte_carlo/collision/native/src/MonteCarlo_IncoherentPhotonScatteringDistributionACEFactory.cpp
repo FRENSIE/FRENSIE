@@ -175,7 +175,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
  const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened distribution is valid
-  testPrecondition( !doppler_broadened_dist.get() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
