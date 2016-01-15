@@ -19,8 +19,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
+#include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,7 +32,7 @@ class DopplerBroadenedPhotonEnergyDistribution
 public:
   
   //! The electron momentum distribution array (Compton Profiles)
-  typedef Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
+  typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
   ElectronMomentumDistArray;
   
   //! Constructor
