@@ -30,11 +30,10 @@ public:
 
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
-		 const SubshellType interaction_subshell,
-		 const double num_electrons_in_subshell,
-		 const double binding_energy,
-		 const std::shared_ptr<const Utility::TabularOneDDistribution>&
-		 compton_profile );
+		const SubshellType interaction_subshell,
+		const double num_electrons_in_subshell,
+		const double binding_energy,
+		const std::shared_ptr<const ComptonProfile>& compton_profile );
 
   //! Destructor
   ~SubshellDopplerBroadenedPhotonEnergyDistribution()
@@ -89,7 +88,7 @@ private:
   double d_subshell_binding_energy;
 
   // The compton profile for the subshell
-  std::shared_ptr<const Utility::TabularOneDDistribution> d_compton_profile;
+  std::shared_ptr<const ComptonProfile> d_compton_profile;
 };
 
 } // end MonteCarlo namespace

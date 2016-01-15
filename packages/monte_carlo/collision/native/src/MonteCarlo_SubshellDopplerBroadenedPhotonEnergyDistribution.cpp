@@ -21,7 +21,7 @@ SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhoton
 		 const SubshellType interaction_subshell,
 		 const double num_electrons_in_subshell,
 		 const double binding_energy,
-		 const std::shared_ptr<const Utility::TabularOneDDistribution>&
+		 const std::shared_ptr<const ComptonProfile>&
 		 compton_profile )
   : d_interaction_subshell( interaction_subshell ),
     d_num_electrons_in_subshell( num_electrons_in_subshell ),
@@ -30,8 +30,6 @@ SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhoton
 {
   // Make sure the Compton profile is valid
   testPrecondition( compton_profile.get() );
-  testPrecondition( compton_profile->getLowerBoundOfIndepVar() >= -1.0 );
-  testPrecondition( compton_profile->getLowerBoundOfIndepVar() <= 0.0 );
 }
 
 // Return the subshell
@@ -110,10 +108,10 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordTrials(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the max electron momentum projection
-  double pz_max = calculateMaxElectronMomentumProjection( 
-						     incoming_energy,
-						     d_subshell_binding_energy,
-						     scattering_angle_cosine );
+  ComptonProfile::MomentumQuantity pz_max = Utility::Units::mec_momentum*
+    calculateMaxElectronMomentumProjection( incoming_energy,
+					    d_subshell_binding_energy,
+					    scattering_angle_cosine );
 
   // Calculate the doppler broadened energy
   bool energetically_possible = false;
@@ -123,9 +121,10 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordTrials(
     ++trials;
     
     // Sample an electron momentum projection
-    double pz = d_compton_profile->sampleInSubrange( pz_max );
+    ComptonProfile::MomentumQuantity pz = 
+      d_compton_profile->sampleInSubrange( pz_max );
     
-    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
+    outgoing_energy = calculateDopplerBroadenedEnergy(pz.value(),
 						      incoming_energy,
 						      scattering_angle_cosine,
 						      energetically_possible );

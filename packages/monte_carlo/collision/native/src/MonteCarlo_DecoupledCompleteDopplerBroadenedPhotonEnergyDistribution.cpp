@@ -46,10 +46,6 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::DecoupledCompleteDopp
   // Make sure the comptron profile array is valid
   testPrecondition( electron_momentum_dist_array.size() ==
 		    old_subshell_binding_energies.size() );
-  testPrecondition( electron_momentum_dist_array.front()->getLowerBoundOfIndepVar() >= -1.0 );
-  testPrecondition( electron_momentum_dist_array.back()->getLowerBoundOfIndepVar() >= -1.0 );
-  testPrecondition( electron_momentum_dist_array.front()->getUpperBoundOfIndepVar() <= 1.0 );
-  testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
 
   // Create the old subshell interaction distribution
   Teuchos::Array<double> dummy_indep_vals( old_subshell_occupancies.size() );
@@ -59,7 +55,8 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::DecoupledCompleteDopp
 					          old_subshell_occupancies ) );
 
   // Check if a half (standard) or full profile is being used.
-  if( electron_momentum_dist_array.front()->getLowerBoundOfIndepVar() < 0.0 )
+  if( electron_momentum_dist_array.front()->getLowerBoundOfMomentum() < 
+      0.0*mec_momentum )
     d_half_profiles = false;
   else
     d_half_profiles = true;
@@ -83,12 +80,13 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
 						     outgoing_energy,
 						     scattering_angle_cosine);
   
-  const double electron_momentum_projection = 
-    calculateElectronMomentumProjection( incoming_energy,
-					 outgoing_energy,
-					 scattering_angle_cosine );
+  const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+    mec_momentum*calculateElectronMomentumProjection( incoming_energy,
+						      outgoing_energy,
+						      scattering_angle_cosine);
 
-  double compton_profile_terms = 0.0;				       
+  ComptonProfile::ProfileQuantity compton_profile_terms = 
+    0.0*inverse_mec_momentum;
 
   for( unsigned i = 0; i < d_old_subshell_binding_energy.size(); ++i )
   {
@@ -99,7 +97,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
       if( d_half_profiles )
       {
 	compton_profile_terms += 
-	  d_electron_momentum_distribution[i]->evaluate( 
+	  d_electron_momentum_distribution[i]->evaluate(
 				      fabs( electron_momentum_projection ) )/2;
       }
       else
@@ -111,7 +109,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
     }
   }
 
-  return multiplier*compton_profile_terms;
+  return multiplier*compton_profile_terms.value();
 }
     
 // Evaluate the subshell distribution
@@ -213,7 +211,7 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 					subshell_binding_energy );
 
     // Get the Compton profile for the sampled subshell
-    const Utility::TabularOneDDistribution& compton_profile = 
+    const ComptonProfile& compton_profile = 
       *d_electron_momentum_distribution[compton_shell_index];
 
     // Calculate the maximum outgoing photon energy
@@ -233,10 +231,10 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
       continue;
 
     // Calculate the maximum electron momentum projection
-    double pz_max = calculateMaxElectronMomentumProjection( 
-						     incoming_energy,
-						     subshell_binding_energy,
-						     scattering_angle_cosine );
+    ComptonProfile::MomentumQuantity pz_max = Utility::Units::mec_momentum*
+      calculateMaxElectronMomentumProjection( incoming_energy,
+					      subshell_binding_energy,
+					      scattering_angle_cosine );
 
     // If using a half profile, make sure the maximum electron momentum 
     // projection is positive (why? - pz_max >= -1.0 is acceptable...)
@@ -248,16 +246,18 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 
     //   break;
     // }
-    if( pz_max < compton_profile.getLowerBoundOfIndepVar() )
+    if( pz_max < compton_profile.getLowerBoundOfMomentum() )
       continue;
 
-    double pz_table_max = compton_profile.getUpperBoundOfIndepVar();
+    ComptonProfile::MomentumQuantity pz_table_max = 
+      compton_profile.getUpperBoundOfMomentum();
     
     if( pz_max > pz_table_max )
       pz_max = pz_table_max;
 
     // Sample an electron momentum projection
-    double pz = compton_profile.sampleInSubrange( pz_max );
+    ComptonProfile::MomentumQuantity pz = 
+      compton_profile.sampleInSubrange( pz_max );
     
     if( d_half_profiles )
     {
@@ -267,7 +267,7 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordT
 
     bool energetically_possible;
 
-    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
+    outgoing_energy = calculateDopplerBroadenedEnergy(pz.value(),
 						      incoming_energy,
 						      scattering_angle_cosine,
 						      energetically_possible );
