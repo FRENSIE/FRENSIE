@@ -87,16 +87,15 @@ private:
   static void createComptonProfileDistArray(
       const Data::XSSEPRDataExtractor& raw_photoatom_data,
       const bool use_full_profile,
-      Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >&
+      DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
       compton_profiles );
 
   //! Create the Compton profile distribution
   static void createComptonProfileDist(
-		       Teuchos::Array<double>& raw_half_momentum_grid,
-		       Teuchos::Array<double>& raw_half_profile,
-		       const bool use_full_profile,
-                       std::shared_ptr<const Utility::TabularOneDDistribution>&
-		       compton_profile_dist );
+		 Teuchos::Array<double>& raw_half_momentum_grid,
+                 Teuchos::Array<double>& raw_half_profile,
+                 const bool use_full_profile,
+                 std::shared_ptr<const ComptonProfile>& compton_profile );
 };
 
 } // end MonteCarlo namespace

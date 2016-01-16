@@ -15,12 +15,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_UnitTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The standard Compton profile class
 template<typename StoredMomentumUnit,
-	 typename StoredInverseMomentumUnit,
+	 typename StoredInverseMomentumUnit = typename Utility::UnitTraits<StoredMomentumUnit>::InverseUnit,
 	 template<typename> class SmartPointer = std::shared_ptr>
 class StandardComptonProfile : public ComptonProfile
 {

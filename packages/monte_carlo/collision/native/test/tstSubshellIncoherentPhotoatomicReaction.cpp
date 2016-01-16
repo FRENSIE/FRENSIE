@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
@@ -24,6 +25,8 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_MeCMomentumUnit.hpp"
+#include "Utility_InverseMeCMomentumUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -347,10 +350,14 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
     
     // Create the Compton profile and occupation number distributions
-    std::shared_ptr<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
-			    new Utility::TabularDistribution<Utility::LinLin>( 
-						       compton_profile_grid_s1,
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
+                                                       compton_profile_grid_s1,
 						       compton_profile_s1 ) );
+
+    std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile_s1_dist( 
+           new MonteCarlo::StandardComptonProfile<Utility::Units::MeCMomentum>(
+                                                       raw_compton_profile ) );
 
     Teuchos::RCP<const Utility::OneDDistribution> occupation_number_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>(
