@@ -21,11 +21,14 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_InverseAtomicMomentumUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -154,7 +157,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
+  MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
   
@@ -179,26 +182,24 @@ int main( int argc, char** argv )
 						  full_momentum_grid,
 						  full_profile );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                       half_momentum_grid,
+                                                       half_profile ) );
 
-    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
-						 full_profile.end() );
-
-    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
-					       half_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
-						 half_profile.end() );
-    
     half_compton_profiles[shell].reset( 
-	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
-							    half_profile ) );
-
-    full_compton_profiles[shell].reset(
-	 new Utility::TabularDistribution<Utility::LogLin>( full_momentum_grid,
-							    full_profile ) );
-		 
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+                                                       raw_compton_profile ) );
+    
+    raw_compton_profile.reset(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                       full_momentum_grid,
+                                                       full_profile ) );
+    
+    full_compton_profiles[shell].reset( 
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+                                                       raw_compton_profile ) );
+    
   }
 
   half_distribution.reset(

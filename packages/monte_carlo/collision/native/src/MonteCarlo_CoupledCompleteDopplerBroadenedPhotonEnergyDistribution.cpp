@@ -44,7 +44,7 @@ CoupledCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledCompleteDopplerB
 
   // Check if a half (standard) or full profile is being used.
   if( electron_momentum_dist_array.front()->getLowerBoundOfMomentum() < 
-      0.0*mec_momentum )
+      0.0*Utility::Units::mec_momentum )
     d_half_profiles = false;
   else
     d_half_profiles = true;

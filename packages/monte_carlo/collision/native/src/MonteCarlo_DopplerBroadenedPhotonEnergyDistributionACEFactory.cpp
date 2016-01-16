@@ -12,8 +12,11 @@
 #include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_InverseAtomicMomentumUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -42,7 +45,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 				    raw_photoatom_data.extractAtomicNumber() );
   
   // Create the compton profile distributions
-  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
+  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -92,7 +95,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    subshell_order );
 
   // Create the compton profile distributions
-  Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >
+  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -178,7 +181,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
-  std::shared_ptr<const Utility::TabularOneDDistribution> compton_profile;
+  std::shared_ptr<const ComptonProfile> compton_profile;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
 							    half_momentum_grid,
@@ -237,8 +240,8 @@ DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
 	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	 const bool use_full_profile,
-	 Teuchos::Array<std::shared_ptr<const Utility::TabularOneDDistribution> >&
-	 compton_profiles )
+	 DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+         compton_profiles )
 {
   Teuchos::ArrayView<const double> lswd_block = 
     raw_photoatom_data.extractLSWDBlock();
@@ -271,17 +274,18 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 
 // Create the Compton profile distribution
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
-			  Teuchos::Array<double>& raw_half_momentum_grid,
-			  Teuchos::Array<double>& raw_half_profile,
-			  const bool use_full_profile,
-                          std::shared_ptr<const Utility::TabularOneDDistribution>&
-			  compton_profile_dist )
+		       Teuchos::Array<double>& raw_half_momentum_grid,
+                       Teuchos::Array<double>& raw_half_profile,
+                       const bool use_full_profile,
+                       std::shared_ptr<const ComptonProfile>& compton_profile )
 {
   // Make sure the half grid and profile are valid
   testPrecondition( raw_half_momentum_grid.size() > 1 );
   testPrecondition( raw_half_profile.size() ==
 		    raw_half_momentum_grid.size() );
   
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile;
+
   if( use_full_profile )
   {
     Teuchos::Array<double> full_momentum_grid, full_profile;
@@ -293,31 +297,26 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 						  full_momentum_grid,
 						  full_profile );
     
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
-    
-    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
-						 full_profile.end() );
-    
     // Ignore interp parameter (always assume lin-lin inerpolation)
-    compton_profile_dist.reset(
-	 new Utility::TabularDistribution<Utility::LinLin>( full_momentum_grid,
-							    full_profile ) );
+    // The Compton profile momentum grid in the ACE tables use atomic units.
+    // The Compton profiles in the ACE tables use inverse atomic units.
+    raw_compton_profile.reset(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                        full_momentum_grid,
+                                                        full_profile ) );
   }
   else
-  {
-    MonteCarlo::convertMomentumGridToMeCUnits( raw_half_momentum_grid.begin(),
-					       raw_half_momentum_grid.end() );
-    
-    MonteCarlo::convertProfileToInverseMeCUnits( raw_half_profile.begin(),
-						 raw_half_profile.end() );
-    
+  {    
     // Ignore interp parameter (always assume lin-lin interpolation)
-    compton_profile_dist.reset(
-		          new Utility::TabularDistribution<Utility::LinLin>( 
-						        raw_half_momentum_grid,
+    raw_compton_profile.reset(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                        raw_half_momentum_grid,
 							raw_half_profile ) );
   }
+
+  compton_profile.reset(
+                   new StandardComptonProfile<Utility::Units::AtomicMomentum>(
+                                                       raw_compton_profile ) );
 }
 
 } // end MonteCarlo namespace

@@ -11,9 +11,12 @@
 #include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_MeCMomentumUnit.hpp"
+#include "Utility_InverseMeCMomentumUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -60,10 +63,15 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 
   for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
   {
-    compton_profiles[i].reset(
-      new Utility::TabularDistribution<Utility::LinLin>(
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
       raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order_copy[i]),
       raw_photoatom_data.getComptonProfile( subshell_order_copy[i] ) ) );
+    
+    compton_profiles[i].reset(
+                      new StandardComptonProfile<Utility::Units::MeCMomentum>( 
+                                                       raw_compton_profile ) );
+      
   }
 
   doppler_broadened_dist.reset( 
@@ -107,10 +115,14 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile
-  std::shared_ptr<Utility::TabularOneDDistribution> compton_profile(
-       new Utility::TabularDistribution<Utility::LinLin>(
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum> > raw_compton_profile(
+      new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::MeCMomentum,Utility::Units::InverseMeCMomentum>(
 	     raw_photoatom_data.getComptonProfileMomentumGrid( endf_subshell ),
 	     raw_photoatom_data.getComptonProfile( endf_subshell ) ) );
+
+  std::shared_ptr<ComptonProfile> compton_profile(
+                      new StandardComptonProfile<Utility::Units::MeCMomentum>(
+                                                       raw_compton_profile ) );
 
   doppler_broadened_dist.reset(
 	    new SubshellDopplerBroadenedPhotonEnergyDistribution(

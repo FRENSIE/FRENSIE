@@ -56,7 +56,7 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::DecoupledCompleteDopp
 
   // Check if a half (standard) or full profile is being used.
   if( electron_momentum_dist_array.front()->getLowerBoundOfMomentum() < 
-      0.0*mec_momentum )
+      0.0*Utility::Units::mec_momentum )
     d_half_profiles = false;
   else
     d_half_profiles = true;
@@ -81,12 +81,13 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
 						     scattering_angle_cosine);
   
   const ComptonProfile::MomentumQuantity electron_momentum_projection = 
-    mec_momentum*calculateElectronMomentumProjection( incoming_energy,
-						      outgoing_energy,
-						      scattering_angle_cosine);
+    Utility::Units::mec_momentum*
+    calculateElectronMomentumProjection( incoming_energy,
+                                         outgoing_energy,
+                                         scattering_angle_cosine);
 
   ComptonProfile::ProfileQuantity compton_profile_terms = 
-    0.0*inverse_mec_momentum;
+    0.0/Utility::Units::mec_momentum;
 
   for( unsigned i = 0; i < d_old_subshell_binding_energy.size(); ++i )
   {
@@ -98,7 +99,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
       {
 	compton_profile_terms += 
 	  d_electron_momentum_distribution[i]->evaluate(
-				      fabs( electron_momentum_projection ) )/2;
+                                    fabs( electron_momentum_projection ) )/2.0;
       }
       else
       {
