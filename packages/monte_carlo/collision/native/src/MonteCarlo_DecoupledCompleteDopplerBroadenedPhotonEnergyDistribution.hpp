@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
 
@@ -27,50 +30,17 @@ public:
   
   //! Constructor
   DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
-	       const Teuchos::Array<double>& endf_subshell_occupancies,
-	       const Teuchos::Array<SubshellType>& endf_subshell_order,
-	       const Teuchos::Array<double>& old_subshell_binding_energies,
-	       const Teuchos::Array<double>& old_subshell_occupancies,
-	       const ElectronMomentumDistArray& electron_momentum_dist_array );
+               const Teuchos::Array<double>& endf_subshell_occupancies,
+               const Teuchos::Array<SubshellType>& endf_subshell_order,
+               const Teuchos::Array<double>& old_subshell_binding_energies,
+               const Teuchos::Array<double>& old_subshell_occupancies,
+               const std::shared_ptr<const ComptonProfileSubshellConverter>&
+               subshell_converter,
+               const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
   virtual ~DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
-  
-
-  //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-		   const double outgoing_energy,
-		   const double scattering_angle_cosine ) const;
-    
-  //! Evaluate the subshell distribution
-  double evaluateSubshell( const double incoming_energy,
-			   const double outgoing_energy,
-			   const double scattering_angle_cosine,
-			   const SubshellType subshell ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const double incoming_energy,
-		      const double outgoing_energy,
-		      const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluateSubshellPDF( const double incoming_energy,
-			      const double outgoing_energy,
-			      const double scattering_angle_cosine,
-			      const SubshellType subshell ) const;
-
-  //! Evaluate the integrated cross section (b/mu)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-					 const double scattering_angle_cosine,
-					 const double precision ) const;
-
-  //! Evaluate the integrated cross section (b/mu)
-  double evaluateSubshellIntegratedCrossSection( 
-				          const double incoming_energy,
-					  const double scattering_angle_cosine,
-					  const SubshellType subshell,
-					  const double precision ) const;
 
   //! Sample an outgoing energy from the distribution
   void sample( const double incoming_energy,

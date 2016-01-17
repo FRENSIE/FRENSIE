@@ -38,7 +38,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    subshell_order );
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
   
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
@@ -94,6 +94,13 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    raw_photoatom_data,
 							    subshell_order );
 
+  // Create the Compton profile subshell converter
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
+  
+  ComptonProfileSubshellConverterFactory::createConverter(
+				    converter,
+				    raw_photoatom_data.extractAtomicNumber() );
+
   // Create the compton profile distributions
   DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles;
@@ -109,6 +116,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 			   subshell_order,
 			   raw_photoatom_data.extractLBEPSBlock(),
 			   raw_photoatom_data.extractLNEPSBlock(),
+                           converter,
 			   compton_profiles ) );
 }
 
@@ -147,7 +155,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
   
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
