@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSE Includes
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
@@ -23,11 +26,12 @@ public:
   
   //! Constructor
   CoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
-       const Teuchos::Array<double>& subshell_binding_energies,
-       const Teuchos::Array<double>& subshell_occupancies,
-       const Teuchos::Array<SubshellType>& subshell_order,
-       const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-       const ElectronMomentumDistArray& electron_momentum_dist_array );
+               const Teuchos::Array<double>& subshell_binding_energies,
+               const Teuchos::Array<double>& subshell_occupancies,
+               const Teuchos::Array<SubshellType>& subshell_order,
+               const std::shared_ptr<const ComptonProfileSubshellConverter>&
+               subshell_converter,
+               const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
   virtual ~CoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
@@ -84,7 +88,7 @@ public:
 private:
 
   // The Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> d_subshell_converter;
+  std::shared_ptr<const ComptonProfileSubshellConverter> d_subshell_converter;
 
   // The subshell binding energies
   Teuchos::Array<double> d_subshell_binding_energies;

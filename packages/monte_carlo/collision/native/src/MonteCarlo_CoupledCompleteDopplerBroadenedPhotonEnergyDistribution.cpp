@@ -21,11 +21,12 @@ namespace MonteCarlo{
  * to 1.0).
  */
 CoupledCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
-       const Teuchos::Array<double>& subshell_binding_energies,
-       const Teuchos::Array<double>& subshell_occupancies,
-       const Teuchos::Array<SubshellType>& subshell_order,
-       const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-       const ElectronMomentumDistArray& electron_momentum_dist_array )
+                const Teuchos::Array<double>& subshell_binding_energies,
+                const Teuchos::Array<double>& subshell_occupancies,
+                const Teuchos::Array<SubshellType>& subshell_order,
+                const std::shared_ptr<const ComptonProfileSubshellConverter>&
+                subshell_converter,
+                const ElectronMomentumDistArray& electron_momentum_dist_array )
   : CompleteDopplerBroadenedPhotonEnergyDistribution( subshell_occupancies,
 						      subshell_order ),
     d_subshell_converter( subshell_converter ),

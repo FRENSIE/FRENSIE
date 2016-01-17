@@ -1,10 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ComptonProfileSubshellConverterFactory.cpp
+//! \file   MonteCarlo_ComptonProfileSubshellConverterFactory_def.hpp
 //! \author Alex Robinson
 //! \brief  Compton profile subshell-to-index converter factory definition
 //!
 //---------------------------------------------------------------------------//
+
+#ifndef MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_DEF_HPP
+#define MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
@@ -15,8 +18,9 @@
 namespace MonteCarlo{
 
 // Create the converter
+template<typename SmartPointer>
 void ComptonProfileSubshellConverterFactory::createConverter( 
-		      Teuchos::RCP<ComptonProfileSubshellConverter>& converter,
+		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
@@ -331,9 +335,10 @@ void ComptonProfileSubshellConverterFactory::createConverter(
   }
 }
 
-
 } // end MonteCarlo namespace
 
+#endif // end MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ComptonProfileSubshellConverterFactory.cpp
+// end MonteCarlo_ComptonProfileSubshellConverterFactory_def.hpp
 //---------------------------------------------------------------------------//

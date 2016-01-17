@@ -9,8 +9,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,15 +28,20 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::DecoupledCompleteDopp
 	       const Teuchos::Array<SubshellType>& endf_subshell_order,
 	       const Teuchos::Array<double>& old_subshell_binding_energies,
 	       const Teuchos::Array<double>& old_subshell_occupancies,
+               const std::shared_ptr<const ComptonProfileSubshellConverter>&
+               subshell_converter,
 	       const ElectronMomentumDistArray& electron_momentum_dist_array )
   : CompleteDopplerBroadenedPhotonEnergyDistribution(endf_subshell_occupancies,
-						     endf_subshell_order ),
-    d_old_subshell_occupancy_distribution(),
+						     endf_subshell_order,
+                                                     subshell_converter ),
+  d_old_subshell_occupancy_distribution(),
     d_old_subshell_binding_energy( old_subshell_binding_energies ),
     d_old_subshell_occupancies( old_subshell_occupancies ),
     d_half_profiles( true ),
     d_electron_momentum_distribution( electron_momentum_dist_array )
 {
+  // Make sure that the subshell converter is valid
+  testPrecondition( subshell_converter.get() );
   // Make sure the shell interaction data is valid
   testPrecondition( endf_subshell_occupancies.size() > 0 );
   testPrecondition( endf_subshell_order.size() == 
@@ -77,14 +84,13 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double multiplier = this->evaluateMultiplier(incoming_energy,
-						     outgoing_energy,
-						     scattering_angle_cosine);
+                                                     scattering_angle_cosine);
   
   const ComptonProfile::MomentumQuantity electron_momentum_projection = 
     Utility::Units::mec_momentum*
     calculateElectronMomentumProjection( incoming_energy,
                                          outgoing_energy,
-                                         scattering_angle_cosine);
+                                         scattering_angle_cosine );
 
   ComptonProfile::ProfileQuantity compton_profile_terms = 
     0.0/Utility::Units::mec_momentum;
@@ -93,20 +99,24 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate(
   {
     if( incoming_energy >= d_old_subshell_binding_energy[i] )
     {
+      double subshell_occupancy = d_old_subshell_occupancies[i];
+      
       // Half profiles are multiplied by 2 two keep them normalized - divide
       // by two after evaluating the profile.
       if( d_half_profiles )
       {
-	compton_profile_terms += 
-	  d_electron_momentum_distribution[i]->evaluate(
+	compton_profile_terms += subshell_occupancy*
+          d_electron_momentum_distribution[i]->evaluate(
                                     fabs( electron_momentum_projection ) )/2.0;
       }
       else
       {
-	compton_profile_terms +=
-	  d_electron_momentum_distribution[i]->evaluate(
+	compton_profile_terms += subshell_occupancy*
+          d_electron_momentum_distribution[i]->evaluate(
 					        electron_momentum_projection );
       }
+
+      compton_profile_terms += subshell_term;
     }
   }
 
@@ -120,7 +130,68 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshe
 				          const double scattering_angle_cosine,
 					  const SubshellType subshell ) const
 {
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  remember( unsigned test_subshell_index = 
+            d_subshell_converter->convertSubshellToIndex( subshell ) );
+  remeber( double test_subshell_be = 
+           d_old_subshell_occupancies[test_subshell_index] );
+  testPrecondition( outgoing_energy < incoming_energy );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Get the subshell index corresponding to the requested subshell
+  unsigned compton_shell_index = 
+    d_subshell_converter->convertSubshellToIndex( subshell );
+
+  // Get the subshell binding energy
+  double subshell_binding_energy = 
+    d_old_subshell_occupancies[test_subshell_index];
+
+  if( outgoing_energy < incoming_energy - subshell_binding_energy )
+  {
+    // Get the Compton profile for the subshell
+    const ComptonProfile& compton_profile = 
+      *d_electron_momentum_distribution[compton_shell_index];
+
+    // Get the subshell occupancy
+    const double subshell_occupancy = d_old_subshell_occupancies[i];
   
+    // Calculate the electron momentum projection
+    const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+      Utility::Units::mec_momentum*
+      calculateElectronMomentumProjection( incoming_energy,
+                                           outgoing_energy,
+                                           scattering_angle_cosine);
+
+    // Evaluate the Compton profile
+    ComptonProfile::ProfileQuantity compton_profile_value;
+
+    // Half profiles are multiplied by 2 two keep them normalized - divide
+    // by two after evaluating the profile.
+    if( d_half_profiles )
+    {
+      compton_profile_value = compton_profile.evaluate(
+                                    fabs( electron_momentum_projection ) )/2.0;
+    }
+    else
+    {
+      compton_profile_value = compton_profile.evaluate(
+      					        electron_momentum_projection );
+    }
+    
+
+    // Evaluate the cross section
+    const double multiplier = this->evaluateMultiplier(
+                                                     incoming_energy,
+                                                     scattering_angle_cosine );
+
+    return multiplier*subshell_occupancy*compton_profile_value;
+  }
+  else
+    return 0.0;
 }
 
 // Evaluate the PDF
@@ -129,7 +200,12 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
 {
-  return 0.0;
+  return this->evaluate( incoming_energy, 
+                         outgoing_energy,
+                         scattering_angle_cosine )/
+    this->evaluateIntegratedCrossSection( incoming_energy,
+                                          scattering_angle_cosine,
+                                          1e-3 );
 }
 
 // Evaluate the PDF
@@ -139,7 +215,15 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshe
 				          const double scattering_angle_cosine,
 					  const SubshellType subshell ) const
 {
-  return 0.0;
+  return this->evaluateSubshell( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine,
+                                 subshell )/
+    this->evaluateSubshellIntegratedCrossSection(
+                                                 incoming_energy,
+                                                 scattering_angle_cosine,
+                                                 subshell,
+                                                 1e-3 );
 }
 
 // Evaluate the integrated cross section (b/mu)
@@ -148,7 +232,34 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateIntegr
 					  const double scattering_angle_cosine,
 					  const double precision ) const
 {
-  return 0.0;
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Evaluate the integrated cross section
+  boost::function<double (double x)> double_diff_cs_wrapper = 
+    boost::bind<double>( &CompleteDopplerBroadenedPhotonEnergyDistribution::evaluate,
+                         boost::cref( *this ),
+                         incoming_energy,
+                         scattering_angle_cosine,
+                         _1 );
+
+  double abs_error, diff_cs;
+
+  Utility::GaussKronrodQuadratureSet quadrature_set( presicion );
+  
+  quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
+                                          0.0,
+                                          incoming_energy,
+                                          diff_cs,
+                                          abs_error );
+
+  // Make sure that the differential cross section is valid
+  testPostcondition( diff_cs > 0.0 );
+
+  return diff_cs;
 }
 
 // Evaluate the integrated cross section (b/mu)
@@ -158,7 +269,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshe
 					  const SubshellType subshell,
 					  const double precision ) const
 {
-  return 0.0;
+  
 }
 
 // Sample an outgoing energy from the distribution
