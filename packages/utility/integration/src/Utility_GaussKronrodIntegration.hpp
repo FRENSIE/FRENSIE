@@ -10,7 +10,7 @@
 #define UTILITY_GAUSS_KRONROD_INTEGRATION_HPP
 
 // Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
+#include <Teuchos_Array.hpp>
 
 namespace Utility{
 
@@ -82,20 +82,63 @@ public:
 */
 private:
 
-  // AdaptiveQuadraturePointTraits declaration
-  template<int Points>
-  struct AdaptiveQuadraturePointTraits
-  {
-    //! Valid rule
-    static const bool valid_rule = false;
-    
-    //! The Adaptive Guass-Kronrod rule GSL key
-    static const int rule_key = 0;
-  };
-
   // Function wrapper for evaluating the functor
   template<typename Functor>
   static double functorWrapper( const double x, void* indirected_functor );
+
+  // Calculate the quadrature upper and lower integrand values at an abscissa
+  template<typename Functor>
+  void calculateQuadratureIntegrandValuesAtAbscissa( 
+    Functor& integrand, 
+    double abscissa,
+    double half_length,
+    double midpoint,
+    double& integrand_value_lower,
+    double& integrand_value_upper ) const;
+
+  // Normalize absolute error from integration
+  void normalizeAbsoluteError( 
+    double& absolute_error, 
+    double result_abs, 
+    double result_asc ) const;
+
+  // 7 point Gauss quadrature weights
+  static const double gauss_weights_7[4];
+
+  // 7 point Gauss quadrature abscissae
+  static const double gauss_abscissae_7[4];
+
+  // 15 point Gauss Kronrad quadrature weights 
+  //static const Teuchos::Array<double> kronrod_weights_15;
+  static const double kronrod_weights_15[8];
+
+  // 15 point Gauss Kronrad quadrature abscissae
+  //static Teuchos::Array<double> kronrod_abscissae_15;
+  static const double kronrod_abscissae_15[8];
+
+  // 21 point Gauss Kronrad quadrature weights 
+  static Teuchos::Array<double> kronrod_weights_21;
+
+  // 21 point Gauss Kronrad quadrature abscissae
+  static Teuchos::Array<double> kronrod_abscissae_21;
+
+  // 31 point Gauss Kronrad quadrature weights 
+  static Teuchos::Array<double> kronrod_weights_31;
+
+  // 31 point Gauss Kronrad quadrature abscissae
+  static Teuchos::Array<double> kronrod_abscissae_31;
+
+  // 41 point Gauss Kronrad quadrature weights 
+  static Teuchos::Array<double> kronrod_weights_41;
+
+  // 41 point Gauss Kronrad quadrature abscissae
+  static Teuchos::Array<double> kronrod_abscissae_41;
+
+  // 51 point Gauss Kronrad quadrature weights 
+  static Teuchos::Array<double> kronrod_weights_51;
+
+  // 51 point Gauss Kronrad quadrature abscissae
+  static Teuchos::Array<double> kronrod_abscissae_51;
 
   // The relative error tolerance
   double d_relative_error_tol;
