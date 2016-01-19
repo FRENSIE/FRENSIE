@@ -101,16 +101,18 @@ public:
 			      SubshellType& shell_of_interaction,
 			      unsigned& trials ) const;
 
-  //! Sample an electron momentum from the subshell distribution
-  double sampleSubshellMomentum( const double const double incoming_energy,
-                                 const double scattering_angle_cosine,
-                                 SubshellType shell_of_interaction ) const;
-
   //! Sample an electron momentum from the distribution
-  void sampleMomentum( const double incoming_energy,
-                       const double scattering_angle_cosine,
-                       double& electron_momentum,
-                       SubshellType& shell_of_interaction ) const;
+  void sampleMomentumAndRecordTrials( 
+                                    const double incoming_energy,
+                                    const double scattering_angle_cosine,
+                                    double& electron_momentum,
+                                    SubshellType& shell_of_interaction,
+                                    unsigned& trials ) const;
+
+  //! Sample an electron momentum from the subshell distribution
+  double sampleSubshellMomentum( const double incoming_energy,
+                                 const double scattering_angle_cosine,
+                                 const SubshellType subshell ) const;
 
 protected:
 
@@ -149,6 +151,12 @@ protected:
                                           Subshell& subshell ) const = 0;
 
 private:
+
+  // Sample an electron momentum from the subshell distribution
+  double sampleSubshellMomentum( const double incoming_energy,
+                                 const double scattering_angle_cosine,
+                                 const double subshell_binding_energy,
+                                 const ComptonProfile& compton_profile ) const;
 
   // The ENDF subshell interaction probabilities
   boost::scoped_ptr<const Utility::TabularOneDDistribution>

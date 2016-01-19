@@ -18,11 +18,13 @@
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The subshell Doppler broadened photon energy distribution class
+template<typename ComptonProfilePolicy>
 class SubshellDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadenedPhotonEnergyDistribution
 {
 
@@ -31,8 +33,8 @@ public:
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
 		const SubshellType interaction_subshell,
-		const double num_electrons_in_subshell,
-		const double binding_energy,
+		const double subshell_occupancy,
+		const double subshell_binding_energy,
 		const std::shared_ptr<const ComptonProfile>& compton_profile );
 
   //! Destructor
@@ -43,10 +45,10 @@ public:
   SubshellType getSubshell() const;
   
   //! Return the number of electrons in the subshell
-  double getNumberOfElectronsInSubshell() const;
+  double getSubshellOccupancy() const;
 
-  //! Return the binding energy
-  double getBindingEnergy() const;
+  //! Return the subshell binding energy
+  double getSubshellBindingEnergy() const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
@@ -75,6 +77,13 @@ public:
 			      double& outgoing_energy,
 			      SubshellType& shell_of_interaction,
 			      unsigned& trials ) const;
+
+  //! Sample an electron momentum projection and record the number of trials
+  void sampleMomentumAndRecordTrials( const double incoming_energy,
+                                      const double scattering_angle_cosine,
+                                      double& electron_momentum_projection,
+                                      Subshell& shell_of_interaction,
+                                      unsigned& trials ) const;
   
 private:
 
@@ -82,7 +91,7 @@ private:
   SubshellType d_interaction_subshell;
 
   // The number of electrons in the subshell
-  double d_num_electrons_in_subshell;
+  double d_subshell_occupancy;
 
   // THe subshell binding energy
   double d_subshell_binding_energy;
@@ -92,6 +101,14 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 

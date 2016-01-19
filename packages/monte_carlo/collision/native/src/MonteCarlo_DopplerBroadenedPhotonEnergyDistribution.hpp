@@ -73,6 +73,14 @@ public:
 				SubshellType& shell_of_interaction,
 				unsigned& trials ) const = 0;
 
+  //! Sample an electron momentum projection and record the number of trials
+  virtual void sampleMomentumAndRecordTrials(
+                                          const double incoming_energy,
+                                          const double scattering_angle_cosine,
+                                          double& electron_momentum_projection,
+                                          Subshell& shell_of_interaction,
+                                          unsigned& trials ) const = 0;
+
 protected:
 
   //! Evaluate the cross section multiplier
