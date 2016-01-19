@@ -23,7 +23,8 @@
 namespace MonteCarlo{
 
 //! The decoupled complete Doppler broadenening photon energy dist. class
-class DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution : public CompleteDopplerBroadenedPhotonEnergyDistribution
+template<typename ComptonProfilePolicy>
+class DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution : public CompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
 {
 
 public:
@@ -39,28 +40,26 @@ public:
                const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
-  virtual ~DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
+  ~DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
-  //! Sample an outgoing energy from the distribution
-  void sample( const double incoming_energy,
-	       const double scattering_angle_cosine,
-	       double& outgoing_energy,
-	       SubshellType& shell_of_interaction ) const;
+protected:
 
-  //! Sample an outgoing energy and record the number of trials
-  void sampleAndRecordTrials( const double incoming_energy,
-			      const double scattering_angle_cosine,
-			      double& outgoing_energy,
-			      SubshellType& shell_of_interaction,
-			      unsigned& trials ) const;
+  //! Return the binding energy of a subshell
+  double getSubshellBindingEnergy( const SubshellType subshell ) const;
+  
+  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  double getSubshellOccupancy( const SubshellType subshell ) const;
+
+  //! Sample an interaction subshell
+  void sampleInteractionSubshell( unsigned& old_subshell_index,
+                                  double& subshell_binding_energy,
+                                  Subshell& subshell ) const;
 
 private:
 
   // Sample the old subshell that is interacted with
-  void sampleOldInteractionSubshell( 
-				   unsigned& old_shell_of_interaction,
-				   double& old_subshell_binding_energy ) const;
+  unsigned sampleOldInteractionSubshell() const;
 
   // The old subshell interaction probabilities
   boost::scoped_ptr<const Utility::TabularOneDDistribution>
@@ -71,15 +70,17 @@ private:
 
   // The old subshell occupandies
   Teuchos::Array<double> d_old_subshell_occupancies;
-  
-  // Records if the Compton profiles are half (standard) or full
-  bool d_half_profiles;
-
-  // The electron momentum dist array
-  ElectronMomentumDistArray d_electron_momentum_distribution;
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
