@@ -23,7 +23,7 @@ class ComptonProfileSubshellConverterFactory
 public:
 
   //! Create the converter
-  template<typename SmartPointer>
+  template<template<typename> class SmartPointer>
   static void createConverter( 
 		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number );

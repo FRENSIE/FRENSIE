@@ -18,7 +18,7 @@
 namespace MonteCarlo{
 
 // Create the converter
-template<typename SmartPointer>
+template<template<typename> class SmartPointer>
 void ComptonProfileSubshellConverterFactory::createConverter( 
 		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number )

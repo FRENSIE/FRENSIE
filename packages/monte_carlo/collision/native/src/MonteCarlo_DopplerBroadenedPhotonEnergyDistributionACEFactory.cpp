@@ -12,6 +12,7 @@
 #include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -53,8 +54,9 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    use_full_profile,
 							    compton_profiles );
 
+  // ACE Compton profiles are halved and then doubled so they remain normalized
   doppler_broadened_dist.reset( 
-		  new CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+      new CoupledCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>( 
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
 			   subshell_order,
@@ -77,7 +79,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> >( dist );
 }
 
 // Create a decoupled complete Doppler broadened photon energy dist
@@ -110,8 +112,9 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    use_full_profile,
 							    compton_profiles );
   
+  // ACE Compton profiles are halved and then doubled so they remain normalized
   doppler_broadened_dist.reset( 
-		new DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+      new DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>( 
 			   raw_photoatom_data.extractSubshellOccupancies(),
 			   subshell_order,
 			   raw_photoatom_data.extractLBEPSBlock(),
@@ -135,7 +138,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy> >( dist );
 }
 
 // Create a subshell Doppler broadened photon energy dist
@@ -197,12 +200,24 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 							    use_full_profile,
 							    compton_profile );
 
-  doppler_broadened_dist.reset(
-		      new SubshellDopplerBroadenedPhotonEnergyDistribution(
+  if( use_full_profile )
+  {
+    doppler_broadened_dist.reset(
+        new SubshellDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
 			 subshell,
 			 raw_photoatom_data.extractLNEPSBlock()[compton_index],
 		         raw_photoatom_data.extractLBEPSBlock()[compton_index],
 			 compton_profile ) );
+  }
+  else
+  {
+    doppler_broadened_dist.reset(
+        new SubshellDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>(
+			 subshell,
+			 raw_photoatom_data.extractLNEPSBlock()[compton_index],
+		         raw_photoatom_data.extractLBEPSBlock()[compton_index],
+			 compton_profile ) );
+  }
 			 
 }
 
