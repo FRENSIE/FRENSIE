@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstQuadpackWrappers.cpp
+//! \file   tstGaussKronrodIntegration.cpp
 //! \author Luke Kersting
-//! \brief  quadpack wrapper unit test
+//! \brief  Gauss Kronrod quadrature integration unit test
 //!
 //---------------------------------------------------------------------------//
 
@@ -38,7 +38,7 @@ double fun( double x )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( QuadpackWrappers, qags )
+TEUCHOS_UNIT_TEST( GaussKronrodIntegration, qags )
 {
 
   // Create boost rapper function for f
@@ -46,6 +46,7 @@ TEUCHOS_UNIT_TEST( QuadpackWrappers, qags )
     boost::bind<double>( &fun,
                          _1 );
 
+  Utility::GaussKronrodIntegration set( 0.1, 0.1 );
   double result = 4.0;
 
   TEST_EQUALITY_CONST( result, 4.0 );
