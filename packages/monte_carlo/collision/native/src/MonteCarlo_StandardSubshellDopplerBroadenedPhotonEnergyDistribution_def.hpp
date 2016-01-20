@@ -1,20 +1,21 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution_def.hpp
+//! \file   MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //! \author Alex Robinson
-//! \brief  The subshell Doppler broadened photon energy distribution def.
+//! \brief  The standard subshell Doppler broadened photon energy distribution 
+//!         def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
-#define MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_STANDARD_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_STANDARD_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 // Boost Includes
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -27,8 +28,8 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 template<typename ComptonProfilePolicy>
-SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::SubshellDopplerBroadenedPhotonEnergyDistribution(
-		 const SubshellType interaction_subshell,
+StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
+		 const StandardSubshellType interaction_subshell,
 		 const double subshell_occupancy,
 		 const double subshell_binding_energy,
 		 const std::shared_ptr<const ComptonProfile>&
@@ -49,30 +50,9 @@ SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::Subshell
   testPrecondition( compton_profile.get() );
 }
 
-// Return the subshell
-template<typename ComptonProfilePolicy>
-SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell() const
-{
-  return d_interaction_subshell;
-}
-  
-// Return the number of electrons in the subshell
-template<typename ComptonProfilePolicy>
-double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy() const
-{
-  return d_subshell_occupancy;
-}
-
-// Return the binding energy
-template<typename ComptonProfilePolicy>
-double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy() const
-{
-  return d_subshell_binding_energy;
-}
-
 // Evaluate the distribution
 template<typename ComptonProfilePolicy>
-double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluate( 
+double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluate( 
 				   const double incoming_energy,
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
@@ -122,7 +102,7 @@ double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::e
 
 // Evaluate the PDF
 template<typename ComptonProfilePolicy>
-double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluatePDF( 
+double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluatePDF( 
 			           const double incoming_energy,
 				   const double outgoing_energy,
 			           const double scattering_angle_cosine ) const
@@ -137,7 +117,7 @@ double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::e
 
 // Evaluate the integrated cross section (b/mu)
 template<typename ComptonProfilePolicy>
-double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSection( 
+double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSection( 
 					  const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const double precision ) const
@@ -149,7 +129,7 @@ double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::e
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   boost::function<double (double x)> double_diff_cs_wrapper = 
-    boost::bind<double>( &SubshellDopplerBroadenedPhotonEnergyDistribution::evaluate,
+    boost::bind<double>( &StandardSubshellDopplerBroadenedPhotonEnergyDistribution::evaluate,
                          boost::cref( *this ),
                          incoming_energy,
                          _1,
@@ -157,7 +137,7 @@ double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::e
   
   double abs_error, diff_cs;
   
-  const double binding_energy = this->getSubshellBindingEnergy( subshell );
+  const double binding_energy = this->getStandardSubshellBindingEnergy( subshell );
 
   Utility::GausKronrodQuandratureSet quadrature_set( precision );
 
@@ -175,11 +155,11 @@ double SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::e
 
 // Sample an outgoing energy from the distribution
 template<typename ComptonProfilePolicy>
-void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sample( 
+void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sample( 
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
-				     SubshellType& shell_of_interaction ) const
+				     StandardSubshellType& shell_of_interaction ) const
 {
   unsigned trial_dummy;
 
@@ -192,11 +172,11 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sam
 
 // Sample an outgoing energy and record the number of trials
 template<typename ComptonProfilePolicy>
-void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleAndRecordTrials( 
+void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleAndRecordTrials( 
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  double& outgoing_energy,
-					  SubshellType& shell_of_interaction,
+					  StandardSubshellType& shell_of_interaction,
 					  unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -239,11 +219,11 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sam
 
 // Sample an electron momentum projection and record the number of trials
 template<typename ComptonProfilePolicy>
-void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleMomentumAndRecordTrials( 
+void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleMomentumAndRecordTrials( 
                                       const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
-                                      Subshell& shell_of_interaction,
+                                      StandardSubshell& shell_of_interaction,
                                       unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -271,8 +251,8 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sam
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution_def.hpp
+// end MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //---------------------------------------------------------------------------//

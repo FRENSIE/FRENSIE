@@ -9,6 +9,16 @@
 #ifndef MONTE_CARLO_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
+// Boost Includes
+#include <boost/scoped_ptr.hpp>
+#include <boost/bimap.hpp>
+
+// FRENSIE Includes
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
@@ -32,6 +42,10 @@ public:
                const std::shared_ptr<const ComptonProfileSubshellConverter>&
                subshell_converter,
                const ElectronMomentumDistArray& electron_momentum_dist_array );
+
+  //! Destructor
+  virtual ~StandardCompleteDopplerBroadendPhotonEnergyDistribution()
+  { /* .. */ }
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
