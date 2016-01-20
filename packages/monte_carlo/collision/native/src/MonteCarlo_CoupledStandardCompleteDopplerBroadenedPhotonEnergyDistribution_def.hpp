@@ -18,17 +18,21 @@
 namespace MonteCarlo{
 
 // Constructor
-CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-                const Teuchos::Array<double>& subshell_binding_energies,
-                const Teuchos::Array<double>& subshell_occupancies,
-                const Teuchos::Array<SubshellType>& subshell_order,
-                const std::shared_ptr<const ComptonProfileSubshellConverter>&
-                subshell_converter,
-                const ElectronMomentumDistArray& electron_momentum_dist_array )
-  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution( subshell_occupancies,
-						      subshell_order ),
-    d_subshell_converter( subshell_converter ),
-    d_subshell_binding_energies( subshell_binding_energies ),
+template<typename ComptonProfilePolicy>
+CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
+     const Teuchos::Array<double>& subshell_binding_energies,
+     const Teuchos::Array<double>& subshell_occupancies,
+     const Teuchos::Array<SubshellType>& subshell_order,
+     const std::shared_ptr<const ComptonProfileSubshellConverter>&
+     subshell_converter,
+     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+     electron_momentum_dist_array )
+  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>( 
+                                                subshell_occupancies,
+                                                subshell_order,
+                                                subshell_converter,
+                                                electron_momentum_dist_array ),
+    d_subshell_binding_energies( subshell_binding_energies )
 {
   // Make sure the shell interaction data is valid
   testPrecondition( subshell_occupancies.size() > 0 );
@@ -48,7 +52,7 @@ double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPr
 
   unsigned endf_subshell_index = this->getENDFSubshellIndex( subshell );
 
-  return d_subshell_binding_energy[endf_subshell_index];
+  return d_subshell_binding_energies[endf_subshell_index];
 }
 
 // Sample an interaction subshell
@@ -59,7 +63,7 @@ template<typename ComptonProfilePolicy>
 void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
-                                               Subshell& subshell ) const
+                                               SubshellType& subshell ) const
 {
   subshell = this->sampleENDFInteractionSubshell();
 

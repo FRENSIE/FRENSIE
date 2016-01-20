@@ -60,13 +60,13 @@ SubshellIncoherentPhotonScatteringDistribution::getSubshell() const
 }
 
 // Return the number of electrons in the subshell
-double SubshellIncoherentPhotonScatteringDistribution::getNumberOfElectronsInSubshell() const
+double SubshellIncoherentPhotonScatteringDistribution::getSubshellOccupancy() const
 {
   return d_num_electrons_in_subshell;
 }
 
 // Return the binding energy
-double SubshellIncoherentPhotonScatteringDistribution::getBindingEnergy() const
+double SubshellIncoherentPhotonScatteringDistribution::getSubshellBindingEnergy() const
 {
   return d_binding_energy;
 }

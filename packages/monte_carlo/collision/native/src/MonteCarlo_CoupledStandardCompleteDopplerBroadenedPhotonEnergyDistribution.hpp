@@ -27,12 +27,13 @@ public:
   
   //! Constructor
   CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-               const Teuchos::Array<double>& subshell_binding_energies,
-               const Teuchos::Array<double>& subshell_occupancies,
-               const Teuchos::Array<SubshellType>& subshell_order,
-               const std::shared_ptr<const ComptonProfileSubshellConverter>&
-               subshell_converter,
-               const ElectronMomentumDistArray& electron_momentum_dist_array );
+     const Teuchos::Array<double>& subshell_binding_energies,
+     const Teuchos::Array<double>& subshell_occupancies,
+     const Teuchos::Array<SubshellType>& subshell_order,
+     const std::shared_ptr<const ComptonProfileSubshellConverter>&
+     subshell_converter,
+     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+     electron_momentum_dist_array );
 
   //! Destructor
   virtual ~CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
@@ -43,13 +44,10 @@ protected:
   //! Return the binding energy of a subshell
   double getSubshellBindingEnergy( const SubshellType subshell ) const;
   
-  //! Return the occupancy of a subshell (default is the ENDF occupacy)
-  double getSubshellOccupancy( const SubshellType subshell ) const;
-
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  Subshell& subshell ) const;
+                                  SubshellType& subshell ) const;
 
 private:
 

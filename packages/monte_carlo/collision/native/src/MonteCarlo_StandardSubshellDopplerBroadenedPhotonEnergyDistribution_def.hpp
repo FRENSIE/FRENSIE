@@ -15,7 +15,6 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -24,19 +23,15 @@
 namespace MonteCarlo{
 
 // Constructor
-/*! \details The occupation number and Compton profile grid be in me*c units.
- * The Compton profile must be in inverse me*c units.
- */
 template<typename ComptonProfilePolicy>
 StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
-		 const StandardSubshellType interaction_subshell,
+		 const SubshellType interaction_subshell,
 		 const double subshell_occupancy,
 		 const double subshell_binding_energy,
-		 const std::shared_ptr<const ComptonProfile>&
-		 compton_profile )
-  : d_interaction_subshell( interaction_subshell ),
-    d_subshell_occupancy( subshell_occupancy ),
-    d_subshell_binding_energy( subshell_binding_energy ),
+		 const std::shared_ptr<const ComptonProfile>& compton_profile )
+  : SubshellDopplerBroadenedPhotonEnergyDistribution(interaction_subshell,
+                                                     subshell_occupancy,
+                                                     subshell_binding_energy ),
     d_compton_profile( compton_profile )
 {
   // Make sure the interaction subshell is valid
@@ -48,6 +43,7 @@ StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
   testPrecondition( subshell_binding_energy > 0.0 );
   // Make sure the Compton profile is valid
   testPrecondition( compton_profile.get() );
+  testPrecondition( ComptonProfilePolicy::isValidProfile( *compton_profile ) );
 }
 
 // Evaluate the distribution
@@ -61,7 +57,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   testPrecondition( incoming_energy > 0.0 );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= 
-                    incoming_energy - d_subshell_binding_energy );
+                    incoming_energy - this->getSubshellBindingEnergy() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -69,7 +65,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // The evaluated double differential cross section
   double cross_section;
 
-  if( outgoing_energy < incoming_energy - d_subshell_binding_energy )
+  if( outgoing_energy < incoming_energy - this->getSubshellBindingEnergy() )
   {
     // Calculate the electron momentum projection
     const ComptonProfile::MomentumQuantity electron_momentum_projection = 
@@ -80,7 +76,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
     // Evaluate the Compton profile
     ComptonProfile::ProfileQuantity compton_profile_quantity = 
-      ComptonProfilePolicy::evaluate( d_compton_profile,
+      ComptonProfilePolicy::evaluate( *d_compton_profile,
                                       electron_momentum_projection );
 
     // Evaluate the cross section
@@ -88,7 +84,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
                                                      incoming_energy,
                                                      scattering_angle_cosine );
 
-    cross_section = multiplier*d_subshell_occupancy*
+    cross_section = multiplier*this->getSubshellOccupancy()*
       compton_profile_quantity.value();
   }
   else
@@ -137,13 +133,13 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   
   double abs_error, diff_cs;
   
-  const double binding_energy = this->getStandardSubshellBindingEnergy( subshell );
+  const double binding_energy = this->getSubshellBindingEnergy();
 
-  Utility::GausKronrodQuandratureSet quadrature_set( precision );
+  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
 
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
                                           0.0,
-                                          incoming_energy - d_subshell_binding_energy,
+                                          incoming_energy - this->getSubshellBindingEnergy(),
                                           diff_cs,
                                           abs_error );
 
@@ -159,7 +155,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
-				     StandardSubshellType& shell_of_interaction ) const
+				     SubshellType& shell_of_interaction ) const
 {
   unsigned trial_dummy;
 
@@ -176,11 +172,11 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  double& outgoing_energy,
-					  StandardSubshellType& shell_of_interaction,
+					  SubshellType& shell_of_interaction,
 					  unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_subshell_binding_energy );
+  testPrecondition( incoming_energy >= this->getSubshellBindingEnergy() );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -188,7 +184,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   // Calculate the max electron momentum projection
   ComptonProfile::MomentumQuantity pz_max = Utility::Units::mec_momentum*
     calculateMaxElectronMomentumProjection( incoming_energy,
-					    d_subshell_binding_energy,
+					    this->getSubshellBindingEnergy(),
 					    scattering_angle_cosine );
 
   // Calculate the doppler broadened energy
@@ -196,13 +192,15 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 
   while( !energetically_possible )
   {
+    double pz;
+    
     this->sampleMomentumAndRecordTrials( incoming_energy,
                                          scattering_angle_cosine,
-                                         electron_momentum_projection,
+                                         pz,
                                          shell_of_interaction,
                                          trials );
     
-    outgoing_energy = calculateDopplerBroadenedEnergy(pz.value(),
+    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
 						      incoming_energy,
 						      scattering_angle_cosine,
 						      energetically_possible );
@@ -223,11 +221,11 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                       const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
-                                      StandardSubshell& shell_of_interaction,
+                                      SubshellType& shell_of_interaction,
                                       unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= d_subshell_binding_energy );
+  testPrecondition( incoming_energy >= this->getSubshellBindingEnergy() );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -237,16 +235,16 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   // Calculate the max electron momentum projection
   ComptonProfile::MomentumQuantity pz_max = Utility::Units::mec_momentum*
     calculateMaxElectronMomentumProjection( incoming_energy,
-					    d_subshell_binding_energy,
+					    this->getSubshellBindingEnergy(),
 					    scattering_angle_cosine );
 
   // Calculate the doppler broadened energy
   ComptonProfile::MomentumQuantity pz = 
-    ComptonProfilePolicy::sample( d_compton_profile, pz_max );
+    ComptonProfilePolicy::sample( *d_compton_profile, pz_max );
 
   electron_momentum_projection = pz.value();
     
-  shell_of_interaction = d_interaction_subshell;
+  shell_of_interaction = this->getSubshell();
 }
 
 } // end MonteCarlo namespace

@@ -24,8 +24,8 @@ DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadened
     const double kahn_sampling_cutoff_energy )
   : SubshellIncoherentPhotonScatteringDistribution( 
 	       doppler_broadened_energy_dist->getSubshell(),
-	       doppler_broadened_energy_dist->getNumberOfElectronsInSubshell(),
-	       doppler_broadened_energy_dist->getBindingEnergy(),
+	       doppler_broadened_energy_dist->getSubshellOccupancy(),
+	       doppler_broadened_energy_dist->getSubshellBindingEnergy(),
 	       occupation_number,
 	       kahn_sampling_cutoff_energy ),
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )

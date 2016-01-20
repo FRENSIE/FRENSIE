@@ -81,7 +81,7 @@ public:
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
                                           double& electron_momentum_projection,
-                                          Subshell& shell_of_interaction,
+                                          SubshellType& shell_of_interaction,
                                           unsigned& trials ) const = 0;
 
 protected:

@@ -53,7 +53,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   }
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter(
+  std::shared_ptr<ComptonProfileSubshellConverter> converter(
 				   new VoidComptonProfileSubshellConverter() );
 
   // Create the compton profile distributions

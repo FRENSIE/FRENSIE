@@ -129,12 +129,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the binding energy can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
-		   getBindingEnergy )
+		   getSubshellBindingEnergy )
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(), 
+  TEST_EQUALITY_CONST( derived_dist->getSubshellBindingEnergy(), 
 		       8.82899999999999935e-02 );
 }
 

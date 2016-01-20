@@ -24,21 +24,22 @@ namespace MonteCarlo{
  */
 template<typename ComptonProfilePolicy>
 DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-	       const Teuchos::Array<double>& endf_subshell_occupancies,
-	       const Teuchos::Array<SubshellType>& endf_subshell_order,
-	       const Teuchos::Array<double>& old_subshell_binding_energies,
-	       const Teuchos::Array<double>& old_subshell_occupancies,
-               const std::shared_ptr<const ComptonProfileSubshellConverter>&
-               subshell_converter,
-	       const ElectronMomentumDistArray& electron_momentum_dist_array )
-  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
+     const Teuchos::Array<double>& endf_subshell_occupancies,
+     const Teuchos::Array<SubshellType>& endf_subshell_order,
+     const Teuchos::Array<double>& old_subshell_binding_energies,
+     const Teuchos::Array<double>& old_subshell_occupancies,
+     const std::shared_ptr<const ComptonProfileSubshellConverter>&
+     subshell_converter,
+     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+     electron_momentum_dist_array )
+  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>(
                                                 endf_subshell_occupancies,
                                                 endf_subshell_order,
                                                 subshell_converter,
                                                 electron_momentum_dist_array ),
     d_old_subshell_occupancy_distribution(),
     d_old_subshell_binding_energy( old_subshell_binding_energies ),
-    d_old_subshell_occupancies( old_subshell_occupancies ),
+    d_old_subshell_occupancies( old_subshell_occupancies )
 {
   // Make sure the old shell data is valid
   testPrecondition( old_subshell_binding_energies.size() > 0 );
@@ -91,7 +92,7 @@ template<typename ComptonProfilePolicy>
 void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
-                                               Subshell& subshell ) const
+                                               SubshellType& subshell ) const
 {
   old_subshell_index = this->sampleOldInteractionSubshell();
 
@@ -107,7 +108,7 @@ unsigned DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compt
   unsigned old_subshell_of_interaction;
   
   d_old_subshell_occupancy_distribution->sampleAndRecordBinIndex( 
-						    old_shell_of_interaction );
+                                                 old_subshell_of_interaction );
 
   return old_subshell_of_interaction;
 }
