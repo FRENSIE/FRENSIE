@@ -8,9 +8,11 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
@@ -75,7 +77,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   }
 
   doppler_broadened_dist.reset( 
-		   new CoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+     new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
 						subshell_binding_energies, 
 						subshell_occupancies,
 						subshell_order,
@@ -125,7 +127,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
                                                        raw_compton_profile ) );
 
   doppler_broadened_dist.reset(
-	    new SubshellDopplerBroadenedPhotonEnergyDistribution(
+    new StandardSubshellDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
 		  subshell,
 		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
 		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
