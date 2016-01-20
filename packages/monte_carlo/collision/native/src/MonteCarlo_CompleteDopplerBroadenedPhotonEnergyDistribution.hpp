@@ -9,16 +9,6 @@
 #ifndef MONTE_CARLO_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <memory>
-
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-#include <boost/bimap.hpp>
-
-// FRENSIE Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
 
@@ -65,6 +55,12 @@ public:
 					  const double scattering_angle_cosine,
 					  const SubshellType subshell,
 					  const double precision ) const = 0;
+
+  //! Sample an electron momentum from the subshell distribution
+  virtual double sampleSubshellMomentum( 
+                                       const double incoming_energy,
+                                       const double scattering_angle_cosine,
+                                       const SubshellType subshell ) const = 0;
 };
 
 } // end MonteCarlo namespace
