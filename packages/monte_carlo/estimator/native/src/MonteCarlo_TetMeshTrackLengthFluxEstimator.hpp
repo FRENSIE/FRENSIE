@@ -10,7 +10,7 @@
 #define MONTE_CARLO_TET_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
 // Std Lib Includes
-#include <string>
+#include <string.h>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
