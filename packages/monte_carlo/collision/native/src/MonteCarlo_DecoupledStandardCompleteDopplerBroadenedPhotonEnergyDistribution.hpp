@@ -32,13 +32,14 @@ public:
   
   //! Constructor
   DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-               const Teuchos::Array<double>& endf_subshell_occupancies,
-               const Teuchos::Array<SubshellType>& endf_subshell_order,
-               const Teuchos::Array<double>& old_subshell_binding_energies,
-               const Teuchos::Array<double>& old_subshell_occupancies,
-               const std::shared_ptr<const ComptonProfileSubshellConverter>&
-               subshell_converter,
-               const ElectronMomentumDistArray& electron_momentum_dist_array );
+     const Teuchos::Array<double>& endf_subshell_occupancies,
+     const Teuchos::Array<SubshellType>& endf_subshell_order,
+     const Teuchos::Array<double>& old_subshell_binding_energies,
+     const Teuchos::Array<double>& old_subshell_occupancies,
+     const std::shared_ptr<const ComptonProfileSubshellConverter>&
+     subshell_converter,
+     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+     electron_momentum_dist_array );
 
   //! Destructor
   ~DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
@@ -55,7 +56,7 @@ protected:
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  Subshell& subshell ) const;
+                                  SubshellType& subshell ) const;
 
 private:
 

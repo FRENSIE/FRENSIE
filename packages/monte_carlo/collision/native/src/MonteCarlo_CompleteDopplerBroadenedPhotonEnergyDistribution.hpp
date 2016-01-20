@@ -21,7 +21,8 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 public:
 
   //! Constructor
-  CompleteDopplerBroadenedPhotonEnergyDistribution();
+  CompleteDopplerBroadenedPhotonEnergyDistribution()
+  { /* ... */ }
 
   //! Destructor
   virtual ~CompleteDopplerBroadenedPhotonEnergyDistribution()
@@ -49,13 +50,6 @@ public:
 					  const SubshellType subshell,
 					  const double precision ) const = 0;
 
-  //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateSubshellIntegratedCrossSection( 
-				          const double incoming_energy,
-					  const double scattering_angle_cosine,
-					  const SubshellType subshell,
-					  const double precision ) const = 0;
-
   //! Sample an electron momentum from the subshell distribution
   virtual double sampleSubshellMomentum( 
                                        const double incoming_energy,
@@ -63,13 +57,13 @@ public:
                                        const SubshellType subshell ) const = 0;
 };
 
-} // end MonteCarlo namespace
-
 // Check if the distribution is complete (all subshells)
 inline bool CompleteDopplerBroadenedPhotonEnergyDistribution::isComplete() const
 {
   return true;
 }
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 

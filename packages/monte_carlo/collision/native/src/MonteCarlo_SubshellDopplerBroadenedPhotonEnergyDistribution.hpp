@@ -31,6 +31,9 @@ public:
   virtual ~SubshellDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
+  //! Check if the distribution is complete (all subshells)
+  bool isComplete() const;
+
   //! Return the subshell
   SubshellType getSubshell() const;
   
@@ -52,8 +55,6 @@ private:
   double d_subshell_binding_energy;
 };
 
-} // end MonteCarlo namespace
-
 // Return the subshell
 inline SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshell() const
 {
@@ -71,6 +72,8 @@ inline double SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshellBindi
 {
   return d_subshell_binding_energy;
 }
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 

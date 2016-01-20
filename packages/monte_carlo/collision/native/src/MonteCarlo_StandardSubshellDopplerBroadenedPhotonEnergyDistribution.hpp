@@ -31,10 +31,10 @@ public:
 
   //! Constructor
   StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
-                     const SubshellType interaction_subshell,
-                     const double subshell_occupancy,
-                     const double subshell_binding_energy,
-                     std::shared_ptr<const ComptonProfile> d_compton_profile );
+              const SubshellType interaction_subshell,
+              const double subshell_occupancy,
+              const double subshell_binding_energy,
+              const std::shared_ptr<const ComptonProfile>& d_compton_profile );
 
   //! Destructor
   ~StandardSubshellDopplerBroadenedPhotonEnergyDistribution()
@@ -72,7 +72,7 @@ public:
   void sampleMomentumAndRecordTrials( const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
-                                      Subshell& shell_of_interaction,
+                                      SubshellType& shell_of_interaction,
                                       unsigned& trials ) const;
 
 private:

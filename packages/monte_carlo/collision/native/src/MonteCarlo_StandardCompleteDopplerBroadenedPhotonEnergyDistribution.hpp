@@ -36,7 +36,7 @@ class StandardCompleteDopplerBroadenedPhotonEnergyDistribution : public Complete
 public:
 
   //! Constructor
-  StandardCompleteDopplerBroadendPhotonEnergyDistribution(
+  StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                const Teuchos::Array<double>& endf_subshell_occupancies,
                const Teuchos::Array<SubshellType>& endf_subshell_order,
                const std::shared_ptr<const ComptonProfileSubshellConverter>&
@@ -44,7 +44,7 @@ public:
                const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
-  virtual ~StandardCompleteDopplerBroadendPhotonEnergyDistribution()
+  virtual ~StandardCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* .. */ }
 
   //! Evaluate the distribution
@@ -68,13 +68,6 @@ public:
                               const double outgoing_energy,
                               const double scattering_angle_cosine,
                               const SubshellType subshell ) const;
-
-  //! Evaluate the integrated cross section (b/mu)
-  double evaluateSubshellIntegratedCrossSection( 
-				          const double incoming_energy,
-					  const double scattering_angle_cosine,
-					  const SubshellType subshell,
-					  const double precision ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,
@@ -133,22 +126,22 @@ protected:
   unsigned getENDFSubshellIndex( const SubshellType subshell ) const;
 
   //! Return the subshell corresponding to the endf subshell index
-  Subshell getSubshell( const unsigned endf_subshell_index ) const;
+  SubshellType getSubshell( const unsigned endf_subshell_index ) const;
 
   //! Return the Compton profile for a subshell
   const ComptonProfile& getComptonProfile( const SubshellType& subshell) const;
   
   //! Return the Compton profile for an old subshell index 
   const ComptonProfile& getComptonProfile( 
-                              const subshell_index& old_subshell_index ) const;
+                                    const unsigned& old_subshell_index ) const;
 
   //! Sample an ENDF subshell
-  subshell sampleENDFInteractionSubshell() const;
+  SubshellType sampleENDFInteractionSubshell() const;
 
   //! Sample an interaction subshell
   virtual void sampleInteractionSubshell( unsigned& old_subshell_index,
                                           double& subshell_binding_energy,
-                                          Subshell& subshell ) const = 0;
+                                          SubshellType& subshell ) const = 0;
 
 private:
 

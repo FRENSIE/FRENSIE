@@ -34,7 +34,7 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
     d_endf_subshell_order(),
     d_endf_subshell_occupancies( endf_subshell_occupancies ),
     d_subshell_converter( subshell_converter ),
-    d_electron_momentum_dist_array( electron_momentum_dist_array )
+    d_electron_momentum_distribution( electron_momentum_dist_array )
 {
   // Make sure the shell interaction data is valid
   testPrecondition( endf_subshell_occupancies.size() > 0 );
@@ -44,8 +44,8 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
   testPrecondition( subshell_converter.get() );
   // Make sure the comptron profile array is valid
   testPrecondition( electron_momentum_dist_array.size() > 0 );
-  testPrecondition( ComptonProfilePolicy::isValidProfile( electron_momentum_dist_array.front() ) );
-  testPrecondition( ComptonProfilePolicy::isValidProfile( electron_momentum_dist_array.back() ) );
+  testPrecondition( ComptonProfilePolicy::isValidProfile( *electron_momentum_dist_array.front() ) );
+  testPrecondition( ComptonProfilePolicy::isValidProfile( *electron_momentum_dist_array.back() ) );
   
   // Create the ENDF subshell interaction distribution
   Teuchos::Array<double> dummy_indep_vals( endf_subshell_occupancies.size() );
@@ -60,13 +60,6 @@ StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
     d_endf_subshell_order.insert( SubshellOrderMapType::value_type( 
                                                  i, endf_subshell_order[i] ) );
   }
-
-  // Check if a half (standard) or full profile is being used.
-  if( electron_momentum_dist_array.front()->getLowerBoundOfMomentum() < 
-      0.0*Utility::Units::mec_momentum )
-    d_half_profiles = false;
-  else
-    d_half_profiles = true;
 }
 
 // Evaluate the distribution
@@ -217,12 +210,18 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   double cross_section = 0.0;
 
   // Evaluate the integrated cross section for each subshell
-  for( unsigned i = 0; i < d_endf_subshell_order.size(); ++i )
+  SubshellOrderMapType::const_iterator subshell_it = 
+    d_endf_subshell_order.begin();
+
+  while( subshell_it != d_endf_subshell_order.end() )
   {
     cross_section += this->evaluateSubshellIntegratedCrossSection(
                                                        incoming_energy,
                                                        scattering_angle_cosine,
+                                                       subshell_it->right,
                                                        precision );
+
+    ++subshell_it;
   }
   
   // Make sure the integrated cross section is valid
@@ -316,7 +315,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                        shell_of_interaction,
                                        trials );
 
-  bool energetically_possible
+  bool energetically_possible;
 
   outgoing_energy = calculateDopplerBroadenedEnergy( pz,
                                                      incoming_energy,
@@ -395,11 +394,10 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   const ComptonProfile& compton_profile = 
     *d_electron_momentum_distribution[compton_subshell_index];
 
-  electron_momentum = this->sampleSubshellAndRecordTrials(
-                                                       incoming_energy,
-                                                       scattering_angle_cosine,
-                                                       subshell_binding_energy,
-                                                       compton_profile );
+  electron_momentum = this->sampleSubshellMomentum( incoming_energy,
+                                                    scattering_angle_cosine,
+                                                    subshell_binding_energy,
+                                                    compton_profile );
 }
 
 // Sample an electron momentum from the subshell distribution
@@ -469,14 +467,14 @@ bool StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 
 // Return the occupancy of a subshell (default is the ENDF occupacy)
 template<typename ComptonProfilePolicy>
-double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( const SubshellType subshell ) const
+inline double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( const SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
 
   unsigned endf_subshell_index = this->getENDFSubshellIndex( subshell );
 
-  return d_endf_subshell_occupancies[old_subshell_index];
+  return d_endf_subshell_occupancies[endf_subshell_index];
 }
 
 // Return the old subshell index corresponding to the subshell
@@ -500,7 +498,7 @@ unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 
 // Return the subshell corresponding to the endf subshell index
 template<typename ComptonProfilePolicy>
-Subshell StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell( 
+SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell( 
                                      const unsigned endf_subshell_index ) const
 {
   SubshellOrderMapType::left_map::const_iterator endf_subshell_index_it =
@@ -522,30 +520,31 @@ const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<C
   // Get the old subshell corresponding to the subshell type
   unsigned old_subshell_index = this->getOldSubshellIndex( subshell );
 
-  return d_electron_momentum_distribution[old_subshell_index];
+  return *d_electron_momentum_distribution[old_subshell_index];
 }
   
 // Return the Compton profile for an old subshell index 
 template<typename ComptonProfilePolicy>
 const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getComptonProfile( 
-                               const subshell_index& old_subshell_index ) const
+                                     const unsigned& old_subshell_index ) const
 {
   // Make sure the old subshell index is valid
   testPrecondition( old_subshell_index < 
                     d_electron_momentum_distribution.size() );
 
-  return d_electron_momentum_distribution[old_subshell_index];
+  return *d_electron_momentum_distribution[old_subshell_index];
 }
 
 // Sample an ENDF subshell
 template<typename ComptonProfilePolicy>
-void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleENDFInteractionSubshell( 
-					    SubshellType& shell_of_interaction,
-					    unsigned& shell_index ) const
+SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleENDFInteractionSubshell() const
 {
-  d_endf_subshell_occupancy_distribution->sampleAndRecordBinIndex(shell_index);
+  unsigned endf_subshell_index;
+  
+  d_endf_subshell_occupancy_distribution->sampleAndRecordBinIndex(
+                                                         endf_subshell_index );
 								  
-  shell_of_interaction = d_endf_subshell_order[shell_index];
+  return this->getSubshell( endf_subshell_index );
 }
 
 } // end MonteCarlo namespace
