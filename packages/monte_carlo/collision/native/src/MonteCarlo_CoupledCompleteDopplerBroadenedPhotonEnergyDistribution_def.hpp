@@ -1,16 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
+//! \file   MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //! \author Alex Robinson
 //! \brief  The coupled complete Doppler broadened photon energy dist. def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
-#define MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
@@ -18,19 +18,14 @@
 namespace MonteCarlo{
 
 // Constructor
-/*! \details The Compton profile grids must be in me*c units (not atomic 
- * units). The Compton profiles must be in inverse me*c units (not inverse 
- * atomic units). Only half profiles should be provided (grid ranges from 0.0 
- * to 1.0).
- */
-CoupledCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                 const Teuchos::Array<double>& subshell_binding_energies,
                 const Teuchos::Array<double>& subshell_occupancies,
                 const Teuchos::Array<SubshellType>& subshell_order,
                 const std::shared_ptr<const ComptonProfileSubshellConverter>&
                 subshell_converter,
                 const ElectronMomentumDistArray& electron_momentum_dist_array )
-  : CompleteDopplerBroadenedPhotonEnergyDistribution( subshell_occupancies,
+  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution( subshell_occupancies,
 						      subshell_order ),
     d_subshell_converter( subshell_converter ),
     d_subshell_binding_energies( subshell_binding_energies ),
@@ -45,7 +40,7 @@ CoupledCompleteDopplerBroadenedPhotonEnergyDistribution::CoupledCompleteDopplerB
 
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
-double CoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
+double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
                                             const SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -61,7 +56,7 @@ double CoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePol
  * and the binding energy is the same as the subshell (i.e. they are coupled).
  */
 template<typename ComptonProfilePolicy>
-void CoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
+void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
                                                Subshell& subshell ) const
@@ -75,8 +70,8 @@ void CoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolic
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
+// end MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //---------------------------------------------------------------------------//
