@@ -1,13 +1,14 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
+//! \file   MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The decoupled complete Doppler broadened photon energy dist. decl.
+//! \brief  The decoupled standard complete Doppler broadened photon energy 
+//!         dist. decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
-#define MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#define MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -16,7 +17,7 @@
 #include <boost/scoped_ptr.hpp>
 
 // FRENSE Includes
-#include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
@@ -24,13 +25,13 @@ namespace MonteCarlo{
 
 //! The decoupled complete Doppler broadenening photon energy dist. class
 template<typename ComptonProfilePolicy>
-class DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution : public CompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
+class DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
 {
 
 public:
   
   //! Constructor
-  DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+  DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                const Teuchos::Array<double>& endf_subshell_occupancies,
                const Teuchos::Array<SubshellType>& endf_subshell_order,
                const Teuchos::Array<double>& old_subshell_binding_energies,
@@ -40,7 +41,7 @@ public:
                const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
-  ~DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
+  ~DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
 protected:
@@ -78,12 +79,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
+// end MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
 //---------------------------------------------------------------------------//

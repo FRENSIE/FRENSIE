@@ -1,16 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
+//! \file   MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //! \author Alex Robinson
 //! \brief  The decoupled complete Doppler broadened photon energy dist. def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
-#define MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -23,7 +23,7 @@ namespace MonteCarlo{
  * to 1.0).
  */
 template<typename ComptonProfilePolicy>
-DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
 	       const Teuchos::Array<double>& endf_subshell_occupancies,
 	       const Teuchos::Array<SubshellType>& endf_subshell_order,
 	       const Teuchos::Array<double>& old_subshell_binding_energies,
@@ -31,7 +31,7 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>:
                const std::shared_ptr<const ComptonProfileSubshellConverter>&
                subshell_converter,
 	       const ElectronMomentumDistArray& electron_momentum_dist_array )
-  : CompleteDopplerBroadenedPhotonEnergyDistribution(
+  : StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                                                 endf_subshell_occupancies,
                                                 endf_subshell_order,
                                                 subshell_converter,
@@ -58,7 +58,7 @@ DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>:
 
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
-double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
                                             const SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -71,7 +71,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfileP
   
 // Return the occupancy of a subshell (default is the ENDF occupacy)
 template<typename ComptonProfilePolicy>
-double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( 
                                             const SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -88,7 +88,7 @@ double DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfileP
  * separately - i.e. they are decoupled).
  */
 template<typename ComptonProfilePolicy>
-void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
+void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
                                                Subshell& subshell ) const
@@ -102,7 +102,7 @@ void DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePol
 
 // Sample the old subshell that is interacted with
 template<typename ComptonProfilePolicy>
-unsigned DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleOldInteractionSubshell() const
+unsigned DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleOldInteractionSubshell() const
 {
   unsigned old_subshell_of_interaction;
   
@@ -114,8 +114,8 @@ unsigned DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfil
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_DECOUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
+// end MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp
 //---------------------------------------------------------------------------//

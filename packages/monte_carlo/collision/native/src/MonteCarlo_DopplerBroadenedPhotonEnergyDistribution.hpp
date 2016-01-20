@@ -43,6 +43,9 @@ public:
   virtual ~DopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
+  //! Check if the distribution is complete (all subshells)
+  virtual bool isComplete() const = 0;
+
   //! Evaluate the distribution
   virtual double evaluate( const double incoming_energy,
 			   const double outgoing_energy,

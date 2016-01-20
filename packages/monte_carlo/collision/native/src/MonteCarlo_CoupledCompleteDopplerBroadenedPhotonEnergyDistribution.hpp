@@ -1,32 +1,32 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
+//! \file   MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The coupled complete Doppler broadened photon energy dist. decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
-#define MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#define MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // FRENSE Includes
-#include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 
 namespace MonteCarlo{
 
 //! The coupled complete Doppler broadenening photon energy dist. class
 template<typename ComptonProfilePolicy>
-class CoupledCompleteDopplerBroadenedPhotonEnergyDistribution : public CompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
+class CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>
 {
 
 public:
   
   //! Constructor
-  CoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+  CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
                const Teuchos::Array<double>& subshell_binding_energies,
                const Teuchos::Array<double>& subshell_occupancies,
                const Teuchos::Array<SubshellType>& subshell_order,
@@ -35,7 +35,7 @@ public:
                const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
-  virtual ~CoupledCompleteDopplerBroadenedPhotonEnergyDistribution()
+  virtual ~CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
 protected:
@@ -63,12 +63,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_COUPLED_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_COUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
+// end MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp
 //---------------------------------------------------------------------------//
