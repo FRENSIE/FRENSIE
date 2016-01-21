@@ -19,8 +19,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
@@ -150,6 +152,13 @@ int main( int argc, char** argv )
 					      (unsigned)subshell_endf_des[i] );
   }
 
+  // Create the Compton profile subshell converter
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  
+  MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
+				   converter,
+			           xss_data_extractor->extractAtomicNumber() );
+
   // Create the compton profile distributions
   Teuchos::ArrayView<const double> lswd_block = 
     xss_data_extractor->extractLSWDBlock();
@@ -203,19 +212,21 @@ int main( int argc, char** argv )
   }
 
   half_distribution.reset(
-     new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+     new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
+                          converter,
 			  half_compton_profiles ) );
   
   full_distribution.reset(
-     new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+      new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
+                          converter,
 			  full_compton_profiles ) );
 
   // Clear setup data
