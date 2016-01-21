@@ -19,7 +19,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -117,7 +117,7 @@ int main( int argc, char** argv )
                                                        raw_compton_profile ) );
    
     // Create the Doppler broadened energy distribution
-    distribution.reset( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
+    distribution.reset( new MonteCarlo::StandardSubshellDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
 		    data_container.getSubshellOccupancy( 1 ),
 		    data_container.getSubshellBindingEnergy( 1 ),

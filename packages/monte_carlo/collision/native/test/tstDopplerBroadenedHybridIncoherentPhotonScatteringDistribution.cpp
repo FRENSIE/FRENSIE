@@ -20,8 +20,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
@@ -376,7 +376,7 @@ int main( int argc, char** argv )
   }
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
   
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -412,14 +412,15 @@ int main( int argc, char** argv )
        new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
                                                        raw_compton_profile ) );
   }
-
+  
   // Create the Doppler broadened distribution
   std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
-    doppler_dist( new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+    doppler_dist( new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
+                          converter,
 			  half_compton_profiles ) );
 
   // Create the scattering distribution

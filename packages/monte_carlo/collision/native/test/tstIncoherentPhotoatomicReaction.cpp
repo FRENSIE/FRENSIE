@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
@@ -268,7 +268,7 @@ int main( int argc, char** argv )
   }
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
   
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -314,11 +314,12 @@ int main( int argc, char** argv )
 			  subshell_order ) );
 
   std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
-    doppler_dist( new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+    doppler_dist( new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
+                          converter,
 			  compton_profiles ) );
 
   Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>

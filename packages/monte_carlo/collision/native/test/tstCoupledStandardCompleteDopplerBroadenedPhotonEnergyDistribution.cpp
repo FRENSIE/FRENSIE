@@ -19,7 +19,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
@@ -35,10 +36,10 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
   half_distribution;
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
   full_distribution;
 
 //---------------------------------------------------------------------------//
@@ -127,11 +128,11 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -151,7 +152,7 @@ int main( int argc, char** argv )
   }
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
   
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -208,7 +209,7 @@ int main( int argc, char** argv )
   }
 
   half_distribution.reset(
-      new MonteCarlo::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>( 
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
@@ -216,7 +217,7 @@ int main( int argc, char** argv )
 			  half_compton_profiles ) );
 
   full_distribution.reset(
-      new MonteCarlo::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>( 
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,

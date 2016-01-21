@@ -20,7 +20,7 @@
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -374,7 +374,7 @@ int main( int argc, char** argv )
 			  3.0 ) );
 
     std::shared_ptr<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
-      doppler_dist( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
+      doppler_dist( new MonteCarlo::StandardSubshellDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
 		    data_container.getSubshellOccupancy( 1 ),
 		    data_container.getSubshellBindingEnergy( 1 ),
