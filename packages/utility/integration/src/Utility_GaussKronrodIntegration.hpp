@@ -22,7 +22,9 @@ public:
 
   //! Constructor
   GaussKronrodIntegration( const double relative_error_tol,
-				const double absolute_error_tol = 0.0 );
+                           const double absolute_error_tol = 0.0,
+                           const size_t subinterval_limit = 1000,
+                           const size_t work_space_size = 1000 );
 
   //! Destructor
   ~GaussKronrodIntegration();
@@ -43,6 +45,16 @@ public:
 			    double upper_limit,
 			    double& result,
 			    double& absolute_error ) const;
+
+  //! Integrate the function with point rule
+  template<int Points, typename Functor>
+  void integrateWithPointRule( Functor& integrand,
+			    double lower_limit,
+			    double upper_limit,
+			    double& result,
+			    double& absolute_error,
+                double& result_abs, 
+                double& result_asc ) const;
 /*
   //! Integrate the function over a semi-infinite interval (+infinity)
   template<typename Functor>
@@ -82,6 +94,29 @@ public:
 */
 private:
 
+  // Gauss-Kronrod quadrature set for Points rule declaration 
+  template<int Points>
+  struct QuadratureSet
+  {
+    // Valid rule
+    static const bool valid_rule = false;
+
+    // Number of Kronrod weights and abscissae
+    static const int kronrod_points = ( Points + 1 )/2;
+
+    // Number of Gauss weights and abscissae
+    static const int gauss_points = ( kronrod_points )/2;
+
+    // Gauss quadrature weights 
+    static const double gauss_weights[gauss_points];
+    
+    // Kronrad quadrature weights 
+    static const double kronrod_weights[kronrod_points];
+
+    // Kronrad quadrature abscissae
+    static const double kronrod_abscissae[kronrod_points];
+  };
+
   // Function wrapper for evaluating the functor
   template<typename Functor>
   static double functorWrapper( const double x, void* indirected_functor );
@@ -96,55 +131,53 @@ private:
     double& integrand_value_lower,
     double& integrand_value_upper ) const;
 
-  // Normalize absolute error from integration
-  void normalizeAbsoluteError( 
+  // Rescale absolute error from integration
+  void rescaleAbsoluteError( 
     double& absolute_error, 
     double result_abs, 
     double result_asc ) const;
 
-  // 7 point Gauss quadrature weights
-  static const double gauss_weights_7[4];
+  // Test if subinterval is too small
+  template<int Points>
+  inline bool subintervalTooSmall( double& lower_limit_1, 
+                                   double& lower_limit_2, 
+                                   double& upper_limit_2 ) const;
 
-  // 7 point Gauss quadrature abscissae
-  static const double gauss_abscissae_7[4];
+  // Update the integral results and errors
+  inline void updateIntegral( Teuchos::Array<double>& bin_lower_limit, 
+                              Teuchos::Array<double>& bin_upper_limit, 
+                              Teuchos::Array<double>& bin_result, 
+                              Teuchos::Array<double>& bin_error,
+                              double& lower_limit_1, 
+                              double& upper_limit_1,
+                              double& area_1, 
+                              double& error_1,
+                              double& lower_limit_2,
+                              double& upper_limit_2, 
+                              double& area_2, 
+                              double& error_2,
+                              int& last,
+                              int& bin_with_max_error ) const;
 
-  // 15 point Gauss Kronrad quadrature weights 
-  //static const Teuchos::Array<double> kronrod_weights_15;
-  static const double kronrod_weights_15[8];
-
-  // 15 point Gauss Kronrad quadrature abscissae
-  //static Teuchos::Array<double> kronrod_abscissae_15;
-  static const double kronrod_abscissae_15[8];
-
-  // 21 point Gauss Kronrad quadrature weights 
-  static Teuchos::Array<double> kronrod_weights_21;
-
-  // 21 point Gauss Kronrad quadrature abscissae
-  static Teuchos::Array<double> kronrod_abscissae_21;
-
-  // 31 point Gauss Kronrad quadrature weights 
-  static Teuchos::Array<double> kronrod_weights_31;
-
-  // 31 point Gauss Kronrad quadrature abscissae
-  static Teuchos::Array<double> kronrod_abscissae_31;
-
-  // 41 point Gauss Kronrad quadrature weights 
-  static Teuchos::Array<double> kronrod_weights_41;
-
-  // 41 point Gauss Kronrad quadrature abscissae
-  static Teuchos::Array<double> kronrod_abscissae_41;
-
-  // 51 point Gauss Kronrad quadrature weights 
-  static Teuchos::Array<double> kronrod_weights_51;
-
-  // 51 point Gauss Kronrad quadrature abscissae
-  static Teuchos::Array<double> kronrod_abscissae_51;
+  // Sort the bin order from highest to lowest error 
+  void sortErrorList( Teuchos::Array<double>& bin_error,
+                      Teuchos::Array<double>& bin_order, 
+                      double maximum_bin_error, 
+                      int bin_with_larger_error,
+                      int bin_with_smaller_error, 
+                      int nr_max ) const;
 
   // The relative error tolerance
   double d_relative_error_tol;
 
   // The absolute error tolerance
   double d_absolute_error_tol;
+
+  // The subinterval limit
+  size_t d_subinterval_limit;
+
+  // The work array
+  size_t d_workspace_size;
 };
 
 } // end Utility namespace

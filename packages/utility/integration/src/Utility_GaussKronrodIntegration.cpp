@@ -14,98 +14,34 @@ namespace Utility{
 
 // Initialize static member data
 
-// 7 point Gauss quadrature weights
-const double GaussKronrodIntegration::gauss_weights_7[4] =
-{
-  0.129484966168869693270611432679082,
-  0.279705391489276667901467771423780,
-  0.381830050505118944950369775488975,
-  0.417959183673469387755102040816327
-};
-
-
-// 7 point Gauss quadrature abscissae
-const double GaussKronrodIntegration::gauss_abscissae_7[4] =
-{
-  0.949107912342758524526189684047851,
-  0.741531185599394439863864773280788,
-  0.405845151377397166906606412076961,
-  0.000000000000000000000000000000000
-};
-
-// 15 point Gauss Kronrad quadrature weights
-//const Teuchos::Array<double> GaussKronrodIntegration::kronrod_weights_15( 8 ); 
-const double GaussKronrodIntegration::kronrod_weights_15[8] =
-{
-  0.022935322010529224963732008058970,
-  0.063092092629978553290700663189204,
-  0.104790010322250183839876322541518,
-  0.140653259715525918745189590510238,
-  0.169004726639267902826583426598550,
-  0.190350578064785409913256402421014,
-  0.204432940075298892414161999234649,
-  0.209482141084727828012999174891714
-};
-
-
-// 15 point Gauss Kronrad quadrature abscissae
-//Teuchos::Array<double> GaussKronrodIntegration::kronrod_abscissae_15( 8 ); 
-const double GaussKronrodIntegration::kronrod_abscissae_15[8] =
-{
-  0.991455371120812639206854697526329,
-  0.949107912342758524526189684047851,
-  0.864864423359769072789712788640926,
-  0.741531185599394439863864773280788,
-  0.586087235467691130294144838258730,
-  0.405845151377397166906606412076961,
-  0.207784955007898467600689403773245,
-  0.000000000000000000000000000000000
-};
-
-// 21 point Gauss Kronrad quadrature weights and abscissae
-Teuchos::Array<double> kronrod_weights_21(11);
-
-// 21 point Gauss Kronrad quadrature abscissae
-Teuchos::Array<double> kronrod_abscissae_21(11);
-
-// 31 point Gauss Kronrad quadrature weights and abscissae
-Teuchos::Array<double> kronrod_weights_31(16);
-
-// 31 point Gauss Kronrad quadrature abscissae
-Teuchos::Array<double> kronrod_abscissae_31(16);
-
-// 41 point Gauss Kronrad quadrature weights and abscissae
-Teuchos::Array<double> kronrod_weights_41(21);
-
-// 41 point Gauss Kronrad quadrature abscissae
-Teuchos::Array<double> kronrod_abscissae_41(21);
-
-// 51 point Gauss Kronrad quadrature weights and abscissae
-Teuchos::Array<double> kronrod_weights_51(26);
-
-// 51 point Gauss Kronrad quadrature abscissae
-Teuchos::Array<double> kronrod_abscissae_51(26);
-
 // Constructor
 GaussKronrodIntegration::GaussKronrodIntegration( 
     const double relative_error_tol,
-    const double absolute_error_tol )
+    const double absolute_error_tol,
+    const size_t subinterval_limit,
+    const size_t workspace_size )
   : d_relative_error_tol( relative_error_tol ),
-    d_absolute_error_tol( absolute_error_tol )
+    d_absolute_error_tol( absolute_error_tol ),
+    d_subinterval_limit( subinterval_limit ),
+    d_workspace_size( workspace_size )
 {
   // Make sure the error tolerances are valid
   testPrecondition( relative_error_tol >= 0.0 );
   testPrecondition( absolute_error_tol >= 0.0 );
+  // Make sure the work space size is valid
+  testPrecondition( workspace_size > 0 );
+  // Make sure the subinterval limit is valid
+  testPrecondition( subinterval_limit > 0 );
+  testPrecondition( subinterval_limit <= workspace_size );
 
-  std::cout << "weight 1 = " << kronrod_weights_15[0] << std::endl;
 }
 
 // Destructor
 GaussKronrodIntegration::~GaussKronrodIntegration()
 { /* ... */ }
 
-// Normalize absolute error from integration
-void GaussKronrodIntegration::normalizeAbsoluteError( 
+// Rescale absolute error from integration
+void GaussKronrodIntegration::rescaleAbsoluteError( 
     double& absolute_error, 
     double result_abs, 
     double result_asc ) const
@@ -122,6 +58,122 @@ void GaussKronrodIntegration::normalizeAbsoluteError(
       absolute_error = std::max( absolute_error,
          50.0*std::numeric_limits<double>::epsilon() * result_abs );
     };
+};
+
+// Update the integral results and errors
+inline void GaussKronrodIntegration::updateIntegral( 
+        Teuchos::Array<double>& bin_lower_limit, 
+        Teuchos::Array<double>& bin_upper_limit, 
+        Teuchos::Array<double>& bin_result, 
+        Teuchos::Array<double>& bin_error,
+        double& lower_limit_1, 
+        double& upper_limit_1,
+        double& area_1, 
+        double& error_1,
+        double& lower_limit_2,
+        double& upper_limit_2, 
+        double& area_2, 
+        double& error_2,
+        int& last,
+        int& bin_with_max_error ) const
+{
+    if ( error_2 <= error_1 )
+    {
+      bin_lower_limit[last] = lower_limit_2;
+      bin_upper_limit[bin_with_max_error] = upper_limit_1;
+      bin_upper_limit[last] = upper_limit_2;
+      bin_error[bin_with_max_error] = error_1;
+      bin_error[last] = error_2;
+    }
+    else
+    {
+      bin_lower_limit[bin_with_max_error] = lower_limit_2;
+      bin_lower_limit[last] = lower_limit_1;
+      bin_upper_limit[last] = upper_limit_1;
+      bin_result[bin_with_max_error] = area_2;
+      bin_result[last] = area_1;
+      bin_error[bin_with_max_error] = error_2;
+      bin_error[last] = error_1;
+    }
+};
+
+// Sort the bin order from highest to lowest error 
+/*! \details The error list will be correctly sorted with the exception
+ *  of two bins: bin_with_larger_error & bin_with_smaller_error.
+ *  The bin_with_larger_error is located near the fron of the order list.
+ *  The bin_with_smaller_error is at the end of the used list entries.
+ */
+void GaussKronrodIntegration::sortErrorList( 
+        Teuchos::Array<double>& bin_error,
+        Teuchos::Array<double>& bin_order, 
+        double maximum_bin_error, 
+        int bin_with_larger_error,
+        int bin_with_smaller_error, 
+        int nr_max ) const
+{
+
+  //  Check whether the list contains more than two error estimates.
+  if ( bin_with_smaller_error <= 2 )
+  {
+    bin_order[0] = 0;
+    bin_order[1] = 1;
+  }
+  else
+  {
+    double larger_bin_error = bin_error[bin_with_larger_error];
+    double smaller_bin_error = bin_error[bin_with_smaller_error];
+
+   /*
+    *  This part of the routine is only executed if, due to a
+    *  difficult integrand, subdivision increased the error
+    *  estimate. in the normal case the insert procedure should
+    *  start after the nr_max-th largest error estimate.
+    */
+    while ( nr_max > 0 && larger_bin_error > bin_error[ bin_order[nr_max-1] ] )
+    {
+      bin_order[nr_max] = bin_order[nr_max-1];
+      nr_max--; 
+    }
+
+    /*
+     *  Compute the number of elements in the list to be maintained
+     *  in descending order. This number depends on the number of
+     *  subdivisions still allowed.
+     */
+    int max_bin;
+    if ( (d_subinterval_limit/2+2) < bin_with_smaller_error )
+      max_bin = d_subinterval_limit + 1 - bin_with_smaller_error;
+    else
+      max_bin = bin_with_smaller_error;
+
+    /*
+     *  Insert larger_bin_error by traversing the list top-down, starting
+     *  comparison from the element bin_error[ bin_order[nr_max+1] ].
+     */
+    int large_bin = nr_max+1;
+    while ( large_bin < max_bin && bin_error[ bin_order[large_bin] ] > larger_bin_error )
+    {
+      bin_order[large_bin-1] = bin_order[large_bin];
+      large_bin++;
+    }
+    bin_order[large_bin-1] = bin_with_larger_error;
+
+    //  Insert smaller_bin_error by traversing the list bottom-up.
+    int small_bin = max_bin-1;
+    while ( small_bin > large_bin -2 && 
+            bin_error[ bin_order[small_bin] ] < smaller_bin_error )
+    {
+      bin_order[small_bin+1] = bin_order[small_bin];
+      small_bin--;
+    }
+    bin_order[small_bin+1] = bin_with_smaller_error;
+  }
+
+  // Set bin_with_larger_error to the bin with maximum error.
+  bin_with_larger_error = bin_order[nr_max];
+
+  // Set maximum_bin_error.
+  maximum_bin_error = bin_error[bin_with_larger_error];
 };
 
 } // end Utility namespace

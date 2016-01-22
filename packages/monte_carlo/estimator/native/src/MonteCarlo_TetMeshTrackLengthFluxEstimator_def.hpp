@@ -131,7 +131,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 						vertices[1],
 						vertices[2],
 						vertices[3],
-                                                barycentric_transform_matrix );
+                        barycentric_transform_matrix );
 
     // Assign reference vertices (always fourth vertex)
     d_tet_reference_vertices[*tet] = vertices[3];
