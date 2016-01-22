@@ -148,10 +148,10 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
-  fake_stream[3] = 0.005; // select first shell for collision
-  fake_stream[4] = 6.427713151861e-01; // select pz = 0.291894102792
-  fake_stream[5] = 0.25; // select energy loss
-  fake_stream[6] = 0.005; // select first shell for collision
+  fake_stream[3] = 0.005; // select first shell for collision - old
+  fake_stream[4] = 0.005; // select first shell for collision - endf
+  fake_stream[5] = 6.427713151861e-01; // select pz = 0.291894102792
+  fake_stream[6] = 0.25; // select energy loss
   fake_stream[7] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -206,9 +206,9 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionACEFactory,
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
-  fake_stream[3] = 0.005; // select first shell for collision
-  fake_stream[4] = 0.5; // select pz = 0.0
-  fake_stream[5] = 0.005; // select first shell for collision
+  fake_stream[3] = 0.005; // select first shell for collision - old
+  fake_stream[4] = 0.005; // select first shell for collision - endf
+  fake_stream[5] = 0.5; // select pz = 0.0
   fake_stream[6] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );

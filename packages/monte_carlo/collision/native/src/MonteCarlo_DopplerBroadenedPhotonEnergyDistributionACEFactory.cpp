@@ -345,7 +345,8 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 						  raw_half_profile.begin(),
 						  raw_half_profile.end(),
 						  full_momentum_grid,
-						  full_profile );
+						  full_profile,
+                                                  true );
     
     // Ignore interp parameter (always assume lin-lin inerpolation)
     // The Compton profile momentum grid in the ACE tables use atomic units.
