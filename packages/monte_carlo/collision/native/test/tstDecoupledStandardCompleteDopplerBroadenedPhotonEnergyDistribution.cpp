@@ -55,10 +55,10 @@ TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
-  fake_stream[0] = 0.005; // select first shell for collision
-  fake_stream[1] = 6.427713151861e-01; // select pz = 0.291894102792
-  fake_stream[2] = 0.25; // select energy loss
-  fake_stream[3] = 0.005; // select first shell for collision
+  fake_stream[0] = 0.005; // select first shell for collision - old
+  fake_stream[1] = 0.005; // select first shell for collision - endf
+  fake_stream[2] = 6.427713151861e-01; // select pz = 0.291894102792
+  fake_stream[3] = 0.25; // select energy loss
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -84,9 +84,9 @@ TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.005; // select first shell for collision
-  fake_stream[1] = 0.5; // select pz = 0.0
-  fake_stream[2] = 0.005; // select first shell for collision
+  fake_stream[0] = 0.005; // select first shell for collision - old
+  fake_stream[1] = 0.005; // select first shell for collision - endf
+  fake_stream[2] = 0.5; // select pz = 0.0
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -189,7 +189,8 @@ int main( int argc, char** argv )
 						  half_profile.begin(),
 						  half_profile.end(),
 						  full_momentum_grid,
-						  full_profile );
+						  full_profile,
+                                                  true );
 
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(

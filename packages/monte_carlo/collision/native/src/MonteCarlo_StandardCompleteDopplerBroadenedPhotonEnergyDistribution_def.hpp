@@ -327,7 +327,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   if( !energetically_possible || outgoing_energy < 0.0 )
   {
       outgoing_energy = calculateComptonLineEnergy( incoming_energy,
-						  scattering_angle_cosine );
+                                                    scattering_angle_cosine );
   }
   else
   {
@@ -507,6 +507,8 @@ SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPro
   // Make sure the index was found
   testPostcondition( endf_subshell_index_it != 
                      d_endf_subshell_order.left.end() );
+
+  return endf_subshell_index_it->second;
 }
 
 // Return the Compton profile for a subshell

@@ -188,7 +188,8 @@ int main( int argc, char** argv )
 						  half_profile.begin(),
 						  half_profile.end(),
 						  full_momentum_grid,
-						  full_profile );
+						  full_profile,
+                                                  true );
 
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
