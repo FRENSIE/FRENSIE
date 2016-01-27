@@ -188,6 +188,17 @@ private:
 	 const bool energy_multiplication = false,
 	 const Teuchos::ParameterList* bins = NULL );
 
+  // Create a hex mesh track length flux estimator
+  static void createHexMeshTrackLengthFluxEstimator(
+	 const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+	 const std::string& mesh_file_name,
+	 const std::string& output_mesh_file_name,
+	 const bool energy_multiplication = false,
+	 const Teuchos::ParameterList* bins = NULL );
+
   // Assign bins to an estimator
   static void assignBinsToEstimator( const Teuchos::ParameterList& bins,
 				     Teuchos::RCP<Estimator>& estimator );
@@ -236,6 +247,9 @@ private:
 
   // The tet mesh track-length flux estimator name
   static const std::string tet_mesh_track_length_flux_name;
+
+  // The hex mesh track-length flux estimator name
+  static const std::string hex_mesh_track_length_flux_name;
 
   // The warning output stream
   static std::ostream* s_os_warn;

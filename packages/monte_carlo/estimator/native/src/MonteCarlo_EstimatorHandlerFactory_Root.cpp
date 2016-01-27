@@ -19,6 +19,7 @@
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
 #include "Geometry_ModuleInterface_Root.hpp"
@@ -50,6 +51,9 @@ const std::string EstimatorHandlerFactory<Geometry::Root>::cell_collision_flux_n
 
 const std::string EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name = 
   "Tet Mesh Track-Length Flux";
+
+const std::string EstimatorHandlerFactory<Geometry::Root>::hex_mesh_track_length_flux_name = 
+  "Hex Mesh Track-Length Flux";
 
 std::ostream* EstimatorHandlerFactory<Geometry::Root>::s_os_warn = NULL;
 
@@ -292,6 +296,19 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
 	     EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name )
     {
       *s_os_warn << "Warning: Root does not currently support the tetrahedral " <<
+                   "mesh track length flux estimator. As such, estimator " <<
+                   id << " will not be implemented." << std::endl;
+    }
+
+    // Create a hex mesh track length flux estimator
+    /* Warning: Mesh tallies are not currently supported by ROOT and thus have
+     * been turned off for the ROOT specialization.
+     */
+
+    else if( estimator_id_type_map[id] == 
+	     EstimatorHandlerFactory<Geometry::Root>::hex_mesh_track_length_flux_name )
+    {
+      *s_os_warn << "Warning: Root does not currently support the hexrahedral " <<
                    "mesh track length flux estimator. As such, estimator " <<
                    id << " will not be implemented." << std::endl;
     }
@@ -972,6 +989,20 @@ void EstimatorHandlerFactory<Geometry::Root>::createTetMeshTrackLengthFluxEstima
   // flux estimator...
 }
 
+// Create a hex mesh track length flux estimator
+void EstimatorHandlerFactory<Geometry::Root>::createHexMeshTrackLengthFluxEstimator(
+	 const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+	 const std::string& mesh_file_name,
+	 const std::string& output_mesh_file_name,
+	 const bool energy_multiplication,
+	 const Teuchos::ParameterList* bins )
+{
+  // ROOT does not currently support the creation of a hex mesh track length
+  // flux estimator...
+}
 // Assign bins to an estimator
 void EstimatorHandlerFactory<Geometry::Root>::assignBinsToEstimator( 
 					   const Teuchos::ParameterList& bins,
@@ -1164,9 +1195,12 @@ bool EstimatorHandlerFactory<Geometry::Root>::isMeshEstimatorTypeValid(
 {
   if( estimator_type == EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name )
     return true;
+  else if (estimator_type == EstimatorHandlerFactory<Geometry::Root>::hex_mesh_track_length_flux_name)
+    return true;
   else
     return false;
 }
+
 
 #endif // end HAVE_FRENSIE_ROOT
 
