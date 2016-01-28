@@ -2,89 +2,159 @@
 //!
 //! \file   tstGaussKronrodIntegration.cpp
 //! \author Luke Kersting
-//! \brief  Gauss Kronrod quadrature integration unit test
+//! \brief  Gauss-Kronrod quadrature gk_integration unit tests.
 //!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-
 // Boost Includes
-#include <boost/scoped_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
+// Trilinos Includes
+#include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
 #include "Utility_GaussKronrodIntegration.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables
+// Testing Functors
 //---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-double fun( double x )
+struct X2Functor
 {
-  return x;
+  double operator()( const double x ) const
+  {
+    if( x >= 0.0 && x <= 1.0 )
+      return x*x;
+    else
+      return 0.0;
+  }
+  
+  static double getIntegratedValue()
+  {
+    return 1.0/3.0;
+  }
+};
+
+
+double exp_neg_x( const double x )
+{
+  return exp( -x );
 }
 
+double exp_neg_abs_x( const double x, const double a )
+{
+  return exp( -a*fabs(x) );
+}
+
+double inv_sqrt_abs_x( const double x )
+{
+  return 1/sqrt(fabs(x));
+}
+
+//---------------------------------------------------------------------------//
+// Instantiation macros.
+//---------------------------------------------------------------------------//
+#define UNIT_TEST_INSTANTIATION( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2Functor )
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( GaussKronrodIntegration, qags )
+// Check that functions can be integrated over [0,1]
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+				   integrate,
+				   Functor )
 {
-
-  // Create boost rapper function for f
-  boost::function<double (double x)> f_wrapper = 
-    boost::bind<double>( &fun,
-                         _1 );
-
-  Utility::GaussKronrodIntegration set( 0.1, 0.1 );
-  double result = 4.0;
-
-  TEST_EQUALITY_CONST( result, 4.0 );
-}		   
-
-//---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{  
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
-    Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
-    clp.parse(argc,argv);
-
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
-    return parse_return;
-  }
+  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
   
-  // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  double result, absolute_error;
+  size_t evals;
 
-  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
+  Functor functor_instance;
 
-  if (success)
-    *out << "\nEnd Result: TEST PASSED" << std::endl;
-  else
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
+  gk_integration.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
 
-  clp.printFinalTimerSummary(out.ptr());
+  double tol = absolute_error/result;
 
-  return (success ? 0 : 1);  
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
-									      
+
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrate );
+*/
 //---------------------------------------------------------------------------//
-// end tstAbsorptionElectroatomicReaction.cpp
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+				   integrateAdaptively,
+				   Functor )
+{
+  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+
+  double result, absolute_error;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integration.integrateAdaptively<15>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  double tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+/*
+  // Test the 21-point rule
+  gk_integration.integrateAdaptively<21>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+  // Test the 31-point rule
+  gk_integration.integrateAdaptively<31>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+  // Test the 41-point rule
+  gk_integration.integrateAdaptively<41>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+  // Test the 51-point rule
+  gk_integration.integrateAdaptively<51>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );*/
+}
+
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively );
+
+//---------------------------------------------------------------------------//
+// end tstGaussKronrodIntegration.cpp
 //---------------------------------------------------------------------------//

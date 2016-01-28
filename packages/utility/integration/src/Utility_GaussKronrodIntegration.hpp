@@ -93,7 +93,7 @@ public:
 			  double& absolute_error ) const;
 */
 private:
-
+/*
   // Gauss-Kronrod quadrature set for Points rule declaration 
   template<int Points>
   struct QuadratureSet
@@ -101,21 +101,16 @@ private:
     // Valid rule
     static const bool valid_rule = false;
 
-    // Number of Kronrod weights and abscissae
-    static const int kronrod_points = ( Points + 1 )/2;
-
-    // Number of Gauss weights and abscissae
-    static const int gauss_points = ( kronrod_points )/2;
-
     // Gauss quadrature weights 
-    static const double gauss_weights[gauss_points];
+    static const double gauss_weights[( Points + 1 )/4] = {0};
     
     // Kronrad quadrature weights 
-    static const double kronrod_weights[kronrod_points];
+    static const double kronrod_weights[( Points + 1 )/2] = {0};
 
     // Kronrad quadrature abscissae
-    static const double kronrod_abscissae[kronrod_points];
+    static const double kronrod_abscissae[( Points + 1 )/2] = {0};
   };
+*/
 
   // Function wrapper for evaluating the functor
   template<typename Functor>
@@ -139,12 +134,12 @@ private:
 
   // Test if subinterval is too small
   template<int Points>
-  inline bool subintervalTooSmall( double& lower_limit_1, 
+  bool subintervalTooSmall( double& lower_limit_1, 
                                    double& lower_limit_2, 
                                    double& upper_limit_2 ) const;
 
   // Update the integral results and errors
-  inline void updateIntegral( Teuchos::Array<double>& bin_lower_limit, 
+  void updateIntegral( Teuchos::Array<double>& bin_lower_limit, 
                               Teuchos::Array<double>& bin_upper_limit, 
                               Teuchos::Array<double>& bin_result, 
                               Teuchos::Array<double>& bin_error,

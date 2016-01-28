@@ -59,7 +59,7 @@ void GaussKronrodIntegration::rescaleAbsoluteError(
          50.0*std::numeric_limits<double>::epsilon() * result_abs );
     };
 };
-
+/*
 // Update the integral results and errors
 inline void GaussKronrodIntegration::updateIntegral( 
         Teuchos::Array<double>& bin_lower_limit, 
@@ -76,6 +76,23 @@ inline void GaussKronrodIntegration::updateIntegral(
         double& error_2,
         int& last,
         int& bin_with_max_error ) const
+*/
+// Update the integral results and errors
+void GaussKronrodIntegration::updateIntegral( 
+    Teuchos::Array<double>& bin_lower_limit, 
+    Teuchos::Array<double>& bin_upper_limit, 
+    Teuchos::Array<double>& bin_result, 
+    Teuchos::Array<double>& bin_error,
+    double& lower_limit_1, 
+    double& upper_limit_1,
+    double& area_1, 
+    double& error_1,
+    double& lower_limit_2,
+    double& upper_limit_2, 
+    double& area_2, 
+    double& error_2,
+    int& last,
+    int& bin_with_max_error ) const
 {
     if ( error_2 <= error_1 )
     {
