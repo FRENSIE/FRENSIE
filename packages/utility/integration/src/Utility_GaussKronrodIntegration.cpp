@@ -18,21 +18,16 @@ namespace Utility{
 GaussKronrodIntegration::GaussKronrodIntegration( 
     const double relative_error_tol,
     const double absolute_error_tol,
-    const size_t subinterval_limit,
-    const size_t workspace_size )
+    const size_t subinterval_limit )
   : d_relative_error_tol( relative_error_tol ),
     d_absolute_error_tol( absolute_error_tol ),
-    d_subinterval_limit( subinterval_limit ),
-    d_workspace_size( workspace_size )
+    d_subinterval_limit( subinterval_limit ) 
 {
   // Make sure the error tolerances are valid
   testPrecondition( relative_error_tol >= 0.0 );
   testPrecondition( absolute_error_tol >= 0.0 );
-  // Make sure the work space size is valid
-  testPrecondition( workspace_size > 0 );
   // Make sure the subinterval limit is valid
   testPrecondition( subinterval_limit > 0 );
-  testPrecondition( subinterval_limit <= workspace_size );
 
 }
 
