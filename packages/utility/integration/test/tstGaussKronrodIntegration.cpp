@@ -39,6 +39,21 @@ struct X2Functor
   }
 };
 
+struct X3Functor
+{
+  double operator()( const double x ) const
+  {
+    if( x >= 0.0 && x <= 1.0 )
+      return x*x*x;
+    else
+      return 0.0;
+  }
+
+  static double getIntegratedValue()
+  {
+    return 0.25;
+  }
+};
 
 double exp_neg_x( const double x )
 {
@@ -59,7 +74,8 @@ double inv_sqrt_abs_x( const double x )
 // Instantiation macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2Functor )
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2Functor ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3Functor )
 /*
 //---------------------------------------------------------------------------//
 // Tests

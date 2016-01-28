@@ -23,8 +23,7 @@ public:
   //! Constructor
   GaussKronrodIntegration( const double relative_error_tol,
                            const double absolute_error_tol = 0.0,
-                           const size_t subinterval_limit = 1000,
-                           const size_t work_space_size = 1000 );
+                           const size_t subinterval_limit = 1000 );
 
   //! Destructor
   ~GaussKronrodIntegration();
@@ -48,7 +47,8 @@ public:
 
   //! Integrate the function with point rule
   template<int Points, typename Functor>
-  void integrateWithPointRule( Functor& integrand,
+  void integrateWithPointRule( 
+                Functor& integrand,
 			    double lower_limit,
 			    double upper_limit,
 			    double& result,
@@ -93,25 +93,6 @@ public:
 			  double& absolute_error ) const;
 */
 private:
-/*
-  // Gauss-Kronrod quadrature set for Points rule declaration 
-  template<int Points>
-  struct QuadratureSet
-  {
-    // Valid rule
-    static const bool valid_rule = false;
-
-    // Gauss quadrature weights 
-    static const double gauss_weights[( Points + 1 )/4] = {0};
-    
-    // Kronrad quadrature weights 
-    static const double kronrod_weights[( Points + 1 )/2] = {0};
-
-    // Kronrad quadrature abscissae
-    static const double kronrod_abscissae[( Points + 1 )/2] = {0};
-  };
-*/
-
   // Function wrapper for evaluating the functor
   template<typename Functor>
   static double functorWrapper( const double x, void* indirected_functor );
@@ -170,9 +151,6 @@ private:
 
   // The subinterval limit
   size_t d_subinterval_limit;
-
-  // The work array
-  size_t d_workspace_size;
 };
 
 } // end Utility namespace
