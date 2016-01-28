@@ -27,15 +27,16 @@
 
 namespace Utility{
 
+/*
 // Gauss-Kronrod quadrature set for 15 point rule
 template<>
 struct GaussKronrodIntegration::QuadratureSet<15>
 {
-  //! Valid rule
+  // Valid rule
   static const bool valid_rule = true;
 
   // Gauss quadrature weights 
-  const double gauss_weights[4] =
+  static const double gauss_weights[4] =
   {
     0.129484966168869693270611432679082,
     0.279705391489276667901467771423780,
@@ -44,7 +45,7 @@ struct GaussKronrodIntegration::QuadratureSet<15>
   };
     
   // Kronrad quadrature weights 
-  const double kronrod_weights[8] = 
+  static const double kronrod_weights[8] = 
   {
     0.022935322010529224963732008058970,
     0.063092092629978553290700663189204,
@@ -54,10 +55,10 @@ struct GaussKronrodIntegration::QuadratureSet<15>
     0.190350578064785409913256402421014,
     0.204432940075298892414161999234649,
     0.209482141084727828012999174891714
- };
+  };
 
   // Kronrad quadrature abscissae
-  const double kronrod_abscissae[8] = 
+  static const double kronrod_abscissae[8] = 
   {
     0.991455371120812639206854697526329,
     0.949107912342758524526189684047851,
@@ -445,7 +446,7 @@ struct GaussKronrodIntegration::QuadratureSet<61>
     0.000000000000000000000000000000000
   };
 };
-
+*/
 // Function wrapper for evaluating the functor
 template<typename Functor>
 double GaussKronrodIntegration::functorWrapper( const double x, 
@@ -701,13 +702,66 @@ void GaussKronrodIntegration::integrateWithPointRule(
              double& result_abs, 
              double& result_asc ) const
 {
-  // Make sure the rule requested is valid
-  testStaticPrecondition( QuadratureSet<Points>::valid_rule );
   // Make sure the integration limits are valid
   testPrecondition( lower_limit <= upper_limit );
   // Make sure the integration limits are bounded
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( lower_limit ) );
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
+
+  int number_of_weights = (Points+1)/2;
+
+  double gauss_weights[number_of_weights/2];
+  double kronrod_abscissae[number_of_weights];
+  double kronrod_weights[number_of_weights];
+
+std::cout << "number_of_weights = " << number_of_weights << std::endl;
+std::cout << "number_of_weights = " << number_of_weights << std::endl;
+std::cout << "Points = " << Points << std::endl;
+  if ( Points == 15 )
+  { 
+  // Gauss quadrature weights 
+  gauss_weights[4] =
+  {
+    0.129484966168869693270611432679082,
+    0.279705391489276667901467771423780,
+    0.381830050505118944950369775488975,
+    0.417959183673469387755102040816327
+  };
+    
+  // Kronrad quadrature weights 
+  kronrod_weights[8] = 
+  {
+    0.022935322010529224963732008058970,
+    0.063092092629978553290700663189204,
+    0.104790010322250183839876322541518,
+    0.140653259715525918745189590510238,
+    0.169004726639267902826583426598550,
+    0.190350578064785409913256402421014,
+    0.204432940075298892414161999234649,
+    0.209482141084727828012999174891714
+  };
+
+  // Kronrad quadrature abscissae
+  kronrod_abscissae[8] = 
+  {
+    0.991455371120812639206854697526329,
+    0.949107912342758524526189684047851,
+    0.864864423359769072789712788640926,
+    0.741531185599394439863864773280788,
+    0.586087235467691130294144838258730,
+    0.405845151377397166906606412076961,
+    0.207784955007898467600689403773245,
+    0.000000000000000000000000000000000
+  };
+  }
+  else
+    testPrecondition( false );
+
+std::cout << "kronrod_weights[0] = " << kronrod_weights[0] << std::endl;
+std::cout << "kronrod_weights[1] = " << kronrod_weights[1] << std::endl;
+std::cout << "kronrod_weights[2] = " << kronrod_weights[2] << std::endl;
+std::cout << "kronrod_weights[3] = " << kronrod_weights[3] << std::endl;
+
 
   if( lower_limit < upper_limit )
   {
@@ -722,11 +776,11 @@ void GaussKronrodIntegration::integrateWithPointRule(
 
     // Estimate result for Gauss
     double gauss_result = 
-        integrand_midpoint*QuadratureSet<Points>::gauss_weights[3];
+        gauss_weights[3]*integrand_midpoint;
 
     // Estimate result for Kronrod
     double kronrod_result = 
-        integrand_midpoint*QuadratureSet<Points>::kronrod_weights[7];
+        integrand_midpoint*kronrod_weights[7];
  
     // Absolute value of kronrod estimate
     result_abs = fabs( kronrod_result );
@@ -736,44 +790,48 @@ void GaussKronrodIntegration::integrateWithPointRule(
     Teuchos::Array<double> integrand_values_sum( 7 );
 
     // Estimate Kronrod and absolute value integral
-    for ( int j = 0; j < Points - 1; j++ )
+    for ( int j = 0; j < number_of_weights - 1; j++ )
       {  
         calculateQuadratureIntegrandValuesAtAbscissa( 
             integrand, 
-            QuadratureSet<Points>::kronrod_abscissae[j],
+            kronrod_abscissae[j],
             half_length,
             midpoint,
             integrand_values_lower[j],
             integrand_values_upper[j] );
 
         kronrod_result += 
-            QuadratureSet<Points>::kronrod_weights[j]*integrand_values_sum[j];
+            kronrod_weights[j]*integrand_values_sum[j];
+std::cout << "j  = " << j  << std::endl;
+std::cout << "kronrod_weights[j]  = " << kronrod_weights[j]  << std::endl;
+std::cout << "integrand_values_sum[j]  = " << integrand_values_sum[j]  << std::endl;
+std::cout << "kronrod_result  = " << kronrod_result  << std::endl;
 
         integrand_values_sum[j] = 
           integrand_values_lower[j] + integrand_values_upper[j];
 
-        result_abs += QuadratureSet<Points>::kronrod_weights[j]*( 
+        result_abs += kronrod_weights[j]*( 
           fabs( integrand_values_lower[j] ) + fabs( integrand_values_upper[j] ) );
       };
 
     double mean_kronrod_result = 0.5*kronrod_result;
-    result_asc = QuadratureSet<Points>::kronrod_weights[7]*
+    result_asc = kronrod_weights[7]*
         fabs( integrand_midpoint - mean_kronrod_result );
 
-    for ( int j = 0; j < Points - 1; j++ )
+    for ( int j = 0; j < number_of_weights - 1; j++ )
       {  
 
-        result_asc += QuadratureSet<Points>::kronrod_weights[j]*
+        result_asc += kronrod_weights[j]*
           ( fabs( integrand_values_lower[j] - mean_kronrod_result ) +
             fabs( integrand_values_upper[j] - mean_kronrod_result ) );
       };
 
     // Estimate Gauss integral
-    for ( int j = 0; j < ( Points - 1 )/2; j++ )
+    for ( int j = 0; j < ( number_of_weights - 1 )/2; j++ )
       {
         int jj = j*2 + 1;
         gauss_result += 
-            QuadratureSet<Points>::gauss_weights[j]*integrand_values_sum[jj];
+            gauss_weights[j]*integrand_values_sum[jj];
       };
 
   double abs_half_length = fabs( half_length );
@@ -781,8 +839,10 @@ void GaussKronrodIntegration::integrateWithPointRule(
   result_abs *= abs_half_length;
   result_asc *= abs_half_length;
   absolute_error = fabs( ( kronrod_result - gauss_result ) * half_length );
-
+std::cout << "final kronrod_result  = " << kronrod_result  << std::endl;
+std::cout << "absolute_error  = " << absolute_error  << std::endl;
   rescaleAbsoluteError( absolute_error, result_abs, result_asc );
+std::cout << "rescaleAbsoluteError  = " << absolute_error  << std::endl;
          
 
 
@@ -809,11 +869,20 @@ inline bool GaussKronrodIntegration::subintervalTooSmall(
 {
   int c = Points/10;
   double max = std::max( fabs ( lower_limit_1 ), fabs ( upper_limit_2 ) );
-  double var = 
-    1000.0*c*std::numeric_limits<double>::epsilon()*fabs( lower_limit_2 );
+  double epsilon = 1000.0*c*std::numeric_limits<double>::epsilon();
+  double min = 10000.0*std::numeric_limits<double>::min();
 
+//  std::cout << "c = " << c << std::endl;
+//  std::cout << "lower_limit_1 = " << lower_limit_1 << std::endl;
+//  std::cout << "lower_limit_2 = " << lower_limit_2 << std::endl;
+//  std::cout << "upper_limit_2 = " << upper_limit_2 << std::endl;
+//  std::cout << "max = " << max << std::endl;
+//  std::cout << "epsilon = " << epsilon << std::endl;
+//  std::cout << "min = " << min << std::endl;
+//  std::cout << "epsilon() = " << std::numeric_limits<double>::epsilon() << std::endl;
+//  std::cout << "min() = " << std::numeric_limits<double>::min() << std::endl;
 
-  if ( max <= ( 1.0 + var + 10000.0*std::numeric_limits<double>::min() ) )
+  if ( max <= ( 1.0 + epsilon ) * ( fabs( lower_limit_2 ) + min ) )
     return true;
   else
     return false;
