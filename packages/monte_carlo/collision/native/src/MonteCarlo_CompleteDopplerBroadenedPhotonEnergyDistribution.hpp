@@ -31,6 +31,16 @@ public:
   //! Check if the distribution is complete (all subshells)
   bool isComplete() const;
 
+  //! Check if the subshell is valid
+  virtual bool isValidSubshell( const SubshellType subshell ) const = 0;
+
+  //! Return the binding energy of a subshell
+  virtual double getSubshellBindingEnergy( 
+                                       const SubshellType subshell ) const = 0;
+
+  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  virtual double getSubshellOccupancy( const SubshellType subshell ) const = 0;
+
   //! Evaluate the subshell distribution
   virtual double evaluateSubshell( const double incoming_energy,
                                    const double outgoing_energy,

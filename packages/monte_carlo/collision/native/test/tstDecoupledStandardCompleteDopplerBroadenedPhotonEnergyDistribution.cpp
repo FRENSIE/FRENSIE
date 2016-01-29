@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp
+//! \file   tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp
 //! \author Alex Robinson
 //! \brief  Decoupled complete DB photon energy distribution unit tests
 //!
@@ -39,15 +39,1175 @@
 Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
   half_distribution;
 
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+  half_complete_distribution;
+
 Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
   full_distribution;
+
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+  full_complete_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check if a subshell is valid
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             isValidSubshell )
+{
+  // Half distribution
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                    MonteCarlo::K_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L1_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L2_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L3_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M1_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M2_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M3_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M4_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M5_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N1_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N2_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N3_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N4_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N5_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N6_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N7_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O1_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O2_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O3_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O4_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O5_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P1_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P2_SUBSHELL ) );
+  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P3_SUBSHELL ) );
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::Q3_SUBSHELL ) );
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+                                              MonteCarlo::INVALID_SUBSHELL ) );
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+                                              MonteCarlo::UNKNOWN_SUBSHELL ) );
+
+  // Full distribution
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                    MonteCarlo::K_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L1_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L2_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::L3_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M1_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M2_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M3_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M4_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::M5_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N1_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N2_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N3_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N4_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N5_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N6_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::N7_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O1_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O2_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O3_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O4_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::O5_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P1_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P2_SUBSHELL ) );
+  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::P3_SUBSHELL ) );
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+                                                   MonteCarlo::Q3_SUBSHELL ) );
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+                                              MonteCarlo::INVALID_SUBSHELL ) );
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+                                              MonteCarlo::UNKNOWN_SUBSHELL ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell binding energy can be returned
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             getSubshellBindingEnergy )
+{
+  // Half distribution 
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                      MonteCarlo::K_SUBSHELL ),
+                          0.088005,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L1_SUBSHELL ),
+                          0.015861,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L2_SUBSHELL ),
+                          0.0152,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L3_SUBSHELL ),
+                          0.013035,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M1_SUBSHELL ),
+                          0.003851,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M2_SUBSHELL ),
+                          0.003554,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M3_SUBSHELL ),
+                          0.003066,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M4_SUBSHELL ),
+                          0.002586,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M5_SUBSHELL ),
+                          0.002484,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N1_SUBSHELL ),
+                          0.000894,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N2_SUBSHELL ),
+                          0.000764,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N3_SUBSHELL ),
+                          0.000645,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N4_SUBSHELL ),
+                          0.000434,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N5_SUBSHELL ),
+                          0.000412,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N6_SUBSHELL ),
+                          0.000141,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N7_SUBSHELL ),
+                          0.000136,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O1_SUBSHELL ),
+                          0.000148,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O2_SUBSHELL ),
+                          0.000105,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O3_SUBSHELL ),
+                          8.6e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O4_SUBSHELL ),
+                          2.0e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O5_SUBSHELL ),
+                          1.8e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P1_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P2_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P3_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+
+  // Full distribution
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                      MonteCarlo::K_SUBSHELL ),
+                          0.088005,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L1_SUBSHELL ),
+                          0.015861,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L2_SUBSHELL ),
+                          0.0152,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::L3_SUBSHELL ),
+                          0.013035,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M1_SUBSHELL ),
+                          0.003851,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M2_SUBSHELL ),
+                          0.003554,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M3_SUBSHELL ),
+                          0.003066,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M4_SUBSHELL ),
+                          0.002586,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::M5_SUBSHELL ),
+                          0.002484,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N1_SUBSHELL ),
+                          0.000894,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N2_SUBSHELL ),
+                          0.000764,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N3_SUBSHELL ),
+                          0.000645,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N4_SUBSHELL ),
+                          0.000434,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N5_SUBSHELL ),
+                          0.000412,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N6_SUBSHELL ),
+                          0.000141,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::N7_SUBSHELL ),
+                          0.000136,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O1_SUBSHELL ),
+                          0.000148,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O2_SUBSHELL ),
+                          0.000105,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O3_SUBSHELL ),
+                          8.6e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O4_SUBSHELL ),
+                          2.0e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::O5_SUBSHELL ),
+                          1.8e-5,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P1_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P2_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+  TEST_FLOATING_EQUALITY( full_complete_distribution->getSubshellBindingEnergy(
+                                                     MonteCarlo::P3_SUBSHELL ),
+                          0.0,
+                          1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell occupancy can be returned
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             getSubshellOccupancy )
+{
+  // Half distribution
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                      MonteCarlo::K_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N6_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N7_SUBSHELL ),
+                       8 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P3_SUBSHELL ),
+                       2 );
+
+  // Full distribution
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                      MonteCarlo::K_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::L3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::M5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N6_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::N7_SUBSHELL ),
+                       8 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O3_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O4_SUBSHELL ),
+                       4 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::O5_SUBSHELL ),
+                       6 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P1_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P2_SUBSHELL ),
+                       2 );
+  TEST_EQUALITY_CONST( full_complete_distribution->getSubshellOccupancy(
+                                                     MonteCarlo::P3_SUBSHELL ),
+                       2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell distribution can be evaluated
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshell_half )
+{
+  // Above max energy
+  double cross_section = half_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.412,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Max energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.411995,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          0.077179060436207,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.25271981255859755,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.24747240367306983,
+                          1e-15 );
+
+  // Min energy (for Compton profile grid)
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.0666690829629601,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.02805809565454027,
+                          1e-15 );
+
+  // Below min energy (for Compton profile grid)
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.066,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.815395566418701,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.38629223432666243,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.8794650180059378,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.7621319119578402,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.0192161806966558,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2227112051752336,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.4364930672258214,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2113525633910784,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          3.6032956960778817,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2703919059658135,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          4.928318122205952,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          3.662541834095016,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          5.625556432361759,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N6_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          4.626950854598549,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N7_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          6.233749824572172,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          8.385783818059283,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          5.509760603731998,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          12.163527895643893,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          11.315733485067268,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          17.448311930633853,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          26.794039864962183,
+                          1e-14 );
+  
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          20.841524452812,
+                          1e-15 );
+ 
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          20.841524452812,
+                          1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell distribution can be evaluated
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshell_full )
+{
+  // Above max energy
+  double cross_section = full_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.412,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Max energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.411995,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          0.077179060436207,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.25271981255859755,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.24747240367306983,
+                          1e-15 );
+
+  // Min energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                      0.5,
+                                                      0.0,
+                                                      0.0,
+                                                      MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.009842522369949987,
+                          1e-15 ); 
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.815395566418701,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.38629223432666243,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.8794650180059378,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.7621319119578402,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.0192161806966558,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2227112051752336,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1.4364930672258214,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2113525633910784,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          3.6032956960778817,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.2703919059658135,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          4.928318122205952,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          3.662541834095016,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          5.625556432361759,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N6_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          4.626950854598549,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N7_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          6.233749824572172,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          8.385783818059283,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          5.509760603731998,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          12.163527895643893,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          11.315733485067268,
+                          1e-15 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          17.448311930633853,
+                          1e-15 );
+  
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          26.794039864962183,
+                          1e-14 );
+
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          20.841524452812,
+                          1e-15 );
+ 
+  // Compton-line energy
+  cross_section = full_complete_distribution->evaluateSubshell(
+                                                     0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          20.841524452812,
+                          1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the complete distribution can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluate )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshellIntegratedCrossSection )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the complete integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateIntegratedCrossSection )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell PDF can be evaluated
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshellPDF )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the complete PDF can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluatePDF )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell momentum can be sampled
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             sampleSubshellMomentum )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electron momentum can be sampled
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             sampleMomentumAndRecordTrials )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
-		   sample_half )
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             sample_half )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
@@ -75,8 +1235,9 @@ TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
-		   sample_full )
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             sample_full )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
@@ -192,6 +1353,22 @@ int main( int argc, char** argv )
 						  full_profile,
                                                   true );
 
+    if( shell == 22 )
+    {
+      std::cout.precision( 18 );
+      for( unsigned i = 0; i < half_momentum_grid.size(); ++i )
+      {
+        std::cout << half_momentum_grid[i] << " "
+                  << half_profile[i] << std::endl;
+      }
+      std::cout << std::endl << "FULL" << std::endl;
+      for( unsigned i = 0; i < full_momentum_grid.size(); ++i )
+      {
+        std::cout << full_momentum_grid[i] << " "
+                  << full_profile[i] << std::endl;
+      }
+    }
+
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        half_momentum_grid,
@@ -212,7 +1389,7 @@ int main( int argc, char** argv )
     
   }
 
-  half_distribution.reset(
+  half_complete_distribution.reset(
      new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
@@ -220,8 +1397,10 @@ int main( int argc, char** argv )
 			  xss_data_extractor->extractLNEPSBlock(),
                           converter,
 			  half_compton_profiles ) );
+
+  half_distribution = half_complete_distribution;
   
-  full_distribution.reset(
+  full_complete_distribution.reset(
       new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
@@ -229,6 +1408,8 @@ int main( int argc, char** argv )
 			  xss_data_extractor->extractLNEPSBlock(),
                           converter,
 			  full_compton_profiles ) );
+  
+  full_distribution = full_complete_distribution;
 
   // Clear setup data
   ace_file_handler.reset();
@@ -253,5 +1434,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp
+// end tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp
 //---------------------------------------------------------------------------//

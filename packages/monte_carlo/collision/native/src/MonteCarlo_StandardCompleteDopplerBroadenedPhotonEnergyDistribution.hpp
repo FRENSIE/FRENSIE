@@ -47,10 +47,16 @@ public:
   virtual ~StandardCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* .. */ }
 
+  //! Check if the subshell is valid
+  bool isValidSubshell( const SubshellType subshell ) const;
+
+  //! Return the occupancy of a subshell (default is the ENDF occupacy)
+  virtual double getSubshellOccupancy( const SubshellType subshell ) const;
+
   //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-		   const double outgoing_energy,
-		   const double scattering_angle_cosine ) const;
+  virtual double evaluate( const double incoming_energy,
+                           const double outgoing_energy,
+                           const double scattering_angle_cosine ) const;
 
   //! Evaluate the subshell distribution
   double evaluateSubshell( const double incoming_energy,
@@ -108,16 +114,6 @@ public:
                                  const SubshellType subshell ) const;
 
 protected:
-
-  //! Check if the subshell is valid
-  bool isValidSubshell( const SubshellType subshell ) const;
-
-  //! Return the binding energy of a subshell
-  virtual double getSubshellBindingEnergy( 
-                                       const SubshellType subshell ) const = 0;
-
-  //! Return the occupancy of a subshell (default is the ENDF occupacy)
-  virtual double getSubshellOccupancy( const SubshellType subshell ) const;
 
   //! Return the old subshell index corresponding to the subshell
   unsigned getOldSubshellIndex( const SubshellType subshell ) const;

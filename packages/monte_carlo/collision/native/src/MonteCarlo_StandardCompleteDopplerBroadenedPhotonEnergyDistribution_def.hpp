@@ -72,7 +72,8 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
   // Make sure the outgoing energy is valid
-  testPrecondition( outgoing_energy < incoming_energy );
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -111,7 +112,8 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
   // Make sure the outgoing energy is valid
-  testPrecondition( outgoing_energy < incoming_energy );
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -123,7 +125,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   // The evaluated double differential cross section
   double cross_section;
 
-  if( outgoing_energy < incoming_energy - subshell_binding_energy )
+  if( outgoing_energy <= incoming_energy - subshell_binding_energy )
   {
     // Get the Compton profile for the subshell
     const ComptonProfile& compton_profile = 
@@ -138,7 +140,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
       calculateElectronMomentumProjection( incoming_energy,
                                            outgoing_energy,
                                            scattering_angle_cosine);
-
+    
     // Evaluate the Compton profile
     ComptonProfile::ProfileQuantity compton_profile_quantity = 
       ComptonProfilePolicy::evaluate( compton_profile, 
