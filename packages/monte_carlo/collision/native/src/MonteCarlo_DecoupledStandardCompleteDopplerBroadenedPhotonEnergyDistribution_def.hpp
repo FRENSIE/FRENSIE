@@ -83,6 +83,64 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   return d_old_subshell_occupancies[old_subshell_index];
 }
 
+// Evaluate the distribution
+template<typename ComptonProfilePolicy>
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluate( 
+				   const double incoming_energy,
+				   const double outgoing_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Calculate the electron momentum projection
+  const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+    Utility::Units::mec_momentum*
+    calculateElectronMomentumProjection( incoming_energy,
+                                         outgoing_energy,
+                                         scattering_angle_cosine );
+
+  // Evaluate the multiplier
+  const double multiplier = this->evaluateMultiplier(incoming_energy,
+                                                     scattering_angle_cosine );
+
+  // The total double differential cross section
+  double cross_section = 0.0;
+
+  // Evaluate each subshell
+  for( unsigned i = 0; i < d_old_subshell_binding_energy.size(); ++i )
+  {
+    // Get the subshell binding energy
+    const double subshell_binding_energy = d_old_subshell_binding_energy[i];
+
+    // Get the subshell occupancy
+    const double subshell_occupancy = d_old_subshell_occupancies[i];
+
+    // Get the subshell Compton profile
+    const ComptonProfile& compton_profile = this->getComptonProfile( i );
+
+    if( outgoing_energy <= incoming_energy - subshell_binding_energy )
+    {
+      cross_section += subshell_occupancy*
+        ComptonProfilePolicy::evaluate( compton_profile,
+                                        electron_momentum_projection ).value();
+    }
+  }
+
+  cross_section *= multiplier;
+
+  // Make sure the cross section is valid
+  testPostcondition( cross_section >= 0.0 );
+
+  return cross_section;
+}
+
 // Sample an interaction subshell
 /*! \details The old subshell index used to select the Compton profile and
  * and the binding energy is not the same as the subshell (each are sampled

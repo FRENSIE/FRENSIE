@@ -45,13 +45,18 @@ public:
   ~DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
 
-protected:
-
   //! Return the binding energy of a subshell
   double getSubshellBindingEnergy( const SubshellType subshell ) const;
   
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
   double getSubshellOccupancy( const SubshellType subshell ) const;
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+		   const double outgoing_energy,
+		   const double scattering_angle_cosine ) const;
+
+protected:
 
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
