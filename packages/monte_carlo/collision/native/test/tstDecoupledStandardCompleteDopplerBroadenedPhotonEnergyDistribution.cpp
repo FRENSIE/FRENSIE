@@ -51,6 +51,17 @@ Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check if the distribution is complete
+TEUCHOS_UNIT_TEST( 
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             isComplete )
+{
+  TEST_ASSERT( half_distribution->isComplete() );
+
+  TEST_ASSERT( full_distribution->isComplete() );
+}
+                  
+//---------------------------------------------------------------------------//
 // Check if a subshell is valid
 TEUCHOS_UNIT_TEST( 
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
@@ -1146,14 +1157,107 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluate )
 {
-  
+  // Compton-line energy
+  double cross_section = half_distribution->evaluate( 0.5,
+                                                      0.25271981255859755,
+                                                      0.0 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 144.39001687165862, 1e-15 );
+
+  // Compton-line energy
+  cross_section = full_distribution->evaluate( 0.5,
+                                               0.25271981255859755,
+                                               0.0 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 144.39001687165862, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell integrated cross section can be evaluated
 TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
-             evaluateSubshellIntegratedCrossSection )
+             evaluateSubshellIntegratedCrossSection_half )
+{
+  
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                     MonteCarlo::K_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::L1_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::L2_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::L3_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::M1_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::M2_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::M3_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::M4_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::M5_SUBSHELL ),
+  //                      6 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N1_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N2_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N3_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N4_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N5_SUBSHELL ),
+  //                      6 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N6_SUBSHELL ),
+  //                      6 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::N7_SUBSHELL ),
+  //                      8 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::O1_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::O2_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::O3_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::O4_SUBSHELL ),
+  //                      4 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::O5_SUBSHELL ),
+  //                      6 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::P1_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::P2_SUBSHELL ),
+  //                      2 );
+  // TEST_EQUALITY_CONST( half_complete_distribution->getSubshellOccupancy(
+  //                                                    MonteCarlo::P3_SUBSHELL ),
+  //                      2 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshellIntegratedCrossSection_full )
 {
   
 }
