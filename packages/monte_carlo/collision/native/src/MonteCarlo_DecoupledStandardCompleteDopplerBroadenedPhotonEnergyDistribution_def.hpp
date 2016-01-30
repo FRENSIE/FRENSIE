@@ -9,8 +9,13 @@
 #ifndef MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 #define MONTE_CARLO_DECOUPLED_STANDARD_COMPLETE_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_DEF_HPP
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -139,6 +144,42 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   testPostcondition( cross_section >= 0.0 );
 
   return cross_section;
+}
+
+// Evaluate the distribution
+template<typename ComptonProfilePolicy>
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSection( 
+                                         const double incoming_energy,
+                                         const double scattering_angle_cosine,
+                                         const double precision ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  boost::function<double (double x)> double_diff_cs_wrapper = 
+    boost::bind<double>( &DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate,
+                         boost::cref( *this ),
+                         incoming_energy,
+                         _1,
+                         scattering_angle_cosine );
+
+  double abs_error, diff_cs;
+
+  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+
+  quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
+                                          0.0,
+                                          incoming_energy,
+                                          diff_cs,
+                                          abs_error );
+
+  // Make sure that the differential cross section is valid
+  testPostcondition( diff_cs >= 0.0 );
+
+  return diff_cs;                         
 }
 
 // Sample an interaction subshell
