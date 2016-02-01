@@ -1866,7 +1866,230 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshellPDF_full )
 {
+  // Compton-line energy
+  double pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 4.7647746446724915, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 15.036947632736435, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 7.081477324867008, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::L3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 8.089844586686603, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 32.73595285014459, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 32.73595285014459, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 18.904733708093087, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 20.63962118089761, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 13.344553382298198, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::M5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 13.699441209385501, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 67.15875649189272, 1e-12 );
   
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 42.300794935866286, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 45.92852622144515, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 34.141151852558984, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 34.96390824829563, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N6_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 28.764832720629716, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::N7_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 29.06602172284424, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 156.49926900099578, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 102.82360411443777, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 113.51002502326621, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O4_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 105.61282587664924, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::O5_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 108.56818867429266, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P1_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 500.23793204171403, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P2_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 389.1143276726739, 1e-12 );
+
+  // Compton-line energy
+  pdf_value =
+    full_complete_distribution->evaluateSubshellPDF( 0.5,
+                                                     0.25271981255859755,
+                                                     0.0,
+                                                     MonteCarlo::P3_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 389.1143276726739, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -2058,26 +2281,36 @@ int main( int argc, char** argv )
 						  full_profile,
                                                   true );
 
-    if( shell == 22 )
+    if( shell == 0 )
     {
+      Teuchos::Array<double> half_cdf(
+                 swd_block( shell_index + 1 + 2*num_mom_vals, num_mom_vals ) );
       std::cout.precision( 18 );
       for( unsigned i = 0; i < half_momentum_grid.size(); ++i )
       {
         std::cout << half_momentum_grid[i] << " "
-                  << half_profile[i] << std::endl;
+                  << half_profile[i] << " "
+                  << half_cdf[i] << std::endl;
       }
-      std::cout << std::endl << "FULL" << std::endl;
-      for( unsigned i = 0; i < full_momentum_grid.size(); ++i )
-      {
-        std::cout << full_momentum_grid[i] << " "
-                  << full_profile[i] << std::endl;
-      }
+      // std::cout << std::endl << "FULL" << std::endl;
+      // for( unsigned i = 0; i < full_momentum_grid.size(); ++i )
+      // {
+      //   std::cout << full_momentum_grid[i] << " "
+      //             << full_profile[i] << std::endl;
+      // }
     }
 
     std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        half_momentum_grid,
                                                        half_profile ) );
+
+    if( shell == 0 )
+    {
+      std::shared_ptr<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile_copy = std::dynamic_pointer_cast<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >( raw_compton_profile );
+      
+      raw_compton_profile_copy->toStream( std::cout );
+    }
 
     half_compton_profiles[shell].reset( 
        new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
