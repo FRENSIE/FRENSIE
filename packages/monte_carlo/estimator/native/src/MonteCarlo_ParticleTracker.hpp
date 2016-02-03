@@ -59,7 +59,7 @@ public:
 private:
 
   // Flag for new particle 
-  bool d_particle_reset = true;
+  bool d_particle_reset;
 
   // Number of histories to be tracked
   const unsigned d_number_of_histories;
@@ -92,10 +92,10 @@ private:
   Teuchos::Array< double > d_weight;
   
   // History Number
-  unsigned d_history_number = 0;
+  unsigned d_history_number;
   
   // Generation Number
-  unsigned d_generation_number = 0;
+  unsigned d_generation_number;
   
   // Particle Type
   ParticleType d_particle_type;
