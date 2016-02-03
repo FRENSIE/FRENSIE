@@ -14,11 +14,24 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleTracker::ParticleTracker( const unsigned number_of_histories )
+ : d_particle_reset( true ),
+   d_number_of_histories( number_of_histories ),
+   d_x_pos(),
+   d_y_pos(),
+   d_z_pos(),
+   d_x_dir(),
+   d_y_dir(),
+   d_z_dir(),
+   d_energy(),
+   d_col_num(),
+   d_weight(),
+   d_history_number( 0u ),
+   d_generation_number( 0u ),
+   d_particle_type(),
+   d_history_number_map()
 {
   // Make sure there are some particles being tracked
   testPrecondition( number_of_histories > 0 );
-  
-  d_number_of_histories = number_of_histories;
 }
 
 // Add current history estimator contribution
@@ -27,71 +40,79 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  // Get the lifetime information of a newly generated particle
-  if ( d_particle_reset )
+  // Check if we still need to be tracking particles
+  if ( particle.getHistoryNumber() <= d_number_of_histories )
   {
-    // History Number
-    d_history_number = particle.getHistoryNumber();
-    
-    // Generation Number
-    d_generation_number = particle.getGenerationNumber();
-    
-    // Particle Type
-    d_particle_type = particle.getParticleType();
+    // Get the lifetime information of a newly generated particle
+    if ( d_particle_reset )
+    {
+      // History Number
+      d_history_number = particle.getHistoryNumber();
+      
+      // Generation Number
+      d_generation_number = particle.getGenerationNumber();
+      
+      // Particle Type
+      d_particle_type = particle.getParticleType();
 
-    // Append the initial position data
-    d_x_pos.push_back( start_point[0] );
-    d_y_pos.push_back( start_point[1] );
-    d_z_pos.push_back( start_point[2] );
-    
-    // Append the initial direction data
-    d_x_dir.push_back( particle.getXDirection() );
-    d_y_dir.push_back( particle.getYDirection() );
-    d_z_dir.push_back( particle.getZDirection() );
-    
-    // Append the initial energy data
-    d_energy.push_back( particle.getEnergy() );
-    
-    // Append the initial collision number data
-    d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
-    
-    // Append the initial weight data
-    d_weight.push_back( particle.getWeight() );
-    
-    // Flag that we are working on an existing particle
-    d_particle_reset = false;
-  }
-  else
-  {
-    // Append the new position data
-    d_x_pos.push_back( start_point[0] );
-    d_y_pos.push_back( start_point[1] );
-    d_z_pos.push_back( start_point[2] );
-    
-    // Append the new direction data
-    d_x_dir.push_back( particle.getXDirection() );
-    d_y_dir.push_back( particle.getYDirection() );
-    d_z_dir.push_back( particle.getZDirection() );
-    
-    // Append the new energy data
-    d_energy.push_back( particle.getEnergy() );
-    
-    // Append the new collision number data
-    d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
-    
-    // Append the new weight data
-    d_weight.push_back( particle.getWeight() );
-  }
+      // Append the initial position data
+      d_x_pos.push_back( start_point[0] );
+      d_y_pos.push_back( start_point[1] );
+      d_z_pos.push_back( start_point[2] );
+      
+      // Append the initial direction data
+      d_x_dir.push_back( particle.getXDirection() );
+      d_y_dir.push_back( particle.getYDirection() );
+      d_z_dir.push_back( particle.getZDirection() );
+      
+      // Append the initial energy data
+      d_energy.push_back( particle.getEnergy() );
+      
+      // Append the initial collision number data
+      d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
+      
+      // Append the initial weight data
+      d_weight.push_back( particle.getWeight() );
+      
+      // Flag that we are working on an existing particle
+      d_particle_reset = false;
+    }
+    else
+    {
+      // Append the new position data
+      d_x_pos.push_back( start_point[0] );
+      d_y_pos.push_back( start_point[1] );
+      d_z_pos.push_back( start_point[2] );
+      
+      // Append the new direction data
+      d_x_dir.push_back( particle.getXDirection() );
+      d_y_dir.push_back( particle.getYDirection() );
+      d_z_dir.push_back( particle.getZDirection() );
+      
+      // Append the new energy data
+      d_energy.push_back( particle.getEnergy() );
+      
+      // Append the new collision number data
+      d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
+      
+      // Append the new weight data
+      d_weight.push_back( particle.getWeight() );
+    }
 
-  // Check if the particle is gone and commit data if isGone == true
-  if ( particle.isGone() )
-  {
-    // Commit particle track data
-    commitParticleTrackData();
-    
-    // Reset particle track data
-    resetParticleTrackData();
+    // Check if the particle is gone and commit data if isGone == true
+    if ( particle.isGone() )
+    {
+      // Commit particle track data
+      commitParticleTrackData();
+      
+      // Reset particle track data
+      resetParticleTrackData();
+    }
   }
+  
+  // Test that there is a valid history/generation number
+  testPostcondition( history_number > 0 );
+  testPostcondition( generation_number > 0 );
 }
 
 void ParticleTracker::commitParticleTrackData()
@@ -110,21 +131,21 @@ void ParticleTracker::commitParticleTrackData()
   particle_data.push_back( d_weight );
   
   // Begin the process of narrowing down where to add new data
-  if ( d_history_number_map.count( d_history_number ) == 1 )
+  if ( d_history_number_map.count( d_history_number )  )
   {
   
     // If we find the history number, check if the particle type exists yet
-    if ( d_history_number_map[ d_history_number ].count( d_particle_type ) == 1 )
+    if ( d_history_number_map[ d_history_number ].count( d_particle_type ) )
     {
       
       // If we find the particle type, check if the generation number exists yet
-      if ( d_history_number_map[ d_history_number ][ d_particle_type ].count( d_generation_number ) == 1 )
+      if ( d_history_number_map[ d_history_number ][ d_particle_type ].count( d_generation_number ) )
       {
       
         unsigned i = 1;
               
         // If the generation number exists, add it to the list of particles
-        while ( d_history_number_map[ d_history_number ][ d_particle_type ][ d_generation_number ].count( i ) == 1 )
+        while ( d_history_number_map[ d_history_number ][ d_particle_type ][ d_generation_number ].count( i ) )
         {
           ++i;
         }
@@ -139,7 +160,7 @@ void ParticleTracker::commitParticleTrackData()
       
         // Map of individual particles to array of particle data
         boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > 
-          individual_particle_map[ 1 ] = particle_data;
+          individual_particle_map[ 1u ] = particle_data;
 
         // Map of generation number to individual particles
         boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >
@@ -154,7 +175,7 @@ void ParticleTracker::commitParticleTrackData()
     {
       // Map of individual particles to array of particle data
       boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > 
-        individual_particle_map[ 1 ] = particle_data;
+        individual_particle_map[ 1u ] = particle_data;
 
       // Map of generation number to individual particles
       boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >
@@ -205,6 +226,10 @@ void ParticleTracker::resetParticleTrackData()
   d_energy.clear();
   d_col_num.clear();
   d_weight.clear();
+  
+  // Clear the particle lifetime data
+  d_history_number = 0u;
+  d_generation_number = 0u;
   
   // Flag that the particle is reset and lifetime information should be found
   d_particle_reset = true;
