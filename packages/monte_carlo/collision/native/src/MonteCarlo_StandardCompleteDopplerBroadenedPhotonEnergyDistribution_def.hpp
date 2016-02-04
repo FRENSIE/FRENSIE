@@ -151,7 +151,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
                                                      incoming_energy,
                                                      scattering_angle_cosine );
 
-    cross_section = multiplier*subshell_occupancy*
+    cross_section = // multiplier*subshell_occupancy*
       compton_profile_quantity.value();
   }
   else
@@ -170,12 +170,19 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
 {
-  return this->evaluate( incoming_energy, 
-                         outgoing_energy,
-                         scattering_angle_cosine )/
+  const double diff_cross_section = this->evaluate( incoming_energy, 
+                                                    outgoing_energy,
+                                                    scattering_angle_cosine );
+  
+  const double integrated_cross_section =
     this->evaluateIntegratedCrossSection( incoming_energy,
                                           scattering_angle_cosine,
                                           1e-3 );
+
+  if( integrated_cross_section > 0.0 )
+    return diff_cross_section/integrated_cross_section;
+  else
+    return 0.0;
 }
 
 // Evaluate the PDF
@@ -186,14 +193,22 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 				          const double scattering_angle_cosine,
 					  const SubshellType subshell ) const
 {
-  return this->evaluateSubshell( incoming_energy,
-                                 outgoing_energy,
-                                 scattering_angle_cosine,
-                                 subshell )/
+  const double diff_cross_section = 
+    this->evaluateSubshell( incoming_energy,
+                            outgoing_energy,
+                            scattering_angle_cosine,
+                            subshell );
+
+  const double integrated_cross_section = 
     this->evaluateSubshellIntegratedCrossSection( incoming_energy,
                                                   scattering_angle_cosine,
                                                   subshell,
                                                   1e-3 );
+
+  if( integrated_cross_section > 0.0 )
+    return diff_cross_section/integrated_cross_section;
+  else
+    return 0.0;
 }
 
 // Evaluate the integrated cross section (b/mu)
@@ -256,13 +271,60 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
   double abs_error, diff_cs;
 
-  const double binding_energy = this->getSubshellBindingEnergy( subshell );
-
   Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+
+  // Evaluate the minimum and maximum energy for integration (not the
+  // true minimum and maximum energy)
+  double min_energy = 0.0;
+
+  {
+    const ComptonProfile::MomentumQuantity min_electron_momentum_projection = 
+      ComptonProfilePolicy::getLowerBoundOfMomentum( 
+                                         this->getComptonProfile( subshell ) );
+
+    if( min_electron_momentum_projection > -1.0*Utility::Units::mec_momentum )
+    {
+      bool possible;
+      
+      min_energy = calculateDopplerBroadenedEnergy(
+                                      min_electron_momentum_projection.value(),
+                                      incoming_energy,
+                                      scattering_angle_cosine,
+                                      possible );
+    }
+  }
+
+  double max_energy = 
+    incoming_energy - this->getSubshellBindingEnergy( subshell );
+
+  {
+    const ComptonProfile::MomentumQuantity table_max_electron_momentum_projection = 
+      ComptonProfilePolicy::getUpperBoundOfMomentum( 
+                                         this->getComptonProfile( subshell ) );
+
+    double max_electron_momentum_projection = 
+      calculateMaxElectronMomentumProjection( 
+                                    incoming_energy,
+                                    this->getSubshellBindingEnergy( subshell ),
+                                    scattering_angle_cosine );
+                                              
+
+    if( max_electron_momentum_projection >
+        table_max_electron_momentum_projection.value() )
+    {
+      bool possible;
+    
+      max_energy = calculateDopplerBroadenedEnergy(
+                                table_max_electron_momentum_projection.value(),
+                                incoming_energy,
+                                scattering_angle_cosine,
+                                possible );
+    }
+  }
   
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
-                                          0.0,
-                                          incoming_energy - binding_energy,
+                                          min_energy,
+                                          max_energy,
                                           diff_cs,
                                           abs_error );
 
@@ -338,9 +400,6 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
       outgoing_energy = std::numeric_limits<double>::min();
   }
   
-  // Increment the number of trials
-  ++trials;
-
   // Make sure the outgoing energy is valid
   testPostcondition( outgoing_energy <= incoming_energy );
   testPostcondition( outgoing_energy > 0.0 );
@@ -400,6 +459,9 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                                     scattering_angle_cosine,
                                                     subshell_binding_energy,
                                                     compton_profile );
+
+  // Increment the number of trials
+  trials += iterations;
 }
 
 // Sample an electron momentum from the subshell distribution

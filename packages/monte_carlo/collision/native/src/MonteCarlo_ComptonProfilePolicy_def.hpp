@@ -32,6 +32,22 @@ inline bool FullComptonProfilePolicy::isValidProfile(
   return profile.getLowerBoundOfMomentum() == -1.0*Utility::Units::mec_momentum
     && profile.getUpperBoundOfMomentum() >= 1.0*Utility::Units::mec_momentum;
 }
+
+// Get the lower bound of the momentum
+inline ComptonProfile::MomentumQuantity 
+FullComptonProfilePolicy::getLowerBoundOfMomentum(
+                                                const ComptonProfile& profile )
+{
+  return profile.getLowerBoundOfMomentum();
+}
+  
+// Get the upper bound of the momentum
+inline ComptonProfile::MomentumQuantity 
+FullComptonProfilePolicy::getUpperBoundOfMomentum(
+                                                const ComptonProfile& profile )
+{
+  return profile.getUpperBoundOfMomentum();
+}
   
 // Evaluate a full Compton profile
 inline ComptonProfile::ProfileQuantity FullComptonProfilePolicy::evaluate( 
@@ -64,7 +80,23 @@ inline bool HalfComptonProfilePolicyHelper::isValidProfile(
                                                const ComptonProfile& profile )
 {
   return profile.getLowerBoundOfMomentum() == 0.0*Utility::Units::mec_momentum
-    && profile.getUpperBoundOfMomentum() > 0.0*Utility::Units::mec_momentum;
+    && profile.getUpperBoundOfMomentum() <= 1.0*Utility::Units::mec_momentum;
+}
+
+// Get the lower bound of the momentum
+inline ComptonProfile::MomentumQuantity 
+HalfComptonProfilePolicyHelper::getLowerBoundOfMomentum(
+                                                const ComptonProfile& profile )
+{
+  return -profile.getUpperBoundOfMomentum();
+}
+  
+// Get the upper bound of the momentum
+inline ComptonProfile::MomentumQuantity 
+HalfComptonProfilePolicyHelper::getUpperBoundOfMomentum(
+                                                const ComptonProfile& profile )
+{
+  return profile.getUpperBoundOfMomentum();
 }
 
 // Sample from a half Compton profile
