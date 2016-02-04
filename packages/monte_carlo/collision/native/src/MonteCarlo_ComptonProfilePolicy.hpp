@@ -19,6 +19,14 @@ struct FullComptonProfilePolicy
 {
   //! Check if the full Compton profile is valid
   static bool isValidProfile( const ComptonProfile& profile );
+
+  //! Get the lower bound of the momentum
+  static ComptonProfile::MomentumQuantity getLowerBoundOfMomentum(
+                                               const ComptonProfile& profile );
+  
+  //! Get the upper bound of the momentum
+  static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
+                                               const ComptonProfile& profile );
     
   //! Evaluate a full Compton profile
   static ComptonProfile::ProfileQuantity evaluate( 
@@ -36,6 +44,14 @@ struct HalfComptonProfilePolicyHelper
 {
   //! Check if the half Compton profile is valid
   static bool isValidProfile( const ComptonProfile& profile );
+  
+  //! Get the lower bound of the momentum
+  static ComptonProfile::MomentumQuantity getLowerBoundOfMomentum(
+                                               const ComptonProfile& profile );
+  
+  //! Get the upper bound of the momentum
+  static ComptonProfile::MomentumQuantity getUpperBoundOfMomentum(
+                                               const ComptonProfile& profile );
 
   //! Sample from a half Compton profile
   static ComptonProfile::MomentumQuantity sample(

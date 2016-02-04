@@ -257,7 +257,7 @@ int main( int argc, char** argv )
   Teuchos::Array<double> pdf_evaluation_energies( 2001 );
 
   for( unsigned i = 0; i < 2001; ++i )
-    pdf_evaluation_energies[i] = 0.0 + initial_energy*i/1e3;
+    pdf_evaluation_energies[i] = 0.0 + initial_energy*i/2000.0;
   
   // Generate the samples
   return samplePhotonDopplerDistributionCore( doppler_dist,

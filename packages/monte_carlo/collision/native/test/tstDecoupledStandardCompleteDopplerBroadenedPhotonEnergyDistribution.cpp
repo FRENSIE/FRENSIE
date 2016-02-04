@@ -1858,6 +1858,29 @@ TEUCHOS_UNIT_TEST(
                                                      MonteCarlo::P3_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 389.11505020705556, 1e-12 );
+
+  // Check that the pdf evaluates to 1.0
+  boost::function<double (double x)> double_diff_cs_wrapper = 
+    boost::bind<double>( &MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF,
+                         boost::cref( *half_complete_distribution ),
+                         0.5,
+                         _1,
+                         -1.0,
+                         MonteCarlo::K_SUBSHELL );
+
+  Utility::GaussKronrodQuadratureSet quadrature_set( 1e-3 );
+
+  double abs_error, value;
+
+  const double binding_energy = half_complete_distribution->getSubshellBindingEnergy( MonteCarlo::K_SUBSHELL );
+  
+  quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
+                                          0.0,
+                                          0.5 - binding_energy,
+                                          value,
+                                          abs_error );
+  std::cout.precision( 18 );
+  std::cout << value << std::endl;
 }
 
 //---------------------------------------------------------------------------//

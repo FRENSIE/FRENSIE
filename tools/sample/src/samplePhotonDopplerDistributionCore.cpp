@@ -12,6 +12,7 @@
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -257,17 +258,33 @@ int samplePhotonDopplerDistributionCore(
   if( sample_ofile.get() )
   {
     for( unsigned i = 0; i < num_samples; ++i )
-      (*sample_ofile) << samples[i] << std::endl;
+    {
+      bool possible;
+      double outgoing_energy = 
+        MonteCarlo::calculateDopplerBroadenedEnergy( samples[i],
+                                                     incoming_energy,
+                                                     scattering_angle_cosine,
+                                                     possible );
+                                                     
+      (*sample_ofile) << samples[i] << " "
+                      << outgoing_energy << std::endl;
+    }
   }
   
   if( dist_ofile.get() )
   {
     for( unsigned i = 0; i < pdf_values.size(); ++i )
     {
-      (*dist_ofile) << pdf_evaluation_energies << " "
+      double pz = MonteCarlo::calculateElectronMomentumProjection( 
+                                                    incoming_energy,
+                                                    pdf_evaluation_energies[i],
+                                                    scattering_angle_cosine );
+      
+      (*dist_ofile) << incoming_energy << " "
                     << scattering_angle_cosine << " "
-                    << pdf_values[i]
-                    << std::endl;
+                    << pdf_evaluation_energies[i] << " "
+                    << pz << " "
+                    << pdf_values[i] << std::endl;
     }
   }
 
