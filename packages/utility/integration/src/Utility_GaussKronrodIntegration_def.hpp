@@ -76,7 +76,7 @@ void GaussKronrodIntegration::integrateAdaptively(
     (d_relative_error_tol < 50 * std::numeric_limits<double>::epsilon() ||
     d_relative_error_tol < 0.5e-28),
     Utility::IntegrationException,
-    "cannot reach tolerance because of roundoff error on first attempt" );
+    "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
 
   /* perform the first integration */
 
@@ -98,14 +98,15 @@ void GaussKronrodIntegration::integrateAdaptively(
 
   double round_off = 50.0*std::numeric_limits<double>::epsilon()*result_abs;
 
-  if ( ( absolute_error <= tolerance && absolute_error != result_asc ) || 
-            absolute_error == 0.0)
+  if ( ( bin_error[0] <= tolerance && bin_error[0] != result_asc ) || 
+            bin_error[0] == 0.0)
     {
       result = bin_result[0];
       absolute_error = bin_error[0];    
 
       return;
     }
+
 
   TEST_FOR_EXCEPTION( absolute_error <= round_off && absolute_error > tolerance, 
                       Utility::IntegrationException,
@@ -114,8 +115,7 @@ void GaussKronrodIntegration::integrateAdaptively(
 
   TEST_FOR_EXCEPTION( d_subinterval_limit == 1, 
                       Utility::IntegrationException,
-                      "cannot reach tolerance because of roundoff error "
-                      "on first attempt" );
+                      "a maximum of one iteration was insufficient" );
 
   double maximum_bin_error = bin_error[0];
   int bin_with_max_error = 0;
@@ -191,6 +191,13 @@ void GaussKronrodIntegration::integrateAdaptively(
 
       tolerance = std::max( d_absolute_error_tol, d_relative_error_tol * fabs (area));
 
+std::cout << "total_error = " << total_error << std::endl;
+std::cout << "tolerance = " << tolerance << std::endl;
+
+
+      if ( total_error <= tolerance )
+        break;
+
       TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
                           Utility::IntegrationException,
                           "Roundoff error prevented tolerance from being achieved" );
@@ -204,9 +211,6 @@ void GaussKronrodIntegration::integrateAdaptively(
                                                        upper_limit_2 ), 
                           Utility::IntegrationException,
                           "Maximum number of subdivisions reached" );
-
-      if ( total_error <= tolerance )
-        break;
 
       updateIntegral( bin_lower_limit, bin_upper_limit, bin_result, bin_error,
                       lower_limit_1, upper_limit_1, area_1, error_1, 
@@ -236,13 +240,13 @@ void GaussKronrodIntegration::integrateAdaptively(
  */ 
 template<int Points, typename Functor>
 void GaussKronrodIntegration::integrateWithPointRule(
-						 Functor& integrand, 
-						 double lower_limit, 
-						 double upper_limit,
-						 double& result,
-						 double& absolute_error,
-             double& result_abs, 
-             double& result_asc ) const
+            Functor& integrand, 
+            double lower_limit, 
+            double upper_limit,
+            double& result,
+            double& absolute_error,
+            double& result_abs, 
+            double& result_asc ) const
 {
   // Make sure the point rule is valid_rule
   testStaticPrecondition( GaussKronrodQuadratureSetTraits<Points>::valid_rule );
@@ -263,23 +267,36 @@ void GaussKronrodIntegration::integrateWithPointRule(
     // Integrand at the midpoint
     double integrand_midpoint = integrand( midpoint );
 
+    // Get number of Kronrod weights
+    int number_of_weights =
+        GaussKronrodQuadratureSetTraits<Points>::kronrod_weights.size();
+
     // Estimate result for Gauss
-    double gauss_result = integrand_midpoint*
-        GaussKronrodQuadratureSetTraits<Points>::gauss_weights[3];
+    double gauss_result;
+
+    if ( number_of_weights % 2 == 0 )
+    {
+      gauss_result = integrand_midpoint*
+        GaussKronrodQuadratureSetTraits<Points>::gauss_weights[number_of_weights/2 - 1];
+    }
+    else
+    {
+      gauss_result = 0.0;
+    }
 
     // Estimate result for Kronrod
     double kronrod_result = 
-        integrand_midpoint*GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[7];
+        integrand_midpoint*GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1];
  
     // Absolute value of kronrod estimate
     result_abs = fabs( kronrod_result );
 
-    Teuchos::Array<double> integrand_values_lower( 7 );
-    Teuchos::Array<double> integrand_values_upper( 7 );
-    Teuchos::Array<double> integrand_values_sum( 7 );
+    Teuchos::Array<double> integrand_values_lower( number_of_weights );
+    Teuchos::Array<double> integrand_values_upper( number_of_weights );
+    Teuchos::Array<double> integrand_values_sum( number_of_weights );
 
     // Estimate Kronrod and absolute value integral
-    for ( int j = 0; j < GaussKronrodQuadratureSetTraits<Points>::kronrod_weights.size()-1; j++ )
+    for ( int j = 0; j < number_of_weights-1; j++ )
       {  
         calculateQuadratureIntegrandValuesAtAbscissa( 
             integrand, 
@@ -289,30 +306,29 @@ void GaussKronrodIntegration::integrateWithPointRule(
             integrand_values_lower[j],
             integrand_values_upper[j] );
 
-        kronrod_result += 
-            GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*integrand_values_sum[j];
-
         integrand_values_sum[j] = 
           integrand_values_lower[j] + integrand_values_upper[j];
+
+        kronrod_result += 
+            GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*integrand_values_sum[j];
 
         result_abs += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*( 
           fabs( integrand_values_lower[j] ) + fabs( integrand_values_upper[j] ) );
       };
 
     double mean_kronrod_result = 0.5*kronrod_result;
-    result_asc = GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[7]*
+    result_asc = GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1]*
         fabs( integrand_midpoint - mean_kronrod_result );
 
     for ( int j = 0; j < GaussKronrodQuadratureSetTraits<Points>::kronrod_weights.size() - 1; j++ )
       {  
-
         result_asc += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*
           ( fabs( integrand_values_lower[j] - mean_kronrod_result ) +
             fabs( integrand_values_upper[j] - mean_kronrod_result ) );
       };
 
     // Estimate Gauss integral
-    for ( int j = 0; j < GaussKronrodQuadratureSetTraits<Points>::gauss_weights.size(); j++ )
+    for ( int j = 0; j < (number_of_weights-1)/2; j++ )
       {
         int jj = j*2 + 1;
         gauss_result += integrand_values_sum[jj]*
@@ -324,6 +340,8 @@ void GaussKronrodIntegration::integrateWithPointRule(
   result_abs *= abs_half_length;
   result_asc *= abs_half_length;
   absolute_error = fabs( ( kronrod_result - gauss_result ) * half_length );
+
+  rescaleAbsoluteError( absolute_error, result_abs, result_asc);
 
   }
   else if( lower_limit == upper_limit )
@@ -369,8 +387,8 @@ void GaussKronrodIntegration::calculateQuadratureIntegrandValuesAtAbscissa(
 {
   double weighted_abscissa = half_length*abscissa;
 
-  integrand_value_lower = integrand( midpoint - abscissa );
-  integrand_value_upper = integrand( midpoint + abscissa );
+  integrand_value_lower = integrand( midpoint - weighted_abscissa );
+  integrand_value_upper = integrand( midpoint + weighted_abscissa );
 };  
 
 } // end Utility namespace

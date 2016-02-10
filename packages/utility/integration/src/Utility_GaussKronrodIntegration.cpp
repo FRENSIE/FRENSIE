@@ -118,7 +118,7 @@ void GaussKronrodIntegration::updateIntegral(
 void GaussKronrodIntegration::sortErrorList( 
         Teuchos::Array<double>& bin_error,
         Teuchos::Array<double>& bin_order, 
-        double maximum_bin_error, 
+        double& maximum_bin_error, 
         int bin_with_larger_error,
         int bin_with_smaller_error, 
         int nr_max ) const
