@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstGaussKronrodIntegration.cpp
+//! \file   tstGaussKronrodIntegrator.cpp
 //! \author Luke Kersting
-//! \brief  Gauss-Kronrod quadrature gk_integration unit tests.
+//! \brief  Gauss-Kronrod quadrature integrator unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,7 +18,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Utility_GaussKronrodIntegration.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functors
@@ -81,40 +81,40 @@ double inv_sqrt_abs_x( const double x )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrate,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
   
   double result, absolute_error;
   size_t evals;
 
   Functor functor_instance;
 
-  gk_integration.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
+  gk_integrator.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
 
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrate );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrate );
 */
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_15,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 15-point rule
-  gk_integration.integrateAdaptively<15>( functor_instance, 
+  gk_integrator.integrateAdaptively<15>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -125,22 +125,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_15 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_15 );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_21,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 21-point rule
-  gk_integration.integrateAdaptively<21>( functor_instance, 
+  gk_integrator.integrateAdaptively<21>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -151,22 +151,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_21 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_21 );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_31,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 31-point rule
-  gk_integration.integrateAdaptively<31>( functor_instance, 
+  gk_integrator.integrateAdaptively<31>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -177,22 +177,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_31 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_31 );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_41,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 41-point rule
-  gk_integration.integrateAdaptively<41>( functor_instance, 
+  gk_integrator.integrateAdaptively<41>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -203,22 +203,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_41 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_41 );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_51,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 51-point rule
-  gk_integration.integrateAdaptively<51>( functor_instance, 
+  gk_integrator.integrateAdaptively<51>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -229,22 +229,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_51 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_51 );
 
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_61,
 				   Functor )
 {
-  Utility::GaussKronrodIntegration gk_integration( 1e-12 );
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
 
   double result, absolute_error, tol;
 
   Functor functor_instance;
 
   // Test the 61-point rule
-  gk_integration.integrateAdaptively<61>( functor_instance, 
+  gk_integrator.integrateAdaptively<61>( functor_instance, 
 				  0.0, 
 				  1.0, 
 				  result, 
@@ -255,8 +255,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegration,
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 }
 
-UNIT_TEST_INSTANTIATION( GaussKronrodIntegration, integrateAdaptively_61 );
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively_61 );
 
 //---------------------------------------------------------------------------//
-// end tstGaussKronrodIntegration.cpp
+// end tstGaussKronrodIntegrator.cpp
 //---------------------------------------------------------------------------//

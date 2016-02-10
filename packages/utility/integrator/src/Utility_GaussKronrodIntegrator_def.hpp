@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodIntegration_def.hpp
+//! \file   Utility_GaussKronrodIntegrator_def.hpp
 //! \author Luke Kersting
-//! \brief  Gauss-Kronrod integration
+//! \brief  Gauss-Kronrod integrator
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GAUSS_KRONROD_INTEGRATION_DEF_HPP
-#define UTILITY_GAUSS_KRONROD_INTEGRATION_DEF_HPP
+#ifndef UTILITY_GAUSS_KRONROD_INTEGRATOR_DEF_HPP
+#define UTILITY_GAUSS_KRONROD_INTEGRATOR_DEF_HPP
 
 // Std Includes
 #include <limits>
@@ -22,7 +22,7 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_IntegrationException.hpp"
+#include "Utility_IntegratorException.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_GaussKronrodQuadratureSetTraits.hpp"
 
@@ -30,7 +30,7 @@ namespace Utility{
 
 // Function wrapper for evaluating the functor
 template<typename Functor>
-double GaussKronrodIntegration::functorWrapper( const double x, 
+double GaussKronrodIntegrator::functorWrapper( const double x, 
 						     void* indirected_functor )
 {
   // Make sure the functor is valid
@@ -53,7 +53,7 @@ double GaussKronrodIntegration::functorWrapper( const double x,
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
 template<int Points, typename Functor>
-void GaussKronrodIntegration::integrateAdaptively(
+void GaussKronrodIntegrator::integrateAdaptively(
 						 Functor& integrand, 
 						 double lower_limit, 
 						 double upper_limit,
@@ -75,7 +75,7 @@ void GaussKronrodIntegration::integrateAdaptively(
     d_absolute_error_tol <= 0 && 
     (d_relative_error_tol < 50 * std::numeric_limits<double>::epsilon() ||
     d_relative_error_tol < 0.5e-28),
-    Utility::IntegrationException,
+    Utility::IntegratorException,
     "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
 
   /* perform the first integration */
@@ -109,12 +109,12 @@ void GaussKronrodIntegration::integrateAdaptively(
 
 
   TEST_FOR_EXCEPTION( absolute_error <= round_off && absolute_error > tolerance, 
-                      Utility::IntegrationException,
+                      Utility::IntegratorException,
                       "cannot reach tolerance because of roundoff error "
                       "on first attempt" );
 
   TEST_FOR_EXCEPTION( d_subinterval_limit == 1, 
-                      Utility::IntegrationException,
+                      Utility::IntegratorException,
                       "a maximum of one iteration was insufficient" );
 
   double maximum_bin_error = bin_error[0];
@@ -199,17 +199,17 @@ std::cout << "tolerance = " << tolerance << std::endl;
         break;
 
       TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
-                          Utility::IntegrationException,
+                          Utility::IntegratorException,
                           "Roundoff error prevented tolerance from being achieved" );
 
       TEST_FOR_EXCEPTION( last == d_subinterval_limit, 
-                          Utility::IntegrationException,
+                          Utility::IntegratorException,
                           "Maximum number of subdivisions reached" );
 
       TEST_FOR_EXCEPTION( subintervalTooSmall<Points>( lower_limit_1, 
                                                        lower_limit_2, 
                                                        upper_limit_2 ), 
-                          Utility::IntegrationException,
+                          Utility::IntegratorException,
                           "Maximum number of subdivisions reached" );
 
       updateIntegral( bin_lower_limit, bin_upper_limit, bin_result, bin_error,
@@ -239,7 +239,7 @@ std::cout << "tolerance = " << tolerance << std::endl;
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
 template<int Points, typename Functor>
-void GaussKronrodIntegration::integrateWithPointRule(
+void GaussKronrodIntegrator::integrateWithPointRule(
             Functor& integrand, 
             double lower_limit, 
             double upper_limit,
@@ -351,7 +351,7 @@ void GaussKronrodIntegration::integrateWithPointRule(
   }
   else // invalid limits
   {
-    THROW_EXCEPTION( Utility::IntegrationException,
+    THROW_EXCEPTION( Utility::IntegratorException,
 		     "Invalid integration limits: " << lower_limit << " !< "
 		     << upper_limit << "." );
   }
@@ -359,7 +359,7 @@ void GaussKronrodIntegration::integrateWithPointRule(
 
 // Test if subinterval is too small
 template<int Points>
-inline bool GaussKronrodIntegration::subintervalTooSmall( 
+inline bool GaussKronrodIntegrator::subintervalTooSmall( 
         double& lower_limit_1, 
         double& lower_limit_2, 
         double& upper_limit_2 ) const
@@ -377,7 +377,7 @@ inline bool GaussKronrodIntegration::subintervalTooSmall(
 
 // Calculate the quadrature upper and lower integrand values at an abscissa
 template<typename Functor>
-void GaussKronrodIntegration::calculateQuadratureIntegrandValuesAtAbscissa( 
+void GaussKronrodIntegrator::calculateQuadratureIntegrandValuesAtAbscissa( 
     Functor& integrand, 
     double abscissa,
     double half_length,
@@ -393,8 +393,8 @@ void GaussKronrodIntegration::calculateQuadratureIntegrandValuesAtAbscissa(
 
 } // end Utility namespace
 
-#endif // end UTILITY_GAUSS_KRONROD_INTEGRATION_DEF_HPP
+#endif // end UTILITY_GAUSS_KRONROD_INTEGRATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodIntegration_def.hpp
+// end Utility_GaussKronrodIntegrator_def.hpp
 //---------------------------------------------------------------------------//
