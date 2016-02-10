@@ -138,10 +138,11 @@ private:
   // Sort the bin order from highest to lowest error 
   void sortErrorList( Teuchos::Array<double>& bin_error,
                       Teuchos::Array<double>& bin_order, 
-                      double maximum_bin_error, 
+                      double& maximum_bin_error, 
                       int bin_with_larger_error,
                       int bin_with_smaller_error, 
                       int nr_max ) const;
+
 
   // The relative error tolerance
   double d_relative_error_tol;
