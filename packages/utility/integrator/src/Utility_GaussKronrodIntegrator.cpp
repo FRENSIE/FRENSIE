@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodIntegration.cpp
+//! \file   Utility_GaussKronrodIntegrator.cpp
 //! \author Luke Kersting
-//! \brief  Gauss-Kronrod integration
+//! \brief  Gauss-Kronrod integrator
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_GaussKronrodIntegration.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -15,7 +15,7 @@ namespace Utility{
 // Initialize static member data
 
 // Constructor
-GaussKronrodIntegration::GaussKronrodIntegration( 
+GaussKronrodIntegrator::GaussKronrodIntegrator( 
     const double relative_error_tol,
     const double absolute_error_tol,
     const size_t subinterval_limit )
@@ -32,11 +32,11 @@ GaussKronrodIntegration::GaussKronrodIntegration(
 }
 
 // Destructor
-GaussKronrodIntegration::~GaussKronrodIntegration()
+GaussKronrodIntegrator::~GaussKronrodIntegrator()
 { /* ... */ }
 
 // Rescale absolute error from integration
-void GaussKronrodIntegration::rescaleAbsoluteError( 
+void GaussKronrodIntegrator::rescaleAbsoluteError( 
     double& absolute_error, 
     double result_abs, 
     double result_asc ) const
@@ -56,7 +56,7 @@ void GaussKronrodIntegration::rescaleAbsoluteError(
 };
 /*
 // Update the integral results and errors
-inline void GaussKronrodIntegration::updateIntegral( 
+inline void GaussKronrodIntegrator::updateIntegral( 
         Teuchos::Array<double>& bin_lower_limit, 
         Teuchos::Array<double>& bin_upper_limit, 
         Teuchos::Array<double>& bin_result, 
@@ -73,7 +73,7 @@ inline void GaussKronrodIntegration::updateIntegral(
         int& bin_with_max_error ) const
 */
 // Update the integral results and errors
-void GaussKronrodIntegration::updateIntegral( 
+void GaussKronrodIntegrator::updateIntegral( 
     Teuchos::Array<double>& bin_lower_limit, 
     Teuchos::Array<double>& bin_upper_limit, 
     Teuchos::Array<double>& bin_result, 
@@ -115,7 +115,7 @@ void GaussKronrodIntegration::updateIntegral(
  *  The bin_with_larger_error is located near the fron of the order list.
  *  The bin_with_smaller_error is at the end of the used list entries.
  */
-void GaussKronrodIntegration::sortErrorList( 
+void GaussKronrodIntegrator::sortErrorList( 
         Teuchos::Array<double>& bin_error,
         Teuchos::Array<double>& bin_order, 
         double& maximum_bin_error, 
@@ -191,5 +191,5 @@ void GaussKronrodIntegration::sortErrorList(
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodIntegration.cpp
+// end Utility_GaussKronrodIntegrator.cpp
 //---------------------------------------------------------------------------//

@@ -1,32 +1,32 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GaussKronrodIntegration.hpp
+//! \file   Utility_GaussKronrodIntegrator.hpp
 //! \author Luke Kersting
-//! \brief  Gauss-Kronrod integration
+//! \brief  Gauss-Kronrod integrator
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GAUSS_KRONROD_INTEGRATION_HPP
-#define UTILITY_GAUSS_KRONROD_INTEGRATION_HPP
+#ifndef UTILITY_GAUSS_KRONROD_INTEGRATOR_HPP
+#define UTILITY_GAUSS_KRONROD_INTEGRATOR_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 namespace Utility{
 
-//! The Gauss-Kronrod integration
-class GaussKronrodIntegration
+//! The Gauss-Kronrod integrator
+class GaussKronrodIntegrator
 {
 
 public:
 
   //! Constructor
-  GaussKronrodIntegration( const double relative_error_tol,
+  GaussKronrodIntegrator( const double relative_error_tol,
                            const double absolute_error_tol = 0.0,
                            const size_t subinterval_limit = 1000 );
 
   //! Destructor
-  ~GaussKronrodIntegration();
+  ~GaussKronrodIntegrator();
 /*
   //! Integrate the function
   template<typename Functor>
@@ -160,12 +160,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_GaussKronrodIntegration_def.hpp"
+#include "Utility_GaussKronrodIntegrator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GUASS_KRONROD_INTEGRATION_HPP
+#endif // end UTILITY_GUASS_KRONROD_INTEGRATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GaussKronrodIntegration.hpp
+// end Utility_GaussKronrodIntegrator.hpp
 //---------------------------------------------------------------------------//
