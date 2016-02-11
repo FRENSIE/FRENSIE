@@ -29,6 +29,21 @@ class ParticleTrackerHDF5FileHandler
 {
 
 public:
+    
+  typedef Teuchos::Array< Teuchos::Array< double > >
+    ParticleDataTwoDArray;
+    
+  typedef boost::unordered_map< unsigned, ParticleDataTwoDArray >
+    IndividualParticleSubmap;
+    
+  typedef boost::unordered_map< unsigned, IndividualParticleSubmap >
+    GenerationNumberSubmap;
+        
+  typedef boost::unordered_map< ParticleType, GenerationNumberSubmap >
+    ParticleTypeSubmap;
+    
+  typedef boost::unordered_map< unsigned, ParticleTypeSubmap >
+    OverallHistoryMap;
 
   //! Enum for file operations
   enum ParticleTrackerHDF5FileOps{
@@ -40,7 +55,7 @@ public:
   //! Constructor (file ownership)
   ParticleTrackerHDF5FileHandler( 
 	  const std::string& hdf5_file_name,
-	  const ParticleTrackerHDF5FileOps file_op = OVERWRITE_ESTIMATOR_HDF5_FILE );
+	  const ParticleTrackerHDF5FileOps file_op = OVERWRITE_PTRACK_HDF5_FILE );
 
   //! Constructor (file sharing)
   ParticleTrackerHDF5FileHandler( 
@@ -50,13 +65,45 @@ public:
   ~ParticleTrackerHDF5FileHandler();
 
   //! Assign particle tracker data to HDF5 file
-  void setParticleTrackerData( boost::unordered_map< unsigned, boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > > >
-    particle_tracker_data_map );
+  void setParticleTrackerData( OverallHistoryMap particle_tracker_data_map );
+  
+  //! Get particle tracker data from HDF5 file
+  void getXPositionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getYPositionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getZPositionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+
+  //! Get particle tracker data from HDF5 file
+  void getXDirectionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getYDirectionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getZDirectionData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+
+  //! Get particle tracker data from HDF5 file
+  void getEnergyData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getCollisionNumberData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
+                         
+  //! Get particle tracker data from HDF5 file
+  void getWeightData( std::string particle_data_location,
+                         Teuchos::Array< double >& data );
 
 private:
-
-  // Allow HDF5 type traits specialization friend access
-  friend class Utility::HDF5TypeTraits<EstimatorHDF5FileHandler::EntityType>;
 
   // The estimator group location and name
   static const std::string particle_tracker_group_loc_name;

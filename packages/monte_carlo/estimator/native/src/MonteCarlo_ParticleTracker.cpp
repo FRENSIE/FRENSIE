@@ -28,10 +28,11 @@ ParticleTracker::ParticleTracker( const unsigned number_of_histories )
    d_history_number( 0u ),
    d_generation_number( 0u ),
    d_particle_type(),
-   d_history_number_map()
+   d_history_number_map(),
+   d_first_particle( true )
 {
   // Make sure there are some particles being tracked
-  testPrecondition( number_of_histories > 0 );
+  testPrecondition( d_number_of_histories >= 0 );
 }
 
 // Add current history estimator contribution
@@ -54,50 +55,29 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
       
       // Particle Type
       d_particle_type = particle.getParticleType();
-
-      // Append the initial position data
-      d_x_pos.push_back( start_point[0] );
-      d_y_pos.push_back( start_point[1] );
-      d_z_pos.push_back( start_point[2] );
-      
-      // Append the initial direction data
-      d_x_dir.push_back( particle.getXDirection() );
-      d_y_dir.push_back( particle.getYDirection() );
-      d_z_dir.push_back( particle.getZDirection() );
-      
-      // Append the initial energy data
-      d_energy.push_back( particle.getEnergy() );
-      
-      // Append the initial collision number data
-      d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
-      
-      // Append the initial weight data
-      d_weight.push_back( particle.getWeight() );
       
       // Flag that we are working on an existing particle
       d_particle_reset = false;
     }
-    else
-    {
-      // Append the new position data
-      d_x_pos.push_back( start_point[0] );
-      d_y_pos.push_back( start_point[1] );
-      d_z_pos.push_back( start_point[2] );
-      
-      // Append the new direction data
-      d_x_dir.push_back( particle.getXDirection() );
-      d_y_dir.push_back( particle.getYDirection() );
-      d_z_dir.push_back( particle.getZDirection() );
-      
-      // Append the new energy data
-      d_energy.push_back( particle.getEnergy() );
-      
-      // Append the new collision number data
-      d_col_num.push_back( static_cast<double>( particle.getCollisionNumber() ) );
-      
-      // Append the new weight data
-      d_weight.push_back( particle.getWeight() );
-    }
+
+    // Append the initial position data
+    d_x_pos.push_back( start_point[0] );
+    d_y_pos.push_back( start_point[1] );
+    d_z_pos.push_back( start_point[2] );
+    
+    // Append the initial direction data
+    d_x_dir.push_back( particle.getXDirection() );
+    d_y_dir.push_back( particle.getYDirection() );
+    d_z_dir.push_back( particle.getZDirection() );
+    
+    // Append the initial energy data
+    d_energy.push_back( particle.getEnergy() );
+    
+    // Append the initial collision number data
+    d_col_num.push_back( static_cast< double >( particle.getCollisionNumber() ) );
+    
+    // Append the initial weight data
+    d_weight.push_back( particle.getWeight() );
 
     // Check if the particle is gone and commit data if isGone == true
     if ( particle.isGone() )
@@ -111,13 +91,13 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
   }
   
   // Test that there is a valid history/generation number
-  testPostcondition( history_number > 0 );
-  testPostcondition( generation_number > 0 );
+  testPostcondition( d_history_number >= 0 );
+  testPostcondition( d_generation_number >= 0 );
 }
 
 void ParticleTracker::commitParticleTrackData()
 {
-  Teuchos::Array< Teuchos::Array< double > > particle_data;
+  ParticleTrackerHDF5FileHandler::ParticleDataTwoDArray particle_data;
 
   // Start by adding the arrays of data to the total particle array
   particle_data.push_back( d_x_pos );
@@ -131,18 +111,37 @@ void ParticleTracker::commitParticleTrackData()
   particle_data.push_back( d_weight );
   
   // Begin the process of narrowing down where to add new data
-  if ( d_history_number_map.count( d_history_number )  )
+  if ( d_first_particle )
   {
-  
+    // If this is the first particle, initialize the history map
+
+    // Map of individual particles to array of particle data
+    ParticleTrackerHDF5FileHandler::IndividualParticleSubmap individual_particle_map;
+    individual_particle_map[ 0u ] = particle_data;
+
+    // Map of generation number to individual particles
+    ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
+    generation_number_map[ d_generation_number ] = individual_particle_map;
+      
+    // Map of particle type to generation number
+    ParticleTrackerHDF5FileHandler::ParticleTypeSubmap particle_type_map;
+    particle_type_map[ d_particle_type ] = generation_number_map;
+    
+    // Map of the history number to the particle type map
+    d_history_number_map[ d_history_number ] = particle_type_map;
+    
+    d_first_particle = false;
+  }
+  else if ( d_history_number_map.find( d_history_number ) != d_history_number_map.end()  )
+  {
     // If we find the history number, check if the particle type exists yet
     if ( d_history_number_map[ d_history_number ].count( d_particle_type ) )
     {
-      
+
       // If we find the particle type, check if the generation number exists yet
       if ( d_history_number_map[ d_history_number ][ d_particle_type ].count( d_generation_number ) )
       {
-      
-        unsigned i = 1;
+        unsigned i = 0u;
               
         // If the generation number exists, add it to the list of particles
         while ( d_history_number_map[ d_history_number ][ d_particle_type ][ d_generation_number ].count( i ) )
@@ -152,65 +151,51 @@ void ParticleTracker::commitParticleTrackData()
         
         // Assign the data
         d_history_number_map[ d_history_number ][ d_particle_type ][ d_generation_number ][ i ] =
-          particle_data;
-          
+          particle_data;  
       }
       else
       {
-      
         // Map of individual particles to array of particle data
-        boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > 
-          individual_particle_map[ 1u ] = particle_data;
-
-        // Map of generation number to individual particles
-        boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >
-          generation_number_map[ d_generation_number ] = individual_particle_map;
+        ParticleTrackerHDF5FileHandler::IndividualParticleSubmap individual_particle_map;
+        individual_particle_map[ 0u ] = particle_data;
           
         d_history_number_map[ d_history_number ][ d_particle_type ][ d_generation_number ] =
-          generation_number_map;
-          
+          individual_particle_map;
       } 
     }
     else
     {
       // Map of individual particles to array of particle data
-      boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > 
-        individual_particle_map[ 1u ] = particle_data;
+      ParticleTrackerHDF5FileHandler::IndividualParticleSubmap individual_particle_map;
+      individual_particle_map[ 0u ] = particle_data;
 
       // Map of generation number to individual particles
-      boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >
-        generation_number_map[ d_generation_number ] = individual_particle_map;
-        
-      // Map of particle type to generation number
-      boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > >
-        particle_type_map[ d_particle_type ] = generation_number_map;
+      ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
+      generation_number_map[ d_generation_number ] = individual_particle_map;
         
       d_history_number_map[ d_history_number ][ d_particle_type ] =
-        particle_type_map;
+        generation_number_map;
     }
-  
   }
   else
   {
-  
     // If the history number does not yet exist, then no more checking needs to
     //   be done. We can be confident no submaps exist.
-  
+
     // Map of individual particles to array of particle data
-    boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > 
-      individual_particle_map[ 1 ] = particle_data;
+    ParticleTrackerHDF5FileHandler::IndividualParticleSubmap individual_particle_map;
+    individual_particle_map[ 0u ] = particle_data;
 
     // Map of generation number to individual particles
-    boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >
-      generation_number_map[ d_generation_number ] = individual_particle_map;
+    ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
+    generation_number_map[ d_generation_number ] = individual_particle_map;
       
     // Map of particle type to generation number
-    boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > >
-      particle_type_map[ d_particle_type ] = generation_number_map;
+    ParticleTrackerHDF5FileHandler::ParticleTypeSubmap particle_type_map;
+    particle_type_map[ d_particle_type ] = generation_number_map;
   
     // Map of the history number to the particle type map
     d_history_number_map[ d_history_number ] = particle_type_map;
-    
   }
 }
 
@@ -239,6 +224,95 @@ void ParticleTracker::exportData( ParticleTrackerHDF5FileHandler& hdf5_file,
                  const bool process_data ) const
 {
   hdf5_file.setParticleTrackerData( d_history_number_map );
+}
+
+// Get the x position data
+void ParticleTracker::getXPositionData( Teuchos::Array< double >& array )
+{
+  array = d_x_pos;
+}
+
+// Get the y position data
+void ParticleTracker::getYPositionData( Teuchos::Array< double >& array )
+{
+  array = d_y_pos;
+}
+
+// Get the z position data
+void ParticleTracker::getZPositionData( Teuchos::Array< double >& array )
+{
+  array = d_z_pos;
+}
+
+// Get the x direction data
+void ParticleTracker::getXDirectionData( Teuchos::Array< double >& array )
+{
+  array = d_x_dir;
+}
+
+// Get the y direction data
+void ParticleTracker::getYDirectionData( Teuchos::Array< double >& array )
+{
+  array = d_y_dir;
+}
+
+// Get the z direction data
+void ParticleTracker::getZDirectionData( Teuchos::Array< double >& array )
+{
+  array = d_z_dir;
+}
+
+// Get the energy data
+void ParticleTracker::getEnergyData( Teuchos::Array< double >& array )
+{
+  array = d_energy;
+}
+
+// Get the collision number data
+void ParticleTracker::getCollisionNumberData( Teuchos::Array< double >& array )
+{
+  array = d_col_num;
+}
+
+// Get the weight data
+void ParticleTracker::getWeightData( Teuchos::Array< double >& array )
+{
+  array = d_weight;
+}
+
+// Get the data map
+void ParticleTracker::getDataMap( 
+                ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
+{
+  history_map = d_history_number_map;
+}
+
+// Check if particle is reset 
+bool ParticleTracker::isParticleReset()
+{
+  return d_particle_reset;
+}
+
+// Reset data
+void ParticleTracker::resetData()
+{
+  ParticleTracker::resetParticleTrackData();
+  
+  d_history_number_map.clear();
+}
+
+// Commit History Contribution
+void commitHistoryContribution()
+{
+
+}
+
+// Reduce data
+void reduceData( 
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+
 }
 
 } // end MonteCarlo namespace
