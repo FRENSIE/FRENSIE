@@ -74,10 +74,10 @@ ParticleTrackerHDF5FileHandler::~ParticleTrackerHDF5FileHandler()
 
 // Assign particle tracker data to HDF5 file 
 void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
-  boost::unordered_map< unsigned, boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > > >
-    particle_tracker_data_map )
+       ParticleTrackerHDF5FileHandler::OverallHistoryMap 
+         particle_tracker_data_map )
 {
-  boost::unordered_map< unsigned, boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > > >::const_iterator
+  ParticleTrackerHDF5FileHandler::OverallHistoryMap::const_iterator
     history_number, end_history_number;
   history_number = particle_tracker_data_map.begin();
   end_history_number = particle_tracker_data_map.end();
@@ -87,7 +87,7 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
     std::string history_location = particle_tracker_group_loc_name + 
                                 std::to_string( history_number->first ) + "/";
                                      
-    boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > >::const_iterator
+    ParticleTrackerHDF5FileHandler::ParticleTypeSubmap::const_iterator
       particle_type, end_particle_type;
     particle_type = history_number->second.begin();
     end_particle_type = history_number->second.end();
@@ -97,23 +97,24 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
       std::string particle_location = history_location + 
                                   std::to_string( particle_type->first ) + "/";
                                         
-      boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > >::const_iterator
+      ParticleTrackerHDF5FileHandler::GenerationNumberSubmap::const_iterator
         generation_number, end_generation_number;
       generation_number = particle_type->second.begin();
       end_generation_number = particle_type->second.end();
       
       while( generation_number != end_generation_number )
-      {
+      {      
         std::string generation_location = particle_location + 
                               std::to_string( generation_number->first ) + "/";
                                     
-        boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > >::const_iterator
+        ParticleTrackerHDF5FileHandler::IndividualParticleSubmap::const_iterator
           particle_number, end_particle_number;
         particle_number = generation_number->second.begin();
         end_particle_number = generation_number->second.end();
         
         while( particle_number != end_particle_number )
         {
+          
           std::string individual_particle_location = generation_location +
                                 std::to_string( particle_number->first ) + "/";
         
@@ -197,13 +198,142 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
                               }
           EXCEPTION_CATCH_RETHROW( std::runtime_error,
             "Error writing particle tracking weight data to HDF5 dataset" );
-            
+          
+          ++particle_number;
         }
+        ++generation_number;
       }
+      ++particle_type;
     }
+    ++history_number;
   }
 }
 
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getXPositionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "x_position" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get x position error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getYPositionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "y_position" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get y position error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getZPositionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "z_position" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get z position error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getXDirectionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "x_direction" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get x direction error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getYDirectionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "y_direction" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get y direction error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getZDirectionData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "z_direction" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get z direction error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getEnergyData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "energy" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get energy error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getCollisionNumberData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "collision_number" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get collision number error" );
+}
+
+// Get the particle tracker data history map
+void ParticleTrackerHDF5FileHandler::getWeightData( 
+                                std::string particle_data_location,
+                                Teuchos::Array< double >& data )
+{  
+  try{
+    d_hdf5_file->readArrayFromDataSet(
+			       data, 
+             particle_data_location + "weight" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get weight error" );
+}
 
 } // end MonteCarlo namespace
 

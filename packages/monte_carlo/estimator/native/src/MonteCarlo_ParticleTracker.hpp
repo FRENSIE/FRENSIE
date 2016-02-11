@@ -11,9 +11,12 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_any.hpp>
+#include <Teuchos_Comm.hpp>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/mpl/vector.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
@@ -47,7 +50,7 @@ public:
 						 const double end_point[3] );
 
   //! Commit current history data to overall maps
-  void commitParticleTrackData():
+  void commitParticleTrackData();
   
   //! Reset particle track data for next particle
   void resetParticleTrackData();
@@ -55,6 +58,51 @@ public:
   //! Export the particle tracker data via hdf5
   void exportData( ParticleTrackerHDF5FileHandler& hdf5_file,
                    const bool process_data ) const;
+
+  //! Get the x position data
+  void getXPositionData( Teuchos::Array< double >& array );
+  
+  //! Get the y position data
+  void getYPositionData( Teuchos::Array< double >& array );
+  
+  //! Get the z position data
+  void getZPositionData( Teuchos::Array< double >& array );
+  
+  //! Get the x direction data
+  void getXDirectionData( Teuchos::Array< double >& array );
+  
+  //! Get the y direction data
+  void getYDirectionData( Teuchos::Array< double >& array );
+  
+  //! Get the z direction data
+  void getZDirectionData( Teuchos::Array< double >& array );
+  
+  //! Get the energy data
+  void getEnergyData( Teuchos::Array< double >& array );
+  
+  //! Get the collision number data
+  void getCollisionNumberData( Teuchos::Array< double >& array );
+  
+  //! Get the weight data
+  void getWeightData( Teuchos::Array< double >& array );
+  
+  //! Check if particle is reset 
+  bool isParticleReset();
+
+  //! Get the data map
+  void getDataMap( ParticleTrackerHDF5FileHandler::OverallHistoryMap&
+                                                                history_map );
+
+  //! Reset data
+  void resetData();
+  
+  //! Commit History Contribution
+  void commitHistoryContribution();
+  
+  //! Reduce estimator data in multiple nodes
+  void reduceData( 
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
 
 private:
 
@@ -101,9 +149,12 @@ private:
   ParticleType d_particle_type;
        
   // Map of history number to particle type
-  boost::unordered_map< unsigned, boost::unordered_map< ParticleType, boost::unordered_map< unsigned, boost::unordered_map< unsigned, Teuchos::Array< Teuchos::Array< double > > > > > >
-    d_history_number_map;
-}
+  ParticleTrackerHDF5FileHandler::OverallHistoryMap d_history_number_map;
+  
+  // First particle
+  bool d_first_particle;
+
+};
 
 } // end MonteCarlo namespace
 
