@@ -20,23 +20,32 @@
 namespace Utility{
 
 // Calculate the volume of a hexahedron
-double calculateHexahedronVolume( const double vertex_a[3],
-				  const double vertex_b[3],
-				  const double vertex_c[3],
-				  const double vertex_d[3],
-				  const double vertex_e[3],
-				  const double vertex_f[3],
-				  const double vertex_g[3],
-				  const double vertex_h[3] )
+double calculateHexahedronVolume( const double x_plane_set[2],
+				  const double y_plane_set[2],
+				  const double z_plane_set[2] )
 {
   
   
-  double volume;
+  double volume = (x_plane_set[2] - x_plane_set[1]) * (y_plane_set[2] - y_plane_set[1]) * (z_plane_set[2] - z_plane_set[1]);
 
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( volume ) );
   testPostcondition( volume > 0.0 );
 
   return volume;
+}
+
+void findPlanarSets( double x_plane_set[2],
+                     double y_plane_set[2],
+                     double z_plane_set[2],
+                     const Teuchos::TwoDArray<double>& vertex_set(8,3))
+{
+        x_plane_set[0] = vertex_set[0][0];
+        x_plane_set[1] = vertex_set[2][0];
+        y_plane_set[0] = vertex_set[0][1];
+        y_plane_set[1] = vertex_set[4][1];
+        z_plane_set[0] = vertex_set[3][2];
+        z_plane_set[1] = vertex_set[0][2];
+
 }
 
 } // end Utility namespace
