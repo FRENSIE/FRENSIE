@@ -19,113 +19,68 @@
 #include <moab/CartVect.hpp>
 #include <moab/Matrix3.hpp>
 
+// FRENSIE Includes
+#include "Utility_ContractException.hpp"
+
 namespace Utility{
 
-Teuchos::Array<double> crossProduct(const double vertex_1[3],
-                                    const double vertex_2[3],
-                                    const double vertex_3[3]);
-
 //! Calculate the volume of a hexahedron
-double calculateHexahedronVolume(  const double vertex_a[3],
-				   const double vertex_b[3],
-				   const double vertex_c[3],
-				   const double vertex_d[3],
-				   const double vertex_e[3],
-				   const double vertex_f[3],
-				   const double vertex_g[3],
-				   const double vertex_h[3]);
+double calculateHexahedronVolume(  const double x_plane_set[2],
+				   const double y_plane_set[2],
+				   const double z_plane_set[2]);
 
-//! Calculate the volume of a hexahedron
-double calculateHexahedronVolume( const moab::CartVect& vertex_a,
-				  const moab::CartVect& vertex_b,
-				  const moab::CartVect& vertex_c,
-				  const moab::CartVect& vertex_d,
-				  const moab::CartVect& vertex_e,
-				  const moab::CartVect& vertex_f,
-				  const moab::CartVect& vertex_g,
-				  const moab::CartVect& vertex_h);
-
-//! Calculate hexahedron facenormal vectors
-void calculateFaceNormals( const double vertex_a[3],
-			   const double vertex_b[3],
-		           const double vertex_c[3],
-			   const double vertex_d[3],
-			   const double vertex_e[3],
-			   const double vertex_f[3],
-		           const double vertex_g[3],
-		           const double vertex_h[3],
-                           Teuchos::TwoDArray<double>& face_normals);
-
-//! Calculate hexahedron facenormal vectors
-void calculateFaceNormals( const moab::CartVect& vertex_a,
-		           const moab::CartVect& vertex_b,
-			   const moab::CartVect& vertex_c,
-			   const moab::CartVect& vertex_d,
-			   const moab::CartVect& vertex_e,
-			   const moab::CartVect& vertex_f,
-			   const moab::CartVect& vertex_g,
-			   const moab::CartVect& vertex_h,
-			   Teuchos::TwoDArray<double>& face_normals );
+//! Calculate the volume of a hexahedron - needs to be changed
 
 
 //! Return if a point is in a hex 
-template<typename TestPoint, typename ReferencePoint, typename Matrix>
-bool isPointInHex( const TestPoint& point,
-                   const ReferencePoint& reference_vertex,
-                   const Matrix& matrix,
-		   const double tol = 1e-6 );
-//edited version
 template<typename TestPoint>
 bool isPointInHex( const TestPoint& point,
-                   const Teuchos::TwoDArray<double>& face_normals,
-		   const double tol = 1e-6 );
-                   
-//! Return if a point is in a hex - should be deleted since both calculations above output same type of array
-template<typename TestPoint, typename ReferencePoint>
-bool isPointInHex( const TestPoint& point,
-                   const ReferencePoint& reference_vertex,
-		   const double barycentric_array[9] );
+                   const double reference_x_plane_set[2],
+                   const double reference_y_plane_set[2],//use some other object for these 3 parts such that I can pass by reference in order to make code more efficient
+                   const double reference_z_plane_set[2],
+                   const double tol);
                
 // Calculate the volume of a hexahedron
-inline double calculateHexahedronVolume( const moab::CartVect& vertex_a,
-				         const moab::CartVect& vertex_b,
-				         const moab::CartVect& vertex_c,
-				         const moab::CartVect& vertex_d,
-				         const moab::CartVect& vertex_e,
-				         const moab::CartVect& vertex_f,
-				         const moab::CartVect& vertex_g,
-				         const moab::CartVect& vertex_h)
-{
-  return calculateHexahedronVolume( vertex_a.array(),
-				    vertex_b.array(),
-				    vertex_c.array(),
-				    vertex_d.array(),
-				    vertex_e.array(),
-				    vertex_f.array(),
-				    vertex_g.array(),
-				    vertex_h.array() );
-}
+
+
+
+void findPlanarSets(double x_plane_set[2],
+                    double y_plane_set[2],
+                    double z_plane_set[2],
+                    const Teuchos::TwoDArray<double>& vertex_set);
 
 // Calculate hexahedron face normal vectors
-inline void calculateFaceNormals( const moab::CartVect& vertex_a,
-				  const moab::CartVect& vertex_b,
-				  const moab::CartVect& vertex_c,
-				  const moab::CartVect& vertex_d,
-				  const moab::CartVect& vertex_e,
-				  const moab::CartVect& vertex_f,
-				  const moab::CartVect& vertex_g,
-				  const moab::CartVect& vertex_h,
-			          Teuchos::TwoDArray<double>& face_normals)
+inline void findPlanarSets( const moab::CartVect& vertex_a,
+			    const moab::CartVect& vertex_b,
+			    const moab::CartVect& vertex_c,
+			    const moab::CartVect& vertex_d,
+			    const moab::CartVect& vertex_e,
+			    const moab::CartVect& vertex_f,
+			    const moab::CartVect& vertex_g,
+			    const moab::CartVect& vertex_h,
+			    Teuchos::TwoDArray<double>& vertex_set)
 {
-  calculateFaceNormals( vertex_a.array(),
-		        vertex_b.array(),
-			vertex_c.array(),
-			vertex_d.array(),
-		        vertex_e.array(),
-			vertex_f.array(),
-			vertex_g.array(),
-			vertex_h.array(),
-                        face_normals );
+  // Test size of vertex_set for 8 rows and 3 columns
+  testPrecondition(vertex_set.getNumRows() == 8);
+  testPrecondition(vertex_set.getNumCols() == 3);  
+
+  for (int i = 0; i != 3; i++) vertex_set[0][i] = vertex_a[i];
+  for (int i = 0; i != 3; i++) vertex_set[1][i] = vertex_b[i];
+  for (int i = 0; i != 3; i++) vertex_set[2][i] = vertex_c[i];
+  for (int i = 0; i != 3; i++) vertex_set[3][i] = vertex_d[i];
+  for (int i = 0; i != 3; i++) vertex_set[4][i] = vertex_e[i];
+  for (int i = 0; i != 3; i++) vertex_set[5][i] = vertex_f[i];
+  for (int i = 0; i != 3; i++) vertex_set[6][i] = vertex_g[i];
+  for (int i = 0; i != 3; i++) vertex_set[7][i] = vertex_h[i];
+
+  double x_plane_set[2];
+  double y_plane_set[2];
+  double z_plane_set[2];
+
+  findPlanarSets( x_plane_set,
+                  y_plane_set,
+                  z_plane_set,
+                  vertex_set);
 }
 
 } // end Utility namespace

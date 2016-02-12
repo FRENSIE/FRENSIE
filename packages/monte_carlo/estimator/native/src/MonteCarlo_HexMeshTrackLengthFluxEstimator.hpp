@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp
-//! \author Alex Robinson, Eli Moll
+//! \author Luke Kersting, Philip Britt
 //! \brief  Hex mesh flux estimator class declaration.
 //!
 //---------------------------------------------------------------------------//
@@ -58,6 +58,15 @@ public:
 		     const Estimator::idType id,
 		     const double multiplier,
 		     const std::string input_mesh_file_name,
+		     const std::string output_mesh_file_name = "hexmesh.h5m" );
+
+  //! Constructor
+  HexMeshTrackLengthFluxEstimator(
+		     const Estimator::idType id,
+		     const double multiplier,
+		     const Teuchos::Array<double> x_grid_points,
+                     const Teuchos::Array<double> y_grid_points,
+                     const Teuchos::Array<double> z_grid_points,
 		     const std::string output_mesh_file_name = "hexmesh.h5m" );
 
   //! Destructor
