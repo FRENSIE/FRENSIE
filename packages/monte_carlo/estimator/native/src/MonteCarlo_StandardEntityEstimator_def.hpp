@@ -541,14 +541,18 @@ void StandardEntityEstimator<EntityId>::reduceData(
 // Export the estimator data
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::exportData(
-			   EstimatorHDF5FileHandler& hdf5_file,
-			   const bool process_data ) const
+                                             const std::string& hdf5_file_name,
+                                             const bool process_data ) const
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   
   // Export the lower level data first
-  EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
+  EntityEstimator<EntityId>::exportData( hdf5_file_name, process_data );
+
+  // Open the hdf5 file
+  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name,
+                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
 
   // Export the raw total data for each entity
   {

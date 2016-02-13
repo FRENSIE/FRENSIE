@@ -59,7 +59,7 @@ void CellCollisionFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
   os << "Cell Collision Estimator: " << getId() << std::endl;
 

@@ -31,23 +31,18 @@
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_PrintableObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 //! The estimator base class
-class Estimator : public Utility::PrintableObject
+class Estimator : public ParticleHistoryObserver
 {
 
 public:
-
-  //! Typedef for estimator id
-  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Typedef for tuple of estimator moments (1st,2nd)
   typedef Utility::Pair<double,double> TwoEstimatorMoments;
@@ -82,15 +77,12 @@ public:
   static void setEndTime( const double end_time );
 
   //! Constructor
-  Estimator( const idType id,
+  Estimator( const VolatileObserver::idType id,
 	     const double multiplier );
 
   //! Destructor
   virtual ~Estimator()
   { /* ... */ }
-
-  //! Return the estimator id
-  idType getId() const;
 
   //! Set the bin boundaries for a dimension of the phase space (floating pt)
   template<PhaseSpaceDimension dimension, typename DimensionType>
@@ -125,19 +117,8 @@ public:
   //! Enable support for multiple threads
   virtual void enableThreadSupport( const unsigned num_threads );
 
-  //! Commit the contribution from the current history to the estimator
-  virtual void commitHistoryContribution() = 0;
-
-  //! Reset estimator data
-  virtual void resetData() = 0;
-
-  //! Reduce estimator data on all processes in comm and collect on the root 
-  virtual void reduceData( 
-	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-	    const int root_process ) = 0;
-
   //! Export the estimator data
-  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  virtual void exportData( const std::string& hdf5_file_name,
 			   const bool process_data ) const;
   
 protected:
@@ -244,18 +225,6 @@ private:
 			     
   // The tolerance used for relative error and vov calculations
   static double tol;
-
-  // The number of particle histories that will be run
-  static unsigned long long num_histories;
-
-  // The start time used for the figure of merit calculation
-  static double start_time;
-
-  // The end time used for the figure of merit calculation
-  static double end_time;
-
-  // The estimator id
-  idType d_id;
 
   // The constant multiplier for the estimator
   double d_multiplier;

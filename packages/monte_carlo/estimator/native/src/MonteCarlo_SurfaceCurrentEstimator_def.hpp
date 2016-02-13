@@ -75,7 +75,8 @@ void SurfaceCurrentEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( 
+                                                       std::ostream& os ) const
 {
   os << "Surface Current Estimator: " << getId() << std::endl;
 

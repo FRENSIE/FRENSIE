@@ -84,8 +84,8 @@ public:
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
@@ -94,7 +94,7 @@ public:
   void resetData();
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::string& hdf5_file_name,
 		   const bool process_data ) const;
 
 private:

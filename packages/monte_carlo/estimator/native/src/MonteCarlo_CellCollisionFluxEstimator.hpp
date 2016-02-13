@@ -48,8 +48,8 @@ public:
 		     const StandardCellEstimator::cellIdType cell_of_collision,
 		     const double inverse_total_cross_section );
   
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 };
 
 } // end MonteCarlo namespace

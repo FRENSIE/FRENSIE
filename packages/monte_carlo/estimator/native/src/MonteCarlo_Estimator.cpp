@@ -14,42 +14,16 @@
 
 namespace MonteCarlo{
 
-// Initialize the number of histories run
+// Initialize the tolerance
 double Estimator::tol = 1e-8;
-unsigned long long Estimator::num_histories = 0ull;
-double Estimator::start_time = 0.0;
-double Estimator::end_time = Estimator::start_time;
-
-// Set the number of particle histories that will be simulated
-void Estimator::setNumberOfHistories( const unsigned long long num_histories )
-{
-  Estimator::num_histories = num_histories;
-}
-
-// Set the start time for the figure of merit calculation
-void Estimator::setStartTime( const double start_time )
-{
-  testPrecondition( start_time >= 0.0 );
-  
-  Estimator::start_time = start_time;
-}
-
-// Set the end time for the figure of merit calculation
-void Estimator::setEndTime( const double end_time )
-{
-  testPrecondition( end_time > start_time );
-  
-  Estimator::end_time = end_time;
-}
 
 // Constructor
-  Estimator::Estimator( const Estimator::idType id,
+  Estimator::Estimator( const VolatileObserver::idType id,
 			const double multiplier )
-  : PrintableObject(),
-    d_id( id ),
-    d_multiplier( multiplier ),
-    d_has_uncommitted_history_contribution( 1, false ),
-    d_response_functions( 1 )
+    : ParticleHistoryObserver( id ),
+      d_multiplier( multiplier ),
+      d_has_uncommitted_history_contribution( 1, false ),
+      d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
   testPrecondition( multiplier > 0.0 );
@@ -108,13 +82,19 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
 }
 
 // Export the estimator data
-void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
+void Estimator::exportData( const std::string& hdf5_file_name,
 			    const bool process_data ) const
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure this estimator has not been exported yet
-  testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
+  remeber( EstimatorHDF5FileHandler test_hdf5_file( hdf5_file_name,
+                                                    EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE ) );
+  testPrecondition( !test_hdf5_file.doesEstimatorExist( d_id ) );
+
+  // Open the hdf5 file
+  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
+                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
   
   // Export the response function ordering
   {

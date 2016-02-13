@@ -79,7 +79,7 @@ void CellTrackLengthFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
   os << "Cell Track Length Flux Estimator: " << getId() << std::endl;
 
