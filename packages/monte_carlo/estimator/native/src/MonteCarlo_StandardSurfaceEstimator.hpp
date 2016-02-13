@@ -52,7 +52,7 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::string& hdf5_file_name,
 		   const bool process_data ) const;
 };
 

@@ -74,7 +74,8 @@ void SurfaceFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( 
+                                                       std::ostream& os ) const
 {
   os << "Surface Flux Estimator: " << getId() << std::endl;
 

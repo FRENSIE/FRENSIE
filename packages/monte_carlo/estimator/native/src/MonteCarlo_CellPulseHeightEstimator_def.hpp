@@ -201,7 +201,7 @@ void CellPulseHeightEstimator<
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<ContributionMultiplierPolicy>::print( 
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::printSummary( 
 						       std::ostream& os ) const
 {
   os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
@@ -245,13 +245,16 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 // Export the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
-					   EstimatorHDF5FileHandler& hdf5_file,
-					   const bool process_data ) const
+                                             const std::string& hdf5_file_name,
+                                             const bool process_data ) const
 {
   // Export the lower level data
   EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
-								hdf5_file,
+								hdf5_file_name,
 								process_data );
+
+  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
+                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
 
   // Set the estimator as a cell estimator
   hdf5_file.setCellEstimator( this->getId() );

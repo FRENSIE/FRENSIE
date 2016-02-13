@@ -1,0 +1,309 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   MonteCarlo_EventModuleInterface_Native.hpp
+//! \author Alex Robinson
+//! \brief  Event module interface class declaration
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
+#define FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
+
+// FRENSIE Includes
+#include "MonteCarlo_EventModuleInterfaceDecl.hpp"
+#include "MonteCarlo_EventHandler.hpp"
+#include "Utility_DirectionHelpers.hpp"
+
+namespace MonteCarlo{
+
+/*! \brief Native event module interface class specialization
+ * \ingroup event_module
+ */
+template<>
+class EventModuleInterface<MonteCarlo::EventHandler>
+{
+
+public:
+  //! The external event observer handle class
+  typedef ModuleTraits::InternalEventObserverHandle ExternalEventObserverHandle;
+  
+  //! The internal event observer handle class
+  typedef ModuleTraits::InternalEventObserverHandle InternalEventObserverHandle;
+
+  //! The value of an invalid external estimator handle
+  static const ExternalEstimatorHandle invalid_external_event_observer_handle;
+
+  //! Set the event handler instance
+  static void setHandlerInstance(
+              const std::shared_ptr<MonteCarlo::EventHandler>& event_handler );
+
+  //! Enable support for multiple threads
+  static void enableThreadSupport( const unsigned num_threads );
+
+  //! Update the observers from a particle generation event
+  static void updateObserversFromParticleGenerationEvent(
+					       const ParticleState& particle );
+
+  //! Update the observers from a particle entering cell event
+  static void updateObserversFromParticleEnteringCellEvent(
+              const ParticleState& particle,
+              const Geometry::ModuleTraits::InternalCellHandle cell_entering );
+
+  //! Update the observers from a particle leaving cell event
+  static void updateObserversFromParticleLeavingCellEvent(
+               const ParticleState& particle,
+               const Geometry::ModuleTraits::InternalCellHandle cell_leaving );
+
+  //! Update the observers from a particle subtrack ending in cell event
+  static void updateObserversFromParticleSubtrackEndingInCellEvent(
+             const ParticleState& particle,
+             const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
+             const double particle_subtrack_length,
+             const double subtrack_start_time );
+
+  //! Update the observers from a particle colliding in cell event
+  static void updateObserversFromParticleCollidingInCellEvent(
+                                    const ParticleState& particle,
+                                    const double inverse_total_cross_section );
+
+  //! Update the observers from a surface intersection event
+  static void updateObserversFromParticleCrossingSurfaceEvent(
+	  const ParticleState& particle,
+          const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double surface_normal[3] );
+
+  //! Update the global observers from a collision event
+  static void updateObserversFromParticleCollidingGlobalEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
+
+  //! Update the global estimators from a domain exit event
+  static void updateObserversFromParticleLeavingDomainGlobalEvent(
+                                                 const ParticleState& particle,
+                                                 const double start_point[3],
+                                                 const double end_point[3] );
+
+  //! Commit the observer history constributions
+  static void commitObserverHistoryContributions();
+
+  //! Print the observer data
+  static void printObserverSummaries( std::ostream& os,
+                                      const double num_histories,
+                                      const double start_time,
+                                      const double end_time );
+
+  //! Reset the observer data
+  static void resetObserverData();
+
+  //! Reduce observer data on all processes in comm and collect on the root
+  static void reduceObserverData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
+
+  //! Export the observer data
+  static void exportObserverData(const std::string& data_file_name,
+				  const unsigned long long last_history_number,
+				  const unsigned long long histories_completed,
+				  const double start_time,
+				  const double end_time,
+				  const bool process_data );
+
+  //! Get the internal observer handle corresponding to the external handle
+  static InternalEventObserverHandle getInternalEventObserverHandle(
+			 const ExternalEventObserverHandle observer_external );
+
+  //! Get the external observer handle corresponding to the internal handle
+  static ExternalEventObserverHandle getExternalEventObserverHandle(
+                         const InternalEventObserverHandle observer_internal );
+
+private:
+
+  // The event handler instance
+  static std::shared_ptr<MonteCarlo::EventHandler> s_event_handler;
+};
+
+// Set the event handler instance
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::setHandlerInstance(
+               const std::shared_ptr<MonteCarlo::EventHandler>& event_handler )
+{ 
+  // Make sure the handler is valid
+  testPrecondition( event_handler.get() );
+
+  s_event_handler = event_handler;
+}
+
+// Enable support for multiple threads
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::enableThreadSupport( 
+						   const unsigned num_threads )
+{
+  s_event_handler->enableThreadSupport( num_threads );
+}
+
+// Update the observers from a particle generation event
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleGenerationEvent(
+					        const ParticleState& particle )
+{
+  s_event_handler->updateObserversFromParticleGenerationEvent( particle );
+}
+
+// Update the observers from a particle entering cell event
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleEnteringCellEvent(
+              const ParticleState& particle,
+              const Geometry::ModuleTraits::InternalCellHandle cell_entering )
+{
+  s_event_handler->updateObserversFromParticleEnteringCellEvent(particle,
+                                                                cell_entering);
+}
+
+// Update the observers from a particle leaving cell event
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleLeavingCellEvent(
+               const ParticleState& particle,
+               const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
+{
+  s_event_handler->updateObserversFromParticleLeavingCellEvent( particle,
+                                                                cell_leaving );
+}
+
+// Update the observers from a particle subtrack ending in cell event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleSubtrackEndingInCellEvent(
+             const ParticleState& particle,
+             const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
+             const double particle_subtrack_length,
+             const double subtrack_start_time )
+{
+  s_event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                      particle,
+                                                      cell_of_subtrack,
+                                                      particle_subtrack_length,
+                                                      subtrack_start_time );
+}
+
+// Update the observers from a particle colliding in cell event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleCollidingInCellEvent(
+                                    const ParticleState& particle,
+                                    const double inverse_total_cross_section )
+{
+  s_event_handler->updateObserversFromParticleCollidingInCellEvent( 
+                                                 particle,
+                                                 inverse_total_cross_section );
+}
+
+// Update the observers from a surface intersection event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleCrossingSurfaceEvent(
+	  const ParticleState& particle,
+          const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double surface_normal[3] )
+{
+  s_event_handler->updateObserversFromParticleCrossingSurfaceEvent(
+                                                              particle,
+                                                              surface_crossing,
+                                                              surface_normal );
+}
+
+// Update the global estimators from a collision event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleCollidingGlobalEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] )
+{
+  s_event_handler->updateObserversFromParticleCollidingGlobalEvent(particle,
+                                                                   start_point,
+                                                                   end_point );
+}
+
+// Update the global estimators from a domain exit event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleLeavingDomainGlobalEvent(
+                                                 const ParticleState& particle,
+                                                 const double start_point[3],
+                                                 const double end_point[3] )
+{
+  s_event_handler->updateObserversFromParticleLeavingDomainGlobalEvent(
+                                                                   particle,
+                                                                   start_point,
+                                                                   end_point );
+}
+
+// Commit the estimator history constributions
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::commitEstimatorHistoryContributions()
+{
+  s_event_handler->commitEstimatorHistoryContributions();
+}
+
+//! Print the estimator data
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::printEstimators( 
+						    std::ostream& os,
+						    const double num_histories,
+						    const double start_time,
+						    const double end_time )
+{
+  s_event_handler->printEstimators( os,
+                                    num_histories,
+                                    start_time,
+                                    end_time );
+}
+
+// Reset the estimator data
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::resetEstimatorData()
+{
+  s_event_handler->resetEstimatorData();
+}
+
+// Reduce estimator data on all processes in comm and collect on the root
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+  s_event_handler->reduceEstimatorData( comm, root_process );
+}
+
+// Export the estimator data
+inline void 
+EventModuleInterface<MonteCarlo::EventHandler>::exportEstimatorData( 
+				 const std::string& data_file_name,
+				 const unsigned long long last_history_number,
+				 const unsigned long long histories_completed,
+				 const double start_time,
+				 const double end_time,
+				 const bool process_data )
+{
+  s_event_handler->exportEstimatorData( data_file_name,
+                                        last_history_number,
+                                        histories_completed,
+                                        start_time,
+                                        end_time,
+                                        process_data );
+}
+
+// Get the internal estimator handle corresponding to the external handle
+inline EventModuleInterface<MonteCarlo::EventHandler>::InternalEstimatorHandle 
+EventModuleInterface<MonteCarlo::EventHandler>::getInternalEstimatorHandle(
+			     const ExternalEstimatorHandle estimator_external )
+{
+  return estimator_external;
+}
+
+// Get the external estimator handle corresponding to the internal handle
+inline EventModuleInterface<MonteCarlo::EventHandler>::ExternalEstimatorHandle 
+EventModuleInterface<MonteCarlo::EventHandler>::getExternalEstimatorHandle(
+			     const InternalEstimatorHandle estimator_internal )
+{
+  return estimator_internal;
+}
+
+} // end MonteCarlo namespace
+
+#endif // end FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
+
+//---------------------------------------------------------------------------//
+// end MonteCarlo_EventModuleInterface_Native.hpp
+//---------------------------------------------------------------------------//

@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorModuleInterface.hpp"
+#include "MonteCarlo_EventModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -42,8 +42,8 @@ protected:
   // Typedef for source module interface
   typedef SourceModuleInterface<SourceHandler> SMI;
   
-  // Typedef for estimator module interface
-  typedef EstimatorModuleInterface<EstimatorHandler> EMI;
+  // Typedef for event module interface
+  typedef EventModuleInterface<EstimatorHandler> EMI;
   
   // Typedef for collision module interface
   typedef CollisionModuleInterface<CollisionHandler> CMI;

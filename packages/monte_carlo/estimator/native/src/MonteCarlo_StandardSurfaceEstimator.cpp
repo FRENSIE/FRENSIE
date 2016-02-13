@@ -59,14 +59,17 @@ void StandardSurfaceEstimator::setParticleTypes(
 }
 
 // Export the estimator data
-void StandardSurfaceEstimator::exportData(
-					  EstimatorHDF5FileHandler& hdf5_file,
-					  const bool process_data ) const
+void StandardSurfaceEstimator::exportData( const std::string& hdf5_file_name,
+                                           const bool process_data ) const
 {
   // Export the lower level data first
   StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>::exportData( 
-								hdf5_file,
+								hdf5_file_name,
 								process_data );
+
+  // Open the hdf5 file
+  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
+                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
 
   // Set the estimator as a surface estimator
   hdf5_file.setSurfaceEstimator( this->getId() );

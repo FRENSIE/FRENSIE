@@ -52,8 +52,8 @@ public:
 		      const StandardCellEstimator::cellIdType cell_of_subtrack,
 		      const double track_length );
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 
 private:
 

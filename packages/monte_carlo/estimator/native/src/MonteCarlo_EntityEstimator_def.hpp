@@ -396,11 +396,15 @@ void EntityEstimator<EntityId>::reduceData(
 
 // Export the estimator data
 template<typename EntityId>
-void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
-					   const bool process_data ) const
+void EntityEstimator<EntityId>::exportData( const std::string& hdf5_file_name,
+                                            const bool process_data ) const
 {
   // Export the low level estimator data
-  Estimator::exportData( hdf5_file, process_data );
+  Estimator::exportData( hdf5_file_name, process_data );
+
+  // Open the hdf5 file
+  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
+                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
 
   // Export the Entity norm constants 
   hdf5_file.setEstimatorEntities( this->getId(),
@@ -599,35 +603,35 @@ void EntityEstimator<EntityId>::printImplementation(
   os << std::endl;
   
   // Print the estimator data for each entity
-  typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
-    end_entity_data;
+  // typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
+  //   end_entity_data;
 
-  entity_data = d_entity_estimator_moments_map.begin();
-  end_entity_data = d_entity_estimator_moments_map.end();
+  // entity_data = d_entity_estimator_moments_map.begin();
+  // end_entity_data = d_entity_estimator_moments_map.end();
 
-  while( entity_data != end_entity_data )
-  {
-    os << entity_type << " " << entity_data->first 
-       << " Bin Data: " << std::endl;
-    os << "--------" << std::endl;
+  // while( entity_data != end_entity_data )
+  // {
+  //   os << entity_type << " " << entity_data->first 
+  //      << " Bin Data: " << std::endl;
+  //   os << "--------" << std::endl;
 
-    printEstimatorBinData( os, 
-			   entity_data->second,
-			   getEntityNormConstant( entity_data->first ) );
-    os << std::endl;
+  //   printEstimatorBinData( os, 
+  //       		   entity_data->second,
+  //       		   getEntityNormConstant( entity_data->first ) );
+  //   os << std::endl;
 
-    ++entity_data;
-  }
+  //   ++entity_data;
+  // }
 
   // Print the estimator total bin data
-  os << " Total Bin Data: " << std::endl;
-  os << "--------" << std::endl;
+  // os << " Total Bin Data: " << std::endl;
+  // os << "--------" << std::endl;
 
-  printEstimatorBinData( os, 
-			 d_estimator_total_bin_data, 
-			 d_total_norm_constant );
+  // printEstimatorBinData( os, 
+  //       		 d_estimator_total_bin_data, 
+  //       		 d_total_norm_constant );
   
-  os << std::endl;
+  // os << std::endl;
 }
 
 // Get the total estimator bin data
