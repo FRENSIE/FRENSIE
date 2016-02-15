@@ -9,10 +9,28 @@
 #ifndef UTILITY_GAUSS_KRONROD_INTEGRATOR_HPP
 #define UTILITY_GAUSS_KRONROD_INTEGRATOR_HPP
 
+// std Includes
+#include <queue>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 namespace Utility{
+
+struct BinTraits
+{
+  double lower_limit;
+  double upper_limit;
+  double result;
+  double error;
+
+  bool operator <( const BinTraits& bins ) const
+  {
+    return error < bins.error;
+  }
+};
+
+typedef std::priority_queue<BinTraits> BinQueue;
 
 //! The Gauss-Kronrod integrator
 class GaussKronrodIntegrator
@@ -40,6 +58,14 @@ public:
   //! Integrate the function adaptively
   template<int Points, typename Functor>
   void integrateAdaptively( Functor& integrand,
+			    double lower_limit,
+			    double upper_limit,
+			    double& result,
+			    double& absolute_error ) const;
+
+  //! Integrate the function adaptively with BinQueue
+  template<int Points, typename Functor>
+  void integrateAdaptivelyWithBinQueue( Functor& integrand,
 			    double lower_limit,
 			    double upper_limit,
 			    double& result,
