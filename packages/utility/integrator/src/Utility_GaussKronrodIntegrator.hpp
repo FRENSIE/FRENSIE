@@ -22,8 +22,8 @@ public:
 
   //! Constructor
   GaussKronrodIntegrator( const double relative_error_tol,
-                           const double absolute_error_tol = 0.0,
-                           const size_t subinterval_limit = 1000 );
+                          const double absolute_error_tol = 0.0,
+                          const size_t subinterval_limit = 1000 );
 
   //! Destructor
   ~GaussKronrodIntegrator();
@@ -75,7 +75,7 @@ public:
   void integrateInfiniteInterval( Functor& integrand,
 				  double& result,
 				  double& absolute_error ) const;
-
+*/
   //! Integrate a function with integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( Functor& integrand,
@@ -83,7 +83,7 @@ public:
 				       double upper_limit,
 				       double& result,
 				       double& absolute_error ) const;
-
+/*
   //! Integrate a function with known integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( 
@@ -139,7 +139,7 @@ private:
   void sortErrorList( Teuchos::Array<double>& bin_error,
                       Teuchos::Array<double>& bin_order, 
                       double& maximum_bin_error, 
-                      int bin_with_larger_error,
+                      int& bin_with_larger_error,
                       int bin_with_smaller_error, 
                       int nr_max ) const;
 

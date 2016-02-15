@@ -20,6 +20,7 @@
 
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -70,7 +71,7 @@ private:
   double integratedSAlphaBetaFunction( const double beta );
 
   // The integration gkq_set for integrating over alpha values
-  Utility::GaussKronrodQuadratureSet d_alpha_gkq_set;
+  Utility::GaussKronrodIntegrator d_alpha_gkq_set;
 
   // The integration gkq_set for integrating over beta values
   Utility::GaussKronrodQuadratureSet d_beta_gkq_set;
