@@ -41,17 +41,29 @@ void GaussKronrodIntegrator::rescaleAbsoluteError(
     double result_abs, 
     double result_asc ) const
 {
-  if ( result_asc != 0.0 && absolute_error != 0.0 )
+  if ( result_asc != 0 && absolute_error != 0 )
     {
-      absolute_error = result_asc * 
-        std::min( 1.0, pow( 200.0 * absolute_error/result_asc, 1.5 ) );
+      double scale = 200.0 * absolute_error/result_asc;
+
+      if ( scale < 1.0 )
+      {
+        absolute_error = result_asc * pow( scale, 1.5 );
+      }  
+      else
+      {    
+      absolute_error = result_asc;
+      }  
     };
 
   if ( result_abs > std::numeric_limits<double>::min() / ( 50.0 *
                     std::numeric_limits<double>::epsilon() ) )
     {
-      absolute_error = std::max( absolute_error,
-         50.0*std::numeric_limits<double>::epsilon() * result_abs );
+      double min_error = 50.0*std::numeric_limits<double>::epsilon() * result_abs;
+
+      if ( min_error > absolute_error ) 
+        {
+          absolute_error = min_error;
+        }
     };
 };
 /*
@@ -92,20 +104,26 @@ void GaussKronrodIntegrator::updateIntegral(
     if ( error_2 <= error_1 )
     {
       bin_lower_limit[last] = lower_limit_2;
-      bin_upper_limit[bin_with_max_error] = upper_limit_1;
       bin_upper_limit[last] = upper_limit_2;
-      bin_error[bin_with_max_error] = error_1;
       bin_error[last] = error_2;
+      bin_result[last] = area_2;
+
+      // Lower limit already set as lower_limit_1
+      bin_upper_limit[bin_with_max_error] = upper_limit_1;
+      bin_error[bin_with_max_error] = error_1;
+      bin_result[bin_with_max_error] = area_1;
     }
     else
     {
-      bin_lower_limit[bin_with_max_error] = lower_limit_2;
       bin_lower_limit[last] = lower_limit_1;
       bin_upper_limit[last] = upper_limit_1;
-      bin_result[bin_with_max_error] = area_2;
-      bin_result[last] = area_1;
-      bin_error[bin_with_max_error] = error_2;
       bin_error[last] = error_1;
+      bin_result[last] = area_1;
+
+      bin_lower_limit[bin_with_max_error] = lower_limit_2;
+      // Upper limit already set as upper_limit_2
+      bin_error[bin_with_max_error] = error_2;
+      bin_result[bin_with_max_error] = area_2;
     }
 };
 
@@ -119,13 +137,13 @@ void GaussKronrodIntegrator::sortErrorList(
         Teuchos::Array<double>& bin_error,
         Teuchos::Array<double>& bin_order, 
         double& maximum_bin_error, 
-        int bin_with_larger_error,
+        int& bin_with_larger_error,
         int bin_with_smaller_error, 
         int nr_max ) const
 {
 
   //  Check whether the list contains more than two error estimates.
-  if ( bin_with_smaller_error <= 2 )
+  if ( bin_with_smaller_error < 2 )
   {
     bin_order[0] = 0;
     bin_order[1] = 1;
@@ -163,7 +181,7 @@ void GaussKronrodIntegrator::sortErrorList(
      *  comparison from the element bin_error[ bin_order[nr_max+1] ].
      */
     int large_bin = nr_max+1;
-    while ( large_bin < max_bin && bin_error[ bin_order[large_bin] ] > larger_bin_error )
+    while ( large_bin < max_bin && larger_bin_error < bin_error[ bin_order[large_bin] ] )
     {
       bin_order[large_bin-1] = bin_order[large_bin];
       large_bin++;

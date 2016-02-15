@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   Functor functor_instance;
 
-  gk_integrator.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
+  gk_integrator.integrateWithPointRule( functor_instance, 0.0, 1.0, result, absolute_error, evals);
 
   double tol = absolute_error/result;
 
@@ -101,6 +101,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrate );
 */
+
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
