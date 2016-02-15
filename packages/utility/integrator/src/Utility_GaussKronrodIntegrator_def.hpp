@@ -41,7 +41,7 @@ double GaussKronrodIntegrator::functorWrapper( const double x,
   return (*functor)( x );
 }
 
-// Integrate the function adaptively
+// Integrate the function adaptively without BinQueue
 /*! \details Functor must have operator()( double ) defined. This function
  * applies the specified integration rule (Points) adaptively until an 
  * estimate of the integral of the integrand over [lower_limit,upper_limit] is
@@ -53,7 +53,7 @@ double GaussKronrodIntegrator::functorWrapper( const double x,
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
 template<int Points, typename Functor>
-void GaussKronrodIntegrator::integrateAdaptively(
+void GaussKronrodIntegrator::integrateAdaptivelyWithoutQueue(
 						 Functor& integrand, 
 						 double lower_limit, 
 						 double upper_limit,
@@ -220,7 +220,13 @@ void GaussKronrodIntegrator::integrateAdaptively(
                      bin_with_max_error, last, nr_max );
 
     }
+/*
   for ( int i = last; i >= 0; i-- )
+    {
+      result += bin_result[i];
+    }
+*/
+  for ( int i = 0; i < last+1; i++ )
     {
       result += bin_result[i];
     }
@@ -240,7 +246,7 @@ void GaussKronrodIntegrator::integrateAdaptively(
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
 template<int Points, typename Functor>
-void GaussKronrodIntegrator::integrateAdaptivelyWithBinQueue(
+void GaussKronrodIntegrator::integrateAdaptively(
 						 Functor& integrand, 
 						 double lower_limit, 
 						 double upper_limit,
@@ -312,13 +318,10 @@ void GaussKronrodIntegrator::integrateAdaptivelyWithBinQueue(
                       Utility::IntegratorException,
                       "a maximum of one iteration was insufficient" );
 
-  double maximum_bin_error = bin.error;
-  int bin_with_max_error = 0;
   double area = bin.result;
   double total_error = bin.error;
   int round_off_1 = 0.0;
   int round_off_2 = 0.0;
-  int nr_max = 0;
 
   int last;
   for ( last = 1; last < d_subinterval_limit; last++ )
@@ -329,7 +332,8 @@ void GaussKronrodIntegrator::integrateAdaptivelyWithBinQueue(
       double result_abs_1 = 0.0, result_abs_2 = 0.0;
 
       // Pop bin with highest error from queue
-      bin = bin_queue.pop();
+      bin = bin_queue.top();
+      bin_queue.pop();
 
       // Bisect the bin with the largest error estimate into bin 1 and bin 2 
       BinTraits bin_1, bin_2;
@@ -407,11 +411,18 @@ void GaussKronrodIntegrator::integrateAdaptivelyWithBinQueue(
                           "Maximum number of subdivisions reached" );
 
     }
+
+  // Reverse order of bin queue
+  BinTraits* front = const_cast<BinTraits*>(&bin_queue.top());
+  BinTraits* back = const_cast<BinTraits*>(front + bin_queue.size());
+  std::sort(front, back);
+
   while ( !bin_queue.empty() )
-    {
-      bin = bin_queue.pop();
-      result += bin.result;
-    }
+  {
+    bin = bin_queue.top();
+    result += bin.result;
+    bin_queue.pop();
+  }
 
   absolute_error = total_error;
 }

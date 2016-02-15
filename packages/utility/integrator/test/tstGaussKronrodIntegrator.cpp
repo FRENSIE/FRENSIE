@@ -105,6 +105,32 @@ UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrate );
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+				   integrateAdaptivelyWithoutQueue_15,
+				   Functor )
+{
+  Utility::GaussKronrodIntegrator gk_integrator( 1e-12 );
+
+  double result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integrator.integrateAdaptivelyWithoutQueue<15>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+}
+
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptivelyWithoutQueue_15 );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 				   integrateAdaptively_15,
 				   Functor )
 {

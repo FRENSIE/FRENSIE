@@ -57,7 +57,7 @@ public:
 */
   //! Integrate the function adaptively
   template<int Points, typename Functor>
-  void integrateAdaptively( Functor& integrand,
+  void integrateAdaptivelyWithoutQueue( Functor& integrand,
 			    double lower_limit,
 			    double upper_limit,
 			    double& result,
@@ -65,7 +65,7 @@ public:
 
   //! Integrate the function adaptively with BinQueue
   template<int Points, typename Functor>
-  void integrateAdaptivelyWithBinQueue( Functor& integrand,
+  void integrateAdaptively( Functor& integrand,
 			    double lower_limit,
 			    double upper_limit,
 			    double& result,
