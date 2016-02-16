@@ -51,7 +51,7 @@ private:
   // Test if two estimator types are equivalent
   static bool areEstimatorTypesEquivalent(
                                     const std::string& geometry_module_type,
-					                const std::string& xml_type );
+                                    const std::string& xml_type );
 
   // Test if an estimator type is a cell pulse height estimator
   static bool isCellPulseHeightEstimator( const std::string& estimator_name );
@@ -218,24 +218,6 @@ private:
   
   // Check if a mesh estimator type is valid
   static bool isMeshEstimatorTypeValid( const std::string& estimator_type );
-
-  // The surface current estimator name
-  static const std::string surface_current_name;
-
-  // The surface flux estimator name
-  static const std::string surface_flux_name;
-
-  // The cell pulse height estimator name
-  static const std::string cell_pulse_height_name;
-
-  // The cell track-length flux estimator name
-  static const std::string cell_track_length_flux_name;
-
-  // The cell collision flux estimator name
-  static const std::string cell_collision_flux_name;
-
-  // The tet mesh track-length flux estimator name
-  static const std::string tet_mesh_track_length_flux_name;
 
   // The warning output stream
   static std::ostream* s_os_warn;

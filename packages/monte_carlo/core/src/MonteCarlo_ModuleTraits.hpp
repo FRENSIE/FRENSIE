@@ -41,7 +41,7 @@ struct ModuleTraits
   static const InternalSourceHandle invalid_internal_source_handle;
   
   //! The invalid estimator handle value
-  static const InternalEventObserverHandle invalid_internal_estimator_handle;
+  static const InternalEventObserverHandle invalid_internal_event_observer_handle;
   
   //! The invalid material handle value
   static const InternalMaterialHandle invalid_internal_material_handle;
