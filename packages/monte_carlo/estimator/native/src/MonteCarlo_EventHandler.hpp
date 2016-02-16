@@ -46,6 +46,9 @@ public:
   //! Return the number of observers that have been added
   unsigned getNumberOfObservers() const;
 
+  //! Check if an observer with the given id exists
+  unsigned doesObserverExist( const unsigned observer_id ) const;
+
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 

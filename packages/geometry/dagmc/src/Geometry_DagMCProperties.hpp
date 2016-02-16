@@ -84,8 +84,20 @@ public:
   //! Check if the cell estimator type is valid
   static bool isCellEstimatorTypeValid( const std::string& estimator_type );
 
+  //! Check if the cell observer type is valid
+  static bool isCellObserverTypeValid( const std::string& observer_type );
+
   //! Check if the surface estimator type is valid
   static bool isSurfaceEstimatorTypeValid( const std::string& estimator_type );
+
+  //! Check if the surface observer type is valid
+  static bool isSurfaceObserverTypeValid( const std::string& observer_type );
+
+  //! Check if the estimator type is valid
+  static bool isEtimatorTypeValid( const std::string& estimator_type );
+
+  //! Check if the observer type is valid
+  static bool isObserverTypeValid( const std::string& observer_type );
 
   //! Check if the particle type is valid
   static bool isParticleTypeValid( const std::string& particle_type );

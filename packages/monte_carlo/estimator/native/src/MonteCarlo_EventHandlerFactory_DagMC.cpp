@@ -32,25 +32,6 @@
 
 namespace MonteCarlo{
 
-// Initialize static member data
-const std::string EstimatorHandlerFactory<moab::DagMC>::surface_current_name = 
-  "Surface Current";
-
-const std::string EstimatorHandlerFactory<moab::DagMC>::surface_flux_name = 
-  "Surface Flux";
-
-const std::string EstimatorHandlerFactory<moab::DagMC>::cell_pulse_height_name = 
-  "Cell Pulse Height";
-
-const std::string EstimatorHandlerFactory<moab::DagMC>::cell_track_length_flux_name = 
-  "Cell Track-Length Flux";
-
-const std::string EstimatorHandlerFactory<moab::DagMC>::cell_collision_flux_name = 
-  "Cell Collision Flux";
-
-const std::string EstimatorHandlerFactory<moab::DagMC>::tet_mesh_track_length_flux_name = 
-  "Tet Mesh Track-Length Flux";
-
 std::ostream* EstimatorHandlerFactory<moab::DagMC>::s_os_warn = NULL;
 
 // Initialize the estimator handler using DagMC
