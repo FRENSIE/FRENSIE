@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Boost Includes
+#include <boost/unordered_set.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
@@ -55,209 +58,104 @@ StandardEstimatorFactory<moab::DagMC>::StandardEstimatorFactory(
 		     d_geom_estimator_id_surfaces_map.size() );
 }
 
-// Create and register all estimators
-void createAndRegisterEstimator( 
-                            const std::shared_ptr<EventHandler>& event_handler,
-                            const Teuchos::ParameterList& estimator_rep ) const
-{
-  // Make sure the parameter list describes an estimator
-  testPrecondition( this->isEstimatorRep( estimator_rep ) );
-  
-  // Get the estimator id - required
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Id" ),
-                      InvalidEstimatorRepresentation,
-                      "Error: the estimator id was not specified in estimator "
-                      << estimator_rep.name() << "!" );
-  
-  unsigned id = estimator_rep.get<unsigned>( "Id" );
-  
-  // Get the estimator type - required
-  std::string estimator_type; 
-
-  if( d_estimator_id_type_map.find( id ) != d_estimator_id_type_map.end() )
-  {
-    // Make sure the DagMC type and the parameter list type match
-    if( estimator_rep.isParameter( "Type" ) )
-    {
-      TEST_FOR_EXCEPTION( d_estimator_id_type_map.find( id )->second != 
-                          estimator_rep.get<std::string>( "Type" ),
-                          InvalidEstimatorRepresentation,
-                          "Error: estimator " << id << " specified in the "
-                          "xml file and the .sat file have inconsistent "
-                          "types (" 
-                          << estimator_rep.get<std::string>( "Type" ) << " != "
-                          << estimator_id_type_map[id] << ")!" );
-    }
-
-    estimator_type = d_estimator_id_type_map.find( id )->second;
-  }
-  else if( estimator_rep.isParameter( "Type" ) )
-    estimator_type = estimator_rep.get<std::string>( "Type" );
-  else
-  {
-    THROW_EXCEPTION( InvalidEstimatorRepresentation,
-                     "Error: estimator " << id << " does not have a "
-                     "type specified!" );
-  }
-
-  // Get the estimator particle type - required
-  std::string estimator_particle_type;
-  
-  if( d_estimator_id_ptype_map.find( id ) != d_estimator_id_ptype_map.end() )
-  {
-    // Make sure the DagMC particle type and the param. list particle type ==
-    if( estimator_rep.isParameter( "Particle Type" ) )
-    {
-      TEST_FOR_EXCEPTION( d_estimator_id_ptype_map[id] !=
-                          estimator_rep.get<std::string>( "Particle Type" ),
-                          InvalidEstimatorRepresentation,
-                          "Error: estimator " << id << " specified in the "
-                          "xml file and the .sat file have inconsitent "
-                          "particle types ("
-                          << estimator_rep.get<std::string>("Particle Type")
-                          << " != " << d_estimator_id_ptype_map[id] <<
-                          ")!" );
-    }
-    
-    estimator_particle_type = d_estimator_id_ptype_map.find( id )->second;
-  }
-  else if( estimator_rep.isParameter( "Particle Type" ) )
-    estimator_particle_type = estimator_rep.get<std::string>("Particle Type");
-  else
-  {
-    THROW_EXCEPTION( InvalidEstimatorRepresentation,
-                     "Error: estimator " << id << " does not have a "
-                     "particle type specified!" );
-  }
-
-  // Make sure the particle type name is valid
-  TEST_FOR_EXCEPTION( !isValidParticleTypeName( estimator_particle_type ),
-                      InvalidEstimatorRepresentation,
-                      "Error: estimator " << id << " specified particle "
-                      "type " << particle_type << " which is not valid!" );
-
-  Teuchos::Array<ParticleType> particle_types( 1 );
-  particle_types[0] = 
-    convertParticleTypeNameToParticleTypeEnum( estimator_particle_type );
-
-  // Get the estimator multiplier - optional
-  double multiplier = 1.0;
-
-  if( estimator_rep.isParameter( "Multiplier" ) )
-    multiplier = estimator_rep.get<double>( "Multiplier" );
-
-  TEST_FOR_EXCEPTION( multiplier <= 0.0,
-                      InvalidEstimatorRepresentation,
-                      "Error: estimator " << id << " has a negative "
-                      "multiplier specified!" );
-  
-  // Check if energy multiplication was requested - optional
-  bool energy_mult = false;
-
-  if( estimator_rep.isParameter( "Energy Multiplication" ) )
-    energy_mult = estimator_rep.get<bool>( "Energy Multiplication" ); 
-
-  // Get the estimator bins - optional
-  const Teuchos::ParameterList* estimator_bins = NULL;
-
-  if( estimator_rep.isParameter( "Bins" ) )
-    estimator_bins = &estimator_rep.get<Teuchos::ParameterList>( "Bins" );
-
-  // Get the response functions assigned to the estimator - optional
-  Teuchos::Array<Teuchos::RCP<ResponseFunction> > response_functions;
-
-  if( estimator_rep.isParameter( "Response Functions" ) )
-  {
-    const Utility::ArrayString& array_string = 
-      estimator_rep.get<Utility::ArrayString>( "Response Functions" );
-
-    Teuchos::Array<unsigned> requested_response_functions;
-
-    try{
-      requested_response_functions = 
-        array_string.getConcreteArray<unsigned>();
-    }
-    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                                InvalidEstimatorRepresentation,
-                                "Error: the response functions requested for"
-                                " estimator " << id << " are not valid!" );
-
-    response_functions.resize( requested_response_functions.size() );
-
-    for( unsigned i = 0; i < requested_response_functions.size(); ++i )
-    {
-      TEST_FOR_EXCEPTION( this->getResponseFunctionIdMap().find( requested_response_functions[i] ) ==
-                          this->getResponseFunctionIdMap().end(),
-                          InvalidEstimatorRepresentation,
-                          "Error: estimator " << id << " has requested "
-                          "response function " << 
-                          requested_response_functions[i] << 
-                          " which does not exist!" );
-
-      response_functions[i] = this->getResponseFunctionIdMap().find( 
-                                     requested_response_functions[i] )->second;
-    }
-  }
-
-  // Create the cell pulse height estimator
-  if( this->isCellPulseHeightEstimator( estimator_type ) )
-  {
-    // Get the cells assigned to the estimator
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> assigned_cells;
-
-    // Filter out multiple occurances of the same cell
-    {
-      boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
-        unique_cells;
-
-      if( d_estimator_id_cells_map.find( id ) != d_estimator_id_cells_map.end() )
-      {
-        unique_cells.insert( 
-                           d_estimator_id_cells_map.find( id )->second.begin(),
-                           d_estimator_id_cells_map.find( id )->second.end() );
-      }
-      
-      if( estimator_rep.isParameter( "Cells" ) )
-      {
-        const Utility::ArrayString& array_string = 
-          estimator_rep.get<Utility::ArrayString>( "Cells" );
-
-        Teuchos::Array<unsigned> xml_cells;
-
-        try{
-          xml_cells = array_string.getConcreteArray<unsigned>();
-        }
-        EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
-                                    InvalidEstimatorRepresentation,
-                                    "Error: the cells requested for "
-                                    "estimator " << id << 
-                                    " are not valid!" );
-
-        for( unsigned i = 0u; i < xml_cells.size(); ++i )
-        {
-          TEST_FOR_EXCEPTION( 
-            !Geometry::ModuleInterface<moab::DagMC>::doesCellExist( xml_cells[i] ),
-            InvalidEstimatorRepresentation,
-            "Error: estimator " << id << " specified "
-            "cell " << xml_cells[i] << " in the xml "
-            "file, which does not exists!" );
-
-          unique_cells.insert( xml_cells[i] );
-        }
-      }
-
-      assigned_cells.assign( unique_cells.begin(), unique_cells.end() );
-    }
-    
-    if( 
-    std::shared_ptr<CellPulseHeightEstimator
-  }
-}
-
 // Create and register cached estimators
 void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
 {
+  boost::unordered_map<unsigned,std::string>::iterator estimator_id_type =
+    d_geom_estimator_id_type_map.begin();
 
+  while( estimator_id_type != d_geom_estimator_id_type_map.end() )
+  {
+    // Get the estimator id
+    unsigned estimator_id = estimator_id_type->first;
+    
+    // Get the estimator type
+    const std::string& estimator_type = estimator_id_type->second;
+
+    // Get the estimator particle type
+    const std::string& particle_type_name = 
+      d_geom_estimator_id_ptype_map.find( estimator_id );
+
+    Teuchos::Array<ParticleType> particle_types;
+
+    this->convertParticleTypeNameToParticleTypes( particle_types,
+                                                  estimator_id,
+                                                  particle_type_name );
+
+    // Use a default multiplier
+    double multiplier = 1.0;
+
+    // No response functions
+    Teuchos::Array<Teuchos::RCP<ResponseFunction> > response_functions;
+
+    try{
+      // Create and register a cell estimator
+      if( this->isCellEstimator( estimator_type ) )
+      {
+        boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle> 
+          unique_cells;
+
+        this->getCachedCells( unique_cells, estimator_id );
+
+        Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+          assigned_cells( unique_cells.begin(), unique_cells.end() );
+
+        TEST_FOR_EXCEPTION( assigned_cells.size() == 0,
+                            InvalidEstimatorRepresentation,
+                            "Error: cell estimator " << estimator_id << 
+                            " has no cells assigned to it!" );
+
+        this->createAndRegisterCellEstimator( estimator_type,
+                                              estimator_id,
+                                              multiplier,
+                                              particle_types,
+                                              response_functions );
+      }
+              
+      // Create and register a surface estimator
+      else if( this->isSurfaceEstimator( estimator_type ) )
+      {
+        boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>
+          unique_surfaces;
+        
+        this->getCachedSurfaces( unique_surfaces, estimator_id );
+
+        Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceArea>
+          assigned_surfaces( unique_surfaces.begin(), unique_surfaces.end() );
+
+        TEST_FOR_EXCEPTION( assigned_surfaces.size() == 0,
+                            InvalidEstimatorRepresentation,
+                            "Error: surface estimator " << estimator_id << 
+                            " has no surfaces assigned to it!" );
+
+        this->createAndRegisterSurfaceEstimator( estimator_type,
+                                                 estimator_id,
+                                                 multiplier,
+                                                 particle_types,
+                                                 response_functions );
+      }
+      
+      // Invalid estimator type
+      else
+      {
+        THROW_EXCEPTION( InvalidEstimatorRepresentation,
+                         "Error: estimator " << estimator_id << "has an "
+                         "invalid type (" << estimator_type << ")!" );
+      }
+    } // end try
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                InvalidEstimatorRepresentation,
+                                "Error: could not create estimator "
+                                << estimator_id << "!" );
+
+    ++estimator_id_type;
+  }
+
+  // Clear all cached estimator data
+  d_geom_estimator_id_type_map.clear();
+  d_geom_estimator_id_ptype_map.clear();
+  d_geom_estimator_id_cells_map.clear();
+  d_geom_estimator_id_surfaces_map.clear();
 }
                        
 // Load estimator id maps with cell estimator properties
@@ -290,8 +188,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithCellEstimator
 							       particle_type );
     
     // The observer id must be unique
-    TEST_FOR_EXCEPTION( d_estimator_id_type_map.find( id ) !=
-			d_estimator_id_type_map.end(),
+    TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find( id ) !=
+			d_geom_estimator_id_type_map.end(),
 			InvalidEstimatorRepresentation,
 			"Error: estimator id " << id << " is used multiple "
 			"times in the .sat file!" );
@@ -304,7 +202,7 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithCellEstimator
 	<< estimator_type << " specified in the .sat file, which is "
 	"invalid!" );
 
-    d_estimator_id_type_map[id] = 
+    d_geom_estimator_id_type_map[id] = 
       this->convertDagMCEstimatorTypeNameToStandard( estimator_type );
 
     // Store the particle type requested
@@ -323,7 +221,7 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithCellEstimator
 			"photons or electrons can be assigned)" );
 			
 
-    d_estimator_id_ptype_map[id] = 
+    d_geom_estimator_id_ptype_map[id] = 
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the cells assigned to the estimator
@@ -332,8 +230,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithCellEstimator
 			"Error: estimator " << id << " has no cells "
 			"specified!" );
 
-    d_estimator_id_cells_map[id].assign( cell_it->second.begin(),
-                                         cell_it->second.end() );
+    d_geom_estimator_id_cells_map[id].assign( cell_it->second.begin(),
+                                              cell_it->second.end() );
 
     ++cell_it;
   }
@@ -385,7 +283,7 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithSurfaceEstima
        << estimator_type << " specified in the .sat file, which is "
        "invalid!" );
 
-    d_estimator_id_type_map[id] = 
+    d_geom_estimator_id_type_map[id] = 
       this->convertDagMCEstimatorTypeNameToStandard( estimator_type );
 
     // Store the particle type requested
@@ -396,7 +294,7 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithSurfaceEstima
 	     << particle_type << " specified in the .sat file, which is "
 	     "not valid (choose n, p or e)!" );
 
-    d_estimator_id_ptype_map[id] = 
+    d_geom_estimator_id_ptype_map[id] = 
       convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
     
     // Store the cells assigned to the estimator
@@ -405,8 +303,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithSurfaceEstima
 			"Error: estimator " << id << " has no cells "
 			"specified!" );
 
-    d_estimator_id_surfaces_map[id].assign( surface_it->second.begin(),
-                                            surface_it->second.end() );
+    d_geom_estimator_id_surfaces_map[id].assign( surface_it->second.begin(),
+                                                 surface_it->second.end() );
 
     ++surface_it;
   }
@@ -419,9 +317,9 @@ void StandardEstimatorFactory<moab::DagMC>::loadCellVolumeMap()
 #ifdef HAVE_FRENSIE_DAGMC
   boost::unordered_map<unsigned,
    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >::const_iterator
-    it = d_estimator_id_cells_map.begin();
+    it = d_geom_estimator_id_cells_map.begin();
 
-  while( it != d_estimator_id_cells_map.end() )
+  while( it != d_geom_estimator_id_cells_map.end() )
   {
     for( unsigned i = 0u; i < it->second.size(); ++i )
     {
@@ -443,9 +341,9 @@ void StandardEstimatorFactory<moab::DagMC>::loadSurfaceAreaMap()
 #ifdef HAVE_FRENSIE_DAGMC
   boost::unordered_map<unsigned,
     Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >::const_iterator
-    it = d_estimator_id_surfaces_map.begin();
+    it = d_geom_estimator_id_surfaces_map.begin();
 
-  while( it != d_estimator_id_surfaces_map.end() )
+  while( it != d_geom_estimator_id_surfaces_map.end() )
   {
     for( unsigned i = 0u; i < it->second.size(); ++i )
     {
@@ -507,63 +405,237 @@ std::string StandardEstimatorFactory<moab::DagMC>::convertDagMCEstimatorTypeName
 }
 
 // Verify that the estimator type is consistent with cached data
+/*! \details This method will check that, if there data was found for the 
+ * estimator in the .sat file, the estimator type requested in the xml file
+ * is the same as the estimator type requested in the .sat file. An 
+ * exception will be thrown if there is an ambiguity. 
+ */
 void StandardEstimatorFactory<moab::DagMC>::verifyEstimatorTypeConsistency( 
                                      const unsigned estimator_id,
                                      const std::string& estimator_type ) const
 {
-
+  // Check if there is any cached data for the estimator
+  if( d_geom_estimator_id_type_map.find( estimator_id ) !=
+      d_geom_estimator_id_type_map.end() )
+  {
+    TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find(estimator_id)->second
+                        != estimator_type,
+                        InvalidEstimatorRepresentation,
+                        "Error: estimator " << estimator_id << " has an "
+                        "ambiguous type. DagMC requested " 
+                        << d_geom_estimator_id_type_map.find(estimator_id)->second <<
+                        " while the xml file requested "
+                        << estimator_type << "!" );
+  }
 }
 
 // Get the estimator particle types - required
+/*! \details Unlike the estimator type, the particle type only needs to be
+ * specified in either the .sat file or the xml file. An exception is thrown
+ * if it appears in neither or if it appears in both and they do not match.
+ */
 void StandardEstimatorFactory<moab::DagMC>::getEstimatorParticleType( 
                            Teuchos::Array<ParticleType>& particle_types,
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const
 {
+  if( d_geom_estimator_id_ptype_map.find( id ) != 
+      d_geom_estimator_id_ptype_map.end() )
+  {
+    // Make sure the DagMC particle type and the param. list particle type ==
+    if( estimator_rep.isParameter( "Particle Type" ) )
+    {
+      TEST_FOR_EXCEPTION( d_geom_estimator_id_ptype_map.find( id )->second !=
+                          estimator_rep.get<std::string>( "Particle Type" ),
+                          InvalidEstimatorRepresentation,
+                          "Error: estimator " << id << " specified in the "
+                          "xml file and the .sat file have inconsitent "
+                          "particle types ("
+                          << estimator_rep.get<std::string>("Particle Type") <<
+                          " != " 
+                          << d_geom_estimator_id_ptype_map.find(id)->second <<
+                          ")!" );
+    }
+    
+    const std::string& particle_type_name = 
+      d_geom_estimator_id_ptype_map.find( id )->second;
 
+    this->convertParticleTypeNameToParticleTypes( particle_types,
+                                                  estimator_id,
+                                                  particle_type_name );
+  }
+  // Use the default method to extract the particle type
+  else
+  {
+    EstimatorFactory::getEstimatorParticleType( particle_types,
+                                                estimator_id,
+                                                estimator_rep );
+  }
 }
 
-// Get the cells assigned to the estimator - required if cell estimator
-void StandardEstimatorFactory<moab::DagMC>::getEstimatorCells( 
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& assigned_cells,
-    const unsigned estimator_id,
-    const Teuchos::ParameterList& estimator_rep ) const
+// Verify the existence of cells
+void StandardEstimatorFactory<moab::DagMC>::verifyExistenceOfCells(
+        const boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
+        cells ) const
 {
+  boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>::const_iterator cell = cells.begin();
 
+  while( cell != cells.end() )
+  {
+    TEST_FOR_EXCEPTION( 
+          !Geometry::ModuleInterface<moab::DagMC>::doesCellExist( *cell ),
+          InvalidEstimatorRepresentation,
+          "Error: estimator " << estimator_id << " specified "
+          "cell " << *cell << " in the xml "
+          "file, which does not exists!" );
+    
+    ++cell;
+  }
+}
+
+// Get the cached cells (add to set)
+void StandardEstimatorFactory<moab::DagMC>::getCachedCells( 
+       boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
+       const unsigned estimator_id ) const
+{
+  if( d_geom_estimator_id_cells_map.find( estimator_id ) != 
+      d_geom_estimator_id_cells_map.end() )
+  {
+    unique_cells.insert( 
+            d_geom_estimator_id_cells_map.find( estimator_id )->second.begin(),
+            d_geom_estimator_id_cells_map.find( estimator_id )->second.end() );
+  }
 }
 
 // Get the cell volumes
+/*! \details Make sure the existence of the cells is confirmed before
+ * calling this method.
+ */ 
 void StandardEstimatorFactory<moab::DagMC>::getCellVolumes( 
      Teuchos::Array<double>& cell_volumes,
      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells )
 {
+  // Resize the cell volume array
+  cell_volumes.resize( cells.size() );
 
+  // Get the volume of every cell
+  for( unsigned i = 0; i < cells.size(); ++i )
+  {
+    // Check if the cell volume has already been cached
+    if( d_cell_volume_map.find( cells[i] ) != d_cell_volume_map.end() )
+      cell_volumes[i] = d_cell_volume_map.find( cells[i] )->second;
+    
+    // Calculate and cache the cell volume if the cell is new
+    else
+    {
+      cell_volumes[i] = 
+        Geometry::ModuleInterface<moab::DagMC>::getCellVolume( cells[i] );
+
+      d_cell_volume_map[cells[i]] = cell_volumes[i];
+    }
+  }
 }
 
-// Get the surfaces assigned to the estimator - required if surface est.
-void StandardEstimatorFactory<moab::DagMC>::getEstimatorSurfaces( 
-                 Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-                 assigned_surfaces,
-                 const unsigned estimator_id,
-                 const Teuchos::ParameterList& estimator_rep ) const
+// Verify the existence of surfaces
+void verifyExistenceOfSurfaces(
+     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     surfaces ) const
 {
+  boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>::const_iterator surface = surfaces.begin();
 
+  while( surface != surfaces.end() )
+  {
+    TEST_FOR_EXCEPTION( 
+          !Geometry::ModuleInterface<moab::DagMC>::doesSurfaceExist(*surface),
+          InvalidEstimatorRepresentation,
+          "Error: estimator " << estimator_id << " specified "
+          "surface " << *surface << " in the xml "
+          "file, which does not exists!" );
+    
+    ++surface;
+  }
+}
+
+// Get the cached surfaces (add to set)
+void getCachedSurfaces(
+     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     surfaces,
+     const unsigned estimator_id ) const
+{
+  if( d_geom_estimator_id_surfaces_map.find( estimator_id ) != 
+      d_geom_estimator_id_surfaces_map.end() )
+  {
+    surfaces.insert( 
+         d_geom_estimator_id_surfaces_map.find( estimator_id )->second.begin(),
+         d_geom_estimator_id_surfaces_map.find( estimator_id )->second.end() );
+  }
 }
 
 // Get the surface areas
+/*! \details Make sure the existence of the surfaces is confirmed before
+ * calling this method.
+ */
 void StandardEstimatorFactory<moab::DagMC>::getSurfaceAreas( 
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces )
 {
+  // Resize the surface areas array
+  surface_areas.resize( surfaces.size() );
 
+  // Get the area of every surface
+  for( unsigned i = 0; i < surfaces.size(); ++i )
+  {
+    // Check if the surface area has already been cached
+    if( d_surface_area_map.find( surfaces[i] ) != d_surface_area_map.end() )
+      surface_areas[i] = d_surface_area_map.find( surfaces[i] )->second;
+
+    // Calculate and cache the surface area if the surface is new
+    else
+    {
+      surface_areas[i] = 
+        Geometry::ModuleInterface<moab::DagMC>::getCellSurfaceArea(
+                                                              surfaces[i], 0 );
+      d_surface_area_map[surfaces[i]] = surface_areas[i];
+    }
+  }
 }
 
 // Update the estimator cache info
+/*! \details This function should be called after an estimator has been
+ * successfully created by the factory. All of the cached info for this
+ * estimator will be deleted.
+ */
 void StandardEstimatorFactory<moab::DagMC>::updateEstimatorCacheInfo( 
                                                             const unsigned id )
 {
+  if( d_geom_estimator_id_type_map.find( id ) !=
+      d_geom_estimator_id_type_map.end() )
+  {
+    d_geom_estimator_id_type_map.erase( 
+                                     d_geom_estimator_id_type_map.find( id ) );
+  }
 
+  if( d_geom_estimator_id_ptype_map.find( id ) !=
+      d_geom_estimator_id_ptype_map.end() )
+  {
+    d_geom_estimator_id_ptype_map.erase(
+                                    d_geom_estimator_id_ptype_map.find( id ) );
+  }
+
+  if( d_geom_estimator_id_cells_map.find( id ) !=
+      d_geom_estimator_id_cells_map.end() )
+  {
+    d_geom_estimator_id_cells_map.erase(
+                                    d_geom_estimator_id_cells_map.find( id ) );
+  }
+
+  if( d_geom_estimator_id_surfaces_map.find( id ) !=
+      d_geom_estimator_id_surfaces_map.end() )
+  {
+    d_geom_estimator_id_surfaces_map.erase(
+                                 d_geom_estimator_id_surfaces_map.find( id ) );
+  }
 }
 
 } // end MonteCarlo namespace

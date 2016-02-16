@@ -58,6 +58,30 @@ public:
   
 protected:
 
+  //! Check if an estimator type is a cell estimator
+  static bool isCellEstimator( const std::string& estimator_name );
+
+  //! Check if an estimator type is a surface estimator
+  static bool isSurfaceEstimator( const std::string& estimator_name );
+
+  //! Check if an estimator type is a mesh estimator
+  static bool isMeshEstimator( const std::string& estimator_name );
+
+  //! Return the cell pulse height estimator name
+  static const std::string& getCellPulseHeightEstimatorName();
+
+  //! Return the cell track length flux estimator name
+  static const std::string& getCellTrackLengthFluxEstimatorName();
+
+  //! Return the cell collision flux estimator name
+  static const std::string& getCellCollisionFluxEstimatorName();
+
+  //! Return the surface flux estimator name
+  static const std::string& getSurfaceFluxEstimatorName();
+
+  //! Return the surface current estimator name
+  static const std::string& getSurfaceCurrentEstimatorName();
+
   //! Verify that the estimator type is consistent with cached data
   virtual void verifyEstimatorTypeConsistency( 
                                  const unsigned estimator_id,
@@ -68,13 +92,29 @@ protected:
                            Teuchos::Array<ParticleType>& particle_types,
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const;
+  
+  //! Convert the particle type name to particle types
+  void convertParticleTypeNameToParticleTypes( 
+                                 Teuchos::Array<ParticleType>& particle_types,
+                                 const unsigned estimator_id,
+                                 const std::string& particle_type_name ) const;
 
   //! Get the cells assigned to the estimator - required if cell estimator
-  virtual void getEstimatorCells( 
+  void getEstimatorCells( 
                     Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
                     assigned_cells,
                     const unsigned estimator_id,
-                    const Teuchos::ParameterList& estimator_rep ) const = 0;
+                    const Teuchos::ParameterList& estimator_rep ) const;
+
+  //! Verify the existence of cells
+  virtual void verifyExistenceOfCells(
+        const boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
+        cells ) const = 0;
+
+  //! Get the cached cells (add to set)
+  virtual void getCachedCells( 
+       boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>& cells,
+       const unsigned estimator_id ) const = 0;
 
   //! Get the cell volumes
   virtual void getCellVolumes( 
@@ -82,38 +122,52 @@ protected:
               const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
               cells ) = 0;
 
-  // Get the surfaces assigned to the estimator - required if surface est.
-  virtual void getEstimatorSurfaces( 
+  //! Get the surfaces assigned to the estimator - required if surface est.
+  void getEstimatorSurfaces( 
                  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
                  assigned_surfaces,
                  const unsigned estimator_id,
-                 const Teuchos::ParameterList& estimator_rep ) const = 0;
+                 const Teuchos::ParameterList& estimator_rep ) const;
 
-  // Get the surface areas
+  //! Verify the existence of surfaces
+  virtual void verifyExistenceOfSurfaces(
+     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     surfaces ) const = 0;
+
+  //! Get the cached surfaces (add to set)
+  virtual void getCachedSurfaces(
+     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     surfaces,
+     const unsigned estimator_id ) const = 0;
+
+  //! Get the surface areas
   virtual void getSurfaceAreas( 
            Teuchos::Array<double>& surface_areas,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces ) = 0; 
 
-  //! Create and register a surface flux estimator
-  virtual void createAndRegisterSurfaceFluxEstimator(
-         const Teuchos::ParameterList& estimator_rep,
+  //! Create and register a cell estimator
+  void createAndRegisterCellEstimator(
+      const std::string& cell_estimator_type,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const bool energy_multiplication = false,
+      const Teuchos::ParameterList* bins = NULL );
+
+  // Create and register a surface estimator
+  virtual void createAndRegisterSurfaceEstimator(
+         const std::string& surface_estimator_type,
          const unsigned id,
-	 const double multiplier,
-	 const Teuchos::Array<ParticleType> particle_types,
+         const double multiplier,
+         const Teuchos::Array<ParticleType> particle_types,
          const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+         surfaces,
 	 const bool energy_multiplication = false,
 	 const Teuchos::ParameterList* bins = NULL );
-
-  //! Create a surface current estimator
-  virtual void createAndRegisterSurfaceCurrentEstimator(
-         const Teuchos::ParameterList& estimator_rep,
-         const unsigned id,
-	 const double multiplier,
-	 const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-	 const bool energy_multiplication = false,
-	 const Teuchos::ParameterList* bins = NULL ) const;
 
   //! Update the estimator cache info
   virtual void updateEstimatorCacheInfo( const unsigned estimator_id ) = 0;
@@ -126,46 +180,22 @@ private:
   //! Check if an estimator type is a cell pulse height estimator
   static bool isCellPulseHeightEstimator( const std::string& estimator_name );
 
-  //! Return the cell pulse height estimator name
-  static const std::string& getCellPulseHeightEstimatorName();
-
   //! Check if an estimator type is a cell track length flux estimator
   static bool isCellTrackLengthFluxEstimator( 
 					   const std::string& estimator_name );
 
-  //! Return the cell track length flux estimator name
-  static const std::string& getCellTrackLengthFluxEstimatorName();
-
   //! Check if an estimator type is a cell collision flux estimator
   static bool isCellCollisionFluxEstimator(const std::string& estimator_name );
-
-  //! Return the cell collision flux estimator name
-  static const std::string& getCellCollisionFluxEstimatorName();
-
-  //! Check if an estimator type is a cell estimator
-  static bool isCellEstimator( const std::string& estimator_name );
 
   //! Check if an estimator type is a surface flux estimator
   static bool isSurfaceFluxEstimator( const std::string& estimator_name );
 
-  //! Return the surface flux estimator name
-  static const std::string& getSurfaceFluxEstimatorName();
-
   //! Check if an estimator type is a surface current estimator
   static bool isSurfaceCurrentEstimator( const std::string& estimator_name );
-
-  //! Return the surface current estimator name
-  static const std::string& getSurfaceCurrentEstimatorName();
-
-  //! Check if an estimator type is a surface estimator
-  static bool isSurfaceEstimator( const std::string& estimator_name );
 
   //! Check if an estimator type is a tet mesh track length flux estimator
   static bool isTetMeshTrackLengthFluxEstimator( 
                                            const std::string& estimator_name );
-
-  //! Check if an estimator type is a mesh estimator
-  static bool isMeshEstimator( const std::string& estimator_name );
 
   //! Check if an object type is an estimator
   static bool isEstimator( const std::string& object_name );
@@ -201,38 +231,60 @@ private:
 
   //! Create and register a cell pulse height estimator
   void createAndRegisterCellPulseHeightEstimator(
-      const Teuchos::ParameterList& estimator_rep,
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;
 
   //! Create and register a cell track length flux estimator
   void createAndRegisterCellTrackLengthFluxEstimator(
-      const Teuchos::ParameterList& estimator_rep,
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
   
   //! Create and register a cell collision flux estimator
   void createAndRegisterCellCollisionFluxEstimator(
-      const Teuchos::ParameterList& estimator_rep,
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
 
+  // Create and register a surface flux estimator
+  void createAndRegisterSurfaceFluxEstimator(
+         const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+         surfaces,
+	 const bool energy_multiplication = false,
+	 const Teuchos::ParameterList* bins = NULL );
+
+  // Create and register a surface current estimator
+  void createAndRegisterSurfaceCurrentEstimator(
+         const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+         surfaces,
+	 const bool energy_multiplication = false,
+	 const Teuchos::ParameterList* bins = NULL ) const;
+  
   //! Create and register a tet mesh track length flux estimator
   void createAndRegisterTetMeshTrackLengthFluxEstimator(
          const Teuchos::ParameterList& estimator_rep,
-	 const unsigned id,
+         const unsigned id,
 	 const double multiplier,
 	 const Teuchos::Array<ParticleType> particle_types,
 	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
