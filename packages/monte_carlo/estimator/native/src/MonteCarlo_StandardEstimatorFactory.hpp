@@ -41,7 +41,7 @@ public:
 //! Helper function for creating an estimatory factory instance
 template<typename GeometryHandler>
 inline std::shared_ptr<EstimatorFactory>
-getEstimatorHandlerFactoryInstance( 
+getEstimatorFactoryInstance( 
           const std::shared_ptr<EventHandler>& event_handler,
           const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
           response_function_id_map,
