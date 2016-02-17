@@ -11,9 +11,13 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <stdexcept>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+// Boost Includes
+#include <boost/unordered_set.hpp>
+
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -109,7 +113,8 @@ protected:
   //! Verify the existence of cells
   virtual void verifyExistenceOfCells(
         const boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
-        cells ) const = 0;
+        cells,
+        const unsigned estimator_id ) const = 0;
 
   //! Get the cached cells (add to set)
   virtual void getCachedCells( 
@@ -132,7 +137,8 @@ protected:
   //! Verify the existence of surfaces
   virtual void verifyExistenceOfSurfaces(
      const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
-     surfaces ) const = 0;
+     surfaces,
+     const unsigned estimator_id ) const = 0;
 
   //! Get the cached surfaces (add to set)
   virtual void getCachedSurfaces(
@@ -322,6 +328,17 @@ private:
 
   // The warning output stream
   std::ostream* s_os_warn;                               
+};
+
+//! The invalid estimator representation error
+class InvalidEstimatorRepresentation : public std::logic_error
+{
+  
+public:
+
+  InvalidEstimatorRepresentation( const std::string& what_arg )
+    : std::logic_error( what_arg )
+  { /* ... */ }
 };
 
 } // end MonteCarlo

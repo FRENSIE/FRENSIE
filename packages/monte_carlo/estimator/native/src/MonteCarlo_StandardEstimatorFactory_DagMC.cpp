@@ -6,20 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/unordered_set.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
-#include "MonteCarlo_CellPulseHeightEstimator.hpp"
-#include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
-#include "MonteCarlo_CellCollisionFluxEstimator.hpp"
-#include "MonteCarlo_SurfaceFluxEstimator.hpp"
-#include "MonteCarlo_SurfaceCurrentEstimator.hpp"
-#include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "FRENSIE_dagmc_config.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCProperties.hpp"
@@ -476,8 +468,10 @@ void StandardEstimatorFactory<moab::DagMC>::getEstimatorParticleType(
 // Verify the existence of cells
 void StandardEstimatorFactory<moab::DagMC>::verifyExistenceOfCells(
         const boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
-        cells ) const
+        cells,
+        const unsigned estimator_id ) const
 {
+#ifdef HAVE_FRENSIE_DAGMC
   boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>::const_iterator cell = cells.begin();
 
   while( cell != cells.end() )
@@ -491,6 +485,7 @@ void StandardEstimatorFactory<moab::DagMC>::verifyExistenceOfCells(
     
     ++cell;
   }
+#endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Get the cached cells (add to set)

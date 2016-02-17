@@ -236,17 +236,6 @@ private:
   static const std::string tet_mesh_track_length_flux_name;
 };
 
-//! The invalid estimator representation error
-class InvalidEstimatorRepresentation : public std::logic_error
-{
-  
-public:
-
-  InvalidEstimatorRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
-};
-
 } // end MonteCarlo namespace
 
 #endif // end FACEMC_EVENT_HANDLER_FACTORY_HPP

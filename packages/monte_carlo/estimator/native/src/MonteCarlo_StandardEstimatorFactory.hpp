@@ -33,10 +33,6 @@ public:
   ~StandardEstimatorFactory()
   { /* ... */ }
 
-  //! Create and register an estimator
-  void createAndRegisterEstimator(const Teuchos::ParameterList& estimator_rep )
-  { GeometryHandler::geometry_handler_is_missing_specialization(); }
-
   //! Create and register cached estimators
   void createAndRegisterCachedEstimators()
   { GeometryHandler::geometry_handler_is_missing_specialization(); }
