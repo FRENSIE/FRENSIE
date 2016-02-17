@@ -18,15 +18,15 @@
 
 //! Create the event handler
 template<typename GeometryHandler>
-void EventHandlerFactory<GeometryHandler>::createHandler( 
-          std::shared_ptr<EventHandler>& event_handler,
+std::shared_ptr<EventHandler>
+EventHandlerFactory<GeometryHandler>::createHandler( 
           const Teuchos::ParameterList& observer_reps,
           const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
           response_function_id_map,
           std::ostream* os_warn )
 {
-  // Reset the event handler
-  event_handler.reset( new EventHandler() );
+  // Create a new event handler
+  std::shared_ptr<EventHandler> event_handler( new EventHandler() );
 
   // Create the estimator factory
   std::shared_ptr<EstimatorFactory> estimator_factory;
@@ -79,6 +79,9 @@ void EventHandlerFactory<GeometryHandler>::createHandler(
 
   // Create any cached observers
   estimator_factory->createAndRegisterCachedEstimators();
+
+  // Return the new event handler
+  return event_handler;
 }
 
 #endif // end MONTE_CARLO_EVENT_HANDLER_FACTORY_DEF_HPP

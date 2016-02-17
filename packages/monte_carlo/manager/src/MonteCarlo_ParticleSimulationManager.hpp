@@ -111,6 +111,12 @@ private:
   void ignoreParticle( ParticleStateType& particle,
 		       ParticleBank& particle_bank ) const;
 
+  // Print lost particle info
+  void printLostParticleInfo( const std::string& file,
+                              const int line,
+                              const std::string& error_message ) const;
+                              
+
   // Starting history
   unsigned long long d_start_history;
   
@@ -146,35 +152,28 @@ private:
 #define CATCH_LOST_PARTICLE_AND_BREAK( particle )			\
   catch( std::runtime_error& exception )				\
   {									\
-    std::cout << exception.what() << std::endl;				\
-    std::cout << "Lost particle info: " << std::endl;			\
-    std::cout << " History: " << particle.getHistoryNumber() << std::endl; \
-    std::cout << " Cell: " << particle.getCell() << std::endl;		\
-    std::cout << " Position: " << particle.getXPosition() << " ";	\
-    std::cout << particle.getYPosition() << " ";			\
-    std::cout << particle.getZPosition() << std::endl;			\
-    std::cout << " Direction: " << particle.getXDirection() << " ";	\
-    std::cout << particle.getYDirection() << " ";			\
-    std::cout << particle.getZDirection() << std::endl;			\
     particle.setAsLost();						\
+                                                                        \
+    this->printLostParticleInfo( __FILE__,                              \
+                                 __LINE__,                              \
+                                 exception.what(),                      \
+                                 particle );                            \
     break;								\
-    }
+  }
 
 //! Macro for catching a lost source particle
 #define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank )			\
   catch( std::runtime_error& exception )				\
   {									\
-    std::cout << exception.what() << std::endl;				\
-    std::cout << "Lost particle info: " << std::endl;			\
-    std::cout << " History: " << bank.top().getHistoryNumber() << std::endl; \
-    std::cout << " Cell: " << bank.top().getCell() << std::endl;	\
-    std::cout << " Position: " << bank.top().getXPosition() << " ";	\
-    std::cout << bank.top().getYPosition() << " ";			\
-    std::cout << bank.top().getZPosition() << std::endl;		\
-    std::cout << " Direction: " << bank.top().getXDirection() << " ";	\
-    std::cout << bank.top().getYDirection() << " ";			\
-    std::cout << bank.top().getZDirection() << std::endl;		\
+    bank.top().setAsLost();                                             \
+                                                                        \
+    this->printLostParticleInfo( __FILE__,                              \
+                                 __LINE__,                              \
+                                 exception.what(),                      \
+                                 bank.top() );                          \
+                                                                        \
     bank.pop();								\
+                                                                        \
     continue;								\
   }
 

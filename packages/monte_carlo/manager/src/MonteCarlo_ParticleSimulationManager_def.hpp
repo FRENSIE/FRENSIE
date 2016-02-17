@@ -524,6 +524,38 @@ void ParticleSimulationManager<GeometryHandler,
   particle.setAsGone();
 }
 
+// Print lost particle info
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::printLostParticleInfo( 
+                                       const std::string& file,
+                                       const int line,
+                                       const std::string& error_message,
+                                       const ParticleState& particle ) const
+{
+  #pragma omp critical( lost_particle )
+  {
+    std::cerr << error_message << std::endl
+              << "Particle " << particle.getHistoryNumber() << " (gen "
+              << particle.getGenerationNumber() << ") lost: " << std::endl
+              << "\t File: " << file << std::endl
+              << "\t Line: " << line << std::endl
+              << "\t Cell: " << particle.getCell() << std::endl
+              << "\t Position: " << particle.getXPosition() << " "
+              << particle.getYPosition() << " "
+              << particle.getZPosition() << std::endl
+              << "\t Direction: " << particle.getXDirection() << " "
+              << particle.getYDirection() << " "
+              << particle.getZDirection() << std::endl
+              << "\t Type: " << particle.getParticleType() << std::endl;
+  }
+}
+
 // Print the data in all estimators to the desired stream
 template<typename GeometryHandler,
 	 typename SourceHandler,

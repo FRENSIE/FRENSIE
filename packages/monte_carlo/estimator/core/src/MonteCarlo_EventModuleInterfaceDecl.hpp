@@ -170,7 +170,7 @@ public:
 //! Set the event handler instance
 template<typename EventHandler>
 inline void setEventHandlerInstance(
-		       const Teuchos::RCP<EventHandler>& handler_instance )
+                        const std::shared_ptr<EventHandler>& handler_instance )
 {
   EventModuleInterface<EventHandler>::setHandlerInstance( handler_instance );
 }
