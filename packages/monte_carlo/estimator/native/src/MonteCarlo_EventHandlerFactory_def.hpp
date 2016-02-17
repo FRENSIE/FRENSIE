@@ -46,10 +46,15 @@ void EventHandlerFactory<GeometryHandler>::createHandler(
 
   while( observer_rep != observer_reps.end() )
   {
-    // Note: if the parameter entry is not a parameter list an exception will
-    // get thrown here - there should probably be better error handling...
+    // Make sure every parameter entry is a list
+    TEST_FOR_EXCEPTION( !observer_rep->second.isList(),
+                        InvalidObserverRepresentation,
+                        "Error: all observers must be specified with "
+                        "parameter lists (non-list parameter was found in "
+                        "the observers xml file!" );
+                        
     const Teuchos::Parameterlist& observer_rep = 
-      Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
+      Teuchos::any_cast<Teuchos::ParameterList>(observer_rep->second.getAny());
 
     try{
       // Create the estimator
