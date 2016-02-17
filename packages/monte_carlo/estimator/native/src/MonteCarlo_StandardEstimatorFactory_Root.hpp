@@ -1,27 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_StandardEstimatorFactory_DagMC.hpp
-//! \author Alex Robinson
-//! \brief  The standard estimator factory class specialization for DagMC
+//! \file   MonteCarlo_StandardEstimatorFactory_Root.hpp
+//! \author Alex Robinson, Eli Moll
+//! \brief  The standard estimator factory class specialization for Root
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
-#define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
-
-// Moab Includes
-#include <DagMC.hpp>
+#ifndef MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_ROOT_HPP
+#define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_ROOT_HPP
 
 // FRENSIE Includes
+#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_StandardEstimatorFactory.hpp"
 
 namespace MonteCarlo{
 
-//! The standard estimator factory class specialization for DagMC
-template<>
-class StandardEstimatorFactory<moab::DagMC> : public EstimatorFactory
-{
+#ifdef HAVE_FRENSIE_ROOT
 
+//! The standard estimator factory class specialization for Root
+template<>
+class StandardEstimatorFactory<Geometry::Root> : public EstimatorFactory
+{
+  
 public:
 
   //! Constructor
@@ -43,12 +43,6 @@ protected:
   //! Verify that the estimator type is consistent with cached data
   void verifyEstimatorTypeConsistency( const unsigned estimator_id,
                                        const std::string& estimator_type ) const;
-
-  //! Get the estimator particle types - required
-  void getEstimatorParticleType( 
-                           Teuchos::Array<ParticleType>& particle_types,
-                           const unsigned estimator_id,
-                           const Teuchos::ParameterList& estimator_rep ) const;
 
   //! Verify the existence of cells
   void verifyExistenceOfCells(
@@ -84,38 +78,22 @@ protected:
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
            surfaces );
 
+  //! Create and register a surface estimator
+  void createAndRegisterSurfaceEstimator(
+         const std::string& surface_estimator_type,
+         const unsigned id,
+         const double multiplier,
+         const Teuchos::Array<ParticleType> particle_types,
+         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+         surfaces,
+	 const bool energy_multiplication = false,
+	 const Teuchos::ParameterList* bins = NULL );
+
   //! Update the estimator cache info
   void updateEstimatorCacheInfo( const unsigned id );
-  
+
 private:
-
-  // Load estimator id maps with cell estimator properties
-  void loadEstimatorIdMapsWithCellEstimatorProps();
-
-  // Load estimator id mpas with surface estimator properties
-  void loadEstimatorIdMapsWithSurfaceEstimatorProps();
-
-  // Load the cell volume map
-  void loadCellVolumeMap();
-
-  // Load the surface area map
-  void loadSurfaceAreaMap();
-
-  // Convert a DagMC estimator type name to the standard estimator type name
-  std::string convertDagMCEstimatorTypeNameToStandard(
-                          const std::string& dagmc_estimator_type_name ) const;
-
-  // The estimator id type map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_type_map;
-
-  // The estimator id particle type map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_ptype_map;
-
-  // The estimator id cells map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_cells_map;
-
-  // The estimator id surfaces map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_surfaces_map;
 
   // The cell volume map
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
@@ -126,10 +104,12 @@ private:
   d_surface_area_map;
 };
 
+#endif // end HAVE_FRENSIE_ROOT
+
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
+#endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_ROOT_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_StandardEstimatorFactory_DagMC.hpp
+// end MonteCarlo_StandardEstimatorFactory_Root.hpp
 //---------------------------------------------------------------------------//

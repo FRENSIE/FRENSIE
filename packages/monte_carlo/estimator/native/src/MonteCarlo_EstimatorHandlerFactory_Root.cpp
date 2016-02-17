@@ -603,21 +603,7 @@ void EstimatorHandlerFactory<Geometry::Root>::createCellVolumeMap(
    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >::const_iterator
     it = estimator_id_cells_map.begin();
 
-  TObjArray* volume_list = Geometry::Root::getManager()->GetListOfVolumes();
-  TIterator* volume_list_iterator = volume_list->MakeIterator();
-  int number_volumes = volume_list->GetEntries();
   
-  for (int i=0; i < number_volumes; i++) 
-  {
-    TObject* current_object = volume_list_iterator->Next();
-    TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
-    if ( current_volume->GetUniqueID() == 0 )
-    {
-      THROW_EXCEPTION( std::runtime_error,
-                       "Error: Root contains a cell which has not been "
-                       " assigned a unique cell ID in the input file." );
-    }
-  } 
 
 
   while( it != estimator_id_cells_map.end() )
