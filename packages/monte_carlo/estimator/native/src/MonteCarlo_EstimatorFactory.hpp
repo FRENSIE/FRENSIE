@@ -26,6 +26,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
 #include "MonteCarlo_EventHandler.hpp"
+#include "MonteCarlo_ResponseFunction.hpp"
 
 namespace MonteCarlo{
 
@@ -331,13 +332,13 @@ private:
 };
 
 //! The invalid estimator representation error
-class InvalidEstimatorRepresentation : public std::logic_error
+class InvalidEstimatorRepresentation : public std::runtime_error
 {
   
 public:
 
   InvalidEstimatorRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
+    : std::runtime_error( what_arg )
   { /* ... */ }
 };
 
