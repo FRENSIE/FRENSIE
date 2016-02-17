@@ -35,12 +35,16 @@ class EventHandlerFactory
 public:
 
   //! Create the event handler
-  static void createHandler( 
-          std::shared_ptr<EventHandler>& event_handler,
+  static std::shared_ptr<EventHandler> createHandler(
           const Teuchos::ParameterList& observer_reps,
           const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
           response_function_id_map,
           std::ostream* os_warn = &std::cerr );
+
+private:
+
+  // Constructor
+  EventHandlerFactory();
 };
 
 //! The invalid observer representation error

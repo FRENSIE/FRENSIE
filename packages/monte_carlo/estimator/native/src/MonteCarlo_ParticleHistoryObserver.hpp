@@ -60,6 +60,10 @@ public:
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process ) = 0;
 
+  //! Export the estimator data
+  virtual void exportData( const std::string& hdf5_file_name,
+                           const bool process_data ) const = 0;
+
 protected:
 
   //! Get the number of particle histories observed
