@@ -206,6 +206,51 @@ void GaussKronrodIntegrator::sortErrorList(
   maximum_bin_error = bin_error[bin_with_larger_error];
 };
 
+// get the Wynn Epsilon-Algoirithm extrapolated value
+void GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation( 
+        Teuchos::Array<double>& bin_extrapolated_result, 
+        Teuchos::Array<double>& last_three_results, 
+        double& extrapolated_result, 
+        double& extrapolated_error,  
+        int& number_of_extrapolations,
+        int& last_extrapolated_bin  ) const
+{
+
+};  
+
+// check the roundoff error 
+void GaussKronrodIntegrator::checkRoundoffError( 
+                       const BinTraits& bin, 
+                       const BinTraits& bin_1, 
+                       const BinTraits& bin_2,    
+                       const double& bin_1_asc,
+                       const double& bin_2_asc,
+                       int& round_off_1,
+                       int& round_off_2,
+                       const int number_of_iterations ) const
+{
+    if (bin_1_asc != bin_1.error && bin_2_asc != bin_2.error)
+    {
+       double area_12 = bin_1.result + bin_2.result;
+       double error_12 = bin_1.error + bin_2.error;
+       double delta = bin.result - area_12;
+
+       if ( fabs (delta) <= 1.0e-5 * fabs (area_12) && 
+            error_12 >= 0.99 * bin.error )
+       {
+         round_off_1++;
+       }
+       if ( number_of_iterations >= 10 && error_12 > bin.error )
+       {
+          round_off_2++;
+       }
+     }
+
+    TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
+                        Utility::IntegratorException,
+                        "Roundoff error prevented tolerance from being achieved" );
+};
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

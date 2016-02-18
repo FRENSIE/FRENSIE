@@ -21,7 +21,7 @@ struct BinTraits
 {
   double lower_limit;
   double upper_limit;
-  double result;
+  long double result;
   double error;
 
   bool operator <( const BinTraits& bins ) const
@@ -55,14 +55,6 @@ public:
 		  double& absolute_error,
 		  size_t& number_of_function_evals ) const;
 */
-  //! Integrate the function adaptively
-  template<int Points, typename Functor>
-  void integrateAdaptivelyWithoutQueue( Functor& integrand,
-			    double lower_limit,
-			    double upper_limit,
-			    double& result,
-			    double& absolute_error ) const;
-
   //! Integrate the function adaptively with BinQueue
   template<int Points, typename Functor>
   void integrateAdaptively( Functor& integrand,
@@ -77,7 +69,7 @@ public:
                 Functor& integrand,
 			    double lower_limit,
 			    double upper_limit,
-			    double& result,
+			    long double& result,
 			    double& absolute_error,
                 double& result_abs, 
                 double& result_asc ) const;
@@ -109,7 +101,7 @@ public:
 				       double upper_limit,
 				       double& result,
 				       double& absolute_error ) const;
-/*
+
   //! Integrate a function with known integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( 
@@ -117,8 +109,8 @@ public:
 			  const Teuchos::ArrayView<double>& points_of_interest,
 			  double& result,
 			  double& absolute_error ) const;
-*/
-private:
+
+protected:
   // Function wrapper for evaluating the functor
   template<typename Functor>
   static double functorWrapper( const double x, void* indirected_functor );
@@ -132,6 +124,16 @@ private:
     double midpoint,
     double& integrand_value_lower,
     double& integrand_value_upper ) const;
+
+  // Bisect and integrate the given bin interval
+  template<int Points, typename Functor>
+  void bisectAndIntegrateBinInterval( 
+    Functor& integrand, 
+    const BinTraits& bin,
+    BinTraits& bin_1,
+    BinTraits& bin_2,
+    double& bin_1_asc,
+    double& bin_2_asc ) const;
 
   // Rescale absolute error from integration
   void rescaleAbsoluteError( 
@@ -161,6 +163,17 @@ private:
                               int& last,
                               int& bin_with_max_error ) const;
 
+  // check the roundoff error 
+  void checkRoundoffError( 
+                       const BinTraits& bin, 
+                       const BinTraits& bin_1, 
+                       const BinTraits& bin_2,    
+                       const double& bin_1_asc,
+                       const double& bin_2_asc,
+                       int& round_off_1,
+                       int& round_off_2,
+                       const int number_of_iterations ) const;
+ 
   // Sort the bin order from highest to lowest error 
   void sortErrorList( Teuchos::Array<double>& bin_error,
                       Teuchos::Array<double>& bin_order, 
@@ -169,7 +182,16 @@ private:
                       int bin_with_smaller_error, 
                       int nr_max ) const;
 
+  // get the Wynn Epsilon-Algoirithm extrapolated value
+  void getWynnEpsilonAlgorithmExtrapolation( 
+        Teuchos::Array<double>& bin_extrapolated_result, 
+        Teuchos::Array<double>& last_three_results, 
+        double& extrapolated_result, 
+        double& extrapolated_error,  
+        int& number_of_extrapolations,
+        int& last_extrapolated_bin  ) const;
 
+private:
   // The relative error tolerance
   double d_relative_error_tol;
 
