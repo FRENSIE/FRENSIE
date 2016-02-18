@@ -299,7 +299,7 @@ private:
 
   //! Assign bins to an estimator
   void assignBinsToEstimator( const Teuchos::ParameterList& bins,
-                              Teuchos::RCP<Estimator>& estimator ) const;
+                              std::shared_ptr<Estimator>& estimator ) const;
 
   // The surface current estimator name
   static const std::string s_surface_current_name;
@@ -327,7 +327,7 @@ private:
   d_response_function_id_map;
 
   // The warning output stream
-  std::ostream* s_os_warn;                               
+  std::ostream* d_os_warn;                               
 };
 
 //! The invalid estimator representation error

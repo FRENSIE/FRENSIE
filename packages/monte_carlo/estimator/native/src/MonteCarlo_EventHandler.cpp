@@ -14,8 +14,10 @@
 #include "MonteCarlo_ParticleLeavingCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
+#include "Utility_HDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -86,7 +88,7 @@ void EventHandler::printObserverSummaries( std::ostream& os,
   ParticleHistoryObserver::setStartTime( start_time );
   ParticleHistoryObserver::setEndTime( end_time );
   
-  os << "Estimators: " << std::endl;
+  os << "Observers: " << std::endl;
   
   ParticleHistoryObservers::const_iterator it = 
     d_particle_history_observers.begin();
@@ -148,22 +150,26 @@ void EventHandler::exportObserverData(
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   
   // Initialize the HDF5 file
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+
+  hdf5_file->openHDF5FileAndOverwrite( data_file_name );
+
+  // Create a particle history observer HDF5 file handler
   {
-    EstimatorHDF5FileHandler hdf5_file_handler( 
-                     data_file_name,
-                     EstimatorHDF5FileHandler::OVERWRITE_ESTIMATOR_HDF5_FILE );
+    ParticleHistoryObserverHDF5FileHandler pho_hdf5_file_handler( hdf5_file );
   
     // Set the simulation time
-    hdf5_file_handler.setSimulationTime( end_time - start_time );
+    pho_hdf5_file_handler.setSimulationTime( end_time - start_time );
   
     ParticleHistoryObserver::setStartTime( start_time );
     ParticleHistoryObserver::setEndTime( end_time );
   
     // Set the last history simulated
-    hdf5_file_handler.setLastHistorySimulated( last_history_number );
+    pho_hdf5_file_handler.setLastHistorySimulated( last_history_number );
   
     // Set the number of histories simulated
-    hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
+    pho_hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
   
     ParticleHistoryObserver::setNumberOfHistories( histories_completed );
   }
@@ -174,7 +180,7 @@ void EventHandler::exportObserverData(
   
   while( it != d_particle_history_observers.end() )
   {
-    it->second->exportData( data_file_name, process_data );
+    it->second->exportData( hdf5_file, process_data );
 
     ++it;
   }
@@ -221,7 +227,7 @@ void EventHandler::updateObserversFromParticleSubtrackEndingInCellEvent(
 {
   ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
 						    particle,
-						    cell_leaving,
+						    cell_of_subtrack,
 						    particle_subtrack_length );
 }
 

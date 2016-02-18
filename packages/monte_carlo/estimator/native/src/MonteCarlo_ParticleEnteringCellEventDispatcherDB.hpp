@@ -9,11 +9,11 @@
 #ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
 #define FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
-
-// Teuchos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEnteringCellEventDispatcher.hpp"

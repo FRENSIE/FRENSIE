@@ -9,11 +9,11 @@
 #ifndef FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
 #define FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
-
-// Teuchos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
@@ -33,7 +33,7 @@ public:
   //! Attach an observer to the dispatcher
   static void attachObserver( 
                             const ModuleTraits::InternalEventObserverHandle id,
-                            Teuchos::RCP<Observer>& observer );
+                            const std::shared_ptr<Observer>& observer );
 
   //! Detach an observer from the dispatcher
   static void detachObserver( 
@@ -49,7 +49,7 @@ protected:
 
   // The observer map
   typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
-					Teuchos::RCP<Observer> > ObserverIdMap;
+					std::shared_ptr<Observer> > ObserverIdMap;
 
   // Get the oberver map
   static ObserverIdMap& observer_id_map();

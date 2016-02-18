@@ -9,6 +9,9 @@
 #ifndef FACEMC_OBSERVER_REGISTRATION_HELPERS_HPP
 #define FACEMC_OBSERVER_REGISTRATION_HELPERS_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/mpl/find.hpp>
 #include <boost/mpl/deref.hpp>
@@ -33,14 +36,15 @@ struct ObserverRegistrationHelper
   //! Register the observer with dispatchers associated with BeginEventTag tag
   template<typename Observer, typename EntityHandle>
   static void registerObserverWithTag(
-			      Teuchos::RCP<Observer>& observer,
+			      const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids );
 
   /*! Register the global observer with the global dispatcher associated with
    * BeginEventTag tag
    */
   template<typename Observer>
-  static void registerGlobalObserverWithTag( Teuchos::RCP<Observer>& observer);
+  static void registerGlobalObserverWithTag( 
+                                   const std::shared_ptr<Observer>& observer );
 };
 
 //! Struct for ending iteration through all event tags
@@ -50,28 +54,29 @@ struct ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>
   //! End registration iteration
   template<typename Observer, typename EntityHandle>
   static void registerObserverWithTag(
-			      Teuchos::RCP<Observer>& observer,
+			      const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids );
 
   //! End global registration iteration
   template<typename Observer>
-  static void registerGlobalObserverWithTag( Teuchos::RCP<Observer>& observer);
+  static void registerGlobalObserverWithTag( 
+                                    const std::shared_ptr<Observer>& observer);
 };
 
 //! Register an observer with the appropriate dispatcher
 template<typename Observer, typename EntityHandle>
-void registerObserver( Teuchos::RCP<Observer>& observer,
+void registerObserver( const std::shared_ptr<Observer>& observer,
 		       const Teuchos::Array<EntityHandle>& entity_ids );
 
 //! Register a global observer with the appropriate dispatcher
 template<typename Observer>
-void registerGlobalObserver( Teuchos::RCP<Observer>& observer );
+void registerGlobalObserver( const std::shared_ptr<Observer>& observer );
 
 /*! Register an observer with the appropriate particle colliding in cell event 
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-void registerObserver( Teuchos::RCP<Observer>& observer,
+void registerObserver( const std::shared_ptr<Observer>& observer,
 		       const Teuchos::Array<EntityHandle>& entity_ids,
 		       ParticleCollidingInCellEventObserver::EventTag );
 
@@ -79,7 +84,7 @@ void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleCrossingSurfaceEventObserver::EventTag );
 
@@ -87,7 +92,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleEnteringCellEventObserver::EventTag );
 
@@ -95,7 +100,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleLeavingCellEventObserver::EventTag );
 
@@ -104,7 +109,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  */
 template<typename Observer, typename EntityHandle>
 inline void registerObserver( 
-			 Teuchos::RCP<Observer>& observer,
+			 const std::shared_ptr<Observer>& observer,
 			 const Teuchos::Array<EntityHandle>& entity_ids,
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
 
@@ -113,7 +118,7 @@ inline void registerObserver(
  */
 template<typename Observer>
 inline void registerGlobalObserver( 
-			 Teuchos::RCP<Observer>& observer,
+			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
 
 } // end MonteCarlo namespace

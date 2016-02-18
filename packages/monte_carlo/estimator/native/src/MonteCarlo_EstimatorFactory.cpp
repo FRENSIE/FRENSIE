@@ -11,6 +11,8 @@
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
+#include "MonteCarlo_SurfaceFluxEstimator.hpp"
+#include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_ArrayString.hpp"
@@ -93,7 +95,7 @@ void EstimatorFactory::createAndRegisterEstimator(
                       InvalidEstimatorRepresentation,
                       "Error: estimator id " << estimator_id << " is used by "
                       "another observer!" );
-  TEST_FOR_EXCEPTION( id == 
+  TEST_FOR_EXCEPTION( estimator_id == 
                       ModuleTraits::invalid_internal_event_observer_handle,
                       InvalidEstimatorRepresentation,
                       "Error: estimator id " << estimator_id << 
@@ -185,8 +187,9 @@ void EstimatorFactory::createAndRegisterEstimator(
                                             multiplier,
                                             particle_types,
                                             response_functions,
-                                            energy_multiplication,
-                                            bins );
+                                            cells,
+                                            energy_mult,
+                                            estimator_bins );
     }
 
     // Create and register a surface estimator
@@ -195,27 +198,29 @@ void EstimatorFactory::createAndRegisterEstimator(
       // Get the surfaces
       Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surfaces;
   
-      this->getEstimatorSurfaces( surfaces, id, estimator_rep );
+      this->getEstimatorSurfaces( surfaces, estimator_id, estimator_rep );
       
       this->createAndRegisterSurfaceEstimator( estimator_type,
                                                estimator_id,
                                                multiplier,
                                                particle_types,
                                                response_functions,
-                                               energy_multiplication,
-                                               bins );
+                                               surfaces,
+                                               energy_mult,
+                                               estimator_bins );
     }
 
     // Create and register a tet mesh track length flux estimator
     else if( this->isTetMeshTrackLengthFluxEstimator( estimator_type ) )
     {
-      this->createAndRegisterTetMeshTrackLengthFluxEstimator( estimator_rep,
-                                                              estimator_id,
-                                                              multiplier,
-                                                              particle_types,
-                                                              response_functions,
-                                                              energy_multiplication,
-                                                              bins );
+      this->createAndRegisterTetMeshTrackLengthFluxEstimator( 
+                                                            estimator_rep,
+                                                            estimator_id,
+                                                            multiplier,
+                                                            particle_types,
+                                                            response_functions,
+                                                            energy_mult,
+                                                            estimator_bins );
     }
 
     // Invalid estimator type
@@ -310,31 +315,31 @@ bool EstimatorFactory::isEstimator( const std::string& object_name )
 }
 
 // Return the cell pulse height estimator name
-const std::string& getCellPulseHeightEstimatorName()
+const std::string& EstimatorFactory::getCellPulseHeightEstimatorName()
 {
   return s_cell_pulse_height_name;
 }
 
 // Return the cell track length flux estimator name
-const std::string& getCellTrackLengthFluxEstimatorName()
+const std::string& EstimatorFactory::getCellTrackLengthFluxEstimatorName()
 {
   return s_cell_track_length_flux_name;
 }
 
 // Return the cell collision flux estimator name
-const std::string& getCellCollisionFluxEstimatorName()
+const std::string& EstimatorFactory::getCellCollisionFluxEstimatorName()
 {
-  return cell_collision_flux_name;
+  return s_cell_collision_flux_name;
 }
 
 // Return the surface flux estimator name
-const std::string& getSurfaceFluxEstimatorName()
+const std::string& EstimatorFactory::getSurfaceFluxEstimatorName()
 {
   return s_surface_flux_name;
 }
 
 // Return the surface current estimator name
-const std::string& getSurfaceCurrentEstimatorName()
+const std::string& EstimatorFactory::getSurfaceCurrentEstimatorName()
 {
   return s_surface_current_name;
 }
@@ -406,7 +411,7 @@ void EstimatorFactory::convertParticleTypeNameToParticleTypes(
 }
 
 // Get the cells assigned to the estimator - required if cell estimator
-void getEstimatorCells( 
+void EstimatorFactory::getEstimatorCells( 
                     Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
                     assigned_cells,
                     const unsigned estimator_id,
@@ -434,13 +439,13 @@ void getEstimatorCells(
                                 " in the xml file are not valid!" );
     
     unique_cells.insert( xml_cells.begin(), xml_cells.end() );
+
+    // Verify the existence of the specified cells
+    this->verifyExistenceOfCells( unique_cells, estimator_id );
   }
 
-  // Verify the existence of the specified cells
-  this->verifyExistenceOfCells( unique_cells );
-
   // Add the cached cells
-  this->getCachedCells( unique_cells );
+  this->getCachedCells( unique_cells, estimator_id );
 
   // Assign the cells
   assigned_cells.assign( unique_cells.begin(), unique_cells.end() );
@@ -482,11 +487,12 @@ void EstimatorFactory::getEstimatorSurfaces(
 
     unique_surfaces.insert( xml_surfaces.begin(), xml_surfaces.end() );
 
-  // Verify the existence of the specified surfaces
-  this->verifyExistenceOfSurfaces( unique_surfaces );
+    // Verify the existence of the specified surfaces
+    this->verifyExistenceOfSurfaces( unique_surfaces, estimator_id );
+  }
 
   // Add the cached cells
-  this->getCachedSurfaces( unique_surfaces );
+  this->getCachedSurfaces( unique_surfaces, estimator_id );
 
   // Assign the surfaces
   assigned_surfaces.assign( unique_surfaces.begin(), unique_surfaces.end() );
@@ -510,7 +516,7 @@ double EstimatorFactory::getEstimatorMultiplier(
 
   TEST_FOR_EXCEPTION( multiplier <= 0.0,
                       InvalidEstimatorRepresentation,
-                      "Error: estimator " << id << " has a negative "
+                      "Error: estimator " << estimator_id << " has a negative "
                       "multiplier specified!" );
 
   return multiplier;
@@ -562,7 +568,8 @@ void EstimatorFactory::getResponseFunctions(
     EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                                 InvalidEstimatorRepresentation,
                                 "Error: the response functions requested for"
-                                " estimator " << id << " are not valid!" );
+                                " estimator " << estimator_id << 
+                                " are not valid!" );
 
     response_functions.resize( requested_response_functions.size() );
 
@@ -571,8 +578,8 @@ void EstimatorFactory::getResponseFunctions(
       TEST_FOR_EXCEPTION( d_response_function_id_map.find( requested_response_functions[i] ) ==
                           d_response_function_id_map.end(),
                           InvalidEstimatorRepresentation,
-                          "Error: estimator " << id << " has requested "
-                          "response function " << 
+                          "Error: estimator " << estimator_id << 
+                          " has requested response function " << 
                           requested_response_functions[i] << 
                           " which does not exist!" );
 
@@ -610,7 +617,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
     this->createAndRegisterCellPulseHeightEstimator( id,
                                                      multiplier,
                                                      particle_types,
-                                                     response_functions,
+                                                     response_funcs,
                                                      cells,
                                                      energy_multiplication,
                                                      bins );
@@ -622,7 +629,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
     this->createAndRegisterCellTrackLengthFluxEstimator( id,
                                                          multiplier,
                                                          particle_types,
-                                                         response_functions,
+                                                         response_funcs,
                                                          cells,
                                                          energy_multiplication,
                                                          bins );
@@ -634,7 +641,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
     this->createAndRegisterCellCollisionFluxEstimator( id,
                                                        multiplier,
                                                        particle_types,
-                                                       response_functions,
+                                                       response_funcs,
                                                        cells,
                                                        energy_multiplication,
                                                        bins );
@@ -650,7 +657,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
 }
 
 // Create and register a surface estimator
-void createAndRegisterSurfaceEstimator(
+void EstimatorFactory::createAndRegisterSurfaceEstimator(
          const std::string& surface_estimator_type,
          const unsigned id,
          const double multiplier,
@@ -678,7 +685,7 @@ void createAndRegisterSurfaceEstimator(
     this->createAndRegisterSurfaceFluxEstimator( id,
                                                  multiplier,
                                                  particle_types,
-                                                 response_functions,
+                                                 response_funcs,
                                                  surfaces,
                                                  energy_multiplication,
                                                  bins );
@@ -690,7 +697,7 @@ void createAndRegisterSurfaceEstimator(
     this->createAndRegisterSurfaceCurrentEstimator( id,
                                                     multiplier,
                                                     particle_types,
-                                                    response_functions,
+                                                    response_funcs,
                                                     surfaces,
                                                     energy_multiplication,
                                                     bins );
@@ -715,10 +722,13 @@ void EstimatorFactory::createAndRegisterCellPulseHeightEstimator(
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins ) const
 {
-  // Make sure the parameter list is valid
-  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_cell_pulse_height_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   // Make sure there is at least one cell assigned
   testPrecondition( cells.size() > 0 );
   
@@ -771,14 +781,17 @@ void EstimatorFactory::createAndRegisterCellTrackLengthFluxEstimator(
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
 {
-  // Make sure the parameter list is valid
-  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_cell_track_length_flux_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   // Make sure there is at least one cell assigned
   testPrecondition( cells.size() > 0 );
   
@@ -841,14 +854,17 @@ void EstimatorFactory::createAndRegisterCellCollisionFluxEstimator(
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
-      const Teuchos::ParameterList* bins ) const  
+      const Teuchos::ParameterList* bins ) 
 {
-  // Make sure the parameter list is valid
-  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_cell_collision_flux_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   // Make sure there is at least one cell assigned
   testPrecondition( cells.size() > 0 );
   
@@ -905,7 +921,7 @@ void EstimatorFactory::createAndRegisterCellCollisionFluxEstimator(
 }
 
 // Create and register a surface flux estimator
-void createAndRegisterSurfaceFluxEstimator(
+void EstimatorFactory::createAndRegisterSurfaceFluxEstimator(
          const unsigned id,
 	 const double multiplier,
 	 const Teuchos::Array<ParticleType> particle_types,
@@ -915,17 +931,20 @@ void createAndRegisterSurfaceFluxEstimator(
 	 const bool energy_multiplication,
 	 const Teuchos::ParameterList* bins )
 {
-  // Make sure the parameter list is valid
-  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_surface_flux_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   // Make sure there is at least one surface assigned
   testPrecondition( surfaces.size() > 0 );
   
   std::shared_ptr<Estimator> estimator;
 
   // Get the surface ares
-  Teuchos::Array<double> surface_areas
+  Teuchos::Array<double> surface_areas;
 
   this->getSurfaceAreas( surface_areas, surfaces );
 
@@ -975,7 +994,7 @@ void createAndRegisterSurfaceFluxEstimator(
 }
 
 // Create a surface current estimator
-void createAndRegisterSurfaceCurrentEstimator(
+void EstimatorFactory::createAndRegisterSurfaceCurrentEstimator(
          const unsigned id,
 	 const double multiplier,
 	 const Teuchos::Array<ParticleType> particle_types,
@@ -985,10 +1004,13 @@ void createAndRegisterSurfaceCurrentEstimator(
 	 const bool energy_multiplication,
 	 const Teuchos::ParameterList* bins ) const
 {
-  // Make sure the parameter list is valid
-  testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_surface_current_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   // Make sure at least one surface is assigned
   testPrecondition( surfaces.size() > 0 );
   
@@ -1044,13 +1066,21 @@ void EstimatorFactory::createAndRegisterTetMeshTrackLengthFluxEstimator(
 	 const double multiplier,
 	 const Teuchos::Array<ParticleType> particle_types,
 	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const bool energy_multiplication = false,
-	 const Teuchos::ParameterList* bins = NULL ) const
+         const bool energy_multiplication,
+	 const Teuchos::ParameterList* bins ) const
 {
   // Make sure the parameter list is valid
   testPrecondition( this->getEstimatorId( estimator_rep ) == id );
-  testPrecondition( this->getEstimatorType( estimator_rep ) ==
-                    s_tet_mesh_track_length_flux_name );
+  remember( std::string test_estimator_type );
+  remember( this->getEstimatorType( test_estimator_type, id, estimator_rep ) );
+  testPrecondition( test_estimator_type == s_tet_mesh_track_length_flux_name );
+  // Make sure the id is valid
+  testPrecondition( id != 
+                    ModuleTraits::invalid_internal_event_observer_handle );
+  // Make sure the multiplier is valid
+  testPrecondition( multiplier > 0.0 );
+  // Make sure there is at least one particle type assigned
+  testPrecondition( particle_types.size() > 0 );
   
   std::shared_ptr<Estimator> estimator;
 
@@ -1118,14 +1148,15 @@ void EstimatorFactory::createAndRegisterTetMeshTrackLengthFluxEstimator(
 }
 
 // Return the warning output stream
-std::ostream& getWarningOutputStream() const
+std::ostream& EstimatorFactory::getWarningOutputStream() const
 {
   return *d_os_warn;
 }
 
 // Assign bins to an estimator
-void assignBinsToEstimator( const Teuchos::ParameterList& bins,
-                            std::shared_ptr<Estimator>& estimator ) const 
+void EstimatorFactory::assignBinsToEstimator( 
+                                  const Teuchos::ParameterList& bins,
+                                  std::shared_ptr<Estimator>& estimator ) const
 {
   Teuchos::ParameterList::ConstIterator it = bins.begin();
 

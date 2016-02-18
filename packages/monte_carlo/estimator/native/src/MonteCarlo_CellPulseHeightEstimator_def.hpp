@@ -13,6 +13,7 @@
 #include <iostream>
 
 // FRENSIE Includes
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -245,19 +246,18 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
 // Export the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
-                                             const std::string& hdf5_file_name,
-                                             const bool process_data ) const
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export the lower level data
   EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
-								hdf5_file_name,
+								hdf5_file,
 								process_data );
 
-  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
-                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
 
   // Set the estimator as a cell estimator
-  hdf5_file.setCellEstimator( this->getId() );
+  estimator_hdf5_file.setCellEstimator( this->getId() );
 }
 
 // Assign bin boundaries to an estimator dimension

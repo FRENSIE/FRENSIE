@@ -117,8 +117,9 @@ public:
   virtual void enableThreadSupport( const unsigned num_threads );
 
   //! Export the estimator data
-  virtual void exportData( const std::string& hdf5_file_name,
-			   const bool process_data ) const;
+  virtual void exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const;
   
 protected:
 
