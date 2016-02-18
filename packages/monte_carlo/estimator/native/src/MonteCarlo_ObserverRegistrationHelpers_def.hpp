@@ -17,7 +17,7 @@ template<typename Observer, typename EntityHandle>
 inline void 
 ObserverRegistrationHelper<BeginEventTagIterator,
 			   EndEventTagIterator>::registerObserverWithTag(
-			       Teuchos::RCP<Observer>& observer,
+			       const std::shared_ptr<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 {
   registerObserver( observer, 
@@ -37,7 +37,7 @@ template<typename Observer>
 inline void
 ObserverRegistrationHelper<BeginEventTagIterator,
 			   EndEventTagIterator>::registerGlobalObserverWithTag(
-					     Teuchos::RCP<Observer>& observer )
+				    const std::shared_ptr<Observer>& observer )
 {
   registerGlobalObserver( observer,
 		    typename boost::mpl::deref<BeginEventTagIterator>::type());
@@ -53,7 +53,7 @@ template<typename Observer, typename EntityHandle>
 inline void 
 ObserverRegistrationHelper<EndEventTagIterator,
 			   EndEventTagIterator>::registerObserverWithTag(
-			       Teuchos::RCP<Observer>& observer,
+			       const std::shared_ptr<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 { /* ... */ }
 
@@ -63,12 +63,12 @@ template<typename Observer>
 inline void
 ObserverRegistrationHelper<EndEventTagIterator,
 			   EndEventTagIterator>::registerGlobalObserverWithTag(
-					     Teuchos::RCP<Observer>& observer )
+                                    const std::shared_ptr<Observer>& observer )
 { /* ... */ }
 
 //! Register an observer with the appropriate dispatcher
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
@@ -84,7 +84,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
 
 //! Register a global observer with the appropriate dispatcher
 template<typename Observer>
-inline void registerGlobalObserver( Teuchos::RCP<Observer>& observer )
+inline void registerGlobalObserver( const std::shared_ptr<Observer>& observer )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
     BeginEventTagIterator;
@@ -100,15 +100,15 @@ inline void registerGlobalObserver( Teuchos::RCP<Observer>& observer )
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleCollidingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCollidingInCellEventObserver::EventTag>::value));
   
-  Teuchos::RCP<ParticleCollidingInCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleCollidingInCellEventObserver>( observer );
+  std::shared_ptr<ParticleCollidingInCellEventObserver> observer_base = 
+    std::dynamic_pointer_cast<ParticleCollidingInCellEventObserver>( observer );
   
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
@@ -122,15 +122,15 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleCrossingSurfaceEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::value));
   
-  Teuchos::RCP<ParticleCrossingSurfaceEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleCrossingSurfaceEventObserver>( observer );
+  std::shared_ptr<ParticleCrossingSurfaceEventObserver> observer_base = 
+    std::dynamic_pointer_cast<ParticleCrossingSurfaceEventObserver>( observer );
   
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
@@ -144,15 +144,15 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));
   
-  Teuchos::RCP<ParticleEnteringCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleEnteringCellEventObserver>( observer );
+  std::shared_ptr<ParticleEnteringCellEventObserver> observer_base = 
+    std::dynamic_pointer_cast<ParticleEnteringCellEventObserver>( observer );
   
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
@@ -166,15 +166,15 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  * dispatcher
  */
 template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
+inline void registerObserver( const std::shared_ptr<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids,
 			      ParticleLeavingCellEventObserver::EventTag )
 {
   // Make sure the observer has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::value));
   
-  Teuchos::RCP<ParticleLeavingCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleLeavingCellEventObserver>( observer );
+  std::shared_ptr<ParticleLeavingCellEventObserver> observer_base = 
+    std::dynamic_pointer_cast<ParticleLeavingCellEventObserver>( observer );
   
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
   {
@@ -189,15 +189,15 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
  */
 template<typename Observer, typename EntityHandle>
 inline void registerObserver( 
-			  Teuchos::RCP<Observer>& observer,
+			  const std::shared_ptr<Observer>& observer,
 			  const Teuchos::Array<EntityHandle>& entity_ids,
 			  ParticleSubtrackEndingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::value));
   
-  Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleSubtrackEndingInCellEventObserver>( 
+  std::shared_ptr<ParticleSubtrackEndingInCellEventObserver> observer_base = 
+    std::dynamic_pointer_cast<ParticleSubtrackEndingInCellEventObserver>( 
 								    observer );
   
   for( unsigned i = 0u; i < entity_ids.size(); ++i )
@@ -214,13 +214,13 @@ inline void registerObserver(
  */
 template<typename Observer>
 inline void registerGlobalObserver( 
-			 Teuchos::RCP<Observer>& observer,
+			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag )
 {
   // Make sure the Observer class has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingGlobalEventObserver::EventTag>::value));
 
-  Teuchos::RCP<ParticleSubtrackEndingGlobalEventObserver> observer_base = 
+  std::shared_ptr<ParticleSubtrackEndingGlobalEventObserver> observer_base = 
     observer;
 
   ParticleSubtrackEndingGlobalEventDispatcher::attachObserver(

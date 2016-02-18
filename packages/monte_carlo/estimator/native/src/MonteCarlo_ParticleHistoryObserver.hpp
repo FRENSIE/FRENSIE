@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -18,6 +19,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
+#include "Utility_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -56,7 +58,7 @@ public:
   virtual bool hasUncommittedHistoryContribution() const = 0;
 
   //! Commit the contribution from the current history to the observer
-  virtual bool commitHistoryContribution() = 0;
+  virtual void commitHistoryContribution() = 0;
 
   //! Reset the observer data
   virtual void resetData() = 0;
@@ -67,8 +69,9 @@ public:
             const int root_process ) = 0;
 
   //! Export the estimator data
-  virtual void exportData( const std::string& hdf5_file_name,
-                           const bool process_data ) const = 0;
+  virtual void exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const = 0;
 
   //! Print a summary of the data
   virtual void printSummary( std::ostream& os ) const = 0;

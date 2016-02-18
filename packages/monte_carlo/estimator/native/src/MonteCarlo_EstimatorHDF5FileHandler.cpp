@@ -56,12 +56,12 @@ EstimatorHDF5FileHandler::EstimatorHDF5FileHandler(
 
 // Constructor (file sharing)
 EstimatorHDF5FileHandler::EstimatorHDF5FileHandler( 
-		      const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file )
+                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
   : d_hdf5_file( hdf5_file ),
     d_hdf5_file_ownership( false )
 {
   // Make sure the file is valid
-  testPrecondition( !hdf5_file.is_null() );
+  testPrecondition( hdf5_file.get() );
   testPrecondition( hdf5_file->hasOpenFile() );
 }
 
@@ -70,88 +70,6 @@ EstimatorHDF5FileHandler::~EstimatorHDF5FileHandler()
 {
   if( d_hdf5_file_ownership )
     d_hdf5_file->closeHDF5File();
-}
-
-// Set the simulation time
-void EstimatorHDF5FileHandler::setSimulationTime( 
-						const double simulation_time )
-{
-  // Make sure the simulation time is valid
-  testPrecondition( simulation_time > 0.0 );
-  
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( simulation_time,
-					     estimator_group_loc_name,
-					     "simulation_time" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Set Simulation Time Error" );
-}
-
-// Get the simulation time
-void EstimatorHDF5FileHandler::getSimulationTime( 
-						double& simulation_time ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( simulation_time,
-					      estimator_group_loc_name,
-					      "simulation_time" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Get Simulation Time Error" );
-}
-
-// Set the last history simulated
-void EstimatorHDF5FileHandler::setLastHistorySimulated( 
-			     const unsigned long long last_history_simulated )
-{
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( last_history_simulated,
-					     estimator_group_loc_name,
-					     "last_history_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Last History Simulated Error" );
-}
-
-// Get the last history simulated
-void EstimatorHDF5FileHandler::getLastHistorySimulated(
-			     unsigned long long& last_history_simulated ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( last_history_simulated,
-					      estimator_group_loc_name,
-					      "last_history_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Last History Simulated Error" );
-}
-
-// Set the number of histories simulated
-void EstimatorHDF5FileHandler::setNumberOfHistoriesSimulated(
-			  const unsigned long long number_histories_simulated )
-{
-  // Make sure the number of histories simulated is valid
-  testPrecondition( number_histories_simulated > 0ull );
-  
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( number_histories_simulated,
-					     estimator_group_loc_name,
-					     "number_of_histories_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Number of Histories Simulated Error" );
-}
-
-// Get the number of histories simulated
-void EstimatorHDF5FileHandler::getNumberOfHistoriesSimulated(
-			 unsigned long long& number_histories_simulated ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( number_histories_simulated,
-					      estimator_group_loc_name,
-					      "number_of_histories_simulated");
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Number of Histories Simulated Error" );
 }
 
 // Check if an estimator exists

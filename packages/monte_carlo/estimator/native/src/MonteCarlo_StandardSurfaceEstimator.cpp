@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardSurfaceEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -59,20 +60,20 @@ void StandardSurfaceEstimator::setParticleTypes(
 }
 
 // Export the estimator data
-void StandardSurfaceEstimator::exportData( const std::string& hdf5_file_name,
-                                           const bool process_data ) const
+void StandardSurfaceEstimator::exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export the lower level data first
   StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>::exportData( 
-								hdf5_file_name,
+								hdf5_file,
 								process_data );
 
-  // Open the hdf5 file
-  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
-                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
 
   // Set the estimator as a surface estimator
-  hdf5_file.setSurfaceEstimator( this->getId() );
+  estimator_hdf5_file.setSurfaceEstimator( this->getId() );
 }
 
 } // end MonteCarlo namespace

@@ -13,6 +13,7 @@
 #include <sstream>
 
 // FRENSIE Includes
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -396,23 +397,23 @@ void EntityEstimator<EntityId>::reduceData(
 
 // Export the estimator data
 template<typename EntityId>
-void EntityEstimator<EntityId>::exportData( const std::string& hdf5_file_name,
-                                            const bool process_data ) const
+void EntityEstimator<EntityId>::exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export the low level estimator data
-  Estimator::exportData( hdf5_file_name, process_data );
+  Estimator::exportData( hdf5_file, process_data );
 
-  // Open the hdf5 file
-  EstimatorHDF5FileHandler hdf5_file( hdf5_file_name, 
-                                      EstimatorHDF5FileHandler::APPEND_ESTIMATOR_HDF5_FILE );
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
 
   // Export the Entity norm constants 
-  hdf5_file.setEstimatorEntities( this->getId(),
-				  d_entity_norm_constants_map );
+  estimator_hdf5_file.setEstimatorEntities( this->getId(),
+                                            d_entity_norm_constants_map );
 
   // Export the total norm constant
-  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
-					   d_total_norm_constant );
+  estimator_hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
+                                                     d_total_norm_constant );
   
   // Export all of the estimator data
   {
@@ -427,12 +428,12 @@ void EntityEstimator<EntityId>::exportData( const std::string& hdf5_file_name,
 	d_entity_norm_constants_map.find( entity_data->first )->second;
 
       // Export the entity norm constant
-      hdf5_file.setEntityNormConstant( this->getId(),
+      estimator_hdf5_file.setEntityNormConstant( this->getId(),
 				       entity_data->first,
 				       norm_constant );
       
       // Export the raw entity moment data
-      hdf5_file.setRawEstimatorEntityBinData( this->getId(),
+      estimator_hdf5_file.setRawEstimatorEntityBinData( this->getId(),
 					      entity_data->first,
 					      entity_data->second );
       
@@ -450,16 +451,17 @@ void EntityEstimator<EntityId>::exportData( const std::string& hdf5_file_name,
 				processed_data[j].second );
 	}
 	
-	hdf5_file.setProcessedEstimatorEntityBinData( this->getId(),
-						      entity_data->first,
-						      processed_data );
+	estimator_hdf5_file.setProcessedEstimatorEntityBinData( 
+                                                            this->getId(),
+                                                            entity_data->first,
+                                                            processed_data );
       }
     }
   }
 
   // Export the total bin data
-  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
-					 d_estimator_total_bin_data );
+  estimator_hdf5_file.setRawEstimatorTotalBinData( this->getId(),
+                                                   d_estimator_total_bin_data );
 
   // Export the processed total bin data
   if( process_data )
@@ -476,8 +478,8 @@ void EntityEstimator<EntityId>::exportData( const std::string& hdf5_file_name,
     }
 
     
-    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
-						 processed_data );
+    estimator_hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
+                                                           processed_data );
   }
 }
 

@@ -41,9 +41,9 @@ ParticleEventDispatcherDB<Dispatcher>::getDispatcher(
 // Attach an observer to the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcherDB<Dispatcher>::attachObserver(
-		  const typename Dispatcher::EntityHandleType entity_id,
-		  const ModuleTraits::InternalEventObserverHandle estimator_id,
-                  Teuchos::RCP<typename Dispatcher::ObserverType>& observer )
+	   const typename Dispatcher::EntityHandleType entity_id,
+           const ModuleTraits::InternalEventObserverHandle estimator_id,
+           const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
   ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id)->attachObserver(
 								  estimator_id,

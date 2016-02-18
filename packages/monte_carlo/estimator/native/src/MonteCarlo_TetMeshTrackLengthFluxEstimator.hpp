@@ -81,8 +81,8 @@ public:
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
 		   const bool process_data ) const;
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print a summary of the estimator data
+  void printSummary( std::ostream& os ) const;
 
   //! Get all tet elements
   const moab::Range getAllTetElements() const;

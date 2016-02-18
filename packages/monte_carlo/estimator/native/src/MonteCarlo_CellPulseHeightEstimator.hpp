@@ -94,7 +94,7 @@ public:
   void resetData();
 
   //! Export the estimator data
-  void exportData( const std::string& hdf5_file_name,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 
 private:

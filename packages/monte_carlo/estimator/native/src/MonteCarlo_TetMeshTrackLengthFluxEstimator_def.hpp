@@ -728,14 +728,103 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   }   
 }
 
-// Print the estimator data
+// Print a summary of estimator data
 /*! \details Due to the large number of tets that are likely to be printed,
  * printing of data to the screen will not be done.
  */
 template<typename ContributionMultiplierPolicy>
-void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::print( 
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary( 
 						       std::ostream& os ) const
-{ /* ... */ }
+{ 
+  // Collect some basic statistics regarding the mesh elements
+  Teuchos::Array<unsigned long long> num_zero_tets(
+                                  this->getNumberOfResponseFunctions(), 0ull );
+  Teuchos::Array<unsigned long long> num_tets_lte_1pc_re( 
+                                  this->getNumberOfResponseFunctions(), 0ull );
+  Teuchos::Array<unsigned long long> num_tets_lte_5pc_re( 
+                                  this->getNumberOfResponseFunctions(), 0ull );
+  Teuchos::Array<unsigned long long> num_tets_lte_10pc_re(
+                                  this->getNumberOfResponseFunctions(), 0ull );
+  
+  // Get the tets
+  moab::Range all_tet_elements;
+  moab::ErrorCode return_value = d_moab_interface->get_entities_by_dimension(
+                                       d_tet_meshset, 3, all_tet_elements);
+                                       
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
+
+  for( moab::Range::const_iterator tet = all_tet_elements.begin(); 
+       tet != all_tet_elements.end(); 
+       ++tet )
+  {
+    const double tet_volume = this->getEntityNormConstant( *tet );
+    
+    const Estimator::FourEstimatorMomentsArray& total_tet_data = 
+      this->getEntityTotalData( *tet );
+    
+    for( unsigned i = 0; i != total_tet_data.size(); ++i )
+    {
+      double mean, relative_error, vov, fom;
+      
+      this->processMoments( total_tet_data[i],
+                            tet_volume,
+                            mean,
+                            relative_error,
+                            vov,
+                            fom ); 
+
+      if( mean == 0.0 )
+        ++num_zero_tets[i];
+
+      if( relative_error <= 0.10 )
+        ++num_tets_lte_10pc_re[i];
+      if( relative_error <= 0.05 )
+        ++num_tets_lte_5pc_re[i];
+      if( relative_error <= 0.01 )
+        ++num_tets_lte_1pc_re[i];
+    }
+  }
+
+  unsigned long long number_of_tets = d_tet_reference_vertices.size();
+    
+  os << "Tet mesh track-length flux estimator " << this->getId() << ": "
+     << std::endl 
+     << "\t Tets: " << number_of_tets << std::endl;
+
+  // Print the percentage of tets with no hits
+  os << "\t % of Tets with no hits (per response func.): ";
+    
+  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+    os << (double)num_zero_tets[i]/number_of_tets*100.0 << " ";
+
+  os << std::endl;
+
+  // Print the percentage of tets with <= 10% relative error
+  os << "\t % of Tets with <= 10% RE (per response func.): ";
+
+  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+    os << (double)num_tets_lte_10pc_re[i]/number_of_tets*100.0 << " ";
+
+  os << std::endl;
+
+  // Print the percentage of tets with <= 5% relative error
+  os << "\t % of Tets with <= 5% RE (per response func.): ";
+
+  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+    os << (double)num_tets_lte_5pc_re[i]/number_of_tets*100.0 << " ";
+
+  os << std::endl;
+
+  // Print the percentage of tets with <= 1% relative error
+  os << "\t % of Tets with <= 1% RE (per respone func.): ";
+
+  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+    os << (double)num_tets_lte_1pc_re[i]/number_of_tets*100.0 << " ";
+
+  os << std::endl;
+}
 
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>

@@ -27,7 +27,7 @@ ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::attachObserver(
 			    const ModuleTraits::InternalEventObserverHandle id,
-                            Teuchos::RCP<Observer>& observer  )
+                            const std::shared_ptr<Observer>& observer  )
 {
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );

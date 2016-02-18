@@ -9,10 +9,13 @@
 #ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_DB_HPP
 #define FACEMC_PARTICLE_EVENT_DISPATCHER_DB_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Teuchos Includes
+// Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 namespace MonteCarlo{
@@ -30,9 +33,9 @@ public:
 
   //! Attach an observer to the appropriate dispatcher
   static void attachObserver(
-		const typename Dispatcher::EntityHandleType entity_id,
-		const ModuleTraits::InternalEventObserverHandle estimator_id,
-		Teuchos::RCP<typename Dispatcher::ObserverType>& observer );
+	  const typename Dispatcher::EntityHandleType entity_id,
+          const ModuleTraits::InternalEventObserverHandle estimator_id,
+	  const std::shared_ptr<typename Dispatcher::ObserverType>& observer );
   
   //! Detach an observer from the appropriate dispatcher
   static void detachObserver(
