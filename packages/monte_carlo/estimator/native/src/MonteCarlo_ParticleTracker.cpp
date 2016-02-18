@@ -15,9 +15,9 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleTracker::ParticleTracker( const unsigned number_of_histories )
- : d_particle_reset( true ),
-   d_number_of_histories( number_of_histories ),
-   d_x_pos(),
+  : d_particle_reset( std::pair( 0u, true ) ),
+    d_number_of_histories( number_of_histories ),
+    d_x_pos( std::pair( 0u, std::vector<double>() ),
    d_y_pos(),
    d_z_pos(),
    d_x_dir(),
