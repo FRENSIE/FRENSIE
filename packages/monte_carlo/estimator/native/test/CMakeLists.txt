@@ -235,6 +235,13 @@ TARGET_LINK_LIBRARIES(tstParticleTracker monte_carlo_estimator_native ${Boost_LI
 ADD_TEST(ParticleTracker_test ${MPIEXEC} -n 4 tstParticleTracker)
 ENDIF()
 
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_EXECUTABLE(tstSharedParallelParticleTracker 
+    tstSharedParallelParticleTracker.cpp ${BOOST_PREFIX})
+  TARGET_LINK_LIBRARIES(tstSharedParallelParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
+  ADD_TEST(SharedParallelParticleTracker_test tstSharedParallelParticleTracker --threads=4)
+ENDIF()
+
 ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
   tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
