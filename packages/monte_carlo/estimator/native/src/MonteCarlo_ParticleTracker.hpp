@@ -10,18 +10,26 @@
 #define MONTE_CARLO_PARTICLE_TRACKER_HPP
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_CommHelpers.hpp>
+#endif 
+#include <Teuchos_GlobalMPISession.hpp>
+#include <Teuchos_Tuple.hpp>
 #include <Teuchos_any.hpp>
 #include <Teuchos_Comm.hpp>
 
 // Boost Includes
-#include <boost/unordered_map.hpp>
 #include <boost/mpl/vector.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/vector.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
+#include "FRENSIE_mpi_config.hpp"
 
 namespace MonteCarlo{
 
@@ -60,31 +68,31 @@ public:
                    const bool process_data ) const;
 
   //! Get the x position data
-  void getXPositionData( Teuchos::Array< double >& array );
+  void getXPositionData( std::vector< double >& array );
   
   //! Get the y position data
-  void getYPositionData( Teuchos::Array< double >& array );
+  void getYPositionData( std::vector< double >& array );
   
   //! Get the z position data
-  void getZPositionData( Teuchos::Array< double >& array );
+  void getZPositionData( std::vector< double >& array );
   
   //! Get the x direction data
-  void getXDirectionData( Teuchos::Array< double >& array );
+  void getXDirectionData( std::vector< double >& array );
   
   //! Get the y direction data
-  void getYDirectionData( Teuchos::Array< double >& array );
+  void getYDirectionData( std::vector< double >& array );
   
   //! Get the z direction data
-  void getZDirectionData( Teuchos::Array< double >& array );
+  void getZDirectionData( std::vector< double >& array );
   
   //! Get the energy data
-  void getEnergyData( Teuchos::Array< double >& array );
+  void getEnergyData( std::vector< double >& array );
   
   //! Get the collision number data
-  void getCollisionNumberData( Teuchos::Array< double >& array );
+  void getCollisionNumberData( std::vector< double >& array );
   
   //! Get the weight data
-  void getWeightData( Teuchos::Array< double >& array );
+  void getWeightData( std::vector< double >& array );
   
   //! Check if particle is reset 
   bool isParticleReset();
@@ -104,8 +112,19 @@ public:
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 
+  //! Serialize the data and pack it into a string
+  std::string packDataInString();
+  
+  //! Unpack the data from the serialized string
+  void unpackDataFromString( 
+              std::string& packed_string,
+              ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map );
+
 private:
 
+  //! Contribute the data from the workers
+  void contributeDataFromWorkers( std::string packaged_data );
+  
   // Flag for new particle 
   bool d_particle_reset;
 
@@ -113,31 +132,31 @@ private:
   const unsigned d_number_of_histories;
 
   // Position data set - x
-  Teuchos::Array< double > d_x_pos;
+  std::vector< double > d_x_pos;
   
   // Position data set - y
-  Teuchos::Array< double > d_y_pos;
+  std::vector< double > d_y_pos;
   
   // Position data set - z
-  Teuchos::Array< double > d_z_pos;
+  std::vector< double > d_z_pos;
   
   // Direction data set - u
-  Teuchos::Array< double > d_x_dir;
+  std::vector< double > d_x_dir;
   
   // Direction data set - v
-  Teuchos::Array< double > d_y_dir;
+  std::vector< double > d_y_dir;
   
   // Direction data set - w
-  Teuchos::Array< double > d_z_dir;
+  std::vector< double > d_z_dir;
   
   // Energy data set
-  Teuchos::Array< double > d_energy;
+  std::vector< double > d_energy;
   
   // Collision Number data set
-  Teuchos::Array< double > d_col_num;
+  std::vector< double > d_col_num;
   
   // Weight data set
-  Teuchos::Array< double > d_weight;
+  std::vector< double > d_weight;
   
   // History Number
   unsigned d_history_number;
@@ -153,7 +172,14 @@ private:
   
   // First particle
   bool d_first_particle;
-
+  
+  friend class boost::serialization::access;
+  
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+        ar & d_history_number_map;
+  }
 };
 
 } // end MonteCarlo namespace

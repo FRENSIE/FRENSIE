@@ -228,10 +228,12 @@ ADD_EXECUTABLE(tstEstimatorHandler
 TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EstimatorHandler_test tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
+IF(${FRENSIE_ENABLE_MPI})
 ADD_EXECUTABLE(tstParticleTracker
-  tstParticleTracker.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleTracker monte_carlo_estimator_native)
-ADD_TEST(ParticleTracker_test tstParticleTracker)
+  tstParticleTracker.cpp ${BOOST_PREFIX})
+TARGET_LINK_LIBRARIES(tstParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
+ADD_TEST(ParticleTracker_test ${MPIEXEC} -n 4 tstParticleTracker)
+ENDIF()
 
 ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
   tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
