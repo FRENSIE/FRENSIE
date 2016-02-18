@@ -26,8 +26,8 @@ ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
 // Attach an observer to the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::attachObserver(
-				const ModuleTraits::InternalEstimatorHandle id,
-				Teuchos::RCP<Observer>& observer  )
+			    const ModuleTraits::InternalEventObserverHandle id,
+                            Teuchos::RCP<Observer>& observer  )
 {
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
@@ -39,7 +39,7 @@ void ParticleGlobalEventDispatcher<Observer>::attachObserver(
 // Detach an observer from the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachObserver(
-			       const ModuleTraits::InternalEstimatorHandle id )
+			   const ModuleTraits::InternalEventObserverHandle id )
 {
   d_observer_map.erase( id );
 }

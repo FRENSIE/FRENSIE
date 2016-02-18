@@ -74,7 +74,7 @@ protected:
 
   //! Get the cached surfaces (add to set)
   void getCachedSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const;
 
@@ -112,10 +112,12 @@ private:
   boost::unordered_map<unsigned,std::string> d_geom_estimator_id_ptype_map;
 
   // The estimator id cells map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_cells_map;
+  typedef boost::unordered_map<unsigned,Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> > EstimatorIdCellsMap;
+  EstimatorIdCellsMap d_geom_estimator_id_cells_map;
 
   // The estimator id surfaces map (from DagMC geom)
-  boost::unordered_map<unsigned,std::string> d_geom_estimator_id_surfaces_map;
+  typedef boost::unordered_map<unsigned,Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> > EstimatorIdSurfacesMap;
+  EstimatorIdSurfacesMap d_geom_estimator_id_surfaces_map;
 
   // The cell volume map
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>

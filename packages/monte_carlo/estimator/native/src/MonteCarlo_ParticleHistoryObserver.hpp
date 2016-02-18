@@ -9,14 +9,20 @@
 #ifndef MONTE_CARLO_PARTICLE_HISTORY_OBSERVER_HPP
 #define MONTE_CARLO_PARTICLE_HISTORY_OBSERVER_HPP
 
+// Std Lib Includes
+#include <iostream>
+
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+#include <Teuchos_Comm.hpp>
+
 // FRENSIE Includes
-#include "MonteCarlo_ExportableObject.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
 //! The particle history observer base class
-class ParticleHistoryObserver : public ExportableObject
+class ParticleHistoryObserver
 {
   
 public:
@@ -64,6 +70,9 @@ public:
   virtual void exportData( const std::string& hdf5_file_name,
                            const bool process_data ) const = 0;
 
+  //! Print a summary of the data
+  virtual void printSummary( std::ostream& os ) const = 0;
+
 protected:
 
   //! Get the number of particle histories observed
@@ -91,6 +100,16 @@ private:
 inline ParticleHistoryObserver::idType ParticleHistoryObserver::getId() const
 {
   return d_id;
+}
+
+//! Stream operator for printing summaries of particle history observers
+inline std::ostream& operator<<( 
+                          std::ostream& os,
+                          const MonteCarlo::ParticleHistoryObserver& observer )
+{
+  observer.printSummary( os );
+
+  return os;
 }
 
 } // end MonteCarlo namespace

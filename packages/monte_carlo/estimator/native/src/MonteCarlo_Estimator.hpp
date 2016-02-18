@@ -23,7 +23,6 @@
 #include <Teuchos_TwoDArray.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_any.hpp>
-#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
@@ -77,7 +76,7 @@ public:
   static void setEndTime( const double end_time );
 
   //! Constructor
-  Estimator( const VolatileObserver::idType id,
+  Estimator( const ParticleHistoryObserver::idType id,
 	     const double multiplier );
 
   //! Destructor
@@ -250,12 +249,6 @@ private:
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
 };
-
-// Return the estimator id
-inline Estimator::idType Estimator::getId() const
-{
-  return d_id;
-}
 
 // Return the estimator constant multiplier
 inline double Estimator::getMultiplier() const

@@ -175,6 +175,22 @@ void DagMCProperties::extractEstimatorPropertyValues(
   unsigned first_pos = prop_value.find_first_of( "." );
   unsigned last_pos = prop_value.find_last_of( "." );
 
+  TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( first_pos == last_pos,
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+
   std::string id_string = prop_value.substr( 0, first_pos );
 
   std::istringstream iss( id_string );

@@ -12,6 +12,7 @@
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
@@ -92,6 +93,11 @@ void EstimatorFactory::createAndRegisterEstimator(
                       InvalidEstimatorRepresentation,
                       "Error: estimator id " << estimator_id << " is used by "
                       "another observer!" );
+  TEST_FOR_EXCEPTION( id == 
+                      ModuleTraits::invalid_internal_event_observer_handle,
+                      InvalidEstimatorRepresentation,
+                      "Error: estimator id " << estimator_id << 
+                      " is reserved!" );
 
   // Get the estimator type
   std::string estimator_type;

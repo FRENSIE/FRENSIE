@@ -31,17 +31,17 @@ public:
   //! Attach an observer to the appropriate dispatcher
   static void attachObserver(
 		const typename Dispatcher::EntityHandleType entity_id,
-		const ModuleTraits::InternalEstimatorHandle estimator_id,
+		const ModuleTraits::InternalEventObserverHandle estimator_id,
 		Teuchos::RCP<typename Dispatcher::ObserverType>& observer );
   
   //! Detach an observer from the appropriate dispatcher
   static void detachObserver(
-		    const typename Dispatcher::EntityHandleType entity_id,
-		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+		const typename Dispatcher::EntityHandleType entity_id,
+		const ModuleTraits::InternalEventObserverHandle estimator_id );
 
   //! Detach the observer from all dispatchers
   static void detachObserver(
-		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+		const ModuleTraits::InternalEventObserverHandle estimator_id );
 
   //! Detach all observers
   static void detachAllObservers();

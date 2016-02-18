@@ -31,11 +31,13 @@ public:
   typedef Observer ObserverType;
 
   //! Attach an observer to the dispatcher
-  static void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
-			      Teuchos::RCP<Observer>& observer );
+  static void attachObserver( 
+                            const ModuleTraits::InternalEventObserverHandle id,
+                            Teuchos::RCP<Observer>& observer );
 
   //! Detach an observer from the dispatcher
-  static void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
+  static void detachObserver( 
+                          const ModuleTraits::InternalEventObserverHandle id );
 
   //! Detach all observers
   static void detachAllObservers();
@@ -46,7 +48,7 @@ public:
 protected:
 
   // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
+  typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
 					Teuchos::RCP<Observer> > ObserverIdMap;
 
   // Get the oberver map

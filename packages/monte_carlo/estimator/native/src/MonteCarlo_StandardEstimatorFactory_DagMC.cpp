@@ -30,7 +30,7 @@ StandardEstimatorFactory<moab::DagMC>::StandardEstimatorFactory(
           const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
           response_function_id_map,
           std::ostream* os_warn )
-  : EstimatoryFactory( event_handler, response_function_id_map, os_warn ),
+  : EstimatorFactory( event_handler, response_function_id_map, os_warn )
 {
   // Load the estimator id maps
   this->loadEstimatorIdMapsWithCellEstimatorProps();
@@ -66,7 +66,7 @@ void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
 
     // Get the estimator particle type
     const std::string& particle_type_name = 
-      d_geom_estimator_id_ptype_map.find( estimator_id );
+      d_geom_estimator_id_ptype_map.find( estimator_id )->second;
 
     Teuchos::Array<ParticleType> particle_types;
 
@@ -101,7 +101,8 @@ void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
                                               estimator_id,
                                               multiplier,
                                               particle_types,
-                                              response_functions );
+                                              response_functions,
+                                              assigned_cells );
       }
               
       // Create and register a surface estimator
@@ -112,7 +113,7 @@ void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
         
         this->getCachedSurfaces( unique_surfaces, estimator_id );
 
-        Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceArea>
+        Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
           assigned_surfaces( unique_surfaces.begin(), unique_surfaces.end() );
 
         TEST_FOR_EXCEPTION( assigned_surfaces.size() == 0,
@@ -124,7 +125,8 @@ void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
                                                  estimator_id,
                                                  multiplier,
                                                  particle_types,
-                                                 response_functions );
+                                                 response_functions,
+                                                 assigned_surfaces );
       }
       
       // Invalid estimator type
@@ -174,10 +176,25 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithCellEstimator
     std::string estimator_type;
     std::string particle_type;
     
-    Geometry::DagMCProperties::extractEstimatorPropertyValues( cell_it->first,
-							       id,
-							       estimator_type,
-							       particle_type );
+    try{
+      Geometry::DagMCProperties::extractEstimatorPropertyValues(
+                                                               cell_it->first,
+                                                               id,
+                                                               estimator_type,
+                                                               particle_type );
+    }
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                InvalidEstimatorRepresentation,
+                                "Error: an invalid estimator specification "
+                                "was found in the .sat file ("
+                                << cell_it->first << ")!" );
+
+    // Make sure the id is valid
+    TEST_FOR_EXCEPTION( id == 
+                        ModuleTraits::invalid_internal_event_observer_handle,
+                        InvalidEstimatorRepresentation,
+                        "Error: estimator id " << id << " found in the "
+                        ".sat file is reserved!" );
     
     // The observer id must be unique
     TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find( id ) !=
@@ -261,8 +278,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithSurfaceEstima
 							     estimator_type,
 							     particle_type );
     // The estimator id must be unique
-    TEST_FOR_EXCEPTION( estimator_id_type_map.find( id ) !=
-			estimator_id_type_map.end(),
+    TEST_FOR_EXCEPTION( d_geom_estimator_id_type_map.find( id ) !=
+			d_geom_estimator_id_type_map.end(),
 			InvalidEstimatorRepresentation,
 			"Error: estimator id " << id << " is used multiple "
 			"times in the .sat file!" );
@@ -307,9 +324,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadEstimatorIdMapsWithSurfaceEstima
 void StandardEstimatorFactory<moab::DagMC>::loadCellVolumeMap()
 {
 #ifdef HAVE_FRENSIE_DAGMC
-  boost::unordered_map<unsigned,
-   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >::const_iterator
-    it = d_geom_estimator_id_cells_map.begin();
+  EstimatorIdCellsMap::const_iterator it = 
+    d_geom_estimator_id_cells_map.begin();
 
   while( it != d_geom_estimator_id_cells_map.end() )
   {
@@ -331,9 +347,8 @@ void StandardEstimatorFactory<moab::DagMC>::loadCellVolumeMap()
 void StandardEstimatorFactory<moab::DagMC>::loadSurfaceAreaMap()
 {
 #ifdef HAVE_FRENSIE_DAGMC
-  boost::unordered_map<unsigned,
-    Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >::const_iterator
-    it = d_geom_estimator_id_surfaces_map.begin();
+  EstimatorIdSurfacesMap::const_iterator it = 
+    d_geom_estimator_id_surfaces_map.begin();
 
   while( it != d_geom_estimator_id_surfaces_map.end() )
   {
@@ -359,7 +374,7 @@ std::string StandardEstimatorFactory<moab::DagMC>::convertDagMCEstimatorTypeName
 {
 #ifdef HAVE_FRENSIE_DAGMC
   // Make sure the estimator type is valid
-  testPrecondition( Geometry::DagMCProperties::isEstimatorTypeValid( dagmc_estimator_type_name ) );
+  testPrecondition( Geometry::DagMCProperties::isObserverTypeValid( dagmc_estimator_type_name ) );
   
   if( dagmc_estimator_type_name == 
       Geometry::DagMCProperties::getSurfaceCurrentName() )
@@ -431,26 +446,27 @@ void StandardEstimatorFactory<moab::DagMC>::getEstimatorParticleType(
                            const unsigned estimator_id,
                            const Teuchos::ParameterList& estimator_rep ) const
 {
-  if( d_geom_estimator_id_ptype_map.find( id ) != 
+  if( d_geom_estimator_id_ptype_map.find( estimator_id ) != 
       d_geom_estimator_id_ptype_map.end() )
   {
     // Make sure the DagMC particle type and the param. list particle type ==
     if( estimator_rep.isParameter( "Particle Type" ) )
     {
-      TEST_FOR_EXCEPTION( d_geom_estimator_id_ptype_map.find( id )->second !=
-                          estimator_rep.get<std::string>( "Particle Type" ),
-                          InvalidEstimatorRepresentation,
-                          "Error: estimator " << id << " specified in the "
-                          "xml file and the .sat file have inconsitent "
-                          "particle types ("
-                          << estimator_rep.get<std::string>("Particle Type") <<
-                          " != " 
-                          << d_geom_estimator_id_ptype_map.find(id)->second <<
-                          ")!" );
+      TEST_FOR_EXCEPTION( 
+                  d_geom_estimator_id_ptype_map.find( estimator_id )->second !=
+                  estimator_rep.get<std::string>( "Particle Type" ),
+                  InvalidEstimatorRepresentation,
+                  "Error: estimator " << estimator_id << 
+                  " specified in the xml file and the .sat file have "
+                  "inconsitent particle types ("
+                  << estimator_rep.get<std::string>("Particle Type") <<
+                  " != " 
+                  << d_geom_estimator_id_ptype_map.find( estimator_id )->second
+                  << ")!" );
     }
     
     const std::string& particle_type_name = 
-      d_geom_estimator_id_ptype_map.find( id )->second;
+      d_geom_estimator_id_ptype_map.find( estimator_id )->second;
 
     this->convertParticleTypeNameToParticleTypes( particle_types,
                                                   estimator_id,
@@ -496,7 +512,7 @@ void StandardEstimatorFactory<moab::DagMC>::getCachedCells(
   if( d_geom_estimator_id_cells_map.find( estimator_id ) != 
       d_geom_estimator_id_cells_map.end() )
   {
-    unique_cells.insert( 
+    cells.insert( 
             d_geom_estimator_id_cells_map.find( estimator_id )->second.begin(),
             d_geom_estimator_id_cells_map.find( estimator_id )->second.end() );
   }
@@ -532,9 +548,10 @@ void StandardEstimatorFactory<moab::DagMC>::getCellVolumes(
 }
 
 // Verify the existence of surfaces
-void verifyExistenceOfSurfaces(
+void StandardEstimatorFactory<moab::DagMC>::verifyExistenceOfSurfaces(
      const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
-     surfaces ) const
+     surfaces,
+     const unsigned estimator_id ) const
 {
   boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>::const_iterator surface = surfaces.begin();
 
@@ -552,8 +569,8 @@ void verifyExistenceOfSurfaces(
 }
 
 // Get the cached surfaces (add to set)
-void getCachedSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+void StandardEstimatorFactory<moab::DagMC>::getCachedSurfaces(
+     boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const
 {
