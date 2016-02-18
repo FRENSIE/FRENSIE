@@ -30,6 +30,7 @@
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 #include "FRENSIE_mpi_config.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace MonteCarlo{
 
@@ -126,46 +127,46 @@ private:
   void contributeDataFromWorkers( std::string packaged_data );
   
   // Flag for new particle 
-  bool d_particle_reset;
+  std::unordered_map< unsigned, bool > d_particle_reset;
 
   // Number of histories to be tracked
   const unsigned d_number_of_histories;
 
   // Position data set - x
-  std::vector< double > d_x_pos;
+  std::unordered_map< unsigned, std::vector< double > > d_x_pos;
   
   // Position data set - y
-  std::vector< double > d_y_pos;
+  std::unordered_map< unsigned, std::vector< double > > d_y_pos;
   
   // Position data set - z
-  std::vector< double > d_z_pos;
+  std::unordered_map< unsigned, std::vector< double > > d_z_pos;
   
   // Direction data set - u
-  std::vector< double > d_x_dir;
+  std::unordered_map< unsigned, std::vector< double > > d_x_dir;
   
   // Direction data set - v
-  std::vector< double > d_y_dir;
+  std::unordered_map< unsigned, std::vector< double > > d_y_dir;
   
   // Direction data set - w
-  std::vector< double > d_z_dir;
+  std::unordered_map< unsigned, std::vector< double > > d_z_dir;
   
   // Energy data set
-  std::vector< double > d_energy;
+  std::unordered_map< unsigned, std::vector< double > > d_energy;
   
   // Collision Number data set
-  std::vector< double > d_col_num;
+  std::unordered_map< unsigned, std::vector< double > > d_col_num;
   
   // Weight data set
-  std::vector< double > d_weight;
+  std::unordered_map< unsigned, std::vector< double > > d_weight;
   
   // History Number
-  unsigned d_history_number;
+  std::unordered_map< unsigned, unsigned > d_history_number;
   
   // Generation Number
-  unsigned d_generation_number;
+  std::unordered_map< unsigned, unsigned > d_generation_number;
   
   // Particle Type
-  ParticleType d_particle_type;
+  std::unordered_map< unsigned, unsigned > d_particle_type;
        
   // Map of history number to particle type
   ParticleTrackerHDF5FileHandler::OverallHistoryMap d_history_number_map;
