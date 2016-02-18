@@ -9,11 +9,8 @@
 #ifndef MONTE_CARLO_PARTICLE_TRACKER_HDF5_FILE_HANDLER_HPP
 #define MONTE_CARLO_PARTICLE_TRACKER_HDF5_FILE_HANDLER_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
+// Standard library Includes
+#include <unordered_map>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
@@ -30,19 +27,19 @@ class ParticleTrackerHDF5FileHandler
 
 public:
     
-  typedef Teuchos::Array< Teuchos::Array< double > >
+  typedef std::vector< std::vector< double > >
     ParticleDataTwoDArray;
     
-  typedef boost::unordered_map< unsigned, ParticleDataTwoDArray >
+  typedef std::unordered_map< unsigned, ParticleDataTwoDArray >
     IndividualParticleSubmap;
     
-  typedef boost::unordered_map< unsigned, IndividualParticleSubmap >
+  typedef std::unordered_map< unsigned, IndividualParticleSubmap >
     GenerationNumberSubmap;
         
-  typedef boost::unordered_map< ParticleType, GenerationNumberSubmap >
+  typedef std::unordered_map< unsigned, GenerationNumberSubmap >
     ParticleTypeSubmap;
     
-  typedef boost::unordered_map< unsigned, ParticleTypeSubmap >
+  typedef std::unordered_map< unsigned, ParticleTypeSubmap >
     OverallHistoryMap;
 
   //! Enum for file operations
@@ -69,39 +66,39 @@ public:
   
   //! Get particle tracker data from HDF5 file
   void getXPositionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getYPositionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getZPositionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
 
   //! Get particle tracker data from HDF5 file
   void getXDirectionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getYDirectionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getZDirectionData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
 
   //! Get particle tracker data from HDF5 file
   void getEnergyData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getCollisionNumberData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
                          
   //! Get particle tracker data from HDF5 file
   void getWeightData( std::string particle_data_location,
-                         Teuchos::Array< double >& data );
+                         std::vector< double >& data );
 
 private:
 

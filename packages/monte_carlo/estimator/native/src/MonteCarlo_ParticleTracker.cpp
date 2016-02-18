@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "Utility_ContractException.hpp"
+#include "Teuchos_DefaultMpiComm.hpp"
 
 namespace MonteCarlo{
 
@@ -227,55 +228,55 @@ void ParticleTracker::exportData( ParticleTrackerHDF5FileHandler& hdf5_file,
 }
 
 // Get the x position data
-void ParticleTracker::getXPositionData( Teuchos::Array< double >& array )
+void ParticleTracker::getXPositionData( std::vector< double >& array )
 {
   array = d_x_pos;
 }
 
 // Get the y position data
-void ParticleTracker::getYPositionData( Teuchos::Array< double >& array )
+void ParticleTracker::getYPositionData( std::vector< double >& array )
 {
   array = d_y_pos;
 }
 
 // Get the z position data
-void ParticleTracker::getZPositionData( Teuchos::Array< double >& array )
+void ParticleTracker::getZPositionData( std::vector< double >& array )
 {
   array = d_z_pos;
 }
 
 // Get the x direction data
-void ParticleTracker::getXDirectionData( Teuchos::Array< double >& array )
+void ParticleTracker::getXDirectionData( std::vector< double >& array )
 {
   array = d_x_dir;
 }
 
 // Get the y direction data
-void ParticleTracker::getYDirectionData( Teuchos::Array< double >& array )
+void ParticleTracker::getYDirectionData( std::vector< double >& array )
 {
   array = d_y_dir;
 }
 
 // Get the z direction data
-void ParticleTracker::getZDirectionData( Teuchos::Array< double >& array )
+void ParticleTracker::getZDirectionData( std::vector< double >& array )
 {
   array = d_z_dir;
 }
 
 // Get the energy data
-void ParticleTracker::getEnergyData( Teuchos::Array< double >& array )
+void ParticleTracker::getEnergyData( std::vector< double >& array )
 {
   array = d_energy;
 }
 
 // Get the collision number data
-void ParticleTracker::getCollisionNumberData( Teuchos::Array< double >& array )
+void ParticleTracker::getCollisionNumberData( std::vector< double >& array )
 {
   array = d_col_num;
 }
 
 // Get the weight data
-void ParticleTracker::getWeightData( Teuchos::Array< double >& array )
+void ParticleTracker::getWeightData( std::vector< double >& array )
 {
   array = d_weight;
 }
@@ -302,17 +303,124 @@ void ParticleTracker::resetData()
 }
 
 // Commit History Contribution
-void commitHistoryContribution()
-{
+void ParticleTracker::commitHistoryContribution()
+{ /*...*/ }
 
+// Serialize and pack into string
+std::string ParticleTracker::packDataInString()
+{
+  // Serialize the history number map
+  std::ostringstream output_stream("ptrack_data_map");
+  boost::archive::binary_oarchive output_archive(output_stream);
+  output_archive << d_history_number_map;
+  
+  return output_stream.str();
+}
+
+// Unpack the data from a string and store into a container
+void ParticleTracker::unpackDataFromString( 
+              std::string& packed_string,
+              ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
+{
+  std::istringstream input_stream( packed_string );
+  boost::archive::binary_iarchive input_archive( input_stream );
+  input_archive >> history_map;
 }
 
 // Reduce data
-void reduceData( 
+void ParticleTracker::reduceData( 
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
+#ifdef HAVE_FRENSIE_MPI
+  // Make sure the global MPI session has been initialized
+  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
+  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
 
+  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
+    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
+							    comm.getRawPtr() );
+							    
+	// Only proceed to the reduce call if the comm is an mpi comm
+  if( mpi_comm != NULL && comm->getSize() > 1 )
+  {
+    int rank = comm->getRank();
+    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm()); 
+
+    if( rank == root_process ) // Handle the master
+    {
+      int nodes_reporting = 1;
+      
+      while( nodes_reporting < comm->getSize() )
+      {
+        MPI_Status status;
+        int message_size;
+
+        // Probe for incoming sends to determine message size
+        ::MPI_Probe( MPI_ANY_SOURCE,
+                     0,
+                     MPI_COMM_WORLD,
+                     &status);
+
+        // Get the size of the incoming message
+        ::MPI_Get_count( &status, 
+                         MPI_CHAR, 
+                         &message_size );
+
+        char *packaged_data = new char[message_size];
+        
+        ::MPI_Recv( packaged_data,
+                    message_size,
+                    MPI_CHAR,
+                    MPI_ANY_SOURCE,
+                    0,
+                    MPI_COMM_WORLD,
+                    MPI_STATUS_IGNORE );
+                    
+        // Contribute the data from this worker to the node map. 
+        std::string reconstructed( packaged_data, message_size );  
+        this->contributeDataFromWorkers( reconstructed );
+  
+        ++nodes_reporting;
+        std::cout << "done" << std::endl;
+      }
+      
+    }
+    else // Handle the workers
+    {
+      std::string packaged_data = packDataInString();
+      
+      ::MPI_Send( packaged_data.c_str(), 
+                  packaged_data.size(),
+                  MPI_CHAR, 
+                  root_process, 
+                  0,
+                  MPI_COMM_WORLD );      
+    }  
+  }
+#endif // end HAVE_FRENSIE_MPI
+}
+
+void ParticleTracker::contributeDataFromWorkers( std::string packaged_data )
+{
+#ifdef HAVE_FRENSIE_MPI
+  ParticleTrackerHDF5FileHandler::OverallHistoryMap worker_history_map;
+  
+  unpackDataFromString( packaged_data, worker_history_map );
+  ParticleTrackerHDF5FileHandler::OverallHistoryMap::const_iterator
+    history_number, end_history_number;
+  history_number = worker_history_map.begin();
+  end_history_number = worker_history_map.end();
+  
+  while( history_number != end_history_number )
+  {
+    d_history_number_map[ history_number->first ] = history_number->second;
+    
+    ++history_number;
+  }
+#endif // end HAVE_FRENSIE_MPI
 }
 
 } // end MonteCarlo namespace

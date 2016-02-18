@@ -38,31 +38,31 @@ MonteCarlo::ParticleTrackerHDF5FileHandler::OverallHistoryMap
 TEUCHOS_UNIT_TEST( ParticleTrackerHDF5FileHandler, constructor_ownership )
 {
   // Construct a sample data map for manipulation
-  Teuchos::Array< double > x_pos;
+  std::vector< double > x_pos;
   x_pos.push_back( 1.0 );
   
-  Teuchos::Array< double > y_pos;
+  std::vector< double > y_pos;
   y_pos.push_back( 1.0 );
   
-  Teuchos::Array< double > z_pos;
+  std::vector< double > z_pos;
   z_pos.push_back( 1.0 );
   
-  Teuchos::Array< double > x_dir;
+  std::vector< double > x_dir;
   x_dir.push_back( 1.0 );
   
-  Teuchos::Array< double > y_dir;
+  std::vector< double > y_dir;
   y_dir.push_back( 0.0 );
   
-  Teuchos::Array< double > z_dir;
+  std::vector< double > z_dir;
   z_dir.push_back( 0.0 );
   
-  Teuchos::Array< double > energy;
+  std::vector< double > energy;
   energy.push_back( 2.0 );
   
-  Teuchos::Array< double > col_num;
+  std::vector< double > col_num;
   col_num.push_back( 0.0 );
   
-  Teuchos::Array< double > weight;
+  std::vector< double > weight;
   weight.push_back( 1.0 );
 
   MonteCarlo::ParticleTrackerHDF5FileHandler::ParticleDataTwoDArray 
@@ -113,7 +113,7 @@ TEUCHOS_UNIT_TEST( ParticleTrackerHDF5FileHandler, constructor_ownership )
   // Make sure file has not been overwritten
   std::string data_location = "/Particle_Tracker/0/0/0/0/";
 
-  Teuchos::Array< double > sample_x_pos;
+  std::vector< double > sample_x_pos;
   file_handler->getXPositionData( data_location, sample_x_pos );
   
   UTILITY_TEST_COMPARE_ARRAYS( sample_x_pos, x_pos );

@@ -119,17 +119,17 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
                                 std::to_string( particle_number->first ) + "/";
         
           // Extract the particle information
-          Teuchos::Array< double > x_pos = particle_number->second[0];
-          Teuchos::Array< double > y_pos = particle_number->second[1];
-          Teuchos::Array< double > z_pos = particle_number->second[2];
+          std::vector< double > x_pos = particle_number->second[0];
+          std::vector< double > y_pos = particle_number->second[1];
+          std::vector< double > z_pos = particle_number->second[2];
           
-          Teuchos::Array< double > x_dir = particle_number->second[3];
-          Teuchos::Array< double > y_dir = particle_number->second[4];
-          Teuchos::Array< double > z_dir = particle_number->second[5];
+          std::vector< double > x_dir = particle_number->second[3];
+          std::vector< double > y_dir = particle_number->second[4];
+          std::vector< double > z_dir = particle_number->second[5];
           
-          Teuchos::Array< double > energy = particle_number->second[6];
-          Teuchos::Array< double > col_num = particle_number->second[7];
-          Teuchos::Array< double > weight = particle_number->second[8];
+          std::vector< double > energy = particle_number->second[6];
+          std::vector< double > col_num = particle_number->second[7];
+          std::vector< double > weight = particle_number->second[8];
           
           // Construct data set folders for data
           std::string x_pos_dataset = individual_particle_location += "x_position";
@@ -212,7 +212,7 @@ void ParticleTrackerHDF5FileHandler::setParticleTrackerData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getXPositionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -226,7 +226,7 @@ void ParticleTrackerHDF5FileHandler::getXPositionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getYPositionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -240,7 +240,7 @@ void ParticleTrackerHDF5FileHandler::getYPositionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getZPositionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -254,7 +254,7 @@ void ParticleTrackerHDF5FileHandler::getZPositionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getXDirectionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -268,7 +268,7 @@ void ParticleTrackerHDF5FileHandler::getXDirectionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getYDirectionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -282,7 +282,7 @@ void ParticleTrackerHDF5FileHandler::getYDirectionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getZDirectionData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -296,7 +296,7 @@ void ParticleTrackerHDF5FileHandler::getZDirectionData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getEnergyData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -310,7 +310,7 @@ void ParticleTrackerHDF5FileHandler::getEnergyData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getCollisionNumberData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
@@ -324,7 +324,7 @@ void ParticleTrackerHDF5FileHandler::getCollisionNumberData(
 // Get the particle tracker data history map
 void ParticleTrackerHDF5FileHandler::getWeightData( 
                                 std::string particle_data_location,
-                                Teuchos::Array< double >& data )
+                                std::vector< double >& data )
 {  
   try{
     d_hdf5_file->readArrayFromDataSet(
