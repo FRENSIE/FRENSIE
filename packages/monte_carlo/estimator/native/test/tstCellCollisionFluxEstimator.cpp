@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,6 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -274,15 +276,21 @@ TEUCHOS_UNIT_TEST( CellCollisionFluxEstimator,
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+
+  hdf5_file->openHDF5FileAndOverwrite( 
 				  "test_cell_track_length_flux_estimator.h5" );
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator HDF5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef StandardCellEstimator::cellIdType cellIdType;
 
@@ -684,15 +692,20 @@ TEUCHOS_UNIT_TEST( CellCollisionFluxEstimator,
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::Estimator::setNumberOfHistories( threads );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( 
 				  "test_cell_collision_flux_estimator.h5" );
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef StandardCellEstimator::cellIdType cellIdType;
 
