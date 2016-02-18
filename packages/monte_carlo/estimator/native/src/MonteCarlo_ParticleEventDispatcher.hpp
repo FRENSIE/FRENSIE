@@ -41,11 +41,11 @@ public:
   { /* ... */ }
 
   //! Attach an observer to the dispatcher
-  void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
+  void attachObserver( const ModuleTraits::InternalEventObserverHandle id,
 		       Teuchos::RCP<Observer>& observer );
 
   //! Detach an observer from the dispatcher
-  void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
+  void detachObserver( const ModuleTraits::InternalEventObserverHandle id );
 
   //! Get the entity id corresponding to this particle event dispatcher
   EntityHandle getId() const;
@@ -56,7 +56,7 @@ public:
 protected:
 
   // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
+  typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
 					Teuchos::RCP<Observer> > ObserverIdMap;
 
 

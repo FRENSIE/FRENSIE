@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
-#define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
+#ifndef MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_HPP
+#define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorFactory.hpp"
@@ -55,7 +55,7 @@ getEstimatorFactoryInstance(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
+#endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEstimatorFactory.hpp

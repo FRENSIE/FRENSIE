@@ -13,11 +13,15 @@
 #include <iostream>
 #include <memory>
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
@@ -123,11 +127,12 @@ public:
   
 private:
 
-  // Typedef for the estimator list
-  typedef Teuchos::Array<std::shared_ptr<ParticleHistoryObserver> > 
-  ParticleHistoryObserverArray;
+  // Typedef for the observers container
+  typedef boost::unordered_map<ParticleHistoryObserver::idType,
+                               std::shared_ptr<ParticleHistoryObserver> > 
+  ParticleHistoryObservers;
 
-  ParticleHistoryObserverArray d_particle_history_observers;
+  ParticleHistoryObservers d_particle_history_observers;
 };
 
 } // end MonteCarlo namespace

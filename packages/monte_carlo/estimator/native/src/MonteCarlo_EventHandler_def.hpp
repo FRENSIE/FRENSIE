@@ -30,12 +30,15 @@ void EventHandler::addEntityEventObserver(
   testPrecondition( observer.get() );
   // Make sure at least one entity id is specified
   testPrecondition( entity_ids.size() > 0 );
+  // Make sure the observer id is unique
+  testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
+                    d_particle_history_observers.end() );
   
   // Register the observer with the particle event dispatchers
   REGISTER_OBSERVER_WITH_DISPATCHERS( observer, entity_ids );
 
   // Add the estimator to the master list
-  d_particle_history_observers.push_back( observer );
+  d_particle_history_observers[observer->getId()] = observer;
 }
 
 // Add a global observer to the handler
@@ -47,12 +50,15 @@ void EventHandler::addGlobalEventObserver(
 {
   // Make sure observer is valid
   testPrecondition( observer.get() );
+  // Make sure the observer id is unique
+  testPrecondition( d_particle_history_observers.find( observer->getId() ) ==
+                    d_particle_history_observers.end() );
  
   // Register the estimator with the particle global event dispatchers
   REGISTER_GLOBAL_OBSERVER_WITH_DISPATCHERS( observer );
 
   // Add the estimator to the master list
-  d_particle_history_observers.push_back( observer );
+  d_particle_history_observers[observer->getId()] = observer;
 }
 
 } // end MonteCarlo namespace

@@ -41,9 +41,9 @@ ParticleEventDispatcherDB<Dispatcher>::getDispatcher(
 // Attach an observer to the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcherDB<Dispatcher>::attachObserver(
-		    const typename Dispatcher::EntityHandleType entity_id,
-		    const ModuleTraits::InternalEstimatorHandle estimator_id,
-		    Teuchos::RCP<typename Dispatcher::ObserverType>& observer )
+		  const typename Dispatcher::EntityHandleType entity_id,
+		  const ModuleTraits::InternalEventObserverHandle estimator_id,
+                  Teuchos::RCP<typename Dispatcher::ObserverType>& observer )
 {
   ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id)->attachObserver(
 								  estimator_id,
@@ -53,8 +53,8 @@ inline void ParticleEventDispatcherDB<Dispatcher>::attachObserver(
 // Detach an observer from the appropriate dispatcher
 template<typename Dispatcher>
 inline void ParticleEventDispatcherDB<Dispatcher>::detachObserver(
-		     const typename Dispatcher::EntityHandleType entity_id,
-		     const ModuleTraits::InternalEstimatorHandle estimator_id )
+		 const typename Dispatcher::EntityHandleType entity_id,
+		 const ModuleTraits::InternalEventObserverHandle estimator_id )
 {
   ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id)->detachObserver( 
 								estimator_id );
@@ -63,7 +63,7 @@ inline void ParticleEventDispatcherDB<Dispatcher>::detachObserver(
 // Detach the observer from all dispatchers
 template<typename Dispatcher>
 inline void ParticleEventDispatcherDB<Dispatcher>::detachObserver(
-		     const ModuleTraits::InternalEstimatorHandle estimator_id )
+		 const ModuleTraits::InternalEventObserverHandle estimator_id )
 {
   typename DispatcherMap::iterator it = 
     ParticleEventDispatcherDB<Dispatcher>::master_map.begin();

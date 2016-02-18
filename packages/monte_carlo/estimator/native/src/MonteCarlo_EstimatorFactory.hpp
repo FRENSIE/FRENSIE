@@ -15,13 +15,12 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
-// Boost Includes
 #include <boost/unordered_set.hpp>
-
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
@@ -143,7 +142,7 @@ protected:
 
   //! Get the cached surfaces (add to set)
   virtual void getCachedSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+     boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const = 0;
 
@@ -242,7 +241,7 @@ private:
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL ) const;
 
@@ -252,7 +251,7 @@ private:
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
   
@@ -262,7 +261,7 @@ private:
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-      const Teucohs::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication = false,
       const Teuchos::ParameterList* bins = NULL );
 
