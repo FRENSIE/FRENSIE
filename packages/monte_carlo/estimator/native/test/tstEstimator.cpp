@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -38,7 +39,7 @@ public:
   ~TestEstimator()
   { /* ... */ }
 
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { 
     printEstimatorResponseFunctionNames( os );
     printEstimatorBins( os );
@@ -599,7 +600,7 @@ TEUCHOS_UNIT_TEST( Estimator, processMoments_two )
 {
   TestEstimator estimator( 0, 1.0 );
   
-  MonteCarlo::Estimator::setNumberOfHistories( 100ull );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 100ull );
 
   double mean;
   double relative_error;
@@ -621,9 +622,9 @@ TEUCHOS_UNIT_TEST( Estimator, processMoments_four )
 {
   TestEstimator estimator( 0, 1.0 );
   
-  MonteCarlo::Estimator::setNumberOfHistories( 100ull );
-  MonteCarlo::Estimator::setStartTime( 0.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 100ull );
+  MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   double mean;
   double relative_error;
@@ -721,9 +722,14 @@ TEUCHOS_UNIT_TEST( Estimator, exportData )
   }
 
   // Set up the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( "test_estimator.h5");
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_estimator.h5");
 
-  estimator.exportData( hdf5_file_handler, false );
+  estimator.exportData( hdf5_file, false );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure that the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );

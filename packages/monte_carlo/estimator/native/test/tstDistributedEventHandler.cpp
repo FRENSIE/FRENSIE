@@ -1,13 +1,14 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   tstDistributedEstimatorHandler.cpp
+//! \file   tstDistributedEventHandler.cpp
 //! \author Alex Robinson
-//! \brief  Estimator handler distributed parallel unit tests
+//! \brief  Event handler distributed parallel unit tests
 //!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,7 +18,7 @@
 #include <Teuchos_DefaultComm.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHandler.hpp"
+#include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
@@ -37,38 +38,40 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_3;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_4;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
 estimator_5;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_6;
 
-Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_7;
 
-Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_8;
 
-Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
 estimator_9;
 
-Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_10;
 
-Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 mesh_estimator;
+
+std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -78,7 +81,7 @@ template<typename CellEstimator>
 void initializeCellEstimator( 
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    Teuchos::RCP<CellEstimator>& estimator )
+    std::shared_ptr<CellEstimator>& estimator )
 {  
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -101,7 +104,7 @@ template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    Teuchos::RCP<CellPulseHeightEstimator>& estimator )
+    std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {  
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -122,7 +125,7 @@ void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
-	   Teuchos::RCP<SurfaceEstimator>& estimator )
+	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
   Teuchos::Array<double> surface_areas( surface_ids.size(), 1.0 );
 
@@ -146,7 +149,7 @@ void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
-	   Teuchos::RCP<SurfaceEstimator>& estimator )
+	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -165,7 +168,7 @@ void initializeSurfaceCurrentEstimator(
 template<typename MeshEstimator>
 void initializeMeshEstimator( const unsigned estimator_id,
 			      const std::string& mesh_file_name,
-			      Teuchos::RCP<MeshEstimator>& estimator )
+			      std::shared_ptr<MeshEstimator>& estimator )
 {
   estimator.reset( new MeshEstimator( estimator_id,
 				      1.0,
@@ -183,7 +186,7 @@ void initializeMeshEstimator( const unsigned estimator_id,
 // Tests
 //---------------------------------------------------------------------------//
 // Check that estimator data can be reduced
-TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
+TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 {
   MonteCarlo::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
@@ -289,7 +292,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
 								 end_point_6 );
 
   // Commit the contributions
-  MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
+  event_handler->commitObserverHistoryContributions();
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
@@ -309,7 +312,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
   comm->barrier();
 
   // Reduce the estimator data
-  MonteCarlo::EstimatorHandler::reduceEstimatorData( comm, 0 );
+  event_handler->reduceObserverData( comm, 0 );
 
   typedef MonteCarlo::StandardCellEstimator::cellIdType cellIdType;
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType surfaceIdType;
@@ -319,13 +322,12 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
   // Export the estimator data
   if( comm->getRank() == 0 )
   {
-    MonteCarlo::EstimatorHandler::exportEstimatorData( 
-					    "test_estimator_handler_rank_0.h5",
-					    procs,
-					    procs,
-					    0.0,
-					    1.0,
-					    false );
+    event_handler->exportObserverData( "test_estimator_handler_rank_0.h5",
+                                       procs,
+                                       procs,
+                                       0.0,
+                                       1.0,
+                                       false );
 
     // Initialize the HDF5 file
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
@@ -542,12 +544,12 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
     std::ostringstream oss;
     oss << "test_estimator_handler_rank_ " << comm->getRank() << ".h5";
     
-    MonteCarlo::EstimatorHandler::exportEstimatorData( oss.str(),
-						       procs,
-						       procs,
-						       0.0,
-						       1.0,
-						       false );
+    event_handler->exportObserverData( oss.str(),
+                                       procs,
+                                       procs,
+                                       0.0,
+                                       1.0,
+                                       false );
     
     // Initialize the HDF5 file
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
@@ -758,7 +760,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
   //comm->barrier();
 
   // Reset the estimator data
-  MonteCarlo::EstimatorHandler::resetEstimatorData();
+  event_handler->resetObserverData();
 }
 
 //---------------------------------------------------------------------------//
@@ -792,6 +794,9 @@ int main( int argc, char** argv )
 
   mpiSession.barrier();
 
+  // Initialize the event handler
+  event_handler.reset( new MonteCarlo::EventHandler );
+
   // Initialize estimators
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
   cell_ids[0] = 0;
@@ -804,12 +809,12 @@ int main( int argc, char** argv )
   initializeCellPulseHeightEstimator( 4u, cell_ids, estimator_5 );
   initializeCellPulseHeightEstimator( 5u, cell_ids, estimator_6 );
 
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_1, cell_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_2, cell_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_3, cell_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_4, cell_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_5, cell_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_6, cell_ids );
+  event_handler->addEntityEventObserver( estimator_1, cell_ids );
+  event_handler->addEntityEventObserver( estimator_2, cell_ids );
+  event_handler->addEntityEventObserver( estimator_3, cell_ids );
+  event_handler->addEntityEventObserver( estimator_4, cell_ids );
+  event_handler->addEntityEventObserver( estimator_5, cell_ids );
+  event_handler->addEntityEventObserver( estimator_6, cell_ids );
 
   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
   surface_ids[0] = 0;
@@ -820,14 +825,14 @@ int main( int argc, char** argv )
   initializeSurfaceCurrentEstimator( 8u, surface_ids, estimator_9 );
   initializeSurfaceCurrentEstimator( 9u, surface_ids, estimator_10 );
 
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_7, surface_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_8, surface_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_9, surface_ids );
-  MonteCarlo::EstimatorHandler::addEstimator( estimator_10, surface_ids );
+  event_handler->addEntityEventObserver( estimator_7, surface_ids );
+  event_handler->addEntityEventObserver( estimator_8, surface_ids );
+  event_handler->addEntityEventObserver( estimator_9, surface_ids );
+  event_handler->addEntityEventObserver( estimator_10, surface_ids );
 
   initializeMeshEstimator( 10u, test_input_mesh_file_name, mesh_estimator );
 
-  MonteCarlo::EstimatorHandler::addGlobalEstimator( mesh_estimator );
+  event_handler->addGlobalEventObserver( mesh_estimator );
 
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

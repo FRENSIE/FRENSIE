@@ -66,15 +66,6 @@ protected:
 
 public:
 
-  //! Set the number of particle histories that will be simulated
-  static void setNumberOfHistories( const unsigned long long num_histories );
-  
-  //! Set the start time for the figure of merit calculation
-  static void setStartTime( const double start_time );
-  
-  //! Set the end time for the figure of merit calculation
-  static void setEndTime( const double end_time );
-
   //! Constructor
   Estimator( const ParticleHistoryObserver::idType id,
 	     const double multiplier );
