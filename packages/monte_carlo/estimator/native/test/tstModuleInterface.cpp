@@ -189,23 +189,274 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   particle.setEnergy( 1.0 );
   particle.setCell( 1 );
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
   
   EMI::updateObserversFromParticleGenerationEvent( particle );
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   EMI::commitObserverHistoryContributions();
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the event module interface can update observers from
+// a particle entering cell event
+TEUCHOS_UNIT_TEST( EventModuleInterface,
+                   updateObserversFromParticleEnteringCellEvent )
+{
+  typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
+
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setCell( 1 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::updateObserversFromParticleEnteringCellEvent( particle, 2 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the estimator module interface can update observers from
+// a particle leavind cell event
+TEUCHOS_UNIT_TEST( EventModuleInterface,
+                   updateObserversFromParticleLeavingCellEvent )
+{
+  typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
+
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setCell( 1 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+  
+  EMI::updateObserversFromParticleLeavingCellEvent( particle, 1 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the estimator module interface can update observers from
+// a particle subtrack ending in cell event
+TEUCHOS_UNIT_TEST( EventModuleInterface,
+                   updateObserversFromParticleSubtrackEndingInCellEvent )
+{
+  typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
+
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setCell( 1 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+    
+  EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                       particle, 1, 1.0, 0.0 );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the estimator module interface can update estimators from
-// a particle crossing surface event
+// a particle colliding in cell event
+TEUCHOS_UNIT_TEST( EventModuleInterface, 
+		   updateObserversFromParticleCollidingInCellEvent )
+{
+  typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
+
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setCell( 1 );
+  
+  double start_point[3] = { 0.25, 0.0, 0.75 };
+  double end_point[3] = { 0.75, 0.25, 1.0 };
+  
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::updateObserversFromParticleCollidingInCellEvent( particle, 1.0 );
+
+  TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the event module interface can update observers from a
+// particle crossing surface event
 TEUCHOS_UNIT_TEST( EventModuleInterface,
 		   upateObserversFromParticleCrossingSurfaceEvent )
 {
@@ -222,44 +473,53 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   surface_normal[1] = 0.0;
   surface_normal[2] = 0.0;
   
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   EMI::updateObserversFromParticleCrossingSurfaceEvent( 
-						  particle,
-						  2,
-						  3,
-						  1,
-						  1.0,
-						  0.0,
-						  surface_normal.getRawPtr() );
+				     particle, 1, surface_normal.getRawPtr() );
 
-  TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  EMI::commitEstimatorHistoryContributions();
+  EMI::commitObserverHistoryContributions();
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the estimator module interface can update estimators from
-// a particle colliding in cell event
-TEUCHOS_UNIT_TEST( EventModuleInterface, 
-		   updateObserversFromParticleCollidingInCellEvent )
+// Check that the event module interface can update observers from a
+// particle colliding global event
+TEUCHOS_UNIT_TEST( EventModuleInterface,
+                   updateObserversFromParticleCollidingGlobalEvent )
 {
   typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
 
@@ -269,41 +529,107 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   particle.setDirection( 1.0, 0.0, 0.0 );
   particle.setCell( 1 );
 
-  Teuchos::Array<double> surface_normal( 3 );
-  surface_normal[0] = 1.0;
-  surface_normal[1] = 0.0;
-  surface_normal[2] = 0.0;
-  
   double start_point[3] = { 0.25, 0.0, 0.75 };
   double end_point[3] = { 0.75, 0.25, 1.0 };
-  
+
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  EMI::updateObserversFromParticleCollidingInCellEvent( particle,
-							 1.0,
-							 0.0,
-							 1.0 );
-							 
-  EMI::updateObserversFromParticleCollidingGlobalEvent( particle,
-                                                         start_point,
-                                                         end_point );
-
-  TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
-
-  EMI::commitEstimatorHistoryContributions();
+  EMI::updateObserversFromParticleCollidingGlobalEvent( 
+                                            particle, start_point, end_point );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the event module interface can update observers from a
+// particle leaving domain global event
+TEUCHOS_UNIT_TEST( EventModuleInterface,
+                   updateObserversFromParticleLeavingDomainGlobalEvent )
+{
+  typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
+
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+  particle.setDirection( 1.0, 0.0, 0.0 );
+  particle.setCell( 1 );
+
+  double start_point[3] = { 0.25, 0.0, 0.75 };
+  double end_point[3] = { 0.75, 0.25, 1.0 };
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::updateObserversFromParticleLeavingDomainGlobalEvent( 
+                                            particle, start_point, end_point );
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
+
+  EMI::commitObserverHistoryContributions();
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 }
 

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -25,7 +26,7 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator;
 
 std::string test_input_mesh_file_name;
@@ -94,8 +95,8 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
 		   attachObserver )
 {  
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
     
   MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::attachObserver( 
                                                       estimator->getId(),
@@ -103,7 +104,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
                                                              
   observer.reset();
   
-  TEST_EQUALITY_CONST( estimator.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator.use_count(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
 }
 
@@ -115,7 +116,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
   MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::detachObserver( 
                                                      estimator->getId() ); 
                                    
-  TEST_EQUALITY_CONST( estimator.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator.use_count(), 1 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 0 );
 }
 
@@ -124,8 +125,8 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
 		   detachAllObservers )
 {
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
 
   MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::attachObserver(  
                                                       estimator->getId(),
@@ -133,11 +134,11 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 
   observer.reset();
                                
-  TEST_EQUALITY_CONST( estimator.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator.use_count(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );                                                           
                                                              
   MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::detachAllObservers(); 
-  TEST_EQUALITY_CONST( estimator.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator.use_count(), 1 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 0 );
 }
 

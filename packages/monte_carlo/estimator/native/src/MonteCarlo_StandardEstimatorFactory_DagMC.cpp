@@ -374,7 +374,7 @@ std::string StandardEstimatorFactory<moab::DagMC>::convertDagMCEstimatorTypeName
 {
 #ifdef HAVE_FRENSIE_DAGMC
   // Make sure the estimator type is valid
-  testPrecondition( Geometry::DagMCProperties::isObserverTypeValid( dagmc_estimator_type_name ) );
+  testPrecondition( Geometry::DagMCProperties::isEstimatorTypeValid( dagmc_estimator_type_name ) );
   
   if( dagmc_estimator_type_name == 
       Geometry::DagMCProperties::getSurfaceCurrentName() )

@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -64,10 +65,10 @@ protected:
 
 //! Helper function for creating a collision handler instance
 template<typename GeometryHandler>
-inline Teuchos::RCP<CollisionHandlerFactory> 
+inline std::shared_ptr<CollisionHandlerFactory> 
 getCollisionHandlerFactoryInstance( std::ostream* os_warn = &std::cerr )
 {
-  return Teuchos::rcp( new StandardCollisionHandlerFactory<GeometryHandler>( os_warn ) );
+  return std::shared_ptr<CollisionHandlerFactory>( new StandardCollisionHandlerFactory<GeometryHandler>( os_warn ) );
 }
 
 } // end MonteCarlo namespace

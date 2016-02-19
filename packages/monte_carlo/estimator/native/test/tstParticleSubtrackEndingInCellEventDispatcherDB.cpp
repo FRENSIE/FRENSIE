@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -23,10 +24,10 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
 //---------------------------------------------------------------------------//
@@ -35,7 +36,7 @@ estimator_2;
 // Initialize the estimator
 template<typename CellEstimator>
 void initializeCellEstimator( const unsigned estimator_id,
-			      Teuchos::RCP<CellEstimator>& estimator )
+			      std::shared_ptr<CellEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
@@ -68,15 +69,9 @@ void initializeCellEstimator( const unsigned estimator_id,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB, 
 		   getDispatcher )
 {
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher=
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getId(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getId(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getId(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getId(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -87,11 +82,11 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
   initializeCellEstimator( 0u, estimator_1 );
   initializeCellEstimator( 1u, estimator_2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::attachObserver(
@@ -114,18 +109,12 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
   observer_1.reset();
   observer_2.reset();
   
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 3 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 3 );
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher=
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
-
-  dispatcher =
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -171,17 +160,11 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
 {
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::detachObserver( 0, 0);
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher=
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 1 );
 
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::detachObserver( 1, 0);
 
-  dispatcher = 
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -191,15 +174,9 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
 {
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::detachObserver( 1 );
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher=
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -207,11 +184,11 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
 		   detachAllObservers )
 {
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::attachObserver(
@@ -234,27 +211,15 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcherDB,
   observer_1.reset();
   observer_2.reset();
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher=
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
   
-  dispatcher =
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   
   MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::detachAllObservers();
 
-  dispatcher =
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
   
-  dispatcher =
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

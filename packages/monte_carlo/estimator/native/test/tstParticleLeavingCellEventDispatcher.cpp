@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -23,13 +24,13 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher(
+std::shared_ptr<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher(
 			new MonteCarlo::ParticleLeavingCellEventDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -39,7 +40,7 @@ Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher(
 template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
 			    const unsigned estimator_id,
-			    Teuchos::RCP<CellPulseHeightEstimator>& estimator )
+			    std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
@@ -84,11 +85,11 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcher, attachObserver )
   initializeCellPulseHeightEstimator( 0u, estimator_1 );
   initializeCellPulseHeightEstimator( 1u, estimator_2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
 								 estimator_2 );
   
   dispatcher->attachObserver( estimator_1->getId(), observer_1 );
@@ -97,8 +98,8 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcher, attachObserver )
   observer_1.reset();
   observer_2.reset();
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 2 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 2 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
 }
 
@@ -126,21 +127,21 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcher, detachObserver )
 {
   dispatcher->detachObserver( 0u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 2 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
 
   dispatcher->detachObserver( 1u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
 }
 

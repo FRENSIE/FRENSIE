@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEstimatorHandler.cpp
+//! \file   tstEventHandler.cpp
 //! \author Alex Robinson
-//! \brief  Estimator handler unit tests
+//! \brief  Event handler unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,7 +17,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHandler.hpp"
+#include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
@@ -184,8 +184,8 @@ void initializeMeshEstimator( const unsigned estimator_id,
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that estimators can be added to the estimator handler
-TEUCHOS_UNIT_TEST( EstimatorHandler, add_observers )
+// Check that observers can be added to the event handler
+TEUCHOS_UNIT_TEST( EventHandler, add_observers )
 {
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
   cell_ids[0] = 0;
@@ -209,21 +209,39 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, add_observers )
 
   event_handler->addGlobalEventObserver( mesh_estimator );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 4 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 4 );
 
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
 
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 11 );
+}
+
+//---------------------------------------------------------------------------//
+// Check if observers exist in the event handler
+TEUCHOS_UNIT_TEST( EventHandler, doesObserverExist )
+{
+  TEST_ASSERT( event_handler->doesObserverExist( 0u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 1u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 2u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 3u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 4u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 5u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 6u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 7u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 8u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 9u ) );
+  TEST_ASSERT( event_handler->doesObserverExist( 10u ) );
+  TEST_ASSERT( !event_handler->doesObserverExist( 11u ) );
 }
 
 //---------------------------------------------------------------------------//

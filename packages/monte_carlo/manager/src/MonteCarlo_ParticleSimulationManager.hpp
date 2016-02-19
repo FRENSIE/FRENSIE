@@ -65,10 +65,11 @@ public:
   virtual void runSimulation();
 
   //! Print the data in all estimators to the desired stream
-  virtual void printSimulationSummary( std::ostream &os ) const;
+  virtual void printSimulationSummary( std::ostream& os ) const;
 
   //! Export the simulation data (to an hdf5 file)
-  virtual void exportSimulationData( const std::string& data_file_name ) const;
+  virtual void exportSimulationData( const std::string& data_file_name,
+                                     std::ostream& os ) const;
 
   // Signal handler
   virtual void signalHandler(int signal);
@@ -114,7 +115,8 @@ private:
   // Print lost particle info
   void printLostParticleInfo( const std::string& file,
                               const int line,
-                              const std::string& error_message ) const;
+                              const std::string& error_message,
+                              const ParticleState& particle ) const;
                               
 
   // Starting history

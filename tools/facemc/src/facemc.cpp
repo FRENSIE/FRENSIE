@@ -15,7 +15,7 @@
 // The signal handler
 void signalHandlerWrapper(int signal)
 {
-  if( !facemc_manager.is_null() )
+  if( facemc_manager.get() )
     facemc_manager->signalHandler(signal);
 }
 

@@ -168,11 +168,11 @@ public:
 };
 
 //! Set the event handler instance
-template<typename EventHandler>
+template<typename EventHandlerType>
 inline void setEventHandlerInstance(
-                        const std::shared_ptr<EventHandler>& handler_instance )
+                        const std::shared_ptr<EventHandlerType>& handler_instance )
 {
-  EventModuleInterface<EventHandler>::setHandlerInstance( handler_instance );
+  EventModuleInterface<EventHandlerType>::setHandlerInstance( handler_instance );
 }
 
 } // end MonteCarlo namespace

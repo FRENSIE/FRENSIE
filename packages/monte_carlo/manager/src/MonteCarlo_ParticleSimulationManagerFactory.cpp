@@ -17,7 +17,6 @@
 #include "FRENSIE_root_config.hpp"
 #include "FRENSIE_mpi_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
-#include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "Geometry_ModuleInterface.hpp"
@@ -31,7 +30,7 @@
 namespace MonteCarlo{
 
 // Create the requested manager
-Teuchos::RCP<SimulationManager> 
+std::shared_ptr<SimulationManager> 
 ParticleSimulationManagerFactory::createManager(
 	   const Teuchos::ParameterList& simulation_info,
 	   const Teuchos::ParameterList& geom_def,

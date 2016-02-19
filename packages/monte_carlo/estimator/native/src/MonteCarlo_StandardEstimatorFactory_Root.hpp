@@ -68,9 +68,9 @@ protected:
 
   //! Get the cached surfaces (add to set)
   void getCachedSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
-     surfaces,
-     const unsigned estimator_id ) const;
+           boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           surfaces,
+           const unsigned estimator_id ) const;
 
   //! Get the surface areas
   void getSurfaceAreas( 

@@ -24,7 +24,7 @@
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
-Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
+std::shared_ptr<MonteCarlo::SimulationManager> facemc_manager;
 
 /*! \details This function should be executed by simply wrapping a main 
  * function around it. If desired a signal handler can also be attached
@@ -38,7 +38,7 @@ int facemcCore( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> geometry_definition;
   Teuchos::RCP<Teuchos::ParameterList> source_definition;
   Teuchos::RCP<Teuchos::ParameterList> response_function_definitions;
-  Teuchos::RCP<Teuchos::ParameterList> estimator_definitions;
+  Teuchos::RCP<Teuchos::ParameterList> observer_definitions;
   Teuchos::RCP<Teuchos::ParameterList> material_definitions;
   
   std::string simulation_info_xml_file;
@@ -218,7 +218,7 @@ int facemcCore( int argc, char** argv )
 
   // Export the simulation data
   try{
-    facemc_manager->exportSimulationData( simulation_name );
+    facemc_manager->exportSimulationData( simulation_name, *out );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
                             "Error: could not export the simulation data!" );

@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -39,7 +40,7 @@ public:
   { /* ... */ }
 
   //! Create the particle source represented by the parameter list
-  virtual Teuchos::RCP<ParticleSource>
+  virtual std::shared_ptr<ParticleSource>
   createSource( const Teuchos::ParameterList& source_rep,
 		const ParticleModeType& particle_mode ) = 0;
 
@@ -47,7 +48,7 @@ protected:
 
   // Create the particle source represented by the parameter list
   template<typename GeometryHandler>
-  static Teuchos::RCP<ParticleSource>
+  static std::shared_ptr<ParticleSource>
   createSourceImpl( const Teuchos::ParameterList& source_rep,
 		    const ParticleModeType& particle_mode );
 
@@ -69,14 +70,14 @@ private:
   static double 
   createDistributedSource(const Teuchos::ParameterList& source_rep,
 			  const ParticleModeType& particle_mode,
-			  Teuchos::RCP<ParticleSource>& source,
+			  std::shared_ptr<ParticleSource>& source,
 			  const unsigned num_sources = 1u );
 
   // Create a state source
   static double
   createStateSource( const Teuchos::ParameterList& source_rep,
 		     const ParticleModeType& particle_mode,
-		     Teuchos::RCP<ParticleSource>& source,
+		     std::shared_ptr<ParticleSource>& source,
 		     const unsigned num_sources = 1u );
 
   // Create a compound source
@@ -84,7 +85,7 @@ private:
   static void
   createCompoundSource( const Teuchos::ParameterList& compound_source,
 			const ParticleModeType& particle_mode,
-			Teuchos::RCP<ParticleSource>& source );
+			std::shared_ptr<ParticleSource>& source );
 
   // The default time distribution
   static const Teuchos::RCP<Utility::OneDDistribution> s_default_time_dist;

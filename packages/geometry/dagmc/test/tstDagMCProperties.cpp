@@ -197,6 +197,33 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isCellEstimatorTypeValid_custom )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a cell observer type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isCellObserverTypeValid )
+{
+  std::string e_type = "cell.pulse.height";
+
+  Geometry::DagMCProperties::setCellPulseHeightName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellObserverTypeValid( e_type ) );
+  
+  e_type = "cell.tl.flux";
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellObserverTypeValid( e_type ) );
+
+  e_type = "cell.c.flux";
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellObserverTypeValid( e_type ) );
+
+  e_type = "bad.type";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isCellObserverTypeValid( e_type ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a surface estimator type can be tested
 TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid_default )
 {
@@ -240,6 +267,105 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid_custom )
   e_type = "surface.current";
 
   TEST_ASSERT( !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid( e_type ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a surface observer type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceObserverTypeValid )
+{
+  std::string e_type = e_type = "surface.flux";
+
+  Geometry::DagMCProperties::setSurfaceFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceObserverTypeValid( e_type ) );
+
+  e_type = "surface.current";
+
+  Geometry::DagMCProperties::setSurfaceCurrentName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceObserverTypeValid( e_type ) );
+
+  e_type = "bad.type";
+
+  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceObserverTypeValid( e_type ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an estimator type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isEstimatorTypeValid )
+{
+  std::string e_type = "cell.pulse.height";
+
+  Geometry::DagMCProperties::setCellPulseHeightName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isEstimatorTypeValid( e_type ) );
+  
+  e_type = "cell.tl.flux";
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isEstimatorTypeValid( e_type ) );
+
+  e_type = "cell.c.flux";
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isEstimatorTypeValid( e_type ) );
+
+  e_type = "surface.flux";
+
+  Geometry::DagMCProperties::setSurfaceFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isEstimatorTypeValid( e_type ) );
+
+  e_type = "surface.current";
+
+  Geometry::DagMCProperties::setSurfaceCurrentName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isEstimatorTypeValid( e_type ) );
+
+  e_type = "bad.type";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isEstimatorTypeValid( e_type ));
+}
+
+//---------------------------------------------------------------------------//
+// Check that an observer type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isObserverTypeValid )
+{
+  std::string e_type = "cell.pulse.height";
+
+  Geometry::DagMCProperties::setCellPulseHeightName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isObserverTypeValid( e_type ) );
+  
+  e_type = "cell.tl.flux";
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isObserverTypeValid( e_type ) );
+
+  e_type = "cell.c.flux";
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isObserverTypeValid( e_type ) );
+
+  e_type = "surface.flux";
+
+  Geometry::DagMCProperties::setSurfaceFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isObserverTypeValid( e_type ) );
+
+  e_type = "surface.current";
+
+  Geometry::DagMCProperties::setSurfaceCurrentName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isObserverTypeValid( e_type ) );
+
+  e_type = "bad.type";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isObserverTypeValid( e_type ));
 }
 
 //---------------------------------------------------------------------------//

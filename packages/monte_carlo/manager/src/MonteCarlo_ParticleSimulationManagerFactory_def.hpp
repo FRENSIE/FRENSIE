@@ -13,6 +13,8 @@
 #include <memory>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleSimulationManager.hpp"
+#include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_StandardParticleSourceFactory.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EventHandlerFactory.hpp"
@@ -98,17 +100,19 @@ ParticleSimulationManagerFactory::createManager(
   if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
       Teuchos::GlobalMPISession::getNProc() > 1 )
   {
-    return new BatchedDistributedParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
+    return std::shared_ptr<SimulationManager>(
+             new BatchedDistributedParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
 	     comm,
              0,
              SimulationGeneralProperties::getNumberOfHistories(),
-             SimulationGeneralProperties::getNumberOfBatchesPerProcessor() );
+             SimulationGeneralProperties::getNumberOfBatchesPerProcessor() ) );
   }
   // Create a local simulation manager
   else
   {   
-    return new ParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
-                         SimulationGeneralProperties::getNumberOfHistories() );
+    return std::shared_ptr<SimulationManager>( 
+            new ParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(
+                       SimulationGeneralProperties::getNumberOfHistories() ) );
   }
 }
 

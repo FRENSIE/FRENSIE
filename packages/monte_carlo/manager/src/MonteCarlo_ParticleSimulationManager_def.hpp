@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorModuleInterface.hpp"
+#include "MonteCarlo_EventModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationNeutronProperties.hpp"
@@ -416,7 +416,7 @@ void ParticleSimulationManager<GeometryHandler,
   }
 
   // Update the global observers: particle leaving domain global event
-  EMI::updateEstimatorsFromParticleLeavingDomainGlobalEvent(
+  EMI::updateObserversFromParticleLeavingDomainGlobalEvent(
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );
@@ -567,16 +567,18 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::printSimulationSummary( 
 						       std::ostream &os ) const
 {
-  os << "!!!Particle Simulation Finished!!!" << std::endl;
+  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+  os << "!!! Particle Simulation Finished !!!" << std::endl;
+  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
   os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
   
-  EMI::printEstimators( os,
-			d_histories_completed,
-			d_start_time,
-			d_end_time+d_previous_run_time );
+  EMI::printObserverSummaries( os,
+                               d_histories_completed,
+                               d_start_time,
+                               d_end_time+d_previous_run_time );
 }
 
 // Print the data in all estimators to a parameter list
@@ -588,19 +590,20 @@ void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::exportSimulationData(
-				      const std::string& data_file_name ) const
+                                             const std::string& data_file_name,
+                                             std::ostream& os ) const
 {
-  std::cout << "Exporting simulation data ... ";
-  std::cout.flush();
+  os << "Exporting simulation data ... ";
+  os.flush();
   
-  EMI::exportEstimatorData( data_file_name,
-  			    d_start_history+d_histories_completed,
-  			    d_histories_completed,
-  			    d_start_time,
-  			    d_end_time+d_previous_run_time,
-			    true );
+  EMI::exportObserverData( data_file_name,
+                           d_start_history+d_histories_completed,
+                           d_histories_completed,
+                           d_start_time,
+                           d_end_time+d_previous_run_time,
+                           true );
 
-  std::cout << "done." << std::endl;
+  os << "done." << std::endl;
 }
 
 // Signal handler

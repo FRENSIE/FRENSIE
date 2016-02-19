@@ -112,9 +112,9 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfSurfaces(
 /*! \details Root does not cache any estimator data so this method is empty.
  */
 void StandardEstimatorFactory<Geometry::Root>::getCachedSurfaces(
-     const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
-     surfaces,
-     const unsigned estimator_id ) const
+           boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
+           surfaces,
+           const unsigned estimator_id ) const
 { /* ... */ }
 
 // Get the surface areas

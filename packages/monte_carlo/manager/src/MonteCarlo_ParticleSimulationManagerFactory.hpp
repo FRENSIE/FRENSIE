@@ -30,7 +30,7 @@ class ParticleSimulationManagerFactory
 public:
 
   //! Create the requested manager
-  static std::shared<SimulationManager> createManager( 
+  static std::shared_ptr<SimulationManager> createManager( 
 	  const Teuchos::ParameterList& simulation_info,
 	  const Teuchos::ParameterList& geom_def,
 	  const Teuchos::ParameterList& source_def,

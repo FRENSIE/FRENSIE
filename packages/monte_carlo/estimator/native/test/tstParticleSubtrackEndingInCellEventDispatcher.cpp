@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -23,13 +24,13 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher(
+std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher(
 			new MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -38,7 +39,7 @@ Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher> dispatcher
 // Initialize the estimator
 template<typename CellEstimator>
 void initializeCellEstimator( const unsigned estimator_id,
-			      Teuchos::RCP<CellEstimator>& estimator )
+			      std::shared_ptr<CellEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
@@ -89,10 +90,10 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
   initializeCellEstimator( 0u, estimator_1 );
   initializeCellEstimator( 1u, estimator_2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_2 );
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_1 );
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( estimator_2 );
   
   dispatcher->attachObserver( estimator_1->getId(), observer_1 );
   dispatcher->attachObserver( estimator_2->getId(), observer_2 );
@@ -100,8 +101,8 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
   observer_1.reset();
   observer_2.reset();
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 2 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 2 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
 }
 
@@ -130,21 +131,21 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 {
   dispatcher->detachObserver( 0u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 2 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 2 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
 
   dispatcher->detachObserver( 1u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 1 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
 }
 

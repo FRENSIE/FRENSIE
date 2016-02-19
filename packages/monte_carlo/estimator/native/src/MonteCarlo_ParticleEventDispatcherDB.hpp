@@ -28,7 +28,7 @@ class ParticleEventDispatcherDB
 public:
 
   //! Get the appropriate dispatcher for the given cell id
-  static Teuchos::RCP<Dispatcher>& getDispatcher(
+  static Dispatcher& getDispatcher(
 		       const typename Dispatcher::EntityHandleType entity_id );
 
   //! Attach an observer to the appropriate dispatcher
@@ -53,7 +53,7 @@ protected:
   
   // Typedef for the dispatcher map
   typedef typename boost::unordered_map<typename Dispatcher::EntityHandleType,
-					Teuchos::RCP<Dispatcher> >
+					std::shared_ptr<Dispatcher> >
   DispatcherMap;
 
   //! Get the master map
