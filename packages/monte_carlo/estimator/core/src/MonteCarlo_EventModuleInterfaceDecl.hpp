@@ -25,7 +25,7 @@
 /*! \defgroup event_module Event Module
  * \ingroup physics_simulation_modules
  *
- * The handle of events has been abstracted. Currently, there is only one
+ * The handling of events has been abstracted. Currently, there is only one
  * event package that has been created and it is found within the MonteCarlo
  * package. The event package as well as any other packages that may 
  * exist can be used in this software without having to change other code

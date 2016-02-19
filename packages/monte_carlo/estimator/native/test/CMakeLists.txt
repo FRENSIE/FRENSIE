@@ -264,15 +264,15 @@ TARGET_LINK_LIBRARIES(tstResponseFunctionFactory monte_carlo_estimator_native)
 ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
 
 IF(FRENSIE_ENABLE_DAGMC)
-ADD_EXECUTABLE(tstEstimatorHandlerFactory_DagMC
-  tstEstimatorHandlerFactory_DagMC.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorHandlerFactory_DagMC monte_carlo_estimator_native)
-ADD_TEST(EstimatorHandlerFactoryDagMC_test tstEstimatorHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_estimators_dagmc.xml")
+ADD_EXECUTABLE(tstStandardEventHandlerFactory_DagMC
+  tstStandardEventHandlerFactory_DagMC.cpp)
+TARGET_LINK_LIBRARIES(tstStandardEventHandlerFactory_DagMC monte_carlo_estimator_native)
+ADD_TEST(StandardEventHandlerFactoryDagMC_test tstStandardEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
-ADD_EXECUTABLE(tstEstimatorHandlerFactory_Root
-  tstEstimatorHandlerFactory_Root.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorHandlerFactory_Root monte_carlo_estimator_native geometry_root)
-ADD_TEST(EstimatorHandlerFactoryRoot_test tstEstimatorHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_estimators_root.xml")
+ADD_EXECUTABLE(tstStandardEventHandlerFactory_Root
+  tstStandardEventHandlerFactory_Root.cpp)
+TARGET_LINK_LIBRARIES(tstStandardEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
+ADD_TEST(StandardEventHandlerFactoryRoot_test tstStandardEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
 ENDIF()
