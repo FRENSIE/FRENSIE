@@ -16,6 +16,8 @@
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
+namespace MonteCarlo{
+
 //! Create the event handler
 template<typename GeometryHandler>
 std::shared_ptr<EventHandler>
@@ -42,19 +44,21 @@ EventHandlerFactory<GeometryHandler>::createHandler(
                               "Error: The observers could not be created!" );
 
   // Create the observers
-  Teuchos::ParameterList::ConstIterator observer_rep = observer_reps.begin();
+  Teuchos::ParameterList::ConstIterator observer_rep_it = 
+    observer_reps.begin();
 
-  while( observer_rep != observer_reps.end() )
+  while( observer_rep_it != observer_reps.end() )
   {
     // Make sure every parameter entry is a list
-    TEST_FOR_EXCEPTION( !observer_rep->second.isList(),
+    TEST_FOR_EXCEPTION( !observer_rep_it->second.isList(),
                         InvalidObserverRepresentation,
                         "Error: all observers must be specified with "
                         "parameter lists (non-list parameter was found in "
                         "the observers xml file!" );
                         
-    const Teuchos::Parameterlist& observer_rep = 
-      Teuchos::any_cast<Teuchos::ParameterList>(observer_rep->second.getAny());
+    const Teuchos::ParameterList& observer_rep = 
+      Teuchos::any_cast<Teuchos::ParameterList>( 
+                                            observer_rep_it->second.getAny() );
 
     try{
       // Create the estimator
@@ -68,21 +72,29 @@ EventHandlerFactory<GeometryHandler>::createHandler(
                          "Error: observer " << observer_rep.name() <<
                          " is not supported!" );
       }
-      EXCEPTION_CATCH_RETHROW_AS( std::exception,
-                                  InvalidObserverRepresentation,
-                                  "Error: The observers could not be "
-                                  "created!");
     }
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                InvalidObserverRepresentation,
+                                "Error: The observers could not be "
+                                "created!");
 
-    ++observer_rep;
+    ++observer_rep_it;
   }
 
   // Create any cached observers
-  estimator_factory->createAndRegisterCachedEstimators();
+  try{
+    estimator_factory->createAndRegisterCachedEstimators();
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                              InvalidObserverRepresentation,
+                              "Error: the cached observers could not be "
+                              "created!" );
 
   // Return the new event handler
   return event_handler;
 }
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_EVENT_HANDLER_FACTORY_DEF_HPP
 

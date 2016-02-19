@@ -493,8 +493,8 @@ const moab::Range TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>:
 // Export the estimator data
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
-                                           EstimatorHDF5FileHandler& hdf5_file,
-					                       const bool process_data ) const
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export data in FRENSIE formatting for data manipulation
   StandardEntityEstimator<moab::EntityHandle>::exportData( hdf5_file,
@@ -507,9 +507,9 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     std::vector<moab::Tag> mean_tag( this->getNumberOfBins()*
                                      this->getNumberOfResponseFunctions()+
                                      this->getNumberOfResponseFunctions() ), 
-                           relative_error_tag( mean_tag.size() );
+      relative_error_tag( mean_tag.size() );
     std::vector<moab::Tag> vov_tag( this->getNumberOfResponseFunctions() ), 
-        fom_tag( vov_tag.size() );
+      fom_tag( vov_tag.size() );
     moab::ErrorCode return_value = d_moab_interface->get_entities_by_dimension(
                                        d_tet_meshset, 3, all_tet_elements);
                                        

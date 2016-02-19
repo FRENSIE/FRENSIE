@@ -18,7 +18,7 @@ ParticleEventDispatcherDB<Dispatcher>::master_map;
 
 // Get the appropriate dispatcher for the given cell id
 template<typename Dispatcher>
-inline Teuchos::RCP<Dispatcher>& 
+inline Dispatcher& 
 ParticleEventDispatcherDB<Dispatcher>::getDispatcher(
 		        const typename Dispatcher::EntityHandleType entity_id )
 {
@@ -26,15 +26,15 @@ ParticleEventDispatcherDB<Dispatcher>::getDispatcher(
     ParticleEventDispatcherDB<Dispatcher>::master_map.find( entity_id );
 
   if( it != ParticleEventDispatcherDB<Dispatcher>::master_map.end() )
-    return it->second;
+    return *(it->second);
   else
   {
-    Teuchos::RCP<Dispatcher>& new_dispatcher = 
+    std::shared_ptr<Dispatcher>& new_dispatcher = 
       ParticleEventDispatcherDB<Dispatcher>::master_map[entity_id];
 
     new_dispatcher.reset( new Dispatcher( entity_id ) );
 
-    return new_dispatcher;
+    return *new_dispatcher;
   }
 }
 
@@ -45,7 +45,7 @@ inline void ParticleEventDispatcherDB<Dispatcher>::attachObserver(
            const ModuleTraits::InternalEventObserverHandle estimator_id,
            const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
-  ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id)->attachObserver(
+  ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id).attachObserver(
 								  estimator_id,
 								  observer );
 }
@@ -56,7 +56,7 @@ inline void ParticleEventDispatcherDB<Dispatcher>::detachObserver(
 		 const typename Dispatcher::EntityHandleType entity_id,
 		 const ModuleTraits::InternalEventObserverHandle estimator_id )
 {
-  ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id)->detachObserver( 
+  ParticleEventDispatcherDB<Dispatcher>::getDispatcher(entity_id).detachObserver( 
 								estimator_id );
 }
 

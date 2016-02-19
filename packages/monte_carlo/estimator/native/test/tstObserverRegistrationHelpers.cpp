@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -30,41 +31,41 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_3;
 
-Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_4;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
 estimator_5;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_6;
 
-Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator_7;
 
-Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_8;
 
-Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
 estimator_9;
 
-Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_10;
 
 Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
 
 Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
 
-Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 tet_mesh_estimator;
 
 std::string test_input_mesh_file_name;
@@ -77,7 +78,7 @@ template<typename CellEstimator>
 void initializeCellEstimator( 
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    Teuchos::RCP<CellEstimator>& estimator )
+    std::shared_ptr<CellEstimator>& estimator )
 {  
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -100,7 +101,7 @@ template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    Teuchos::RCP<CellPulseHeightEstimator>& estimator )
+    std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {  
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
@@ -121,7 +122,7 @@ void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
-	   Teuchos::RCP<SurfaceEstimator>& estimator )
+	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
   Teuchos::Array<double> surface_areas( surface_ids.size(), 1.0 );
 
@@ -145,7 +146,7 @@ void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
-	   Teuchos::RCP<SurfaceEstimator>& estimator )
+	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
   Teuchos::Array<double> surface_areas( surface_ids.size(), 1.0 );
 
@@ -206,17 +207,17 @@ TEUCHOS_UNIT_TEST( ObserverRegistrationHelpers, register_macro )
   REGISTER_OBSERVER_WITH_DISPATCHERS( estimator_10, surface_ids );
   REGISTER_GLOBAL_OBSERVER_WITH_DISPATCHERS( tet_mesh_estimator );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 4 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 4 );
   
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
 }

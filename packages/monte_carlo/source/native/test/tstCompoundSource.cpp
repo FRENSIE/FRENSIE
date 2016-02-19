@@ -38,7 +38,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<MonteCarlo::ParticleSource> source;
+std::shared_ptr<MonteCarlo::ParticleSource> source;
 
 //---------------------------------------------------------------------------//
 // Test Sat File Name
@@ -122,7 +122,7 @@ void initializeSource()
     source_2_energy_distribution( new Utility::DeltaDistribution( 14.1 ) );
   
   // Create the uniform spherical source
-  Teuchos::RCP<MonteCarlo::DistributedSource> spherical_source( 
+  std::shared_ptr<MonteCarlo::DistributedSource> spherical_source( 
      new MonteCarlo::DistributedSource(
 	      0u,
 	      source_1_spatial_distribution,
@@ -135,7 +135,7 @@ void initializeSource()
   spherical_source->setRejectionCell( 2 );
 
   // Create the point source
-  Teuchos::RCP<MonteCarlo::ParticleSource> point_source( 
+  std::shared_ptr<MonteCarlo::ParticleSource> point_source( 
      new MonteCarlo::DistributedSource(
 	      1u,
               source_2_spatial_distribution,
@@ -145,8 +145,8 @@ void initializeSource()
               MonteCarlo::NEUTRON,
               &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
 
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ParticleSource> > sources( 2 );
-  sources[0] = Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSource>( 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ParticleSource> > sources( 2 );
+  sources[0] = std::dynamic_pointer_cast<MonteCarlo::ParticleSource>( 
 							    spherical_source );
   sources[1] = point_source;
 

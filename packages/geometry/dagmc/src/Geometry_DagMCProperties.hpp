@@ -94,7 +94,7 @@ public:
   static bool isSurfaceObserverTypeValid( const std::string& observer_type );
 
   //! Check if the estimator type is valid
-  static bool isEtimatorTypeValid( const std::string& estimator_type );
+  static bool isEstimatorTypeValid( const std::string& estimator_type );
 
   //! Check if the observer type is valid
   static bool isObserverTypeValid( const std::string& observer_type );

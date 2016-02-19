@@ -24,7 +24,7 @@ namespace MonteCarlo{
 
 // Create the source represented by the parameter list
 template<typename GeometryHandler>
-Teuchos::RCP<ParticleSource>
+std::shared_ptr<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
 				     const Teuchos::ParameterList& source_rep,
 		    		     const ParticleModeType& particle_mode )
@@ -46,7 +46,7 @@ ParticleSourceFactory::createSourceImpl(
     ++param_iter;
   }
   
-  Teuchos::RCP<ParticleSource> source;
+  std::shared_ptr<ParticleSource> source;
   
   if( num_params == 1 )
   {
@@ -70,7 +70,7 @@ ParticleSourceFactory::createSourceImpl(
 								  source );
   
   // Make sure the source has been created
-  testPostcondition( !source.is_null() );
+  testPostcondition( source.get() );
 
   // Print out unused parameters
   source_rep.unused( std::cout );
@@ -83,7 +83,7 @@ template<typename GeometryHandler>
 double ParticleSourceFactory::createDistributedSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      Teuchos::RCP<ParticleSource>& source,
+				      std::shared_ptr<ParticleSource>& source,
 				      const unsigned num_sources )
 {
   // Extract the source id
@@ -164,7 +164,7 @@ double ParticleSourceFactory::createDistributedSource(
 //    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
   
   // Create the new source
-  Teuchos::RCP<DistributedSource> source_tmp( new DistributedSource( 
+  std::shared_ptr<DistributedSource> source_tmp( new DistributedSource( 
 	     id,
 	     spatial_distribution,
 	     directional_distribution,
@@ -287,7 +287,7 @@ double ParticleSourceFactory::createDistributedSource(
   }
   
   // Set the return source
-  source = Teuchos::rcp_dynamic_cast<ParticleSource>( source_tmp );
+  source = std::dynamic_pointer_cast<ParticleSource>( source_tmp );
 
   double weight;
   // Return the weight of the source
@@ -307,12 +307,12 @@ template<typename GeometryHandler>
 void ParticleSourceFactory::createCompoundSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      Teuchos::RCP<ParticleSource>& source )
+				      std::shared_ptr<ParticleSource>& source )
 {
   unsigned num_sources = source_rep.numParams();
   unsigned source_index = 0u;
 
-  Teuchos::Array<Teuchos::RCP<ParticleSource> > sources( num_sources );
+  Teuchos::Array<std::shared_ptr<ParticleSource> > sources( num_sources );
   Teuchos::Array<double> source_weights( num_sources );
   
   Teuchos::ParameterList::ConstIterator param_iter = source_rep.begin();

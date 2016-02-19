@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,10 +25,10 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
 //---------------------------------------------------------------------------//
@@ -36,7 +37,7 @@ estimator_2;
 // Initialize the estimator
 template<typename SurfaceEstimator>
 void initializeSurfaceFluxEstimator( const unsigned estimator_id,
-				 Teuchos::RCP<SurfaceEstimator>& estimator )
+				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> 
@@ -65,7 +66,7 @@ void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 // Initialize the estimator
 template<typename SurfaceEstimator>
 void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
-				 Teuchos::RCP<SurfaceEstimator>& estimator )
+				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> 
@@ -96,15 +97,9 @@ void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
 // Check that the correct event dispatchers can be returned
 TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB, getDispatcher )
 {
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventDispatcher> dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getId(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getId(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getId(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getId(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -114,11 +109,11 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB, attachObserver )
   initializeSurfaceCurrentEstimator( 0u, estimator_1 );
   initializeSurfaceFluxEstimator( 1u, estimator_2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::attachObserver(
@@ -141,18 +136,12 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB, attachObserver )
   observer_1.reset();
   observer_2.reset();
   
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 3 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 3 );
 
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventDispatcher> dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
-
-  dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -198,17 +187,11 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB,
 {
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::detachObserver( 0, 0 );
 
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventDispatcher> dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 1 );
 
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::detachObserver( 1, 0 );
 
-  dispatcher = 
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -218,15 +201,9 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB,
 {
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::detachObserver( 1 );
 
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventDispatcher> dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -234,11 +211,11 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB,
 TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB,
 		   detachAllObservers )
 {
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::attachObserver(
@@ -261,27 +238,15 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB,
   observer_1.reset();
   observer_2.reset();
 
-  Teuchos::RCP<MonteCarlo::ParticleCrossingSurfaceEventDispatcher> dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
   
-  dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   
   MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::detachAllObservers();
 
-  dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
   
-  dispatcher =
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

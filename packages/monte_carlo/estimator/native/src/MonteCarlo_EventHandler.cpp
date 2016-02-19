@@ -34,7 +34,8 @@ unsigned EventHandler::getNumberOfObservers() const
 }
 
 // Check if an observer with the given id exists
-unsigned EventHandler::doesObserverExist( const unsigned observer_id ) const
+bool EventHandler::doesObserverExist( 
+                      const ParticleHistoryObserver::idType observer_id ) const
 {
   return d_particle_history_observers.find( observer_id ) !=
     d_particle_history_observers.end();
@@ -243,7 +244,7 @@ void EventHandler::updateObserversFromParticleCollidingInCellEvent(
 }
 
 // Update the observers from a surface intersection event
-void updateObserversFromParticleCrossingSurfaceEvent(
+void EventHandler::updateObserversFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
           const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
           const double surface_normal[3] )
@@ -262,7 +263,7 @@ void updateObserversFromParticleCrossingSurfaceEvent(
 }
 
 // Update the global estimators from a collision event
-void updateObserversFromParticleCollidingGlobalEvent(
+void EventHandler::updateObserversFromParticleCollidingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] )
@@ -274,7 +275,7 @@ void updateObserversFromParticleCollidingGlobalEvent(
 }
 
 // Update the global estimators from a domain exit event
-void updateObserversFromParticleLeavingDomainGlobalEvent(
+void EventHandler::updateObserversFromParticleLeavingDomainGlobalEvent(
                                                  const ParticleState& particle,
                                                  const double start_point[3],
                                                  const double end_point[3] )

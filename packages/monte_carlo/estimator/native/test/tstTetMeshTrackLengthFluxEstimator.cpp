@@ -350,10 +350,14 @@ TEUCHOS_UNIT_TEST( TetMeshTrackLengthFluxEstimator, data_analysis )
   MonteCarlo::Estimator::setEndTime( 1.0 );
   
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-                            "test_tet_mesh_track_length_flux_estimator.h5" ); 
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_tet_mesh_track_length_flux_estimator.h5" ); 
                             
-  estimator->exportData( hdf5_file_handler, true );       
+  estimator->exportData( hdf5_file, true );       
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
   
   // Get the tet EntityHandles for use in data retrieval
   const moab::Range all_tet_elements = estimator->getAllTetElements();

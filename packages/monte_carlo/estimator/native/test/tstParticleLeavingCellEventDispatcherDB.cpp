@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -23,10 +24,10 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> >
 estimator_1;
 
-Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
 //---------------------------------------------------------------------------//
@@ -36,7 +37,7 @@ estimator_2;
 template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
 			    const unsigned estimator_id,
-			    Teuchos::RCP<CellPulseHeightEstimator>& estimator )
+			    std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {
   // Set the entity ids
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
@@ -63,15 +64,9 @@ void initializeCellPulseHeightEstimator(
 // Check that the correct event dispatchers can be returned
 TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB, getDispatcher )
 {
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getId(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getId(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getId(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getId(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -81,11 +76,11 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB, attachObserver )
   initializeCellPulseHeightEstimator( 0u, estimator_1 );
   initializeCellPulseHeightEstimator( 1u, estimator_2 );
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::attachObserver(
@@ -108,18 +103,12 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB, attachObserver )
   observer_1.reset();
   observer_2.reset();
   
-  TEST_EQUALITY_CONST( estimator_1.total_count(), 3 );
-  TEST_EQUALITY_CONST( estimator_2.total_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_1.use_count(), 3 );
+  TEST_EQUALITY_CONST( estimator_2.use_count(), 3 );
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
-
-  dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -163,17 +152,11 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB,
 {
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::detachObserver( 0, 0 );
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 1 );
 
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::detachObserver( 1, 0 );
 
-  dispatcher = 
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -183,15 +166,9 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB,
 {
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::detachObserver( 1 );
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
 
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
-
-  dispatcher = 
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,11 +176,11 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB,
 TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB,
 		   detachAllObservers )
 {
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_1 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>( 
 								 estimator_1 );
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
+  std::shared_ptr<MonteCarlo::ParticleLeavingCellEventObserver> observer_2 =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleLeavingCellEventObserver>(
 								 estimator_2 );
   
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::attachObserver(
@@ -226,27 +203,15 @@ TEUCHOS_UNIT_TEST( ParticleLeavingCellEventDispatcherDB,
   observer_1.reset();
   observer_2.reset();
 
-  Teuchos::RCP<MonteCarlo::ParticleLeavingCellEventDispatcher> dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
   
-  dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   
   MonteCarlo::ParticleLeavingCellEventDispatcherDB::detachAllObservers();
 
-  dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 0 );
   
-  dispatcher =
-    MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 );
-
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

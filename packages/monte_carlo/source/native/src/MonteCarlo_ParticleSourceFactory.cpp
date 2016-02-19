@@ -126,7 +126,7 @@ ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterLis
 double ParticleSourceFactory::createStateSource( 
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      Teuchos::RCP<ParticleSource>& source,
+				      std::shared_ptr<ParticleSource>& source,
 				      const unsigned num_sources )
 {
   return 0.0;

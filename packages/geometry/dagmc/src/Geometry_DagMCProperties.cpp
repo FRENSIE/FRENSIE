@@ -211,12 +211,37 @@ bool DagMCProperties::isCellEstimatorTypeValid(
     estimator_type.compare( DagMCProperties::cell_collision_flux_name ) == 0;
 }
 
+// Check if the cell observer type is valid
+bool DagMCProperties::isCellObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isCellEstimatorTypeValid( observer_type );
+}
+
 // Check if the surface estimator type is valid
 bool DagMCProperties::isSurfaceEstimatorTypeValid( 
 					    const std::string& estimator_type )
 {
   return estimator_type.compare( DagMCProperties::surface_flux_name ) == 0 ||
     estimator_type.compare( DagMCProperties::surface_current_name ) == 0;
+}
+
+// Check if the surface observer type is valid
+bool DagMCProperties::isSurfaceObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isSurfaceEstimatorTypeValid( observer_type );
+}
+
+// Check if the estimator type is valid
+bool DagMCProperties::isEstimatorTypeValid( const std::string& estimator_type )
+{
+  return DagMCProperties::isCellEstimatorTypeValid( estimator_type ) ||
+    DagMCProperties::isSurfaceEstimatorTypeValid( estimator_type );
+}
+
+// Check if the observer type is valid
+bool DagMCProperties::isObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isEstimatorTypeValid( observer_type );
 }
 
 // Check if the particle type is valid

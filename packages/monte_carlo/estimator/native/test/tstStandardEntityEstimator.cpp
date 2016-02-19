@@ -49,7 +49,7 @@ public:
   ~TestStandardEntityEstimator()
   { /* ... */ }
 
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
   // Allow public access to the standard entity estimator protected mem. funcs.
@@ -255,10 +255,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   }
 
   // Initialize the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					 "test_standard_entity_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
 
-  estimator->exportData( hdf5_file_handler, false );
+  estimator->exportData( hdf5_file, false );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure that the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -611,14 +615,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   }
 
   // Initialize the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					 "test_standard_entity_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
 
-  MonteCarlo::Estimator::setStartTime( 0.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
-  MonteCarlo::Estimator::setNumberOfHistories( 1 );
+  MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
 
-  estimator->exportData( hdf5_file_handler, true );
+  estimator->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure that the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -1088,14 +1096,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, true );
+  estimator_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 
@@ -1402,14 +1414,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   for( unsigned i = 0; i < threads; ++i )
     TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
   
-  MonteCarlo::Estimator::setNumberOfHistories( threads );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, true );
+  estimator_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 
@@ -1743,10 +1759,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   TEST_EQUALITY_CONST( estimator_base->getNumberOfResponseFunctions(), 1 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator3.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator3.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, false );
+  estimator_base->exportData( hdf5_file, false );
+
+  // Create and estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 
