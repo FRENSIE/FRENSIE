@@ -30,8 +30,8 @@ public:
   //! The internal event observer handle class
   typedef ModuleTraits::InternalEventObserverHandle InternalEventObserverHandle;
 
-  //! The value of an invalid external estimator handle
-  static const ExternalEstimatorHandle invalid_external_event_observer_handle;
+  //! The value of an invalid external event observer handle
+  static const ExternalEventObserverHandle invalid_external_event_observer_handle;
 
   //! Set the event handler instance
   static void setHandlerInstance(
@@ -229,46 +229,46 @@ inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromP
                                                                    end_point );
 }
 
-// Commit the estimator history constributions
+// Commit the observer history constributions
 inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::commitEstimatorHistoryContributions()
+EventModuleInterface<MonteCarlo::EventHandler>::commitObserverHistoryContributions()
 {
-  s_event_handler->commitEstimatorHistoryContributions();
+  s_event_handler->commitObserverHistoryContributions();
 }
 
-//! Print the estimator data
+//! Print the observer data
 inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::printEstimators( 
+EventModuleInterface<MonteCarlo::EventHandler>::printObserverSummaries( 
 						    std::ostream& os,
 						    const double num_histories,
 						    const double start_time,
 						    const double end_time )
 {
-  s_event_handler->printEstimators( os,
-                                    num_histories,
-                                    start_time,
-                                    end_time );
+  s_event_handler->printObserverSummaries( os,
+                                           num_histories,
+                                           start_time,
+                                           end_time );
 }
 
-// Reset the estimator data
+// Reset the observer data
 inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::resetEstimatorData()
+EventModuleInterface<MonteCarlo::EventHandler>::resetObserverData()
 {
-  s_event_handler->resetEstimatorData();
+  s_event_handler->resetObserverData();
 }
 
-// Reduce estimator data on all processes in comm and collect on the root
+// Reduce observer data on all processes in comm and collect on the root
 inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::reduceEstimatorData(
+EventModuleInterface<MonteCarlo::EventHandler>::reduceObserverData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
-  s_event_handler->reduceEstimatorData( comm, root_process );
+  s_event_handler->reduceObserverData( comm, root_process );
 }
 
-// Export the estimator data
+// Export the observer data
 inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::exportEstimatorData( 
+EventModuleInterface<MonteCarlo::EventHandler>::exportObserverData( 
 				 const std::string& data_file_name,
 				 const unsigned long long last_history_number,
 				 const unsigned long long histories_completed,
@@ -276,28 +276,28 @@ EventModuleInterface<MonteCarlo::EventHandler>::exportEstimatorData(
 				 const double end_time,
 				 const bool process_data )
 {
-  s_event_handler->exportEstimatorData( data_file_name,
-                                        last_history_number,
-                                        histories_completed,
-                                        start_time,
-                                        end_time,
-                                        process_data );
+  s_event_handler->exportObserverData( data_file_name,
+                                       last_history_number,
+                                       histories_completed,
+                                       start_time,
+                                       end_time,
+                                       process_data );
 }
 
-// Get the internal estimator handle corresponding to the external handle
-inline EventModuleInterface<MonteCarlo::EventHandler>::InternalEstimatorHandle 
-EventModuleInterface<MonteCarlo::EventHandler>::getInternalEstimatorHandle(
-			     const ExternalEstimatorHandle estimator_external )
+// Get the internal observer handle corresponding to the external handle
+inline EventModuleInterface<MonteCarlo::EventHandler>::InternalEventObserverHandle 
+EventModuleInterface<MonteCarlo::EventHandler>::getInternalEventObserverHandle(
+			 const ExternalEventObserverHandle observer_external )
 {
-  return estimator_external;
+  return observer_external;
 }
 
 // Get the external estimator handle corresponding to the internal handle
-inline EventModuleInterface<MonteCarlo::EventHandler>::ExternalEstimatorHandle 
-EventModuleInterface<MonteCarlo::EventHandler>::getExternalEstimatorHandle(
-			     const InternalEstimatorHandle estimator_internal )
+inline EventModuleInterface<MonteCarlo::EventHandler>::ExternalEventObserverHandle 
+EventModuleInterface<MonteCarlo::EventHandler>::getExternalEventObserverHandle(
+			 const InternalEventObserverHandle observer_internal )
 {
-  return estimator_internal;
+  return observer_internal;
 }
 
 } // end MonteCarlo namespace

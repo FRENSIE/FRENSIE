@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEstimatorHandlerFactory_DagMC.cpp
-//! \author Alex Robinson
-//! \brief  Estimator handler factory unit tests
+//! \file   tstStandardEventHandlerFactory_Root.cpp
+//! \author Alex Robinson, Eli Moll
+//! \brief  Event handler factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,14 +15,11 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
-#include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
-#include "Geometry_DagMCInstanceFactory.hpp"
-#include "Geometry_ModuleInterface.hpp"
+#include "MonteCarlo_StandardEventHandlerFactory_Root.hpp"
+#include "Geometry_Root.hpp"
+#include "Geometry_RootInstanceFactory.hpp"
+#include "Geometry_ModuleInterface_Root.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 
 //---------------------------------------------------------------------------//
@@ -36,7 +33,7 @@ std::string test_estimator_xml_file_name;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the estimator handler can be initialized
-TEUCHOS_UNIT_TEST( EstimatorHandlerFactoryDagMC, initializeHandlerUsingDagMC )
+TEUCHOS_UNIT_TEST( EventHandlerFactoryRoot, initializeHandlerUsingRoot )
 {
   Teuchos::RCP<Teuchos::ParameterList> response_reps = 
     Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
@@ -44,11 +41,11 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactoryDagMC, initializeHandlerUsingDagMC )
   Teuchos::RCP<Teuchos::ParameterList> estimator_reps =
     Teuchos::getParametersFromXmlFile( test_estimator_xml_file_name );
 
-  MonteCarlo::EstimatorHandlerFactory<moab::DagMC>::initializeHandler( 
+  MonteCarlo::EventHandlerFactory<Geometry::Root>::initializeHandler( 
 							     *response_reps,
 							     *estimator_reps );
 
-  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 17 );
+  TEST_EQUALITY_CONST( MonteCarlo::EventHandler::getNumberOfEstimators(), 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -81,14 +78,14 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Initialize DagMC
+  // Initialize Root
   Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
-  Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+  Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
 
-  Geometry::ModuleInterface<moab::DagMC>::initialize();
-
+  Geometry::ModuleInterface<Geometry::Root>::initialize();
+  
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   
@@ -105,5 +102,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstEstimatorHandlerFactory_DagMC.cpp
+// end tstStandardEventHandlerFactory_Root.cpp
 //---------------------------------------------------------------------------//
