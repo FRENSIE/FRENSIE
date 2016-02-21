@@ -264,6 +264,13 @@ TARGET_LINK_LIBRARIES(tstResponseFunctionFactory monte_carlo_estimator_native)
 ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
 
 IF(FRENSIE_ENABLE_DAGMC)
+ADD_EXECUTABLE(tstStandardEstimatorFactory_DagMC
+  tstStandardEstimatorFactory_DagMC.cpp)
+TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_DagMC monte_carlo_estimator_native)
+ADD_TEST(StandardEstimatorFactory_DagMC_test tstStandardEstimatorFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
 ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
   tstEventHandlerFactory_DagMC.cpp)
 TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
