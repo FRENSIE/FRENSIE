@@ -61,6 +61,8 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
            InvalidEstimatorRepresentation,
            "Error: estimator " << estimator_id << " specified cell " 
            << *cell << " in the xml file, which does not exists!" );
+
+    ++cell;
   }
 }
 
@@ -103,10 +105,7 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfSurfaces(
      const boost::unordered_set<Geometry::ModuleTraits::InternalSurfaceHandle>&
      surfaces,
      const unsigned estimator_id ) const
-{
-  THROW_EXCEPTION( InvalidEstimatorRepresentation,
-                   "Error: Surface estimators are not supported with Root!" );
-}
+{ /* ... */ }
 
 // Get the cached surfaces (add to set)
 /*! \details Root does not cache any estimator data so this method is empty.

@@ -392,8 +392,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   // Initialize the hdf5 file
   std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndOverwrite( 
-						  "test_entity_estimator.h5" );
+  hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator.h5" );
 
   estimator->exportData( hdf5_file, false );
 
