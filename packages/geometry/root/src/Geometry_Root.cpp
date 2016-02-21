@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Geometry_Root.hpp"
+#include "Geometry_ModuleTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -44,8 +45,14 @@ void Root::initialize( const std::string& filename )
     TEST_FOR_EXCEPTION( current_volume->GetUniqueID() == 0,
                         std::runtime_error,
                         "Error: Root contains a cell which has not been "
-                        "assigned a unique cell ID in the input file so "
-                        "estimators cannot be created!" );
+                        "assigned a unique cell ID in the input file!" );
+
+    TEST_FOR_EXCEPTION( current_volume->GetUniqueID() ==
+                        ModuleTraits::invalid_internal_cell_handle,
+                        std::runtime_error,
+                        "Error: Root contains a cell that has a reserved id ("
+                        << ModuleTraits::invalid_internal_cell_handle <<
+                        ") in the input file!" );
   } 
 }
 

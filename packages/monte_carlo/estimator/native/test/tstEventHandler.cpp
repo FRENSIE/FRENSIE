@@ -72,6 +72,9 @@ mesh_estimator;
 
 std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 
+Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids;
+Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids;
+
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
@@ -79,17 +82,17 @@ std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 template<typename CellEstimator>
 void initializeCellEstimator( 
     const unsigned estimator_id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
+    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& ids,
     std::shared_ptr<CellEstimator>& estimator )
 {  
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
-  Teuchos::Array<double> cell_volumes( cell_ids.size(), 1.0 );
+  Teuchos::Array<double> cell_volumes( ids.size(), 1.0 );
   
   estimator.reset( new CellEstimator( estimator_id,
 				      estimator_multiplier,
-				      cell_ids,
+				      ids,
 				      cell_volumes ) );
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
@@ -102,7 +105,7 @@ void initializeCellEstimator(
 template<typename CellPulseHeightEstimator>
 void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
+    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& ids,
     std::shared_ptr<CellPulseHeightEstimator>& estimator )
 {  
   // Set the estimator multiplier
@@ -110,7 +113,7 @@ void initializeCellPulseHeightEstimator(
 
   estimator.reset( new CellPulseHeightEstimator( estimator_id,
 						 estimator_multiplier,
-						 cell_ids ) );
+						 ids ) );
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
@@ -123,17 +126,17 @@ template<typename SurfaceEstimator>
 void initializeSurfaceFluxEstimator( 
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-	   surface_ids,
+	   ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
-  Teuchos::Array<double> surface_areas( surface_ids.size(), 1.0 );
+  Teuchos::Array<double> surface_areas( ids.size(), 1.0 );
 
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
   estimator.reset( new SurfaceEstimator( estimator_id,
 					 estimator_multiplier,
-					 surface_ids,
+					 ids,
 					 surface_areas ) );
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
@@ -147,7 +150,7 @@ template<typename SurfaceEstimator>
 void initializeSurfaceCurrentEstimator( 
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-	   surface_ids,
+	   ids,
 	   std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the estimator multiplier
@@ -155,7 +158,7 @@ void initializeSurfaceCurrentEstimator(
 
   estimator.reset( new SurfaceEstimator( estimator_id,
 					 estimator_multiplier,
-					 surface_ids ) );
+					 ids ) );
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
@@ -187,10 +190,6 @@ void initializeMeshEstimator( const unsigned estimator_id,
 // Check that observers can be added to the event handler
 TEUCHOS_UNIT_TEST( EventHandler, add_observers )
 {
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
-  cell_ids[0] = 0;
-  cell_ids[1] = 1;
-  
   event_handler->addEntityEventObserver( estimator_1, cell_ids );
   event_handler->addEntityEventObserver( estimator_2, cell_ids );
   event_handler->addEntityEventObserver( estimator_3, cell_ids );
@@ -198,10 +197,6 @@ TEUCHOS_UNIT_TEST( EventHandler, add_observers )
   event_handler->addEntityEventObserver( estimator_5, cell_ids );
   event_handler->addEntityEventObserver( estimator_6, cell_ids );
   
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
-  surface_ids[0] = 0;
-  surface_ids[1] = 1;
-
   event_handler->addEntityEventObserver( estimator_7, surface_ids );
   event_handler->addEntityEventObserver( estimator_8, surface_ids );
   event_handler->addEntityEventObserver( estimator_9, surface_ids );
@@ -209,17 +204,17 @@ TEUCHOS_UNIT_TEST( EventHandler, add_observers )
 
   event_handler->addGlobalEventObserver( mesh_estimator );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 0 ).getNumberOfObservers(), 4 );
-
   TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 4 );
+
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 4 );
 
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
 
@@ -251,6 +246,7 @@ TEUCHOS_UNIT_TEST( EventHandler, updateObserversFromParticleGenerationEvent )
   MonteCarlo::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
+  particle.setCell( 1 );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
@@ -668,7 +664,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
   particle.setDirection( 1.0, 0.0, 0.0 );
-  particle.setCell( 0 );
+  particle.setCell( 1 );
 
   // Update the cell collision flux estimators
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -676,7 +672,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
 
   event_handler->updateObserversFromParticleCollidingInCellEvent(
 							       particle, 1.0 );
-
+  
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
   
@@ -685,7 +681,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() ); 
 
   event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
-                                                       particle, 0, 1.0, 0.0 );
+                                                       particle, 1, 1.0, 0.0 );
 
   TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() ); 
@@ -694,7 +690,7 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
 
-  event_handler->updateObserversFromParticleEnteringCellEvent( particle, 0 );
+  event_handler->updateObserversFromParticleEnteringCellEvent( particle, 1 );
   
   TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
@@ -771,13 +767,12 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
-  event_handler->exportObserverData( 
-						   "test_estimator_handler.h5",
-						   1,
-						   1,
-						   0.0,
-						   1.0,
-						   false );
+  event_handler->exportObserverData( "test_estimator_handler.h5",
+                                     1,
+                                     1,
+                                     0.0,
+                                     1.0,
+                                     false );
 
   // Open the HDF5 file
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
@@ -794,140 +789,140 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
     raw_bin_data_copy;
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   0u, 0u, raw_bin_data_copy );
+						   0u, 1u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   0u, 1u, raw_bin_data_copy );
+						   0u, 2u, raw_bin_data_copy );
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   1u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   2u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   1u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   2u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   3u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   2u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   3u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   4u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   3u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   4u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   5u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   4u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   5u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   6u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   6u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   7u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   6u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   7u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   8u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+						   7u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   8u, 1u, raw_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   9u, 0u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 2u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   9u, 1u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   9u, 2u, raw_bin_data_copy );
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					raw_bin_data_copy,
@@ -1005,10 +1000,6 @@ TEUCHOS_UNIT_TEST( EventHandler,
   
   // Enable thread support in the estimators
   event_handler->enableThreadSupport( threads );
-  
-  MonteCarlo::PhotonState particle( 0ull );
-  particle.setWeight( 1.0 );
-  particle.setEnergy( 1.0 );
 
   // Update the cell collision flux estimators
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -1025,37 +1016,37 @@ TEUCHOS_UNIT_TEST( EventHandler,
 
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
-								      particle,
-								      0,
-								      1.0 );
-    MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
-								      particle,
-								      1,
-								      1.0 );
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
-								      particle,
-								      0,
-								      1.0 );
-    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
-								      particle,
-								      1,
-								      1.0 );
-    MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
-								      particle,
-								      0 );
-    MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
-								      particle,
-								      1 );
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
-								      particle,
-								      0,
-								      1.0 );
-    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
-								      particle,
-								      1,
-								      1.0 );
+    MonteCarlo::PhotonState particle( 0ull );
+    particle.setWeight( 1.0 );
+    particle.setEnergy( 1.0 );
+    particle.setDirection( 1.0, 0.0, 0.0 );
+    particle.setCell( 1 );
+    
+    event_handler->updateObserversFromParticleCollidingInCellEvent(
+                                                               particle, 1.0 );
+    particle.setCell( 2 );
+    
+    event_handler->updateObserversFromParticleCollidingInCellEvent(
+                                                               particle, 1.0 );
+    
+    event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                       particle, 1, 1.0, 0.0 );
+    event_handler->updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                       particle, 2, 1.0, 0.0 );
+    
+    event_handler->updateObserversFromParticleEnteringCellEvent( particle, 1 );
+    event_handler->updateObserversFromParticleEnteringCellEvent( particle, 2 );
 
+    Teuchos::Array<double> surface_normal( 3 );
+    surface_normal[0] = 1.0;
+    surface_normal[1] = 0.0;
+    surface_normal[2] = 0.0;
+    
+    event_handler->updateObserversFromParticleCrossingSurfaceEvent( 
+				     particle, 1, surface_normal.getRawPtr() );
+    event_handler->updateObserversFromParticleCrossingSurfaceEvent( 
+				     particle, 2, surface_normal.getRawPtr() );
+    
     double start_point_1[3] = { 0.25, 0.0, 0.75 };
     double start_point_2[3] = { 0.0, 0.25, 0.75 };
     double start_point_3[3] = { 0.75, 0.0, 0.25 };
@@ -1070,36 +1061,24 @@ TEUCHOS_UNIT_TEST( EventHandler,
     double end_point_5[3] = { 1.0, 0.75, 0.25 };
     double end_point_6[3] = { 0.75, 1.0, 0.25 };
 
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_1,
-								 end_point_1 );
-  
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_2,
-								 end_point_2 );
+    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+                                        particle, start_point_1, end_point_1 );
 
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_3,
-								 end_point_3 );
-
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_4,
-								 end_point_4 );
-
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_5,
-								 end_point_5 );
+    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+                                        particle, start_point_2, end_point_2 );
     
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-							         particle,
-							         start_point_6,
-								 end_point_6 );
+    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+                                        particle, start_point_3, end_point_3 );
 
+    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+                                        particle, start_point_4, end_point_4 );
+
+    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+                                        particle, start_point_5, end_point_5 );
+
+    event_handler->updateObserversFromParticleLeavingDomainGlobalEvent(
+                                        particle, start_point_6, end_point_6 );
+    
     // Commit the contributions
     event_handler->commitObserverHistoryContributions();
   }
@@ -1117,13 +1096,12 @@ TEUCHOS_UNIT_TEST( EventHandler,
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
-  event_handler->exportObserverData( 
-						  "test_estimator_handler2.h5",
-						  threads,
-						  threads,
-						  0.0,
-						  1.0,
-						  false );
+  event_handler->exportObserverData( "test_estimator_handler2.h5",
+                                     threads,
+                                     threads,
+                                     0.0,
+                                     1.0,
+                                     false );
 
   // Open the HDF5 file
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
@@ -1139,140 +1117,140 @@ TEUCHOS_UNIT_TEST( EventHandler,
     raw_bin_data_copy;
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   0u, 0u, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-					raw_bin_data_copy,
-					1e-15 );
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   1u, 0u, raw_bin_data_copy );
-
+						   0u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   2u, 0u, raw_bin_data_copy );
-
+						   1u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   2u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   3u, 0u, raw_bin_data_copy );
-
+						   2u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   3u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   4u, 0u, raw_bin_data_copy );
-
+						   3u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   4u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
-						   5u, 0u, raw_bin_data_copy );
-
+						   4u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   5u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   6u, 0u, raw_bin_data_copy );
-
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   6u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   7u, 0u, raw_bin_data_copy );
-
+						   6u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   7u, 1u, raw_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   8u, 0u, raw_bin_data_copy );
-
+						   7u, 2u, raw_bin_data_copy );
+  
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   8u, 1u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 2u, raw_bin_data_copy );
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   9u, 0u, raw_bin_data_copy );
+						   9u, 1u, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
 
   hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
-						   9u, 1u, raw_bin_data_copy );
+						   9u, 2u, raw_bin_data_copy );
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
@@ -1375,9 +1353,9 @@ int main( int argc, char** argv )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
   
   // Initialize estimators
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
-  cell_ids[0] = 0;
-  cell_ids[1] = 1;
+  cell_ids.resize( 2 );
+  cell_ids[0] = 1;
+  cell_ids[1] = 2;
   
   initializeCellEstimator( 0u, cell_ids, estimator_1 );
   initializeCellEstimator( 1u, cell_ids, estimator_2 );
@@ -1386,9 +1364,9 @@ int main( int argc, char** argv )
   initializeCellPulseHeightEstimator( 4u, cell_ids, estimator_5 );
   initializeCellPulseHeightEstimator( 5u, cell_ids, estimator_6 );
 
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
-  surface_ids[0] = 0;
-  surface_ids[1] = 1;
+  surface_ids.resize( 2 );
+  surface_ids[0] = 1;
+  surface_ids[1] = 2;
   
   initializeSurfaceFluxEstimator( 6u, surface_ids, estimator_7 );
   initializeSurfaceFluxEstimator( 7u, surface_ids, estimator_8 );
