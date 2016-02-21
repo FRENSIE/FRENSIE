@@ -273,7 +273,7 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid_custom )
 // Check that a surface observer type can be tested
 TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceObserverTypeValid )
 {
-  std::string e_type = e_type = "surface.flux";
+  std::string e_type = "surface.flux";
 
   Geometry::DagMCProperties::setSurfaceFluxName( e_type );
 
@@ -287,7 +287,7 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceObserverTypeValid )
 
   e_type = "bad.type";
 
-  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceObserverTypeValid( e_type ) );
+  TEST_ASSERT( !Geometry::DagMCProperties::isSurfaceObserverTypeValid( e_type ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -429,8 +429,8 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );

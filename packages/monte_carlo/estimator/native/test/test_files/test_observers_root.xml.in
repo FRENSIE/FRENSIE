@@ -1,4 +1,4 @@
-<ParameterList name="Estimators">
+<ParameterList name="Observers">
 
  <ParameterList name="Cell Track Length Flux Estimator 2">
     <Parameter name="Id" type="unsigned int" value="12"/>

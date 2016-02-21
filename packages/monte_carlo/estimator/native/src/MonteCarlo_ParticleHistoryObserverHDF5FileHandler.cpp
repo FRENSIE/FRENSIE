@@ -59,6 +59,8 @@ ParticleHistoryObserverHDF5FileHandler::ParticleHistoryObserverHDF5FileHandler(
   // Make sure the file is valid
   testPrecondition( hdf5_file.get() );
   testPrecondition( hdf5_file->hasOpenFile() );
+
+  Utility::HDF5FileHandler::throwExceptions();
 }
 
 // Destructor
