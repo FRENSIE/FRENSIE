@@ -67,6 +67,8 @@ bool EstimatorFactory::isEstimatorRep(
 
     is_estimator_rep = this->isEstimator( object_type );
   }
+  
+  return is_estimator_rep;
 }
 
 // Create and register an estimator
