@@ -62,6 +62,12 @@ public:
 
   //! Check if the estimator is a cell estimator
   bool isCellEstimator( const unsigned estimator_id ) const;
+
+  //! Set the estimator as a mesh estimator
+  void setMeshEstimator( const unsigned estimator_id );
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator( const unsigned estimator_id ) const;
   
   //! Set the estimator multiplier
   void setEstimatorMultiplier( const unsigned estimator_id,

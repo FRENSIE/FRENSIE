@@ -146,6 +146,37 @@ bool EstimatorHDF5FileHandler::isCellEstimator(
   return (type == CELL_ENTITY);
 }
 
+// Set the estimator as a mesh estimator
+void EstimatorHDF5FileHandler::setMeshEstimator( const unsigned estimator_id )
+{
+  try{
+    d_hdf5_file->writeValueToGroupAttribute( 
+			       MESH_VOLUME_ENTITY, 
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "entity_type" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Mesh Estimator Error" );
+}
+
+// Check if the estimator is a mesh estimator
+bool EstimatorHDF5FileHandler::isMeshEstimator( 
+					    const unsigned estimator_id ) const
+{
+  EntityType type;
+
+  try{
+    d_hdf5_file->readValueFromGroupAttribute( 
+			       type,
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "entity_type" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Is Mesh Estimator Error" );
+
+  return (type == MESH_VOLUME_ENTITY);
+}
+
 // Set the estimator multiplier
 void EstimatorHDF5FileHandler::setEstimatorMultiplier( 
 						   const unsigned estimator_id,

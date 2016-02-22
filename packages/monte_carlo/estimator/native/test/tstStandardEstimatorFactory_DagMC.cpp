@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
+#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -23,6 +24,7 @@
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_EventHandler.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
@@ -99,7 +101,180 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
                                             observer_rep_it->second.getAny() );
 
     estimator_factory->createAndRegisterEstimator( observer_rep );
+
+    ++observer_rep_it;
   }
+
+  // Check that all of the estimators got created
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 11 );
+
+  event_handler->exportObserverData( "estimator_factory_dagmc_partial.h5",
+                                     1,
+                                     1,
+                                     0.0,
+                                     1.0,
+                                     false );
+
+  // Initialize the hdf5 file
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndReadOnly( "estimator_factory_dagmc_partial.h5" );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+
+  // Check that the correct estimators exist
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 1 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 2 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 4 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 9 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 10 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 11 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 12 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 13 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 14 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 15 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 16 ) );
+
+  // Check that estimator 1 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 1 ) );
+  
+  double multiplier; 
+  hdf5_file_handler.getEstimatorMultiplier( 1, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  Teuchos::Array<unsigned> response_function_ordering;
+
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                               1, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering[0], 0 );
+
+  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 1, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
+
+  Teuchos::Array<double> energy_bins;
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+                                                              1, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
+
+  std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+    cell_id_vols;
+
+  hdf5_file_handler.getEstimatorEntities( 1, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 55 );
+  
+  // Check that estimator 2 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 2 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 2, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                               2, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 2 );
+  TEST_EQUALITY_CONST( response_function_ordering[0], 0 );
+  TEST_EQUALITY_CONST( response_function_ordering[1], 1 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 2, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 2 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
+  TEST_EQUALITY_CONST( dimension_ordering[1], 
+                       MonteCarlo::COLLISION_NUMBER_DIMENSION );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+                                                              2, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
+
+  Teuchos::Array<unsigned> collision_bins;
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
+                                                           2, collision_bins );
+
+  TEST_EQUALITY_CONST( collision_bins.size(), 4 );
+  TEST_EQUALITY_CONST( collision_bins.front(), 0 );
+  TEST_EQUALITY_CONST( collision_bins.back(), 10 );
+
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 2, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 36 );
+
+  // Check that estimator 4 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 4 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 4, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 4, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
+  
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+                                                              4, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
+
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 4, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 4 );
+
+  // Check that estimator 9 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 9 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 9, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 9, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 2 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::COSINE_DIMENSION );
+  TEST_EQUALITY_CONST( dimension_ordering[1], MonteCarlo::ENERGY_DIMENSION );
+
+  Teuchos::Array<double> cosine_bins;
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+                                                              9, cosine_bins );
+
+  TEST_EQUALITY_CONST( cosine_bins.size(), 5 );
+  TEST_EQUALITY_CONST( cosine_bins.front(), -1.0 );
+  TEST_EQUALITY_CONST( cosine_bins.back(), 1.0 );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+                                                              9, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
+
+  std::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,double>
+    surface_id_areas;
+  hdf5_file_handler.getEstimatorEntities( 9, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 3 );
 }
 
 //---------------------------------------------------------------------------//
