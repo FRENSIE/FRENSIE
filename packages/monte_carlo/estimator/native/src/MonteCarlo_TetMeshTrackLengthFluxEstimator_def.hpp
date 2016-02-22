@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
@@ -499,6 +500,11 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   // Export data in FRENSIE formatting for data manipulation
   StandardEntityEstimator<moab::EntityHandle>::exportData( hdf5_file,
                                                            process_data );
+
+  // Set the estimator as a mesh estimator
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
+  
+  estimator_hdf5_file.setMeshEstimator( this->getId() );
         
   // Export data for visualization
   if( process_data )

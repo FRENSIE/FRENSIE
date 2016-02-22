@@ -118,6 +118,7 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, setSurfaceEstimator )
 
   TEST_ASSERT( file_handler.isSurfaceEstimator( 0u ) );
   TEST_ASSERT( !file_handler.isCellEstimator( 0u ) );
+  TEST_ASSERT( !file_handler.isMeshEstimator( 0u ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -130,6 +131,20 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, setCellEstimator )
 
   TEST_ASSERT( !file_handler.isSurfaceEstimator( 0u ) );
   TEST_ASSERT( file_handler.isCellEstimator( 0u ) );
+  TEST_ASSERT( !file_handler.isMeshEstimator( 0u) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an estimator can be set as a mesh estimator
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, setMeshEstimator )
+{
+  MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
+
+  file_handler.setMeshEstimator( 0u );
+
+  TEST_ASSERT( !file_handler.isSurfaceEstimator( 0u ) );
+  TEST_ASSERT( !file_handler.isCellEstimator( 0u ) );
+  TEST_ASSERT( file_handler.isMeshEstimator( 0u) );
 }
 
 //---------------------------------------------------------------------------//
