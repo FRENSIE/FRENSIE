@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
-#define FACEMC_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
+#ifndef MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
+#define MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
 
 namespace MonteCarlo{
 
@@ -93,7 +93,7 @@ void ParticleEventDispatcherDB<Dispatcher>::detachAllObservers()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DB_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEventDispatcherDB_def.hpp

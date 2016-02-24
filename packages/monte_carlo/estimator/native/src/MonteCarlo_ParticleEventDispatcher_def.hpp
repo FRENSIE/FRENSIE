@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
-#define FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
+#ifndef MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
+#define MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -68,7 +68,7 @@ ParticleEventDispatcher<EntityHandle,Observer>::observer_id_map()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEventDispatcher_def.hpp

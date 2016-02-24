@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
-#define FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -107,7 +107,7 @@ void CellTrackLengthFluxEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator_def.hpp

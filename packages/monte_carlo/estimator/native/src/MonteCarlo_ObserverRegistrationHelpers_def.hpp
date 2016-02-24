@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
-#define FACEMC_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
+#ifndef MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
+#define MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
 
 namespace MonteCarlo{
 
@@ -230,7 +230,7 @@ inline void registerGlobalObserver(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
+#endif // end MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ObserverRegistrationHelpers_def.hpp

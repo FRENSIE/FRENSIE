@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
-#define FACEMC_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
+#define MONTE_CARLO_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -30,7 +30,7 @@ struct WeightAndEnergyMultiplier
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_CONTRIBUTION_MULTIPLIER_POLICY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EstimatorContributionMultiplierPolicy.hpp

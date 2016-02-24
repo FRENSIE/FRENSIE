@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
-#define FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#ifndef MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#define MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -72,7 +72,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#endif // end MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleGlobalEventDispatcher.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
-#define FACEMC_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
+#ifndef MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
+#define MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -54,7 +54,7 @@ ParticleLeavingCellEventDispatcherDB::dispatchParticleLeavingCellEvent(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
+#endif // end MONTE_CARLO_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleLeavingCellEventDispatcherDB.hpp

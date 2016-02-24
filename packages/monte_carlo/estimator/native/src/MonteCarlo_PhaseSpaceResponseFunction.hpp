@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHASE_SPACE_RESPONSE_FUNCTION_HPP
-#define FACEMC_PHASE_SPACE_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_PHASE_SPACE_RESPONSE_FUNCTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunction.hpp"

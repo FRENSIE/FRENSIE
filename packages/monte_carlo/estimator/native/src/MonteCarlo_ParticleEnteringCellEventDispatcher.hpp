@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
-#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
+#ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
+#define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -48,7 +48,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
+#endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEnteringCellEventDispatcher.hpp

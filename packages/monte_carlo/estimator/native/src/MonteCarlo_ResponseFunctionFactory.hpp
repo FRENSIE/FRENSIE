@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_RESPONSE_FUNCTION_FACTORY_HPP
-#define FACEMC_RESPONSE_FUNCTION_FACTORY_HPP
+#ifndef MONTE_CARLO_RESPONSE_FUNCTION_FACTORY_HPP
+#define MONTE_CARLO_RESPONSE_FUNCTION_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -74,7 +74,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_RESPONSE_FUNCTION_FACTORY_HPP
+#endif // end MONTE_CARLO_RESPONSE_FUNCTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ResponseFunctionFactory.hpp

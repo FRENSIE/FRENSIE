@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
-#define FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#define MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -72,7 +72,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator.hpp

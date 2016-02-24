@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
-#define FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -192,7 +192,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator.hpp

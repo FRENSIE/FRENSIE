@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_HPP
-#define FACEMC_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_HPP
+#define MONTE_CARLO_ESTIMATOR_HPP
 
 // Std Lib Includes
 #include <string>
@@ -336,7 +336,7 @@ inline bool Estimator::hasUncommittedHistoryContribution() const
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.hpp

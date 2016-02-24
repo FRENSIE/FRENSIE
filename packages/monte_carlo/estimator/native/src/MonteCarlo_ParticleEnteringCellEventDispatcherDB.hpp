@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
-#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
+#ifndef MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
+#define MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DB_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -55,7 +55,7 @@ ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DP_HPP
+#endif // end MONTE_CARLO_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DP_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp
