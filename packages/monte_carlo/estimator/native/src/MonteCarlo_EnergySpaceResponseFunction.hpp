@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
-#define FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunction.hpp"
@@ -45,7 +45,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#endif // end MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EnergySpaceResponseFunction.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_HANDLER_DEF_HPP
-#define FACEMC_ESTIMATOR_HANDLER_DEF_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_HANDLER_DEF_HPP
+#define MONTE_CARLO_ESTIMATOR_HANDLER_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ObserverRegistrationHelpers.hpp"
@@ -63,7 +63,7 @@ void EventHandler::addGlobalEventObserver(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_EVENT_HANDLER_DEF_HPP
+#endif // end MONTE_CARLO_EVENT_HANDLER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EventHandler_def.hpp

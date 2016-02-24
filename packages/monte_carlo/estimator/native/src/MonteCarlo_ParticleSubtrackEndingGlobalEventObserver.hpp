@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#define MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -43,7 +43,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp

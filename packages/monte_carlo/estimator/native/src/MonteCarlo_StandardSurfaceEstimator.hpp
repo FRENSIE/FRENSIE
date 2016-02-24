@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
-#define FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -58,7 +58,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardSurfaceEstimator.hpp

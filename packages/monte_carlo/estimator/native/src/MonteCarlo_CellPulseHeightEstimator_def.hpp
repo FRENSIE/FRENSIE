@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
-#define FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -355,7 +355,7 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellPulseHeightEstimator_def.hpp

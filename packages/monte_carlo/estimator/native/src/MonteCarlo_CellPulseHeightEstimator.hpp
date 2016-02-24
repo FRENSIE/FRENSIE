@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
-#define FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#define MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -142,7 +142,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellPulseHeightEstimator.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
-#define FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
@@ -962,7 +962,7 @@ void StandardEntityEstimator<EntityId>::resetUpdateTracker(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator_def.hpp

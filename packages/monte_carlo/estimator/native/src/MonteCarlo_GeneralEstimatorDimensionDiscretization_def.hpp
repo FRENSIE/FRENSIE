@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
-#define FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#ifndef MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#define MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -122,7 +122,7 @@ void GeneralEstimatorDimensionDiscretization<dimension>::exportData(
 
 } // end MonteCarlo namespace						     
 
-#endif // end FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
+#endif // end MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_GeneralEstimatorDimensionDiscretization_def.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ENTITY_ESTIMATOR_DEF_HPP
-#define FACEMC_ENTITY_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <sstream>
@@ -771,7 +771,7 @@ void EntityEstimator<EntityId>::calculateTotalNormalizationConstant()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ENTITY_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EntityEstimator_def.hpp

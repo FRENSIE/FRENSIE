@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
-#define FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
+#ifndef MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
+#define MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -62,7 +62,7 @@ ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
+#endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp

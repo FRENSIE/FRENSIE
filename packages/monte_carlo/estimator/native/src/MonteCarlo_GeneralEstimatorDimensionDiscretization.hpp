@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
-#define FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#ifndef MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#define MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -128,7 +128,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#endif // end MONTE_CARLO_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp

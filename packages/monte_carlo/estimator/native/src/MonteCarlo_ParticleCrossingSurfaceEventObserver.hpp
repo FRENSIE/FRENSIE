@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
+#define MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -48,7 +48,7 @@ public:
   
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCrossingSurfaceEventObserver.hpp

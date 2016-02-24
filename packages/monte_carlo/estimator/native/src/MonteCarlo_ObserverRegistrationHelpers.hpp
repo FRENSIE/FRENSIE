@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_OBSERVER_REGISTRATION_HELPERS_HPP
-#define FACEMC_OBSERVER_REGISTRATION_HELPERS_HPP
+#ifndef MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_HPP
+#define MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -139,7 +139,7 @@ inline void registerGlobalObserver(
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_OBSERVER_REGISTRATION_HELPERS_HPP
+#endif // end MONTE_CARLO_OBSERVER_REGISTRATION_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ObserverRegistrationHelpers.hpp

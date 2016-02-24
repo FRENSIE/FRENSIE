@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
-#define FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
+#ifndef MONTE_CARLO_EVENT_MODULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_EVENT_MODULE_INTERFACE_NATIVE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_EventModuleInterfaceDecl.hpp"
@@ -302,7 +302,7 @@ EventModuleInterface<MonteCarlo::EventHandler>::getExternalEventObserverHandle(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_EVENT_MODULE_INTERFACE_NATIVE_HPP
+#endif // end MONTE_CARLO_EVENT_MODULE_INTERFACE_NATIVE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EventModuleInterface_Native.hpp

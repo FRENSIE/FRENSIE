@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ENTITY_ESTIMATOR_HPP
-#define FACEMC_ENTITY_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_ENTITY_ESTIMATOR_HPP
+#define MONTE_CARLO_ENTITY_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_CELL_ESTIMATOR_HPP
-#define FACEMC_STANDARD_CELL_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
@@ -50,7 +50,7 @@ protected:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_CELL_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardCellEstimator.hpp

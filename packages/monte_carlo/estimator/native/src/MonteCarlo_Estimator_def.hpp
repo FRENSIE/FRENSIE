@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_DEF_HPP
-#define FACEMC_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
@@ -50,7 +50,7 @@ inline void Estimator::convertPartialParticleStateToGenericMap<DIMENSION_end>(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator_def.hpp
