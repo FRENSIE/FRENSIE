@@ -15,25 +15,57 @@ namespace MonteCarlo{
 
 // Constructor
 ParticleTracker::ParticleTracker( const unsigned number_of_histories )
-  : d_particle_reset( std::pair( 0u, true ) ),
+  : d_particle_reset(),
     d_number_of_histories( number_of_histories ),
-    d_x_pos( std::pair( 0u, std::vector<double>() ),
-   d_y_pos(),
-   d_z_pos(),
-   d_x_dir(),
-   d_y_dir(),
-   d_z_dir(),
-   d_energy(),
-   d_col_num(),
-   d_weight(),
-   d_history_number( 0u ),
-   d_generation_number( 0u ),
-   d_particle_type(),
-   d_history_number_map(),
-   d_first_particle( true )
+    d_x_pos(),
+    d_y_pos(),
+    d_z_pos(),
+    d_x_dir(),
+    d_y_dir(),
+    d_z_dir(),
+    d_energy(),
+    d_col_num(),
+    d_weight(),
+    d_history_number(),
+    d_generation_number(),
+    d_particle_type(),
+    d_history_number_map(),
+    d_first_particle()
 {
   // Make sure there are some particles being tracked
   testPrecondition( d_number_of_histories >= 0 );
+  
+  // Initialize the data maps
+  this->initialize( 0u );
+}
+
+// Initialize the data maps
+void ParticleTracker::initialize( unsigned thread )
+{
+  d_particle_reset.insert( std::pair<unsigned,bool>(thread, true) );
+  d_x_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_y_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_z_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_x_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_y_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_z_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_energy.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_col_num.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_weight.insert( std::pair<unsigned, std::vector<double> >(thread, 
+                                                    std::vector<double>() ) );
+  d_history_number.insert( std::pair<unsigned, unsigned>(thread, 0u) );
+  d_generation_number.insert( std::pair<unsigned, unsigned>(thread, 0u) );
+  d_particle_type.insert( std::pair<unsigned, unsigned>(thread, 0u) );
+  
+  d_first_particle = true;
 }
 
 // Add current history estimator contribution
@@ -238,6 +270,14 @@ void ParticleTracker::exportData( ParticleTrackerHDF5FileHandler& hdf5_file,
                  const bool process_data ) const
 {
   hdf5_file.setParticleTrackerData( d_history_number_map );
+}
+
+void ParticleTracker::enableThreadSupport( const unsigned num_threads )
+{
+  for( unsigned i = 1u; i < num_threads; ++i )
+  {
+    this->initialize( i );
+  }
 }
 
 // Get the x position data

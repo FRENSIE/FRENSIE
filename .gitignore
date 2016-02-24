@@ -31,3 +31,7 @@ lib
 bin
 CMakeFiles
 CMakeCache.txt
+GTAGS
+GRTAGS
+GPATH
+.vscode/

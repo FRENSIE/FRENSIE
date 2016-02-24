@@ -26,7 +26,7 @@
 //---------------------------------------------------------------------------//
 
 // Construct a particle tracker
-MonteCarlo::ParticleTracker particle_tracker( 1u );
+MonteCarlo::ParticleTracker particle_tracker( 100u );
 
 // Construct a sample particle
 MonteCarlo::PhotonState particle( 0u );
@@ -209,7 +209,6 @@ TEUCHOS_UNIT_TEST( ParticleTracker, testDataPackaging )
   UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position );
 }
 
-/*
 // Check that parallel data can be brought together
 TEUCHOS_UNIT_TEST( ParticleTracker, distributedParallelTest )
 {
@@ -321,7 +320,6 @@ TEUCHOS_UNIT_TEST( ParticleTracker, distributedParallelTest )
     UTILITY_TEST_COMPARE_ARRAYS( map_x_pos_h0, map_x_pos_h3 );
   }
 }
-*/
 
 //---------------------------------------------------------------------------//
 // Custom main function
