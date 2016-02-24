@@ -275,6 +275,203 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   hdf5_file_handler.getEstimatorEntities( 9, surface_id_areas );
   
   TEST_EQUALITY_CONST( surface_id_areas.size(), 3 );
+
+  // Check that estimator 10 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 10 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 10, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 10, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 2 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::COSINE_DIMENSION );
+  TEST_EQUALITY_CONST( dimension_ordering[1], 
+                       MonteCarlo::COLLISION_NUMBER_DIMENSION );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+                                                             10, cosine_bins );
+
+  TEST_EQUALITY_CONST( cosine_bins.size(), 5 );
+  TEST_EQUALITY_CONST( cosine_bins.front(), -1.0 );
+  TEST_EQUALITY_CONST( cosine_bins.back(), 1.0 );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
+                                                          10, collision_bins );
+
+  TEST_EQUALITY_CONST( collision_bins.size(), 4 );
+  TEST_EQUALITY_CONST( collision_bins.front(), 0 );
+  TEST_EQUALITY_CONST( collision_bins.back(), 10 );
+
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 10, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 3 );
+
+  // Check that estimator 11 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isMeshEstimator( 11 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 11, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 11, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 2 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
+  TEST_EQUALITY_CONST( dimension_ordering[1], 
+                       MonteCarlo::COLLISION_NUMBER_DIMENSION );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+                                                             11, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+                                                          11, collision_bins );
+
+  TEST_EQUALITY_CONST( collision_bins.size(), 4 );
+  TEST_EQUALITY_CONST( collision_bins.front(), 0 );
+  TEST_EQUALITY_CONST( collision_bins.back(), 10 );
+
+  std::unordered_map<moab::EntityHandle,double>
+    tet_id_vols;
+  hdf5_file_handler.getEstimatorEntities( 11, tet_id_vols );
+  
+  TEST_EQUALITY_CONST( tet_id_vols.size(), 6 );
+
+  // Check that estimator 12 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 12 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 12, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              12, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering[0], 0 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 12, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 12, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_ASSERT( cell_id_vols.count( 1 ) );
+  TEST_ASSERT( cell_id_vols.count( 26 ) );
+
+  // Check that estimator 13 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 13 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 13, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              13, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering[0], 0 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 13, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 13, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_ASSERT( cell_id_vols.count( 1 ) );
+  TEST_ASSERT( cell_id_vols.count( 26 ) );
+
+  // Check that estimator 14 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 14 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 14, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              14, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 14, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 14, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_ASSERT( cell_id_vols.count( 1 ) );
+  TEST_ASSERT( cell_id_vols.count( 26 ) );
+
+  // Check that estimator 15 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 15 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 15, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              15, response_function_ordering );
+
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 15, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 15, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 3 );
+  TEST_ASSERT( surface_id_areas.count( 7 ) );
+  TEST_ASSERT( surface_id_areas.count( 16 ) );
+  TEST_ASSERT( surface_id_areas.count( 25 ) );
+
+  // Check that estimator 16 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 16 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 16, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              16, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 16, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 16, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 3 );
+  TEST_ASSERT( surface_id_areas.count( 7 ) );
+  TEST_ASSERT( surface_id_areas.count( 16 ) );
+  TEST_ASSERT( surface_id_areas.count( 25 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -283,6 +480,190 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC,
                    createAndRegisterCachedEstimators )
 {
   TEST_NOTHROW( estimator_factory->createAndRegisterCachedEstimators() );
+
+  // Check that all of the estimators got created
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 17 );
+
+  event_handler->exportObserverData( "estimator_factory_dagmc_full.h5",
+                                     1,
+                                     1,
+                                     0.0,
+                                     1.0,
+                                     false );
+
+  // Initialize the hdf5 file
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndReadOnly( "estimator_factory_dagmc_full.h5" );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+
+  // Check that the correct estimators exist
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 1 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 2 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 3 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 4 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 5 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 6 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 7 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 8 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 9 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 10 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 11 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 12 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 13 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 14 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 15 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 16 ) );
+
+  // Check that estimator 0 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 0 ) );
+  
+  double multiplier;
+  hdf5_file_handler.getEstimatorMultiplier( 0, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  Teuchos::Array<unsigned> response_function_ordering;
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              0, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
+  hdf5_file_handler.getEstimatorDimensionOrdering( 0, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  std::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+    cell_id_vols;
+  hdf5_file_handler.getEstimatorEntities( 0, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 55 );
+
+  // Check that estimator 3 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isCellEstimator( 3 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 3, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              3, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 3, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  cell_id_vols.clear();
+  hdf5_file_handler.getEstimatorEntities( 3, cell_id_vols );
+  
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 36 );
+
+  // Check that estimator 5 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 5 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 5, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              5, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 5, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  std::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,double>
+    surface_id_areas;
+  hdf5_file_handler.getEstimatorEntities( 5, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 7 );
+
+  // Check that estimator 6 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 6 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 6, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              6, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 6, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 6, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 7 );
+
+  // Check that estimator 7 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 7 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 7, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              7, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 7, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 7, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 7 );
+
+  // Check that estimator 8 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 8 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 8, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 1.0 );
+
+  response_function_ordering.clear();
+  hdf5_file_handler.getEstimatorResponseFunctionOrdering( 
+                                              8, response_function_ordering );
+  
+  TEST_EQUALITY_CONST( response_function_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( response_function_ordering.front(), 4294967295 );
+  
+  dimension_ordering.clear();
+  hdf5_file_handler.getEstimatorDimensionOrdering( 8, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0 );
+  
+  surface_id_areas.clear();
+  hdf5_file_handler.getEstimatorEntities( 8, surface_id_areas );
+  
+  TEST_EQUALITY_CONST( surface_id_areas.size(), 7 );
 }
 
 //---------------------------------------------------------------------------//
