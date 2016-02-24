@@ -102,6 +102,9 @@ public:
   void getDataMap( ParticleTrackerHDF5FileHandler::OverallHistoryMap&
                                                                 history_map );
 
+  //! Enable support for multiple threads
+  void enableThreadSupport( const unsigned num_threads );
+
   //! Reset data
   void resetData();
   
@@ -122,6 +125,9 @@ public:
               ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map );
 
 private:
+
+  //! Initialize the data maps
+  void initialize( unsigned thread );
 
   //! Contribute the data from the workers
   void contributeDataFromWorkers( std::string packaged_data );

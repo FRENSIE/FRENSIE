@@ -27,14 +27,16 @@
 
 // Construct a particle tracker
 MonteCarlo::ParticleTracker particle_tracker( 100u );
-int threads;
+int threads = 0;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the data is updated appropriately in the GlobalSubtrackEndingEvent
 TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testUpdateFromGlobalSubtrackEndingEvent )
-{                
+{ 
+  particle_tracker.enableThreadSupport( threads );
+               
   #pragma omp parallel num_threads( threads )
   {
     MonteCarlo::PhotonState particle( Utility::GlobalOpenMPSession::getThreadId() );
@@ -250,119 +252,37 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testDataPackaging )
   }
 }
 
-/*
+
 // Check that parallel data can be brought together
-TEUCHOS_UNIT_TEST( ParticleTracker, distributedParallelTest )
+TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, checkParallelData )
 {
-  // Construct a particle tracker
-  MonteCarlo::ParticleTracker particle_tracker_mpi( 4u );
-
-  const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm = 
-    Teuchos::DefaultComm<unsigned long long>::getComm();
-  
-  comm->barrier();
-  
-  if( comm->getRank() == 0 )
-  {
-    MonteCarlo::PhotonState particle_mpi(0u);
-    
-    // Initial particle state
-    particle_mpi.setPosition( 1.0, 1.0, 1.0 );
-    particle_mpi.setDirection( 1.0, 0.0, 0.0 );
-    particle_mpi.setEnergy( 2.5 );
-    particle_mpi.setWeight( 1.0 );
-    particle_mpi.setAsGone();
-    
-    // Start and end positions
-    double start_point[3] = { 1.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-    
-    particle_tracker_mpi.updateFromGlobalParticleSubtrackEndingEvent( particle_mpi,
-                                                                  start_point,
-                                                                  end_point );
-  }
-  else if( comm->getRank() == 1 )
-  {
-    MonteCarlo::PhotonState particle_mpi(1u);
-    
-    // Initial particle state
-    particle_mpi.setPosition( 1.0, 1.0, 1.0 );
-    particle_mpi.setDirection( 1.0, 0.0, 0.0 );
-    particle_mpi.setEnergy( 2.5 );
-    particle_mpi.setWeight( 1.0 );
-    particle_mpi.setAsGone();
-    
-    // Start and end positions
-    double start_point[3] = { 1.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-    
-    particle_tracker_mpi.updateFromGlobalParticleSubtrackEndingEvent( particle_mpi,
-                                                                  start_point,
-                                                                  end_point );
-  }
-  else if( comm->getRank() == 2 )
-  {
-    MonteCarlo::PhotonState particle_mpi(2u);
-    
-    // Initial particle state
-    particle_mpi.setPosition( 1.0, 1.0, 1.0 );
-    particle_mpi.setDirection( 1.0, 0.0, 0.0 );
-    particle_mpi.setEnergy( 2.5 );
-    particle_mpi.setWeight( 1.0 );
-    particle_mpi.setAsGone();
-    
-    // Start and end positions
-    double start_point[3] = { 1.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-    
-    particle_tracker_mpi.updateFromGlobalParticleSubtrackEndingEvent( particle_mpi,
-                                                                  start_point,
-                                                                  end_point );
-  }
-  else if( comm->getRank() == 3 )
-  {
-    MonteCarlo::PhotonState particle_mpi(3u);
-    
-    // Initial particle state
-    particle_mpi.setPosition( 1.0, 1.0, 1.0 );
-    particle_mpi.setDirection( 1.0, 0.0, 0.0 );
-    particle_mpi.setEnergy( 2.5 );
-    particle_mpi.setWeight( 1.0 );
-    particle_mpi.setAsGone();
-    
-    // Start and end positions
-    double start_point[3] = { 1.0, 1.0, 1.0 };
-    double end_point[3] = { 2.0, 1.0, 1.0 };
-    
-    particle_tracker_mpi.updateFromGlobalParticleSubtrackEndingEvent( particle_mpi,
-                                                                  start_point,
-                                                                  end_point );   
-  }
-  
-  particle_tracker_mpi.reduceData( comm, 0 );
-  
+  // Overall history map 
   MonteCarlo::ParticleTrackerHDF5FileHandler::OverallHistoryMap history_map;
+  particle_tracker.getDataMap( history_map );
   
-  if( comm->getRank() ==  0 )
+  // Expected data
+  std::vector< double > input_x_position;                                                            
+  input_x_position.push_back( 2.0 );
+  
+  // Mapped data
+  std::vector< double > mapped_x_position_0;
+  std::vector< double > mapped_x_position_1;
+  std::vector< double > mapped_x_position_2;
+  std::vector< double > mapped_x_position_3;
+  
+  mapped_x_position_0 = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+  mapped_x_position_1 = history_map[ 1 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+  mapped_x_position_2 = history_map[ 2 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+  mapped_x_position_3 = history_map[ 3 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+  
+  #pragma omp critical
   {
-    particle_tracker_mpi.getDataMap( history_map );
-    
-    std::vector< double > map_x_pos_h0;
-    std::vector< double > map_x_pos_h1;
-    std::vector< double > map_x_pos_h2;
-    std::vector< double > map_x_pos_h3;
-    
-    map_x_pos_h0 = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-    map_x_pos_h1 = history_map[ 1 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-    map_x_pos_h2 = history_map[ 2 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-    map_x_pos_h3 = history_map[ 3 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-
-    UTILITY_TEST_COMPARE_ARRAYS( map_x_pos_h0, map_x_pos_h1 );
-    UTILITY_TEST_COMPARE_ARRAYS( map_x_pos_h0, map_x_pos_h2 );
-    UTILITY_TEST_COMPARE_ARRAYS( map_x_pos_h0, map_x_pos_h3 );
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_0 );
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_1 );
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_2 );
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_3 );
   }
 }
-*/
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -370,9 +290,7 @@ TEUCHOS_UNIT_TEST( ParticleTracker, distributedParallelTest )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  threads = 1;
-
+  
   clp.setOption( "threads",
 		 &threads,
 		 "Number of threads to use" );
@@ -408,4 +326,3 @@ int main( int argc, char** argv )
 //---------------------------------------------------------------------------//
 // end tstStandardCellEstimator.cpp
 //---------------------------------------------------------------------------//
-
