@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleCrossingSurfaceEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle crossing surface event dispatcher class declaration.
+//! \brief  Particle crossing surface event dispatcher database class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,36 +16,48 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
-#include "MonteCarlo_ParticleCrossingSurfaceEventObserver.hpp"
-#include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The particle crossing surface event dispatcher class
-class ParticleCrossingSurfaceEventDispatcher : 
-    public ParticleEventDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,
-				   ParticleCrossingSurfaceEventObserver>
+//! The particle crossing surface event dispatcher database class
+class ParticleCrossingSurfaceEventDispatcher : public ParticleEventDispatcher<ParticleCrossingSurfaceEventLocalDispatcher>
 {
 
 public:
 
   //! Constructor
-  ParticleCrossingSurfaceEventDispatcher(
-	      const Geometry::ModuleTraits::InternalSurfaceHandle surface_id );
+  ParticleCrossingSurfaceEventDispatcher()
+  { /* ... */ }
 
   //! Destructor
   ~ParticleCrossingSurfaceEventDispatcher()
   { /* ... */ }
 
-  //! Dispatch the new event to the observers
+  //! Dispatch the particle crossing surface event to the observers
   void dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine );
 };
+
+// Dispatch the particle crossing surface event to the observers
+inline void
+ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEvent(
+	  const ParticleState& particle,
+	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double angle_cosine )
+{
+  DispatcherMap::iterator it = this->dispatcher_map().find( surface_crossing );
+
+  if( it != this->dispatcher_map().end() )
+  {
+    it->second->dispatchParticleCrossingSurfaceEvent( particle,
+						      surface_crossing,
+						      angle_cosine );
+  }
+}
 
 } // end MonteCarlo namespace
 

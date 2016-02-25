@@ -1,27 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleCrossingSurfaceEventDispatcher.cpp
+//! \file   MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.cpp
 //! \author Alex Robinson
 //! \brief  Particle crossing surface event dispatcher class declaration.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcher.hpp"
+#include "MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
   
 // Constructor
-ParticleCrossingSurfaceEventDispatcher::ParticleCrossingSurfaceEventDispatcher(
+ParticleCrossingSurfaceEventLocalDispatcher::ParticleCrossingSurfaceEventLocalDispatcher(
 	       const Geometry::ModuleTraits::InternalSurfaceHandle surface_id )
-  : ParticleEventDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,
-			    ParticleCrossingSurfaceEventObserver>( surface_id )
+  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,
+                                 ParticleCrossingSurfaceEventObserver>( surface_id )
 { /* ... */ }
 
 // Dispatch the new event ot the observers
 void 
-ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEvent(
+ParticleCrossingSurfaceEventLocalDispatcher::dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine )
@@ -44,5 +44,5 @@ ParticleCrossingSurfaceEventDispatcher::dispatchParticleCrossingSurfaceEvent(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleCrossingSurfaceEventDispatcher.cpp
+// end MonteCarlo_ParticleCrossingSurfaceEventLocalDispatcher.cpp
 //---------------------------------------------------------------------------//

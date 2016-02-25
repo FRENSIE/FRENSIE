@@ -114,18 +114,11 @@ public:
 	  const double surface_normal[3] )
   { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
 
-  //! Update the global estimators from a collision event
-  static inline void updateEstimatorsFromParticleCollidingGlobalEvent(
+  //! Update the global estimators from a subtrack ending event
+  static inline void updateEstimatorsFromParticleSubtrackEndingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] )
-  { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
-
-  //! Update the global estimators from a domain exit event
-  static inline void updateObserversFromParticleLeavingDomainGlobalEvent(
-                                                 const ParticleState& particle,
-                                                 const double start_point[3],
-                                                 const double end_point[3] )
   { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
 
   //! Commit the observer history contributions

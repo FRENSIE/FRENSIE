@@ -1,26 +1,26 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleSubtrackEndingInCellEventDispatcher.cpp
+//! \file   MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.cpp
 //! \author Alex Robinson
 //! \brief  Particle subtrack ending in cell event dispatcher class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcher.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-ParticleSubtrackEndingInCellEventDispatcher::ParticleSubtrackEndingInCellEventDispatcher(
+ParticleSubtrackEndingInCellEventLocalDispatcher::ParticleSubtrackEndingInCellEventLocalDispatcher(
 		     const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
-			    ParticleSubtrackEndingInCellEventObserver>(cell_id)
+  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+                                 ParticleSubtrackEndingInCellEventObserver>(cell_id)
 { /* ... */ }
 
 // Dispatch the new event to the observers
-void ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEndingInCellEvent(
+void ParticleSubtrackEndingInCellEventLocalDispatcher::dispatchParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
 	     const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
 	     const double track_length )
@@ -44,5 +44,5 @@ void ParticleSubtrackEndingInCellEventDispatcher::dispatchParticleSubtrackEnding
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleSubtrackEndingInCellEventDispatcher.cpp
+// end MonteCarlo_ParticleSubtrackEndingInCellEventLocalDispatcher.cpp
 //---------------------------------------------------------------------------//

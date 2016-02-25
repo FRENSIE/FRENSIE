@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleCollidingInCellEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle colliding in cell event dispatcher class declaration.
+//! \brief  Particle colliding in cell event dispatcher database declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,36 +16,50 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleCollidingInCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
-#include "MonteCarlo_ParticleCollidingInCellEventObserver.hpp"
-#include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The particle colliding in cell event dispatcher
+//! The particle colliding in cell event dispatcher database class
 class ParticleCollidingInCellEventDispatcher :
-    public ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
-				   ParticleCollidingInCellEventObserver>
+    public ParticleEventDispatcher<ParticleCollidingInCellEventLocalDispatcher>
 {
 
 public:
 
   //! Constructor
-  ParticleCollidingInCellEventDispatcher(
-		    const Geometry::ModuleTraits::InternalCellHandle cell_id );
+  ParticleCollidingInCellEventDispatcher()
+  { /* ... */ }
 
   //! Destructor
   ~ParticleCollidingInCellEventDispatcher()
   { /* ... */ }
 
-  //! Dispatch the new event to the observers
-  void dispatchParticleCollidingInCellEvent(
+  //! Dispatch the particle colliding in cell event to the observers
+  void dispatchParticleCollidingInCellEvent( 
 	    const ParticleState& particle,
 	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section );
 };
+
+// Dispatch the particle entering cell event to the observers
+inline void
+ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEvent(
+	    const ParticleState& particle,
+	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
+	    const double inverse_total_cross_section )
+{
+  DispatcherMap::iterator it = this->dispatcher_map().find(cell_of_collision );
+
+  if( it != this->dispatcher_map().end() )
+  {
+    it->second->dispatchParticleCollidingInCellEvent( 
+						 particle, 
+						 cell_of_collision,
+						 inverse_total_cross_section );
+  }
+}
 
 } // end MonteCarlo namespace
 
