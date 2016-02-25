@@ -14,13 +14,10 @@
 
 namespace MonteCarlo{
 
-// Initializing static member data
-template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap ParticleGlobalEventDispatcher<Observer>::d_observer_map;
-
 // Constructor
 template<typename Observer>
 ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
+  : d_observer_map()
 { /* ... */ }
 
 // Attach an observer to the dispatcher
@@ -55,12 +52,13 @@ unsigned ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers()
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachAllObservers()
 {
-  d_observer_map.clear( );
+  d_observer_map.clear();
 }
 
 // Get the observer id map
 template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& ParticleGlobalEventDispatcher<Observer>::observer_id_map()
+typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& 
+ParticleGlobalEventDispatcher<Observer>::observer_id_map()
 {
   return d_observer_map;
 }

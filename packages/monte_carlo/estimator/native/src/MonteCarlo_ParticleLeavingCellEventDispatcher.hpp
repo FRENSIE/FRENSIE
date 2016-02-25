@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleLeavingCellEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle leaving cell event dispatcher class declaration.
+//! \brief  Particle leaving cell event dispatcher database class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,35 +16,42 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ParticleLeavingCellEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleEventDispatcher.hpp"
-#include "MonteCarlo_ParticleLeavingCellEventObserver.hpp"
-#include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The particle leaving cell event dispatcher 
-class ParticleLeavingCellEventDispatcher :
-    public ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
-				   ParticleLeavingCellEventObserver>
+//! The particle leaving cell event dispatcher database class
+class ParticleLeavingCellEventDispatcher : public ParticleEventDispatcher<ParticleLeavingCellEventLocalDispatcher>
 {
-
+  
 public:
 
   //! Constructor
-  ParticleLeavingCellEventDispatcher(
-		    const Geometry::ModuleTraits::InternalCellHandle cell_id );
+  ParticleLeavingCellEventDispatcher()
+  { /* ... */ }
 
   //! Destructor
   ~ParticleLeavingCellEventDispatcher()
   { /* ... */ }
 
-  //! Dispatch the new event to the observers
+  //! Dispatch the particle leaving cell event to the observers
   void dispatchParticleLeavingCellEvent(
 	       const ParticleState& particle,
 	       const Geometry::ModuleTraits::InternalCellHandle cell_leaving );
 };
+
+// Dispatch the particle leaving cell event to the observers
+inline void
+ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent( 
+	        const ParticleState& particle,
+	        const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
+{
+  DispatcherMap::iterator it = this->dispatcher_map().find( cell_leaving );
+
+  if( it != this->dispatcher_map().end() )
+    it->second->dispatchParticleLeavingCellEvent( particle, cell_leaving );
+}
 
 } // end MonteCarlo namespace
 

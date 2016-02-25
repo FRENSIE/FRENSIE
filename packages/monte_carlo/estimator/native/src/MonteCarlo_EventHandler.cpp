@@ -8,12 +8,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EventHandler.hpp"
-#include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleLeavingCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
@@ -24,7 +18,13 @@ namespace MonteCarlo{
 
 // Constructor
 EventHandler::EventHandler()
-  : d_particle_history_observers()
+  : d_particle_history_observers(),
+    d_particle_entering_cell_event_dispatcher(),
+    d_particle_leaving_cell_event_dispatcher(),
+    d_particle_subtrack_ending_in_cell_event_dispatcher(),
+    d_particle_colliding_in_cell_event_dispatcher(),
+    d_particle_crossing_surface_event_dispatcher(),
+    d_particle_subtrack_ending_global_event_dispatcher()
 { /* ... */ }
 
 // Return the number of estimators that have been added
@@ -194,7 +194,7 @@ void EventHandler::exportObserverData(
 void EventHandler::updateObserversFromParticleGenerationEvent(
                                                 const ParticleState& particle )
 {
-  ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
+  d_particle_entering_cell_event_dispatcher.dispatchParticleEnteringCellEvent(
 							  particle,
 							  particle.getCell() );
 }
@@ -204,7 +204,7 @@ void EventHandler::updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,
               const Geometry::ModuleTraits::InternalCellHandle cell_entering )
 {
-  ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
+  d_particle_entering_cell_event_dispatcher.dispatchParticleEnteringCellEvent(
                                                                particle,
                                                                cell_entering );
 }
@@ -214,7 +214,7 @@ void EventHandler::updateObserversFromParticleLeavingCellEvent(
                const ParticleState& particle,
                const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
 {
-  ParticleLeavingCellEventDispatcherDB::dispatchParticleLeavingCellEvent(
+  d_particle_leaving_cell_event_dispatcher.dispatchParticleLeavingCellEvent(
                                                                 particle,
                                                                 cell_leaving );
 }
@@ -226,7 +226,7 @@ void EventHandler::updateObserversFromParticleSubtrackEndingInCellEvent(
              const double particle_subtrack_length,
              const double subtrack_start_time )
 {
-  ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
+  d_particle_subtrack_ending_in_cell_event_dispatcher.dispatchParticleSubtrackEndingInCellEvent(
 						    particle,
 						    cell_of_subtrack,
 						    particle_subtrack_length );
@@ -237,7 +237,7 @@ void EventHandler::updateObserversFromParticleCollidingInCellEvent(
                                     const ParticleState& particle,
                                     const double inverse_total_cross_section )
 {
-  ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
+  d_particle_colliding_in_cell_event_dispatcher.dispatchParticleCollidingInCellEvent(
 						 particle,
 						 particle.getCell(),
 						 inverse_total_cross_section );
@@ -256,7 +256,7 @@ void EventHandler::updateObserversFromParticleCrossingSurfaceEvent(
 						       particle.getDirection(),
 						       surface_normal );
 
-  ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
+  d_particle_crossing_surface_event_dispatcher.dispatchParticleCrossingSurfaceEvent(
 							      particle,
 							      surface_crossing,
 							      angle_cosine );
@@ -268,19 +268,7 @@ void EventHandler::updateObserversFromParticleCollidingGlobalEvent(
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-								   particle,
-								   start_point,
-								   end_point );
-}
-
-// Update the global estimators from a domain exit event
-void EventHandler::updateObserversFromParticleLeavingDomainGlobalEvent(
-                                                 const ParticleState& particle,
-                                                 const double start_point[3],
-                                                 const double end_point[3] )
-{
-  ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+  d_particle_subtrack_ending_global_event_dispatcher.dispatchParticleSubtrackEndingGlobalEvent(
 								   particle,
 								   start_point,
 								   end_point );

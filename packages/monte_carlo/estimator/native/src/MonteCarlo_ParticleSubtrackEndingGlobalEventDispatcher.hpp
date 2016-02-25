@@ -24,26 +24,22 @@
 namespace MonteCarlo{
 
 //! The particle subtrack ending global event dispatcher class
-class ParticleSubtrackEndingGlobalEventDispatcher :
-  public ParticleGlobalEventDispatcher<ParticleSubtrackEndingGlobalEventObserver>
+class ParticleSubtrackEndingGlobalEventDispatcher : public ParticleGlobalEventDispatcher<ParticleSubtrackEndingGlobalEventObserver>
 {
   
 public:
+
+  //! Constructor
+  ParticleSubtrackEndingGlobalEventDispatcher();
 
   //! Destructor
   ~ParticleSubtrackEndingGlobalEventDispatcher()
   { /* ... */ }
 
   //! Dispatch the new event to the observers
-  static void dispatchParticleSubtrackEndingGlobalEvent(
-						 const ParticleState& particle,
+  void dispatchParticleSubtrackEndingGlobalEvent(const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] );
-
-private:
-
-  // Constructor
-  ParticleSubtrackEndingGlobalEventDispatcher();
 };
 
 } // end MonteCarlo namespace

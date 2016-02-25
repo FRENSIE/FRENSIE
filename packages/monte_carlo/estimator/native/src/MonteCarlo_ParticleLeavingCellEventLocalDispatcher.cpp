@@ -1,26 +1,26 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleLeavingCellEventDispatcher.hpp
+//! \file   MonteCarlo_ParticleLeavingCellEventLocalDispatcher.hpp
 //! \author Alex Robinson
 //! \brief  Particle leaving cell event dispatcher class declaration.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleLeavingCellEventDispatcher.hpp"
+#include "MonteCarlo_ParticleLeavingCellEventLocalDispatcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-ParticleLeavingCellEventDispatcher::ParticleLeavingCellEventDispatcher(
+ParticleLeavingCellEventLocalDispatcher::ParticleLeavingCellEventLocalDispatcher(
 		     const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
-			    ParticleLeavingCellEventObserver>( cell_id )
+  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+                                 ParticleLeavingCellEventObserver>( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
-void ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
+void ParticleLeavingCellEventLocalDispatcher::dispatchParticleLeavingCellEvent(
 	        const ParticleState& particle,
 	        const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
 {
@@ -40,5 +40,5 @@ void ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleLeavingCellEventDispatcher.cpp
+// end MonteCarlo_ParticleLeavingCellEventLocalDispatcher.cpp
 //---------------------------------------------------------------------------//

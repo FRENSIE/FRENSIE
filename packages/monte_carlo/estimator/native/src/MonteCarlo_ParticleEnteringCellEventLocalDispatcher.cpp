@@ -1,26 +1,26 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleEnteringCellEventDispatcher.cpp
+//! \file   MonteCarlo_ParticleEnteringCellEventLocalDispatcher.cpp
 //! \author Alex Robinson
 //! \brief  Particle entering cell event dispatcher declaration.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleEnteringCellEventDispatcher.hpp"
+#include "MonteCarlo_ParticleEnteringCellEventLocalDispatcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-ParticleEnteringCellEventDispatcher::ParticleEnteringCellEventDispatcher(
+ParticleEnteringCellEventLocalDispatcher::ParticleEnteringCellEventLocalDispatcher(
 		     const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
-			    ParticleEnteringCellEventObserver>( cell_id )
+  : ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+                                 ParticleEnteringCellEventObserver>( cell_id )
 { /* ... */ }
 
 // Dispatch the new event to the observers
-void ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
+void ParticleEnteringCellEventLocalDispatcher::dispatchParticleEnteringCellEvent(
 	       const ParticleState& particle,
 	       const Geometry::ModuleTraits::InternalCellHandle cell_entering )
 {
@@ -40,5 +40,5 @@ void ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleEnteringCellEventDispatcher.cpp
+// end MonteCarlo_ParticleEnteringCellEventLocalDispatcher.cpp
 //---------------------------------------------------------------------------//

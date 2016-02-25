@@ -388,8 +388,8 @@ void ParticleSimulationManager<GeometryHandler,
                                           particle,
                                           1.0/cell_total_macro_cross_section );
         
-  	// Update the global observers: particle colliding global event
-  	EMI::updateObserversFromParticleCollidingGlobalEvent(
+  	// Update the global observers: particle subtrack ending global event
+  	EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );
@@ -415,8 +415,8 @@ void ParticleSimulationManager<GeometryHandler,
     }	     
   }
 
-  // Update the global observers: particle leaving domain global event
-  EMI::updateObserversFromParticleLeavingDomainGlobalEvent(
+  // Update the global observers: particle subtrack ending global event
+  EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );

@@ -72,17 +72,11 @@ public:
           const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double surface_normal[3] );
 
-  //! Update the global observers from a collision event
-  static void updateObserversFromParticleCollidingGlobalEvent(
+  //! Update the global observers from a subtrack ending event
+  static void updateObserversFromParticleSubtrackEndingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] );
-
-  //! Update the global estimators from a domain exit event
-  static void updateObserversFromParticleLeavingDomainGlobalEvent(
-                                                 const ParticleState& particle,
-                                                 const double start_point[3],
-                                                 const double end_point[3] );
 
   //! Commit the observer history constributions
   static void commitObserverHistoryContributions();
@@ -206,24 +200,13 @@ inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromP
                                                               surface_normal );
 }
 
-// Update the global estimators from a collision event
-inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleCollidingGlobalEvent(
+// Update the global estimators from a subtrack ending event
+inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleSubtrackEndingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  s_event_handler->updateObserversFromParticleCollidingGlobalEvent(particle,
-                                                                   start_point,
-                                                                   end_point );
-}
-
-// Update the global estimators from a domain exit event
-inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleLeavingDomainGlobalEvent(
-                                                 const ParticleState& particle,
-                                                 const double start_point[3],
-                                                 const double end_point[3] )
-{
-  s_event_handler->updateObserversFromParticleLeavingDomainGlobalEvent(
+  s_event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                                                    particle,
                                                                    start_point,
                                                                    end_point );
