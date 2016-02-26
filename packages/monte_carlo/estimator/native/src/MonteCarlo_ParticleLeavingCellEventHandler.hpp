@@ -34,7 +34,8 @@ public:
   ParticleLeavingCellEventHandler();
 
   //! Destructor
-  virtual ~ParticleLeavingCellEventHandler();
+  virtual ~ParticleLeavingCellEventHandler()
+  { /* ... */ }
 
   //! Return the particle leaving cell event dispatcher
   ParticleLeavingCellEventDispatcher&

@@ -17,10 +17,10 @@ ParticleEventDispatcher<Dispatcher>::ParticleEventDispatcher()
   : d_dispatcher_map()
 { /* ... */ }
 
-// Get the appropriate dispatcher for the given cell id
+// Get the appropriate local dispatcher for the given entity id
 template<typename Dispatcher>
 inline Dispatcher& 
-ParticleEventDispatcher<Dispatcher>::getDispatcher(
+ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
 		        const typename Dispatcher::EntityHandleType entity_id )
 {
   typename DispatcherMap::iterator it = d_dispatcher_map.find( entity_id );
@@ -45,7 +45,7 @@ inline void ParticleEventDispatcher<Dispatcher>::attachObserver(
            const ModuleTraits::InternalEventObserverHandle observer_id,
            const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
 {
-  this->getDispatcher( entity_id ).attachObserver( observer_id, observer );
+  this->getLocalDispatcher( entity_id ).attachObserver( observer_id, observer);
 }
   
 // Detach an observer from the appropriate dispatcher
@@ -54,7 +54,7 @@ inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
 		 const typename Dispatcher::EntityHandleType entity_id,
 		 const ModuleTraits::InternalEventObserverHandle observer_id )
 {
-  this->getDispatcher( entity_id ).detachObserver( observer_id );
+  this->getLocalDispatcher( entity_id ).detachObserver( observer_id );
 }
 
 // Detach the observer from all dispatchers

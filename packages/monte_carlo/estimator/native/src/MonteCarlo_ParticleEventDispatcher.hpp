@@ -34,8 +34,8 @@ public:
   virtual ~ParticleEventDispatcher()
   { /* ... */ }
 
-  //! Get the appropriate dispatcher for the given entity id
-  Dispatcher& getDispatcher(
+  //! Get the appropriate local dispatcher for the given entity id
+  Dispatcher& getLocalDispatcher(
 		       const typename Dispatcher::EntityHandleType entity_id );
 
   //! Attach an observer to the appropriate dispatcher
@@ -44,12 +44,12 @@ public:
           const ModuleTraits::InternalEventObserverHandle observer_id,
 	  const std::shared_ptr<typename Dispatcher::ObserverType>& observer );
   
-  //! Detach an observer from the appropriate dispatcher
+  //! Detach an observer from the appropriate local dispatcher
   void detachObserver(
 		const typename Dispatcher::EntityHandleType entity_id,
 		const ModuleTraits::InternalEventObserverHandle observer_id );
 
-  //! Detach the observer from all dispatchers
+  //! Detach the observer from all local dispatchers
   void detachObserver(
 		const ModuleTraits::InternalEventObserverHandle observer_id );
 
