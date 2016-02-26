@@ -34,7 +34,7 @@ public:
   virtual ~ParticleEventDispatcher()
   { /* ... */ }
 
-  //! Get the appropriate dispatcher for the given cell id
+  //! Get the appropriate dispatcher for the given entity id
   Dispatcher& getDispatcher(
 		       const typename Dispatcher::EntityHandleType entity_id );
 
