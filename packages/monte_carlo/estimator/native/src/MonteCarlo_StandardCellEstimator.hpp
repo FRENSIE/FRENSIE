@@ -45,7 +45,7 @@ protected:
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end MonteCarlo namespace

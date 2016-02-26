@@ -9,6 +9,9 @@
 #ifndef UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_DB_HPP
 #define UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_DB_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
@@ -40,14 +43,18 @@ public:
 
   //! Add a converter to the database
   static void addConverter( 
-        const Teuchos::RCP<OneDDistributionEntryConverter>& converter_to_add );
+     const std::shared_ptr<OneDDistributionEntryConverter>& converter_to_add );
 
   //! Get the appropriate converter for the given parameter entry
-  static Teuchos::RCP<OneDDistributionEntryConverter> getConverter(
+  static const OneDDistributionEntryConverter& getConverter(
 		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
 
   //! Get the OneDDistribution from the given parameter entry
-  static Teuchos::RCP<OneDDistribution> convertEntry(
+  static Teuchos::RCP<OneDDistribution> convertEntryToRCP(
+		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
+
+  //! Get the OneDDistribution from the given parameter entry
+  static std::shared_ptr<OneDDistribution> convertEntryToSharedPtr(
 		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
   
 private:
@@ -59,9 +66,7 @@ private:
   static bool initialize();
 
   // Typedef for the converter map
-  typedef boost::unordered_map<std::string,
-			       Teuchos::RCP<OneDDistributionEntryConverter> > 
-  ConverterMap;
+  typedef boost::unordered_map<std::string, std::shared_ptr<OneDDistributionEntryConverter> > ConverterMap;
 
   static ConverterMap master_map;
 
@@ -74,7 +79,8 @@ private:
 //! Add a OneDDistribution converter to the database
 #define UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(T) \
   Utility::OneDDistributionEntryConverterDB::addConverter( \
-     Teuchos::rcp( new Utility::StandardOneDDistributionEntryConverter< T > ) )
+           std::shared_ptr<Utility::OneDDistributionEntryConverter>( \
+                   new Utility::StandardOneDDistributionEntryConverter< T > ) )
 
 //! Set up the database
 #define UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_DB_SETUP() \

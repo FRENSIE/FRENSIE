@@ -11,11 +11,13 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
 #include <moab/Interface.hpp>
@@ -103,13 +105,13 @@ private:
   static const double s_tol;
 
   // The moab instance that stores all mesh data
-  Teuchos::RCP<moab::Interface> d_moab_interface;
+  boost::scoped_ptr<moab::Interface> d_moab_interface;
 
   // The tet meshset
   moab::EntityHandle d_tet_meshset;
 
   // The kd-tree for finding point in tet
-  Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
+  boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
   
   // The root of the kd-tree
   moab::EntityHandle d_kd_tree_root;

@@ -26,10 +26,10 @@ namespace MonteCarlo{
  * factory. If DagMC is not enabled this constructor will do nothing.
  */ 
 StandardEstimatorFactory<moab::DagMC>::StandardEstimatorFactory(
-          const std::shared_ptr<EventHandler>& event_handler,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn )
+       const std::shared_ptr<EventHandler>& event_handler,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn )
   : EstimatorFactory( event_handler, response_function_id_map, os_warn )
 {
   // Load the estimator id maps
@@ -78,7 +78,7 @@ void StandardEstimatorFactory<moab::DagMC>::createAndRegisterCachedEstimators()
     double multiplier = 1.0;
 
     // No response functions
-    Teuchos::Array<Teuchos::RCP<ResponseFunction> > response_functions;
+    Teuchos::Array<std::shared_ptr<ResponseFunction> > response_functions;
 
     try{
       // Create and register a cell estimator

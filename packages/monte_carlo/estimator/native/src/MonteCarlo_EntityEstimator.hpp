@@ -54,7 +54,8 @@ public:
 
   //! Set the response functions
   virtual void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Return the entity ids associated with this estimator
   void getEntityIds( EntityIdSet& entity_ids ) const;
@@ -87,7 +88,7 @@ protected:
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Return the normalization constant for an entity
   double getEntityNormConstant( const EntityId& entity_id ) const;

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PHASE_SPACE_RESPONSE_FUNCTION_HPP
 #define MONTE_CARLO_PHASE_SPACE_RESPONSE_FUNCTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunction.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -25,13 +28,13 @@ public:
 
   //! Constructor
   PhaseSpaceResponseFunction( 
-	const unsigned id,
-	const std::string& name,			      
-	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
-        const Teuchos::RCP<Utility::DirectionalDistribution>& 
-	directional_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& energy_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& time_distribution );
+     const unsigned id,
+     const std::string& name,			      
+     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
+     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     directional_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& time_distribution );
 
   //! Destructor
   ~PhaseSpaceResponseFunction()
@@ -46,16 +49,16 @@ public:
 private:
 
   // The spatial distribution
-  Teuchos::RCP<Utility::SpatialDistribution> d_spatial_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> d_spatial_distribution;
 
   // The directional distribution
-  Teuchos::RCP<Utility::DirectionalDistribution> d_directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> d_directional_distribution;
 
   // The energy distribution
-  Teuchos::RCP<Utility::OneDDistribution> d_energy_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_energy_distribution;
 
   // The time distribution
-  Teuchos::RCP<Utility::OneDDistribution> d_time_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_time_distribution;
 
   // Records if the response function is spatially uniform
   bool d_spatially_uniform;

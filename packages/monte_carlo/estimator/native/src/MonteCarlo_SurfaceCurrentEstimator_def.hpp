@@ -30,7 +30,8 @@ SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
 			   ContributionMultiplierPolicy>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   std::cerr << "Warning: Response functions cannot be set for surface current "
 	    << "estimators. The response functions requested for surface "

@@ -11,12 +11,12 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
@@ -32,9 +32,9 @@ public:
 
   //! Create the response functions specified
   static void createResponseFunctions( 
-	        const Teuchos::ParameterList& response_reps,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map );
+	     const Teuchos::ParameterList& response_reps,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map );
 
 private:
 
@@ -47,15 +47,15 @@ private:
 
   // Create an energy space response function
   static void createEnergySpaceResponseFunction(
-		const Teuchos::ParameterList& response_rep,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map );
+	     const Teuchos::ParameterList& response_rep,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map );
 
   // Create a phase space response function
   static void createPhaseSpaceResponseFunction(
-		const Teuchos::ParameterList& response_rep,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map );
+	     const Teuchos::ParameterList& response_rep,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map );
 
   // Create the response function name
   static std::string createName( const Teuchos::ParameterList& response_rep );

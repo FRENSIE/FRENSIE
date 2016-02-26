@@ -26,10 +26,10 @@ public:
 
   //! Constructor
   StandardEstimatorFactory(
-          const std::shared_ptr<EventHandler>& event_handler,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn = &std::cerr );
+       const std::shared_ptr<EventHandler>& event_handler,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn = &std::cerr );
 
   //! Destructor
   ~StandardEstimatorFactory()
@@ -80,15 +80,15 @@ protected:
 
   //! Create and register a surface estimator
   void createAndRegisterSurfaceEstimator(
-         const std::string& surface_estimator_type,
-         const unsigned id,
-         const double multiplier,
-         const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-         surfaces,
-	 const bool energy_multiplication = false,
-	 const Teuchos::ParameterList* bins = NULL );
+      const std::string& surface_estimator_type,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      surfaces,
+      const bool energy_multiplication = false,
+      const Teuchos::ParameterList* bins = NULL );
 
   //! Update the estimator cache info
   void updateEstimatorCacheInfo( const unsigned id );

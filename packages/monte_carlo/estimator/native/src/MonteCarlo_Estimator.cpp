@@ -38,7 +38,8 @@ double Estimator::tol = 1e-8;
 
 // Set the response functions
 void Estimator::setResponseFunctions( 
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -119,7 +120,7 @@ void Estimator::exportData(
   // Export the bin boundaries
   for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
   {
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find( 
 					     d_dimension_ordering[i] )->second;
     
@@ -158,7 +159,7 @@ void Estimator::unsetHasUncommittedHistoryContribution(
 
 // Assign bin boundaries to an estimator dimension
 void Estimator::assignBinBoundaries( 
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -211,7 +212,7 @@ std::string Estimator::getBinName( const unsigned bin_index ) const
     
     unsigned dim_bin_index = (bin_index/total_bins) % dim_bins;
     
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries = 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries = 
       d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second;
     
     //oss << bin_boundaries->getDimensionName() << "_";
@@ -368,7 +369,7 @@ bool Estimator::isPointInEstimatorPhaseSpace(
     const Teuchos::any& dimension_value = 
       dimension_values.find(d_dimension_ordering[i])->second;
 
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
 					     d_dimension_ordering[i] )->second;
 
@@ -401,7 +402,7 @@ unsigned Estimator::calculateBinIndex(
     const Teuchos::any& dimension_value = 
       dimension_values.find(d_dimension_ordering[i])->second;
 
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
 					     d_dimension_ordering[i] )->second;
 

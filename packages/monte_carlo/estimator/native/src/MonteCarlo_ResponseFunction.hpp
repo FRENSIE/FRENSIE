@@ -11,9 +11,7 @@
 
 // Std Lib Includes
 #include <string>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -47,7 +45,7 @@ public:
   virtual bool isSpatiallyUniform() const;
 
   //! Default response function
-  static const Teuchos::RCP<ResponseFunction> default_response_function;
+  static const std::shared_ptr<ResponseFunction> default_response_function;
 
 private:
 

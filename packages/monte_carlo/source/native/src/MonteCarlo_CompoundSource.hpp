@@ -6,15 +6,14 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COMPOUND_SOURCE_HPP
-#define FACEMC_COMPOUND_SOURCE_HPP
+#ifndef MONTE_CARLO_COMPOUND_SOURCE_HPP
+#define MONTE_CARLO_COMPOUND_SOURCE_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
@@ -34,8 +33,9 @@ class CompoundSource : public ParticleSource
 public:
   
   //! Constructor
-  CompoundSource( const Teuchos::Array<std::shared_ptr<ParticleSource> >& sources,
-		  const Teuchos::Array<double>& source_sampling_weights );
+  CompoundSource( 
+               const Teuchos::Array<std::shared_ptr<ParticleSource> >& sources,
+               const Teuchos::Array<double>& source_sampling_weights );
 
   //! Destructor
   ~CompoundSource()
@@ -58,7 +58,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COMPOUND_SOURCE_HPP
+#endif // end MONTE_CARLO_COMPOUND_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CompoundSource.hpp

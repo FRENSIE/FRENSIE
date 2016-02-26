@@ -44,7 +44,8 @@ public:
 
   //! Set the response functions
   void setResponseFunctions(
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Add current history estimator contribution
   void updateFromParticleSubtrackEndingInCellEvent(
@@ -59,7 +60,7 @@ private:
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end MonteCarlo namespace

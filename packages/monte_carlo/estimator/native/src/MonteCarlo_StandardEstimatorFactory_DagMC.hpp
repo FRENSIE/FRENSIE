@@ -26,10 +26,10 @@ public:
 
   //! Constructor
   StandardEstimatorFactory(
-          const std::shared_ptr<EventHandler>& event_handler,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn = &std::cerr );
+       const std::shared_ptr<EventHandler>& event_handler,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn = &std::cerr );
 
   //! Destructor
   ~StandardEstimatorFactory()

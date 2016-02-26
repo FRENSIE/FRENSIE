@@ -9,6 +9,9 @@
 // Std Lib Includes
 #include <limits>
 
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_EnergySpaceResponseFunction.hpp"
@@ -23,9 +26,9 @@ namespace MonteCarlo{
 
 // Create the response functions specified
 void ResponseFunctionFactory::createResponseFunctions( 
-	        const Teuchos::ParameterList& response_reps,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map )
+	     const Teuchos::ParameterList& response_reps,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map )
 {
   // Construct all response functions defined
   Teuchos::ParameterList::ConstIterator it = response_reps.begin();
@@ -110,9 +113,9 @@ void ResponseFunctionFactory::validateResponseFunctionRep(
 
 // Create an energy space response function
 void ResponseFunctionFactory::createEnergySpaceResponseFunction(
-		const Teuchos::ParameterList& response_rep,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map )
+	     const Teuchos::ParameterList& response_rep,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map )
 {
   // Extract the entity id
   unsigned id = response_rep.get<unsigned int>( "Id" );
@@ -132,11 +135,12 @@ void ResponseFunctionFactory::createEnergySpaceResponseFunction(
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
     response_rep.getEntryRCP( "Energy Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution = 
+    Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry);
 
   // Create the response function
-  Teuchos::RCP<ResponseFunction>& new_response_function = response_id_map[id];
+  std::shared_ptr<ResponseFunction>& new_response_function = 
+    response_id_map[id];
 
   new_response_function.reset( new EnergySpaceResponseFunction(
 			   id,
@@ -148,9 +152,9 @@ void ResponseFunctionFactory::createEnergySpaceResponseFunction(
 
 // Create a phase space response function
 void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
-		const Teuchos::ParameterList& response_rep,
-		boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-		response_id_map )
+	     const Teuchos::ParameterList& response_rep,
+	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+             response_id_map )
 {
   // Extract the entity id
   unsigned id = response_rep.get<unsigned int>( "Id" );
@@ -173,7 +177,7 @@ void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
   const Teuchos::ParameterList& spatial_dist_rep = 
     Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
 
-  Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
   try{
     spatial_distribution = 
       Utility::SpatialDistributionFactory::createDistribution( 
@@ -197,7 +201,7 @@ void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
   const Teuchos::ParameterList& directional_dist_rep = 
     Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
   try{
     directional_distribution = 
       Utility::DirectionalDistributionFactory::createDistribution(
@@ -217,17 +221,18 @@ void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
   // Extract the energy distribution
   entry = response_rep.getEntryRCP( "Energy Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution = 
+    Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry);
 
   // Extract the time distribution
   entry = response_rep.getEntryRCP( "Time Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> time_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<Utility::OneDDistribution> time_distribution = 
+    Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry);
 
   // Create the new response function
-  Teuchos::RCP<ResponseFunction>& new_response_function = response_id_map[id];
+  std::shared_ptr<ResponseFunction>& new_response_function = 
+    response_id_map[id];
 
   new_response_function.reset( new PhaseSpaceResponseFunction( 
 			   id,

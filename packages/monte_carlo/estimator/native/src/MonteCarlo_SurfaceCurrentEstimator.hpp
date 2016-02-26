@@ -37,7 +37,8 @@ public:
   
   //! Set the response functions
   void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Add current history estimator contribution
   void updateFromParticleCrossingSurfaceEvent(

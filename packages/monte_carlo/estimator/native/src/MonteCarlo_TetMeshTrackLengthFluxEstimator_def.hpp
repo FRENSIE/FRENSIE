@@ -37,7 +37,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
     d_moab_interface( new moab::Core ),
     d_tet_meshset(),
-    d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
+    d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.get() ) ),
     d_kd_tree_root(),
     d_tet_barycentric_transform_matrices(),
     d_tet_reference_vertices(),
