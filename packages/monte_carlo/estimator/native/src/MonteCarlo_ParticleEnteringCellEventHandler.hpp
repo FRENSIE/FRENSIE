@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -53,9 +56,9 @@ protected:
    * event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleEnteringCellEventObserver::EventTag );
+  void registerObserverWithTag( const std::shared_ptr<Observer>& observer,
+                                const Teuchos::Array<EntityHandle>& entity_ids,
+                                ParticleEnteringCellEventObserver::EventTag );
 
 private:
 
@@ -67,10 +70,10 @@ private:
 // Register an observer with the appropriate particle entering cell event
 // dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleEnteringCellEventHandler::registerObserver( 
-                         const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleEnteringCellEventObserver::EventTag )
+inline void ParticleEnteringCellEventHandler::registerObserverWithTag( 
+                                const std::shared_ptr<Observer>& observer,
+                                const Teuchos::Array<EntityHandle>& entity_ids,
+                                ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));

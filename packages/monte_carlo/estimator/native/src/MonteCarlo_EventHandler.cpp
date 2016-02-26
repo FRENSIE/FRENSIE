@@ -11,20 +11,12 @@
 #include "MonteCarlo_ParticleHistoryObserverHDF5FileHandler.hpp"
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 EventHandler::EventHandler()
-  : d_particle_history_observers(),
-    d_particle_entering_cell_event_dispatcher(),
-    d_particle_leaving_cell_event_dispatcher(),
-    d_particle_subtrack_ending_in_cell_event_dispatcher(),
-    d_particle_colliding_in_cell_event_dispatcher(),
-    d_particle_crossing_surface_event_dispatcher(),
-    d_particle_subtrack_ending_global_event_dispatcher()
 { /* ... */ }
 
 // Return the number of estimators that have been added

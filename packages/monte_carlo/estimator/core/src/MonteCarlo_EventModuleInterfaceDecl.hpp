@@ -76,11 +76,6 @@ public:
   static inline void enableThreadSupport( const unsigned num_threads )
   { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
 
-  //! Update the observers from a particle generation event
-  static inline void updateObserversFromParticleGenerationEvent(
-					        const ParticleState& particle )
-  { (void)UndefinedEventHandler<EventHandler>::notDefined(); }
-
   //! Update the observers from a particle entering cell event
   static inline void updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,

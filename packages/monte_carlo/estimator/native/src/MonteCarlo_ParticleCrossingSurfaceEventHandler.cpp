@@ -8,12 +8,13 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCrossingSurfaceEventHandler.hpp"
+#include "Utility_DirectionHelpers.hpp"
 
 namespace MonteCarlo{
 
 //! Constructor
 ParticleCrossingSurfaceEventHandler::ParticleCrossingSurfaceEventHandler()
-  : d_particle_crossing_surface_event_handler()
+  : d_particle_crossing_surface_event_dispatcher()
 { /* ... */ }
 
 // Return the particle crossing surface event dispatcher

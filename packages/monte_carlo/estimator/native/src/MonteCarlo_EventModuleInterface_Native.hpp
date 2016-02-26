@@ -40,10 +40,6 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads );
 
-  //! Update the observers from a particle generation event
-  static void updateObserversFromParticleGenerationEvent(
-					       const ParticleState& particle );
-
   //! Update the observers from a particle entering cell event
   static void updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,
@@ -134,14 +130,6 @@ EventModuleInterface<MonteCarlo::EventHandler>::enableThreadSupport(
 						   const unsigned num_threads )
 {
   s_event_handler->enableThreadSupport( num_threads );
-}
-
-// Update the observers from a particle generation event
-inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleGenerationEvent(
-					        const ParticleState& particle )
-{
-  s_event_handler->updateObserversFromParticleGenerationEvent( particle );
 }
 
 // Update the observers from a particle entering cell event

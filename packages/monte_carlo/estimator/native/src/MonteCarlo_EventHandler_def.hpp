@@ -14,10 +14,8 @@
 #include <boost/mpl/deref.hpp>
 #include <boost/mpl/next_prior.hpp>
 #include <boost/mpl/begin_end.hpp>
-#include <boost/mpl/contains.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ObserverRegistrationHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -110,7 +108,7 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
                                const std::shared_ptr<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 {
-  event_handler.registerObserver( 
+  event_handler.registerObserverWithTag( 
                    observer,
                    entity_ids,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
@@ -139,7 +137,7 @@ void EventHandler::ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagI
                                     EventHandler& event_handler,
                                     const std::shared_ptr<Observer>& observer )
 {
-  event_handler.registerGlobalObserver( 
+  event_handler.registerGlobalObserverWithTag( 
                    observer,
                    typename boost::mpl::deref<BeginEventTagIterator>::type() );
 
