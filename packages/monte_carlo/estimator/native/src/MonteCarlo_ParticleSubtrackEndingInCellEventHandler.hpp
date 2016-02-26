@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -55,7 +58,8 @@ protected:
    * in cell event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
+  void registerObserverWithTag( 
+                         const std::shared_ptr<Observer>& observer,
 			 const Teuchos::Array<EntityHandle>& entity_ids,
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
 
@@ -69,7 +73,7 @@ private:
 // Register an observer with the appropriate particle subtrack ending in cell
 // event dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleSubtrackEndingInCellEventHandler::registerObserver( 
+inline void ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag( 
                           const std::shared_ptr<Observer>& observer,
                           const Teuchos::Array<EntityHandle>& entity_ids,
                           ParticleSubtrackEndingInCellEventObserver::EventTag )

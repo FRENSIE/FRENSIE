@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -54,9 +57,10 @@ protected:
    * surface event dispatcher
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleCrossingSurfaceEventObserver::EventTag );
+  void registerObserverWithTag( 
+                              const std::shared_ptr<Observer>& observer,
+                              const Teuchos::Array<EntityHandle>& entity_ids,
+                              ParticleCrossingSurfaceEventObserver::EventTag );
 
 private:
 
@@ -68,7 +72,7 @@ private:
 // Register an observer with the appropriate particle crossing 
 // surface event dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleCrossingSurfaceEventHandler::registerObserver( 
+inline void ParticleCrossingSurfaceEventHandler::registerObserverWithTag( 
                                const std::shared_ptr<Observer>& observer,
                                const Teuchos::Array<EntityHandle>& entity_ids,
                                ParticleCrossingSurfaceEventObserver::EventTag )

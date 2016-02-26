@@ -15,6 +15,9 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleCollidingInCellEventDispatcher.hpp"
 #include "Utility_ContractException.hpp"
@@ -53,9 +56,10 @@ protected:
    * cell event dispatcher.
    */
   template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleCollidingInCellEventObserver::EventTag );
+  void registerObserverWithTag( 
+                              const std::shared_ptr<Observer>& observer,
+                              const Teuchos::Array<EntityHandle>& entity_ids,
+                              ParticleCollidingInCellEventObserver::EventTag );
 
 private:
 
@@ -67,7 +71,7 @@ private:
 // Register an observer with the appropriate particle colliding in 
 // cell event dispatcher.
 template<typename Observer, typename EntityHandle>
-inline void ParticleCollidingInCellEventHandler::registerObserver( 
+inline void ParticleCollidingInCellEventHandler::registerObserverWithTag( 
                                const std::shared_ptr<Observer>& observer,
                                const Teuchos::Array<EntityHandle>& entity_ids,
                                ParticleCollidingInCellEventObserver::EventTag )

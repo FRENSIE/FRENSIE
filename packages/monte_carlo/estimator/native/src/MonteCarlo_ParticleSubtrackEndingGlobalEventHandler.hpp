@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -52,7 +55,7 @@ protected:
   // Register a global observer with the appropraite particle subtrack ending
   // global event dispatcher
   template<typename Observer>
-  void registerGlobalObserver( 
+  void registerGlobalObserverWithTag( 
 			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
 
@@ -66,7 +69,7 @@ private:
 // Register a global observer with the appropraite particle subtrack ending
 // global event dispatcher
 template<typename Observer>
-void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserver( 
+void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag( 
 			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag )
 {

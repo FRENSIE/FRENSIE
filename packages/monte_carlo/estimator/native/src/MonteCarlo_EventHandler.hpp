@@ -33,13 +33,18 @@
 
 namespace MonteCarlo{
 
-//! The event handler class 
+/*! The event handler class 
+ * \details The event handler has been designed as a mix-in class so that
+ * it is easier to add new events. In addition, the individual events are
+ * better abstracted and easier to maintain when there is a handler for
+ * each one.
+ */
 class EventHandler : public ParticleCollidingInCellEventHandler,
                      public ParticleCrossingSurfaceEventHandler,
                      public ParticleEnteringCellEventHandler,
                      public ParticleLeavingCellEventHandler,
                      public ParticleSubtrackEndingInCellEventHandler,
-                     public ParticlesubtrackEndingGlobalEventHandler
+                     public ParticleSubtrackEndingGlobalEventHandler
 {
 
 public:
@@ -136,17 +141,27 @@ private:
   };
 
   // Add the observer registration helper as a friend class
-  template<typename BeginEventTagIterator, typename EndEventTagIterator>
-  friend ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>;
+  template<typename T1, typename T2>
+  friend class ObserverRegistrationHelper;
 
-  //! Register an observer with the appropriate dispatcher
+  // Register an observer with the appropriate dispatcher
   template<typename Observer, typename EntityHandle>
   void registerObserver( const std::shared_ptr<Observer>& observer,
                          const Teuchos::Array<EntityHandle>& entity_ids );
 
-  //! Register a global observer with the appropriate dispatcher
+  // Register a global observer with the appropriate dispatcher
   template<typename Observer>
   void registerGlobalObserver( const std::shared_ptr<Observer>& observer );
+
+  // Add the register observer with tag methods from the base classes
+  // Unfortunately, base class methods with the same name will not be 
+  // seen by the compiler unless there is a using declaration
+  using ParticleCollidingInCellEventHandler::registerObserverWithTag;
+  using ParticleCrossingSurfaceEventHandler::registerObserverWithTag;
+  using ParticleEnteringCellEventHandler::registerObserverWithTag;
+  using ParticleLeavingCellEventHandler::registerObserverWithTag;
+  using ParticleSubtrackEndingInCellEventHandler::registerObserverWithTag;
+  using ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag;
 
   // Typedef for the observers container
   typedef boost::unordered_map<ParticleHistoryObserver::idType,

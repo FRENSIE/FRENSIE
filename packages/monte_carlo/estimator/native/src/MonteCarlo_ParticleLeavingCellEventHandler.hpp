@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/mpl/contains.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -51,9 +54,9 @@ protected:
   // Register an observer with the appropriate particle leaving cell event
   // dispatcher
   template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleLeavingCellEventObserver::EventTag );
+  void registerObserverWithTag( const std::shared_ptr<Observer>& observer,
+                                const Teuchos::Array<EntityHandle>& entity_ids,
+                                ParticleLeavingCellEventObserver::EventTag );
 
 private:
 
@@ -65,7 +68,7 @@ private:
 // Register an observer with the appropriate particle leaving cell event
 // dispatcher
 template<typename Observer, typename EntityHandle>
-inline void ParticleLeavingCellEventHandler::registerObserver( 
+inline void ParticleLeavingCellEventHandler::registerObserverWithTag( 
                                 const std::shared_ptr<Observer>& observer,
                                 const Teuchos::Array<EntityHandle>& entity_ids,
                                 ParticleLeavingCellEventObserver::EventTag )
