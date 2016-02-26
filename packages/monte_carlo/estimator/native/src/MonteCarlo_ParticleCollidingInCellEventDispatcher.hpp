@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ParticleCollidingInCellEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle colliding in cell event dispatcher database declaration
+//! \brief  Particle colliding in cell event dispatcher declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,7 +21,7 @@
 
 namespace MonteCarlo{
 
-//! The particle colliding in cell event dispatcher database class
+//! The particle colliding in cell event dispatcher class
 class ParticleCollidingInCellEventDispatcher :
     public ParticleEventDispatcher<ParticleCollidingInCellEventLocalDispatcher>
 {

@@ -21,20 +21,26 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
-#include "MonteCarlo_ParticleCollidingInCellEventDispatcher.hpp"
-#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcher.hpp"
-#include "MonteCarlo_ParticleEnteringCellEventDispatcher.hpp"
-#include "MonteCarlo_ParticleLeavingCellEventDispatcher.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcher.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
+#include "MonteCarlo_ParticleCollidingInCellEventHandler.hpp"
+#include "MonteCarlo_ParticleCrossingSurfaceEventHandler.hpp"
+#include "MonteCarlo_ParticleEnteringCellEventHandler.hpp"
+#include "MonteCarlo_ParticleLeavingCellEventHandler.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingInCellEventHandler.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventHandler.hpp"
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The estimator handler class 
-class EventHandler{
+//! The event handler class 
+class EventHandler : public ParticleCollidingInCellEventHandler,
+                     public ParticleCrossingSurfaceEventHandler,
+                     public ParticleEnteringCellEventHandler,
+                     public ParticleLeavingCellEventHandler,
+                     public ParticleSubtrackEndingInCellEventHandler,
+                     public ParticlesubtrackEndingGlobalEventHandler
+{
 
 public:
 
@@ -88,44 +94,7 @@ public:
                            const double start_time,
                            const double end_time,
                            const bool process_data );
-
-  //! Update the observers from a particle generation event
-  void updateObserversFromParticleGenerationEvent(
-                                               const ParticleState& particle );
-
-  //! Update the observers from a particle entering cell event
-  void updateObserversFromParticleEnteringCellEvent(
-              const ParticleState& particle,
-              const Geometry::ModuleTraits::InternalCellHandle cell_entering );
-
-  //! Update the observers from a particle leaving cell event
-  void updateObserversFromParticleLeavingCellEvent(
-               const ParticleState& particle,
-               const Geometry::ModuleTraits::InternalCellHandle cell_leaving );
-
-  //! Update the observers from a particle subtrack ending in cell event
-  void updateObserversFromParticleSubtrackEndingInCellEvent(
-             const ParticleState& particle,
-             const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
-             const double particle_subtrack_length,
-             const double subtrack_start_time );
-
-  //! Update the observers from a particle colliding in cell event
-  void updateObserversFromParticleCollidingInCellEvent(
-                                    const ParticleState& particle,
-                                    const double inverse_total_cross_section );
-
-  //! Update the observers from a surface intersection event
-  void updateObserversFromParticleCrossingSurfaceEvent(
-	  const ParticleState& particle,
-          const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
-	  const double surface_normal[3] );
-
-  //! Update the global estimators from a subtrack ending event
-  void updateObserversFromParticleSubtrackEndingGlobalEvent(
-						 const ParticleState& particle,
-						 const double start_point[3],
-						 const double end_point[3] );
+  
 private:
 
   // Struct for iterating through all observer event tags
@@ -170,56 +139,14 @@ private:
   template<typename BeginEventTagIterator, typename EndEventTagIterator>
   friend ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>;
 
-  // Register an observer with the appropriate dispatcher
+  //! Register an observer with the appropriate dispatcher
   template<typename Observer, typename EntityHandle>
   void registerObserver( const std::shared_ptr<Observer>& observer,
                          const Teuchos::Array<EntityHandle>& entity_ids );
 
-  // Register a global observer with the appropriate dispatcher
+  //! Register a global observer with the appropriate dispatcher
   template<typename Observer>
   void registerGlobalObserver( const std::shared_ptr<Observer>& observer );
-  
-  // Register an observer with the appropriate particle colliding in cell event
-  // dispatcher
-  template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleCollidingInCellEventObserver::EventTag );
-
-  // Register an observer with the appropriate particle crossing surface event
-  // dispatcher
-  template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleCrossingSurfaceEventObserver::EventTag );
-
-  // Register an observer with the appropriate particle entering cell event
-  // dispatcher
-  template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleEnteringCellEventObserver::EventTag );
-
-  // Register an observer with the appropriate particle leaving cell event
-  // dispatcher
-  template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-                         const Teuchos::Array<EntityHandle>& entity_ids,
-                         ParticleLeavingCellEventObserver::EventTag );
-
-  // Register an observer with the appropriate particle subtrack ending in cell
-  // event dispatcher
-  template<typename Observer, typename EntityHandle>
-  void registerObserver( const std::shared_ptr<Observer>& observer,
-			 const Teuchos::Array<EntityHandle>& entity_ids,
-			 ParticleSubtrackEndingInCellEventObserver::EventTag );
-
-  // Register a global observer with the appropraite particle subtrack ending
-  // global event dispatcher
-  template<typename Observer>
-  void registerGlobalObserver( 
-			 const std::shared_ptr<Observer>& observer,
-			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
 
   // Typedef for the observers container
   typedef boost::unordered_map<ParticleHistoryObserver::idType,
@@ -228,30 +155,6 @@ private:
 
   // The observers
   ParticleHistoryObservers d_particle_history_observers;
-
-  // The particle entering cell event dispatcher
-  ParticleEnteringCellEventDispatcher 
-  d_particle_entering_cell_event_dispatcher;
-
-  // The particle leaving cell event dispatcher
-  ParticleLeavingCellEventDispatcher
-  d_particle_leaving_cell_event_dispatcher;
-
-  // The particle subtrack ending in cell event dispatcher
-  ParticleSubtrackEndingInCellEventDispatcher
-  d_particle_subtrack_ending_in_cell_event_dispatcher;
-
-  // The particle colliding in cell event dispatcher
-  ParticleCollidingInCellEventDispatcher
-  d_particle_colliding_in_cell_event_dispatcher;
-
-  // The particle crossing surface event dispatcher
-  ParticleCrossingSurfaceEventDispatcher
-  d_particle_crossing_surface_event_dispatcher;
-
-  // The particle subtrack ending global event dispatcher
-  ParticleSubtrackEndingGlobalEventDispatcher
-  d_particle_subtrack_ending_global_event_dispatcher;
 };
 
 } // end MonteCarlo namespace
