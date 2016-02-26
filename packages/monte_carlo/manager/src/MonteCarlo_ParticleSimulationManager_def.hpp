@@ -203,7 +203,8 @@ void ParticleSimulationManager<GeometryHandler,
 	  
 	  bank.top().setCell( start_cell );
 	  
-	  EMI::updateObserversFromParticleEnteringCellEvent( bank.top() );
+	  EMI::updateObserversFromParticleEnteringCellEvent( 
+                                            bank.top(), bank.top().getCell() );
 	}
 	
 	// This history only ends when the particle bank is empty

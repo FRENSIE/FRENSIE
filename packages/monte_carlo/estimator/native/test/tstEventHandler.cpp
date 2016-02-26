@@ -25,11 +25,6 @@
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-#include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -204,19 +199,19 @@ TEUCHOS_UNIT_TEST( EventHandler, add_observers )
 
   event_handler->addGlobalEventObserver( mesh_estimator );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 ).getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( event_handler->getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleEnteringCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleLeavingCellEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 1 ).getNumberOfObservers(), 4 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 2 ).getNumberOfObservers(), 4 );
+  TEST_EQUALITY_CONST( event_handler->getParticleCollidingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleSubtrackEndingInCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleEnteringCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleLeavingCellEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers(), 2 );
+  TEST_EQUALITY_CONST( event_handler->getParticleCrossingSurfaceEventDispatcher().getLocalDispatcher( 2 ).getNumberOfObservers(), 4 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
+  TEST_EQUALITY_CONST( event_handler->getParticleSubtrackEndingGlobalEventDispatcher().getNumberOfObservers(), 1 );
 
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 11 );
 } 
@@ -237,56 +232,6 @@ TEUCHOS_UNIT_TEST( EventHandler, doesObserverExist )
   TEST_ASSERT( event_handler->doesObserverExist( 9u ) );
   TEST_ASSERT( event_handler->doesObserverExist( 10u ) );
   TEST_ASSERT( !event_handler->doesObserverExist( 11u ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if observers can be updated from a particle generation event
-TEUCHOS_UNIT_TEST( EventHandler, updateObserversFromParticleGenerationEvent )
-{
-  MonteCarlo::PhotonState particle( 0ull );
-  particle.setWeight( 1.0 );
-  particle.setEnergy( 1.0 );
-  particle.setCell( 1 );
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-  
-  event_handler->updateObserversFromParticleGenerationEvent( particle );
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-
-  event_handler->resetObserverData();
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 }
 
 //---------------------------------------------------------------------------//
@@ -549,9 +494,10 @@ TEUCHOS_UNIT_TEST( EventHandler,
 }
 
 //---------------------------------------------------------------------------//
-// Check if observers can be updated from a particle colliding global event
+// Check if observers can be updated from a particle subtrack ending global 
+// event
 TEUCHOS_UNIT_TEST( EventHandler, 
-                   updateObserversFromParticleCollidingGlobalEvent )
+                   updateObserversFromParticleSubtrackEndingGlobalEvent )
 {
   MonteCarlo::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
@@ -572,61 +518,7 @@ TEUCHOS_UNIT_TEST( EventHandler,
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  event_handler->updateObserversFromParticleCollidingGlobalEvent( 
-                                            particle, start_point, end_point );
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
-
-  event_handler->resetObserverData();
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-}
-
-//---------------------------------------------------------------------------//
-// Check if observers can be updated from a particle generation event
-TEUCHOS_UNIT_TEST( EventHandler, 
-                   updateObserversFromParticleLeavingDomainGlobalEvent )
-{
-  MonteCarlo::PhotonState particle( 0ull );
-  particle.setWeight( 1.0 );
-  particle.setEnergy( 1.0 );
-
-  double start_point[3] = { 0.25, 0.0, 0.75 };
-  double end_point[3] = { 0.75, 0.25, 1.0 };
-
-  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-
-  event_handler->updateObserversFromParticleLeavingDomainGlobalEvent( 
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent( 
                                             particle, start_point, end_point );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -731,22 +623,22 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   double end_point_5[3] = { 1.0, 0.75, 0.25 };
   double end_point_6[3] = { 0.75, 1.0, 0.25 };
 
-  event_handler->updateObserversFromParticleCollidingGlobalEvent(
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_1, end_point_1 );
   
-  event_handler->updateObserversFromParticleCollidingGlobalEvent(
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_2, end_point_2 );
 
-  event_handler->updateObserversFromParticleCollidingGlobalEvent(
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_3, end_point_3 );
 
-  event_handler->updateObserversFromParticleCollidingGlobalEvent(
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_4, end_point_4 );
 
-  event_handler->updateObserversFromParticleCollidingGlobalEvent(
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_5, end_point_5 );
-
-  event_handler->updateObserversFromParticleLeavingDomainGlobalEvent(
+  
+  event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
 					particle, start_point_6, end_point_6 );
 
   TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
@@ -1061,22 +953,22 @@ TEUCHOS_UNIT_TEST( EventHandler,
     double end_point_5[3] = { 1.0, 0.75, 0.25 };
     double end_point_6[3] = { 0.75, 1.0, 0.25 };
 
-    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_1, end_point_1 );
 
-    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_2, end_point_2 );
     
-    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_3, end_point_3 );
 
-    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_4, end_point_4 );
 
-    event_handler->updateObserversFromParticleCollidingGlobalEvent(
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_5, end_point_5 );
-
-    event_handler->updateObserversFromParticleLeavingDomainGlobalEvent(
+    
+    event_handler->updateObserversFromParticleSubtrackEndingGlobalEvent(
                                         particle, start_point_6, end_point_6 );
     
     // Commit the contributions

@@ -26,11 +26,6 @@
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
-#include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
-#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -196,7 +191,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
+  event_handler->getParticleCollidingInCellEventDispatcher().dispatchParticleCollidingInCellEvent(
 								      particle,
 								      0,
 								      1.0 );
@@ -208,7 +203,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() ); 
 
-  MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
+  event_handler->getParticleSubtrackEndingInCellEventDispatcher().dispatchParticleSubtrackEndingInCellEvent(
 								      particle,
 								      0,
 								      1.0 );
@@ -220,7 +215,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() ); 
 
-  MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
+  event_handler->getParticleEnteringCellEventDispatcher().dispatchParticleEnteringCellEvent(
 								      particle,
 								      0 );
 
@@ -234,7 +229,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
+  event_handler->getParticleCrossingSurfaceEventDispatcher().dispatchParticleCrossingSurfaceEvent(
 								      particle,
 								      0,
 								      1.0 );
@@ -261,32 +256,32 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
     double end_point_5[3] = { 1.0, 0.75, 0.25 };
     double end_point_6[3] = { 0.75, 1.0, 0.25 };
   
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_1,
 								 end_point_1 );
   
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_2,
 								 end_point_2 );
 
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_3,
 								 end_point_3 );
 
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_4,
 								 end_point_4 );
 
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_5,
 								 end_point_5 );
     
-    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+    event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_6,
 								 end_point_6 );
