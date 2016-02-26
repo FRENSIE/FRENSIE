@@ -209,10 +209,10 @@ TEUCHOS_UNIT_TEST( Estimator, setResponseFunctions )
 {
   TestEstimator estimator( 0, 1.0 );
   
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 2 );
   
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
@@ -257,10 +257,10 @@ TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 {
   TestEstimator estimator( 0, 1.0 );
   
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 2 );
   
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
@@ -404,10 +404,10 @@ TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
   dimension_values[MonteCarlo::TIME_DIMENSION] = Teuchos::any( 0.0 );
   dimension_values[MonteCarlo::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 0u );
   // Set the response functions
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 2 );
   
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
@@ -500,10 +500,10 @@ TEUCHOS_UNIT_TEST( Estimator, calculateResponseFunctionIndex )
 						       collision_number_bins );
   
   // Set the response functions
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 2 );
   
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
@@ -698,10 +698,10 @@ TEUCHOS_UNIT_TEST( Estimator, exportData )
 						       collision_number_bins );
   
     // Set the response functions
-    Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
       response_functions( 2 );
   
-    Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+    std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
     response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
@@ -837,10 +837,10 @@ TEUCHOS_UNIT_TEST( Estimator, getBinName )
   
   estimator.setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
   
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 2 );
   
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_FACTORY_HPP
-#define FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -88,7 +88,7 @@ private:
 			std::shared_ptr<ParticleSource>& source );
 
   // The default time distribution
-  static const Teuchos::RCP<Utility::OneDDistribution> s_default_time_dist;
+  static const std::shared_ptr<Utility::OneDDistribution> s_default_time_dist;
 };
 
 //! The invalid particle source representation error
@@ -112,7 +112,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceFactory.hpp

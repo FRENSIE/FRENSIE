@@ -22,10 +22,10 @@ namespace MonteCarlo{
 
 // Constructor
 StandardEstimatorFactory<Geometry::Root>::StandardEstimatorFactory(
-          const std::shared_ptr<EventHandler>& event_handler,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn )
+       const std::shared_ptr<EventHandler>& event_handler,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn )
   : EstimatorFactory( event_handler, response_function_id_map, os_warn ),
     d_cell_volume_map(),
     d_surface_area_map()
@@ -131,15 +131,15 @@ void StandardEstimatorFactory<Geometry::Root>::getSurfaceAreas(
  * will be ignored and a warning message will be displayed.
  */
 void StandardEstimatorFactory<Geometry::Root>::createAndRegisterSurfaceEstimator(
-         const std::string& surface_estimator_type,
-         const unsigned id,
-         const double multiplier,
-         const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-         surfaces,
-	 const bool energy_multiplication,
-	 const Teuchos::ParameterList* bins )
+      const std::string& surface_estimator_type,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      surfaces,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins )
 {
   this->getWarningOutputStream() 
     << "Warning: Surface estimators are not supported when using Root. "

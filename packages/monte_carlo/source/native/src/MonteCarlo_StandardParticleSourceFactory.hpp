@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
-#define FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#ifndef MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#define MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceFactory.hpp"
@@ -69,7 +69,7 @@ StandardParticleSourceFactory<GeometryHandler>::createSource(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardParticleSourceFactory.hpp

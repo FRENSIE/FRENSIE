@@ -68,7 +68,7 @@ void StandardCellEstimator::exportData(
  * cell estimators.
  */
 void StandardCellEstimator::assignBinBoundaries(
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == COSINE_DIMENSION )
   {

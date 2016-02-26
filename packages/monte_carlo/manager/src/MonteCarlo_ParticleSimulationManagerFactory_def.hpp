@@ -69,7 +69,7 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
   // Initialize the event handler and interface
   {
     // Create the response functions
-    boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >
+    boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >
       response_function_id_map;
 
     ResponseFunctionFactory::createResponseFunctions( 

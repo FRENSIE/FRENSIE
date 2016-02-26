@@ -6,11 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
-#define FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#ifndef MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterfaceDecl.hpp"
@@ -78,7 +78,7 @@ inline double SourceModuleInterface<ParticleSource>::getSamplingEfficiency()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#endif // end MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SourceModuleInterface_Native.hpp

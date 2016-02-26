@@ -22,10 +22,10 @@ namespace MonteCarlo{
 template<typename GeometryHandler>
 std::shared_ptr<EventHandler>
 EventHandlerFactory<GeometryHandler>::createHandler( 
-          const Teuchos::ParameterList& observer_reps,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn )
+       const Teuchos::ParameterList& observer_reps,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn )
 {
   // Create a new event handler
   std::shared_ptr<EventHandler> event_handler( new EventHandler() );

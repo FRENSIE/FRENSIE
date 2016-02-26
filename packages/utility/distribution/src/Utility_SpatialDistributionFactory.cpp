@@ -17,7 +17,7 @@
 namespace Utility{
 
 // Create the spatial distribution represented by the parameter list
-Teuchos::RCP<SpatialDistribution> 
+std::shared_ptr<SpatialDistribution> 
 SpatialDistributionFactory::createDistribution( 
 			       const Teuchos::ParameterList& distribution_rep )
 {
@@ -178,54 +178,54 @@ void SpatialDistributionFactory::validateAxisName(
 }
 
 // Create a cartesian distribution
-Teuchos::RCP<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution> 
 SpatialDistributionFactory::createCartesianDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
     distribution_rep.getEntryRCP( "X Distribution" );
   
-  Teuchos::RCP<OneDDistribution> x_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> x_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Y Distribution" );
   
-  Teuchos::RCP<OneDDistribution> y_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> y_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Z Distribution" );
   
-  Teuchos::RCP<OneDDistribution> z_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> z_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
   distribution_rep.unused( std::cout );
   
-  return Teuchos::RCP<SpatialDistribution>( 
+  return std::shared_ptr<SpatialDistribution>( 
 			  new CartesianSpatialDistribution( x_distribution,
 							    y_distribution,
 							    z_distribution ) );
 }
 
 // Create a cylindrical distribution
-Teuchos::RCP<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution> 
 SpatialDistributionFactory::createCylindricalDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
     distribution_rep.getEntryRCP( "R Distribution" );
 
-  Teuchos::RCP<OneDDistribution> r_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> r_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Theta Distribution" );
   
-  Teuchos::RCP<OneDDistribution> theta_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> theta_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Axis Distribution" );
   
-  Teuchos::RCP<OneDDistribution> axis_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> axis_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   double center_x_position = 
     distribution_rep.get<double>( "Center X Position" );  
@@ -245,7 +245,7 @@ SpatialDistributionFactory::createCylindricalDistribution(
   
   distribution_rep.unused( std::cout );
 
-  return Teuchos::RCP<SpatialDistribution>( 
+  return std::shared_ptr<SpatialDistribution>( 
 			new CylindricalSpatialDistribution( r_distribution,
 						            theta_distribution,
 							    axis_distribution,
@@ -256,25 +256,25 @@ SpatialDistributionFactory::createCylindricalDistribution(
 }
 
 // Create a spherical distribution
-Teuchos::RCP<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution> 
 SpatialDistributionFactory::createSphericalDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
     distribution_rep.getEntryRCP( "R Distribution" );
   
-  Teuchos::RCP<OneDDistribution> r_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> r_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Theta Distribution" );
   
-  Teuchos::RCP<OneDDistribution> theta_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> theta_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   entry = distribution_rep.getEntryRCP( "Mu Distribution" );
   
-  Teuchos::RCP<OneDDistribution> mu_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<OneDDistribution> mu_distribution = 
+    OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   
   double center_x_position = 
     distribution_rep.get<double>( "Center X Position" );  
@@ -294,7 +294,7 @@ SpatialDistributionFactory::createSphericalDistribution(
   
   distribution_rep.unused( std::cout );
 
-  return Teuchos::RCP<SpatialDistribution>( 
+  return std::shared_ptr<SpatialDistribution>( 
 			  new SphericalSpatialDistribution( r_distribution,
 							    theta_distribution,
 							    mu_distribution,
@@ -305,7 +305,7 @@ SpatialDistributionFactory::createSphericalDistribution(
 }
 
 // Create a point distribution
-Teuchos::RCP<Utility::SpatialDistribution>
+std::shared_ptr<Utility::SpatialDistribution>
 SpatialDistributionFactory::createPointDistribution( 
 			       const Teuchos::ParameterList& distribution_rep )
 {
@@ -317,7 +317,7 @@ SpatialDistributionFactory::createPointDistribution(
 		      "Error: the position is invalid - size ("
 		      << position.size() << ") != 3" );
 
-  return Teuchos::RCP<SpatialDistribution>(
+  return std::shared_ptr<SpatialDistribution>(
 				  new PointSpatialDistribution( position[0],
 								position[1],
 								position[2]) );

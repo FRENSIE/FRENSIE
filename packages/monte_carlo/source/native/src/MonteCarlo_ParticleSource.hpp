@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_HPP
-#define FACEMC_PARTICLE_SOURCE_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -41,7 +41,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SOURCE_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSource.hpp

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -36,11 +37,11 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   Teuchos::ParameterList directional_distribution_rep = 
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution A" );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;
@@ -76,11 +77,11 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   Teuchos::ParameterList directional_distribution_rep = 
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution B" );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   Teuchos::Array<double> sampled_dir( 3 );
 
@@ -112,11 +113,11 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   Teuchos::ParameterList directional_distribution_rep = 
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution C" );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.0;
@@ -150,11 +151,11 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   Teuchos::ParameterList directional_distribution_rep = 
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution D" );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
   
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   Teuchos::Array<double> sampled_dir( 3 );
   
@@ -170,10 +171,10 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createIsotropicDistribution )
 {
-  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
     Utility::DirectionalDistributionFactory::createIsotropicDistribution();
 
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;

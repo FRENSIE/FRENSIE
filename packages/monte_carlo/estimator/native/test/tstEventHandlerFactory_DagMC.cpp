@@ -31,7 +31,7 @@
 //---------------------------------------------------------------------------//
 Teuchos::RCP<Teuchos::ParameterList> observer_reps;
 
-boost::unordered_map<unsigned,Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> > 
   response_function_id_map;
 
 //---------------------------------------------------------------------------//

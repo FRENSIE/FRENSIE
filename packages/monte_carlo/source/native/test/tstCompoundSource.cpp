@@ -8,6 +8,10 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
+
+// Boost Includes
+#include <boost/bind.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -76,17 +80,17 @@ template<typename GeometryHandler>
 void initializeSource()
 {
   // Create the distributions required for each source
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     source_1_spatial_distribution( new Utility::SphericalSpatialDistribution(
 							    r_distribution,
 							    theta_distribution,
@@ -94,31 +98,31 @@ void initializeSource()
 							    0.0,
 							    0.0,
 							    0.0 ) );
-  Teuchos::RCP<Utility::DirectionalDistribution>
+  std::shared_ptr<Utility::DirectionalDistribution>
     directional_distribution( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     source_1_energy_distribution( new Utility::UniformDistribution( 1e-3, 
 								   1.0, 
 								   1.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     x_distribution( new Utility::DeltaDistribution( 0.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     y_distribution( new Utility::DeltaDistribution( 0.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     z_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     source_2_spatial_distribution( new Utility::CartesianSpatialDistribution(
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     source_2_energy_distribution( new Utility::DeltaDistribution( 14.1 ) );
   
   // Create the uniform spherical source

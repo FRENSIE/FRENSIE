@@ -43,10 +43,10 @@ const std::string EstimatorFactory::s_tet_mesh_track_length_flux_name =
 
 // Constructor
 EstimatorFactory::EstimatorFactory(
-          const std::shared_ptr<EventHandler>& event_handler,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn )
+       const std::shared_ptr<EventHandler>& event_handler,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn )
   : d_event_handler( event_handler ),
     d_response_function_id_map( response_function_id_map ),
     d_os_warn( os_warn )
@@ -163,7 +163,7 @@ void EstimatorFactory::createAndRegisterEstimator(
                               << estimator_id << "!" );
 
   // Get the response functions assigned to the estimator - optional
-  Teuchos::Array<Teuchos::RCP<ResponseFunction> > response_functions;
+  Teuchos::Array<std::shared_ptr<ResponseFunction> > response_functions;
 
   try{
     this->getResponseFunctions( response_functions,
@@ -552,9 +552,9 @@ const Teuchos::ParameterList* EstimatorFactory::getEstimatorBins(
 
 // Get the response functions assigned to the estimator - optional
 void EstimatorFactory::getResponseFunctions( 
-           Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions,
-           const unsigned estimator_id,
-           const Teuchos::ParameterList& estimator_rep ) const
+        Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_functions,
+        const unsigned estimator_id,
+        const Teuchos::ParameterList& estimator_rep ) const
 {
   if( estimator_rep.isParameter( "Response Functions" ) )
   {
@@ -597,7 +597,7 @@ void EstimatorFactory::createAndRegisterCellEstimator(
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
-      const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
       const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
@@ -660,15 +660,15 @@ void EstimatorFactory::createAndRegisterCellEstimator(
 
 // Create and register a surface estimator
 void EstimatorFactory::createAndRegisterSurfaceEstimator(
-         const std::string& surface_estimator_type,
-         const unsigned id,
-         const double multiplier,
-         const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-         surfaces,
-	 const bool energy_multiplication,
-	 const Teuchos::ParameterList* bins )
+      const std::string& surface_estimator_type,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      surfaces,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins )
 {
   // Make sure the estimator type is a surface estimator
   testPrecondition( this->isSurfaceEstimator( surface_estimator_type ) );
@@ -719,7 +719,7 @@ void EstimatorFactory::createAndRegisterCellPulseHeightEstimator(
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
-      const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
       const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins ) const
@@ -782,7 +782,7 @@ void EstimatorFactory::createAndRegisterCellTrackLengthFluxEstimator(
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
-      const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
       const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
@@ -855,7 +855,7 @@ void EstimatorFactory::createAndRegisterCellCollisionFluxEstimator(
       const unsigned id,
       const double multiplier,
       const Teuchos::Array<ParticleType> particle_types,
-      const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
       const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cells,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins ) 
@@ -924,14 +924,14 @@ void EstimatorFactory::createAndRegisterCellCollisionFluxEstimator(
 
 // Create and register a surface flux estimator
 void EstimatorFactory::createAndRegisterSurfaceFluxEstimator(
-         const unsigned id,
-	 const double multiplier,
-	 const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-         surfaces,
-	 const bool energy_multiplication,
-	 const Teuchos::ParameterList* bins )
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      surfaces,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins )
 {
   // Make sure the id is valid
   testPrecondition( id != 
@@ -997,14 +997,14 @@ void EstimatorFactory::createAndRegisterSurfaceFluxEstimator(
 
 // Create a surface current estimator
 void EstimatorFactory::createAndRegisterSurfaceCurrentEstimator(
-         const unsigned id,
-	 const double multiplier,
-	 const Teuchos::Array<ParticleType> particle_types,
-         const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-         surfaces,
-	 const bool energy_multiplication,
-	 const Teuchos::ParameterList* bins ) const
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+      surfaces,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins ) const
 {
   // Make sure the id is valid
   testPrecondition( id != 
@@ -1063,13 +1063,13 @@ void EstimatorFactory::createAndRegisterSurfaceCurrentEstimator(
 
 // Create and register a tet mesh track length flux estimator
 void EstimatorFactory::createAndRegisterTetMeshTrackLengthFluxEstimator(
-         const Teuchos::ParameterList& estimator_rep,
-	 const unsigned id,
-	 const double multiplier,
-	 const Teuchos::Array<ParticleType> particle_types,
-	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
-         const bool energy_multiplication,
-	 const Teuchos::ParameterList* bins ) const
+      const Teuchos::ParameterList& estimator_rep,
+      const unsigned id,
+      const double multiplier,
+      const Teuchos::Array<ParticleType> particle_types,
+      const Teuchos::Array<std::shared_ptr<ResponseFunction> >& response_funcs,
+      const bool energy_multiplication,
+      const Teuchos::ParameterList* bins ) const
 {
   // Make sure the parameter list is valid
   testPrecondition( this->getEstimatorId( estimator_rep ) == id );

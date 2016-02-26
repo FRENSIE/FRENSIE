@@ -86,7 +86,8 @@ public:
 
   //! Set the response functions
   virtual void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Return the number of response functions
   unsigned getNumberOfResponseFunctions() const;
@@ -122,7 +123,7 @@ protected:
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
@@ -224,11 +225,11 @@ private:
   Teuchos::Array<unsigned char> d_has_uncommitted_history_contribution;
 
   // The response functions
-  Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
+  Teuchos::Array<std::shared_ptr<ResponseFunction> > d_response_functions;
   
   // The estimator phase space dimension bin boundaries map
   boost::unordered_map<PhaseSpaceDimension,
-  		       Teuchos::RCP<EstimatorDimensionDiscretization> >
+  		       std::shared_ptr<EstimatorDimensionDiscretization> >
   d_dimension_bin_boundaries_map;
 
   // The estimator phase space dimension index step size map

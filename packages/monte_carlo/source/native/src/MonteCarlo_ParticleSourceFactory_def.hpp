@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
-#define FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_DistributedSource.hpp"
@@ -96,7 +96,7 @@ double ParticleSourceFactory::createDistributedSource(
   const Teuchos::ParameterList& spatial_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-  Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
   try{
     spatial_distribution = 
       Utility::SpatialDistributionFactory::createDistribution( 
@@ -109,7 +109,7 @@ double ParticleSourceFactory::createDistributedSource(
 			     "specified in the distributed source!" );
   
   // Extract the directional distribution
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
   
   if( source_rep.isParameter( "Directional Distribution" ) )
   {
@@ -138,18 +138,18 @@ double ParticleSourceFactory::createDistributedSource(
   // Extract the energy distribution
   entry = source_rep.getEntryRCP( "Energy Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution = 
+    Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
   // Extract the time distribution
-  Teuchos::RCP<Utility::OneDDistribution> time_distribution;
+  std::shared_ptr<Utility::OneDDistribution> time_distribution;
   
   if( source_rep.isParameter( "Time Distribution" ) )
   {
     entry = source_rep.getEntryRCP( "Time Distribution" );
 
     time_distribution = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   }
   else // use the default time distribution
     time_distribution = s_default_time_dist;
@@ -200,7 +200,7 @@ double ParticleSourceFactory::createDistributedSource(
     const Teuchos::ParameterList& spatial_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-    Teuchos::RCP<Utility::SpatialDistribution> spatial_importance_func;
+    std::shared_ptr<Utility::SpatialDistribution> spatial_importance_func;
     try{
       spatial_importance_func = 
 	Utility::SpatialDistributionFactory::createDistribution( 
@@ -229,7 +229,7 @@ double ParticleSourceFactory::createDistributedSource(
     const Teuchos::ParameterList& directional_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-    Teuchos::RCP<Utility::DirectionalDistribution> directional_importance_func;
+    std::shared_ptr<Utility::DirectionalDistribution> directional_importance_func;
     try{
       directional_importance_func = 
 	Utility::DirectionalDistributionFactory::createDistribution(
@@ -256,8 +256,8 @@ double ParticleSourceFactory::createDistributedSource(
   {
     entry = source_rep.getEntryRCP( "Energy Importance Function" );
     
-    Teuchos::RCP<Utility::OneDDistribution> energy_importance_func = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+    std::shared_ptr<Utility::OneDDistribution> energy_importance_func = 
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
    
     // Make sure the importance function is compatible with the energy dist
     TEST_FOR_EXCEPTION(
@@ -273,8 +273,8 @@ double ParticleSourceFactory::createDistributedSource(
   {
     entry = source_rep.getEntryRCP( "Time Importance Function" );
 
-    Teuchos::RCP<Utility::OneDDistribution> time_importance_func = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+    std::shared_ptr<Utility::OneDDistribution> time_importance_func = 
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
     
     // Make sure the importance function is compatible with the time dist
     TEST_FOR_EXCEPTION(
@@ -350,7 +350,7 @@ void ParticleSourceFactory::createCompoundSource(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceFactory_def.hpp

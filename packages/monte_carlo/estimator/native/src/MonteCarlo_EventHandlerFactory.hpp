@@ -18,7 +18,6 @@
 #include <boost/unordered_map.hpp>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
@@ -36,10 +35,10 @@ public:
 
   //! Create the event handler
   static std::shared_ptr<EventHandler> createHandler(
-          const Teuchos::ParameterList& observer_reps,
-          const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
-          response_function_id_map,
-          std::ostream* os_warn = &std::cerr );
+       const Teuchos::ParameterList& observer_reps,
+       const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
+       response_function_id_map,
+       std::ostream* os_warn = &std::cerr );
 
 private:
 

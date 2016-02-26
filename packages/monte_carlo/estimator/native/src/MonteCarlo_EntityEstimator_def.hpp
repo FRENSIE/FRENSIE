@@ -85,7 +85,8 @@ EntityEstimator<EntityId>::EntityEstimator( const Estimator::idType id,
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   Estimator::setResponseFunctions( response_functions );
 
@@ -151,7 +152,7 @@ void EntityEstimator<EntityId>::assignEntities(
 // Assign bin boundaries to an estimator dimension
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignBinBoundaries(
-         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );

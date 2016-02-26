@@ -37,7 +37,8 @@ CellPulseHeightEstimator<
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<
                            ContributionMultiplierPolicy>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   std::cerr << "Warning: Response functions cannot be set for pulse height "
 	    << "estimators. The response functions requested for pulse height "
@@ -264,7 +265,7 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<
 			    ContributionMultiplierPolicy>::assignBinBoundaries(
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == ENERGY_DIMENSION )
   {

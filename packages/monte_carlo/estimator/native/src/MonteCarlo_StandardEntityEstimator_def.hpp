@@ -64,7 +64,8 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 // Set the response functions
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );

@@ -118,7 +118,7 @@ void setEntityEstimatorBins(
 						       collision_number_bins );
 
   // Set the response functions
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 1 );
   response_functions[0] = MonteCarlo::ResponseFunction::default_response_function;
 
@@ -381,7 +381,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 						       collision_number_bins );
 
     // Set the response functions
-    Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
       response_functions( 1 );
     response_functions[0] = 
       MonteCarlo::ResponseFunction::default_response_function;
@@ -665,7 +665,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 						       collision_number_bins );
 
     // Set the response functions
-    Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
       response_functions( 1 );
     response_functions[0] = 
       MonteCarlo::ResponseFunction::default_response_function;

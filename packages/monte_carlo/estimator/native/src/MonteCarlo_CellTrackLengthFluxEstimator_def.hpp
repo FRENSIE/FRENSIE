@@ -33,7 +33,8 @@ CellTrackLengthFluxEstimator<
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
 			   ContributionMultiplierPolicy>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   for( unsigned i = 0; i < response_functions.size(); ++i )
   {
@@ -90,7 +91,7 @@ void CellTrackLengthFluxEstimator<
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
                             ContributionMultiplierPolicy>::assignBinBoundaries(
-         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == TIME_DIMENSION )
   {

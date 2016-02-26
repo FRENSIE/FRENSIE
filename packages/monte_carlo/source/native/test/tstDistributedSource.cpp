@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -35,7 +36,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<MonteCarlo::ParticleSource> source;
+std::shared_ptr<MonteCarlo::ParticleSource> source;
 
 //---------------------------------------------------------------------------//
 // Test Sat File Name
@@ -58,21 +59,21 @@ void initializeSource( const bool set_importance_functions = false,
 		       const bool set_rejection_cell = false )
 {
   // Power distribution in r dimension
-  Teuchos::RCP<Utility::OneDDistribution> 
+  std::shared_ptr<Utility::OneDDistribution> 
     r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
   
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
   // Create the spatial distribution
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     spatial_distribution( new Utility::SphericalSpatialDistribution( 
 							    r_distribution,
 							    theta_distribution,
@@ -82,17 +83,17 @@ void initializeSource( const bool set_importance_functions = false,
 							    0.0 ) );
 
   // Create the directional distribution
-  Teuchos::RCP<Utility::DirectionalDistribution>
+  std::shared_ptr<Utility::DirectionalDistribution>
     directional_distribution( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 
   // Uniform distribution in energy dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     energy_distribution( new Utility::UniformDistribution( 1e-3, 1.0, 1.0 ) );
 
   // Delta distribution in time dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
   // Create the distributed source
@@ -120,13 +121,13 @@ void initializeSource( const bool set_importance_functions = false,
     bin_values[1] = 2.0;
     bin_values[2] = 1.0;
     
-    Teuchos::RCP<Utility::OneDDistribution>
+    std::shared_ptr<Utility::OneDDistribution>
       theta_importance_distribution( new Utility::HistogramDistribution(
 								bin_boundaries,
 								bin_values ) );
 
     // Create the spatial importance distribution 
-    Teuchos::RCP<Utility::SpatialDistribution> spatial_importance_distribution(
+    std::shared_ptr<Utility::SpatialDistribution> spatial_importance_distribution(
        new Utility::SphericalSpatialDistribution( r_distribution,
 						 theta_importance_distribution,
 						 mu_distribution,
@@ -135,7 +136,7 @@ void initializeSource( const bool set_importance_functions = false,
 						 0.0 ) );
 
     // Create the directional importance distribution
-    Teuchos::RCP<Utility::DirectionalDistribution>
+    std::shared_ptr<Utility::DirectionalDistribution>
       directional_importance_distribution( 
 	   new Utility::SphericalDirectionalDistribution( 
 						 theta_importance_distribution,
@@ -150,13 +151,13 @@ void initializeSource( const bool set_importance_functions = false,
     bin_values[0] = 5.0;
     bin_values[1] = 2.0;
     bin_values[2] = 1.0;
-    Teuchos::RCP<Utility::OneDDistribution>
+    std::shared_ptr<Utility::OneDDistribution>
       energy_importance_distribution( new Utility::HistogramDistribution(
 								bin_boundaries,
 								bin_values ) );
     
-    Teuchos::RCP<MonteCarlo::DistributedSource> distributed_source = 
-      Teuchos::rcp_dynamic_cast<MonteCarlo::DistributedSource>( source );
+    std::shared_ptr<MonteCarlo::DistributedSource> distributed_source = 
+      std::dynamic_pointer_cast<MonteCarlo::DistributedSource>( source );
 									     
     distributed_source->setSpatialImportanceDistribution( 
 					     spatial_importance_distribution );
@@ -169,8 +170,8 @@ void initializeSource( const bool set_importance_functions = false,
   // Set the rejection cell if requested
   if( set_rejection_cell )
   {
-    Teuchos::RCP<MonteCarlo::DistributedSource> distributed_source = 
-      Teuchos::rcp_dynamic_cast<MonteCarlo::DistributedSource>( source );
+    std::shared_ptr<MonteCarlo::DistributedSource> distributed_source = 
+      std::dynamic_pointer_cast<MonteCarlo::DistributedSource>( source );
 
     // Cell (id=2) of the test geometry will be used as the rejection cell
     distributed_source->setRejectionCell( 2 );
