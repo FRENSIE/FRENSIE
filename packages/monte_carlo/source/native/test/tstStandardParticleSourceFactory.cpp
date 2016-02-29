@@ -20,6 +20,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -54,13 +55,13 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
   Teuchos::RCP<Teuchos::ParameterList> source_rep = 
     Teuchos::getParametersFromXmlFile( test_simple_source_xml_file_name );
 
-  Teuchos::RCP<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-  Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+  std::shared_ptr<MonteCarlo::ParticleSource> source = 
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
-  TEST_ASSERT( !source.is_null() );
+  TEST_ASSERT( source.get() );
 
   MonteCarlo::ParticleBank bank;
 
@@ -72,7 +73,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }						
@@ -85,13 +86,13 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
   Teuchos::RCP<Teuchos::ParameterList> source_rep = 
     Teuchos::getParametersFromXmlFile( test_complex_source_xml_file_name );
 
-  Teuchos::RCP<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-  Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+  std::shared_ptr<MonteCarlo::ParticleSource> source = 
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
-  TEST_ASSERT( !source.is_null() );
+  TEST_ASSERT( source.get() );
 
   MonteCarlo::ParticleBank bank;
 
@@ -103,7 +104,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }	
@@ -116,13 +117,13 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
   Teuchos::RCP<Teuchos::ParameterList> source_rep = 
     Teuchos::getParametersFromXmlFile( test_compound_source_xml_file_name );
 
-  Teuchos::RCP<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-  Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+  std::shared_ptr<MonteCarlo::ParticleSource> source = 
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  TEST_ASSERT( !source.is_null() );
+  TEST_ASSERT( source.get() );
 
   MonteCarlo::ParticleBank bank;
 
@@ -134,7 +135,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
   std::cout << std::endl;
   while( bank.size() > 0 )
   {
-    std::cout << *bank.top() << std::endl;
+    std::cout << bank.top() << std::endl;
     
     bank.pop();
   }

@@ -9,9 +9,15 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Default constructor
+ElectronState::ElectronState()
+  : MassiveParticleState()
+{ /* ... */ }
 
 // Constructor
 ElectronState::ElectronState( 
@@ -41,26 +47,16 @@ ElectronState::ElectronState( const ParticleState& existing_base_state,
 			 reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-ElectronState::ElectronState( const ParticleStateCore& core )
-  : MassiveParticleState(core,
-			 Utility::PhysicalConstants::electron_rest_mass_energy)
-{
-  // Make sure the core is a electron core
-  testPrecondition( core.particle_type == ELECTRON );
-}
-
-// Assignment operator
-ElectronState& ElectronState::operator=( 
-				   const ElectronState& existing_electron_state )
-{
-  MassiveParticleState::operator=( existing_electron_state );
-}
-
 // Return the rest mass energy of the electron (MeV)
 double ElectronState::getRestMassEnergy() const
 {
   return Utility::PhysicalConstants::electron_rest_mass_energy;
+}
+
+// Clone the particle state (do not use to generate new particles!)
+ElectronState* ElectronState::clone() const
+{
+  return new ElectronState( *this, false, false );
 }
 
 // Print the electron state
@@ -68,10 +64,13 @@ void ElectronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Electron" << std::endl;
 
-  this->printImplementation( os );
+  this->printImplementation<ElectronState>( os );
 }			    
 
 } // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::ElectronState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::ElectronState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectronState.cpp

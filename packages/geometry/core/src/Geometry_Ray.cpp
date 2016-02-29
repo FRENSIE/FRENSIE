@@ -20,8 +20,7 @@ Ray::Ray( const double x_position,
 	  const double x_direction,
 	  const double y_direction,
 	  const double z_direction )
-  : Utility::PrintableObject( "Ray" ),
-    d_position( new double[3] ),
+  : d_position( new double[3] ),
     d_direction( new double[3] ),
     d_deep_copy_initialization( true )
 {
@@ -46,8 +45,7 @@ Ray::Ray( const double x_position,
 // Constructor
 Ray::Ray( const double position[3],
 	  const double direction[3] )
-  : Utility::PrintableObject( "Ray" ),
-    d_position( new double[3] ), 
+  : d_position( new double[3] ), 
     d_direction( new double[3] ),
     d_deep_copy_initialization( true )
 {
@@ -76,8 +74,7 @@ Ray::Ray( const double position[3],
 Ray::Ray( double position[3],
 	  double direction[3],
 	  const bool deep_copy )
-  : Utility::PrintableObject( "Ray" ),
-    d_position( position ), 
+  : d_position( position ), 
     d_direction( direction ),
     d_deep_copy_initialization( deep_copy )
 {

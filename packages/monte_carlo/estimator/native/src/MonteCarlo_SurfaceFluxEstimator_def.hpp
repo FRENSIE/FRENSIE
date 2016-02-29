@@ -6,11 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
-#define FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -52,12 +52,12 @@ void SurfaceFluxEstimator<
     // If the angle cosine is very close to zero, set it to eps/2 to
     // prevent large contributions to the estimator
     if( ST::magnitude( angle_cosine ) > 
-        SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff() )
+        SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() )
       contribution = 1.0/ST::magnitude( angle_cosine );
     else
     {
       contribution = 
-	2.0/SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+	2.0/SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
     }
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
@@ -74,7 +74,8 @@ void SurfaceFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( 
+                                                       std::ostream& os ) const
 {
   os << "Surface Flux Estimator: " << getId() << std::endl;
 
@@ -83,7 +84,7 @@ void SurfaceFluxEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceFluxEstimator_def.hpp

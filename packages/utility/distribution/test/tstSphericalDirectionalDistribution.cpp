@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,7 +25,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -137,39 +138,39 @@ TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, getDistributionType )
 // Check that the bounds of two distributions can be tested
 TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, hasSameBounds )
 {
-  Teuchos::RCP<Utility::OneDDistribution> theta_distribution( 
+  std::shared_ptr<Utility::OneDDistribution> theta_distribution( 
 	    new Utility::UniformDistribution( 0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
 
-  Teuchos::RCP<Utility::OneDDistribution> uniform_distribution( 
+  std::shared_ptr<Utility::OneDDistribution> uniform_distribution( 
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
   
-  Teuchos::RCP<Utility::OneDDistribution> histogram_distribution(
+  std::shared_ptr<Utility::OneDDistribution> histogram_distribution(
 	  new Utility::HistogramDistribution( Teuchos::tuple( -1.0, 0.0, 1.0 ),
 					      Teuchos::tuple( 1.0, 1.0 ) ) );
 
-  Teuchos::RCP<Utility::OneDDistribution> discrete_distribution(
+  std::shared_ptr<Utility::OneDDistribution> discrete_distribution(
 	     new Utility::DiscreteDistribution( Teuchos::tuple( 0.0, 1.0 ),
 						Teuchos::tuple( 1.0, 1.0 ) ) );
 
   
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_a(
+  std::shared_ptr<Utility::DirectionalDistribution> directional_dist_a(
 	   new Utility::SphericalDirectionalDistribution( theta_distribution,
 							  uniform_distribution,
 							  Utility::Y_AXIS ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_b(
+  std::shared_ptr<Utility::DirectionalDistribution> directional_dist_b(
 	   new Utility::SphericalDirectionalDistribution( theta_distribution,
 							  uniform_distribution,
 							  Utility::X_AXIS ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_c(
+  std::shared_ptr<Utility::DirectionalDistribution> directional_dist_c(
 	 new Utility::SphericalDirectionalDistribution( theta_distribution,
 							histogram_distribution,
 							Utility::Z_AXIS ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_d(
+  std::shared_ptr<Utility::DirectionalDistribution> directional_dist_d(
 	 new Utility::SphericalDirectionalDistribution( theta_distribution,
 							discrete_distribution,
 							Utility::Z_AXIS ) );
@@ -189,14 +190,14 @@ int main( int argc, char** argv )
   Utility::RandomNumberGenerator::createStreams();
   
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
 
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
   directional_distribution.reset( new Utility::SphericalDirectionalDistribution(

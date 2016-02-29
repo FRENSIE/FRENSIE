@@ -265,9 +265,13 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
+  std::string cross_sections_xml_name = cross_sections_xml_directory;
+  cross_sections_xml_name += "/test_epr_82_native.xml";
+
   // Test the photoatom properties
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
+
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
   TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
@@ -619,6 +623,9 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
 
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
 
+  std::string cross_sections_xml_name = cross_sections_xml_directory;
+  cross_sections_xml_name += "/test_epr_82_native.xml";
+
   // Test the photoatom properties
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
 	       atom->getAtomName().size() );
@@ -779,6 +786,9 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
 
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
+
+  std::string cross_sections_xml_name = cross_sections_xml_directory;
+  cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
@@ -951,6 +961,9 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
 
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
+
+  std::string cross_sections_xml_name = cross_sections_xml_directory;
+  cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <
@@ -1331,6 +1344,9 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
   TEST_ASSERT( !photoatom_map["Pb-Native"].is_null() );
 
   Teuchos::RCP<MonteCarlo::Photoatom>& atom = photoatom_map["Pb-Native"];
+
+  std::string cross_sections_xml_name = cross_sections_xml_directory;
+  cross_sections_xml_name += "/test_epr_82_native.xml";
 
   // Test the photoatom properties
   TEST_ASSERT( atom->getAtomName().find( "test_epr_82_native.xml" ) <

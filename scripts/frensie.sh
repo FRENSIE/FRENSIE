@@ -22,6 +22,7 @@ ROOT_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/root")
 DOXYGEN_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/doxygen")
 FRENSIE_SRC=$(python $ABSPATHEXE "../src")
 FRENSIE_INSTALL=$(python $ABSPATHEXE "../frensie_install")
+MCNP_DATA_PATH=/home/software/mcnpdata/
 
 # Get system details for dashboard
 DISTRO="$(lsb_release -i -s)"
@@ -59,6 +60,7 @@ cmake \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
     -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
     -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
+    -D ROOT_PREFIX:PATH=$ROOT_PREFIX_PATH \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
     -D MCNP_DATA_DIR:PATH=$MCNP_DATA_PATH \
     -D SETUP_DASHBOARD_CLIENT:BOOL=OFF \

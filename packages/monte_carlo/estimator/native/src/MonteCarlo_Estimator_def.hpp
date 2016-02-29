@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_DEF_HPP
-#define FACEMC_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
@@ -22,7 +22,7 @@ void Estimator::setBinBoundaries(
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename PhaseSpaceDimensionTraits<dimension>::dimensionType,DimensionType>::value));
   
-  Teuchos::RCP<EstimatorDimensionDiscretization> dimension_bin_boundaries(
+  std::shared_ptr<EstimatorDimensionDiscretization> dimension_bin_boundaries(
     new GeneralEstimatorDimensionDiscretization<dimension>( bin_boundaries ) );
   
   assignBinBoundaries( dimension_bin_boundaries );
@@ -50,7 +50,7 @@ inline void Estimator::convertPartialParticleStateToGenericMap<DIMENSION_end>(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator_def.hpp

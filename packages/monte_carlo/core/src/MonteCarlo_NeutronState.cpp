@@ -9,9 +9,15 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Constructor
+NeutronState::NeutronState()
+  : MassiveParticleState()
+{ /* ... */ }
 
 // Constructor
 NeutronState::NeutronState( 
@@ -41,26 +47,16 @@ NeutronState::NeutronState( const NeutronState& existing_state,
 			  reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-NeutronState::NeutronState( const ParticleStateCore& core )
-  : MassiveParticleState(core, 
-			 Utility::PhysicalConstants::neutron_rest_mass_energy )
-{
-  // Make sure the core is a neutron core
-  testPrecondition( core.particle_type == NEUTRON );
-}
-
-// Assignment operator
-NeutronState& NeutronState::operator=( 
-				   const NeutronState& existing_neutron_state )
-{
-  MassiveParticleState::operator=( existing_neutron_state );
-}
-
 // Return the rest mass energy of the neutron (MeV)
 double NeutronState::getRestMassEnergy() const
 {
   return Utility::PhysicalConstants::neutron_rest_mass_energy;
+}
+
+// Clone the particle state (do not use to generate new particles!)
+NeutronState* NeutronState::clone() const
+{
+  return new NeutronState( *this, false, false );
 }
 
 // Print the neutron state
@@ -68,10 +64,13 @@ void NeutronState::print( std::ostream& os ) const
 {
   os << "Particle Type: Neutron" << std::endl;
 
-  this->printImplementation( os );
+  this->printImplementation<NeutronState>( os );
 }
 
 } // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::NeutronState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::NeutronState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronState.cpp

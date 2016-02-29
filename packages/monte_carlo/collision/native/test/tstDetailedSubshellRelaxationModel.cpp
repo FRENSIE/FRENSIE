@@ -59,12 +59,12 @@ TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
   TEST_EQUALITY_CONST( primary_vacancy, MonteCarlo::P3_SUBSHELL );
   TEST_EQUALITY_CONST( secondary_vacancy, MonteCarlo::INVALID_SUBSHELL );
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 8.828470000000E-02 );
-  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
-  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(), 8.828470000000E-02 );
+  TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

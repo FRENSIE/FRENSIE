@@ -11,45 +11,20 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Estimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
-// Initialize the number of histories run
+// Initialize the tolerance
 double Estimator::tol = 1e-8;
-unsigned long long Estimator::num_histories = 0ull;
-double Estimator::start_time = 0.0;
-double Estimator::end_time = Estimator::start_time;
-
-// Set the number of particle histories that will be simulated
-void Estimator::setNumberOfHistories( const unsigned long long num_histories )
-{
-  Estimator::num_histories = num_histories;
-}
-
-// Set the start time for the figure of merit calculation
-void Estimator::setStartTime( const double start_time )
-{
-  testPrecondition( start_time >= 0.0 );
-  
-  Estimator::start_time = start_time;
-}
-
-// Set the end time for the figure of merit calculation
-void Estimator::setEndTime( const double end_time )
-{
-  testPrecondition( end_time > start_time );
-  
-  Estimator::end_time = end_time;
-}
 
 // Constructor
-  Estimator::Estimator( const Estimator::idType id,
+  Estimator::Estimator( const ParticleHistoryObserver::idType id,
 			const double multiplier )
-  : PrintableObject( "//---------------------------------------------------------------------------//\n" ),
-    d_id( id ),
-    d_multiplier( multiplier ),
-    d_has_uncommitted_history_contribution( 1, false ),
-    d_response_functions( 1 )
+    : ParticleHistoryObserver( id ),
+      d_multiplier( multiplier ),
+      d_has_uncommitted_history_contribution( 1, false ),
+      d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
   testPrecondition( multiplier > 0.0 );
@@ -63,7 +38,8 @@ void Estimator::setEndTime( const double end_time )
 
 // Set the response functions
 void Estimator::setResponseFunctions( 
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -108,13 +84,19 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
 }
 
 // Export the estimator data
-void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
-			    const bool process_data ) const
+void Estimator::exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure this estimator has not been exported yet
-  testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
+  remember( EstimatorHDF5FileHandler test_estimator_hdf5_file( hdf5_file ) );
+  testPrecondition( 
+               !test_estimator_hdf5_file.doesEstimatorExist( this->getId() ) );
+
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
   
   // Export the response function ordering
   {
@@ -123,27 +105,30 @@ void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
     for( unsigned i = 0; i < d_response_functions.size(); ++i )
       response_function_ordering[i] = d_response_functions[i]->getId();
       
-    hdf5_file.setEstimatorResponseFunctionOrdering( 
-						  d_id, 
+    estimator_hdf5_file.setEstimatorResponseFunctionOrdering( 
+						  this->getId(), 
 						  response_function_ordering );
   }
 
   // Export the dimension ordering
   if( d_dimension_ordering.size() > 0 )
-    hdf5_file.setEstimatorDimensionOrdering( d_id, d_dimension_ordering );
+  {
+    estimator_hdf5_file.setEstimatorDimensionOrdering( this->getId(), 
+                                                       d_dimension_ordering );
+  }
 
   // Export the bin boundaries
   for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
   {
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find( 
 					     d_dimension_ordering[i] )->second;
     
-    dimension_bin_boundaries->exportData( d_id, hdf5_file );
+    dimension_bin_boundaries->exportData( this->getId(), estimator_hdf5_file );
   }
 
   // Export the estimator multiplier
-  hdf5_file.setEstimatorMultiplier( d_id, d_multiplier );
+  estimator_hdf5_file.setEstimatorMultiplier( this->getId(), d_multiplier );
 }
 
 // Set the has uncommited history contribution flag
@@ -174,7 +159,7 @@ void Estimator::unsetHasUncommittedHistoryContribution(
 
 // Assign bin boundaries to an estimator dimension
 void Estimator::assignBinBoundaries( 
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -227,7 +212,7 @@ std::string Estimator::getBinName( const unsigned bin_index ) const
     
     unsigned dim_bin_index = (bin_index/total_bins) % dim_bins;
     
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries = 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries = 
       d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second;
     
     //oss << bin_boundaries->getDimensionName() << "_";
@@ -384,7 +369,7 @@ bool Estimator::isPointInEstimatorPhaseSpace(
     const Teuchos::any& dimension_value = 
       dimension_values.find(d_dimension_ordering[i])->second;
 
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
 					     d_dimension_ordering[i] )->second;
 
@@ -417,7 +402,7 @@ unsigned Estimator::calculateBinIndex(
     const Teuchos::any& dimension_value = 
       dimension_values.find(d_dimension_ordering[i])->second;
 
-    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
 					     d_dimension_ordering[i] )->second;
 
@@ -505,7 +490,7 @@ double Estimator::calculateMean( const double first_moment_contributions) const
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );
 
-  double mean = first_moment_contributions/Estimator::num_histories;
+  double mean = first_moment_contributions/this->getNumberOfHistories();
 
   // Make sure the mean is valid
   testPostcondition( !ST::isnaninf( mean ) );
@@ -520,7 +505,7 @@ double Estimator::calculateRelativeError(
 			       const double second_moment_contributions ) const
 {
   // Make sure that the number of histories is valid
-  testPrecondition( Estimator::num_histories > 0ull );
+  testPrecondition( this->getNumberOfHistories() > 0ull );
   // Make sure the first moment contributions are valid
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );
@@ -534,7 +519,7 @@ double Estimator::calculateRelativeError(
   {
     double argument = second_moment_contributions/
       (first_moment_contributions*first_moment_contributions) - 
-      1.0/Estimator::num_histories;
+      1.0/this->getNumberOfHistories();
     
     // Check for roundoff error resulting in a very small negative number
     if( argument < 0.0 && argument > -Estimator::tol )
@@ -561,7 +546,7 @@ double Estimator::calculateVOV( const double first_moment_contributions,
 				const double fourth_moment_contributions) const
 {
   // Make sure that the number of histories is valid
-  testPrecondition( Estimator::num_histories > 0ull );
+  testPrecondition( this->getNumberOfHistories() > 0ull );
   // Make sure the first moment contributions are valid
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );
@@ -578,24 +563,24 @@ double Estimator::calculateVOV( const double first_moment_contributions,
   double first_moment_contributions_squared = 
     first_moment_contributions*first_moment_contributions;
 
-  double num_histories_squared = Estimator::num_histories*
-    Estimator::num_histories;
+  double num_histories_squared = this->getNumberOfHistories()*
+    this->getNumberOfHistories();
 
-  double num_histories_cubed = num_histories_squared*Estimator::num_histories;
+  double num_histories_cubed = num_histories_squared*this->getNumberOfHistories();
 
   double vov_numerator = fourth_moment_contributions - 
     4*first_moment_contributions*third_moment_contributions/
-    Estimator::num_histories +
+    this->getNumberOfHistories() +
     8*second_moment_contributions*first_moment_contributions_squared/
     num_histories_squared -
     4*first_moment_contributions_squared*first_moment_contributions_squared/
     num_histories_cubed - 
     second_moment_contributions*second_moment_contributions/
-    Estimator::num_histories;
+    this->getNumberOfHistories();
 
   double vov_denominator = 
     (second_moment_contributions - first_moment_contributions_squared/
-     Estimator::num_histories);
+     this->getNumberOfHistories());
   vov_denominator *= vov_denominator;
   
   double vov;
@@ -619,9 +604,9 @@ double Estimator::calculateVOV( const double first_moment_contributions,
 double Estimator::calculateFOM( const double relative_error ) const
 {
   // Make sure the problem time is valid
-  testPrecondition( Estimator::end_time - Estimator::start_time > 0.0 );
+  testPrecondition( this->getElapsedTime() > 0.0 );
 
-  double problem_time = Estimator::end_time - Estimator::start_time;
+  double problem_time = this->getElapsedTime();
 
   double fom;
   

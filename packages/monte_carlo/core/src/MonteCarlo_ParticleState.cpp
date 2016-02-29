@@ -13,24 +13,43 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+/*! \details The default constructor should only be called before loading the
+ * particle state from an archive.
+ */
+ParticleState::ParticleState()
+  : d_history_number( 0 ),
+    d_particle_type(),
+    d_position(),
+    d_direction{0.0,0.0,1.0},
+    d_energy( 0.0 ),
+    d_time( 0.0 ),
+    d_collision_number( 0 ),
+    d_generation_number( 0 ),
+    d_weight( 1.0 ),
+    d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
+    d_lost( false ),
+    d_gone( false ),
+    d_ray( d_position, d_direction, false )
+{ /* ... */ }
+
 // Constructor
 ParticleState::ParticleState( 
 			 const ParticleState::historyNumberType history_number,
 			 const ParticleType type )
-    : Utility::PrintableObject( "ParticleState" ),
-      d_core( history_number, 
-	      type, 
-	      0.0, 0.0, 0.0, 
-	      0.0, 0.0, 0.0, 
-	      0.0, 
-	      0.0, 
-	      0u,
-	      0u,
-	      1.0 ),
-      d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-      d_lost( false ),
-      d_gone( false ),
-      d_ray( &d_core.x_position, &d_core.x_direction, false )
+  : d_history_number( history_number ),
+    d_particle_type( type ),
+    d_position(),
+    d_direction(),
+    d_energy( 0.0 ),
+    d_time( 0.0 ),
+    d_collision_number( 0 ),
+    d_generation_number( 0 ),
+    d_weight( 1.0 ),
+    d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
+    d_lost( false ),
+    d_gone( false ),
+    d_ray( d_position, d_direction, false )
 { /* ... */ }
 
 // Copy constructor
@@ -41,43 +60,59 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
 			      const ParticleType new_type,
 			      const bool increment_generation_number,
 			      const bool reset_collision_number )
-  : d_core( existing_base_state.d_core  ),
+  : d_history_number( existing_base_state.d_history_number ),
+    d_particle_type( new_type ),
+    d_position{existing_base_state.d_position[0],
+               existing_base_state.d_position[1],
+               existing_base_state.d_position[2]},
+    d_direction{existing_base_state.d_direction[0],
+	        existing_base_state.d_direction[1],
+	        existing_base_state.d_direction[2]},
+    d_energy( existing_base_state.d_energy ),
+    d_time( existing_base_state.d_time ),
+    d_collision_number( existing_base_state.d_collision_number ),
+    d_generation_number( existing_base_state.d_generation_number ),
+    d_weight( existing_base_state.d_weight ),
     d_cell( existing_base_state.d_cell ),
     d_lost( false ),
     d_gone( false ),
-    d_ray( &d_core.x_position, &d_core.x_direction, false )
+    d_ray( d_position, d_direction, false )
 {
-  // Reassign the particle type
-  d_core.particle_type = new_type;
-  
   // Increment the generation number if requested
   if( increment_generation_number )
-    ++d_core.generation_number;
+    ++d_generation_number;
 
   // Reset the collision number if requested
   if( reset_collision_number )
-    d_core.collision_number = 0u;
+    d_collision_number = 0u;
 }
 
-// Core constructor
-ParticleState::ParticleState( const ParticleStateCore& core )
-  : d_core( core ),
-    d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-    d_lost( false ),
-    d_gone( false ),
-    d_ray( &d_core.x_position, &d_core.x_direction, false )
-{ /* ... */ }
+// Clone the particle state but change the history number
+/*! \details This method returns a heap-allocated pointer. It is only safe
+ * to call this method inside of a smart pointer constructor or reset method.
+ * The clone will only need a new history number in very rare circumstances
+ * (e.g. state source).
+ */
+ParticleState* ParticleState::clone( 
+	      const ParticleState::historyNumberType new_history_number ) const
+{
+  ParticleState* clone_state = this->clone();
+  
+  clone_state->d_history_number = new_history_number;
+
+  return clone_state;
+}
 
 // Return the history number
 ParticleState::historyNumberType ParticleState::getHistoryNumber() const
 {
-  return d_core.history_number;
+  return d_history_number;
 }
 
 // Return the particle type
 ParticleType ParticleState::getParticleType() const
 {
-  return d_core.particle_type;
+  return d_particle_type;
 }
 
 // Return the cell handle for the cell containing the particle
@@ -100,25 +135,25 @@ void ParticleState::setCell(
 // Return the x position of the particle
 double ParticleState::getXPosition() const
 {
-  return d_core.x_position;
+  return d_position[0];
 }
 
 // Return the y position of the particle
 double ParticleState::getYPosition() const
 {
-  return d_core.y_position;
+  return d_position[1];
 }
 
 // Return the z position of the particle
 double ParticleState::getZPosition() const
 {
-  return d_core.z_position;
+  return d_position[2];
 }
 
 // Return the position of the particle
 const double* ParticleState::getPosition() const
 {
-  return &d_core.x_position;
+  return d_position;
 }
 
 // Set the position of the particle
@@ -131,33 +166,33 @@ void ParticleState::setPosition( const double x_position,
   testPrecondition( !ST::isnaninf( y_position ) );
   testPrecondition( !ST::isnaninf( z_position ) );
   
-  d_core.x_position = x_position;
-  d_core.y_position = y_position;
-  d_core.z_position = z_position;
+  d_position[0] = x_position;
+  d_position[1] = y_position;
+  d_position[2] = z_position;
 }
 
 // Return the x direction of the particle
 double ParticleState::getXDirection() const
 {
-  return d_core.x_direction;
+  return d_direction[0];
 }
 
 // Return the y direction of the particle
 double ParticleState::getYDirection() const
 {
-  return d_core.y_direction;
+  return d_direction[1];
 }
 
 // Return the z direction of the particle
 double ParticleState::getZDirection() const
 {
-  return d_core.z_direction;
+  return d_direction[2];
 }
 
 // Return the direction of the particle
 const double* ParticleState::getDirection() const
 {
-  return &d_core.x_direction;
+  return d_direction;
 }
 
 // Set the direction of the particle
@@ -174,9 +209,9 @@ void ParticleState::setDirection( const double x_direction,
 					     y_direction, 
 					     z_direction ) );
   
-  d_core.x_direction = x_direction;
-  d_core.y_direction = y_direction;
-  d_core.z_direction = z_direction;
+  d_direction[0] = x_direction;
+  d_direction[1] = y_direction;
+  d_direction[2] = z_direction;
 }
 
 // Rotate the direction of the particle using polar a. cosine and azimuthal a.
@@ -215,12 +250,12 @@ void ParticleState::advance( const double distance )
   // Make sure the distance is valid
   testPrecondition( !ST::isnaninf( distance ) );
   
-  d_core.x_position += d_core.x_direction*distance;
-  d_core.y_position += d_core.y_direction*distance;
-  d_core.z_position += d_core.z_direction*distance;
+  d_position[0] += d_direction[0]*distance;
+  d_position[1] += d_direction[1]*distance;
+  d_position[2] += d_direction[2]*distance;
 
   // Compute the time to traverse the distance
-  d_core.time += calculateTraversalTime( distance );
+  d_time += calculateTraversalTime( distance );
 }
 
 // Set the energy of the particle
@@ -233,31 +268,31 @@ void ParticleState::setEnergy( const ParticleState::energyType energy )
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
   
-  d_core.energy = energy;
+  d_energy = energy;
 }
 
 // Return the time state of the particle
-  ParticleState::timeType ParticleState::getTime() const
+ParticleState::timeType ParticleState::getTime() const
 {
-  return d_core.time;
+  return d_time;
 }
 
 // Set the time state of the particle
 void ParticleState::setTime( const ParticleState::timeType time )
 {
-  d_core.time = time;
+  d_time = time;
 }
 
 // Return the collision number of the particle
 ParticleState::collisionNumberType ParticleState::getCollisionNumber() const
 {
-  return d_core.collision_number;
+  return d_collision_number;
 }
 
 // Increment the collision number
 void ParticleState::incrementCollisionNumber()
 {
-  ++d_core.collision_number;
+  ++d_collision_number;
 }
 
 // Reset the collision number
@@ -266,40 +301,40 @@ void ParticleState::incrementCollisionNumber()
  */
 void ParticleState::resetCollisionNumber()
 {
-  d_core.collision_number = 0u;
+  d_collision_number = 0u;
 }
 
 // Return the generation number of the particle
 ParticleState::generationNumberType ParticleState::getGenerationNumber() const
 {
-  return d_core.generation_number;
+  return d_generation_number;
 }
 
 // Increment the generation number
 void ParticleState::incrementGenerationNumber()
 {
-  ++d_core.generation_number;
+  ++d_generation_number;
 }
 
 // Return the weight of the particle
 double ParticleState::getWeight() const
 {
-  return d_core.weight;
+  return d_weight;
 }
 
 // Set the weight of the particle
 void ParticleState::setWeight( const double weight )
 {
-  d_core.weight = weight;
+  d_weight = weight;
 }
 
 // Multiply the weight of the particle by a factor
 void ParticleState::multiplyWeight( const double weight_factor )
 {
   // Make sure that the current weight is valid
-  testPrecondition( d_core.weight > 0.0 );
+  testPrecondition( d_weight > 0.0 );
   
-  d_core.weight *= weight_factor;
+  d_weight *= weight_factor;
 }
 
 // Return if the particle is lost
@@ -324,36 +359,6 @@ bool ParticleState::isGone() const
 void ParticleState::setAsGone()
 {
   d_gone = true;
-}
-
-// Export the core (creating a copy of it)
-ParticleStateCore ParticleState::exportCore() const
-{
-  return d_core;
-}
-
-// Print method implementation
-void ParticleState::printImplementation( std::ostream& os ) const
-{
-  os.precision( 16 );
-  os << "History: " << d_core.history_number << std::endl;
-  os << "Cell: ";
-  if( d_cell == Geometry::ModuleTraits::invalid_internal_cell_handle )
-    os << "Invalid/Unknown" << std::endl;
-  else
-    os << d_cell << std::endl;
-  os << "Position: {" << d_core.x_position << "," << d_core.y_position << ","
-     << d_core.z_position << "}" << std::endl;
-  os << "Direction: {" << d_core.x_direction << "," 
-     << d_core.y_direction << ","
-     << d_core.z_direction << "}" << std::endl;
-  os << "Energy: " << d_core.energy << std::endl;
-  os << "Time: " << d_core.time << std::endl;
-  os << "Collision Number: " << d_core.collision_number << std::endl;
-  os << "Generation Number: " << d_core.generation_number << std::endl;
-  os << "Weight: " << d_core.weight << std::endl;
-  os << "Lost: " << (d_lost ? "True" : "False") << std::endl;
-  os << "Gone: " << (d_gone ? "True" : "False") << std::endl;
 }
 
 } // end MonteCarlo

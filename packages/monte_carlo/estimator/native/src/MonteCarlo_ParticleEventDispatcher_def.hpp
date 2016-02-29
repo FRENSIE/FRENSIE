@@ -2,73 +2,94 @@
 //!
 //! \file   MonteCarlo_ParticleEventDispatcher_def.hpp
 //! \author Alex Robinson
-//! \brief  Particle event dispatcher base class definition.
+//! \brief  Particle event dispatcher database base class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
-#define FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
-
-// FRENSIE Includes
-#include "Utility_ContractException.hpp"
+#ifndef MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
+#define MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 
 namespace MonteCarlo{
 
 // Constructor
-template<typename EntityHandle, typename Observer>
-ParticleEventDispatcher<EntityHandle,Observer>::ParticleEventDispatcher(
-						 const EntityHandle entity_id )
-  : d_entity_id( entity_id )
+template<typename Dispatcher>
+ParticleEventDispatcher<Dispatcher>::ParticleEventDispatcher()
+  : d_dispatcher_map()
 { /* ... */ }
 
-// Attach an observer to the dispatcher
-template<typename EntityHandle, typename Observer>
-void ParticleEventDispatcher<EntityHandle,Observer>::attachObserver(
-				const ModuleTraits::InternalEstimatorHandle id,
-				Teuchos::RCP<Observer>& observer )
+// Get the appropriate local dispatcher for the given entity id
+template<typename Dispatcher>
+inline Dispatcher& 
+ParticleEventDispatcher<Dispatcher>::getLocalDispatcher(
+		        const typename Dispatcher::EntityHandleType entity_id )
 {
-  // Make sure the observer has not been attached yet
-  testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
+  typename DispatcherMap::iterator it = d_dispatcher_map.find( entity_id );
+
+  if( it != d_dispatcher_map.end() )
+    return *(it->second);
+  else
+  {
+    std::shared_ptr<Dispatcher>& new_dispatcher = 
+      d_dispatcher_map[entity_id];
+
+    new_dispatcher.reset( new Dispatcher( entity_id ) );
+
+    return *new_dispatcher;
+  }
+}
+
+// Attach an observer to the appropriate dispatcher
+template<typename Dispatcher>
+inline void ParticleEventDispatcher<Dispatcher>::attachObserver(
+	   const typename Dispatcher::EntityHandleType entity_id,
+           const ModuleTraits::InternalEventObserverHandle observer_id,
+           const std::shared_ptr<typename Dispatcher::ObserverType>& observer )
+{
+  this->getLocalDispatcher( entity_id ).attachObserver( observer_id, observer);
+}
   
-  if( d_observer_map.find( id ) == d_observer_map.end() )
-    d_observer_map[id] = observer;
+// Detach an observer from the appropriate dispatcher
+template<typename Dispatcher>
+inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
+		 const typename Dispatcher::EntityHandleType entity_id,
+		 const ModuleTraits::InternalEventObserverHandle observer_id )
+{
+  this->getLocalDispatcher( entity_id ).detachObserver( observer_id );
 }
 
-// Detach an observer from the dispatcher
-template<typename EntityHandle, typename Observer>
-void ParticleEventDispatcher<EntityHandle,Observer>::detachObserver(
-			       const ModuleTraits::InternalEstimatorHandle id )
+// Detach the observer from all dispatchers
+template<typename Dispatcher>
+inline void ParticleEventDispatcher<Dispatcher>::detachObserver(
+		 const ModuleTraits::InternalEventObserverHandle observer_id )
 {
-  d_observer_map.erase( id );
+  typename DispatcherMap::iterator it = d_dispatcher_map.begin();
+
+  while( it != d_dispatcher_map.end() )
+  {
+    it->second->detachObserver( observer_id );
+
+    ++it;
+  }
 }
 
-// Get the entity id corresponding to this particle event dispatcher
-template<typename EntityHandle, typename Observer>
-inline EntityHandle 
-ParticleEventDispatcher<EntityHandle,Observer>::getId() const
+// Get the dispatcher map
+template<typename Dispatcher>
+inline typename ParticleEventDispatcher<Dispatcher>::DispatcherMap&
+ParticleEventDispatcher<Dispatcher>::dispatcher_map()
 {
-  return d_entity_id;
+  return d_dispatcher_map;
 }
 
-// Get the number of attached observers
-template<typename EntityHandle, typename Observer>
-unsigned 
-ParticleEventDispatcher<EntityHandle,Observer>::getNumberOfObservers() const
+// Detach all observers
+template<typename Dispatcher>
+void ParticleEventDispatcher<Dispatcher>::detachAllObservers()
 {
-  return d_observer_map.size();
-}
-
-// Get the observer map
-template<typename EntityHandle, typename Observer>
-inline typename ParticleEventDispatcher<EntityHandle,Observer>::ObserverIdMap&
-ParticleEventDispatcher<EntityHandle,Observer>::observer_id_map()
-{
-  return d_observer_map;
+  d_dispatcher_map.clear();
 }
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEventDispatcher_def.hpp

@@ -41,6 +41,91 @@ bool isValidParticleModeTypeName( const std::string& particle_mode_type_name )
     return false;
 }
 
+// Test if the source particle type is compatible with the particle mode type
+bool isParticleModeTypeCompatible( const ParticleModeType particle_mode,
+				   const ParticleType particle_type )
+{
+  switch( particle_mode )
+  {
+  case NEUTRON_MODE:
+    {
+      if( particle_type == NEUTRON )
+        return true;
+      else
+        return false;
+    }
+  case PHOTON_MODE:
+    {
+      if( particle_type == PHOTON )
+        return true;
+      else
+        return false;
+    }
+  case ELECTRON_MODE:
+    {
+      if( particle_type == ELECTRON )
+        return true;
+      else
+        return false;
+    }
+  case NEUTRON_PHOTON_MODE:
+    {
+      if( particle_type == NEUTRON )
+        return true;
+      else if( particle_type == PHOTON )
+        return true;
+      else
+        return false;
+    }
+  case PHOTON_ELECTRON_MODE:
+    {
+      if( particle_type == PHOTON )
+        return true;
+      else if( particle_type == ELECTRON )
+        return true;
+      else
+        return false;
+    }
+  case NEUTRON_PHOTON_ELECTRON_MODE:
+    {
+      if( particle_type == NEUTRON )
+        return true;
+      else if( particle_type == PHOTON )
+        return true;
+      else if( particle_type == ELECTRON )
+        return true;
+      else
+        return false;
+    }
+  case ADJOINT_NEUTRON_MODE:
+    {
+      if( particle_type == ADJOINT_NEUTRON )
+        return true;
+      else
+        return false;
+    }
+  case ADJOINT_PHOTON_MODE:
+    {
+      if( particle_type == ADJOINT_PHOTON )
+        return true;
+      else
+        return false;
+    }
+  case ADJOINT_ELECTRON_MODE:
+    {
+      if( particle_type == ADJOINT_ELECTRON )
+        return true;
+      else
+        return false;
+    }
+  default:
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: ParticleModeType " << particle_mode <<
+		     " and ParticleType " << particle_type <<
+	 	     " are not compatible!" );
+  }
+}
+
 // Convert the particle mode type name to a ParticleModeType enum
 ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
 				   const std::string& particle_mode_type_name )

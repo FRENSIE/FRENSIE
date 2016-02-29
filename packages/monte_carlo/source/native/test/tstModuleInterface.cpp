@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -21,6 +22,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -59,8 +61,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
   SMI::sampleParticleState( bank, 0 );
 
   TEST_ASSERT( bank.size() > 0 );
-  TEST_ASSERT( !bank.top().is_null() );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -99,11 +100,11 @@ int main( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> source_rep = 
     Teuchos::getParametersFromXmlFile( test_source_xml_file_name );
 
-  Teuchos::RCP<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-  Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+  std::shared_ptr<MonteCarlo::ParticleSource> source = 
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   setSourceHandlerInstance( source );
 

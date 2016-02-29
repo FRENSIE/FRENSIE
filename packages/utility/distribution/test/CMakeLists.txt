@@ -65,12 +65,6 @@ ADD_EXECUTABLE(tstPolynomialDistribution
 TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
 
-ADD_EXECUTABLE(tstHydrogenFormFactorDistribution
-  tstHydrogenFormFactorDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstHydrogenFormFactorDistribution utility_core utility_prng utility_dist)
-ADD_TEST(HydrogenFormFactorDistribution_test tstHydrogenFormFactorDistribution)
-
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

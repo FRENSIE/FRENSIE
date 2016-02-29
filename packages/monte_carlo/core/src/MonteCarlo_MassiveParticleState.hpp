@@ -25,6 +25,9 @@ private:
 
 public:
 
+  //! Default Constructor
+  MassiveParticleState();
+
   //! Constructor
   MassiveParticleState( const historyNumberType history_number,
 			const ParticleType type );
@@ -42,10 +45,6 @@ public:
 			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
-
-  //! Core constructor
-  MassiveParticleState( const ParticleStateCore& core,
-			const double new_rest_mass_energy );
 
   //! Destructor
   virtual ~MassiveParticleState()
@@ -68,11 +67,25 @@ private:
   // Calculate the time to traverse a distance
   ParticleState::timeType calculateTraversalTime( const double distance) const;
 
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ParticleState);
+    ar & BOOST_SERIALIZATION_NVP( d_speed );
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
+
   // The speed of the particle
   double d_speed;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT( MonteCarlo::MassiveParticleState );
+BOOST_CLASS_VERSION( MonteCarlo::MassiveParticleState, 0 );
 
 #endif // end MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
 

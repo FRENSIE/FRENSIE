@@ -15,9 +15,12 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorModuleInterface.hpp"
+#include "MonteCarlo_EventModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "MonteCarlo_SimulationNeutronProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
@@ -25,7 +28,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+
 
 
 namespace MonteCarlo{
@@ -58,7 +61,7 @@ ParticleSimulationManager<GeometryHandler,
   testPrecondition( number_of_histories > 0 );
 
   // Assign the functions based on the mode
-  ParticleModeType mode = SimulationProperties::getParticleMode();
+  ParticleModeType mode = SimulationGeneralProperties::getParticleMode();
   
   switch( mode )
   {
@@ -210,44 +213,45 @@ void ParticleSimulationManager<GeometryHandler,
 	  typename GMI::InternalCellHandle start_cell;
 	  
 	  try{
-	    start_cell = GMI::findCellContainingPoint( bank.top()->ray() );
+	    start_cell = GMI::findCellContainingPoint( bank.top().ray() );
 	  }
 	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 	  
-	  bank.top()->setCell( start_cell );
+	  bank.top().setCell( start_cell );
 	  
-	  EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
+	  EMI::updateObserversFromParticleEnteringCellEvent( 
+                                            bank.top(), bank.top().getCell() );
 	}
 	
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  switch( bank.top()->getParticleType() )
+	  switch( bank.top().getParticleType() )
 	  {
 	  case NEUTRON: 
-	    d_simulate_neutron( dynamic_cast<NeutronState&>( *bank.top() ),
+	    d_simulate_neutron( dynamic_cast<NeutronState&>( bank.top() ),
 				bank );
 	    break;
 	  case PHOTON:
-	    d_simulate_photon( dynamic_cast<PhotonState&>( *bank.top() ),
+	    d_simulate_photon( dynamic_cast<PhotonState&>( bank.top() ),
 			       bank );
 	    break;
 	  case ELECTRON:
-	    d_simulate_electron( dynamic_cast<ElectronState&>( *bank.top() ),
+	    d_simulate_electron( dynamic_cast<ElectronState&>( bank.top() ),
 	    			 bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
 			     "Error: particle type "
-			     << bank.top()->getParticleType() <<
+			     << bank.top().getParticleType() <<
 			     " is not currently supported!" );
 	  }
   
 	bank.pop();
 	}
 	
-	// Commit all estimator history contributions
-	EMI::commitEstimatorHistoryContributions();
+	// Commit all observer history contributions
+	EMI::commitObserverHistoryContributions();
         
 	// Increment the number of histories completed
         #pragma omp atomic
@@ -285,11 +289,11 @@ void ParticleSimulationManager<GeometryHandler,
   Teuchos::Array<double> surface_normal( 3 );
 
   // Cell information
-  typename GMI::InternalCellHandle cell_entering, cell_leaving;
+  typename GMI::InternalCellHandle cell_entering;
   double cell_total_macro_cross_section;
 
   // Check if the particle energy is below the cutoff
-  if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
   
   while( !particle.isLost() && !particle.isGone() )
@@ -332,32 +336,41 @@ void ParticleSimulationManager<GeometryHandler,
   	// Advance the particle to the cell boundary
   	particle.advance( distance_to_surface_hit );
 
+        // Update the observers: particle subtrack ending in cell event
+        EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                       particle,
+                                                       particle.getCell(),
+                                                       distance_to_surface_hit,
+                                                       subtrack_start_time );
+
+        // Update the observers: particle leaving cell event
+        EMI::updateObserversFromParticleLeavingCellEvent( particle,
+                                                          particle.getCell() );
+                                                                  
+        
   	// Get the surface normal at the intersection point
   	GMI::getSurfaceNormal( surface_hit,
   			       particle.getPosition(),
-  			       surface_normal.getRawPtr() );		       
+  			       surface_normal.getRawPtr() );
 
-  	cell_leaving = particle.getCell();
-	
-  	// Find the cell on the other side of the surface hit
+        // Update the observers: particle crossing surface event
+        EMI::updateObserversFromParticleCrossingSurfaceEvent( particle,
+                                                              surface_hit,
+                                                              surface_normal.getRawPtr() );
+
+        // Find the cell on the other side of the surface hit
   	try{
   	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
-  							cell_leaving,
+  							particle.getCell(),
   							surface_hit );
   	}
   	CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
   	particle.setCell( cell_entering );
 
-  	// Update estimators
-  	EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
-  						  particle,
-  						  cell_entering,
-  						  cell_leaving,
-  						  surface_hit,
-  						  distance_to_surface_hit,
-  						  subtrack_start_time,
-  						  surface_normal.getRawPtr() );
+        // Update the observers: particle entering cell event
+        EMI::updateObserversFromParticleEnteringCellEvent( particle,
+                                                           cell_entering );
 
   	// Check if a termination cell was encountered
   	if( GMI::isTerminationCell( particle.getCell() ) )
@@ -375,20 +388,25 @@ void ParticleSimulationManager<GeometryHandler,
       else
       {
   	// Advance the particle to the collision site
-  	double distance = remaining_subtrack_op/cell_total_macro_cross_section;
+  	double distance_to_collision = 
+          remaining_subtrack_op/cell_total_macro_cross_section;
 	
-  	particle.advance( distance );
-	
-  	// Update estimators
-  	EMI::updateEstimatorsFromParticleCollidingInCellEvent(
-  					  particle,
-  					  distance,
-  					  subtrack_start_time,
-  					  1.0/cell_total_macro_cross_section );
+  	particle.advance( distance_to_collision );
 
-	
+	// Update the observers: particle subtrack ending in cell event
+        EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
+                                                       particle,
+                                                       particle.getCell(),
+                                                       distance_to_collision,
+                                                       subtrack_start_time );
 
-  	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+        // Update the observers: particle colliding in cell event
+        EMI::updateObserversFromParticleCollidingInCellEvent(
+                                          particle,
+                                          1.0/cell_total_macro_cross_section );
+        
+  	// Update the global observers: particle subtrack ending global event
+  	EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );
@@ -396,7 +414,7 @@ void ParticleSimulationManager<GeometryHandler,
   	// Undergo a collision with the material in the cell
   	CMI::collideWithCellMaterial( particle, bank, true );
 
-  	// Indicate that a collision has occurred
+  	// Start a new ray (clear ray tracing acceleration cache)
   	GMI::newRay();
 
   	// Cache the current position of the new ray
@@ -405,7 +423,7 @@ void ParticleSimulationManager<GeometryHandler,
   	ray_start_point[2] = particle.getZPosition();
 
   	// Make sure the energy is above the cutoff
-  	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  	if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
   	  particle.setAsGone();
 
   	// This subtrack is finished
@@ -414,13 +432,13 @@ void ParticleSimulationManager<GeometryHandler,
     }	     
   }
 
-  // Update the global estimators
-  EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  // Update the global observers: particle subtrack ending global event
+  EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );
 
-  // Indicate that this particle history is complete
+  // Start a new ray (clear ray tracing acceleration cache)
   GMI::newRay();
 }
 
@@ -523,6 +541,38 @@ void ParticleSimulationManager<GeometryHandler,
   particle.setAsGone();
 }
 
+// Print lost particle info
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::printLostParticleInfo( 
+                                       const std::string& file,
+                                       const int line,
+                                       const std::string& error_message,
+                                       const ParticleState& particle ) const
+{
+  #pragma omp critical( lost_particle )
+  {
+    std::cerr << error_message << std::endl
+              << "Particle " << particle.getHistoryNumber() << " (gen "
+              << particle.getGenerationNumber() << ") lost: " << std::endl
+              << "\t File: " << file << std::endl
+              << "\t Line: " << line << std::endl
+              << "\t Cell: " << particle.getCell() << std::endl
+              << "\t Position: " << particle.getXPosition() << " "
+              << particle.getYPosition() << " "
+              << particle.getZPosition() << std::endl
+              << "\t Direction: " << particle.getXDirection() << " "
+              << particle.getYDirection() << " "
+              << particle.getZDirection() << std::endl
+              << "\t Type: " << particle.getParticleType() << std::endl;
+  }
+}
+
 // Print the data in all estimators to the desired stream
 template<typename GeometryHandler,
 	 typename SourceHandler,
@@ -534,16 +584,18 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::printSimulationSummary( 
 						       std::ostream &os ) const
 {
-  os << "!!!Particle Simulation Finished!!!" << std::endl;
+  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
+  os << "!!! Particle Simulation Finished !!!" << std::endl;
+  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
   os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
   
-  EMI::printEstimators( os,
-			d_histories_completed,
-			d_start_time,
-			d_end_time+d_previous_run_time );
+  EMI::printObserverSummaries( os,
+                               d_histories_completed,
+                               d_start_time,
+                               d_end_time+d_previous_run_time );
 }
 
 // Print the data in all estimators to a parameter list
@@ -555,19 +607,20 @@ void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::exportSimulationData(
-				      const std::string& data_file_name ) const
+                                             const std::string& data_file_name,
+                                             std::ostream& os ) const
 {
-  std::cout << "Exporting simulation data ... ";
-  std::cout.flush();
+  os << "Exporting simulation data ... ";
+  os.flush();
   
-  EMI::exportEstimatorData( data_file_name,
-  			    d_start_history+d_histories_completed,
-  			    d_histories_completed,
-  			    d_start_time,
-  			    d_end_time+d_previous_run_time,
-			    true );
+  EMI::exportObserverData( data_file_name,
+                           d_start_history+d_histories_completed,
+                           d_histories_completed,
+                           d_start_time,
+                           d_end_time+d_previous_run_time,
+                           true );
 
-  std::cout << "done." << std::endl;
+  os << "done." << std::endl;
 }
 
 // Signal handler

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
-#define FACEMC_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -30,7 +30,8 @@ SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
 			   ContributionMultiplierPolicy>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   std::cerr << "Warning: Response functions cannot be set for surface current "
 	    << "estimators. The response functions requested for surface "
@@ -75,7 +76,8 @@ void SurfaceCurrentEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( 
+                                                       std::ostream& os ) const
 {
   os << "Surface Current Estimator: " << getId() << std::endl;
 
@@ -84,7 +86,7 @@ void SurfaceCurrentEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceCurrentEstimator_def.hpp

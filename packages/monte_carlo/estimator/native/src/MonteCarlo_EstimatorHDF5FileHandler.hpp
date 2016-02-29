@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_ESTIMATOR_HDF5_FILE_HANDLER_HPP
 #define MONTE_CARLO_ESTIMATOR_HDF5_FILE_HANDLER_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -40,32 +43,10 @@ public:
 
   //! Constructor (file sharing)
   EstimatorHDF5FileHandler( 
-		     const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file );
+                  const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
   ~EstimatorHDF5FileHandler();
-
-  //! Set the simulation time
-  void setSimulationTime( const double simulation_time );
-
-  //! Get the simulation time
-  void getSimulationTime( double& simulation_time ) const;
-
-  //! Set the last history simulated
-  void setLastHistorySimulated( 
-			     const unsigned long long last_history_simulated );
-
-  //! Get the last history simulated
-  void getLastHistorySimulated( 
-			    unsigned long long& last_history_simulated ) const;
-
-  //! Set the number of histories simulated
-  void setNumberOfHistoriesSimulated(
-		   const unsigned long long number_histories_simulated );
-
-  //! Get the number of histories simulated
-  void getNumberOfHistoriesSimulated(
-		        unsigned long long& number_histories_simulated ) const;
 
   //! Check if an estimator exists
   bool doesEstimatorExist( const unsigned estimator_id ) const;
@@ -81,6 +62,12 @@ public:
 
   //! Check if the estimator is a cell estimator
   bool isCellEstimator( const unsigned estimator_id ) const;
+
+  //! Set the estimator as a mesh estimator
+  void setMeshEstimator( const unsigned estimator_id );
+
+  //! Check if the estimator is a mesh estimator
+  bool isMeshEstimator( const unsigned estimator_id ) const;
   
   //! Set the estimator multiplier
   void setEstimatorMultiplier( const unsigned estimator_id,
@@ -314,7 +301,7 @@ private:
   static const std::string estimator_group_loc_name;
 
   // The HDF5 file handler
-  Teuchos::RCP<Utility::HDF5FileHandler> d_hdf5_file;
+  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
 
   // The ownership flag
   bool d_hdf5_file_ownership;

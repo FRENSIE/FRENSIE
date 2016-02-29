@@ -23,7 +23,7 @@ namespace Units{
 //! The electron volt base unit
 struct ElectronVoltBaseUnit : public boost::units::base_unit<ElectronVoltBaseUnit,boost::units::energy_dimension,1>
 {
-  static const char* name() { return "electron volts"; }
+  static const char* name() { return "electron volt"; }
   static const char* symbol() { return "eV"; }
 };
 

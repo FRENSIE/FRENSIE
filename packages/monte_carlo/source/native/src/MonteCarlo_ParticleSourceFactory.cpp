@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const Teuchos::RCP<Utility::OneDDistribution> 
+const std::shared_ptr<Utility::OneDDistribution> 
 ParticleSourceFactory::s_default_time_dist( 
 				       new Utility::DeltaDistribution( 0.0 ) );
 
@@ -101,10 +101,32 @@ void ParticleSourceFactory::validateParticleTypeName(
 		      "valid names!" );
 }
 
+// Get the particle type enum
+ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterList& source_rep,
+			      			     const ParticleModeType& particle_mode )
+{
+  // Extract the particle type
+  std::string particle_type_name = 
+    source_rep.get<std::string>( "Particle Type" );
+
+  ParticleSourceFactory::validateParticleTypeName( particle_type_name );
+
+  ParticleType particle_type = convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+
+  TEST_FOR_EXCEPTION( !isParticleModeTypeCompatible( particle_mode, particle_type ),
+		      InvalidParticleSourceRepresentation,
+		      "Error: particle type ("
+		      << particle_type << ") is not compatible with particle mode ("
+		      << particle_mode << ")" );
+
+  return particle_type;
+}
+
 // Create a state source
 double ParticleSourceFactory::createStateSource( 
 				      const Teuchos::ParameterList& source_rep,
-				      Teuchos::RCP<ParticleSource>& source,
+			  	      const ParticleModeType& particle_mode,
+				      std::shared_ptr<ParticleSource>& source,
 				      const unsigned num_sources )
 {
   return 0.0;

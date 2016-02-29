@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 

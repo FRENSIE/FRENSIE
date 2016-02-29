@@ -29,15 +29,15 @@
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
-Teuchos::RCP<MonteCarlo::ResponseFunction> response_function;
+std::shared_ptr<MonteCarlo::ResponseFunction> response_function;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the time and energy distributions
 void initializeEnergyAndTimeDists( 
-	          Teuchos::RCP<Utility::OneDDistribution>& energy_distribution,
-		  Teuchos::RCP<Utility::OneDDistribution>& time_distribution )
+	       std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
+	       std::shared_ptr<Utility::OneDDistribution>& time_distribution )
 {
   energy_distribution.reset( new Utility::UniformDistribution( 
 				       0.0, 
@@ -51,16 +51,16 @@ void initializeEnergyAndTimeDists(
 
 // Initialize the directional distribution
 void initializeDirectionalDistribution(
-     Teuchos::RCP<Utility::DirectionalDistribution>& directional_distribution )
+  std::shared_ptr<Utility::DirectionalDistribution>& directional_distribution )
 {
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
   
   directional_distribution.reset( new Utility::SphericalDirectionalDistribution( 
@@ -71,7 +71,7 @@ void initializeDirectionalDistribution(
 // Initialize a cartesian response function
 void initializeCartesianResponseFunction( const bool uniform )
 {
-  Teuchos::RCP<Utility::OneDDistribution> x_distribution, y_distribution,
+  std::shared_ptr<Utility::OneDDistribution> x_distribution, y_distribution,
     z_distribution;
 
   if( uniform )
@@ -90,17 +90,17 @@ void initializeCartesianResponseFunction( const bool uniform )
     z_distribution = x_distribution;
   }
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     spatial_distribution( new Utility::CartesianSpatialDistribution( 
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
 
   initializeDirectionalDistribution( directional_distribution );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
@@ -118,16 +118,16 @@ void initializeCartesianResponseFunction( const bool uniform )
 void initializeCylindricalResponseFunction( const bool uniform )
 {
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     axis_distribution( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
   
-  Teuchos::RCP<Utility::OneDDistribution> r_distribution;
+  std::shared_ptr<Utility::OneDDistribution> r_distribution;
   
   if( uniform )
     r_distribution.reset( new Utility::PowerDistribution<1u>( 
@@ -142,7 +142,7 @@ void initializeCylindricalResponseFunction( const bool uniform )
 				       1.0 ) );
   }
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     spatial_distribution( new Utility::CylindricalSpatialDistribution( 
 							 r_distribution,
 							 theta_distribution,
@@ -151,11 +151,11 @@ void initializeCylindricalResponseFunction( const bool uniform )
 							 0.0,
 							 0.0 ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
 
   initializeDirectionalDistribution( directional_distribution );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
@@ -173,16 +173,16 @@ void initializeCylindricalResponseFunction( const bool uniform )
 void initializeSphericalResponseFunction( const bool uniform )
 {
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  Teuchos::RCP<Utility::OneDDistribution> r_distribution;
+  std::shared_ptr<Utility::OneDDistribution> r_distribution;
   
   if( uniform )
     r_distribution.reset( new Utility::PowerDistribution<2u>( 
@@ -197,7 +197,7 @@ void initializeSphericalResponseFunction( const bool uniform )
 					    1.0 ) );
   }
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     spatial_distribution( new Utility::SphericalSpatialDistribution( 
 							   r_distribution,
 							   theta_distribution,
@@ -206,11 +206,11 @@ void initializeSphericalResponseFunction( const bool uniform )
 							   0.0,
 							   0.0 ) );
 
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
 
   initializeDirectionalDistribution( directional_distribution );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_HPP
-#define FACEMC_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_HPP
+#define MONTE_CARLO_ESTIMATOR_HPP
 
 // Std Lib Includes
 #include <string>
@@ -23,7 +23,6 @@
 #include <Teuchos_TwoDArray.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_any.hpp>
-#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
@@ -31,23 +30,18 @@
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
-#include "MonteCarlo_ModuleTraits.hpp"
-#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_PrintableObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 //! The estimator base class
-class Estimator : public Utility::PrintableObject
+class Estimator : public ParticleHistoryObserver
 {
 
 public:
-
-  //! Typedef for estimator id
-  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Typedef for tuple of estimator moments (1st,2nd)
   typedef Utility::Pair<double,double> TwoEstimatorMoments;
@@ -72,25 +66,13 @@ protected:
 
 public:
 
-  //! Set the number of particle histories that will be simulated
-  static void setNumberOfHistories( const unsigned long long num_histories );
-  
-  //! Set the start time for the figure of merit calculation
-  static void setStartTime( const double start_time );
-  
-  //! Set the end time for the figure of merit calculation
-  static void setEndTime( const double end_time );
-
   //! Constructor
-  Estimator( const idType id,
+  Estimator( const ParticleHistoryObserver::idType id,
 	     const double multiplier );
 
   //! Destructor
   virtual ~Estimator()
   { /* ... */ }
-
-  //! Return the estimator id
-  idType getId() const;
 
   //! Set the bin boundaries for a dimension of the phase space (floating pt)
   template<PhaseSpaceDimension dimension, typename DimensionType>
@@ -104,7 +86,8 @@ public:
 
   //! Set the response functions
   virtual void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Return the number of response functions
   unsigned getNumberOfResponseFunctions() const;
@@ -125,20 +108,10 @@ public:
   //! Enable support for multiple threads
   virtual void enableThreadSupport( const unsigned num_threads );
 
-  //! Commit the contribution from the current history to the estimator
-  virtual void commitHistoryContribution() = 0;
-
-  //! Reset estimator data
-  virtual void resetData() = 0;
-
-  //! Reduce estimator data on all processes in comm and collect on the root 
-  virtual void reduceData( 
-	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-	    const int root_process ) = 0;
-
   //! Export the estimator data
-  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
-			   const bool process_data ) const;
+  virtual void exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const;
   
 protected:
 
@@ -150,7 +123,7 @@ protected:
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
@@ -245,18 +218,6 @@ private:
   // The tolerance used for relative error and vov calculations
   static double tol;
 
-  // The number of particle histories that will be run
-  static unsigned long long num_histories;
-
-  // The start time used for the figure of merit calculation
-  static double start_time;
-
-  // The end time used for the figure of merit calculation
-  static double end_time;
-
-  // The estimator id
-  idType d_id;
-
   // The constant multiplier for the estimator
   double d_multiplier;
 
@@ -264,11 +225,11 @@ private:
   Teuchos::Array<unsigned char> d_has_uncommitted_history_contribution;
 
   // The response functions
-  Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
+  Teuchos::Array<std::shared_ptr<ResponseFunction> > d_response_functions;
   
   // The estimator phase space dimension bin boundaries map
   boost::unordered_map<PhaseSpaceDimension,
-  		       Teuchos::RCP<EstimatorDimensionDiscretization> >
+  		       std::shared_ptr<EstimatorDimensionDiscretization> >
   d_dimension_bin_boundaries_map;
 
   // The estimator phase space dimension index step size map
@@ -281,12 +242,6 @@ private:
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
 };
-
-// Return the estimator id
-inline Estimator::idType Estimator::getId() const
-{
-  return d_id;
-}
 
 // Return the estimator constant multiplier
 inline double Estimator::getMultiplier() const
@@ -382,7 +337,7 @@ inline bool Estimator::hasUncommittedHistoryContribution() const
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Estimator.hpp

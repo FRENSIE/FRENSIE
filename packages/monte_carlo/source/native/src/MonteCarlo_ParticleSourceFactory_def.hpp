@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
-#define FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_DistributedSource.hpp"
@@ -24,9 +24,10 @@ namespace MonteCarlo{
 
 // Create the source represented by the parameter list
 template<typename GeometryHandler>
-Teuchos::RCP<ParticleSource>
+std::shared_ptr<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
-				     const Teuchos::ParameterList& source_rep )
+				     const Teuchos::ParameterList& source_rep,
+		    		     const ParticleModeType& particle_mode )
 {
   // Get the number of parameters in the list
   unsigned num_params = source_rep.numParams();
@@ -45,7 +46,7 @@ ParticleSourceFactory::createSourceImpl(
     ++param_iter;
   }
   
-  Teuchos::RCP<ParticleSource> source;
+  std::shared_ptr<ParticleSource> source;
   
   if( num_params == 1 )
   {
@@ -57,17 +58,19 @@ ParticleSourceFactory::createSourceImpl(
     {
       ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							            sub_source,
+								    particle_mode,	
 								    source );
     }
     else
-      ParticleSourceFactory::createStateSource( sub_source, source );
+      ParticleSourceFactory::createStateSource( sub_source, particle_mode, source );
   }
   else
     ParticleSourceFactory::createCompoundSource<GeometryHandler>( source_rep, 
+								  particle_mode,
 								  source );
   
   // Make sure the source has been created
-  testPostcondition( !source.is_null() );
+  testPostcondition( source.get() );
 
   // Print out unused parameters
   source_rep.unused( std::cout );
@@ -79,7 +82,8 @@ ParticleSourceFactory::createSourceImpl(
 template<typename GeometryHandler>
 double ParticleSourceFactory::createDistributedSource(
 				      const Teuchos::ParameterList& source_rep,
-				      Teuchos::RCP<ParticleSource>& source,
+			  	      const ParticleModeType& particle_mode,
+				      std::shared_ptr<ParticleSource>& source,
 				      const unsigned num_sources )
 {
   // Extract the source id
@@ -92,7 +96,7 @@ double ParticleSourceFactory::createDistributedSource(
   const Teuchos::ParameterList& spatial_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-  Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
   try{
     spatial_distribution = 
       Utility::SpatialDistributionFactory::createDistribution( 
@@ -105,7 +109,7 @@ double ParticleSourceFactory::createDistributedSource(
 			     "specified in the distributed source!" );
   
   // Extract the directional distribution
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
   
   if( source_rep.isParameter( "Directional Distribution" ) )
   {
@@ -134,33 +138,33 @@ double ParticleSourceFactory::createDistributedSource(
   // Extract the energy distribution
   entry = source_rep.getEntryRCP( "Energy Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> energy_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution = 
+    Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
   // Extract the time distribution
-  Teuchos::RCP<Utility::OneDDistribution> time_distribution;
+  std::shared_ptr<Utility::OneDDistribution> time_distribution;
   
   if( source_rep.isParameter( "Time Distribution" ) )
   {
     entry = source_rep.getEntryRCP( "Time Distribution" );
 
     time_distribution = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   }
   else // use the default time distribution
     time_distribution = s_default_time_dist;
-
+/*
   // Extract the particle type
   std::string particle_type_name = 
     source_rep.get<std::string>( "Particle Type" );
 
   ParticleSourceFactory::validateParticleTypeName( particle_type_name );
-
-  ParticleType particle_type = 
-    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+*/
+  ParticleType particle_type = getParticleType( source_rep, particle_mode );
+//    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
   
   // Create the new source
-  Teuchos::RCP<DistributedSource> source_tmp( new DistributedSource( 
+  std::shared_ptr<DistributedSource> source_tmp( new DistributedSource( 
 	     id,
 	     spatial_distribution,
 	     directional_distribution,
@@ -196,7 +200,7 @@ double ParticleSourceFactory::createDistributedSource(
     const Teuchos::ParameterList& spatial_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-    Teuchos::RCP<Utility::SpatialDistribution> spatial_importance_func;
+    std::shared_ptr<Utility::SpatialDistribution> spatial_importance_func;
     try{
       spatial_importance_func = 
 	Utility::SpatialDistributionFactory::createDistribution( 
@@ -225,7 +229,7 @@ double ParticleSourceFactory::createDistributedSource(
     const Teuchos::ParameterList& directional_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-    Teuchos::RCP<Utility::DirectionalDistribution> directional_importance_func;
+    std::shared_ptr<Utility::DirectionalDistribution> directional_importance_func;
     try{
       directional_importance_func = 
 	Utility::DirectionalDistributionFactory::createDistribution(
@@ -252,8 +256,8 @@ double ParticleSourceFactory::createDistributedSource(
   {
     entry = source_rep.getEntryRCP( "Energy Importance Function" );
     
-    Teuchos::RCP<Utility::OneDDistribution> energy_importance_func = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+    std::shared_ptr<Utility::OneDDistribution> energy_importance_func = 
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
    
     // Make sure the importance function is compatible with the energy dist
     TEST_FOR_EXCEPTION(
@@ -269,8 +273,8 @@ double ParticleSourceFactory::createDistributedSource(
   {
     entry = source_rep.getEntryRCP( "Time Importance Function" );
 
-    Teuchos::RCP<Utility::OneDDistribution> time_importance_func = 
-      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+    std::shared_ptr<Utility::OneDDistribution> time_importance_func = 
+      Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
     
     // Make sure the importance function is compatible with the time dist
     TEST_FOR_EXCEPTION(
@@ -283,7 +287,7 @@ double ParticleSourceFactory::createDistributedSource(
   }
   
   // Set the return source
-  source = Teuchos::rcp_dynamic_cast<ParticleSource>( source_tmp );
+  source = std::dynamic_pointer_cast<ParticleSource>( source_tmp );
 
   double weight;
   // Return the weight of the source
@@ -302,12 +306,13 @@ double ParticleSourceFactory::createDistributedSource(
 template<typename GeometryHandler>
 void ParticleSourceFactory::createCompoundSource(
 				      const Teuchos::ParameterList& source_rep,
-				      Teuchos::RCP<ParticleSource>& source )
+			  	      const ParticleModeType& particle_mode,
+				      std::shared_ptr<ParticleSource>& source )
 {
   unsigned num_sources = source_rep.numParams();
   unsigned source_index = 0u;
 
-  Teuchos::Array<Teuchos::RCP<ParticleSource> > sources( num_sources );
+  Teuchos::Array<std::shared_ptr<ParticleSource> > sources( num_sources );
   Teuchos::Array<double> source_weights( num_sources );
   
   Teuchos::ParameterList::ConstIterator param_iter = source_rep.begin();
@@ -322,6 +327,7 @@ void ParticleSourceFactory::createCompoundSource(
       source_weights[source_index] = 
 	ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							 sub_source,
+							 particle_mode,
 							 sources[source_index],
 							 num_sources );
     }
@@ -329,6 +335,7 @@ void ParticleSourceFactory::createCompoundSource(
     {
       source_weights[source_index] = 
 	ParticleSourceFactory::createStateSource( sub_source,
+						  particle_mode,
 						  sources[source_index],
 						  num_sources );
     }
@@ -343,7 +350,7 @@ void ParticleSourceFactory::createCompoundSource(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SOURCE_FACTORY_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceFactory_def.hpp

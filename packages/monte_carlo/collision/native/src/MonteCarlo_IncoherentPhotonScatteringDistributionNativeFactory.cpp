@@ -20,7 +20,7 @@
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -37,7 +37,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   switch( incoherent_model )
   {
@@ -117,7 +117,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
@@ -167,7 +167,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
   testPrecondition( !doppler_broadened_dist.is_null() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
@@ -194,7 +194,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
   SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
@@ -233,7 +233,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
   testPrecondition( !doppler_broadened_dist.is_null() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
   SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );

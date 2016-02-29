@@ -191,13 +191,13 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction, react_ace )
 
   TEST_ASSERT( photon->isGone() );
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  2.0 - 8.829000000000E-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
 
   bank.pop();
 
@@ -214,13 +214,13 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction, react_ace )
 
   TEST_ASSERT( photon->isGone() );
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  2.0 - 1.584700000000E-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
 
   bank.pop();
 

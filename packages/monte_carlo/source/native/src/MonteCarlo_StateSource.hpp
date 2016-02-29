@@ -6,33 +6,35 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STATE_SOURCE_HPP
-#define FACEMC_STATE_SOURCE_HPP
+#ifndef MONTE_CARLO_STATE_SOURCE_HPP
+#define MONTE_CARLO_STATE_SOURCE_HPP
+
+// Std Lib Includes
+#include <string>
 
 // Boost includes
 #include <boost/unordered_map.hpp>
+#include <boost/shared_ptr.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_ParticleStateCore.hpp"
+#include "Utility_ArchivableObject.hpp"
 
 namespace MonteCarlo{
 
-/*! The state source class
- * \details This class takes an array of particle states and assigns one of
- * the states in the array to the particle state of interest. This is similar
- * to the surface source in MCNP (but more general).
- */
+//! The state source class
 class StateSource : public ParticleSource
 {
   
 public:
 
   //! Constructor
-  StateSource( const Teuchos::Array<ParticleStateCore>& raw_particle_states );
+  StateSource( const std::string& state_source_bank_archive_name,
+	       const std::string& bank_name_in_archive,
+	       const Utility::ArchivableObject::ArchiveType archive_type );
 
   //! Destructor
   ~StateSource()
@@ -48,17 +50,17 @@ public:
 private:
 
   // Compare two particle state cores
-  static bool compareCores( const ParticleStateCore& core_a,
-			    const ParticleStateCore& core_b );
+  static bool compareHistoryNumbers( const ParticleState& state_a,
+				     const ParticleState& state_b );
 
   // The possible states
-  boost::unordered_map<unsigned long long,Teuchos::Array<ParticleStateCore> >
-  d_raw_particle_states;
+  boost::unordered_map<unsigned long long,Teuchos::Array<boost::shared_ptr<ParticleState> > >
+  d_particle_states;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STATE_SOURCE_HPP
+#endif // end MONTE_CARLO_STATE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StateSource.hpp

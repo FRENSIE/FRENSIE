@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
 
   TEST_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
-  TEST_ASSERT( bank.empty() );
+  TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 

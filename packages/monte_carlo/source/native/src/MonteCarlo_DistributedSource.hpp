@@ -6,14 +6,16 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_DISTRIBUTED_SOURCE_HPP
-#define FACEMC_DISTRIBUTED_SOURCE_HPP
+#ifndef MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
+#define MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
+
+// Std Lib Includes
+#include <memory>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
-// FACEMC Includes
+// MONTE_CARLO Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_SpatialDistribution.hpp"
@@ -42,41 +44,41 @@ public:
   
   //! Constructor
   DistributedSource( 
-	const unsigned id,
-	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
-        const Teuchos::RCP<Utility::DirectionalDistribution>& 
-	directional_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& 
-	energy_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& 
-	time_distribution,
-	const ParticleType particle_type,
-	getLocationFunction get_particle_location_func );
-
+     const unsigned id,
+     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
+     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     directional_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& 
+     energy_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& 
+     time_distribution,
+     const ParticleType particle_type,
+     getLocationFunction get_particle_location_func );
+  
   //! Destructor
   ~DistributedSource()
   { /* ... */ }
 
   //! Set the spatial importance distribution
   void setSpatialImportanceDistribution( 
-      const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution );
+   const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution );
 
   //! Set the directional importance distribution
   void setDirectionalImportanceDistribution(
-                          const Teuchos::RCP<Utility::DirectionalDistribution>&
-			  directional_distribution );
+                       const std::shared_ptr<Utility::DirectionalDistribution>&
+                       directional_distribution );
 
   //! Set the energy importance distribution
   void setEnergyImportanceDistribution(
-	  const Teuchos::RCP<Utility::OneDDistribution>& energy_distribution );
+       const std::shared_ptr<Utility::OneDDistribution>& energy_distribution );
 
   //! Set the time importance distribution
   void setTimeImportanceDistribution(
-	    const Teuchos::RCP<Utility::OneDDistribution>& time_distribution );
+	 const std::shared_ptr<Utility::OneDDistribution>& time_distribution );
 
   //! Set the rejection cell
   void setRejectionCell( 
-		       const Geometry::ModuleTraits::InternalCellHandle& cell);
+		      const Geometry::ModuleTraits::InternalCellHandle& cell );
 
   //! Sample a particle state from the source
   void sampleParticleState( ParticleBank& bank,
@@ -103,29 +105,30 @@ private:
   void sampleParticleTime( ParticleState& particle );
 
   // The spatial distribution of the source 
-  Teuchos::RCP<Utility::SpatialDistribution> d_spatial_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> d_spatial_distribution;
   
   // The true spatial distribution of the source
-  Teuchos::RCP<Utility::SpatialDistribution> d_spatial_importance_distribution;
+  std::shared_ptr<Utility::SpatialDistribution> 
+  d_spatial_importance_distribution;
 
   // The directional distribution
-  Teuchos::RCP<Utility::DirectionalDistribution> d_directional_distribution;
+  std::shared_ptr<Utility::DirectionalDistribution> d_directional_distribution;
 
   // The true directional distribution of the source
-  Teuchos::RCP<Utility::DirectionalDistribution> 
+  std::shared_ptr<Utility::DirectionalDistribution> 
   d_directional_importance_distribution;
 
   // The energy distribution
-  Teuchos::RCP<Utility::OneDDistribution> d_energy_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_energy_distribution;
 
   // The true energy distribution of the source
-  Teuchos::RCP<Utility::OneDDistribution> d_energy_importance_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_energy_importance_distribution;
 
   // The time distribution
-  Teuchos::RCP<Utility::OneDDistribution> d_time_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_time_distribution;
 
   // The true time distribution of the source
-  Teuchos::RCP<Utility::OneDDistribution> d_time_importance_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_time_importance_distribution;
 
   // The source id
   unsigned d_id;
@@ -148,7 +151,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_DISTRIBUTED_SOURCE_HPP
+#endif // end MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DistributedSource.hpp

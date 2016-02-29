@@ -8,21 +8,21 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_EnergySpaceResponseFunction.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_UniformDistribution.hpp"
 
-Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+std::shared_ptr<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 1e6, 1.0 ) );
 
-Teuchos::RCP<MonteCarlo::EnergySpaceResponseFunction> response_function(
+std::shared_ptr<MonteCarlo::EnergySpaceResponseFunction> response_function(
 	  new MonteCarlo::EnergySpaceResponseFunction( 0, 
 						       "uniform_energy",
 						       energy_distribution ) );

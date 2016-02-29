@@ -80,6 +80,8 @@ void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>
                                              bank, 
                                              shell_of_interaction);
 
+  electron.incrementCollisionNumber();
+
   // The shell of interaction is currently ignored
   shell_of_interaction = UNKNOWN_SUBSHELL;
 }
