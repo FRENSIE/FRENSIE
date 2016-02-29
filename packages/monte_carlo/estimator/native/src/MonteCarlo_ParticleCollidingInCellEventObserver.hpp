@@ -19,7 +19,16 @@
 
 namespace MonteCarlo{
 
-//! The particle colliding in cell event observer base class
+/*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
+ * \ingroup entity_events
+ * 
+ * Infrastructure used to acquire information from particle colliding
+ * in cell events. 
+ */
+
+/*! The particle colliding in cell event observer base class
+ * \ingroup particle_colliding_in_cell_event
+ */
 class ParticleCollidingInCellEventObserver
 {
   

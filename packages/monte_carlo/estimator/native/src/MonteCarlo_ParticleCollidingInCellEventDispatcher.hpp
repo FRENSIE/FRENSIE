@@ -21,7 +21,9 @@
 
 namespace MonteCarlo{
 
-//! The particle colliding in cell event dispatcher class
+/*! The particle colliding in cell event dispatcher class
+ * \ingroup particle_colliding_in_cell_event
+ */
 class ParticleCollidingInCellEventDispatcher :
     public ParticleEventDispatcher<ParticleCollidingInCellEventLocalDispatcher>
 {
