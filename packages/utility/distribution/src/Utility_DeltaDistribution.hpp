@@ -9,30 +9,40 @@
 #ifndef UTILITY_DELTA_DISTRIBUTION_HPP
 #define UTILITY_DELTA_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_QuantityTraits.hpp"
+#include "Utility_UnitTraits.hpp"
 
 namespace Utility{
 
 /*! The unit-aware delta distribution class
  * \ingroup one_d_distributions
  */
-template<typename IndependentUnit,typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 				   public ParameterListCompatibleObject<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
   
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
+
+  //! This distribution type
+  typedef UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -46,15 +56,21 @@ public:
   //! Default Constructor
   UnitAwareDeltaDistribution();
   
-  //! Constructor
+  //! Basic constructor
   template<typename InputIndepQuantity>
   explicit UnitAwareDeltaDistribution( const InputIndepQuantity location );
 
-  //! Copy constructor
-  UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution& dist_instance );
+  //! Advanced constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareDeltaDistribution( const InputIndepQuantity location,
+			      const InputDepQuantity multiplier );
 
-  //! Copy constructor (copying from unitless distribution only)
-  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDeltaDistribution );
+  //! Copy constructor
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
+
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareDeltaDistribution fromUnitlessDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
   UnitAwareDeltaDistribution& operator=( const UnitAwareDeltaDistribution& dist_instance );
@@ -113,13 +129,25 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareDeltaDistribution& other ) const;
 
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<void,void>& unitless_dist_instance, int );
+
 private:
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareDeltaDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = DELTA_DISTRIBUTION;
 
   // The location of the delta distribution
   IndepQuantity d_location;
+
+  // The multiplier
+  DepQuantity d_multiplier;
 };
 
 /*! The delta distribution (unit-agnostic)
@@ -156,7 +184,7 @@ public:
  * \details The name function will set the type name that must be used in
  * xml files.
  */
-template<typename U,typename V>
+template<typename U, typename V>
 class TypeNameTraits<Utility::UnitAwareDeltaDistribution<U,V> >
 {
 public:

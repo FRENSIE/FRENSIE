@@ -13,6 +13,11 @@
 
 namespace MonteCarlo{
 
+// Default constructor
+MasslessParticleState::MasslessParticleState()
+  : ParticleState()
+{ /* ... */ }
+
 // Constructor
 MasslessParticleState::MasslessParticleState( 
 				        const historyNumberType history_number,
@@ -30,11 +35,6 @@ MasslessParticleState::MasslessParticleState(
 		   new_type,
 		   increment_generation_number,
 		   reset_collision_number )
-{ /* ... */ }
-
-// Core constructor
-MasslessParticleState::MasslessParticleState( const ParticleStateCore& core )
-  : ParticleState( core )
 { /* ... */ }
 
 // Return the speed of the particle (cm/s)

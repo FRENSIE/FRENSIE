@@ -16,7 +16,7 @@
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -34,7 +34,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   switch( incoherent_model )
   {
@@ -139,7 +139,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
@@ -176,7 +176,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
   testPrecondition( !doppler_broadened_dist.is_null() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;

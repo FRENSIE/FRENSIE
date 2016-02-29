@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -359,11 +359,15 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   MonteCarlo::Estimator::setEndTime( 1.0 );
 
   // Initialize the hfd5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					    "test_surface_flux_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_surface_flux_estimator.h5" );
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType SurfaceId;
 
@@ -697,7 +701,7 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
     estimator_2_base->setParticleTypes( particle_types );
 
     // Set the angle cosine cutoff
-    MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
+    MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
 									 0.1 );
   }
 
@@ -732,11 +736,15 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   MonteCarlo::Estimator::setEndTime( 1.0 );
 
   // Initialize the hfd5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				    "test_surface_flux_estimator-special.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_surface_flux_estimator-special.h5" );
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType SurfaceId;
 
@@ -1177,11 +1185,15 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   MonteCarlo::Estimator::setEndTime( 1.0 );
 
   // Initialize the hfd5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					   "test_surface_flux_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_surface_flux_estimator2.h5" );
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType SurfaceId;
 

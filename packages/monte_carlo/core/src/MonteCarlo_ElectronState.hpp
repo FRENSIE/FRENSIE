@@ -34,6 +34,9 @@ public:
   //! The particle state type (for compile time usage)
   static const ParticleType type = ELECTRON;
 
+  //! Default constructor
+  ElectronState();
+
   //! Constructor
   ElectronState( const ParticleState::historyNumberType history_number );
 
@@ -47,24 +50,36 @@ public:
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
-  //! Core constructor
-  ElectronState( const ParticleStateCore& core );
-
-  //! Assignment operator
-  ElectronState& operator=( const ElectronState& existing_electron_state );
-
   //! Destructor
   ~ElectronState()
   { /* ... */ }
 
-  // Return the rest mass energy of the electron (MeV)
+  //! Return the rest mass energy of the electron (MeV)
   double getRestMassEnergy() const;
+
+  //! Clone the particle state (do not use to generate new particles!)
+  ElectronState* clone() const;
 
   //! Print the electron state
   void print( std::ostream& os ) const;
+
+private:
+
+  // Save the state to an archive
+  template<typename Archive>
+  void serialize( Archive& ar, const unsigned version )
+  {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(MassiveParticleState);
+  }
+
+  // Declare the boost serialization access object as a friend
+  friend class boost::serialization::access;
 };
 
 } // end MonteCarlo namespace
+
+BOOST_CLASS_VERSION( MonteCarlo::ElectronState, 0 );
+BOOST_CLASS_EXPORT_KEY2( MonteCarlo::ElectronState, "ElectronState" );
 
 #endif // end MonteCarlo_ELECTRON_STATE_HPP
 

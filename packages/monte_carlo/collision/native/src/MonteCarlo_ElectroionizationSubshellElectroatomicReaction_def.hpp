@@ -55,6 +55,8 @@ void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross
                                              bank, 
                                              shell_of_interaction);
 
+  electron.incrementCollisionNumber();
+
   shell_of_interaction = d_interaction_subshell;
 }
 

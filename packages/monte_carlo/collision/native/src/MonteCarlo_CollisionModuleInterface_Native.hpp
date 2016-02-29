@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_CollisionModuleInterface_Native.hpp
 //! \author Alex Robinson
-//! \brief  Collision module interface specialization for the native hander
+//! \brief  Collision module interface specialization for the native handler
 //!
 //---------------------------------------------------------------------------//
 
@@ -39,7 +39,7 @@ public:
 
   //! Set the collision handler instance
   static void setHandlerInstance(
-	             const Teuchos::RCP<CollisionHandler>& collision_handler );
+                  const std::shared_ptr<CollisionHandler>& collision_handler );
 
   //! Check if a cell is void
   static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
@@ -93,18 +93,12 @@ public:
 				       const bool analogue );
 };
 
-
-// Initialize static member data
-const CollisionModuleInterface<CollisionHandler>::ExternalMaterialHandle 
-CollisionModuleInterface<CollisionHandler>::invalid_external_material_handle = 
-  ModuleTraits::invalid_internal_material_handle;
-
 // Set the collision handler instance
 /* \detials The MonteCarlo::CollisionHandler is a singleton class
  */ 
 inline void 
 CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
-	      const Teuchos::RCP<CollisionHandler>& collision_handler )
+                   const std::shared_ptr<CollisionHandler>& collision_handler )
 { /* ... */ }
 
 // Check if a cell is void

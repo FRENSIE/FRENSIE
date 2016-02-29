@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
-#define FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -79,7 +79,8 @@ public:
 
   //! Set the response functions
   virtual void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
@@ -96,8 +97,9 @@ public:
 	    const int root_process );
 
   //! Export the estimator data
-  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
-			   const bool process_data ) const;
+  virtual void exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const;
   
 protected:
 
@@ -191,7 +193,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator.hpp

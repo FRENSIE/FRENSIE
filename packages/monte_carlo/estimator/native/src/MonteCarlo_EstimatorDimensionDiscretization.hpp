@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
-#define FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#define MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -68,7 +68,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EstimatorDimensionDiscretization.hpp

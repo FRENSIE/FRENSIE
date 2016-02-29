@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Constructor
 CompoundSource::CompoundSource( 
-		  const Teuchos::Array<Teuchos::RCP<ParticleSource> >& sources,
+		  const Teuchos::Array<std::shared_ptr<ParticleSource> >& sources,
 		  const Teuchos::Array<double>& source_sampling_weights )
   : d_sources( sources.size() )
 {
@@ -51,7 +51,7 @@ CompoundSource::CompoundSource(
     Utility::RandomNumberGenerator::getRandomNumber<double>();
   
   // Sample the source that will be sampled from
-  Teuchos::Array<Utility::Trip<Teuchos::RCP<ParticleSource>,
+  Teuchos::Array<Utility::Trip<std::shared_ptr<ParticleSource>,
 			       double,
 			       unsigned> >::iterator
     selected_source = Utility::Search::binaryUpperBound<Utility::SECOND>( 

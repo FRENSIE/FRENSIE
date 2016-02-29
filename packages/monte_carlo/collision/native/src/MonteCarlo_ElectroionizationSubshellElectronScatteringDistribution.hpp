@@ -62,6 +62,11 @@ private:
   // Subshell binding energy
   double d_binding_energy;
 
+  // Calculate the outgoing angle cosine
+  double outgoingAngle( double& normalized_incoming_energy,
+                        double& energy_ratio ) const;
+
+/*
   // Calculate the outgoing angle cosine of the original electron
   double polarDeflectionAngle( double& incoming_momentum_squared,
                                double& outgoing_momentum_squared,
@@ -71,6 +76,7 @@ private:
   double knockOnDeflectionAngle( double& incoming_momentum_squared,
                                  double& outgoing_momentum_squared,
                                  double& outgoing_cosine ) const;
+*/
 
 };
 

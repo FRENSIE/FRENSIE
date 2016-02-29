@@ -6,11 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_FACTORY_HPP
-#define FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -19,6 +20,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
 #include "MonteCarlo_DistributedSource.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 namespace MonteCarlo{
 
@@ -37,21 +40,27 @@ public:
   { /* ... */ }
 
   //! Create the particle source represented by the parameter list
-  virtual Teuchos::RCP<ParticleSource>
-  createSource( const Teuchos::ParameterList& source_rep ) = 0;
+  virtual std::shared_ptr<ParticleSource>
+  createSource( const Teuchos::ParameterList& source_rep,
+		const ParticleModeType& particle_mode ) = 0;
 
 protected:
 
   // Create the particle source represented by the parameter list
   template<typename GeometryHandler>
-  static Teuchos::RCP<ParticleSource>
-  createSourceImpl( const Teuchos::ParameterList& source_rep );
+  static std::shared_ptr<ParticleSource>
+  createSourceImpl( const Teuchos::ParameterList& source_rep,
+		    const ParticleModeType& particle_mode );
 
 private:
 
   // Validate a source respresentation
   static void validateSourceRep( const Teuchos::ParameterList& source_rep,
 				 const unsigned num_sources = 1u );
+
+  // Get the particle type enum
+  static ParticleType getParticleType( const Teuchos::ParameterList& source_rep,
+				       const ParticleModeType& particle_mode );
 
   // Validate the particle type name
   static void validateParticleTypeName( const std::string& particle_type_name);
@@ -60,23 +69,26 @@ private:
   template<typename GeometryHandler>
   static double 
   createDistributedSource(const Teuchos::ParameterList& source_rep,
-			  Teuchos::RCP<ParticleSource>& source,
+			  const ParticleModeType& particle_mode,
+			  std::shared_ptr<ParticleSource>& source,
 			  const unsigned num_sources = 1u );
 
   // Create a state source
   static double
   createStateSource( const Teuchos::ParameterList& source_rep,
-		     Teuchos::RCP<ParticleSource>& source,
+		     const ParticleModeType& particle_mode,
+		     std::shared_ptr<ParticleSource>& source,
 		     const unsigned num_sources = 1u );
 
   // Create a compound source
   template<typename GeometryHandler>
   static void
   createCompoundSource( const Teuchos::ParameterList& compound_source,
-			Teuchos::RCP<ParticleSource>& source );
+			const ParticleModeType& particle_mode,
+			std::shared_ptr<ParticleSource>& source );
 
   // The default time distribution
-  static const Teuchos::RCP<Utility::OneDDistribution> s_default_time_dist;
+  static const std::shared_ptr<Utility::OneDDistribution> s_default_time_dist;
 };
 
 //! The invalid particle source representation error
@@ -100,7 +112,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceFactory.hpp

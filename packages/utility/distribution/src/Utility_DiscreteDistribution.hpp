@@ -11,14 +11,12 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -32,10 +30,22 @@ class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<In
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
+
+  //! This distribution type
+  typedef UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> ThisType;
 
   //! The independent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
@@ -55,12 +65,11 @@ public:
 			const Teuchos::Array<double>& dependent_values,
 			const bool interpret_dependent_values_as_cdf = false );
 
-  //! Hybrid Constructor (implicit unit info potentially dangerous)
+  //! CDF constructor 
   template<typename InputIndepQuantity>
   UnitAwareDiscreteDistribution( 
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& dependent_values,
-	      const bool interpret_dependent_values_as_cdf = false );
+	      const Teuchos::Array<double>& cdf_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -70,11 +79,11 @@ public:
 			
   
   //! Copy constructor
-  UnitAwareDiscreteDistribution( 
-			  const UnitAwareDiscreteDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
-  //! Copy constructor (copying from unitless distribution only)
-  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDiscreteDistribution );
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareDiscreteDistribution fromUnitlessDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_distribution );
   
   //! Assignment operator
   UnitAwareDiscreteDistribution& operator=( const UnitAwareDiscreteDistribution& dist_instance );
@@ -134,6 +143,11 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareDiscreteDistribution& other ) const;
 
+protected:
+  
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
+
 private:
 
   // Return a random sample using the random number and record the bin index
@@ -141,31 +155,42 @@ private:
 				      unsigned& sampled_bin_index ) const;
 
   // Initialize the distribution
+  void initializeDistribution(
+			  const Teuchos::Array<double>& independent_values,
+			  const Teuchos::Array<double>& dependent_values,
+			  const bool interpret_dependent_values_as_cdf );
+
+  // Initialize the distribution from a cdf
+  template<typename InputIndepQuantity>
+  void initializeDistributionFromCDF(
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<double>& cdf_values );
+
+  // Initialize the distribution
   template<typename InputIndepQuantity,typename InputDepQuantity>
   void initializeDistribution( 
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<InputDepQuantity>& dependent_quantities,
-	      const bool interpret_dependent_values_as_cdf );
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
 
-  // Initialize the distribution independent values
-  void initializeDistributionIndepValues( 
-		            const Teuchos::Array<double>& independent_values );
+  // Reconstruct original distribution
+  void reconstructOriginalDistribution(
+		     Teuchos::Array<IndepQuantity>& independent_quantities,
+		     Teuchos::Array<DepQuantity>& dependent_quantities ) const;
 
-  // Initialize the distribution independent values
-  template<typename InputIndepQuantity>
-  void initializeDistributionIndepValues(
-	    const Teuchos::Array<InputIndepQuantity>& independent_quantities );
+  // Reconstruct original distribution w/o units
+  void reconstructOriginalUnitlessDistribution(
+			      Teuchos::Array<double>& independent_values,
+			      Teuchos::Array<double>& dependent_values ) const;
 
-  // Initialize the distribution dependent values
-  void initializeDistributionDepValues(
-				const Teuchos::Array<double>& dependent_values,
-				const bool interpret_dependent_values_as_cdf );
+  // Convert the unitless values to the correct units
+  template<typename Quantity>
+  static void convertUnitlessValues( 
+		                 const Teuchos::Array<double>& unitless_values,
+				 Teuchos::Array<Quantity>& quantities );
 
-  // Initialize the distribution dependent values
-  template<typename InputDepQuantity>
-  void initializeDistributionDepValues(
-		  const Teuchos::Array<InputDepQuantity>& dependent_quantities,
-		  const bool interpret_dependent_values_as_cdf );
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareDiscreteDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
@@ -176,48 +201,6 @@ private:
   // The distribution normalization constant
   DepQuantity d_norm_constant;
 };
-
-// Return a random sample using the random number and record the bin index
-template<typename IndependentUnit,typename DependentUnit>
-inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
-					    double random_number,
-					    unsigned& sampled_bin_index ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  
-  // Get the bin index sampled
-  sampled_bin_index = 
-    Search::binaryUpperBoundIndex<SECOND>( d_distribution.begin(),
-					   d_distribution.end(),
-					   random_number );
-
-  return d_distribution[sampled_bin_index].first;
-}
-
-// Return a random sample from the distribution at the given CDF value in a subrange
-template<typename IndependentUnit,typename DependentUnit>
-inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
-   const double random_number,
-   const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
-{
-  // Make sure the random number is valid
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_distribution.front().first );
-
-  // Scale the random number to the cdf at the max indep var
-  double scaled_random_number = 
-    random_number*this->evaluateCDF( max_indep_var );
-
-  unsigned dummy_index;
-  
-  return this->sampleImplementation( scaled_random_number, dummy_index );
-}
 
 /*! The discrete distribution (unit-agnostic)
  * \ingroup one_d_distributions

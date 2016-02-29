@@ -44,7 +44,7 @@ public:
   	const double angle_cosine )
   { /* ... */ }
 
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { printImplementation( os, "Surface" ); }
 };
 
@@ -118,10 +118,14 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, exportData )
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					"test_standard_surface_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_surface_estimator.h5" );
 
-  estimator->exportData( hdf5_file_handler, false );
+  estimator->exportData( hdf5_file, false );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure the estimator has been set as a surface estimator
   TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 0u ) );

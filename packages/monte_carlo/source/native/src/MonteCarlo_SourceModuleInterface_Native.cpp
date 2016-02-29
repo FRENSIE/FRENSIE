@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Initialize the static source pointer
-Teuchos::RCP<ParticleSource> SourceModuleInterface<ParticleSource>::source;
+std::shared_ptr<ParticleSource> SourceModuleInterface<ParticleSource>::source;
 
 // Constructor
 SourceModuleInterface<ParticleSource>::SourceModuleInterface()
@@ -20,9 +20,9 @@ SourceModuleInterface<ParticleSource>::SourceModuleInterface()
 
 // Initialize the source
 void SourceModuleInterface<ParticleSource>::setHandlerInstance( 
-				   const Teuchos::RCP<ParticleSource>& source )
+				const std::shared_ptr<ParticleSource>& source )
 {
-  testPrecondition( !source.is_null() );
+  testPrecondition( source.get() );
 
   SourceModuleInterface::source = source;
 }

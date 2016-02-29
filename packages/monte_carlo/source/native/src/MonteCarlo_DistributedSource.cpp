@@ -25,16 +25,16 @@ namespace MonteCarlo{
  * estimators unbiased.
  */
 DistributedSource::DistributedSource( 
-	const unsigned id,
-	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
-        const Teuchos::RCP<Utility::DirectionalDistribution>& 
-	directional_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& 
-	energy_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& 
-	time_distribution,
-	const ParticleType particle_type,
-	getLocationFunction get_particle_location_func )
+     const unsigned id,
+     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
+     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     directional_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& 
+     energy_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& 
+     time_distribution,
+     const ParticleType particle_type,
+     getLocationFunction get_particle_location_func )
   : d_id( id ),
     d_spatial_distribution( spatial_distribution ),
     d_spatial_importance_distribution( NULL ),
@@ -49,13 +49,12 @@ DistributedSource::DistributedSource(
     d_number_of_trials( 0u ),
     d_number_of_samples( 0u ),
     d_get_particle_location_func( get_particle_location_func )
-    
 {
   // Make sure that the distributions have been set
-  testPrecondition( !spatial_distribution.is_null() );
-  testPrecondition( !directional_distribution.is_null() );
-  testPrecondition( !energy_distribution.is_null() );
-  testPrecondition( !time_distribution.is_null() );
+  testPrecondition( spatial_distribution.get() );
+  testPrecondition( directional_distribution.get() );
+  testPrecondition( energy_distribution.get() );
+  testPrecondition( time_distribution.get() );
 }
 
 // Set the spatial importance distribution
@@ -64,10 +63,10 @@ DistributedSource::DistributedSource(
  * the necessary weight of the particle to prevent biasing the estimators.
  */ 
 void DistributedSource::setSpatialImportanceDistribution(
-       const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution )
+    const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution )
 {
   // Make sure that the distribution has been set
-  testPrecondition( !spatial_distribution.is_null() );
+  testPrecondition( spatial_distribution.get() );
   
   d_spatial_importance_distribution = spatial_distribution;
 }
@@ -79,11 +78,11 @@ void DistributedSource::setSpatialImportanceDistribution(
  * estimators.
  */ 
 void DistributedSource::setDirectionalImportanceDistribution( 
-                          const Teuchos::RCP<Utility::DirectionalDistribution>&
-			  directional_distribution )
+                       const std::shared_ptr<Utility::DirectionalDistribution>&
+		       directional_distribution )
 {
   // Make sure that the distribution has been set
-  testPrecondition( !directional_distribution.is_null() );
+  testPrecondition( directional_distribution.get() );
 
   d_directional_importance_distribution = directional_distribution;
 }					 
@@ -94,10 +93,10 @@ void DistributedSource::setDirectionalImportanceDistribution(
  * the necessary weight of the particle to prevent biasing the estimators.
  */
 void DistributedSource::setEnergyImportanceDistribution(
-	   const Teuchos::RCP<Utility::OneDDistribution>& energy_distribution )
+	const std::shared_ptr<Utility::OneDDistribution>& energy_distribution )
 {
   // Make sure that the distribution has been set
-  testPrecondition( !energy_distribution.is_null() );
+  testPrecondition( energy_distribution.get() );
 
   d_energy_importance_distribution = energy_distribution;
 }
@@ -108,10 +107,10 @@ void DistributedSource::setEnergyImportanceDistribution(
  * the necessary weight of the particle to prevent biasing the estimators.
  */ 
 void DistributedSource::setTimeImportanceDistribution(
-	     const Teuchos::RCP<Utility::OneDDistribution>& time_distribution )
+	  const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
 {
   // Make sure that the distribution has been set
-  testPrecondition( !time_distribution.is_null() );
+  testPrecondition( time_distribution.get() );
 
   d_time_importance_distribution = time_distribution;
 }
@@ -127,8 +126,9 @@ void DistributedSource::sampleParticleState( ParticleBank& bank,
 					     const unsigned long long history )
 {  
   // Initialize the particle
-  ParticleState::pointerType particle = 
-    ParticleStateFactory::createState( d_particle_type, history );
+  std::shared_ptr<ParticleState> particle;
+  
+  ParticleStateFactory::createState( particle, d_particle_type, history );
     
   // Initialize the particle weight
   particle->setWeight( 1.0 );
@@ -148,7 +148,7 @@ void DistributedSource::sampleParticleState( ParticleBank& bank,
   sampleParticleTime( *particle );
 
   // Add the particle to the bank
-  bank.push( particle );
+  bank.push( *particle );
 }
 
 // Get the sampling efficiency from the source distribution
@@ -182,7 +182,7 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
   
   while( true )  
   {
-    if( d_spatial_importance_distribution.is_null() )
+    if( !d_spatial_importance_distribution.get() )
       d_spatial_distribution->sample( position );
     else
     {
@@ -251,7 +251,7 @@ void DistributedSource::sampleParticleDirection( ParticleState& particle )
   double direction[3];
   double direction_weight = 1.0;
 
-  if( d_directional_importance_distribution.is_null() )
+  if( !d_directional_importance_distribution.get() )
     d_directional_distribution->sample( direction );
   else
   {
@@ -293,7 +293,7 @@ void DistributedSource::sampleParticleEnergy( ParticleState& particle )
   double energy;
   double energy_weight = 1.0;
 
-  if( d_energy_importance_distribution.is_null() )
+  if( !d_energy_importance_distribution.get() )
     energy = d_energy_distribution->sample();
   else
   {
@@ -332,7 +332,7 @@ void DistributedSource::sampleParticleTime( ParticleState& particle )
   double time;
   double time_weight = 1.0;
   
-  if( d_time_importance_distribution.is_null() )
+  if( !d_time_importance_distribution.get() )
     time = d_time_distribution->sample();
   else
   {

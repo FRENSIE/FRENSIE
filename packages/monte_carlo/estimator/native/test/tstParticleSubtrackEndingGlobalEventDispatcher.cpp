@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -25,41 +26,30 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+std::shared_ptr<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
 estimator;
 
-std::string test_input_mesh_file_name;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-// Initialize the estimator
-void initializeTetMeshEstimator()
-{
-  estimator.reset(
-  new MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
-                         0u,
-                         1.0,
-                         test_input_mesh_file_name,
-                         "unit_cube_output.vtk" ) );
-    
-  // Assign energy bins
-  Teuchos::Array<double> energy_bin_boundaries( 2 );
-  energy_bin_boundaries[0] = 0.0;
-  energy_bin_boundaries[1] = 1.0;
-    
-  estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
-                             energy_bin_boundaries );     
-                             
-  // Set the particle types
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
-  particle_types[0] = MonteCarlo::PHOTON;
-    
-  estimator->setParticleTypes( particle_types );
-}
+std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher>
+dispatcher( new MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher );
 
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that an observer can be attached to the dispatcher
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
+		   attachObserver )
+{  
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
+    
+  dispatcher->attachObserver( estimator->getId(), observer );
+                                                             
+  observer.reset();
+  
+  TEST_EQUALITY_CONST( estimator.use_count(), 2 );
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the dispatcher can update from the global ending event
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
@@ -74,37 +64,14 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 
   TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
-                                                            particle,
-                                                            start_point,
-                                                            end_point );
+  dispatcher->dispatchParticleSubtrackEndingGlobalEvent( 
+                                            particle, start_point, end_point );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+
+  estimator->commitHistoryContribution();
 
   TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
-}
-
-// Check that the cell number of observers can be found
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
-                   getNumberOfObservers )
-{
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that an observer can be attached to the dispatcher
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
-		   attachObserver )
-{  
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
-    
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::attachObserver( 
-                                                      estimator->getId(),
-                                                      observer );
-                                                             
-  observer.reset();
-  
-  TEST_EQUALITY_CONST( estimator.total_count(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -112,11 +79,10 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
 		   detachObserver )
 {
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::detachObserver( 
-                                                     estimator->getId() ); 
+  dispatcher->detachObserver( estimator->getId() ); 
                                    
-  TEST_EQUALITY_CONST( estimator.total_count(), 1 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 0 );
+  TEST_EQUALITY_CONST( estimator.use_count(), 1 );
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -124,21 +90,20 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher, 
 		   detachAllObservers )
 {
-  Teuchos::RCP<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
-    Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
+  std::shared_ptr<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver> observer =
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingGlobalEventObserver>( estimator );
 
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::attachObserver(  
-                                                      estimator->getId(),
-                                                      observer );
+  dispatcher->attachObserver(  estimator->getId(), observer );
 
   observer.reset();
                                
-  TEST_EQUALITY_CONST( estimator.total_count(), 2 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );                                                           
+  TEST_EQUALITY_CONST( estimator.use_count(), 2 );
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 1 );
                                                              
-  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::detachAllObservers(); 
-  TEST_EQUALITY_CONST( estimator.total_count(), 1 );
-  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 0 );
+  dispatcher->detachAllObservers(); 
+  
+  TEST_EQUALITY_CONST( estimator.use_count(), 1 );
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -146,6 +111,8 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingGlobalEventDispatcher,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_input_mesh_file_name;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_input_mesh_file_name",
@@ -163,7 +130,29 @@ int main( int argc, char** argv )
     return parse_return;
   }
   
-  initializeTetMeshEstimator();
+  // Initialize the estimator
+  {
+    estimator.reset(
+                    new MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
+                         0u,
+                         1.0,
+                         test_input_mesh_file_name,
+                         "unit_cube_output.vtk" ) );
+    
+    // Assign energy bins
+    Teuchos::Array<double> energy_bin_boundaries( 2 );
+    energy_bin_boundaries[0] = 0.0;
+    energy_bin_boundaries[1] = 1.0;
+    
+    estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+                                                       energy_bin_boundaries );
+                             
+    // Set the particle types
+    Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+    particle_types[0] = MonteCarlo::PHOTON;
+    
+    estimator->setParticleTypes( particle_types );
+  }
   
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   

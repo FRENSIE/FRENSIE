@@ -6,13 +6,14 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ENTITY_ESTIMATOR_DEF_HPP
-#define FACEMC_ENTITY_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <sstream>
 
 // FRENSIE Includes
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -84,7 +85,8 @@ EntityEstimator<EntityId>::EntityEstimator( const Estimator::idType id,
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   Estimator::setResponseFunctions( response_functions );
 
@@ -150,7 +152,7 @@ void EntityEstimator<EntityId>::assignEntities(
 // Assign bin boundaries to an estimator dimension
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignBinBoundaries(
-         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -396,19 +398,23 @@ void EntityEstimator<EntityId>::reduceData(
 
 // Export the estimator data
 template<typename EntityId>
-void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
-					   const bool process_data ) const
+void EntityEstimator<EntityId>::exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export the low level estimator data
   Estimator::exportData( hdf5_file, process_data );
 
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
+
   // Export the Entity norm constants 
-  hdf5_file.setEstimatorEntities( this->getId(),
-				  d_entity_norm_constants_map );
+  estimator_hdf5_file.setEstimatorEntities( this->getId(),
+                                            d_entity_norm_constants_map );
 
   // Export the total norm constant
-  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
-					   d_total_norm_constant );
+  estimator_hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
+                                                     d_total_norm_constant );
   
   // Export all of the estimator data
   {
@@ -423,12 +429,12 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
 	d_entity_norm_constants_map.find( entity_data->first )->second;
 
       // Export the entity norm constant
-      hdf5_file.setEntityNormConstant( this->getId(),
+      estimator_hdf5_file.setEntityNormConstant( this->getId(),
 				       entity_data->first,
 				       norm_constant );
       
       // Export the raw entity moment data
-      hdf5_file.setRawEstimatorEntityBinData( this->getId(),
+      estimator_hdf5_file.setRawEstimatorEntityBinData( this->getId(),
 					      entity_data->first,
 					      entity_data->second );
       
@@ -446,16 +452,17 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
 				processed_data[j].second );
 	}
 	
-	hdf5_file.setProcessedEstimatorEntityBinData( this->getId(),
-						      entity_data->first,
-						      processed_data );
+	estimator_hdf5_file.setProcessedEstimatorEntityBinData( 
+                                                            this->getId(),
+                                                            entity_data->first,
+                                                            processed_data );
       }
     }
   }
 
   // Export the total bin data
-  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
-					 d_estimator_total_bin_data );
+  estimator_hdf5_file.setRawEstimatorTotalBinData( this->getId(),
+                                                   d_estimator_total_bin_data );
 
   // Export the processed total bin data
   if( process_data )
@@ -472,8 +479,8 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
     }
 
     
-    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
-						 processed_data );
+    estimator_hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
+                                                           processed_data );
   }
 }
 
@@ -599,35 +606,35 @@ void EntityEstimator<EntityId>::printImplementation(
   os << std::endl;
   
   // Print the estimator data for each entity
-  typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
-    end_entity_data;
+  // typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
+  //   end_entity_data;
 
-  entity_data = d_entity_estimator_moments_map.begin();
-  end_entity_data = d_entity_estimator_moments_map.end();
+  // entity_data = d_entity_estimator_moments_map.begin();
+  // end_entity_data = d_entity_estimator_moments_map.end();
 
-  while( entity_data != end_entity_data )
-  {
-    os << entity_type << " " << entity_data->first 
-       << " Bin Data: " << std::endl;
-    os << "--------" << std::endl;
+  // while( entity_data != end_entity_data )
+  // {
+  //   os << entity_type << " " << entity_data->first 
+  //      << " Bin Data: " << std::endl;
+  //   os << "--------" << std::endl;
 
-    printEstimatorBinData( os, 
-			   entity_data->second,
-			   getEntityNormConstant( entity_data->first ) );
-    os << std::endl;
+  //   printEstimatorBinData( os, 
+  //       		   entity_data->second,
+  //       		   getEntityNormConstant( entity_data->first ) );
+  //   os << std::endl;
 
-    ++entity_data;
-  }
+  //   ++entity_data;
+  // }
 
   // Print the estimator total bin data
-  os << " Total Bin Data: " << std::endl;
-  os << "--------" << std::endl;
+  // os << " Total Bin Data: " << std::endl;
+  // os << "--------" << std::endl;
 
-  printEstimatorBinData( os, 
-			 d_estimator_total_bin_data, 
-			 d_total_norm_constant );
+  // printEstimatorBinData( os, 
+  //       		 d_estimator_total_bin_data, 
+  //       		 d_total_norm_constant );
   
-  os << std::endl;
+  // os << std::endl;
 }
 
 // Get the total estimator bin data
@@ -765,7 +772,7 @@ void EntityEstimator<EntityId>::calculateTotalNormalizationConstant()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ENTITY_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_ENTITY_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EntityEstimator_def.hpp

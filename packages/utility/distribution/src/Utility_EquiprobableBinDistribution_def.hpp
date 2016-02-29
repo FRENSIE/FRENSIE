@@ -14,8 +14,8 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -44,11 +44,44 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEq
 }
 
 // Copy constructor
+/*! \details Just like boost::units::quantity objects, the unit-aware 
+ * distribution can be explicitly cast to a distribution with compatible
+ * units. If the units are not compatible, this function will not compile. Note
+ * that this allows distributions to be scaled safely (unit conversions 
+ * are completely taken care of by boost::units)!
+ */
 template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution(
-		    const UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>& dist_instance )
-  : d_bin_boundaries( dist_instance.d_bin_boundaries )
-{ /* ... */ }
+  const UnitAwareEquiprobableBinDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
+  : d_bin_boundaries()
+{ 
+  this->initializeDistribution( dist_instance.d_bin_boundaries );
+}
+
+// Copy constructor (copying from unitless distribution only)
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::UnitAwareEquiprobableBinDistribution( 
+ const UnitAwareEquiprobableBinDistribution<void,void>& unitless_dist_instance, int )
+  : d_bin_boundaries()
+{
+  this->initializeDistribution( unitless_dist_instance.d_bin_boundaries );
+}
+
+// Construct distribution from a unitless dist. (potentially dangerous)
+/*! \details Constructing a unit-aware distribution from a unitless 
+ * distribution is potentially dangerous. By forcing users to construct objects
+ * using this method instead of a standard constructor we are trying to make
+ * sure users are aware of the danger. This is designed to mimic the interface 
+ * of the boost::units::quantity, which also has to deal with this issue. 
+ */
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> 
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( 
+ const UnitAwareEquiprobableBinDistribution<void,void>& unitless_distribution )
+{
+  return ThisType( unitless_distribution, 0 );
+}
 
 // Assignment operator
 template<typename IndependentUnit, typename DependentUnit>
@@ -199,6 +232,48 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleInSub
 
   return this->sampleWithRandomNumberInSubrange( random_number,
 						 max_indep_var );
+}
+
+// Return a random sample using the random number and record the bin index
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
+				            double random_number,
+				            unsigned& sampled_bin_index ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
+  double bin_location = random_number*(d_bin_boundaries.size()-1);
+  
+  sampled_bin_index = (unsigned)floor(bin_location);
+  
+  return d_bin_boundaries[sampled_bin_index] + 
+    (bin_location - sampled_bin_index)*(d_bin_boundaries[sampled_bin_index+1]-
+					d_bin_boundaries[sampled_bin_index]);
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+     const double random_number,
+     const typename UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_bin_boundaries.front() );
+
+  // Compute the scaled random number
+  double scaled_random_number = 
+    random_number*this->evaluateCDF( max_indep_var );
+
+  unsigned dummy_index;
+
+  return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
 // Return the upper bound of the distribution independent variable

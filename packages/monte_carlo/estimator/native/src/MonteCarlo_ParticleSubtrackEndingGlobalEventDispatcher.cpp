@@ -12,20 +12,23 @@
 
 namespace MonteCarlo{
 
+// Constructor
+ParticleSubtrackEndingGlobalEventDispatcher::ParticleSubtrackEndingGlobalEventDispatcher()
+{ /* ... */ }
+
 // Dispatch the new event to the observers
 void ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  ObserverIdMap::iterator it = observer_id_map().begin();
+  ObserverIdMap::iterator it = this->observer_id_map().begin();
 
-  while( it != observer_id_map().end() )
+  while( it != this->observer_id_map().end() )
   {
-    it->second->updateFromGlobalParticleSubtrackEndingEvent(
-							    particle,
-							    start_point,
-							    end_point );
+    it->second->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                             start_point,
+                                                             end_point );
 
     ++it;
   }

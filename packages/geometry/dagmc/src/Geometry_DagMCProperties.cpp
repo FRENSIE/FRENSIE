@@ -175,6 +175,22 @@ void DagMCProperties::extractEstimatorPropertyValues(
   unsigned first_pos = prop_value.find_first_of( "." );
   unsigned last_pos = prop_value.find_last_of( "." );
 
+  TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( first_pos == last_pos,
+                      std::runtime_error,
+                      "Error: the observer property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+
   std::string id_string = prop_value.substr( 0, first_pos );
 
   std::istringstream iss( id_string );
@@ -195,12 +211,37 @@ bool DagMCProperties::isCellEstimatorTypeValid(
     estimator_type.compare( DagMCProperties::cell_collision_flux_name ) == 0;
 }
 
+// Check if the cell observer type is valid
+bool DagMCProperties::isCellObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isCellEstimatorTypeValid( observer_type );
+}
+
 // Check if the surface estimator type is valid
 bool DagMCProperties::isSurfaceEstimatorTypeValid( 
 					    const std::string& estimator_type )
 {
   return estimator_type.compare( DagMCProperties::surface_flux_name ) == 0 ||
     estimator_type.compare( DagMCProperties::surface_current_name ) == 0;
+}
+
+// Check if the surface observer type is valid
+bool DagMCProperties::isSurfaceObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isSurfaceEstimatorTypeValid( observer_type );
+}
+
+// Check if the estimator type is valid
+bool DagMCProperties::isEstimatorTypeValid( const std::string& estimator_type )
+{
+  return DagMCProperties::isCellEstimatorTypeValid( estimator_type ) ||
+    DagMCProperties::isSurfaceEstimatorTypeValid( estimator_type );
+}
+
+// Check if the observer type is valid
+bool DagMCProperties::isObserverTypeValid( const std::string& observer_type )
+{
+  return DagMCProperties::isEstimatorTypeValid( observer_type );
 }
 
 // Check if the particle type is valid

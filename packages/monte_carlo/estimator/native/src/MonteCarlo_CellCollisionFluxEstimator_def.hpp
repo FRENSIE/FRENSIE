@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
-#define FACEMC_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -59,7 +59,7 @@ void CellCollisionFluxEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
   os << "Cell Collision Estimator: " << getId() << std::endl;
 
@@ -68,7 +68,7 @@ void CellCollisionFluxEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellCollisionFluxEstimator_def.hpp

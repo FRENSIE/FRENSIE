@@ -80,20 +80,23 @@ TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic,
 TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
 		   react )
 {
-  Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState(0ull) );
-  
-  neutron->setDirection( 0.0, 0.0, 1.0 );
-  neutron->setEnergy( 1.0 );
-
   MonteCarlo::ParticleBank bank;
 
-  bank.push( neutron );
+  {
+    Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState(0ull) );
   
-  nuclear_reaction->react( *neutron, bank );
+    neutron->setDirection( 0.0, 0.0, 1.0 );
+    neutron->setEnergy( 1.0 );
+
+    bank.push( neutron );
+  }
+  
+  nuclear_reaction->react( dynamic_cast<MonteCarlo::NeutronState&>(bank.top()),
+			   bank );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
-  std::cout << std::endl << std::endl << *neutron << std::endl;
+  std::cout << std::endl << std::endl << bank.top() << std::endl;
 }
 
 //---------------------------------------------------------------------------//

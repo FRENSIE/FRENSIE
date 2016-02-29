@@ -8,6 +8,10 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
+
+// Boost Includes
+#include <boost/bind.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -38,7 +42,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<MonteCarlo::ParticleSource> source;
+std::shared_ptr<MonteCarlo::ParticleSource> source;
 
 //---------------------------------------------------------------------------//
 // Test Sat File Name
@@ -76,17 +80,17 @@ template<typename GeometryHandler>
 void initializeSource()
 {
   // Create the distributions required for each source
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     source_1_spatial_distribution( new Utility::SphericalSpatialDistribution(
 							    r_distribution,
 							    theta_distribution,
@@ -94,35 +98,35 @@ void initializeSource()
 							    0.0,
 							    0.0,
 							    0.0 ) );
-  Teuchos::RCP<Utility::DirectionalDistribution>
+  std::shared_ptr<Utility::DirectionalDistribution>
     directional_distribution( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     source_1_energy_distribution( new Utility::UniformDistribution( 1e-3, 
 								   1.0, 
 								   1.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     x_distribution( new Utility::DeltaDistribution( 0.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     y_distribution( new Utility::DeltaDistribution( 0.0 ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     z_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-  Teuchos::RCP<Utility::SpatialDistribution>
+  std::shared_ptr<Utility::SpatialDistribution>
     source_2_spatial_distribution( new Utility::CartesianSpatialDistribution(
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     source_2_energy_distribution( new Utility::DeltaDistribution( 14.1 ) );
   
   // Create the uniform spherical source
-  Teuchos::RCP<MonteCarlo::DistributedSource> spherical_source( 
+  std::shared_ptr<MonteCarlo::DistributedSource> spherical_source( 
      new MonteCarlo::DistributedSource(
 	      0u,
 	      source_1_spatial_distribution,
@@ -135,7 +139,7 @@ void initializeSource()
   spherical_source->setRejectionCell( 2 );
 
   // Create the point source
-  Teuchos::RCP<MonteCarlo::ParticleSource> point_source( 
+  std::shared_ptr<MonteCarlo::ParticleSource> point_source( 
      new MonteCarlo::DistributedSource(
 	      1u,
               source_2_spatial_distribution,
@@ -145,8 +149,8 @@ void initializeSource()
               MonteCarlo::NEUTRON,
               &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
 
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ParticleSource> > sources( 2 );
-  sources[0] = Teuchos::rcp_dynamic_cast<MonteCarlo::ParticleSource>( 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ParticleSource> > sources( 2 );
+  sources[0] = std::dynamic_pointer_cast<MonteCarlo::ParticleSource>( 
 							    spherical_source );
   sources[1] = point_source;
 
@@ -172,26 +176,26 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CompoundSource,
   
   source->sampleParticleState( bank, 0 );
 
-  TEST_ASSERT( bank.top()->getParticleType() == MonteCarlo::PHOTON ||
-	       bank.top()->getParticleType() == MonteCarlo::NEUTRON );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
-  TEST_COMPARE( bank.top()->getXPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getXPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getYPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getYPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getZPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top()->getZPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top()->getXDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getXDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getYDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getYDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getZDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top()->getZDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top()->getEnergy(), >=, 1e-3 );
-  TEST_ASSERT( bank.top()->getEnergy() <= 1.0 ||
-	       bank.top()->getEnergy() == 14.1 );
-  TEST_EQUALITY_CONST( bank.top()->getTime(), 0.0 );
-  TEST_EQUALITY_CONST( bank.top()->getWeight(), 1.0 );
+  TEST_ASSERT( bank.top().getParticleType() == MonteCarlo::PHOTON ||
+	       bank.top().getParticleType() == MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0 );
+  TEST_COMPARE( bank.top().getXPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getXPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getYPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getYPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getZPosition(), >=, -2.0 );
+  TEST_COMPARE( bank.top().getZPosition(), <=, 2.0 );
+  TEST_COMPARE( bank.top().getXDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getXDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getYDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getYDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getZDirection(), >=, -1.0 );
+  TEST_COMPARE( bank.top().getZDirection(), <=, 1.0 );
+  TEST_COMPARE( bank.top().getEnergy(), >=, 1e-3 );
+  TEST_ASSERT( bank.top().getEnergy() <= 1.0 ||
+	       bank.top().getEnergy() == 14.1 );
+  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
+  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( CompoundSource, sampleParticleState );

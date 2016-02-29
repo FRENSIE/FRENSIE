@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SURFACE_FLUX_ESTIMATOR_HPP
-#define FACEMC_SURFACE_FLUX_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_HPP
+#define MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardSurfaceEstimator.hpp"
@@ -42,8 +42,8 @@ public:
 		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
 		const double angle_cosine );
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 };
 
 } // end MonteCarlo namespace
@@ -56,7 +56,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_SURFACE_FLUX_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceFluxEstimator.hpp

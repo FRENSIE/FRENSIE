@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -18,6 +19,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -50,7 +52,7 @@ public:
   ~TestStandardEntityEstimator()
   { /* ... */ }
 
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
   // Allow public access to the standard entity estimator protected mem. funcs.
@@ -248,16 +250,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
   unsigned procs = comm->getSize();
 
-  MonteCarlo::Estimator::setNumberOfHistories( procs );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( procs );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   if( comm->getRank() == 0 )
   {
     // Initialize the HDF5 file
-    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( 
 				  "test_standard_entity_estimator_rank_0.h5" );
 
-    estimator_base->exportData( hdf5_file_handler, true );
+    estimator_base->exportData( hdf5_file, true );
+
+    // Create an estimator hdf5 file handler
+    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
     
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> > 
@@ -334,9 +341,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     oss << "test_standard_entity_estimator_rank_" << comm->getRank() << ".h5";
 
     // Initialize the hdf5 file
-    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( oss.str() );
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( oss.str() );
 
-    estimator_base->exportData( hdf5_file_handler, true );
+    estimator_base->exportData( hdf5_file, true );
+
+    // Create an estimator hdf5 file handler
+    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
     
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> > 

@@ -34,7 +34,7 @@ TEUCHOS_UNIT_TEST( ResponseFunctionFactory, createResponseFunctions )
   Teuchos::RCP<Teuchos::ParameterList> response_reps = 
     Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
 
-  boost::unordered_map<unsigned,Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_id_map;
 
   MonteCarlo::ResponseFunctionFactory::createResponseFunctions( *response_reps,
