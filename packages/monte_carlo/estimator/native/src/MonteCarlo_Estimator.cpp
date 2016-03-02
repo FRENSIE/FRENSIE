@@ -356,6 +356,29 @@ void Estimator::printEstimatorTotalData(
 
 // Check if the point is in the estimator phase space
 bool Estimator::isPointInEstimatorPhaseSpace(
+            const EstimatorParticleStateWrapper& particle_state_wrapper ) const
+{
+  bool point_in_phase_space = true;
+
+  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  {
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					     d_dimension_ordering[i] )->second;
+
+    if( !dimension_bin_boundaries->isValueInDiscretization( particle_state_wrapper ) )
+    {
+      point_in_phase_space = false;
+
+      break;
+    }
+  }
+
+  return point_in_phase_space;
+}
+
+// Check if the point is in the estimator phase space
+bool Estimator::isPointInEstimatorPhaseSpace(
 		              const DimensionValueMap& dimension_values ) const
 {
   // Make sure there are at least as many dimension values as dimensions
@@ -382,6 +405,40 @@ bool Estimator::isPointInEstimatorPhaseSpace(
   }
 
   return point_in_phase_space;
+}
+
+// Calculate the bin index for the desired response function
+unsigned Estimator::calculateBinIndex( 
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const unsigned response_function_index ) const
+{
+  // Make sure the response function is valid
+  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  
+  unsigned long bin_index = 0u;
+  
+  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  {
+    const std::shared_ptr<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					     d_dimension_ordering[i] )->second;
+
+    const unsigned& dimension_index_step_size = 
+      d_dimension_index_step_size_map.find( d_dimension_ordering[i] )->second;
+    
+    bin_index += 
+      dimension_bin_boundaries->calculateBinIndex( particle_state_wrapper )*
+      dimension_index_step_size;
+  }
+  
+  bin_index += response_function_index*getNumberOfBins();
+
+  // Make sure the bin index calculated is valid
+  testPostcondition( bin_index < 
+		     getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
+
+  return bin_index;
 }
 
 // Calculate the bin index for the desired response function

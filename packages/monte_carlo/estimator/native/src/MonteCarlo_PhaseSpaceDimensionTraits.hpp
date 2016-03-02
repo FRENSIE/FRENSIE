@@ -36,14 +36,11 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
-  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
-  { return Teuchos::any( particle.getEnergy() ); }
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getParticleState().getEnergy(); }
 
-  static inline Teuchos::any obfuscateValue( const dimensionType& value )
-  { return Teuchos::any( value ); }
-  
-  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
-  { return Teuchos::any_cast<dimensionType>( any_container );  }
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
 /*! The specialization of the PhaseSpaceDimensionTraits for COSINE_DIMENSION
@@ -63,14 +60,11 @@ struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
   static inline dimensionType upperBound()
   { return 1.0; }
 
-  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
-  { return Teuchos::any(); }
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getAngleCosine(); }
 
-  static inline Teuchos::any obfuscateValue( const dimensionType& value )
-  { return Teuchos::any( value ); }
-
-  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
-  { return Teuchos::any_cast<dimensionType>( any_container );  }
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
 /*! The specialization of the PhaseSpaceDimensionTraits for TIME_DIMENSION
@@ -90,14 +84,11 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
-  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
-  { return Teuchos::any( particle.getTime() ); }
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getParticleState().getTime(); }
 
-  static inline Teuchos::any obfuscateValue( const dimensionType& value )
-  { return Teuchos::any( value ); }
-
-  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
-  { return Teuchos::any_cast<dimensionType>( any_container );  }
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
 /*! The specialization of the PhaseSpaceDimensionTraits for
@@ -118,14 +109,11 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::max(); }
 
-  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
-  { return Teuchos::any( particle.getCollisionNumber() ); }
+  static inline dimensionType getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  { return particle_wrapper.getParticleState().getCollisionNumber(); }
 
-  static inline Teuchos::any obfuscateValue( const dimensionType& value )
-  { return Teuchos::any( value ); }
-
-  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
-  { return Teuchos::any_cast<dimensionType>( any_container );  }
+  static inline dimensionType getDimensionValue( const Teuchos::any& any_value )
+  { return Teuchos::any_cast<dimensionType>( any_value ); }
 };
 
 } // end MonteCarlo namespace

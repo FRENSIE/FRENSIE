@@ -67,13 +67,14 @@ void CellTrackLengthFluxEstimator<
   {
     double contribution = track_length*
       ContributionMultiplierPolicy::multiplier( particle );
+
+    EstimatorParticleStateWrapper particle_state_wrapper( particle );
   
     StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
-							      cell_of_subtrack,
-							      particle, 
-							      0.0,
-							      contribution);
+                                                        cell_of_subtrack,
+							particle_state_wrapper,
+                                                        contribution);
   }
 }
 

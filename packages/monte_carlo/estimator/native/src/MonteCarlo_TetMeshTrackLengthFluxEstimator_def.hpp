@@ -315,10 +315,11 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	  // Handle the special case where the first point is on a mesh surface
 	  if( partial_track_length > 0.0 )
 	  {	
+            EstimatorParticleStateWrapper particle_state_wrapper( particle );
+            
 	    // Add partial history contribution
 	    addPartialHistoryContribution( tet,
-					   particle,
-					   0,
+					   particle_state_wrapper,
 					   partial_track_length );
 	  }
 	}
@@ -335,7 +336,13 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	// Add partial history contribution if tet was found (tolerance
 	// issues may prevent this)
 	if( tet != 0 )
-	  addPartialHistoryContribution( tet, particle, 0, track_length );
+        {
+          EstimatorParticleStateWrapper particle_state_wrapper( particle );
+          
+	  addPartialHistoryContribution( tet, 
+                                         particle_state_wrapper, 
+                                         track_length );
+        }
       }
       // case 2: track entirely misses mesh - do nothing
     }

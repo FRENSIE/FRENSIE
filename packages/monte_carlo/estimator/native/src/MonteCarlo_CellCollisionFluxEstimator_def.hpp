@@ -47,12 +47,13 @@ void CellCollisionFluxEstimator<
     double contribution = inverse_total_cross_section*
       ContributionMultiplierPolicy::multiplier( particle );
 
+    EstimatorParticleStateWrapper particle_state_wrapper( particle );
+
     StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
-							     cell_of_collision,
-							     particle, 
-							     0.0, 
-							     contribution );
+							cell_of_collision,
+							particle_state_wrapper,
+                                                        contribution );
   }
 }
 

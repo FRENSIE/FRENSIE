@@ -29,7 +29,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			       multiplier,
 			       entity_ids,
 			       entity_norm_constants ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { 
@@ -43,7 +42,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const double multiplier,
 			           const Teuchos::Array<EntityId>& entity_ids )
   : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { 
@@ -56,7 +54,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const Estimator::idType id,
 				   const double multiplier )
   : EntityEstimator<EntityId>( id, multiplier ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { /* ... */ }
@@ -192,9 +189,6 @@ void StandardEntityEstimator<EntityId>::enableThreadSupport(
   
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
-
-  // Add thread support to the dimension value map
-  d_dimension_values.resize( num_threads );
 }
 
 // Reset the estimator data
@@ -657,41 +651,35 @@ void StandardEntityEstimator<EntityId>::assignEntities(
  */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
-					    const EntityId entity_id,
-					    const ParticleState& particle,
-					    const double angle_cosine,
-					    const double contribution )
+		   const EntityId entity_id,
+		   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const double contribution )
 {
   // Make sure the thread id is valid
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
-		    d_dimension_values.size() );
+		    d_update_tracker.size() );
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute
-  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType()));
+  testPrecondition( this->isParticleTypeAssigned( 
+               particle_state_wrapper.getParticleState().getParticleType() ) );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
   
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
     
-  Estimator::DimensionValueMap& thread_dimension_values = 
-    d_dimension_values[thread_id];
-  
-  this->convertParticleStateToGenericMap( particle, 
-					  angle_cosine, 
-					  thread_dimension_values );
-        
   // Only add the contribution if the particle state is in the phase space
-  if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
+  if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
   {
     unsigned bin_index;
       
     for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
     {
-      bin_index = this->calculateBinIndex( thread_dimension_values, i );
+      bin_index = this->calculateBinIndex( particle_state_wrapper, i );
       
       double processed_contribution = 
-	contribution*this->evaluateResponseFunction( particle, i );
+        contribution*this->evaluateResponseFunction( 
+                                particle_state_wrapper.getParticleState(), i );
 
       addInfoToUpdateTracker( thread_id, 
 			      entity_id, 

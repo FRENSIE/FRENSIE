@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
@@ -44,11 +45,18 @@ public:
   
   //! Check if the value is contained in the discretization
   virtual bool isValueInDiscretization( 
-				 const Teuchos::any& any_container ) const = 0;
+       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+
+  //! Check if the value is contained in the discretization
+  virtual bool isValueInDiscretization(
+                                     const Teuchos::any& any_value ) const = 0;
 
   //! Calculate the index of the bin that the value falls in
   virtual unsigned calculateBinIndex( 
-				 const Teuchos::any& any_container ) const = 0;
+       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+
+  //! Calculate the index of the bin that the value falls in
+  virtual unsigned calculateBinIndex( const Teuchos::any& any_value) const = 0;
 
   //! Print the boundaries of a bin
   virtual void printBoundariesOfBin( std::ostream& os, 

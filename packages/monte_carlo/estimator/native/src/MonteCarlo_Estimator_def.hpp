@@ -28,26 +28,6 @@ void Estimator::setBinBoundaries(
   assignBinBoundaries( dimension_bin_boundaries );
 }
 
-// Convert a portion of the particle state to a generic map
-template<PhaseSpaceDimension dimension>
-inline void Estimator::convertPartialParticleStateToGenericMap( 
-			            const ParticleState& particle,
-			            DimensionValueMap& dimension_values ) const
-{
-  dimension_values[dimension] = 
-    PhaseSpaceDimensionTraits<dimension>::obfuscateValue( particle );
-
-  // Recursive template instantiation
-  convertPartialParticleStateToGenericMap<static_cast<PhaseSpaceDimension>(dimension+1)>( particle, dimension_values );
-}
-
-// This specialization allows recursion to end.
-template<>
-inline void Estimator::convertPartialParticleStateToGenericMap<DIMENSION_end>( 
-	                            const ParticleState& particle,
-	                            DimensionValueMap& dimension_values ) const
-{ /* ... */ }
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ESTIMATOR_DEF_HPP
