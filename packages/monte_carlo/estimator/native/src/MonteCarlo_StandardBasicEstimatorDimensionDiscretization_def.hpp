@@ -118,7 +118,7 @@ bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<b
 
 // Calculate the index of the bin that the value falls in
 template<typename T>
-bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::calculateBinIndex( 
+unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::calculateBinIndex( 
                                                           const T value ) const
 {
   // Make sure the value is in the discretization
@@ -136,12 +136,12 @@ bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<b
 
 // Calculate the index of the bin that the value falls in
 template<typename T>
-bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::calculateBinIndex( 
+unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::calculateBinIndex( 
                                                           const T value ) const
 {
   // Make sure the value is in the discretization
   testPrecondition( this->isValueInDiscretization( value ) );
-
+  
   return Utility::Search::binaryUpperBoundIndex( 
                                               this->getBinBoundaries().begin(),
                                               this->getBinBoundaries().end(),

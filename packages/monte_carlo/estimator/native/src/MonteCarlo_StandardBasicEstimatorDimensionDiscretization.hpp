@@ -58,7 +58,7 @@ protected:
   bool isValueInDiscretization( const T value ) const;
 
   //! Calculate the index of the bin that the value falls in
-  bool calculateBinIndex( const T value ) const;
+  unsigned calculateBinIndex( const T value ) const;
 };
 
 /*! The standard basic estimator dimension discretization class parial
@@ -92,7 +92,7 @@ protected:
   bool isValueInDiscretization( const T value ) const;
 
   //! Calculate the index of the bin that the value falls in
-  bool calculateBinIndex( const T value ) const;
+  unsigned calculateBinIndex( const T value ) const;
 };
 
 } // end MonteCarlo namespace
