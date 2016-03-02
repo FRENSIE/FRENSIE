@@ -21,7 +21,7 @@
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace DataGen{
@@ -74,7 +74,7 @@ private:
   Utility::GaussKronrodIntegrator d_alpha_gkq_set;
 
   // The integration gkq_set for integrating over beta values
-  Utility::GaussKronrodQuadratureSet d_beta_gkq_set;
+  Utility::GaussKronrodIntegrator d_beta_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

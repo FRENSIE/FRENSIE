@@ -22,7 +22,6 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
@@ -108,7 +107,6 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
     double abs_error;
     
     Utility::GaussKronrodIntegrator quadrature_gkq( precision );
-    Utility::GaussKronrodQuadratureSet quadrature_gkq_set( precision );
 
     if( electron_momentum_projection < 
 	d_compton_profile->getUpperBoundOfIndepVar() )

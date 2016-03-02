@@ -109,6 +109,8 @@ public:
   using Utility::GaussKronrodIntegrator::rescaleAbsoluteError;
   using Utility::GaussKronrodIntegrator::subintervalTooSmall;
   using Utility::GaussKronrodIntegrator::checkRoundoffError;
+  using Utility::GaussKronrodIntegrator::sortBins;
+  using Utility::GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation;
 };
 
 //---------------------------------------------------------------------------//
@@ -463,7 +465,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   bin_1.result = 5.0;
   bin_2.result = 5.0;
 
-  bin.error = 0.1;
+  bin.error = 1.0;
   bin_1.error = 0.5;
   bin_2.error = 0.49;
 
@@ -535,6 +537,370 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   TEST_EQUALITY_CONST( 2, round_off_2 );
 }
 
+//---------------------------------------------------------------------------//
+// Check the roundoff error
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+                   checkRoundoffError2 )
+{
+  TestGaussKronrodIntegrator test_integrator( 1e-12 );
+  
+  Utility::ExtrpolatedBinTraits bin, bin_1, bin_2;
+  int round_off_1 = 0;
+  int round_off_2 = 0;
+  int round_off_3 = 0;
+  int number_of_interactions = 0;
+  bool extrapolate = false;
+  double error_12 = 0.0, bin_1_asc = 0.0, bin_2_asc = 0.0;
+  double tol = 1e-12;
+
+  bin.result = 9.9999;
+  bin_1.result = 5.0;
+  bin_2.result = 5.0;
+
+  bin.error = 1.0;
+  bin_1.error = 0.5;
+  bin_2.error = 0.49;
+
+  bin_1_asc = bin_1.error;
+  bin_2_asc = bin_2.error;
+
+
+  test_integrator.checkRoundoffError( 
+                bin, 
+                bin_1,
+                bin_2,
+                bin_1_asc,
+                bin_2_asc,
+                round_off_1,
+                round_off_2,
+                round_off_3,
+                extrapolate,
+                number_of_interactions );  
+
+  TEST_EQUALITY_CONST( 0, round_off_1 );
+  TEST_EQUALITY_CONST( 0, round_off_2 );
+  TEST_EQUALITY_CONST( 0, round_off_3 );
+
+  bin_1_asc = 0.0;
+  bin_2_asc = 0.0;
+
+
+  test_integrator.checkRoundoffError( 
+                bin, 
+                bin_1,
+                bin_2,
+                bin_1_asc,
+                bin_2_asc,
+                round_off_1,
+                round_off_2,
+                round_off_3,
+                extrapolate,
+                number_of_interactions );  
+
+  TEST_EQUALITY_CONST( 1, round_off_1 );
+  TEST_EQUALITY_CONST( 0, round_off_2 );
+  TEST_EQUALITY_CONST( 0, round_off_3 );
+
+  extrapolate = true;
+
+  test_integrator.checkRoundoffError( 
+                bin, 
+                bin_1,
+                bin_2,
+                bin_1_asc,
+                bin_2_asc,
+                round_off_1,
+                round_off_2,
+                round_off_3,
+                extrapolate,
+                number_of_interactions );  
+
+  TEST_EQUALITY_CONST( 1, round_off_1 );
+  TEST_EQUALITY_CONST( 1, round_off_2 );
+  TEST_EQUALITY_CONST( 0, round_off_3 );
+
+  bin_2.error = 0.501;
+  number_of_interactions = 10;
+
+  test_integrator.checkRoundoffError( 
+                bin, 
+                bin_1,
+                bin_2,
+                bin_1_asc,
+                bin_2_asc,
+                round_off_1,
+                round_off_2,
+                round_off_3,
+                extrapolate,
+                number_of_interactions );   
+
+  TEST_EQUALITY_CONST( 1, round_off_1 );
+  TEST_EQUALITY_CONST( 2, round_off_2 );
+  TEST_EQUALITY_CONST( 1, round_off_3 );
+
+
+  bin.result = 9.9;
+
+  test_integrator.checkRoundoffError( 
+                bin, 
+                bin_1,
+                bin_2,
+                bin_1_asc,
+                bin_2_asc,
+                round_off_1,
+                round_off_2,
+                round_off_3,
+                extrapolate,
+                number_of_interactions );   
+
+  TEST_EQUALITY_CONST( 1, round_off_1 );
+  TEST_EQUALITY_CONST( 2, round_off_2 );
+  TEST_EQUALITY_CONST( 2, round_off_3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the error list can be sorted
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+                   sortBins )
+{
+  TestGaussKronrodIntegrator test_integrator( 1e-12 );
+  
+  Utility::ExtrpolatedBinTraits bin, bin_1, bin_2;
+  
+  int nr_max = 0;
+  int number_of_intervals = 3;
+
+  // Set up bin order array
+  Teuchos::Array<int> bin_order(3);
+  bin_order[0] = 0;
+  bin_order[1] = 1;
+  bin_order[2] = 2;
+
+  // Set bin array
+  Utility::BinArray bin_array(1000);
+  bin.error = 10.0;
+  bin_array[0] = bin;
+  bin.error = 8.0;
+  bin_array[1] = bin;
+  bin.error = 1.0;
+  bin_array[2] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 5.0;
+  bin_2.error = 2.0;
+ 
+  test_integrator.sortBins( 
+                bin_order, 
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max );  
+
+  TEST_EQUALITY_CONST( 1, bin_order[0] );
+  TEST_EQUALITY_CONST( 0, bin_order[1] );
+  TEST_EQUALITY_CONST( 3, bin_order[2] );
+  TEST_EQUALITY_CONST( 2, bin_order[3] );
+  TEST_EQUALITY_CONST( 0, nr_max );
+
+  // Test with nr_max != 0
+  nr_max = 1;
+  number_of_intervals = 3;
+
+  // Set up bin order array
+  bin_order.resize(3);
+  bin_order[0] = 0;
+  bin_order[1] = 1;
+  bin_order[2] = 2;
+
+  // Set bin array
+  bin.error = 10.0;
+  bin_array[0] = bin;
+  bin.error = 8.0;
+  bin_array[1] = bin;
+  bin.error = 1.0;
+  bin_array[2] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 11.0;
+  bin_2.error = 2.0;
+ 
+  test_integrator.sortBins( 
+                bin_order, 
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max ); 
+
+  TEST_EQUALITY_CONST( 1, bin_order[0] );
+  TEST_EQUALITY_CONST( 0, bin_order[1] );
+  TEST_EQUALITY_CONST( 3, bin_order[2] );
+  TEST_EQUALITY_CONST( 2, bin_order[3] );
+  TEST_EQUALITY_CONST( 0, nr_max );
+
+
+  // Test 3
+  nr_max = 0;
+  number_of_intervals = 3;
+
+  // Set up bin order array
+  bin_order.resize(3);
+  bin_order[0] = 1;
+  bin_order[1] = 0;
+  bin_order[2] = 2;
+
+  bin_array.clear();
+
+  // Set bin array
+  bin.error = 0.673651;
+  bin_array[0] = bin;
+  bin.error = 1.90537;
+  bin_array[1] = bin;
+  bin.error = 6.50354e-15;
+  bin_array[2] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 0.673652;
+  bin_2.error = 6.50353e-15;
+
+  test_integrator.sortBins( 
+                bin_order, 
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max ); 
+
+  TEST_EQUALITY_CONST( 1, bin_order[0] );
+  TEST_EQUALITY_CONST( 0, bin_order[1] );
+  TEST_EQUALITY_CONST( 2, bin_order[2] );
+  TEST_EQUALITY_CONST( 3, bin_order[3] );
+  TEST_EQUALITY_CONST( 0, nr_max );
+
+  // Test 4
+  nr_max = 3;
+  number_of_intervals = 6;
+
+  // Set up bin order array
+  bin_order.resize(6);
+  bin_order[0] = 3;
+  bin_order[1] = 4;
+  bin_order[2] = 0;
+  bin_order[3] = 2;
+  bin_order[4] = 1;
+  bin_order[5] = 5;
+
+  bin_array.clear();
+
+  // Set bin array
+  bin.error = 4.0;
+  bin_array[0] = bin;
+  bin.error = 2.0;
+  bin_array[1] = bin;
+  bin.error = 3.0;
+  bin_array[2] = bin;
+  bin.error = 6.0;
+  bin_array[3] = bin;
+  bin.error = 5.0;
+  bin_array[4] = bin;
+  bin.error = 1.0;
+  bin_array[5] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 2.5;
+  bin_2.error = 0.5;
+
+  test_integrator.sortBins( 
+                bin_order, 
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max ); 
+
+  TEST_EQUALITY_CONST( 3, bin_order[0] );
+  TEST_EQUALITY_CONST( 4, bin_order[1] );
+  TEST_EQUALITY_CONST( 0, bin_order[2] );
+  TEST_EQUALITY_CONST( 2, bin_order[3] );
+  TEST_EQUALITY_CONST( 1, bin_order[4] );
+  TEST_EQUALITY_CONST( 5, bin_order[5] );
+  TEST_EQUALITY_CONST( 6, bin_order[6] );
+  TEST_EQUALITY_CONST( 3, nr_max );
+
+  // Test 5
+  nr_max = 3;
+  number_of_intervals = 6;
+
+  // Set up bin order array
+  bin_order.resize(6);
+  bin_order[0] = 3;
+  bin_order[1] = 4;
+  bin_order[2] = 0;
+  bin_order[3] = 2;
+  bin_order[4] = 1;
+  bin_order[5] = 5;
+
+  bin_array.clear();
+
+  // Set bin array
+  bin.error = 4.0;
+  bin_array[0] = bin;
+  bin.error = 2.0;
+  bin_array[1] = bin;
+  bin.error = 3.0;
+  bin_array[2] = bin;
+  bin.error = 6.0;
+  bin_array[3] = bin;
+  bin.error = 5.0;
+  bin_array[4] = bin;
+  bin.error = 1.0;
+  bin_array[5] = bin;
+
+  // Set bin_1 and bin_2
+  bin_1.error = 4.5;
+  bin_2.error = 0.5;
+
+  test_integrator.sortBins( 
+                bin_order, 
+                bin_array,
+                bin_1,
+                bin_2,
+                number_of_intervals,
+                nr_max ); 
+
+  TEST_EQUALITY_CONST( 3, bin_order[0] );
+  TEST_EQUALITY_CONST( 4, bin_order[1] );
+  TEST_EQUALITY_CONST( 2, bin_order[2] );
+  TEST_EQUALITY_CONST( 0, bin_order[3] );
+  TEST_EQUALITY_CONST( 1, bin_order[4] );
+  TEST_EQUALITY_CONST( 5, bin_order[5] );
+  TEST_EQUALITY_CONST( 6, bin_order[6] );
+  TEST_EQUALITY_CONST( 2, nr_max );
+}
+/*
+//---------------------------------------------------------------------------//
+// Check that the Wynn Epsilon-Algorithm extrapolated value can be calculated
+TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
+                   getWynnEpsilonAlgorithmExtrapolation )
+{
+  TestGaussKronrodIntegrator test_integrator( 1e-12 );
+  
+  Teuchos::Array<double> bin_extrapolated_result(52);
+  Teuchos::Array<double> last_three_results(3);
+  double extrapolated_result, extrapolated_error;
+  int number_of_extrapolated_intervals, number_of_extrapolated_calls;
+ 
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
+                bin_extrapolated_result, 
+                last_three_results,
+                extrapolated_result,
+                extrapolated_error,
+                number_of_extrapolated_intervals,
+                number_of_extrapolated_calls );  
+
+}
+*/
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
@@ -652,7 +1018,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( result, 2.0, tol );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated
 TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
@@ -665,20 +1031,51 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   points_of_interest[1] = 0.0; // integrable singularity
   points_of_interest[2] = 1.0;
 
-  Utility::GaussKronrodIntegrator gkq_set( 1e-12, 0.0, 100000 );
+  Utility::GaussKronrodIntegrator gk_int( 1e-12, 0.0, 100000 );
 
   double result, absolute_error;
 
-  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
+  gk_int.integrateAdaptivelyWynnEpsilon( function_wrapper,
 					 points_of_interest(),
 					 result,
 					 absolute_error );
+
   
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( result, 4.0, tol );
 }
-*/
+
+//---------------------------------------------------------------------------//
+// Check that a function with no singularities can be integrated using Wynn Epsilon
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+                                   integrateAdaptivelyWynnEpsilon_no_singularities,
+                                   Functor )
+{
+  Functor functor_instance;
+
+  Teuchos::Array<double> points_of_interest( 3 );
+  points_of_interest[0] = 0.0;
+  points_of_interest[1] = 0.5;
+  points_of_interest[2] = 1.0;
+
+  Utility::GaussKronrodIntegrator gkq_set( 1e-12, 0.0, 100000 );
+
+  double result, absolute_error;
+
+  gkq_set.integrateAdaptivelyWynnEpsilon( 
+            functor_instance,
+    		points_of_interest(),
+			result,
+			absolute_error );
+  
+  double tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+}
+
+UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptivelyWynnEpsilon_no_singularities );
+
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodIntegrator.cpp
 //---------------------------------------------------------------------------//
