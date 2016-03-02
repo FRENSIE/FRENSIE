@@ -30,7 +30,18 @@ struct BinTraits
   }
 };
 
+struct ExtrpolatedBinTraits : BinTraits
+{
+  int level;
+
+  bool operator <( const ExtrpolatedBinTraits& bins ) const
+  {
+    return error < bins.error;
+  }
+};
+
 typedef std::priority_queue<BinTraits> BinQueue;
+typedef Teuchos::Array<ExtrpolatedBinTraits> BinArray;
 
 //! The Gauss-Kronrod integrator
 class GaussKronrodIntegrator
@@ -126,12 +137,12 @@ protected:
     double& integrand_value_upper ) const;
 
   // Bisect and integrate the given bin interval
-  template<int Points, typename Functor>
+  template<int Points, typename Functor, typename Bin>
   void bisectAndIntegrateBinInterval( 
     Functor& integrand, 
-    const BinTraits& bin,
-    BinTraits& bin_1,
-    BinTraits& bin_2,
+    const Bin& bin,
+    Bin& bin_1,
+    Bin& bin_2,
     double& bin_1_asc,
     double& bin_2_asc ) const;
 
@@ -173,14 +184,37 @@ protected:
                        int& round_off_1,
                        int& round_off_2,
                        const int number_of_iterations ) const;
+
+  // check the roundoff error 
+  void checkRoundoffError( 
+                       const ExtrpolatedBinTraits& bin, 
+                       const ExtrpolatedBinTraits& bin_1, 
+                       const ExtrpolatedBinTraits& bin_2,    
+                       const double& bin_1_asc,
+                       const double& bin_2_asc,
+                       int& round_off_1,
+                       int& round_off_2,
+                       int& round_off_3,
+                       const bool extrapolate, 
+                       const int number_of_iterations ) const;
  
   // Sort the bin order from highest to lowest error 
-  void sortErrorList( Teuchos::Array<double>& bin_error,
-                      Teuchos::Array<double>& bin_order, 
-                      double& maximum_bin_error, 
-                      int& bin_with_larger_error,
-                      int bin_with_smaller_error, 
-                      int nr_max ) const;
+  void sortBins( 
+        Teuchos::Array<int>& bin_order,
+        BinArray& bin_array, 
+        const ExtrpolatedBinTraits& bin_1,
+        const ExtrpolatedBinTraits& bin_2,
+        const int& number_of_intervals,
+        int& nr_max ) const;
+
+  // Sort the bin order from highest to lowest error 
+  void sortErrorList( 
+        Teuchos::Array<double>& bin_error,
+        Teuchos::Array<double>& bin_order, 
+        double& maximum_bin_error, 
+        int& bin_with_larger_error,
+        int bin_with_smaller_error, 
+        int nr_max ) const;
 
   // get the Wynn Epsilon-Algoirithm extrapolated value
   void getWynnEpsilonAlgorithmExtrapolation( 
@@ -188,8 +222,8 @@ protected:
         Teuchos::Array<double>& last_three_results, 
         double& extrapolated_result, 
         double& extrapolated_error,  
-        int& number_of_extrapolations,
-        int& last_extrapolated_bin  ) const;
+        int& number_of_extrapolated_intervals,
+        int& number_of_extrapolated_calls  ) const;
 
 private:
   // The relative error tolerance
