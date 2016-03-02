@@ -30,6 +30,7 @@
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
+#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_Tuple.hpp"
@@ -59,11 +60,11 @@ protected:
 
   //! Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
-  
-  // Typedef for map of dimension values
+
+  //! Typedef for map of dimension values
   typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
   DimensionValueMap;
-
+  
 public:
 
   //! Constructor
@@ -158,19 +159,23 @@ protected:
 				const ParticleState& particle,
 				const unsigned response_function_index ) const;
 
-  //! Convert particle state to a generic map
-  void convertParticleStateToGenericMap( 
-				   const ParticleState& particle,
-				   const double angle_cosine,
-				   DimensionValueMap& dimension_values ) const;
-
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace( 
-		             const DimensionValueMap& dimension_values ) const;
+           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
+
+  //! Check if the point is in the estimator phase space
+  bool isPointInEstimatorPhaseSpace(
+                             const DimensionValueMap& dimension_values ) const;
 			        
+  //! Calculate the bin index for the desired response function
+  unsigned calculateBinIndex( 
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const unsigned response_function_index ) const;
+
   //! Calculate the bin index for the desired response function
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
 			      const unsigned response_function_index ) const;
+                             
 
   //! Calculate the response function index given a bin index
   unsigned calculateResponseFunctionIndex( const unsigned bin_index ) const;
@@ -191,12 +196,6 @@ protected:
 		     double& figure_of_merit ) const;
 
 private:
-
-  // Convert a portion of the particle state to a generic map
-  template<PhaseSpaceDimension dimension>
-  void convertPartialParticleStateToGenericMap( 
-				   const ParticleState& particle,
-			           DimensionValueMap& dimension_values ) const;
 
   // Calculate the mean of a set of contributions
   double calculateMean( const double first_moment_contributions ) const;
@@ -302,22 +301,6 @@ inline double Estimator::evaluateResponseFunction(
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
   
   return d_response_functions[response_function_index]->evaluate( particle );
-}
-
-// Convert particle state to a generic map
-inline void Estimator::convertParticleStateToGenericMap( 
-			      const ParticleState& particle,
-			      const double angle_cosine,
-			      DimensionValueMap& dimension_values ) const
-{
-  // It may be useful to neglect the COSINE_DIMENSION in the future...
-  convertPartialParticleStateToGenericMap<DIMENSION_start>( particle,
-							    dimension_values );
-
-  // Assign the cosine dimension value separately
-  dimension_values[COSINE_DIMENSION] = 
-    PhaseSpaceDimensionTraits<COSINE_DIMENSION>::obfuscateValue( 
-								angle_cosine );
 }
 
 // Check if the estimator has uncommitted history contributions

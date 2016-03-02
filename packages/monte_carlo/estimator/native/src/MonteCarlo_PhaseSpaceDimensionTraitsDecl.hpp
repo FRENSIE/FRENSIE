@@ -19,7 +19,7 @@
 #include <Teuchos_any.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -66,50 +66,44 @@ struct PhaseSpaceDimensionTraits
     return 0;
   }
 
-  //! Convert a value from a basic particle state to a Teuchos::any object
-  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
-  { 
+  //! Extract a value from an estimator particle state wrapper
+  static inline const dimensionType& getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
+  {
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
-  } 
+  }
 
-  //! Convert a value to a Teuchos::any object
-  static inline Teuchos::any obfuscateValue( const dimensionType& value )
-  { 
-    (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
-    return 0;
-  }    
-
-  //! Extract a value from a Teuchos::any object associated with the dimension
-  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
+  //! Extract a value from an Teuchos::any container
+  static inline const dimensionType& getDimensionValue( const Teuchos::any& any_value )
   {
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
   }
 };
 
-/*! This function allows access to the obfuscateValue PhaseSpaceDimension
- * traits function.
- * \ingroup phase_space_dim_traits
+/*! This function allows access to the getDimensionValue PhaseSpaceDimension
+ * traits function
+ * \ingrouop phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline Teuchos::any obfuscateValue( const ParticleState& particle )
+inline typename PhaseSpaceDimensionTraits<dimension>::dimensionType 
+getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
 {
-  return PhaseSpaceDimensionTraits<dimension>::obfuscateValue( 
-								    particle );
+  return PhaseSpaceDimensionTraits<dimension>::getDimensionValue( 
+                                                            particle_wrapper );
 }
 
-/*! This function allows access to the obfuscateValue PhaseSpaceDimension
- * traits function.
+/*! This function allows access to the getDimensionvalue PhaseSpaceDimension
+ * traits function
  * \ingroup phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline Teuchos::any obfuscateValue( const typename PhaseSpaceDimensionTraits<dimension>::dimensionType& value )
+inline typename PhaseSpaceDimensionTraits<dimension>::dimensionType
+getDimensionValue( const Teuchos::any& any_value )
 {
-  return PhaseSpaceDimensionTraits<dimension>::obfuscateValue( value );
+  return PhaseSpaceDimensionTraits<dimension>::getDimensionValue( any_value );
+}
 								    
-}
-
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP

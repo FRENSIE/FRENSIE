@@ -113,10 +113,10 @@ protected:
   
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const EntityId entity_id,
-				      const ParticleState& particle,
-				      const double angle_cosine,
-				      const double contribution );
+  void addPartialHistoryContribution( 
+                   const EntityId entity_id,
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const double contribution );
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
@@ -169,9 +169,6 @@ private:
 	
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
-
-  // The generic particle state map (avoids having to make a new map for cont.)
-  Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
 
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;

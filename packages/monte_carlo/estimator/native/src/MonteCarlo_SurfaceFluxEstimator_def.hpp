@@ -62,12 +62,14 @@ void SurfaceFluxEstimator<
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
   
+    EstimatorParticleStateWrapper particle_state_wrapper( particle );
+    particle_state_wrapper.setAngleCosine( angle_cosine );
+
     StandardEntityEstimator<
        StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
-						              surface_crossing,
-							      particle, 
-							      angle_cosine,
-							      contribution );
+                                                        surface_crossing,
+							particle_state_wrapper,
+                                                        contribution );
   }
 }
 

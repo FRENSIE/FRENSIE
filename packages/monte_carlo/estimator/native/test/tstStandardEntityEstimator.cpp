@@ -993,104 +993,121 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 
   // bin 1
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 2 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 3
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 4
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 5
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 6
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 7
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 8
   particle.incrementCollisionNumber();
   particle.setTime( 2.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 9
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 10 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 11
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 12
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 13
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 14
   particle.setEnergy( 1.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  particle_wrapper.setAngleCosine( 0.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 15
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // Commit the contributions
   estimator_base->commitHistoryContribution();
@@ -1310,103 +1327,120 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     MonteCarlo::PhotonState particle( 0ull );
     particle.setEnergy( 1.0 );
     particle.setTime( 2.0 );
+    
+    MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+    particle_wrapper.setAngleCosine( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 1
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 2 
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
     
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 3
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 4
     particle.setTime( 1.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
     
     // bin 5
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 6
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // bin 7
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 8
     particle.incrementCollisionNumber();
     particle.setTime( 2.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 9
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 10 
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 11
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 12
     particle.setTime( 1.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 13
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 14
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // bin 15
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // Commit the contributions
     estimator_base->commitHistoryContribution();
@@ -1622,104 +1656,121 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 
   // bin 1
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 2 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 3
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 4
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 5
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 6
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 7
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 8
   particle.incrementCollisionNumber();
   particle.setTime( 2.0 );
   particle.setEnergy( 1.0 );
+  
+  particle_wrapper.setAngleCosine( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 9
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 10 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 11
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 12
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 13
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 14
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 15
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // Commit the contributions
   estimator_base->commitHistoryContribution();
@@ -1730,8 +1781,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 

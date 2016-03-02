@@ -13,17 +13,21 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
-#include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_StandardBasicEstimatorDimensionDiscretization.hpp"
 
 namespace MonteCarlo{
 
-//! The general estimator dimension discretization class
+/*! The general estimator dimension discretization class
+ * \details If the dimension is not compatible with the continuous or 
+ * discrete treatment provided by the 
+ * StandardBasicEstimatorDimensionDiscretization class then a specialization of
+ * this class should be made.
+ */
 template<PhaseSpaceDimension dimension>
-class GeneralEstimatorDimensionDiscretization : public EstimatorDimensionDiscretization
+class GeneralEstimatorDimensionDiscretization : public StandardBasicEstimatorDimensionDiscretization<typename PhaseSpaceDimensionTraits<dimension>::dimensionType>
 {
 
-protected:
+private:
 
   // Estimator phase space dimension traits typedef
   typedef PhaseSpaceDimensionTraits<dimension> DT;
@@ -42,80 +46,28 @@ public:
   //! Return the dimension name that has been discretized
   std::string getDimensionName() const;
 
-  //! Return the number of bins in the discretization
-  unsigned getNumberOfBins() const;
+  //! Check if the value is contained in the dimension discretization
+  bool isValueInDiscretization( 
+           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
   //! Check if the value is contained in the dimension discretization
-  bool isValueInDiscretization( const Teuchos::any& any_container ) const;
+  bool isValueInDiscretization( const Teuchos::any& any_value ) const;
 
   //! Calculate the index of the bin that the value falls in
-  virtual unsigned calculateBinIndex( const Teuchos::any& any_container) const;
+  unsigned calculateBinIndex( 
+           const EstimatorParticleStateWrapper& particle_state_wrapper ) const;
 
-  //! Print the boundaries of a bin
-  void printBoundariesOfBin( std::ostream& os, const unsigned bin_index) const;
-
-  //! Print the dimension discretization
-  void print( std::ostream& os ) const;
+  //! Calculate the index of the bin that the value falls in
+  unsigned calculateBinIndex( const Teuchos::any& any_value ) const;
 
   //! Export the bin boundaries
   void exportData( const unsigned estimator_id,
-		   EstimatorHDF5FileHandler& hdf5_file ) const;
+                   EstimatorHDF5FileHandler& hdf5_file ) const;
 
 private:
 
-  // The dimension bin boundaries
-  Teuchos::Array<typename DT::dimensionType> d_dimension_bin_boundaries;
-};
-
-/*! The general estimator dimension discretization class specialized for
- * the collision number bin dimension
- */
-template<>
-class GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION> : public EstimatorDimensionDiscretization
-{
-
-private:
-
-  // Estimator phase space dimension traits typedef
-  typedef PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION> DT;
-
-public:
-
-  //! Constructor
-  GeneralEstimatorDimensionDiscretization( 
-                              const Teuchos::Array<typename DT::dimensionType>&
-			      dimension_bin_boundaries );
-
-  //! Destructor
-  ~GeneralEstimatorDimensionDiscretization()
-  { /* ... */ }
-
-  //! Return the dimension name that has been discretized
-  std::string getDimensionName() const;
-
-  //! Return the number of bins in the discretization
-  unsigned getNumberOfBins() const;
-
-  //! Check if the value is contained in the dimension discretization
-  bool isValueInDiscretization( const Teuchos::any& any_container ) const;
-
-  //! Calculate the index of the bin that the value falls in
-  unsigned calculateBinIndex( const Teuchos::any& any_container ) const;
-
-  //! Print the boundaries of a bin
-  void printBoundariesOfBin( std::ostream& os, const unsigned bin_index) const;
-
-  //! Print the dimension discretization
-  void print( std::ostream& os ) const;
-
-  //! Export the bin boundaries
-  void exportData( const unsigned estimator_id,
-		   EstimatorHDF5FileHandler& hdf5_file ) const;
-
-private:
-
-  // The dimension bin boundaries
-  Teuchos::Array<typename DT::dimensionType> d_dimension_bin_boundaries;
+  using StandardBasicEstimatorDimensionDiscretization<typename DT::dimensionType>::isValueInDiscretization;
+  using StandardBasicEstimatorDimensionDiscretization<typename DT::dimensionType>::calculateBinIndex;
 };
 
 } // end MonteCarlo namespace

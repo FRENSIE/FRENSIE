@@ -47,6 +47,14 @@ enum PhaseSpaceDimension{
 std::string convertPhaseSpaceDimensionToString( 
 				         const PhaseSpaceDimension dimension );
 
+//! Convert the PhaseSpaceDimension to a string (basic)
+std::string convertPhaseSpaceDimensionToStringBasic(
+                                         const PhaseSpaceDimension dimension );
+
+//! Convert an unsigned to a PhaseSpaceDimension
+PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
+                                                    const unsigned dimension );
+
 //! Stream operator for printing PhaseSpaceDimension enums
 inline std::ostream& operator<<( std::ostream& os,
 				 const PhaseSpaceDimension dimension )
@@ -70,29 +78,24 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   //! Return the HDF5 data type
   static inline H5::EnumType dataType()
   {
-    // Make sure every enum will be converted
-    testPrecondition( MonteCarlo::DIMENSION_end == 4 );
-    
     H5::EnumType hdf5_phase_space_dimension_type( 
 				   sizeof( MonteCarlo::PhaseSpaceDimension ) );
 
-    MonteCarlo::PhaseSpaceDimension value = MonteCarlo::COSINE_DIMENSION;
-
-    hdf5_phase_space_dimension_type.insert( "COSINE_DIMENSION", &value );
+    MonteCarlo::PhaseSpaceDimension value;
+    std::string value_name;
     
-    value = MonteCarlo::ENERGY_DIMENSION;
+    for( unsigned i = MonteCarlo::DIMENSION_start; 
+         i < MonteCarlo::DIMENSION_end; 
+         ++i )
+    {
+      value = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( i );
 
-    hdf5_phase_space_dimension_type.insert( "ENERGY_DIMENSION", &value );
+      value_name = 
+        MonteCarlo::convertPhaseSpaceDimensionToStringBasic( value );
 
-    value = MonteCarlo::TIME_DIMENSION;
-
-    hdf5_phase_space_dimension_type.insert( "TIME_DIMENSION", &value );
-
-    value = MonteCarlo::COLLISION_NUMBER_DIMENSION;
-
-    hdf5_phase_space_dimension_type.insert( "COLLISION_NUMBER_DIMENSION", 
-					    &value );
-
+      hdf5_phase_space_dimension_type.insert( value_name.c_str(), &value );
+    }
+    
     return hdf5_phase_space_dimension_type;
   }
 
