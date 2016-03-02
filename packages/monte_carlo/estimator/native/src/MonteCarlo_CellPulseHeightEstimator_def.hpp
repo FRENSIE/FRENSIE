@@ -29,7 +29,8 @@ CellPulseHeightEstimator<
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
-    d_update_tracker( 1 )
+    d_update_tracker( 1 ),
+    d_dimension_values( 1 )
 { /* ... */ }
 
 // Set the response functions

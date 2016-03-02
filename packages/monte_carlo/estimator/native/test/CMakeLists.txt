@@ -18,6 +18,12 @@ ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
 TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction monte_carlo_estimator_native)
 ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
 
+ADD_EXECUTABLE(tstEstimatorParticleStateWrapper
+  tstEstimatorParticleStateWrapper.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimatorParticleStateWrapper monte_carlo_estimator_native)
+ADD_TEST(EstimatorParticleStateWrapper_test tstEstimatorParticleStateWrapper)
+
 ADD_EXECUTABLE(tstParticleHistoryObserverHDF5FileHandler
   tstParticleHistoryObserverHDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
