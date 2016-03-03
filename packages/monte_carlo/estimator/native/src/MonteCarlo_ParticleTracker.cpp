@@ -14,8 +14,9 @@
 namespace MonteCarlo{
 
 // Constructor
-ParticleTracker::ParticleTracker( const unsigned number_of_histories )
-  : ParticleHistoryObserver( 0u ),
+ParticleTracker::ParticleTracker( const ParticleHistoryObserver::idType id,
+                                  const unsigned number_of_histories )
+  : ParticleHistoryObserver( id ),
     d_particle_reset(),
     d_number_of_histories( number_of_histories ),
     d_x_pos(),

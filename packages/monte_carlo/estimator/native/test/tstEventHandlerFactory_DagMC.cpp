@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( EventHandlerFactoryDagMC, initializeHandlerUsingDagMC )
                                                     *observer_reps,
                                                     response_function_id_map );
                                                     
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 17 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 18 );
 }
 
 //---------------------------------------------------------------------------//
