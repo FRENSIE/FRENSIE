@@ -21,7 +21,6 @@
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
-#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace DataGen{
