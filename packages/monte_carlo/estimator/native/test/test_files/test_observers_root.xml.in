@@ -1,6 +1,6 @@
 <ParameterList name="Observers">
 
- <ParameterList name="Cell Track Length Flux Estimator 2">
+   <ParameterList name="Cell Track Length Flux Estimator 2">
     <Parameter name="Id" type="unsigned int" value="12"/>
     <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
     <Parameter name="Particle Type" type="string" value="Electron"/>
@@ -41,6 +41,10 @@
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="2"/>
+  </ParameterList>
+
+  <ParameterList name="Particle Tracker 1">
+    <Parameter name="Type" type="string" value="Particle Tracker"/>
   </ParameterList>
 
 </ParameterList>

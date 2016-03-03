@@ -31,12 +31,14 @@
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 #include "FRENSIE_mpi_config.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "MonteCarlo_ParticleHistoryObserver.hpp"
 
 namespace MonteCarlo{
 
 /*! The particle tracking class, similar to the PTRAC function in MCNP
  */
-class ParticleTracker : public ParticleSubtrackEndingGlobalEventObserver
+class ParticleTracker : public ParticleSubtrackEndingGlobalEventObserver,
+  public ParticleHistoryObserver
 {
 
 public:
@@ -63,10 +65,6 @@ public:
   
   //! Reset particle track data for next particle
   void resetParticleTrackData();
-
-  //! Export the particle tracker data via hdf5
-  void exportData( ParticleTrackerHDF5FileHandler& hdf5_file,
-                   const bool process_data ) const;
 
   //! Get the x position data
   void getXPositionData( std::vector< double >& array );
@@ -105,16 +103,26 @@ public:
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 
-  //! Reset data
-  void resetData();
-  
+  //! Check if the observer has uncommitted history contributions
+  bool hasUncommittedHistoryContribution() const;
+
   //! Commit History Contribution
   void commitHistoryContribution();
+
+  //! Reset data
+  void resetData();
   
   //! Reduce estimator data in multiple nodes
   void reduceData( 
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
+
+  //! Export the particle tracker data via hdf5
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                   const bool process_data ) const;
+                   
+  //! Print a summary of the data
+  void printSummary( std::ostream& os ) const;
 
   //! Serialize the data and pack it into a string
   std::string packDataInString();

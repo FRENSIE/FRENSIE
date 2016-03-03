@@ -236,6 +236,7 @@ TARGET_LINK_LIBRARIES(tstDistributedParticleTracker monte_carlo_estimator_native
 ADD_TEST(DistributedParticleTracker_test ${MPIEXEC} -n 4 tstDistributedParticleTracker)
 ENDIF()
 
+
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_EXECUTABLE(tstSharedParallelParticleTracker 
     tstSharedParallelParticleTracker.cpp ${BOOST_PREFIX})
