@@ -104,7 +104,7 @@ public:
   void integrateInfiniteInterval( Functor& integrand,
 				  double& result,
 				  double& absolute_error ) const;
-*/
+
   //! Integrate a function with integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( Functor& integrand,
@@ -112,7 +112,7 @@ public:
 				       double upper_limit,
 				       double& result,
 				       double& absolute_error ) const;
-
+*/
   //! Integrate a function with known integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( 
@@ -158,22 +158,6 @@ protected:
                                    double& lower_limit_2, 
                                    double& upper_limit_2 ) const;
 
-  // Update the integral results and errors
-  void updateIntegral( Teuchos::Array<double>& bin_lower_limit, 
-                              Teuchos::Array<double>& bin_upper_limit, 
-                              Teuchos::Array<double>& bin_result, 
-                              Teuchos::Array<double>& bin_error,
-                              double& lower_limit_1, 
-                              double& upper_limit_1,
-                              double& area_1, 
-                              double& error_1,
-                              double& lower_limit_2,
-                              double& upper_limit_2, 
-                              double& area_2, 
-                              double& error_2,
-                              int& last,
-                              int& bin_with_max_error ) const;
-
   // check the roundoff error 
   void checkRoundoffError( 
                        const BinTraits& bin, 
@@ -206,15 +190,6 @@ protected:
         const ExtrpolatedBinTraits& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const;
-
-  // Sort the bin order from highest to lowest error 
-  void sortErrorList( 
-        Teuchos::Array<double>& bin_error,
-        Teuchos::Array<double>& bin_order, 
-        double& maximum_bin_error, 
-        int& bin_with_larger_error,
-        int bin_with_smaller_error, 
-        int nr_max ) const;
 
   // get the Wynn Epsilon-Algoirithm extrapolated value
   void getWynnEpsilonAlgorithmExtrapolation( 

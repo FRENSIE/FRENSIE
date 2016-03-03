@@ -878,7 +878,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   TEST_EQUALITY_CONST( 6, bin_order[6] );
   TEST_EQUALITY_CONST( 2, nr_max );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check that the Wynn Epsilon-Algorithm extrapolated value can be calculated
 TEUCHOS_UNIT_TEST( GaussKronrodIntegrator, 
@@ -890,6 +890,14 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
   Teuchos::Array<double> last_three_results(3);
   double extrapolated_result, extrapolated_error;
   int number_of_extrapolated_intervals, number_of_extrapolated_calls;
+  double tol = 1e-16;
+  number_of_extrapolated_calls = 0;
+
+  // test 1
+  number_of_extrapolated_intervals = 2;
+  bin_extrapolated_result[0] = 3.93505142975913369L;
+  bin_extrapolated_result[1] = 3.95407442555431254L;
+  bin_extrapolated_result[2] = 3.96752571487956640L;
  
   test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
                 bin_extrapolated_result, 
@@ -897,10 +905,136 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
                 extrapolated_result,
                 extrapolated_error,
                 number_of_extrapolated_intervals,
-                number_of_extrapolated_calls );  
+                number_of_extrapolated_calls ); 
+
+  TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 2 );
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 1 ); 
+  TEST_FLOATING_EQUALITY( extrapolated_error, 
+                          std::numeric_limits<double>::max(), 
+                          tol );
+  TEST_FLOATING_EQUALITY( extrapolated_result, 
+                          3.99999999999999645, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[0], 
+                          3.99999999999999645, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[1], 
+                          0.0, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[2], 
+                          0.0, 
+                          tol );
+
+  // test 2
+  number_of_extrapolated_intervals = 3;
+  bin_extrapolated_result[0] = 3.99999999999999645L;
+  bin_extrapolated_result[1] = 3.95407442555431254L;
+  bin_extrapolated_result[2] = 3.96752571487956640L;
+  bin_extrapolated_result[3] = 3.97703721277715605L;
+  bin_extrapolated_result[4] = 3.96752571487956640L;
+ 
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
+                bin_extrapolated_result, 
+                last_three_results,
+                extrapolated_result,
+                extrapolated_error,
+                number_of_extrapolated_intervals,
+                number_of_extrapolated_calls ); 
+
+  TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 3 );
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 2 ); 
+  TEST_FLOATING_EQUALITY( extrapolated_error, 
+                          std::numeric_limits<double>::max(), 
+                          tol );
+  TEST_FLOATING_EQUALITY( extrapolated_result, 
+                          4.00000000000000355, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[0], 
+                          3.99999999999999645, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[1], 
+                          4.00000000000000355, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[2], 
+                          0.0, 
+                          tol );
+
+
+  // test 3
+  number_of_extrapolated_intervals = 4;
+  bin_extrapolated_result[0] = 3.99999999999999645L;
+  bin_extrapolated_result[1] = 4.00000000000000355L;
+  bin_extrapolated_result[2] = 3.96752571487956640L;
+  bin_extrapolated_result[3] = 3.97703721277715605L;
+  bin_extrapolated_result[4] = 3.98376285743978320L;
+  bin_extrapolated_result[5] = 3.97703721277715605L;
+ 
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
+                bin_extrapolated_result, 
+                last_three_results,
+                extrapolated_result,
+                extrapolated_error,
+                number_of_extrapolated_intervals,
+                number_of_extrapolated_calls ); 
+
+  TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 4 );
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 3 ); 
+  TEST_FLOATING_EQUALITY( extrapolated_error, 
+                          std::numeric_limits<double>::max(), 
+                          tol );
+  TEST_FLOATING_EQUALITY( extrapolated_result, 
+                          4.00000000000000089, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[0], 
+                          3.99999999999999645, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[1], 
+                          4.00000000000000355, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[2], 
+                          4.00000000000000089, 
+                          tol );
+
+
+  // test 4
+  number_of_extrapolated_intervals = 5;
+  bin_extrapolated_result[0] = 4.00000000000000089L;
+  bin_extrapolated_result[1] = 4.00000000000000355L;
+  bin_extrapolated_result[2] = 3.99999999999999911L;
+  bin_extrapolated_result[3] = 3.97703721277715605L;
+  bin_extrapolated_result[4] = 3.98376285743978320L;
+  bin_extrapolated_result[5] = 3.98851860638857758L;
+  bin_extrapolated_result[6] = 3.98376285743978320L;
+
+ 
+  test_integrator.getWynnEpsilonAlgorithmExtrapolation( 
+                bin_extrapolated_result, 
+                last_three_results,
+                extrapolated_result,
+                extrapolated_error,
+                number_of_extrapolated_intervals,
+                number_of_extrapolated_calls ); 
+
+  TEST_EQUALITY_CONST( number_of_extrapolated_intervals, 5 );
+  TEST_EQUALITY_CONST( number_of_extrapolated_calls, 4 ); 
+  TEST_FLOATING_EQUALITY( extrapolated_error, 
+                          5.68434188608080149e-14, 
+                          tol );
+  TEST_FLOATING_EQUALITY( extrapolated_result, 
+                          3.99999999999998135, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[0], 
+                          4.00000000000000355, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[1], 
+                          4.00000000000000089, 
+                          tol );
+  TEST_FLOATING_EQUALITY( last_three_results[2], 
+                          3.99999999999998135, 
+                          tol );
 
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1] adaptively
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
@@ -990,39 +1124,7 @@ UNIT_TEST_INSTANTIATION( GaussKronrodIntegrator, integrateAdaptively );
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated
 TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
-		   integrateAdaptivelyWynnEpsilon_basic )
-{
-  boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
-
-  Utility::GaussKronrodIntegrator gkq_set( 1e-12, 0.0, 100000 );
-
-  double result, absolute_error;
-
-  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
-					 0.0,
-					 1.0,
-					 result,
-					 absolute_error );
-
-  double tol = absolute_error/result;
-
-  TEST_FLOATING_EQUALITY( result, 2.0, tol );
-
-  gkq_set.integrateAdaptivelyWynnEpsilon( function_wrapper,
-					 -1.0,
-					 0.0,
-					 result,
-					 absolute_error );
-
-  tol = absolute_error/result;
-
-  TEST_FLOATING_EQUALITY( result, 2.0, tol );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a function with integrable singularities can be integrated
-TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
-		   integrateAdaptivelyWynnEpsilon_advanced )
+		   integrateAdaptivelyWynnEpsilon )
 {
   boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
 
