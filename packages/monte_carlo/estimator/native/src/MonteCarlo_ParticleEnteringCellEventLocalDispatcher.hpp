@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle entering cell event dispatcher class
+/*! The particle entering cell event dispatcher class
+ * \ingroup particle_entering_cell_event
+ */
 class ParticleEnteringCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,ParticleEnteringCellEventObserver>
 {
   

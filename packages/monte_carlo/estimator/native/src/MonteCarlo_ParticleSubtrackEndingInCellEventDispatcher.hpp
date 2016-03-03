@@ -21,7 +21,9 @@
 
 namespace MonteCarlo{
 
-//! The particle subtrack ending in cell event dispatcher database class
+/*! The particle subtrack ending in cell event dispatcher database class
+ * \ingroup particle_subtrack_ending_in_cell_event
+ */
 class ParticleSubtrackEndingInCellEventDispatcher : public ParticleEventDispatcher<ParticleSubtrackEndingInCellEventLocalDispatcher>
 {
 

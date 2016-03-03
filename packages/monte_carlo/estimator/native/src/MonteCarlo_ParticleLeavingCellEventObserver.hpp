@@ -17,9 +17,18 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
+/*! \defgroup particle_leaving_cell_event Particle Leaving Cell Event
+ * \ingroup entity_events
+ * 
+ * Infrastructure used to acquire information from particle leaving cell 
+ * events.
+ */
+
 namespace MonteCarlo{
 
-//! The particle leaving cell event observer base class
+/*! The particle leaving cell event observer base class
+ * \ingroup particle_leaving_cell_event
+ */
 class ParticleLeavingCellEventObserver{
   
 public:

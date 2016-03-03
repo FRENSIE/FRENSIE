@@ -17,9 +17,18 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
+/*! \defgroup particle_crossing_surface_event Particle Crossing Surface Event
+ * \ingroup entity_events
+ *
+ * Infrastructure used to acquire information from particle crossing surface
+ * events.
+ */
+
 namespace MonteCarlo{
 
-//! The particle crossing surface event observer base class
+/*! The particle crossing surface event observer base class
+ * \ingroup particle_crossing_surface_event
+ */
 class ParticleCrossingSurfaceEventObserver
 {
 

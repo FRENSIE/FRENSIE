@@ -21,7 +21,9 @@
 
 namespace MonteCarlo{
 
-//! The particle entering cell event dispatcher database class
+/*! The particle entering cell event dispatcher database class
+ * \ingroup particle_entering_cell_event
+ */
 class ParticleEnteringCellEventDispatcher : public ParticleEventDispatcher<ParticleEnteringCellEventLocalDispatcher>
 {
 

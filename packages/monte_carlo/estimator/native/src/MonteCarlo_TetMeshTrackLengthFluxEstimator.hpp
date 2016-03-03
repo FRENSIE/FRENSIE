@@ -37,6 +37,7 @@
 namespace MonteCarlo{
 
 /*! The tet-mesh track length flux estimator class
+ * \ingroup particle_subtrack_ending_global_event
  * \details This class is based off of the TrackLengthMeshTally written by
  * Kerry Dunn (UW-Madison CNERG group). The DAGMC repo that contains her
  * class can be found at https://github.com/svalinn/DAGMC.

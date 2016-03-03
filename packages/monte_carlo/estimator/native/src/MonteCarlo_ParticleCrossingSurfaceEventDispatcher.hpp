@@ -21,7 +21,9 @@
 
 namespace MonteCarlo{
 
-//! The particle crossing surface event dispatcher database class
+/*! The particle crossing surface event dispatcher database class
+ * \ingroup particle_crossing_surface_event
+ */
 class ParticleCrossingSurfaceEventDispatcher : public ParticleEventDispatcher<ParticleCrossingSurfaceEventLocalDispatcher>
 {
 

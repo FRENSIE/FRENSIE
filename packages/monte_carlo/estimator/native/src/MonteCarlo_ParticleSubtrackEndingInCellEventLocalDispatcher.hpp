@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle subtrack ending in cell event dispatcher class
+/*! The particle subtrack ending in cell event dispatcher class
+ * \ingroup particle_subtrack_ending_in_cell_event
+ */
 class ParticleSubtrackEndingInCellEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalCellHandle,ParticleSubtrackEndingInCellEventObserver>
 {
   

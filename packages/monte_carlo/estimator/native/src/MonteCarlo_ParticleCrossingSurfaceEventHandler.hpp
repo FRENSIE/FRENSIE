@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle crossing surface event handler class
+/*! The particle crossing surface event handler class
+ * \ingroup particle_crossing_surface_event
+ */
 class ParticleCrossingSurfaceEventHandler
 {
 

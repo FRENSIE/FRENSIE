@@ -19,7 +19,9 @@
 
 namespace MonteCarlo{
 
-//! The cell track length flux estimator class
+/*! The cell track length flux estimator class
+ * \ingroup particle_subtrack_ending_in_cell_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellTrackLengthFluxEstimator : public StandardCellEstimator,
 				     public ParticleSubtrackEndingInCellEventObserver

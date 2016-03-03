@@ -17,9 +17,18 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
+/*! \defgroup particle_subtrack_ending_in_cell_event Particle Subtrack Ending In Cell Event
+ * \ingroup entity_events
+ *
+ * Infrastructure used to acquire information from particle subtrack ending
+ * in cell events.
+ */
+
 namespace MonteCarlo{
 
-//! The particle subtrack ending in cell event observer
+/*! The particle subtrack ending in cell event observer
+ * \ingroup particle_subtrack_ending_in_cell_event
+ */
 class ParticleSubtrackEndingInCellEventObserver
 {
   

@@ -19,7 +19,9 @@
 
 namespace MonteCarlo{
 
-//! The cell collision flux estimator class
+/*! The cell collision flux estimator class
+ * \ingroup particle_colliding_in_cell_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellCollisionFluxEstimator : public StandardCellEstimator,
 				   public ParticleCollidingInCellEventObserver
