@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 51.5291662208688734, 1e-15 );
-/*
+
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 32.3480137739510241, 1e-15 );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );*/
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
