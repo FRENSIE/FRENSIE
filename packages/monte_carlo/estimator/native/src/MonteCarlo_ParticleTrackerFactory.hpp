@@ -49,7 +49,11 @@ public:
   
   //! Create and register a particle tracker
   void createAndRegisterParticleTracker(
-                                    const Teuchos::ParameterList& ptrac_rep );
+                                   const Teuchos::ParameterList& ptrac_rep );
+
+  //! Get the particle tracker ID
+  unsigned getParticleTrackerID(
+                              const Teuchos::ParameterList& ptrac_rep ) const;
 
 private:
 
@@ -74,7 +78,18 @@ getParticleTrackerFactoryInstance(
     new ParticleTrackerFactory( event_handler,
                                 os_warn ) );
 }
+ 
+//! The invalid estimator representation error
+class InvalidParticleTrackerRepresentation : public std::runtime_error
+{
   
+public:
+
+  InvalidParticleTrackerRepresentation( const std::string& what_arg )
+    : std::runtime_error( what_arg )
+  { /* ... */ }
+};
+ 
 } // end MonteCarlo namespace
 
 #endif // MONTE_CARLO_PARTICLE_TRACKER_FACTORY_HPP

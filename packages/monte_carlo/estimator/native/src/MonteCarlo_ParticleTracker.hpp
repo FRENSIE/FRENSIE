@@ -48,7 +48,8 @@ public:
   EventTags;
   
   //! Constructor
-  ParticleTracker( const unsigned number_of_histories = 100 );
+  ParticleTracker( const ParticleHistoryObserver::idType id,
+                   const unsigned number_of_histories = 100 );
   
   //! Destructor
   ~ParticleTracker()

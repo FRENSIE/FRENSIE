@@ -59,9 +59,21 @@ void ParticleTrackerFactory::createAndRegisterParticleTracker(
   // Get the number of histories
   this->getNumberOfHistories( ptrac_rep );
   
-  std::shared_ptr<ParticleTracker> particle_tracker;
+  // Get the particle tracker ID
+  unsigned ptrac_id;
   
-  particle_tracker.reset( new ParticleTracker( d_number_histories ) );
+  try{
+    ptrac_id = this->getParticleTrackerID( ptrac_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                              InvalidParticleTrackerRepresentation,
+                              "Error: could not get the particle tracker id "
+                              "for estimator " << ptrac_rep.name() << "!" );
+  
+  // Construct the new particle tracker
+  std::shared_ptr<ParticleTracker> particle_tracker;
+  particle_tracker.reset( new ParticleTracker( ptrac_id,
+                                               d_number_histories ) );
   
   std::shared_ptr<ParticleTracker>
     derived_particle_tracker = std::dynamic_pointer_cast<ParticleTracker>( particle_tracker );
@@ -77,6 +89,18 @@ void ParticleTrackerFactory::getNumberOfHistories(
   {
     d_number_histories = ptrac_rep.get<unsigned>( "Histories" );
   }
+}
+
+// Get the particle tracker ID
+unsigned ParticleTrackerFactory::getParticleTrackerID(
+                               const Teuchos::ParameterList& ptrac_rep ) const
+{
+  TEST_FOR_EXCEPTION( !ptrac_rep.isParameter( "Id" ),
+                      InvalidParticleTrackerRepresentation,
+                      "Error: the particle tracker id was not specified "
+                      "in particle tracker " << ptrac_rep.name() << "!" );
+                      
+   return ptrac_rep.get<unsigned>( "Id" );
 }
 
 } // end MonteCarlo namespace
