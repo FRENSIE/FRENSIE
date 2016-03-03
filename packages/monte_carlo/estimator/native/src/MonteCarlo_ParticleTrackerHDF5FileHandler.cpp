@@ -56,13 +56,15 @@ ParticleTrackerHDF5FileHandler::ParticleTrackerHDF5FileHandler(
 
 // Constructor (file sharing)
 ParticleTrackerHDF5FileHandler::ParticleTrackerHDF5FileHandler( 
-		      const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file )
+		      const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
   : d_hdf5_file( hdf5_file ),
     d_hdf5_file_ownership( false )
 {
   // Make sure the file is valid
-  testPrecondition( !hdf5_file.is_null() );
+  testPrecondition( hdf5_file.get() );
   testPrecondition( hdf5_file->hasOpenFile() );
+  
+  Utility::HDF5FileHandler::throwExceptions();
 }
 
 // Destructor

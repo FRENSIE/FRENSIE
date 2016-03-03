@@ -56,7 +56,7 @@ public:
 
   //! Constructor (file sharing)
   ParticleTrackerHDF5FileHandler( 
-		     const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file );
+		     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
   ~ParticleTrackerHDF5FileHandler();
@@ -106,7 +106,7 @@ private:
   static const std::string particle_tracker_group_loc_name;
 
   // The HDF5 file handler
-  Teuchos::RCP<Utility::HDF5FileHandler> d_hdf5_file;
+  std::shared_ptr<Utility::HDF5FileHandler> d_hdf5_file;
 
   // The ownership flag
   bool d_hdf5_file_ownership;
