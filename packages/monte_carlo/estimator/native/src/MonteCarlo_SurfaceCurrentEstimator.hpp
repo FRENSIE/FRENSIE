@@ -15,7 +15,9 @@
 
 namespace MonteCarlo{
 
-//! The surface current estimator class
+/*! The surface current estimator class
+ * \ingroup particle_crossing_surface_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class SurfaceCurrentEstimator : public StandardSurfaceEstimator
 {

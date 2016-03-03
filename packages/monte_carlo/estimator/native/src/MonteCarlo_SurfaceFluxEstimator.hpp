@@ -15,7 +15,9 @@
 
 namespace MonteCarlo{
 
-//! The surface flux estimator class
+/*! The surface flux estimator class
+ * \ingroup particle_crossing_surface_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class SurfaceFluxEstimator : public StandardSurfaceEstimator
 {

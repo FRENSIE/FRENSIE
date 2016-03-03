@@ -17,14 +17,14 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
-namespace MonteCarlo{
-
 /*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
  * \ingroup entity_events
  * 
  * Infrastructure used to acquire information from particle colliding
  * in cell events. 
  */
+
+namespace MonteCarlo{
 
 /*! The particle colliding in cell event observer base class
  * \ingroup particle_colliding_in_cell_event

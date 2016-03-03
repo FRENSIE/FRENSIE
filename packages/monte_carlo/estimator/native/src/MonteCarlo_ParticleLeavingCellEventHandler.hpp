@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle leaving cell event handler class
+/*! The particle leaving cell event handler class
+ * \ingroup particle_leaving_cell_event
+ */
 class ParticleLeavingCellEventHandler
 {
 

@@ -17,9 +17,18 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
+/*! \defgroup particle_entering_cell_event Particle Entering Cell Event
+ * \ingroup entity_events
+ *
+ * Infrastructure used to acquire information from particle entering cell 
+ * events.
+ */
+
 namespace MonteCarlo{
 
-//! The particle entering cell event observer base class
+/*! The particle entering cell event observer base class
+ * \ingroup particle_entering_cell_event
+ */
 class ParticleEnteringCellEventObserver
 {
   

@@ -23,6 +23,8 @@
 namespace MonteCarlo{
 
 /*! The pulse height entity estimator class
+ * \ingroup particle_entering_cell_event
+ * \ingroup particle_leaving_cell_event
  * \details This class has been set up to get correct results with multiple
  * threads. However, the commitHistoryContribution member function call 
  * should only appear within an omp critical block. Use the enable thread

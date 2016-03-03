@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle subtrack ending global event handler class
+/*! The particle subtrack ending global event handler class
+ * \ingroup particle_subtrack_ending_global_event
+ */
 class ParticleSubtrackEndingGlobalEventHandler
 {
 

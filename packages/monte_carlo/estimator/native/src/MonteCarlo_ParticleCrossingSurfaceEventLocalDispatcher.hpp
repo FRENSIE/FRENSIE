@@ -24,7 +24,9 @@
 
 namespace MonteCarlo{
 
-//! The particle crossing surface event dispatcher class
+/*! The particle crossing surface event dispatcher class
+ * \ingroup particle_crossing_surface_event
+ */
 class ParticleCrossingSurfaceEventLocalDispatcher : public ParticleEventLocalDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,ParticleCrossingSurfaceEventObserver>
 {
 
