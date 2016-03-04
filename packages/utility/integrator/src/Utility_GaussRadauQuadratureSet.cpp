@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "Utility_GaussRadauQuadratureSet.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -341,9 +341,9 @@ double GaussRadauQuadratureSet::findWeightAtEndPoint( double end_point,
   double abs_error, result;
   double precision = 1e-12;
     
-  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+  Utility::GaussKronrodIntegrator integrator( precision );
 
-  quadrature_set.integrateAdaptively<15>(
+  integrator.integrateAdaptively<15>(
 					weight_function,
 					-1.0,
 					1.0,
@@ -378,9 +378,9 @@ double GaussRadauQuadratureSet::findWeightAtNode( double node,
   double abs_error, result;
   double precision = 1e-12;
     
-  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+  Utility::GaussKronrodIntegrator integrator( precision );
 
-  quadrature_set.integrateAdaptively<15>(
+  integrator.integrateAdaptively<15>(
 					weight_function,
 					-1.0,
 					1.0,

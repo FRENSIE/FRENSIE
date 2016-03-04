@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "DataGen_AdjointBremsstrahlungCrossSectionEvaluator.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
@@ -74,9 +74,9 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
 
     double abs_error;
     
-    Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+    Utility::GaussKronrodIntegrator integrator( precision );
 
-    quadrature_set.integrateAdaptively<15>(
+    integrator.integrateAdaptively<15>(
 					diff_adjoint_brem_wrapper,
 					d_energy_loss_distribution.front().first,
 					d_energy_loss_distribution.back().first,

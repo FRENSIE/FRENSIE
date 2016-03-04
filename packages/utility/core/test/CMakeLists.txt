@@ -152,12 +152,6 @@ ADD_EXECUTABLE(tstLegendrePolynomial
 TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
 ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
 
-ADD_EXECUTABLE(tstGaussRadauQuadratureSet 
-  tstGaussRadauQuadratureSet.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussRadauQuadratureSet utility_core)
-ADD_TEST(GaussRadauQuadratureSet_test tstGaussRadauQuadratureSet)
-
 ADD_EXECUTABLE(tstGaussLegendreQuadratureSet 
   tstGaussLegendreQuadratureSet.cpp )
 TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureSet utility_core)
