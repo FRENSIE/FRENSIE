@@ -243,7 +243,7 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_pb )
   TEST_EQUALITY_CONST( occupation_number, 0.0 );
 
   occupation_number = 
-    occupation_number_pb_k->evaluateOccupationNumber( 0.0, 1e-5 );
+    occupation_number_pb_k->evaluateOccupationNumber( 0.0, 1e-6 );
   
   TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-5 );
 

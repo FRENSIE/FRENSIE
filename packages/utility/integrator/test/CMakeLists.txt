@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(tstGaussKronrodIntegrator 
+  tstGaussKronrodIntegrator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGaussKronrodIntegrator utility_integrator)
+ADD_TEST(GaussKronrodIntegrator_test tstGaussKronrodIntegrator)
