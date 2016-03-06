@@ -8,6 +8,7 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationManager.hpp"
@@ -16,7 +17,9 @@
 extern Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
 
 //! The core facemc function (problem setup and execution)
-int facemcCore( int argc, char** argv );
+int facemcCore( int argc, 
+                char** argv,
+                Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm );
 
 //---------------------------------------------------------------------------//
 // end facemcCore.hpp

@@ -13,11 +13,6 @@
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "FRENSIE_mpi_config.hpp"
 
-// Trilinos Includes
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif 
-
 namespace MonteCarlo{
 
 //! The batched distributed memory particle simulation manager class
@@ -70,18 +65,15 @@ private:
   void coordinateWorkers();
 
   // Tell workers to stop working
-  void stopWorkersAndRecordWork( 
-		        const Teuchos::MpiComm<unsigned long long>& mpi_comm );
+  void stopWorkersAndRecordWork();
 
   // Check for idle worker
   bool isIdleWorkerPresent( 
-                  const Teuchos::MpiComm<unsigned long long>& mpi_comm,
                   Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> >&
 		  idle_worker_info );
   
   // Assign work to idle workers
   void assignWorkToIdleWorker(
-               const Teuchos::MpiComm<unsigned long long>& mpi_comm,
                const Teuchos::CommStatus<unsigned long long>& idle_worker_info,
 	       const Teuchos::Tuple<unsigned long long,2>& task );
   

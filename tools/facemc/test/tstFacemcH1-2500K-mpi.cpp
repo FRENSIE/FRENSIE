@@ -1,50 +1,57 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   facemcMPI.cpp
+//! \file   tstFacemcH1-2500K-mpi.cpp
 //! \author Alex Robinson
-//! \brief  main facemc-mpi executable
+//! \brief  facemc executable mpi verification test for H-1 at 2500K
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <signal.h>
-
-// Trilinos Includes
+// Teuchos Includes
 #include <Teuchos_GlobalMPISession.hpp>
-#include <Teuchos_DefaultMpiComm.hpp>
 #include <Teuchos_DefaultSerialComm.hpp>
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "tstFacemcH1-2500K.hpp"
 #include "facemcCore.hpp"
 
-// The signal handler
-void signalHandlerWrapper(int signal)
-{
-  if( !facemc_manager.is_null() )
-    facemc_manager->signalHandler(signal);
-}
-
-// Main facemc function
 int main( int argc, char** argv )
 {
-  // Assign the signal handler
-  void (*handler)(int);
-  handler = signal(SIGINT,signalHandlerWrapper);
-
   // Initialize the global MPI session
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
+  
   // Create the communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
   
   if( Teuchos::GlobalMPISession::mpiIsInitialized() )
     comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
   else
-    comm.reset( new Teuchos::SerialComm<unsigned long long>() );
+    comm.reset( new Teuchos::SerialComm<unsigned long long> );
+  
+  int return_value = facemcCore( argc, argv, comm );
+  
+  // Test the simulation results
+  bool success;
 
-  return facemcCore( argc, argv, comm );
+  if( return_value == 0 )
+    success = testSimulationResults( "FacemcH1-2500K-mpi.h5" );
+  else // Bad return value
+    success = false;
+      
+  if( comm->getRank() == 0 )
+  {
+    if( success )
+      std::cout << "\nEnd Result: TEST PASSED" << std::endl;
+    else
+      std::cout << "\nEnd Result: TEST FAILED" << std::endl;
+  }
+  
+  comm->barrier();
+
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//
-// end facemcMPI.cpp
+// end tstFacemcH1-2500K-mpi.cpp
 //---------------------------------------------------------------------------//
