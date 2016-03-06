@@ -9,6 +9,9 @@
 // Std Lib Includes
 #include <signal.h>
 
+// Trilinos Includes
+#include <Teuchos_DefaultSerialComm.hpp>
+
 // FRENSIE Includes
 #include "facemcCore.hpp"
 
@@ -26,9 +29,11 @@ int main( int argc, char** argv )
   void (*handler)(int);
   handler = signal(SIGINT,signalHandlerWrapper);
 
-  int return_val = facemcCore( argc, argv );
+  // Create the communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm(
+                                 new Teuchos::SerialComm<unsigned long long> );
 
-  return return_val;
+  return facemcCore( argc, argv, comm );
 }
 
 //---------------------------------------------------------------------------//

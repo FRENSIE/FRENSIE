@@ -15,21 +15,25 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_DefaultMpiComm.hpp>
-#include <Teuchos_DefaultSerialComm.hpp>
 
 // FRENSIE Includes
 #include "facemcCore.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
+#include "Utility_ContractException.hpp"
 
 Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
 
 /*! \details This function should be executed by simply wrapping a main 
  * function around it. If desired a signal handler can also be attached
  */
-int facemcCore( int argc, char** argv )
+int facemcCore( int argc, 
+                char** argv,
+                Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm )
 {
+  // Make sure the communicator is valid
+  testPrecondition( !comm.is_null() );
+  
   Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -139,14 +143,6 @@ int facemcCore( int argc, char** argv )
 
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
-
-  // Create the default communicator
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
-  
-  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
-    comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
-  else
-    comm.reset( new Teuchos::SerialComm<unsigned long long>() );
 
   // Create the simulation manager
   facemc_manager =
