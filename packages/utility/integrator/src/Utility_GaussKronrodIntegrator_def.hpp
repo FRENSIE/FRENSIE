@@ -12,9 +12,6 @@
 // Std Includes
 #include <limits>
 
-// GSL Includes
-#include <gsl/gsl_errno.h>
-
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_ConstTypeTraits.hpp>
