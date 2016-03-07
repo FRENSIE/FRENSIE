@@ -209,9 +209,9 @@
  * \image html Estimator.jpg
  * \image latex Estimator.eps
  *
- * The MonteCarlo::Estimator base class stores the bin information for the 
- * estimator, the response functions (MonteCarlo::ResponseFunction), scalar 
- * multiplier and assigned particle types. Currently supported bins are the 
+ * The MonteCarlo::Estimator base class stores the bin information, the 
+ * response functions (MonteCarlo::ResponseFunction), scalar multiplier and 
+ * assigned particle types for the estimator. Currently supported bins are 
  * energy, time, cosine and collision number. The process for adding additional
  *  bins is discussed in the 
  * \ref adding_estimator_bins_subsubsec "adding estimator bins" section. 
