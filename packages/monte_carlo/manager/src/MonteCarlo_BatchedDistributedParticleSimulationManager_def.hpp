@@ -197,7 +197,9 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   // The number of histories completed by each worker
   Teuchos::Array<Teuchos::RCP<unsigned long long> > 
-    worker_histories_completed( d_comm->getSize() - 1 );
+    worker_histories_completed( d_comm->getSize() );
+  for( unsigned i = 0; i < worker_histories_completed.size(); ++i )
+    worker_histories_completed[i].reset( new unsigned long long( 0ull ) );
 
   // The request for each worker
   Teuchos::Array<Teuchos::RCP<Teuchos::CommRequest<unsigned long long> > > 
