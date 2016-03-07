@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -154,10 +155,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hfd5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( 
-				       "test_cell_pulse_height_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator.h5" );
 
-  estimator->exportData( hdf5_file_handler, false );
+  estimator->exportData( hdf5_file, false );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -295,14 +300,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hfd5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( 
-				       "test_cell_pulse_height_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator.h5" );
 
-  MonteCarlo::Estimator::setStartTime( 0.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
-  MonteCarlo::Estimator::setNumberOfHistories( 1 );
+  MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
 
-  estimator->exportData( hdf5_file_handler, true );
+  estimator->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -515,15 +524,19 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				      "test_cell_pulse_height_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator2.h5");
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator HDF5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data;
@@ -728,15 +741,19 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
     estimator_2_base->commitHistoryContribution();
   }
   
-  MonteCarlo::Estimator::setNumberOfHistories( threads );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				      "test_cell_pulse_height_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator2.h5");
 
-  estimator_1_base->exportData( hdf5_file_handler, true );
-  estimator_2_base->exportData( hdf5_file_handler, true );
+  estimator_1_base->exportData( hdf5_file, true );
+  estimator_2_base->exportData( hdf5_file, true );
+
+  // Create an estimator HDF5 file handler
+   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data;

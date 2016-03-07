@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -99,10 +100,10 @@ int main( int argc, char** argv )
   Teuchos::RCP<Teuchos::ParameterList> source_rep = 
     Teuchos::getParametersFromXmlFile( test_source_xml_file_name );
 
-  Teuchos::RCP<MonteCarlo::ParticleSourceFactory> source_factory = 
+  std::shared_ptr<MonteCarlo::ParticleSourceFactory> source_factory = 
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
-  Teuchos::RCP<MonteCarlo::ParticleSource> source = 
+  std::shared_ptr<MonteCarlo::ParticleSource> source = 
     source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   setSourceHandlerInstance( source );

@@ -6,11 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
-#define FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#ifndef MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_SourceModuleInterfaceDecl.hpp"
@@ -40,7 +40,7 @@ public:
   static const ExternalSourceHandle invalid_external_source_handle;
   
   //! Initialize the source
-  static void setHandlerInstance( const Teuchos::RCP<ParticleSource>& source );
+  static void setHandlerInstance( const std::shared_ptr<ParticleSource>& source );
   
   //! Sample a particle state (or possibly states)
   static void sampleParticleState( ParticleBank& bank,
@@ -55,7 +55,7 @@ private:
   SourceModuleInterface();
 
   // Pointer to source
-  static Teuchos::RCP<ParticleSource> source;
+  static std::shared_ptr<ParticleSource> source;
 };
 
 // Sample the starting particle state
@@ -63,7 +63,7 @@ inline void SourceModuleInterface<ParticleSource>::sampleParticleState(
 					     ParticleBank& bank,
 					     const unsigned long long history )
 {
-  testPrecondition( !SourceModuleInterface::source.is_null() );
+  testPrecondition( SourceModuleInterface::source.get() );
   
   SourceModuleInterface::source->sampleParticleState( bank, history );
 }
@@ -71,14 +71,14 @@ inline void SourceModuleInterface<ParticleSource>::sampleParticleState(
 // Get the sampling efficiency
 inline double SourceModuleInterface<ParticleSource>::getSamplingEfficiency()
 {
-  testPrecondition( !SourceModuleInterface::source.is_null() );
+  testPrecondition( SourceModuleInterface::source.get() );
   
   return SourceModuleInterface::source->getSamplingEfficiency();
 }
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SOURCE_MODULE_INTERFACE_NATIVE_HPP
+#endif // end MONTE_CARLO_SOURCE_MODULE_INTERFACE_NATIVE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SourceModuleInterface_Native.hpp

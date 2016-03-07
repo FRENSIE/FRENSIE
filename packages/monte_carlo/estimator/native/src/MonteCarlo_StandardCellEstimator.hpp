@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_CELL_ESTIMATOR_HPP
-#define FACEMC_STANDARD_CELL_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
@@ -38,19 +38,19 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 
 protected:
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_CELL_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_CELL_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardCellEstimator.hpp

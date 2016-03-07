@@ -14,7 +14,7 @@
 #include "MonteCarlo_SimulationManager.hpp"
 
 // The simulation manager
-extern Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
+extern std::shared_ptr<MonteCarlo::SimulationManager> facemc_manager;
 
 //! The core facemc function (problem setup and execution)
 int facemcCore( int argc, 

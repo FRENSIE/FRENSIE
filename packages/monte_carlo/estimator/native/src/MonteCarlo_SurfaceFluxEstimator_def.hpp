@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
-#define FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
@@ -62,19 +62,22 @@ void SurfaceFluxEstimator<
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
   
+    EstimatorParticleStateWrapper particle_state_wrapper( particle );
+    particle_state_wrapper.setAngleCosine( angle_cosine );
+
     StandardEntityEstimator<
        StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
-						              surface_crossing,
-							      particle, 
-							      angle_cosine,
-							      contribution );
+                                                        surface_crossing,
+							particle_state_wrapper,
+                                                        contribution );
   }
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( 
+                                                       std::ostream& os ) const
 {
   os << "Surface Flux Estimator: " << getId() << std::endl;
 
@@ -83,7 +86,7 @@ void SurfaceFluxEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceFluxEstimator_def.hpp

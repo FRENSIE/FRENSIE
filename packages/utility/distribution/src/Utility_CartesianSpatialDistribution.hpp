@@ -9,9 +9,11 @@
 #ifndef UTILITY_CARTESIAN_SPATIAL_DISTRIBUTION_HPP
 #define UTILITY_CARTESIAN_SPATIAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
@@ -34,9 +36,9 @@ public:
 
   //! Constructor
   CartesianSpatialDistribution( 
-			const Teuchos::RCP<OneDDistribution>& x_distribution,
-			const Teuchos::RCP<OneDDistribution>& y_distribution,
-			const Teuchos::RCP<OneDDistribution>& z_distribution );
+		      const std::shared_ptr<OneDDistribution>& x_distribution,
+                      const std::shared_ptr<OneDDistribution>& y_distribution,
+                      const std::shared_ptr<OneDDistribution>& z_distribution );
 
   //! Destructor
   ~CartesianSpatialDistribution()
@@ -63,13 +65,13 @@ public:
 private:
 
   // X dimension distribution
-  Teuchos::RCP<OneDDistribution> d_x_distribution;
+  std::shared_ptr<OneDDistribution> d_x_distribution;
 
   // Y dimension distribution
-  Teuchos::RCP<OneDDistribution> d_y_distribution;
+  std::shared_ptr<OneDDistribution> d_y_distribution;
 
   // Z dimension distribution
-  Teuchos::RCP<OneDDistribution> d_z_distribution;
+  std::shared_ptr<OneDDistribution> d_z_distribution;
 
   // Records whether the distribution is uniform
   bool d_uniform;

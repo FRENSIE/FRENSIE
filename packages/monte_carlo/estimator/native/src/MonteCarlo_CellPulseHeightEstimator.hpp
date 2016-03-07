@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
-#define FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#define MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -23,6 +23,8 @@
 namespace MonteCarlo{
 
 /*! The pulse height entity estimator class
+ * \ingroup particle_entering_cell_event
+ * \ingroup particle_leaving_cell_event
  * \details This class has been set up to get correct results with multiple
  * threads. However, the commitHistoryContribution member function call 
  * should only appear within an omp critical block. Use the enable thread
@@ -68,7 +70,8 @@ public:
 
   //! Set the response functions
   void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
@@ -84,8 +87,8 @@ public:
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
@@ -94,14 +97,14 @@ public:
   void resetData();
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 
 private:
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 
   // Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
@@ -142,7 +145,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellPulseHeightEstimator.hpp

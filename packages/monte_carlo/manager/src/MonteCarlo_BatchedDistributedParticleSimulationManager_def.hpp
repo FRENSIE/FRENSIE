@@ -94,7 +94,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     this->work();
 
   // Perform a reduction of the estimator data on the root process
-  EMI::reduceEstimatorData( d_comm, d_root_process );
+  EMI::reduceObserverData( d_comm, d_root_process );
 
   // Set the end time
   this->setEndTime( Teuchos::Time::wallTime() );

@@ -2,73 +2,73 @@
 //!
 //! \file   MonteCarlo_ParticleEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle event dispatcher base class declaration.
+//! \brief  Particle event dispatcher database base class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_HPP
-#define FACEMC_PARTICLE_EVENT_DISPATCHER_HPP
+#ifndef MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_HPP
+#define MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_HPP
+
+// Std Lib Includes
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Teuchos Includes
+// Trilinos Includes
 #include <Teuchos_RCP.hpp>
-
-// FRENSIE Includes
-#include "MonteCarlo_ModuleTraits.hpp"
 
 namespace MonteCarlo{
 
-//! The particle event dispatcher base class
-template<typename EntityHandle, typename Observer>
+//! The particle event dispatcher database base class
+template<typename Dispatcher>
 class ParticleEventDispatcher
 {
-
+  
 public:
 
-  //! Typedef for EntityHandle type
-  typedef EntityHandle EntityHandleType;
-  
-  //! Typedef for Observer type
-  typedef Observer ObserverType;
+  // Constructor
+  ParticleEventDispatcher();
 
-  //! Constructor
-  ParticleEventDispatcher( const EntityHandle entity_id );
-
-  //! Destructor
+  // Destructor
   virtual ~ParticleEventDispatcher()
   { /* ... */ }
 
-  //! Attach an observer to the dispatcher
-  void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
-		       Teuchos::RCP<Observer>& observer );
+  //! Get the appropriate local dispatcher for the given entity id
+  Dispatcher& getLocalDispatcher(
+		       const typename Dispatcher::EntityHandleType entity_id );
 
-  //! Detach an observer from the dispatcher
-  void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
+  //! Attach an observer to the appropriate dispatcher
+  void attachObserver(
+	  const typename Dispatcher::EntityHandleType entity_id,
+          const ModuleTraits::InternalEventObserverHandle observer_id,
+	  const std::shared_ptr<typename Dispatcher::ObserverType>& observer );
+  
+  //! Detach an observer from the appropriate local dispatcher
+  void detachObserver(
+		const typename Dispatcher::EntityHandleType entity_id,
+		const ModuleTraits::InternalEventObserverHandle observer_id );
 
-  //! Get the entity id corresponding to this particle event dispatcher
-  EntityHandle getId() const;
+  //! Detach the observer from all local dispatchers
+  void detachObserver(
+		const ModuleTraits::InternalEventObserverHandle observer_id );
 
-  //! Get the number of attached observers
-  unsigned getNumberOfObservers() const;
+  //! Detach all observers
+  void detachAllObservers();
 
 protected:
-
-  // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
-					Teuchos::RCP<Observer> > ObserverIdMap;
-
-
-  // Get the observer map
-  ObserverIdMap& observer_id_map();
   
+  // Typedef for the dispatcher map
+  typedef typename boost::unordered_map<typename Dispatcher::EntityHandleType,
+					std::shared_ptr<Dispatcher> >
+  DispatcherMap;
+
+  //! Get the dispatcher map
+  DispatcherMap& dispatcher_map();
+
 private:
 
-  // The entity id for which the particle event will be dispatched
-  EntityHandle d_entity_id;
-
-  ObserverIdMap d_observer_map;
+  DispatcherMap d_dispatcher_map;
 };
 
 } // end MonteCarlo namespace
@@ -81,7 +81,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_EVENT_DISPATCHER_HPP
+#endif // end MONTE_CARLO_PARTICLE_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleEventDispatcher.hpp
