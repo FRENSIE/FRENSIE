@@ -21,13 +21,13 @@ IF(DEFINED MCNP_DATA_DIR)
 
   # Add the Dag-Facemc H1-2500K Neutron tests
   IF(${FRENSIE_ENABLE_DAGMC})
-    ADD_EXECUTABLE(tstDagFacemcH1-2500K tstDagFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
+    ADD_EXECUTABLE(tstDagFacemcH1-2500K tstDagFacemcH1-2500K.cpp tstFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
     TARGET_LINK_LIBRARIES(tstDagFacemcH1-2500K monte_carlo_manager)
   
     ADD_TEST(DagFacemc_H1-2500K_test tstDagFacemcH1-2500K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/h1-2500K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcH1-2500K --threads=4)
 
     IF(${FRENSIE_ENABLE_MPI})
-      ADD_EXECUTABLE(tstDagFacemcH1-2500K-mpi tstDagFacemcH1-2500K-mpi.cpp ${FACEMC_CORE_CPP})
+      ADD_EXECUTABLE(tstDagFacemcH1-2500K-mpi tstDagFacemcH1-2500K-mpi.cpp tstFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
       TARGET_LINK_LIBRARIES(tstDagFacemcH1-2500K-mpi monte_carlo_manager)
       ADD_TEST(DagFacemc_H1-2500K-mpi_test 
         ${MPIEXEC} -n 4 tstDagFacemcH1-2500K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/h1-2500K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcH1-2500K-mpi --threads=1)
@@ -36,13 +36,13 @@ IF(DEFINED MCNP_DATA_DIR)
 
   # Add the Root-Facemc H1-2500K Neutron tests
   IF(${FRENSIE_ENABLE_ROOT})
-    ADD_EXECUTABLE(tstRootFacemcH1-2500K tstRootFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
+    ADD_EXECUTABLE(tstRootFacemcH1-2500K tstRootFacemcH1-2500K.cpp tstFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
     TARGET_LINK_LIBRARIES(tstRootFacemcH1-2500K monte_carlo_manager)
   
     ADD_TEST(RootFacemc_H1-2500K_test tstRootFacemcH1-2500K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/h1-2500K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcH1-2500K --threads=1)
 
     IF(${FRENSIE_ENABLE_MPI})
-      ADD_EXECUTABLE(tstRootFacemcH1-2500K-mpi tstRootFacemcH1-2500K-mpi.cpp ${FACEMC_CORE_CPP})
+      ADD_EXECUTABLE(tstRootFacemcH1-2500K-mpi tstRootFacemcH1-2500K-mpi.cpp tstFacemcH1-2500K.cpp ${FACEMC_CORE_CPP})
       TARGET_LINK_LIBRARIES(tstRootFacemcH1-2500K-mpi monte_carlo_manager)
       ADD_TEST(RootFacemc_H1-2500K-mpi_test 
         ${MPIEXEC} -n 4 tstRootFacemcH1-2500K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/h1-2500K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/h1-2500K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcH1-2500K-mpi --threads=1)

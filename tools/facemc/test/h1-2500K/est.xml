@@ -5,6 +5,7 @@
     <Parameter name="Type" type="string" value="Surface Current"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Surfaces" type="Array" value="{1}"/>
     <ParameterList name="Bins">
       <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
     </ParameterList>
@@ -15,6 +16,7 @@
     <Parameter name="Type" type="string" value="Surface Flux"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Surfaces" type="Array" value="{1}"/>
     <ParameterList name="Bins">
       <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
     </ParameterList>
