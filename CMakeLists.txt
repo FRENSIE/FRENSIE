@@ -97,13 +97,6 @@ ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
 ENDIF()
 
-# Enable GSL Support
-IF(GSL_PREFIX)
-  ENABLE_GSL_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
-ENDIF()
-
 # Enable ROOT Support
 IF(${FRENSIE_ENABLE_ROOT})
   IF(ROOT_PREFIX)
