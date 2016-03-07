@@ -12,19 +12,30 @@
 // Std Lib Includes
 #include <string>
 
-// Teuchos Includes
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_LocalTestingHelpers.hpp>
-
 // FRENSIE Includes
+#include "facemcCore.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_mpi_config.hpp"
+
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+#include <Teuchos_VerboseObject.hpp>
+#include <Teuchos_LocalTestingHelpers.hpp>
+#include <Teuchos_GlobalMPISession.hpp>
+#include <Teuchos_DefaultSerialComm.hpp>
+
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_CommHelpers.hpp>
+#endif // end HAVE_FRENSIE_MPI
 
 //! Test the output of the H1-2500K simulation
-bool testSimulationResults( const std::string& simulation_hdf5_file_name )
+bool testSimulationResults( const std::string& simulation_hdf5_file_name,
+                            const bool surface_estimators_present )
 {
   Teuchos::FancyOStream& out = 
     *Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -120,6 +131,100 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name )
                           1e-15 );
 
   return success;
+}
+
+//! Conduct a parallel test
+int conductParallelTest( int argc,
+                         char** argv,
+                         const std::string& simulation_hdf5_file_name,
+                         const bool surface_estimators_present )
+{
+#ifdef HAVE_FRENSIE_MPI
+  // Initialize the global MPI session
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  
+  // Create the communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
+  
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
+  else
+    comm.reset( new Teuchos::SerialComm<unsigned long long> );
+  
+  int local_return_value = facemcCore( argc, argv, comm );
+  
+  // Test the simulation results (with root process only)
+  if( comm->getRank() == 0 )
+  {
+    bool local_success;
+    
+    if( local_return_value == 0 )
+    {
+      local_success = testSimulationResults( simulation_hdf5_file_name,
+                                             surface_estimators_present );
+    }
+    else // Bad return value
+      local_success = false;
+
+    local_return_value = (local_success ? 0 : 1 );
+  }
+   
+  // Reduce the simulation results
+  int return_value;
+  
+  Teuchos::reduceAll( *comm,
+                      Teuchos::REDUCE_SUM,
+                      local_return_value,
+                      Teuchos::inOutArg( return_value ) );
+
+  bool success = (return_value == 0 ? true : false);
+  
+  if( comm->getRank() == 0 )
+  {
+    if( success )
+      std::cout << "\nEnd Result: TEST PASSED" << std::endl;
+    else
+      std::cout << "\nEnd Result: TEST FAILED" << std::endl;
+  }
+  
+  comm->barrier();
+
+  return (success ? 0 : 1);
+#else
+  return 1;
+#endif // end HAVE_FRENIE_MPI
+}
+
+//! Conduct a serial test
+int conductSerialTest( int argc, 
+                       char** argv,
+                       const std::string& simulation_hdf5_file_name,
+                       const bool surface_estimators_present )
+{
+  // Create the communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm(
+                                new Teuchos::SerialComm<unsigned long long> );
+  
+  // Run the test problem
+  int return_value = facemcCore( argc, argv, comm );
+  
+  // Test the simulation results
+  bool success;
+
+  if( return_value == 0 )
+  {
+    success = testSimulationResults( simulation_hdf5_file_name,
+                                     surface_estimators_present );
+  }
+  else // Bad return value
+    success = false;
+      
+  if( success )
+    std::cout << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    std::cout << "\nEnd Result: TEST FAILED" << std::endl;
+
+  return (success ? 0 : 1);
 }
                             
 
