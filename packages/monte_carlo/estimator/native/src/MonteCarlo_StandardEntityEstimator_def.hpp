@@ -6,10 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
-#define FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -28,7 +29,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			       multiplier,
 			       entity_ids,
 			       entity_norm_constants ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { 
@@ -42,7 +42,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const double multiplier,
 			           const Teuchos::Array<EntityId>& entity_ids )
   : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { 
@@ -55,7 +54,6 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const Estimator::idType id,
 				   const double multiplier )
   : EntityEstimator<EntityId>( id, multiplier ),
-    d_dimension_values( 1 ),
     d_update_tracker( 1 ),
     d_total_estimator_moments( 1 )
 { /* ... */ }
@@ -63,7 +61,8 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 // Set the response functions
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -190,9 +189,6 @@ void StandardEntityEstimator<EntityId>::enableThreadSupport(
   
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
-
-  // Add thread support to the dimension value map
-  d_dimension_values.resize( num_threads );
 }
 
 // Reset the estimator data
@@ -541,14 +537,17 @@ void StandardEntityEstimator<EntityId>::reduceData(
 // Export the estimator data
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::exportData(
-			   EstimatorHDF5FileHandler& hdf5_file,
-			   const bool process_data ) const
+                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                   const bool process_data ) const
 {
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   
   // Export the lower level data first
   EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
+
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
 
   // Export the raw total data for each entity
   {
@@ -557,9 +556,9 @@ void StandardEntityEstimator<EntityId>::exportData(
 
     while( entity_data != d_entity_total_estimator_moments_map.end() )
     {
-      hdf5_file.setRawEstimatorEntityTotalData( this->getId(),
-						entity_data->first,
-						entity_data->second );
+      estimator_hdf5_file.setRawEstimatorEntityTotalData( this->getId(),
+                                                          entity_data->first,
+                                                          entity_data->second);
 
       if( process_data )
       {
@@ -577,9 +576,10 @@ void StandardEntityEstimator<EntityId>::exportData(
 			     processed_data[i].fourth );
 	}
 
-	hdf5_file.setProcessedEstimatorEntityTotalData( this->getId(),
-							entity_data->first,
-							processed_data );
+	estimator_hdf5_file.setProcessedEstimatorEntityTotalData( 
+                                                            this->getId(),
+                                                            entity_data->first,
+                                                            processed_data );
       }
       
       ++entity_data;
@@ -587,8 +587,8 @@ void StandardEntityEstimator<EntityId>::exportData(
   }
 
   // Export the raw total data over all entities
-  hdf5_file.setRawEstimatorTotalData( this->getId(), 
-				      d_total_estimator_moments );
+  estimator_hdf5_file.setRawEstimatorTotalData( this->getId(), 
+                                                d_total_estimator_moments );
 
   // Export the processed total data over all entities
   if( process_data )
@@ -606,7 +606,8 @@ void StandardEntityEstimator<EntityId>::exportData(
 			    processed_data[i].fourth );
     }
 
-    hdf5_file.setProcessedEstimatorTotalData( this->getId(), processed_data );
+    estimator_hdf5_file.setProcessedEstimatorTotalData( this->getId(), 
+                                                        processed_data );
   }
 }
 
@@ -650,41 +651,35 @@ void StandardEntityEstimator<EntityId>::assignEntities(
  */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
-					    const EntityId entity_id,
-					    const ParticleState& particle,
-					    const double angle_cosine,
-					    const double contribution )
+		   const EntityId entity_id,
+		   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const double contribution )
 {
   // Make sure the thread id is valid
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
-		    d_dimension_values.size() );
+		    d_update_tracker.size() );
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute
-  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType()));
+  testPrecondition( this->isParticleTypeAssigned( 
+               particle_state_wrapper.getParticleState().getParticleType() ) );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
   
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
     
-  Estimator::DimensionValueMap& thread_dimension_values = 
-    d_dimension_values[thread_id];
-  
-  this->convertParticleStateToGenericMap( particle, 
-					  angle_cosine, 
-					  thread_dimension_values );
-        
   // Only add the contribution if the particle state is in the phase space
-  if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
+  if( this->isPointInEstimatorPhaseSpace( particle_state_wrapper ) )
   {
     unsigned bin_index;
       
     for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
     {
-      bin_index = this->calculateBinIndex( thread_dimension_values, i );
+      bin_index = this->calculateBinIndex( particle_state_wrapper, i );
       
       double processed_contribution = 
-	contribution*this->evaluateResponseFunction( particle, i );
+        contribution*this->evaluateResponseFunction( 
+                                particle_state_wrapper.getParticleState(), i );
 
       addInfoToUpdateTracker( thread_id, 
 			      entity_id, 
@@ -956,7 +951,7 @@ void StandardEntityEstimator<EntityId>::resetUpdateTracker(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator_def.hpp

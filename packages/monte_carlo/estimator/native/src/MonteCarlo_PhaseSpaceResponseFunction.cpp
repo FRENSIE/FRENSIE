@@ -14,13 +14,13 @@ namespace MonteCarlo{
 
 // Constructor
 PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
-	const unsigned id,
-        const std::string& name,			      
-	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
-	const Teuchos::RCP<Utility::DirectionalDistribution>& 
-	directional_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& energy_distribution,
-	const Teuchos::RCP<Utility::OneDDistribution>& time_distribution )
+     const unsigned id,
+     const std::string& name,			      
+     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
+     const std::shared_ptr<Utility::DirectionalDistribution>& 
+     directional_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
+     const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
   : ResponseFunction( id, name ),
     d_spatial_distribution( spatial_distribution ),
     d_directional_distribution( directional_distribution ),
@@ -29,10 +29,10 @@ PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
     d_spatially_uniform( false )
 {
   // Make sure that the distributions have been set
-  testPrecondition( !spatial_distribution.is_null() );
-  testPrecondition( !directional_distribution.is_null() );
-  testPrecondition( !energy_distribution.is_null() );
-  testPrecondition( !time_distribution.is_null() );
+  testPrecondition( spatial_distribution.get() );
+  testPrecondition( directional_distribution.get() );
+  testPrecondition( energy_distribution.get() );
+  testPrecondition( time_distribution.get() );
 
   // Determine if the response function is spatially uniform
   if( spatial_distribution->isUniform() )

@@ -6,28 +6,25 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
-#define FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
+#ifndef MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
+#define MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Initializing static member data
-template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap ParticleGlobalEventDispatcher<Observer>::d_observer_map;
-
 // Constructor
 template<typename Observer>
 ParticleGlobalEventDispatcher<Observer>::ParticleGlobalEventDispatcher()
+  : d_observer_map()
 { /* ... */ }
 
 // Attach an observer to the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::attachObserver(
-				const ModuleTraits::InternalEstimatorHandle id,
-				Teuchos::RCP<Observer>& observer  )
+			    const ModuleTraits::InternalEventObserverHandle id,
+                            const std::shared_ptr<Observer>& observer  )
 {
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
@@ -39,7 +36,7 @@ void ParticleGlobalEventDispatcher<Observer>::attachObserver(
 // Detach an observer from the dispatcher
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachObserver(
-			       const ModuleTraits::InternalEstimatorHandle id )
+			   const ModuleTraits::InternalEventObserverHandle id )
 {
   d_observer_map.erase( id );
 }
@@ -55,12 +52,13 @@ unsigned ParticleGlobalEventDispatcher<Observer>::getNumberOfObservers()
 template<typename Observer>
 void ParticleGlobalEventDispatcher<Observer>::detachAllObservers()
 {
-  d_observer_map.clear( );
+  d_observer_map.clear();
 }
 
 // Get the observer id map
 template<typename Observer>
-typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& ParticleGlobalEventDispatcher<Observer>::observer_id_map()
+typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& 
+ParticleGlobalEventDispatcher<Observer>::observer_id_map()
 {
   return d_observer_map;
 }
@@ -68,7 +66,7 @@ typename ParticleGlobalEventDispatcher<Observer>::ObserverIdMap& ParticleGlobalE
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
+#endif // end MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleGlobalEventDispatcher_def.hpp

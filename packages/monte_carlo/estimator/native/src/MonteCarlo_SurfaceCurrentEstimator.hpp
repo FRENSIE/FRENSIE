@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SURFACE_CURRENT_ESTIMATOR_HPP
-#define FACEMC_SURFACE_CURRENT_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_HPP
+#define MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardSurfaceEstimator.hpp"
@@ -15,7 +15,9 @@
 
 namespace MonteCarlo{
 
-//! The surface current estimator class
+/*! The surface current estimator class
+ * \ingroup particle_crossing_surface_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class SurfaceCurrentEstimator : public StandardSurfaceEstimator
 {
@@ -37,7 +39,8 @@ public:
   
   //! Set the response functions
   void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Add current history estimator contribution
   void updateFromParticleCrossingSurfaceEvent(
@@ -45,8 +48,8 @@ public:
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine );
   
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 };
 
 } // end MonteCarlo namespace
@@ -59,7 +62,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_SURFACE_CURRENT_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_SURFACE_CURRENT_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SurfaceCurrentEstimator.hpp

@@ -14,14 +14,14 @@ namespace MonteCarlo{
 
 // Constructor
 EnergySpaceResponseFunction::EnergySpaceResponseFunction(
-	    const unsigned id,
-	    const std::string& name,
-	    const Teuchos::RCP<Utility::OneDDistribution> energy_distribution )
+	 const unsigned id,
+         const std::string& name,
+	 const std::shared_ptr<Utility::OneDDistribution> energy_distribution )
   : ResponseFunction( id, name ),
     d_energy_distribution( energy_distribution )
 {
   // Make sure the energy distribution is valid
-  testPrecondition( !energy_distribution.is_null() );
+  testPrecondition( energy_distribution.get() );
 }
 
 // Evaluate the response function at the desired energy

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -49,7 +50,7 @@ public:
   ~TestStandardEntityEstimator()
   { /* ... */ }
 
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
   // Allow public access to the standard entity estimator protected mem. funcs.
@@ -96,7 +97,7 @@ void setEstimatorBins( Teuchos::RCP<MonteCarlo::Estimator>& estimator )
 						       collision_number_bins );
 
   // Set the response functions
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+  Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
     response_functions( 1 );
   response_functions[0] = MonteCarlo::ResponseFunction::default_response_function;
 
@@ -246,7 +247,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 						       collision_number_bins );
 
     // Set the response functions
-    Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
       response_functions( 1 );
     response_functions[0] = 
       MonteCarlo::ResponseFunction::default_response_function;
@@ -255,10 +256,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   }
 
   // Initialize the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					 "test_standard_entity_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
 
-  estimator->exportData( hdf5_file_handler, false );
+  estimator->exportData( hdf5_file, false );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure that the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -602,7 +607,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 						       collision_number_bins );
 
     // Set the response functions
-    Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::ResponseFunction> > 
       response_functions( 1 );
     response_functions[0] = 
       MonteCarlo::ResponseFunction::default_response_function;
@@ -611,14 +616,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   }
 
   // Initialize the hdf5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-					 "test_standard_entity_estimator.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator.h5" );
 
-  MonteCarlo::Estimator::setStartTime( 0.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
-  MonteCarlo::Estimator::setNumberOfHistories( 1 );
+  MonteCarlo::ParticleHistoryObserver::setStartTime( 0.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1 );
 
-  estimator->exportData( hdf5_file_handler, true );
+  estimator->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Make sure that the estimator exists in the hdf5 file
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 0u ) );
@@ -984,118 +993,139 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 
   // bin 1
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 2 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 3
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 4
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 5
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 6
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 7
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 8
   particle.incrementCollisionNumber();
   particle.setTime( 2.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 9
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 10 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 11
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 12
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 13
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 14
   particle.setEnergy( 1.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  particle_wrapper.setAngleCosine( 0.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 15
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // Commit the contributions
   estimator_base->commitHistoryContribution();
 
   TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
 
-  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, true );
+  estimator_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 
@@ -1297,103 +1327,120 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     MonteCarlo::PhotonState particle( 0ull );
     particle.setEnergy( 1.0 );
     particle.setTime( 2.0 );
+    
+    MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+    particle_wrapper.setAngleCosine( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 1
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 2 
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
     
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 3
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 4
     particle.setTime( 1.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
     
     // bin 5
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 6
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // bin 7
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 8
     particle.incrementCollisionNumber();
     particle.setTime( 2.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 9
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 10 
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 11
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 12
     particle.setTime( 1.0 );
     particle.setEnergy( 1.0 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 13
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
     // bin 14
     particle.setEnergy( 1.0 );
+
+    particle_wrapper.setAngleCosine( 0.0 );
   
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // bin 15
     particle.setEnergy( 0.1 );
 
-    estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-    estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+    estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+    estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
     // Commit the contributions
     estimator_base->commitHistoryContribution();
@@ -1402,14 +1449,18 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   for( unsigned i = 0; i < threads; ++i )
     TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
   
-  MonteCarlo::Estimator::setNumberOfHistories( threads );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator2.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator2.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, true );
+  estimator_base->exportData( hdf5_file, true );
+
+  // Create an estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 
@@ -1605,104 +1656,121 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 
   // bin 1
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 2 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 3
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 4
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 5
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 6
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 7
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 8
   particle.incrementCollisionNumber();
   particle.setTime( 2.0 );
   particle.setEnergy( 1.0 );
+  
+  particle_wrapper.setAngleCosine( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 9
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 10 
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 11
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 12
   particle.setTime( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 13
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   // bin 14
   particle.setEnergy( 1.0 );
+
+  particle_wrapper.setAngleCosine( 0.0 );
   
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // bin 15
   particle.setEnergy( 0.1 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
   
   // Commit the contributions
   estimator_base->commitHistoryContribution();
@@ -1713,8 +1781,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setEnergy( 1.0 );
   particle.setTime( 2.0 );
 
-  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
-  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+  particle_wrapper.setAngleCosine( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle_wrapper, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle_wrapper, 1.0 );
 
   TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
 
@@ -1743,10 +1813,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   TEST_EQUALITY_CONST( estimator_base->getNumberOfResponseFunctions(), 1 );
 
   // Initialize the HDF5 file
-  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-				        "test_standard_entity_estimator3.h5" );
+  std::shared_ptr<Utility::HDF5FileHandler>
+    hdf5_file( new Utility::HDF5FileHandler );
+  hdf5_file->openHDF5FileAndOverwrite( "test_standard_entity_estimator3.h5" );
 
-  estimator_base->exportData( hdf5_file_handler, false );
+  estimator_base->exportData( hdf5_file, false );
+
+  // Create and estimator hdf5 file handler
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > 

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
-#define FACEMC_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#ifndef MONTE_CARLO_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#define MONTE_CARLO_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
@@ -46,7 +46,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#endif // end MONTE_CARLO_HASHED_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_HashedGeneralEstimatorDimensionDiscretization.hpp

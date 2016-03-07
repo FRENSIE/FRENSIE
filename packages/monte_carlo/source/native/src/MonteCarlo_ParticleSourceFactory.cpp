@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const Teuchos::RCP<Utility::OneDDistribution> 
+const std::shared_ptr<Utility::OneDDistribution> 
 ParticleSourceFactory::s_default_time_dist( 
 				       new Utility::DeltaDistribution( 0.0 ) );
 
@@ -126,7 +126,7 @@ ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterLis
 double ParticleSourceFactory::createStateSource( 
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      Teuchos::RCP<ParticleSource>& source,
+				      std::shared_ptr<ParticleSource>& source,
 				      const unsigned num_sources )
 {
   return 0.0;

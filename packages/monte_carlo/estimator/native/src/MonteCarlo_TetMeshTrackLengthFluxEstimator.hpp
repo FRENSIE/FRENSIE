@@ -11,11 +11,13 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
 #include <moab/Interface.hpp>
@@ -35,6 +37,7 @@
 namespace MonteCarlo{
 
 /*! The tet-mesh track length flux estimator class
+ * \ingroup particle_subtrack_ending_global_event
  * \details This class is based off of the TrackLengthMeshTally written by
  * Kerry Dunn (UW-Madison CNERG group). The DAGMC repo that contains her
  * class can be found at https://github.com/svalinn/DAGMC.
@@ -78,11 +81,11 @@ public:
 						 const double end_point[3] );
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print a summary of the estimator data
+  void printSummary( std::ostream& os ) const;
 
   //! Get all tet elements
   const moab::Range getAllTetElements() const;
@@ -103,13 +106,13 @@ private:
   static const double s_tol;
 
   // The moab instance that stores all mesh data
-  Teuchos::RCP<moab::Interface> d_moab_interface;
+  boost::scoped_ptr<moab::Interface> d_moab_interface;
 
   // The tet meshset
   moab::EntityHandle d_tet_meshset;
 
   // The kd-tree for finding point in tet
-  Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
+  boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
   
   // The root of the kd-tree
   moab::EntityHandle d_kd_tree_root;

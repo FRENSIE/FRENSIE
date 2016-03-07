@@ -6,14 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_RESPONSE_FUNCTION_HPP
-#define FACEMC_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_RESPONSE_FUNCTION_HPP
 
 // Std Lib Includes
 #include <string>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -47,7 +45,7 @@ public:
   virtual bool isSpatiallyUniform() const;
 
   //! Default response function
-  static const Teuchos::RCP<ResponseFunction> default_response_function;
+  static const std::shared_ptr<ResponseFunction> default_response_function;
 
 private:
 
@@ -60,7 +58,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_RESPONSE_FUNCTION_HPP
+#endif // end MONTE_CARLO_RESPONSE_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ResponseFunction.hpp

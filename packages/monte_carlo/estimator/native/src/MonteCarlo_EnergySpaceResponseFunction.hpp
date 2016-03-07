@@ -6,8 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
-#define FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#ifndef MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#define MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunction.hpp"
@@ -23,9 +26,9 @@ public:
   
   //! Constructor
   EnergySpaceResponseFunction( 
-	   const unsigned id,
-	   const std::string& name,
-	   const Teuchos::RCP<Utility::OneDDistribution> energy_distribution );
+	const unsigned id,
+        const std::string& name,
+	const std::shared_ptr<Utility::OneDDistribution> energy_distribution );
 
   //! Destructor
   ~EnergySpaceResponseFunction()
@@ -40,12 +43,12 @@ public:
 private:
 
   // The energy distribution
-  Teuchos::RCP<Utility::OneDDistribution> d_energy_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_energy_distribution;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
+#endif // end MONTE_CARLO_ENERGY_SPACE_RESPONSE_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EnergySpaceResponseFunction.hpp

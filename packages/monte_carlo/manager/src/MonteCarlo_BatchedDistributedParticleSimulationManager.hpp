@@ -38,7 +38,7 @@ public:
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned long long number_of_histories,
-	    const unsigned number_of_batches_per_processor = 25,
+	    const unsigned number_of_batches_per_processor = 1,
 	    const unsigned long long start_history = 0ull,
 	    const unsigned long long previously_completed_histories = 0ull,
 	    const double previous_run_time = 0.0 );

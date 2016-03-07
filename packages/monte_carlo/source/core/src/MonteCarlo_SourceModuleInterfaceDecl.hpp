@@ -9,6 +9,9 @@
 #ifndef FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP
 #define FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -61,7 +64,7 @@ public:
 
   //! Set the source handler instance
   static inline void setHandlerInstance( 
-			   const Teuchos::RCP<SourceHandler>& source_instance )
+			const std::shared_ptr<SourceHandler>& source_instance )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
   //! Sample a particle state (or possibly states)
@@ -77,7 +80,7 @@ public:
 //! Set the source handler instance
 template<typename SourceHandler>
 inline void setSourceHandlerInstance( 
-			   const Teuchos::RCP<SourceHandler>& source_instance )
+			const std::shared_ptr<SourceHandler>& source_instance )
 {
   SourceModuleInterface<SourceHandler>::setHandlerInstance( source_instance );
 }

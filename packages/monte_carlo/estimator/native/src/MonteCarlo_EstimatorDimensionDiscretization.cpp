@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
+#include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 
 namespace MonteCarlo{
 

@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -25,28 +26,28 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
 // Initialize the distribution
 void initializeDistribution( 
-		      Teuchos::RCP<Utility::SpatialDistribution>& distribution )
+		  std::shared_ptr<Utility::SpatialDistribution>& distribution )
 {
   // Power distribution in r dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 1.0 ) );
 
   // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     theta_distribution( new Utility::UniformDistribution( 
 					       0.0, 
 					       2*Utility::PhysicalConstants::pi,
 					       1.0 ) );
 
   // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
   distribution.reset( new Utility::SphericalSpatialDistribution( 
