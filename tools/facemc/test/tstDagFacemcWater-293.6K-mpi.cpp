@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "tstDagFacemcWater-293.6K.hpp"
+#include "tstFacemcWater-293.6K.hpp"
 
 int main( int argc, char** argv )
 {

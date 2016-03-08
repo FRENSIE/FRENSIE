@@ -174,7 +174,10 @@ bool testEstimator1Data(
 {
   Teuchos::FancyOStream& out = 
     *Teuchos::VerboseObjectBase::getDefaultOStream();
-
+  out.precision( 18 );
+  
+  out << "\nEstimator 1 Tests: " << std::endl;
+  
   bool success = true;
 
   // Check the dimension ordering
@@ -276,6 +279,8 @@ bool testEstimator2Data(
   Teuchos::FancyOStream& out = 
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
+
+  out << "\nEstimator 2 Tests: " << std::endl;
 
   bool success = true;
 
@@ -382,6 +387,8 @@ bool testEstimator3Data(
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
 
+  out << "\nEstimator 3 Tests: " << std::endl;
+
   bool success = true;
   
   // Check the dimension ordering
@@ -486,6 +493,8 @@ bool testEstimator4Data(
   Teuchos::FancyOStream& out = 
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
+
+  out << "\nEstimator 4 Tests: " << std::endl;
 
   bool success = true;
 

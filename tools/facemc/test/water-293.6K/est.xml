@@ -2,7 +2,7 @@
   
   <ParameterList name="Water Sphere Current">
     <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Type" type="string" value="surface.current"/>
+    <Parameter name="Type" type="string" value="Surface Current"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <Parameter name="Surfaces" type="Array" value="{1}"/>
