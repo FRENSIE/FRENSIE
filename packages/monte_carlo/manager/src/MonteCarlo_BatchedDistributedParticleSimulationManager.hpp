@@ -54,7 +54,8 @@ public:
   void printSimulationSummary( std::ostream &os ) const;
 
   //! Export the simulation data (to an hdf5 file)
-  void exportSimulationData( const std::string& data_file_name ) const;
+  void exportSimulationData( const std::string& data_file_name,
+                             std::ostream& os ) const;
 
   // Signal handler
   void signalHandler(int signal);

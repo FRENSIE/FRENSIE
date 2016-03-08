@@ -430,7 +430,9 @@ template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
-void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData( const std::string& data_file_name ) const
+void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData( 
+                                             const std::string& data_file_name,
+                                             std::ostream& os ) const
 {
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
@@ -438,7 +440,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   if( d_comm->getRank() == d_root_process )
   {
-    ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData( data_file_name );
+    ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData( data_file_name, os );
   }
 }
 
