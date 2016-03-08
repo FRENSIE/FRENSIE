@@ -18,7 +18,7 @@
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <Parameter name="Surfaces" type="Array" value="{1}"/>
     <ParameterList name="Bins">
-      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
     </ParameterList>
   </ParameterList>
 
@@ -29,7 +29,7 @@
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <Parameter name="Cells" type="Array" value="{1}"/>
     <ParameterList name="Bins">
-      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
     </ParameterList>
   </ParameterList>
 
@@ -40,7 +40,7 @@
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <Parameter name="Cells" type="Array" value="{1}"/>
     <ParameterList name="Bins">
-      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 1.0}"/>
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
     </ParameterList>
   </ParameterList>
   
