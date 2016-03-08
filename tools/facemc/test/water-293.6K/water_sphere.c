@@ -16,17 +16,12 @@ void water_sphere()
                  "Geometry for the neutron water sphere at 293.6K test prob.");
   
   // Create the water material
-  TGeoMixture* water = new TGeoMixture( "mat_1", 2, -1.0 );
-  // Hydrogen (weight fraction is not used by facemc)
-  water->DefineElement( 0, 1, 1, 0.201133 ); 
-  // Oxygen (weight fraction is not used by facemc)
-  water->DefineElement( 1, 16, 8, 0.798867 );
-
-  TGeoMedium* med_1 = new TGeoMedium( "med_1", 2, water );
+  TGeoMaterial* water = new TGeoMaterial( "mat_1", 1, 1, -1.0 );
+  TGeoMedium* med_1 = new TGeoMedium( "med_1", 1, water );
 
   // Create the void material
   TGeoMaterial* void_mat = new TGeoMaterial( "void", 0, 0, 0 );
-  TGeoMedium* void_med = new TGeoMedium( "void_med", 1, void_mat );
+  TGeoMedium* void_med = new TGeoMedium( "void_med", 2, void_mat );
 
   // Create the graveyard 
   TGeoMaterial* graveyard_mat = new TGeoMaterial( "graveyard", 0, 0, 0 );

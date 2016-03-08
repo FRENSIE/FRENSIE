@@ -95,21 +95,35 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
     // Obtain the material and density data from ROOT
     TGeoVolume* cell  = dynamic_cast<TGeoVolume*>( iter->Next() );
     TGeoMaterial* mat = cell->GetMaterial();
-    std::string mat_id  = mat->GetName();
+    std::string material_name  = mat->GetName();
     
-    if ( mat_id != "void" && mat_id != Geometry::Root::getTerminalMaterialName() )
+    if ( material_name != Geometry::Root::getVoidMaterialName() && 
+         material_name != Geometry::Root::getTerminalMaterialName() )
     {
-      std::vector<std::string> material_names;
-      material_names.push_back( mat_id.substr(4) );
+      TEST_FOR_EXCEPTION( material_name.find( "mat_" ) != 0,
+                          InvalidMaterialRepresentation,
+                          "Error: ROOT cell " << cell->GetUniqueID() <<
+                          "used an invalid material name ("
+                          << material_name << ")!" );
+      
+      TEST_FOR_EXCEPTION( material_name.find_first_not_of( "0123456789", 4 )
+                          < material_name.size(),
+                          InvalidMaterialRepresentation,
+                          "Error: ROOT cell " << cell->GetUniqueID() <<
+                          "used an invalid material name ("
+                          << material_name << ")!" );
+
+      std::vector<std::string> material_id;
+      material_id.push_back( material_name.substr(4) );
     
       double density =  mat->GetDensity();
-    
-      std::vector<std::string> density_names;
-      density_names.push_back( std::to_string( density ) );
-    
+      
+      std::vector<std::string> density_name;
+      density_name.push_back( std::to_string( density ) );
+      
       // Update the unordered maps
-      cell_id_mat_id_map[ cell->GetUniqueID() ] = material_names;
-      cell_id_density_map[ cell->GetUniqueID() ] = density_names;
+      cell_id_mat_id_map[ cell->GetUniqueID() ] = material_id;
+      cell_id_density_map[ cell->GetUniqueID() ] = density_name;
     }
   }
 

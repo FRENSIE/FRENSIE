@@ -32,6 +32,36 @@ void RootInstanceFactory::initializeRoot(
   // Validate the geometry representation
   RootInstanceFactory::validateGeometryRep( geom_rep );
 
+  if( geom_rep.isParameter( "Terminal Material Name" ) )
+  {
+    std::string terminal_material_name = 
+      geom_rep.get<std::string>( "Terminal Material Name" );
+
+    TEST_FOR_EXCEPTION( terminal_material_name.size() > 0,
+                        std::runtime_error,
+                        "Error: the terminal material name cannot be "
+                        "an empty string!" );
+
+    Root::setTerminalMaterialName( terminal_material_name );
+  }
+
+  if( geom_rep.isParameter( "Void Material Name" ) )
+  {
+    std::string void_material_name =
+      geom_rep.get<std::string>( "Void Material Name" );
+
+    TEST_FOR_EXCEPTION( void_material_name.size() > 0,
+                        std::runtime_error,
+                        "Error: the void material name cannot be "
+                        "an empty string!" );
+  }
+
+  TEST_FOR_EXCEPTION( Root::getVoidMaterialName() ==
+                      Root::getTerminalMaterialName(),
+                      std::runtime_error,
+                      "Error: the void material name and the terminal "
+                      "material name must be different!" );
+
   // Get the Root file name
   std::string root_file_name = geom_rep.get<std::string>( "Root File" );
   
