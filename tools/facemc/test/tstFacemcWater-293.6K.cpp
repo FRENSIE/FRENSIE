@@ -116,6 +116,8 @@ int conductParallelTest( int argc,
   comm->barrier();
 
   return (success ? 0 : 1);
+#else
+  return 1;
 #endif // end HAVE_FRENSIE_MPI
 }
 
@@ -162,6 +164,8 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name,
     if( !local_success )
       success = false;
   }
+  
+  return success;
 }
 
 // Test estimator 1 data
@@ -303,27 +307,27 @@ bool testEstimator2Data(
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( energy_bins,
                                         energy_bins_result,
-                                        1e-15 );
+                                        1e-12 );
 
   // Check the raw entity bin data
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data( 3 ),
     raw_bin_data_result;
-  raw_bin_data[0]( 3545, 3545 );
-  raw_bin_data[1]( 19866, 19882 );
-  raw_bin_data[2]( 9864020, 9866206 );
+  raw_bin_data[0]( 5683.86952697513971, 14594.7812532433054 );
+  raw_bin_data[1]( 31100.183422347498, 69401.3506014862796 );
+  raw_bin_data[2]( 10228878.5287133697, 11123227.5197692532 );
     
   hdf5_file_handler.getRawEstimatorEntityBinData( 2u, 1u, raw_bin_data_result);
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_result,
-                                        1e-15 );
+                                        1e-12 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
     processed_bin_data_result;
-  processed_bin_data[0]( 0.000354499999999999997, 0.0167924818626849701 );
-  processed_bin_data[1]( 0.00198659999999999982, 0.00709068410485995219 );
-  processed_bin_data[2]( 0.986402000000000001, 3.74300990581649494e-05 );
+  processed_bin_data[0]( 5.02704148647381354e-06, 0.0212523335207946001 );
+  processed_bin_data[1]( 2.75062457994683313e-05, 0.00846482861318997165 );
+  processed_bin_data[2]( 0.00904682918562853093, 7.94365252412609289e-05 );
   
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   2u, 1u, processed_bin_data_result );
@@ -332,23 +336,26 @@ bool testEstimator2Data(
                                         processed_bin_data_result,
                                         1e-12 );
 
-  // Check the processed entity bin data
+  // Check the raw total data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1 ), raw_total_data_result;
-  raw_total_data[0]( 9887431, 9890059, 9895315, 9905827 );
+  raw_total_data[0]( 10265662.5816628225, 
+                     11208082.2996950392,
+                     21504184.959070228,
+                     790802399.980736852 );
     
   hdf5_file_handler.getRawEstimatorTotalData( 2u, raw_total_data_result );
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_result,
-                                        1e-15 );
+                                        1e-12 );
 
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 1 ), processed_total_data_result;
-  processed_total_data[0]( 0.9887431, 
-                           3.41377775187904e-05, 
-                           8.39116752915233e-06, 
+  processed_total_data[0]( 0.00907936247291458824,
+                           7.97173758261474205e-05,
+                           0.00164997048202018414,
                            0.0 );
     
   hdf5_file_handler.getProcessedEstimatorTotalData(
@@ -356,13 +363,13 @@ bool testEstimator2Data(
 
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
-                          1e-15 );
+                          1e-9 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].second,
                           processed_total_data_result[0].second,
-                          1e-15 );
+                          1e-9);
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-15 );    
+                          1e-9);    
 
   if( success )
     out << "\nEstimator 2 Tests Passed!" << std::endl;
@@ -412,9 +419,9 @@ bool testEstimator3Data(
   // Check the raw entity bin data
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data( 3 ),
     raw_bin_data_result;
-  raw_bin_data[0]( 3545, 3545 );
-  raw_bin_data[1]( 19866, 19882 );
-  raw_bin_data[2]( 9864020, 9866206 );
+  raw_bin_data[0]( 16280.8059085589884, 129925.681132914382 );
+  raw_bin_data[1]( 63224.6278668959931, 256824.094405798562 );
+  raw_bin_data[2]( 30727006.5592518859, 96461378.8857043236 );
     
   hdf5_file_handler.getRawEstimatorEntityBinData( 3u, 1u, raw_bin_data_result);
     
@@ -425,9 +432,9 @@ bool testEstimator3Data(
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
     processed_bin_data_result;
-  processed_bin_data[0]( 0.000354499999999999997, 0.0167924818626849701 );
-  processed_bin_data[1]( 0.00198659999999999982, 0.00709068410485995219 );
-  processed_bin_data[2]( 0.986402000000000001, 3.74300990581649494e-05 );
+  processed_bin_data[0]( 1.44033996682406438e-05, 0.0221374348955674823 );
+  processed_bin_data[1]( 5.59339377397742945e-05, 0.00800927780320575405 );
+  processed_bin_data[2]( 0.0271837499057028462, 4.65569049863550464e-05 );
   
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   3u, 1u, processed_bin_data_result );
@@ -439,7 +446,10 @@ bool testEstimator3Data(
   // Check the processed entity bin data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1 ), raw_total_data_result;
-  raw_total_data[0]( 9887431, 9890059, 9895315, 9905827 );
+  raw_total_data[0]( 30806511.9930269234,
+                     97716642.5806116909,
+                     333284440.509885013,
+                     1434200222.78973603 );
     
   hdf5_file_handler.getRawEstimatorTotalData( 3u, raw_total_data_result );
   
@@ -450,9 +460,9 @@ bool testEstimator3Data(
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 1 ), processed_total_data_result;
-  processed_total_data[0]( 0.9887431, 
-                           3.41377775187904e-05, 
-                           8.39116752915233e-06, 
+  processed_total_data[0]( 0.0272540872431104898,
+                           5.44384342159306568e-05,
+                           2.38507360683533061e-05,
                            0.0 );
     
   hdf5_file_handler.getProcessedEstimatorTotalData(
@@ -460,13 +470,13 @@ bool testEstimator3Data(
 
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
-                          1e-12 );
+                          1e-9 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].second,
                           processed_total_data_result[0].second,
-                          1e-12 );
+                          1e-9 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-12 ); 
+                          1e-9 ); 
 
   if( success )
     out << "\nEstimator 3 Tests Passed!" << std::endl;
@@ -516,9 +526,9 @@ bool testEstimator4Data(
   // Check the raw entity bin data
   Teuchos::Array<Utility::Pair<double,double> > raw_bin_data( 3 ),
     raw_bin_data_result;
-  raw_bin_data[0]( 3545, 3545 );
-  raw_bin_data[1]( 19866, 19882 );
-  raw_bin_data[2]( 9864020, 9866206 );
+  raw_bin_data[0]( 16100.3441694685825, 139109.114816707821 );
+  raw_bin_data[1]( 63632.6260250982305, 300378.663723571168 );
+  raw_bin_data[2]( 30712007.4940253682, 440645646.957247078 );
     
   hdf5_file_handler.getRawEstimatorEntityBinData( 4u, 1u, raw_bin_data_result);
     
@@ -529,9 +539,9 @@ bool testEstimator4Data(
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
     processed_bin_data_result;
-  processed_bin_data[0]( 0.000354499999999999997, 0.0167924818626849701 );
-  processed_bin_data[1]( 0.00198659999999999982, 0.00709068410485995219 );
-  processed_bin_data[2]( 0.986402000000000001, 3.74300990581649494e-05 );
+  processed_bin_data[0]( 1.42437477095143013e-05, 0.0231633924805241184 );
+  processed_bin_data[1]( 5.62948879635837658e-05, 0.00860719776501863917 );
+  processed_bin_data[2]( 0.0271704804439623811, 0.000605943880365985578 );
   
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   4u, 1u, processed_bin_data_result );
@@ -543,7 +553,10 @@ bool testEstimator4Data(
   // Check the processed entity bin data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1 ), raw_total_data_result;
-  raw_total_data[0]( 9887431, 9890059, 9895315, 9905827 );
+  raw_total_data[0]( 30791740.4642208852,
+                     444447533.520741999,
+                     7447492414.4294672,
+                     148234600622.715698 );
     
   hdf5_file_handler.getRawEstimatorTotalData( 4u, raw_total_data_result );
   
@@ -554,9 +567,9 @@ bool testEstimator4Data(
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 1 ), processed_total_data_result;
-  processed_total_data[0]( 0.9887431, 
-                           3.41377775187904e-05, 
-                           8.39116752915233e-06, 
+  processed_total_data[0]( 0.0272410190796363201,
+                           0.00060725743895694679,
+                           5.47007430075160271e-07,
                            0.0 );
     
   hdf5_file_handler.getProcessedEstimatorTotalData(
@@ -564,13 +577,13 @@ bool testEstimator4Data(
 
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
-                          1e-12 );
+                          1e-9 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].second,
                           processed_total_data_result[0].second,
-                          1e-12 );
+                          1e-9 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-12 ); 
+                          1e-9 ); 
 
   if( success )
     out << "\nEstimator 4 Tests Passed!" << std::endl;
