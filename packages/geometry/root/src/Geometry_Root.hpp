@@ -31,13 +31,23 @@ public:
 //! Get the geometry manager instance
 static TGeoManager* getManager();
 
-//! Get the terminal material properties
-static std::string getTerminalMaterialName();
+//! Get the void material property name
+static const std::string& getVoidMaterialName();
+
+//! Set the void material property name
+static void setVoidMaterialName( const std::string& void_material_name );
+
+//! Get the terminal material property name
+static const std::string& getTerminalMaterialName();
+
+//! Set the terminal material property name
+static void setTerminalMaterialName(
+                                   const std::string& terminal_material_name );
 
 //! Initialize the root geometry manager
 static void initialize( const std::string& filename );
 
-//! Deconstructor
+//! Destructor
 ~Root()
 {/* ... */}
 
@@ -49,9 +59,11 @@ Root();
 // Root TGeoManager
 static TGeoManager* s_manager;
 
-// Root terminal material
-static std::string s_terminal_material_name;
+// Root void material name
+static std::string s_void_material_name;
 
+// Root terminal material name
+static std::string s_terminal_material_name;
 };
 
 // Get the geometry manager instance
@@ -60,8 +72,14 @@ inline TGeoManager* Root::getManager()
   return s_manager; 
 }
 
-// Get the terminal material
-inline std::string Root::getTerminalMaterialName()
+// Get the void material property name
+inline const std::string& Root::getVoidMaterialName()
+{
+  return s_void_material_name;
+}
+
+// Get the terminal material property name
+inline const std::string& Root::getTerminalMaterialName()
 {
   return s_terminal_material_name;
 }

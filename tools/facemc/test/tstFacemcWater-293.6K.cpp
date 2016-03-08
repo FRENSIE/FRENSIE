@@ -427,7 +427,7 @@ bool testEstimator3Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_result,
-                                        1e-12 );
+                                        1.5e-3 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
@@ -441,7 +441,7 @@ bool testEstimator3Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
                                         processed_bin_data_result,
-                                        1e-12 );
+                                        1e-3 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
@@ -455,7 +455,7 @@ bool testEstimator3Data(
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_result,
-                                        1e-12 );
+                                        1.5e-3 );
 
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
@@ -470,13 +470,13 @@ bool testEstimator3Data(
 
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
-                          1e-9 );
+                          5e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].second,
                           processed_total_data_result[0].second,
-                          1e-9 );
+                          5e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-9 ); 
+                          1.5e-4 ); 
 
   if( success )
     out << "\nEstimator 3 Tests Passed!" << std::endl;
@@ -534,7 +534,7 @@ bool testEstimator4Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_result,
-                                        1e-12 );
+                                        2e-3 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
@@ -548,7 +548,7 @@ bool testEstimator4Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
                                         processed_bin_data_result,
-                                        1e-12 );
+                                        1e-3 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
@@ -562,7 +562,7 @@ bool testEstimator4Data(
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_result,
-                                        1e-12 );
+                                        5e-4 );
 
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
@@ -577,13 +577,13 @@ bool testEstimator4Data(
 
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
-                          1e-9 );
+                          5e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].second,
                           processed_total_data_result[0].second,
-                          1e-9 );
+                          1e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-9 ); 
+                          1e-4 ); 
 
   if( success )
     out << "\nEstimator 4 Tests Passed!" << std::endl;
