@@ -11,7 +11,7 @@
 
 int main( int argc, char** argv )
 {
-  return conductSerialTest( argc, argv, "RootFacemcWater-293.6K-mpi.h5", false );
+  return conductParallelTest( argc, argv, "RootFacemcWater-293.6K-mpi.h5", false );
 }
 
 //---------------------------------------------------------------------------//

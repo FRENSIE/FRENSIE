@@ -49,17 +49,33 @@ IF(DEFINED MCNP_DATA_DIR)
     ENDIF()
   ENDIF()
 
-    # Add the Facemc Water-293.6K Neutron tests
-    # ADD_EXECUTABLE(tstFacemcWater-293.6K tstFacemcWater-293.6K.cpp ${FACEMC_CORE_CPP})
-    # TARGET_LINK_LIBRARIES(tstFacemcWater-293.6K monte_carlo_manager)
-    # ADD_TEST(Facemc_Water-293.6K_test tstFacemcWater-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=FacemcWater-293.6K --threads=4)
+  # Add the Dag-Facemc Water-293.6K Neutron tests
+  IF(${FRENSIE_ENABLE_DAGMC})
+    ADD_EXECUTABLE(tstDagFacemcWater-293.6K tstDagFacemcWater-293.6K.cpp tstFacemcWater-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstDagFacemcWater-293.6K monte_carlo_manager)
+    ADD_TEST(DagFacemc_Water-293.6K_test tstDagFacemcWater-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcWater-293.6K --threads=4)
 
-    # IF(${FRENSIE_ENABLE_MPI})
-    #   ADD_EXECUTABLE(tstFacemcWater-293.6K-mpi tstFacemcWater-293.6K-mpi.cpp ${FACEMC_CORE_CPP})
-    #   TARGET_LINK_LIBRARIES(tstFacemcWater-293.6K-mpi monte_carlo_manager)
-    #   ADD_TEST(Facemc_Water-293.6K-mpi_test 
-    #     ${MPIEXEC} -n 4 tstFacemcWater-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=FacemcWater-293.6K-mpi --threads=1)
-    # ENDIF()
+    IF(${FRENSIE_ENABLE_MPI})
+      ADD_EXECUTABLE(tstDagFacemcWater-293.6K-mpi tstDagFacemcWater-293.6K-mpi.cpp tstFacemcWater-293.6K.cpp ${FACEMC_CORE_CPP})
+      TARGET_LINK_LIBRARIES(tstDagFacemcWater-293.6K-mpi monte_carlo_manager)
+      ADD_TEST(DagFacemc_Water-293.6K-mpi_test 
+        ${MPIEXEC} -n 4 tstDagFacemcWater-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcWater-293.6K-mpi --threads=1)
+    ENDIF()
+  ENDIF()
+
+  # Add the Root-Facemc Water-293.6K Neutron tests
+  IF(${FRENSIE_ENABLE_ROOT})
+    ADD_EXECUTABLE(tstRootFacemcWater-293.6K tstRootFacemcWater-293.6K.cpp tstFacemcWater-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstRootFacemcWater-293.6K monte_carlo_manager)
+    ADD_TEST(RootFacemc_Water-293.6K_test tstRootFacemcWater-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcWater-293.6K --threads=1)
+    
+    IF(${FRENSIE_ENABLE_MPI})
+      ADD_EXECUTABLE(tstRootFacemcWater-293.6K-mpi tstRootFacemcWater-293.6K-mpi.cpp tstFacemcWater-293.6K.cpp ${FACEMC_CORE_CPP})
+      TARGET_LINK_LIBRARIES(tstRootFacemcWater-293.6K-mpi monte_carlo_manager)
+      ADD_TEST(RootFacemc_Water-293.6K-mpi_test 
+        ${MPIEXEC} -n 4 tstRootFacemcWater-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/water-293.6K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/water-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcWater-293.6K-mpi --threads=1)
+    ENDIF()
+  ENDIF()
     
     # # Add the U235-293.6K Neutron tests
     # ADD_EXECUTABLE(tstFacemcU235-293.6K tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
