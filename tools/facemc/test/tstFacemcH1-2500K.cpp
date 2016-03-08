@@ -360,7 +360,7 @@ bool testEstimator2Data(
     
   hdf5_file_handler.getProcessedEstimatorTotalData( 
 					     2u, processed_total_data_result );
-  out << "E2 proc total: " << processed_total_data_result << std::endl;
+  
   TEST_FLOATING_EQUALITY( processed_total_data[0].first,
                           processed_total_data_result[0].first,
                           1e-12 );

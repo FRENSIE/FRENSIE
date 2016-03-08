@@ -77,17 +77,33 @@ IF(DEFINED MCNP_DATA_DIR)
     ENDIF()
   ENDIF()
     
-    # # Add the U235-293.6K Neutron tests
-    # ADD_EXECUTABLE(tstFacemcU235-293.6K tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
-    # TARGET_LINK_LIBRARIES(tstFacemcU235-293.6K monte_carlo_manager)
-    # ADD_TEST(Facemc_U235-293.6K_test tstFacemcU235-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=FacemcU235-293.6K --threads=4)
+  # Add the Dag-Facemc U235-293.6K Neutron tests
+  IF(${FRENSIE_ENABLE_DAGMC})
+    ADD_EXECUTABLE(tstDagFacemcU235-293.6K tstDagFacemcU235-293.6K.cpp tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstDagFacemcU235-293.6K monte_carlo_manager)
+    ADD_TEST(DagFacemc_U235-293.6K_test tstDagFacemcU235-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcU235-293.6K --threads=4)
 
-    # IF(${FRENSIE_ENABLE_MPI})
-    #   ADD_EXECUTABLE(tstFacemcU235-293.6K-mpi tstFacemcU235-293.6K-mpi.cpp ${FACEMC_CORE_CPP})
-    # TARGET_LINK_LIBRARIES(tstFacemcU235-293.6K-mpi monte_carlo_manager)
-    # ADD_TEST(Facemc_U235-293.6K-mpi_test 
-    #   ${MPIEXEC} -n 4 tstFacemcU235-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=FacemcU235-293.6K-mpi --threads=1)
-    # ENDIF()
+    IF(${FRENSIE_ENABLE_MPI})
+      ADD_EXECUTABLE(tstDagFacemcU235-293.6K-mpi tstDagFacemcU235-293.6K-mpi.cpp tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstDagFacemcU235-293.6K-mpi monte_carlo_manager)
+    ADD_TEST(DagFacemc_U235-293.6K-mpi_test 
+      ${MPIEXEC} -n 4 tstDagFacemcU235-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/dag-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=DagFacemcU235-293.6K-mpi --threads=1)
+    ENDIF()
+  ENDIF()
+
+  # Add the Root-Facemc U235-293.6K Neutron tests
+  IF(${FRENSIE_ENABLE_ROOT})
+    ADD_EXECUTABLE(tstRootFacemcU235-293.6K tstRootFacemcU235-293.6K.cpp tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstRootFacemcU235-293.6K monte_carlo_manager)
+    ADD_TEST(RootFacemc_U235-293.6K_test tstRootFacemcU235-293.6K --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcU235-293.6K --threads=1)
+
+    IF(${FRENSIE_ENABLE_MPI})
+      ADD_EXECUTABLE(tstRootFacemcU235-293.6K-mpi tstRootFacemcU235-293.6K-mpi.cpp tstFacemcU235-293.6K.cpp ${FACEMC_CORE_CPP})
+    TARGET_LINK_LIBRARIES(tstRootFacemcU235-293.6K-mpi monte_carlo_manager)
+    ADD_TEST(RootFacemc_U235-293.6K-mpi_test 
+      ${MPIEXEC} -n 4 tstRootFacemcU235-293.6K-mpi --sim_info="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/sim_info.xml" --geom_def="${CMAKE_CURRENT_BINARY_DIR}/u235-293.6K/root-geom.xml" --src_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/source.xml" --resp_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/rsp_fn.xml" --est_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/est.xml" --mat_def="${CMAKE_CURRENT_SOURCE_DIR}/u235-293.6K/mat.xml" --cross_sec_dir="${CMAKE_CURRENT_BINARY_DIR}" --simulation_name=RootFacemcU235-293.6K-mpi --threads=1)
+    ENDIF()
+  ENDIF()
     
 ELSE()
   MESSAGE(WARNING "FACEMC verification test cannot be done without specifying the data directory!")
