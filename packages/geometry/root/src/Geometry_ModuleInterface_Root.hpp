@@ -46,14 +46,14 @@ class ModuleInterface<Root>
 public:
 
   //! The external surface id class (used within the geometry handler)
-  typedef Int_t ExternalSurfaceId;
+  typedef ModuleTraits::InternalSurfaceHandle ExternalSurfaceId;
   //! The external cell id class (used within the geometry handler )
-  typedef Int_t ExternalCellId;
+  typedef ModuleTraits::InternalCellHandle ExternalCellId;
   
   //! The external surface handle class (used within the geometry handler)
-  typedef Int_t ExternalSurfaceHandle;
+  typedef ModuleTraits::InternalSurfaceHandle ExternalSurfaceHandle;
   //! The external cell handle class (used within the geometry handler)
-  typedef Int_t ExternalCellHandle;
+  typedef ModuleTraits::InternalCellHandle ExternalCellHandle;
   
   //! The internal surface handle class (used within FRENSIE)
   typedef ModuleTraits::InternalSurfaceHandle InternalSurfaceHandle;
@@ -64,10 +64,6 @@ private:
   
   //! Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
-  
-  //! Root UniqueID to Root_gGeoManager UID map
-  static boost::unordered_map<ExternalCellHandle, Int_t> 
-                                                    s_root_uniqueid_to_uid_map;
 
 public:
 
@@ -78,7 +74,7 @@ public:
   static const ExternalCellHandle invalid_external_cell_handle; 
 
   //! Set the geometry handler instance
-  static void setHandlerInstance( TGeoManager* handler_instance );
+  static void setHandlerInstance( const Root& root_instance );
 
   //! Do just in time initialization of interface members
   static void initialize();
@@ -116,9 +112,6 @@ public:
 				const double position[3],
 				double normal[3] );
 
-  //! Assign unique identites to all cells
-  static void assignCellIds();
-
   //! Get the volume of a cell
   static double getCellVolume( const InternalCellHandle cell );
   
@@ -153,11 +146,10 @@ private:
 };
 
 // Set the geometry handler instance
-/*! \details ROOT returns gGeoManager which handles the specific geometry 
-     loaded into ROOT.
+/*! \details The Root wrapper handles all root queries and is a singleton.
  */
 inline void ModuleInterface<Root>::setHandlerInstance( 
-			    TGeoManager* handler_instance )
+                                                    const Root& root_instance )
 { /* ... */ }
 
 // Initialize a new ray (after a collision)
@@ -168,91 +160,93 @@ inline void ModuleInterface<Root>::setHandlerInstance(
 inline void ModuleInterface<Root>::newRay()
 { /* ... */ }
 
-
-// Check if the cell is a termination cell
-inline bool ModuleInterface<Root>::isTerminationCell( 
-						const InternalCellHandle cell )
+// Enable support for multiple threads
+inline void ModuleInterface<Root>::enableThreadSupport( 
+                                                   const unsigned num_threads )
 { 
-  ExternalCellHandle cell_external = 
-    ModuleInterface<Root>::getExternalCellHandle( cell );
-
-  // Check if cell material is equal to pre-defined terminal material 
-  TGeoVolume* current_volume = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second );
-  std::string current_material = current_volume->GetMaterial()->GetName();
+  Root::enableThreadSupport( num_threads );
   
-  return ( current_material == Root::getTerminalMaterialName() );
+  // if( num_threads > 1 )
+  // {
+  //   THROW_EXCEPTION( std::logic_error,
+  //                    "Error: The Root module interface does not support "
+  //                    "multiple threads yet!");
+  // }
+}
+
+// Find the cell that contains a given point (start of history)
+inline ModuleInterface<Root>::InternalCellHandle 
+ModuleInterface<Root>::findCellContainingPoint( const Ray& ray )
+{
+  Root::setInternalRay( ray );
+
+  return Root::findCellContainingInternalRay();
+}
+
+// Find the cell that contains a given point (surface crossing)
+inline ModuleInterface<Root>::InternalCellHandle 
+ModuleInterface<Root>::findCellContainingPoint( 
+		  const Ray& ray,
+		  const ModuleInterface<Root>::InternalCellHandle current_cell,
+                  const ModuleInterface<Root>::InternalSurfaceHandle surface )
+{
+  return Root::findCellContainingInternalRay();
+}
+
+// Fire a ray through the geometry
+/*! \details Root does not keep track of surfaces so this method will
+ * always set the surface hit to 0.
+ */
+inline void ModuleInterface<Root>::fireRay( 
+                 const Ray& ray,
+	         const ModuleInterface<Root>::InternalCellHandle& current_cell,
+	         ModuleInterface<Root>::InternalSurfaceHandle& surface_hit,
+                 double& distance_to_surface_hit )
+{
+  // Fire the internal root ray
+  distance_to_surface_hit = Root::fireInternalRay();
+
+  // Advance the internal root ray to the next boundary
+  Root::advanceInternalRayToCellBoundary();
+
+  // Dummy return surface
+  surface_hit = 0;
+}
+
+// Get the point location w.r.t. a given cell
+inline PointLocation ModuleInterface<Root>::getPointLocation( 
+                         const Ray& ray,
+			 const ModuleInterface<Root>::InternalCellHandle cell )
+{
+  return Root::getPointLocation( ray, cell );
 }
 
 // Calculate the surface normal at a point on the surface
-/* \details This function will not modify normal[3] if the point is not on a 
- *  boundary.
+/* \details Surfaces are not considered when dealing with Root. This function
+ * will always return a normal of (0,0,1).
  */
 inline void ModuleInterface<Root>::getSurfaceNormal( 
 					   const InternalSurfaceHandle surface,
 					   const double position[3],
 					   double normal[3] )
 {
-  if( Root::getManager()->GetCurrentNavigator()->IsOnBoundary() )
-  {
-    double* normal_t = Root::getManager()->FindNormal();
-    
-    normal[0] = normal_t[0];
-    normal[1] = normal_t[1];
-    normal[2] = normal_t[2];
-  }
-  else
-  {
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: Root has found that the particle is not on "
-                     "a surface, therefore it cannot determine the surface "
-                     "normal." );
-  }
+  normal[0] = 0.0;
+  normal[1] = 0.0;
+  normal[2] = 1.0;
+}
+
+// Check if the cell is a termination cell
+inline bool ModuleInterface<Root>::isTerminationCell( 
+						const InternalCellHandle cell )
+{ 
+  return Root::isTerminationCell( cell );
 }
 
 // Get the volume of a cell
 inline double ModuleInterface<Root>::getCellVolume( 
 						const InternalCellHandle cell )
 {
-  double volume = 0.0;
-  TObjArray* daughters;
-  
-  ExternalCellHandle cell_external = 
-    ModuleInterface<Root>::getExternalCellHandle( cell );
-  
-  if ( s_root_uniqueid_to_uid_map.find( cell_external ) != s_root_uniqueid_to_uid_map.end() )
-  {
-    volume = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second )->Capacity();
-    daughters = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second )->GetNodes();
-  }
-  else
-  {
-    THROW_EXCEPTION( std::logic_error,
-                     "Error: Root encountered unique id " << cell_external <<
-                     " which was not present in the geometry handler." );
-          
-  }
-  
-  
-  if ( daughters != NULL )
-  {
-    TIterator* daughter_list_iterator = daughters->MakeIterator();
-    int number_of_daughters = daughters->GetEntries();
-  
-    for (int i=0; i < number_of_daughters; i++) 
-    {
-      // Obtain the next object in the array and cast it to its derived class
-      TObject* current_object = daughter_list_iterator->Next();
-      TGeoNode* current_node = dynamic_cast<TGeoNode*>( current_object );
-      TGeoVolume* current_daughter = current_node->GetVolume();
-      volume = volume - current_daughter->Capacity();
-    }
-    return volume;
-  }
-  else
-  {
-    return volume;
-  }
-  
+  return Root::getCellVolume( cell );  
 }
 
 // Get the surface area of a surface bounding a cell
@@ -263,21 +257,20 @@ inline double ModuleInterface<Root>::getCellSurfaceArea(
 					   const InternalSurfaceHandle surface,
 					   const InternalCellHandle )
 {
-  return 1;
+  return 1.0;
 }
 
 // Check that an external surface handle exists
 inline bool ModuleInterface<Root>::doesSurfaceExist(
                 const ExternalSurfaceId surface )
 {
-  return ModuleInterface<Root>::doesCellExist( surface );
+  return false;
 }
 
 // Check that an external cell handle exists
-inline bool ModuleInterface<Root>::doesCellExist(
-						    const ExternalCellId cell )
+inline bool ModuleInterface<Root>::doesCellExist( const ExternalCellId cell )
 {
-  return Root::getManager()->GetVolume( cell ) != NULL;
+  return Root::doesCellExist( cell );
 }
 
 // Get the internal surf. handle corresponding to the external surf. handle
@@ -314,8 +307,7 @@ ModuleInterface<Root>::getExternalSurfaceHandle(
 /*! \details Root uses integer handles so use implicit casting.
  */ 
 inline ModuleInterface<Root>::ExternalCellHandle 
-ModuleInterface<Root>::getExternalCellHandle(
-					        const InternalCellHandle cell )
+ModuleInterface<Root>::getExternalCellHandle( const InternalCellHandle cell )
 { 
   return cell;
 } 

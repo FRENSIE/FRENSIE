@@ -45,35 +45,34 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
     
     ++it;
   }
+
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                       ModuleTraits::InternalMaterialHandle>
+    cell_id_mat_id_map;
+
+  try{
+    Geometry::Root::getCellMaterialIds( cell_id_mat_id_map );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
+                              InvalidMaterialRepresentation,
+                              "Error: could not extract the material ids "
+                              "from ROOT!" );                              
   
-  int material_counter = 0;
-  TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial( material_counter );
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                       ModuleTraits::InternalMaterialHandle>::const_iterator 
+    cell_it = cell_id_mat_id_map.begin();
   
-  while ( mat != NULL )
+  while( cell_it != cell_id_mat_id_map.end() )
   {
-    // Obtain the material number from ROOT
-    std::string requested_material_id_name = mat->GetName();
-    
-    if ( requested_material_id_name != "void" && requested_material_id_name != Geometry::Root::getTerminalMaterialName() )
-    { 
-      requested_material_id_name = requested_material_id_name.substr(4);
-    
-      std::istringstream iss( requested_material_id_name );
-    
-      ModuleTraits::InternalMaterialHandle material_id;
-    
-      iss >> material_id;
-    
-      TEST_FOR_EXCEPTION( material_ids.find( material_id ) ==
-			  material_ids.end(),
-			  InvalidMaterialRepresentation,
-			  "Error: ROOT has requested material number "
-			  << material_id << " which is lacking "
-			  "a definition!" );
-	}
-	material_counter += 1;
-	mat = Geometry::Root::getManager()->GetMaterial( material_counter );
-  } 
+    TEST_FOR_EXCEPTION( material_ids.find( cell_it->second ) ==
+                        material_ids.end(),
+                        InvalidMaterialRepresentation,
+                        "Error: ROOT has requested material number "
+                        << cell_it->second << " which is lacking "
+                        "a definition!" );
+
+    ++cell_it;
+  }
 }
 
 // Create the cell id data maps
@@ -85,53 +84,68 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
           boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
 	  std::vector<std::string> >& cell_id_density_map ) const
 {
-  // Get the cell property values (material and density)
-  TObjArray* cells = Geometry::Root::getManager()->GetListOfVolumes();
-  TIterator* iter  = cells->MakeIterator();
-  int number_cells = cells->GetEntries();
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                       ModuleTraits::InternalMaterialHandle>
+    raw_cell_id_mat_id_map;
   
-  for ( Geometry::ModuleTraits::InternalCellHandle i=0; i < number_cells; i++ )
-  {
-    // Obtain the material and density data from ROOT
-    TGeoVolume* cell  = dynamic_cast<TGeoVolume*>( iter->Next() );
-    TGeoMaterial* mat = cell->GetMaterial();
-    std::string material_name  = mat->GetName();
-    
-    if ( material_name != Geometry::Root::getVoidMaterialName() && 
-         material_name != Geometry::Root::getTerminalMaterialName() )
-    {
-      TEST_FOR_EXCEPTION( material_name.find( "mat_" ) != 0,
-                          InvalidMaterialRepresentation,
-                          "Error: ROOT cell " << cell->GetUniqueID() <<
-                          "used an invalid material name ("
-                          << material_name << ")!" );
-      
-      TEST_FOR_EXCEPTION( material_name.find_first_not_of( "0123456789", 4 )
-                          < material_name.size(),
-                          InvalidMaterialRepresentation,
-                          "Error: ROOT cell " << cell->GetUniqueID() <<
-                          "used an invalid material name ("
-                          << material_name << ")!" );
+  try{
+    Geometry::Root::getCellMaterialIds( raw_cell_id_mat_id_map );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
+                              InvalidMaterialRepresentation,
+                              "Error: could not extract the material ids "
+                              "from ROOT!" );  
 
-      std::vector<std::string> material_id;
-      material_id.push_back( material_name.substr(4) );
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>
+    raw_cell_id_density_map;
+
+  try{
+    Geometry::Root::getCellDensities( raw_cell_id_density_map );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
+                              InvalidMaterialRepresentation,
+                              "Error: could not extract the cell densities "
+                              "from ROOT!" );  
     
-      double density =  mat->GetDensity();
+  // Make sure that the maps have the same size
+  TEST_FOR_EXCEPTION( raw_cell_id_mat_id_map.size() != 
+                      raw_cell_id_density_map.size(),
+		      InvalidMaterialRepresentation,
+		      "Error: ROOT must specify densities with material "
+		      "ids!" );
+
+  // Convert the raw cell id mat id map
+  {
+    boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                         ModuleTraits::InternalMaterialHandle>::const_iterator
+      cell_it = raw_cell_id_mat_id_map.begin();
+
+    while( cell_it != raw_cell_id_mat_id_map.end() )
+    {
+      std::vector<std::string> converted_mat_id;
+      converted_mat_id.push_back( std::to_string( cell_it->second ) );
       
-      std::vector<std::string> density_name;
-      density_name.push_back( std::to_string( density ) );
+      cell_id_mat_id_map[cell_it->first] = converted_mat_id;
       
-      // Update the unordered maps
-      cell_id_mat_id_map[ cell->GetUniqueID() ] = material_id;
-      cell_id_density_map[ cell->GetUniqueID() ] = density_name;
+      ++cell_it;
     }
   }
 
-  // Make sure that the maps have the same size
-  TEST_FOR_EXCEPTION( cell_id_mat_id_map.size() != cell_id_density_map.size(),
-		      InvalidMaterialRepresentation,
-		      "Error: ROOT must specify densities with material "
-		      "ids." );
+  // Convert the raw cell id density map
+  {
+    boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>::const_iterator
+      cell_it = raw_cell_id_density_map.begin();
+
+    while( cell_it != raw_cell_id_density_map.end() )
+    {
+      std::vector<std::string> converted_density;
+      converted_density.push_back( std::to_string( cell_it->second ) );
+
+      cell_id_density_map[cell_it->first] = converted_density;
+
+      ++cell_it;
+    }         
+  }
 }
 
 #endif // end HAVE_FRENSIE_ROOT

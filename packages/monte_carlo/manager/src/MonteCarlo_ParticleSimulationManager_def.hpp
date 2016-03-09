@@ -285,6 +285,9 @@ void ParticleSimulationManager<GeometryHandler,
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
     
+    // Initialize new ray here
+    // GMI::newRay( particle.ray() )
+    
     // Ray trace until the necessary number of optical paths have be traveled
     while( true )
     {

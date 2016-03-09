@@ -13,7 +13,7 @@
 #include "Utility_ContractException.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
-#include "Geometry_ModuleInterface_Root.hpp"
+#include "Geometry_Root.hpp"
 #endif
 
 namespace MonteCarlo{
@@ -57,10 +57,10 @@ void StandardEstimatorFactory<Geometry::Root>::verifyExistenceOfCells(
   while( cell != cells.end() )
   {
     TEST_FOR_EXCEPTION(
-           !Geometry::ModuleInterface<Geometry::Root>::doesCellExist( *cell ),
-           InvalidEstimatorRepresentation,
-           "Error: estimator " << estimator_id << " specified cell " 
-           << *cell << " in the xml file, which does not exists!" );
+                     !Geometry::Root::doesCellExist( *cell ),
+                     InvalidEstimatorRepresentation,
+                     "Error: estimator " << estimator_id << " specified cell " 
+                     << *cell << " in the xml file, which does not exists!" );
 
     ++cell;
   }
@@ -92,8 +92,7 @@ void StandardEstimatorFactory<Geometry::Root>::getCellVolumes(
     // Calculate and cache the cell volume if the cell is new
     else
     {
-      cell_volumes [i] = 
-        Geometry::ModuleInterface<Geometry::Root>::getCellVolume( cells[i] );
+      cell_volumes[i] = Geometry::Root::getCellVolume( cells[i] );
 
       d_cell_volume_map[cells[i]] = cell_volumes[i];
     }

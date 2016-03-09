@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Test_Root_Geometry.C
-//! \author Eli Moll
+//! \file   advanced_root_geometry.c
+//! \author Alex Robinson
 //! \brief  Geometry for unit testing on ROOT implementation
 //!
 //---------------------------------------------------------------------------//
@@ -11,7 +11,7 @@
  * surrounding volume is a cube of side length 10cm centered at (0,0,0) filled
  * with the terminal material. 
  */ 
-void Test_Root_Geometry()
+void advanced_root_geometry()
 {
   // Set up manager of geometry world
   gSystem->Load( "libGeom" );
@@ -19,13 +19,13 @@ void Test_Root_Geometry()
                    "Geometry for testing root implementation" );
    
   // Define materials and media (space filling materials)
-  TGeoMaterial *void_mat = new TGeoMaterial( "void",0,0,0 );
+  TGeoMaterial *void_mat = new TGeoMaterial( "empty",0,0,0 );
   TGeoMedium   *void_med = new TGeoMedium( "void_med",1,void_mat );
    
-  TGeoMaterial *mat_1 = new TGeoMaterial( "mat_1",1,1,1 );
+  TGeoMaterial *mat_1 = new TGeoMaterial( "material_1",1,1,1 );
   TGeoMedium   *med_1 = new TGeoMedium( "med_1",2,mat_1 );
   
-  TGeoMaterial *terminal_mat = new TGeoMaterial( "graveyard",0,0,0 );
+  TGeoMaterial *terminal_mat = new TGeoMaterial( "killzone",0,0,0 );
   TGeoMedium   *terminal_med = new TGeoMedium( "graveyard",3,terminal_mat );
 
   // Define the graveyard volume and set it to be the highest node
@@ -52,12 +52,12 @@ void Test_Root_Geometry()
   // gGeoManager->SetTopVisible();
   // terminal_cube->Draw();
 
-  gGeoManager->Export("Test_Root_Geometry.root");
+  gGeoManager->Export("advanced_root_geometry.root");
   exit(1);
 
-}  // end Test_Root_Geometry
+}  // end advanced_root_geometry
 
 
 //---------------------------------------------------------------------------//
-// end Test_Root_Geometry.C
+// end advanced_root_geometry.c
 //---------------------------------------------------------------------------//

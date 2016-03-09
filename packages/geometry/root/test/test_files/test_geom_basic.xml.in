@@ -2,6 +2,6 @@
 
   <Parameter name="Handler" type="string" value="ROOT"/>
   <Parameter name="Root File" type="string" 
-	     value="${CMAKE_CURRENT_BINARY_DIR}/Test_Root_Geometry.root"/>
+	     value="${CMAKE_CURRENT_BINARY_DIR}/basic_root_geometry.root"/>
   
 </ParameterList>
