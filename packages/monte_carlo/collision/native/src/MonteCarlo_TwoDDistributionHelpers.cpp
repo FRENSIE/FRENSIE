@@ -10,7 +10,7 @@
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
-namespace {
+namespace MonteCarlo{
 
 // Find the lower and upper bin boundary
 void findLowerAndUpperBinBoundary( 
@@ -24,14 +24,12 @@ void findLowerAndUpperBinBoundary(
   {
     lower_bin_boundary = dependent_distribution.begin();
     upper_bin_boundary = lower_bin_boundary;
-    //return dependent_distribution.front().second->sample();
   }
   else if( independent_variable >= dependent_distribution.back().first )
   {
     lower_bin_boundary = dependent_distribution.end();
     --lower_bin_boundary;
     upper_bin_boundary = lower_bin_boundary;
-    //return dependent_distribution.back().second->sample();
   }
   else
   {
@@ -52,9 +50,36 @@ void findLowerAndUpperBinBoundary(
   }
 }
 
-} // end Anonymous namespace
 
-namespace MonteCarlo{
+// Sample a two dimensional ditribution with a random number
+/*! \details This function is designed for lin-lin unit base interpolation 
+ * data.
+ */  
+double sampleTwoDDistributionCorrelatedWithRandomNumber(
+   const double independent_variable,
+   const TwoDDistribution& dependent_distribution,
+   const double random_number )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+                                dependent_distribution,
+                                lower_bin_boundary,
+                                upper_bin_boundary,
+                                interpolation_fraction );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return correlatedSampleWithRandomNumber( upper_bin_boundary->second,
+                                             lower_bin_boundary->second,
+                                             interpolation_fraction,
+                                             random_number );
+  }
+  else
+    return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
+}
+
 
 // Sample a two dimensional ditribution
 /*! \details This function is designed for lin-lin unit base interpolation 
@@ -64,24 +89,15 @@ double sampleTwoDDistributionCorrelated(
    const double independent_variable,
    const TwoDDistribution& dependent_distribution )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
-  double interpolation_fraction;
+  double random_number = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  findLowerAndUpperBinBoundary( independent_variable,
-				dependent_distribution,
-				lower_bin_boundary,
-				upper_bin_boundary,
-				interpolation_fraction );
-  
-  if( lower_bin_boundary != upper_bin_boundary )
-  {
-    return correlatedSample( upper_bin_boundary->second,
-			     lower_bin_boundary->second,
-			     interpolation_fraction );
-  }
-  else
-    return lower_bin_boundary->second->sample();
+  return sampleTwoDDistributionCorrelatedWithRandomNumber(
+            independent_variable,
+            dependent_distribution,
+            random_number );
 }
+
 
 // Sample a two dimensional distribution
 /*! \details This function is designed for lin-lin unit base interpolation 
@@ -110,17 +126,97 @@ double sampleTwoDDistributionIndependent(
     return lower_bin_boundary->second->sample();
 }
 
-// Sample an upper and lower distribution using a common random variable
-double correlatedSample(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+
+// Evaluate a correlated value from a two dimensional distribution
+double evaluateTwoDDistributionCorrelated( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+				dependent_distribution,
+				lower_bin_boundary,
+				upper_bin_boundary,
+				interpolation_fraction );
+  
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return evaluateCorrelated( upper_bin_boundary->second,
+                               lower_bin_boundary->second,
+                               interpolation_fraction,
+                               dependent_variable );
+  }
+  else
+    return lower_bin_boundary->second->evaluate( dependent_variable );
+}
+
+
+// Evaluate a correlated PDF from a two dimensional distribution
+double evaluateTwoDDistributionCorrelatedPDF( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+				dependent_distribution,
+				lower_bin_boundary,
+				upper_bin_boundary,
+				interpolation_fraction );
+  
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return evaluateCorrelatedPDF( upper_bin_boundary->second,
+                                  lower_bin_boundary->second,
+                                  interpolation_fraction,
+                                  dependent_variable );
+  }
+  else
+    return lower_bin_boundary->second->evaluatePDF( dependent_variable );
+}
+
+
+// Evaluate a correlated CDF from a two dimensional distribution
+double evaluateTwoDDistributionCorrelatedCDF( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+				dependent_distribution,
+				lower_bin_boundary,
+				upper_bin_boundary,
+				interpolation_fraction );
+  
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return evaluateCorrelatedCDF( upper_bin_boundary->second,
+                                  lower_bin_boundary->second,
+                                  interpolation_fraction,
+                                  dependent_variable );
+  }
+  else
+    return lower_bin_boundary->second->evaluateCDF( dependent_variable );
+}
+
+
+// Sample an upper and lower distribution using a common given random variable
+double correlatedSampleWithRandomNumber(
+        const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+        const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    lower_distribution,
-		    const double interpolation_fraction )
+        const double interpolation_fraction,
+        const double random_number )
 {  
-  double random_number = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
   double upper_dist_dependent_variable = 
                    upper_distribution->sampleWithRandomNumber( random_number );
 
@@ -132,14 +228,34 @@ double correlatedSample(
     (upper_dist_dependent_variable - lower_dist_dependent_variable);
 }
 
-// Sample an upper and lower distribution using a common random variable in a subrange
+
+// Sample an upper and lower distribution using a common random variable
 double correlatedSample(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    lower_distribution,
-		    const double interpolation_fraction,
-		    const double max_indep_var )
+                    const double interpolation_fraction )
+{  
+  double random_number = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+  return correlatedSampleWithRandomNumber(
+                    upper_distribution, 
+                    lower_distribution, 
+                    interpolation_fraction,
+                    random_number );
+}
+
+
+// Sample an upper and lower distribution using a common random variable in a subrange
+double correlatedSampleInSubrange(
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		            const double interpolation_fraction,
+		            const double max_indep_var )
 {  
   // Sample the upper and lower distributions using the same random number
   double random_number = 
@@ -157,6 +273,7 @@ double correlatedSample(
   return lower_dist_dependent_variable + interpolation_fraction*
     (upper_dist_dependent_variable - lower_dist_dependent_variable);
 }
+
 
 // Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(
@@ -177,6 +294,7 @@ double evaluateCorrelatedCDF(
   return interpolation_fraction*(upper_cdf - lower_cdf) + lower_cdf;
 }
 
+
 // Evaluate a correlated pdf value
 double evaluateCorrelatedPDF(
     const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
@@ -193,6 +311,25 @@ double evaluateCorrelatedPDF(
   // Linearly interpolate between the upper and lower cdf values
   return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
 }
+
+
+// Evaluate a correlated value
+double evaluateCorrelated(
+    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const double interpolation_fraction,
+    const double independent_value )
+{
+  double upper_pdf = 
+    upper_distribution->evaluate( independent_value );
+
+  double lower_pdf = 
+    lower_distribution->evaluate( independent_value );
+
+  // Linearly interpolate between the upper and lower pdf values
+  return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
+}
+
 
 // Sample from either the lower or upper distribution depending on interp frac
 double independentSample(

@@ -26,8 +26,7 @@
 //---------------------------------------------------------------------------//
 
 MonteCarlo::TwoDDistribution twod_distribution;
-double interpolation_fraction;
-double independent_value;
+double interpolation_fraction, independent_value, energy;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -85,6 +84,120 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelated_inb
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be correlated sampled with a random number
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelatedWithRandomNumber )
+{
+  double sampled_variable;
+  double random_number =  3.0/18.0; // sample the first distribution
+
+  sampled_variable = 
+    MonteCarlo::sampleTwoDDistributionCorrelatedWithRandomNumber( 
+        0.0001, 
+        twod_distribution,
+        random_number ); 
+
+  TEST_FLOATING_EQUALITY( sampled_variable, -1.5, 1e-15  );
+
+  random_number = 0.5;
+
+  sampled_variable = 
+    MonteCarlo::sampleTwoDDistributionCorrelatedWithRandomNumber( 
+        1.0, 
+        twod_distribution,
+        random_number );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 2.0, 1e-15  );
+
+  sampled_variable = 
+    MonteCarlo::sampleTwoDDistributionCorrelatedWithRandomNumber( 
+        0.05, 
+        twod_distribution,
+        random_number );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 13.0/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled with a random number using independent sampling
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionIndependent )
+{
+  double sampled_variable;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample between the middle and last distribution
+  fake_stream[1] = 0.5; // sample from middle distribution
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sampled_variable = 
+    MonteCarlo::sampleTwoDDistributionIndependent( 0.05, twod_distribution );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated cdf value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedCDF )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedCDF(
+                                                   energy,  
+                                                   independent_value,
+                                                   twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 0.4259259259259260, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated pdf value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedPDF )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+                                                   energy,  
+                                                   independent_value,
+                                                   twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelated )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelated( 
+                                                   energy,  
+                                                   independent_value,
+                                                   twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlation sample for two bins with random number
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSampleWithRandomNumber )
+{
+  double sampled_variable;
+
+  double random_number = 0.5; // sample between the middle and last distribution
+
+  sampled_variable = 
+    MonteCarlo::correlatedSampleWithRandomNumber( twod_distribution[2].second,
+                                                  twod_distribution[1].second,
+                                                  interpolation_fraction,
+                                                  random_number );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 13.0/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
 // Check the correlation sample for two bins
 TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample )
 {
@@ -107,7 +220,7 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample )
 
 //---------------------------------------------------------------------------//
 // Check the correlation sample for two bins in a subrange
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample_subrange )
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSampleInSubrange )
 {
   double sampled_variable;
 
@@ -117,7 +230,8 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample_subrange )
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sampled_variable = MonteCarlo::correlatedSample( twod_distribution[2].second,
+  sampled_variable = 
+           MonteCarlo::correlatedSampleInSubrange( twod_distribution[2].second,
                                                    twod_distribution[1].second,
                                                    interpolation_fraction,
                                                    3.0 );
@@ -133,21 +247,65 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedCDF )
 {
   double sampled_variable;
 
-  // Set up the random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // sample between the middle and last distribution
- 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
   sampled_variable = MonteCarlo::evaluateCorrelatedCDF( 
                                                    twod_distribution[2].second,
                                                    twod_distribution[1].second,
                                                    interpolation_fraction,
                                                    independent_value );
 
+  TEST_FLOATING_EQUALITY( sampled_variable, 0.4259259259259260, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated pdf value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedPDF )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateCorrelatedPDF( 
+                                                   twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction,
+                                                   independent_value );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-12  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelated )
+{
+  double sampled_variable;
+
+  sampled_variable = MonteCarlo::evaluateCorrelated( 
+                                                   twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction,
+                                                   independent_value );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-12  );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distributions can be sampled independently
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, independentSample )
+{
+  double sampled_variable;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample from the middle distribution
+  fake_stream[1] = 0.5; // sample cdf = 0.5
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sampled_variable = MonteCarlo::independentSample( twod_distribution[2].second,
+                                                    twod_distribution[1].second,
+                                                    interpolation_fraction );
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( sampled_variable, 0.4259259259259260, 1e-15  );
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-12  );
 }
 
 //---------------------------------------------------------------------------//
@@ -215,8 +373,9 @@ int main( int argc, char** argv )
 							                              bin_values) );
 
   independent_value = 1.0;
+  energy = 0.05;
 
-  interpolation_fraction = ( 0.05 - twod_distribution[1].first )/
+  interpolation_fraction = ( energy - twod_distribution[1].first )/
                  ( twod_distribution[2].first  - twod_distribution[1].first );
 
   // Initialize the random number generator
