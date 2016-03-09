@@ -320,7 +320,7 @@ bool testEstimator2Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_result,
-                                        1e-12 );
+                                        1e-9 );
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
@@ -334,7 +334,7 @@ bool testEstimator2Data(
     
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
                                         processed_bin_data_result,
-                                        1e-12 );
+                                        1e-9 );
 
   // Check the raw total data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
@@ -348,7 +348,7 @@ bool testEstimator2Data(
   
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_result,
-                                        1e-12 );
+                                        1e-9 );
 
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
