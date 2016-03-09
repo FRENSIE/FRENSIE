@@ -16,7 +16,6 @@ MOAB_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/moab")
 MOAB_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/moab")
 ODEPACK_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/odepack")
 BOOST_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/boost")
-GSL_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/gsl")
 MPI_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/mpi")
 ROOT_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/root")
 DOXYGEN_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/doxygen")
@@ -58,7 +57,6 @@ cmake \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
     -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
-    -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
     -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
     -D ROOT_PREFIX:PATH=$ROOT_PREFIX_PATH \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
