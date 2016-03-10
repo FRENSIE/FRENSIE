@@ -13,6 +13,7 @@
 #include <string>
 #include <stdexcept>
 #include <unordered_map>
+#include <vector>
 
 // Root Includes
 #include <TGeoManager.h>
@@ -74,6 +75,12 @@ public:
 
   //! Check if a cell exists
   static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Get the problem cells
+  template<typename Set>
+  static void getCells( Set& cell_set, 
+                        const bool include_void_cells = true,
+                        const bool include_termination_cells = false );
   
   //! Get the cell volume
   static double getCellVolume( const ModuleTraits::InternalCellHandle cell_id);
@@ -114,6 +121,9 @@ public:
   //! Get the distance from the external ray position to the nearest boundary
   static double fireExternalRay( const Ray& ray );
 
+  //! Check if the internal ray is set
+  static bool isInternalRaySet();
+
   //! Initialize (or reset) an internal root ray 
   static void setInternalRay( const double position[3], 
                               const double direction[3] );
@@ -152,12 +162,21 @@ private:
   // Find the node containing the point
   static TGeoNode* findNodeContainingPoint( const Ray& ray );
 
+  // Reset the internal ray set flag
+  static void internalRayUnset();
+
+  // Set the internal ray set flag
+  static void internalRaySet();
+
   // Root TGeoManager
   static TGeoManager* s_manager;
 
   // Root cell id to uid map
   static std::unordered_map<ModuleTraits::InternalCellHandle,Int_t>
   s_cell_id_uid_map;
+
+  // Internal ray set
+  static std::vector<int> s_internal_ray_set;
 
   // Root void material name
   static std::string s_void_material_name;
