@@ -22,6 +22,46 @@
 
 namespace Geometry{
 
+// Get the problem cells
+/*! \details The set value type should be a ModuleTraits::InternalCellHandle. 
+ */
+template<typename Set>
+void Root::getCells( Set& cell_set,
+                     const bool include_void_cells,
+                     const bool include_termination_cells )
+{
+  // Get a list of the cells
+  TObjArray* cells = s_manager->GetListOfVolumes();
+  unsigned long long number_of_cells = cells->GetEntries();
+  
+  TIterator* cell_it  = cells->MakeIterator();
+  
+  for( unsigned long long i = 0ull; i < number_of_cells; ++i )
+  {
+    // Get the cell
+    TGeoVolume* cell = dynamic_cast<TGeoVolume*>( cell_it->Next() );
+
+    // Get the cell id
+    Geometry::ModuleTraits::InternalCellHandle cell_id = 
+      cell->GetUniqueID();
+    
+    // Check if it is a void cell
+    if( Root::isVoidCell( cell_id ) )
+    {
+      if( include_void_cells )
+        cell_set.insert( cell_id );
+    }
+    // Check if it is a termination cell
+    else if( Root::isTerminationCell( cell_id ) )
+    {
+      if( include_termination_cells )
+        cell_set.insert( cell_id );
+    }
+    else
+      cell_set.insert( cell_id );
+  }
+}
+
 // Get the cell materials
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
  * mapped type must be a string. 

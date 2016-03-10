@@ -21,8 +21,11 @@ MACRO(ENABLE_ROOT_SUPPORT)
   FIND_LIBRARY(ROOT_CORE libCore.so
     PATHS ${ROOT_PREFIX}/lib)
 
+  FIND_LIBRARY(ROOT_THREAD libThread.so
+    PATHS ${ROOT_PREFIX}/lib)
+
   # Store ROOT libraries in the ROOT variable
-  SET(ROOT ${ROOT_GEOM} ${ROOT_CORE})
+  SET(ROOT ${ROOT_GEOM} ${ROOT_CORE} ${ROOT_THREAD})
 
   # Find the root executable
   FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_PREFIX}/bin)

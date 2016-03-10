@@ -16,12 +16,14 @@
 // FRENSIE Includes
 #include "Geometry_Root.hpp"
 #include "Utility_DirectionHelpers.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace Geometry{
 
 // Initialize static member data
 TGeoManager* Root::s_manager = NULL;
 std::unordered_map<ModuleTraits::InternalCellHandle,Int_t> Root::s_cell_id_uid_map;
+std::vector<int> Root::s_internal_ray_set;
 std::string Root::s_terminal_material_name = "graveyard";
 std::string Root::s_void_material_name = "void";
 std::string Root::s_material_property_name = "mat";
@@ -61,6 +63,9 @@ void Root::initialize( const std::string& filename )
 {
   // Make sure to initialize only once
   testPrecondition( !Root::isInitialized() );
+
+  // Initialize the internal ray set array
+  s_internal_ray_set.resize( 1, false );
   
   // Tell ROOT to suppress all non-fatal messages
   gErrorIgnoreLevel = kFatal;
@@ -72,6 +77,9 @@ void Root::initialize( const std::string& filename )
                       InvalidRootGeometry,
                       "Error: ROOT could not import file "
                       << filename << "!" );
+
+  // Lock the geometry so no other geometries can be imported
+  TGeoManager::LockGeometry();
   
   // Get the list of volumes
   TObjArray* volume_list = s_manager->GetListOfVolumes();
@@ -125,8 +133,19 @@ void Root::enableThreadSupport( const unsigned num_threads )
   testPrecondition( Root::isInitialized() );
   // Make sure the number of threads is valid
   testPrecondition( num_threads > 0 );
-  
+
   s_manager->SetMaxThreads( num_threads );
+  
+  // A navigator must be created for each thread
+  // NOTE: this is not done by the SetMaxThreads method (why????)
+  #pragma omp parallel num_threads( num_threads )
+  {
+    // This navigator will also be set to the current navigator for the thread
+    TGeoNavigator* thread_navigator = s_manager->AddNavigator();
+  }
+
+  // The internal ray for each thread must be monitored
+  s_internal_ray_set.resize( num_threads, false );
 }
 
 // Check if a cell exists
@@ -280,6 +299,9 @@ TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
 
+  // The internal ray is not set now
+  Root::internalRayUnset();
+
   TGeoNode* current_node = s_manager->InitTrack( ray.getPosition(),
                                                  ray.getDirection() );
 
@@ -330,43 +352,107 @@ double Root::fireExternalRay( const Ray& ray )
   return s_manager->GetStep();
 }
 
+// Check if the internal ray is set
+bool Root::isInternalRaySet()
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure thread support has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+                    s_internal_ray_set.size() );
+  
+  return s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()];
+}
+
+// Reset the internal ray set flag
+void Root::internalRayUnset()
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure thread support has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+                    s_internal_ray_set.size() );
+  
+  s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()] = false;
+}
+
+// Set the internal ray set flag
+void Root::internalRaySet()
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure thread support has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+                    s_internal_ray_set.size() );
+  
+  s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()] = true;
+}
+
 // Initialize (or reset) an internal root ray 
 void Root::setInternalRay( const double position[3], 
                            const double direction[3] )
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
-  
+
+  // The internal ray is set now
+  Root::internalRaySet();
+
   TGeoNode* current_node = s_manager->InitTrack( position, direction );
 }
 
 // Initialize (or reset) an internal root ray 
 void Root::setInternalRay( const Ray& ray )
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  
   Root::setInternalRay( ray.getPosition(), ray.getDirection() );
 }
 
 // Get the internal root ray position
 const double* Root::getInternalRayPosition()
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  
   return s_manager->GetCurrentPoint();
 }
 
 // Get the internal root ray direction
 const double* Root::getInternalRayDirection()
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  
   return s_manager->GetCurrentDirection();
 }
 
 // Get the cell containing the internal root ray position
 ModuleTraits::InternalCellHandle Root::findCellContainingInternalRay()
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  
   return s_manager->GetCurrentVolume()->GetUniqueID();
 }
 
 // Get the distance from the internal root ray position to the next boundary
 double Root::fireInternalRay()
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  
   TGeoNode* boundary_node = s_manager->FindNextBoundary();
 
   return s_manager->GetStep();
@@ -375,6 +461,11 @@ double Root::fireInternalRay()
 // Advance the internal root ray to the next boundary
 void Root::advanceInternalRayToCellBoundary()
 {
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  
   TGeoNode* next_node = s_manager->Step();
 }
 

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <memory>
 #include <map>
+#include <set>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,7 +25,6 @@
 
 // FRENSIE Includes
 #include "Geometry_Root.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -88,6 +88,51 @@ TEUCHOS_UNIT_TEST( Root, isVoidCell )
   TEST_ASSERT( Geometry::Root::isVoidCell( 1 ) );
   TEST_ASSERT( !Geometry::Root::isVoidCell( 2 ) );
   TEST_ASSERT( !Geometry::Root::isVoidCell( 3 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the cells can be returned
+TEUCHOS_UNIT_TEST( Root, getCells )
+{
+  std::set<Geometry::ModuleTraits::InternalCellHandle> cells;
+
+  // Get all cells except the termination cells
+  Geometry::Root::getCells( cells );
+  
+  TEST_EQUALITY_CONST( cells.size(), 2 );
+  TEST_ASSERT( cells.count( 1 ) );
+  TEST_ASSERT( cells.count( 2 ) );
+  TEST_ASSERT( !cells.count( 3 ) );
+
+  cells.clear();
+
+  // Get all cells except the void and termination cells
+  Geometry::Root::getCells( cells, false );
+
+  TEST_EQUALITY_CONST( cells.size(), 1 );
+  TEST_ASSERT( !cells.count( 1 ) );
+  TEST_ASSERT( cells.count( 2 ) );
+  TEST_ASSERT( !cells.count( 3 ) );
+
+  cells.clear();
+
+  // Get all cells except the void cells
+  Geometry::Root::getCells( cells, false, true );
+
+  TEST_EQUALITY_CONST( cells.size(), 2 );
+  TEST_ASSERT( !cells.count( 1 ) );
+  TEST_ASSERT( cells.count( 2 ) );
+  TEST_ASSERT( cells.count( 3 ) );
+
+  cells.clear();
+
+  // Get all cells
+  Geometry::Root::getCells( cells, true, true );
+
+  TEST_EQUALITY_CONST( cells.size(), 3 );
+  TEST_ASSERT( cells.count( 1 ) );
+  TEST_ASSERT( cells.count( 2 ) );
+  TEST_ASSERT( cells.count( 3 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -326,6 +371,35 @@ TEUCHOS_UNIT_TEST( Root, setInternalRay )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the internal ray has been set
+TEUCHOS_UNIT_TEST( Root, isInternalRaySet )
+{
+  // Initialize the ray
+  Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+  // Use external ray
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::Root::findCellContainingExternalRay( ray );
+
+  TEST_ASSERT( !Geometry::Root::isInternalRaySet() );
+
+  // Set the internal ray
+  Geometry::Root::setInternalRay( ray );
+
+  TEST_ASSERT( Geometry::Root::isInternalRaySet() );
+
+  // Fire an external ray
+  double distance_to_boundary = Geometry::Root::fireExternalRay( ray );
+ 
+  TEST_ASSERT( !Geometry::Root::isInternalRaySet() );
+
+  // Set the internal ray
+  Geometry::Root::setInternalRay( ray );
+
+  TEST_ASSERT( Geometry::Root::isInternalRaySet() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cell containing the internal ray can be found
 TEUCHOS_UNIT_TEST( Root, findCellContainingInternalRay )
 {
@@ -420,16 +494,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  int threads = 1;
-
   clp.setOption( "test_root_file",
 		 &test_root_geom_file_name,
 		 "Test root geometry file name" );
 
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
-  
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -440,10 +508,6 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-
-  // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
 
   // Initialize the global MPI session
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

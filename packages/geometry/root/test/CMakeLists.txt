@@ -4,6 +4,13 @@ ADD_EXECUTABLE(tstRoot tstRoot.cpp)
 TARGET_LINK_LIBRARIES(tstRoot geometry_core geometry_root ${MPI_CXX_LIBRARIES} ${ROOT})
 ADD_TEST(Root_test tstRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root")
 
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_EXECUTABLE(tstSharedParallelRoot tstSharedParallelRoot.cpp)
+  TARGET_LINK_LIBRARIES(tstSharedParallelRoot geometry_core geometry_root ${MPI_CXX_LIBRARIES} ${ROOT})
+  ADD_TEST(SharedParallelRoot_2_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=2)
+  ADD_TEST(SharedParallelRoot_4_test tstSharedParallelRoot --test_root_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/basic_root_geometry.root" --threads=4)
+ENDIF()
+
 ADD_EXECUTABLE(tstRootInstanceFactoryBasic
   tstRootInstanceFactoryBasic.cpp)
 TARGET_LINK_LIBRARIES(tstRootInstanceFactoryBasic geometry_root)
