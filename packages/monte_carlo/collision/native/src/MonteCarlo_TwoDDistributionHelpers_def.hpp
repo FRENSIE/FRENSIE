@@ -1,24 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_TwoDDistributionHelpers.cpp
+//! \file   MonteCarlo_TwoDDistributionHelpers_def.hpp
 //! \author Luke Kersting
-//! \brief  Two dimensional distribution helpers base class definition
+//! \brief  Two dimensional distribution helpers declaration
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
+#define MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
+
 // FRENSIE Includes
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
 namespace MonteCarlo{
 
 // Find the lower and upper bin boundary
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary( 
-	      const double independent_variable,
-	      const MonteCarlo::TwoDDistribution& dependent_distribution,
-	      MonteCarlo::TwoDDistribution::const_iterator& lower_bin_boundary,
-	      MonteCarlo::TwoDDistribution::const_iterator& upper_bin_boundary,
-	      double& interpolation_fraction )
+    const double independent_variable,
+	const DependentTwoDDistribution& dependent_distribution,
+    typename DependentTwoDDistribution::const_iterator& lower_bin_boundary,
+    typename DependentTwoDDistribution::const_iterator& upper_bin_boundary,
+    double& interpolation_fraction )
 {
   if( independent_variable < dependent_distribution.front().first )
   {
@@ -50,17 +53,18 @@ void findLowerAndUpperBinBoundary(
   }
 }
 
-
 // Sample a two dimensional ditribution with a random number
 /*! \details This function is designed for lin-lin unit base interpolation 
  * data.
  */  
+template<typename DependentTwoDDistribution>
 double sampleTwoDDistributionCorrelatedWithRandomNumber(
    const double independent_variable,
-   const TwoDDistribution& dependent_distribution,
+   const DependentTwoDDistribution& dependent_distribution,
    const double random_number )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary, 
+                                                     upper_bin_boundary;
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
@@ -85,9 +89,10 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
 /*! \details This function is designed for lin-lin unit base interpolation 
  * data.
  */  
+template<typename DependentTwoDDistribution>
 double sampleTwoDDistributionCorrelated(
    const double independent_variable,
-   const TwoDDistribution& dependent_distribution )
+   const DependentTwoDDistribution& dependent_distribution )
 {
   double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -103,11 +108,13 @@ double sampleTwoDDistributionCorrelated(
 /*! \details This function is designed for lin-lin unit base interpolation 
  * data.
  */
+template<typename DependentTwoDDistribution>
 double sampleTwoDDistributionIndependent(
     const double independent_variable,
-    const TwoDDistribution& dependent_distribution )
+    const DependentTwoDDistribution& dependent_distribution )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary, 
+                                                     upper_bin_boundary;
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
@@ -128,12 +135,14 @@ double sampleTwoDDistributionIndependent(
 
 
 // Evaluate a correlated value from a two dimensional distribution
+template<typename DependentTwoDDistribution>
 double evaluateTwoDDistributionCorrelated( 
     const double independent_variable,
     const double dependent_variable,
-    const TwoDDistribution& dependent_distribution )
+    const DependentTwoDDistribution& dependent_distribution )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary, 
+                                                     upper_bin_boundary;
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
@@ -155,12 +164,14 @@ double evaluateTwoDDistributionCorrelated(
 
 
 // Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution>
 double evaluateTwoDDistributionCorrelatedPDF( 
     const double independent_variable,
     const double dependent_variable,
-    const TwoDDistribution& dependent_distribution )
+    const DependentTwoDDistribution& dependent_distribution )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary, 
+                                                     upper_bin_boundary;
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
@@ -182,12 +193,14 @@ double evaluateTwoDDistributionCorrelatedPDF(
 
 
 // Evaluate a correlated CDF from a two dimensional distribution
+template<typename DependentTwoDDistribution>
 double evaluateTwoDDistributionCorrelatedCDF( 
     const double independent_variable,
     const double dependent_variable,
-    const TwoDDistribution& dependent_distribution )
+    const DependentTwoDDistribution& dependent_distribution )
 {
-  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary, 
+                                                     upper_bin_boundary;
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
@@ -209,13 +222,12 @@ double evaluateTwoDDistributionCorrelatedCDF(
 
 
 // Sample an upper and lower distribution using a common given random variable
+template<typename DependentDistribution>
 double correlatedSampleWithRandomNumber(
-        const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-        const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-        const double interpolation_fraction,
-        const double random_number )
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
+    const double interpolation_fraction,
+    const double random_number )
 {  
   double upper_dist_dependent_variable = 
                    upper_distribution->sampleWithRandomNumber( random_number );
@@ -230,12 +242,11 @@ double correlatedSampleWithRandomNumber(
 
 
 // Sample an upper and lower distribution using a common random variable
+template<typename DependentDistribution>
 double correlatedSample(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-                    const double interpolation_fraction )
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
+    const double interpolation_fraction )
 {  
   double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -249,13 +260,12 @@ double correlatedSample(
 
 
 // Sample an upper and lower distribution using a common random variable in a subrange
+template<typename DependentDistribution>
 double correlatedSampleInSubrange(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-		            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-		            const double interpolation_fraction,
-		            const double max_indep_var )
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
+	const double interpolation_fraction,
+	const double max_indep_var )
 {  
   // Sample the upper and lower distributions using the same random number
   double random_number = 
@@ -276,13 +286,12 @@ double correlatedSampleInSubrange(
 
 
 // Evaluate a correlated cdf value
+template<typename DependentDistribution>
 double evaluateCorrelatedCDF(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-		    const double interpolation_fraction,
-		    const double independent_value )
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
+	const double interpolation_fraction,
+	const double independent_value )
 {
   double upper_cdf = 
     upper_distribution->evaluateCDF( independent_value );
@@ -296,9 +305,10 @@ double evaluateCorrelatedCDF(
 
 
 // Evaluate a correlated pdf value
+template<typename DependentDistribution>
 double evaluateCorrelatedPDF(
-    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
     const double interpolation_fraction,
     const double independent_value )
 {
@@ -314,9 +324,10 @@ double evaluateCorrelatedPDF(
 
 
 // Evaluate a correlated value
+template<typename DependentDistribution>
 double evaluateCorrelated(
-    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
     const double interpolation_fraction,
     const double independent_value )
 {
@@ -332,12 +343,11 @@ double evaluateCorrelated(
 
 
 // Sample from either the lower or upper distribution depending on interp frac
+template<typename DependentDistribution>
 double independentSample(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-		    const double interpolation_fraction )
+    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
+	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
+	const double interpolation_fraction )
 {
   double random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -350,6 +360,8 @@ double independentSample(
 
 } // end MonteCarlo namespace
 
+#endif // end MONTE_CARLO_TWO_D_DISTRIBUTION_HELPERS_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end MonteCarlo_TwoDDistributionHelpers.cpp
+// end MonteCarlo_TwoDDistributionHelpers_def.hpp
 //---------------------------------------------------------------------------//
