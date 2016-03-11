@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstHardElasticElectroatomicReaction.cpp
+//! \file   tstCutoffElasticElectroatomicReaction.cpp
 //! \author Luke Kersting
-//! \brief  HardElastic electroatomic reaction unit tests
+//! \brief  CutoffElastic electroatomic reaction unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -26,7 +26,16 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_elastic_reaction;
+Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
+    ace_elastic_reaction, test_elastic_reaction;
+Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+    elastic_scattering_distribution;
+Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+    elastic_scattering_function;
+Teuchos::ArrayRCP<double> energy_grid;
+Teuchos::ArrayRCP<double> elastic_cross_section;
+unsigned elastic_threshold_index;
+double upper_cutoff_angle_cosine;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -40,7 +49,7 @@ bool notEqualZero( double value )
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the reaction type can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getReactionType_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getReactionType(),
 		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
@@ -48,7 +57,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getReactionType_ace )
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getThresholdEnergy_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getThresholdEnergy_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getThresholdEnergy(),
                        1.000000000000E-05 );
@@ -56,7 +65,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getThresholdEnergy_ace )
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getNumberOfEmittedElectrons_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedElectrons_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedElectrons(1e-3),
 		       0u );
@@ -67,7 +76,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getNumberOfEmittedElectrons
 
 //---------------------------------------------------------------------------//
 // Check that the number of photons emitted from the rxn can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getNumberOfEmittedPhotons_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getNumberOfEmittedPhotons_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getNumberOfEmittedPhotons(1e-3),
 		       0u );
@@ -78,27 +87,69 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getNumberOfEmittedPhotons_a
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getCrossSection_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, getCrossSection_ace )
 {
   double cross_section = 
-    ace_elastic_reaction->getCrossSection( 9.000000000000E-05 );
+    ace_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09, 1e-12 );
   
   cross_section =
-    ace_elastic_reaction->getCrossSection( 4.000000000000E-04 );
+    ace_elastic_reaction->getCrossSection( 1.0E-03 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08, 1e-12 );
 
   cross_section = 
-    ace_elastic_reaction->getCrossSection( 2.000000000000E-03 );
+    ace_elastic_reaction->getCrossSection( 1.0E+05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.100574153670E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
+// Check that the cutoff cross section can be returned
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, 
+                   getCrossSection_cutoff_ace )
+{
+  double cutoff_angle_cosine = 0.9; // cutoff_delta_mu = 0.1;
+  // Create the reaction
+  elastic_scattering_distribution.reset( 
+	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
+                elastic_scattering_function,
+                cutoff_angle_cosine,
+                true ) );
+
+  test_elastic_reaction.reset(
+	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                elastic_cross_section,
+                elastic_threshold_index,
+                elastic_scattering_distribution ) );
+
+  // cross section ratio for cutoff angle
+  double ratio = 9.500004750002380E-01;
+
+  double cross_section = 
+    test_elastic_reaction->getCrossSection( 1.0E-05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
+  
+  ratio = 2.439897074955E-01;
+  cross_section =
+    test_elastic_reaction->getCrossSection( 1.0E-03 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
+  
+  ratio = 1.410821289154E-05;
+  cross_section = 
+    test_elastic_reaction->getCrossSection( 1.0E+05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02*ratio, 1e-12 );
+}
+
+
+//---------------------------------------------------------------------------//
 // Check that the elastic reaction can be simulated
-TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, react_ace )
+TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20.0 );
@@ -111,7 +162,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, react_ace )
   ace_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
-  TEST_ASSERT( electron.getZDirection() < 1.0 );
+  TEST_ASSERT( electron.getZDirection() < 2.0 );
+  TEST_ASSERT( electron.getZDirection() > 0.0 );
   TEST_ASSERT( bank.isEmpty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
@@ -146,8 +198,8 @@ int main( int argc, char** argv )
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+                                           test_ace_table_name,
+                                           1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
@@ -155,7 +207,6 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableXSSArray() ) );
   
   // Extract the energy grid and cross section
-  Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
   
   Teuchos::ArrayView<const double> raw_elastic_cross_section = 
@@ -166,10 +217,9 @@ int main( int argc, char** argv )
                   raw_elastic_cross_section.end(),
                   notEqualZero );
 
-  Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign( start, raw_elastic_cross_section.end() );
 
-  unsigned elastic_threshold_index = 
+  elastic_threshold_index = 
     energy_grid.size() - elastic_cross_section.size();
 
   // Extract the elastic scattering information data block (ELASI)
@@ -193,14 +243,13 @@ int main( int argc, char** argv )
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    elastic_scattering_distribution( size );
+  elastic_scattering_function.resize( size );
   
   for( unsigned n = 0; n < size; ++n )
   {
-    elastic_scattering_distribution[n].first = elastic_energy_grid[n];
+    elastic_scattering_function[n].first = elastic_energy_grid[n];
 
-    elastic_scattering_distribution[n].second.reset( 
+    elastic_scattering_function[n].second.reset( 
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -209,15 +258,22 @@ int main( int argc, char** argv )
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
-  
+
+  upper_cutoff_angle_cosine = 0.999999;
+
+  elastic_scattering_distribution.reset( 
+	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
+                elastic_scattering_function,
+                upper_cutoff_angle_cosine,
+                true ) );
+ 
   // Create the reaction
   ace_elastic_reaction.reset(
-		new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      elastic_cross_section,
-						      elastic_threshold_index,
-						      atomic_number,
-                              elastic_scattering_distribution ) );
+	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                elastic_cross_section,
+                elastic_threshold_index,
+                elastic_scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -242,5 +298,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstHardElasticElectroatomicReaction.cpp
+// end tstCutoffElasticElectroatomicReaction.cpp
 //---------------------------------------------------------------------------//

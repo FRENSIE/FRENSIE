@@ -159,13 +159,13 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
   // Test that the hard elastic cross section can be returned
   cross_section = material->getMacroscopicReactionCrossSection(
 			    1.00000e-05,
-			    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
 
   cross_section = material->getMacroscopicReactionCrossSection( 
 			    1.00000e+05,
-			    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
 }

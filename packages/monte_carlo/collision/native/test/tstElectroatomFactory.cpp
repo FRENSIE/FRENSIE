@@ -190,19 +190,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   // Test that the hard elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.100574153670E+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 4.436635458458E+08, 1e-12 );
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
 
@@ -392,19 +392,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_2BS_brem )
   // Test that the hard elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.100574153670E+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 4.436635458458E+08, 1e-12 );
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
 
@@ -528,19 +528,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
   // Test that the hard elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.100574153670E+08, 1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 4.436635458458E+08, 1e-12 );
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
 
