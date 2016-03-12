@@ -24,6 +24,7 @@ namespace Geometry{
 
 // Get the problem cells
 /*! \details The set value type should be a ModuleTraits::InternalCellHandle. 
+ * This method is thread safe as long as enableThreadSupport has been called.
  */
 template<typename Set>
 void Root::getCells( Set& cell_set,
@@ -64,7 +65,8 @@ void Root::getCells( Set& cell_set,
 
 // Get the cell materials
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be a string. 
+ * mapped type must be a string. This method is thread safe as long as 
+ * enableThreadSupport has been called.
  */
 template<typename Map>
 void Root::getCellMaterialNames( Map& cell_id_mat_name_map )
@@ -93,7 +95,8 @@ void Root::getCellMaterialNames( Map& cell_id_mat_name_map )
 
 // Get the cell material ids
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be a string.
+ * mapped type must be a string. This method is thread safe as long as 
+ * enableThreadSupport has been called.
  */
 template<typename Map>
 void Root::getCellMaterialIds( Map& cell_id_mat_id_map )
@@ -151,7 +154,8 @@ void Root::getCellMaterialIds( Map& cell_id_mat_id_map )
 // Get the cell densities
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
  * mapped type must be a double. Note that void and terminal cells will
- * not be added to the map.
+ * not be added to the map. This method is thread safe as long as 
+ * enableThreadSupport has been called
  */
 template<typename Map>
 void Root::getCellDensities( Map& cell_id_density_map )

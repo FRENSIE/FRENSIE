@@ -1,5 +1,9 @@
 ADD_SUBDIRECTORY(test_files)
 
+ADD_EXECUTABLE(tstDagMC tstDagMC.cpp)
+TARGET_LINK_LIBRARIES(tstDagMC geometry_core geometry_dagmc)
+ADD_TEST(DagMC_test tstDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
 ADD_EXECUTABLE(tstDagMCProperties
   tstDagMCProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

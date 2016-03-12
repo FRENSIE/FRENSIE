@@ -72,6 +72,9 @@ public:
   //! Return the direction of the ray
   const double* getDirection() const;
 
+  //! Change the direction of the ray
+  void changeDirection( const double direction[3] );
+
   //! Advance the head along its direction by the requested distance
   void advanceHead( const double distance );
 

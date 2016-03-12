@@ -158,6 +158,18 @@ const double* Ray::getDirection() const
   return d_direction;
 }
 
+// Change the direction of the ray
+void Ray::changeDirection( const double direction[3] )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( direction ) );
+
+  // Deep copy the direction
+  d_direction[0] = direction[0];
+  d_direction[1] = direction[1];
+  d_direction[2] = direction[2];
+}
+
 // Advance the head along its direction by the requested distance
 void Ray::advanceHead( const double distance )
 {

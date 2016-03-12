@@ -149,6 +149,8 @@ void Root::enableThreadSupport( const unsigned num_threads )
 }
 
 // Check if a cell exists
+/*! \details This method is thread safe.
+ */
 bool Root::doesCellExist( const ModuleTraits::InternalCellHandle cell_id )
 {
   // Make sure root has been initialized
@@ -159,7 +161,9 @@ bool Root::doesCellExist( const ModuleTraits::InternalCellHandle cell_id )
 }
 
 // Get the cell volume
-/*! \warning This will only return the cell volume when the daughters are
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ * \warning This will only return the cell volume when the daughters are
  * completely contained in the cell of interest (no overlaps)
  */
 double Root::getCellVolume( const ModuleTraits::InternalCellHandle cell_id )
@@ -203,7 +207,10 @@ double Root::getCellVolume( const ModuleTraits::InternalCellHandle cell_id )
 }
 
 // Check if the cell is a termination cell
-double Root::isTerminationCell( const ModuleTraits::InternalCellHandle cell_id)
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
+bool Root::isTerminationCell( const ModuleTraits::InternalCellHandle cell_id)
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
@@ -217,7 +224,7 @@ double Root::isTerminationCell( const ModuleTraits::InternalCellHandle cell_id)
 }
 
 // Check if the cell is a void cell
-double Root::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
+bool Root::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
@@ -231,6 +238,9 @@ double Root::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
 }
 
 // Get the point location w.r.t. a given cell
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 PointLocation Root::getPointLocation( 
                              const Ray& ray,
                              const ModuleTraits::InternalCellHandle& cell_id )
@@ -242,7 +252,8 @@ PointLocation Root::getPointLocation(
 /*! \details Root only allows one to test if a point is inside or outside
  * a cell (not on a cell). If the point is on a cell Root will return
  * inside (unless one of the boundary cells is a daughter node of the
- * cell or interest). 
+ * cell or interest). This method is thread safe as long as enableThreadSupport
+ * has been called.
  */
 PointLocation Root::getPointLocation( 
                              const double position[3],
@@ -293,7 +304,8 @@ PointLocation Root::getPointLocation(
 }
 
 // Find the node containing the point
-// Note: This will update the internal state of Root.
+// Note: This will update the internal state of Root. This method is thread 
+// safe as long as enableThreadSupport has been called.
 TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
 {
   // Make sure root has been initialized
@@ -324,7 +336,9 @@ TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
 }
 
 // Find the cell that contains the external ray
-/*! \warning This method will reset the internal ray.
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called. 
+ * \warning This method will reset the internal ray.
  */
 ModuleTraits::InternalCellHandle 
 Root::findCellContainingExternalRay( const Ray& ray )
@@ -336,7 +350,8 @@ Root::findCellContainingExternalRay( const Ray& ray )
 }
 
 // Fire an external ray through the geometry
-/*! \details The distance to the nearest boundary will be returned. 
+/*! \details The distance to the nearest boundary will be returned. This method
+ * is thread safe as long as enableThreadSupport has been called.
  * \warning This method will reset the internal ray.
  */
 double Root::fireExternalRay( const Ray& ray )
@@ -353,6 +368,9 @@ double Root::fireExternalRay( const Ray& ray )
 }
 
 // Check if the internal ray is set
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 bool Root::isInternalRaySet()
 {
   // Make sure root has been initialized
@@ -389,6 +407,9 @@ void Root::internalRaySet()
 }
 
 // Initialize (or reset) an internal root ray 
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 void Root::setInternalRay( const double position[3], 
                            const double direction[3] )
 {
@@ -403,7 +424,10 @@ void Root::setInternalRay( const double position[3],
   TGeoNode* current_node = s_manager->InitTrack( position, direction );
 }
 
-// Initialize (or reset) an internal root ray 
+// Initialize (or reset) an internal root ray
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called. 
+ */
 void Root::setInternalRay( const Ray& ray )
 {
   // Make sure root has been initialized
@@ -412,7 +436,23 @@ void Root::setInternalRay( const Ray& ray )
   Root::setInternalRay( ray.getPosition(), ray.getDirection() );
 }
 
+// Change the internal ray direction (without changing its location)
+void Root::changeInternalRayDirection( const double direction[3] )
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( direction ) );
+
+  s_manager->SetCurrentDirection( direction );
+}
+
 // Get the internal root ray position
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 const double* Root::getInternalRayPosition()
 {
   // Make sure root has been initialized
@@ -424,6 +464,9 @@ const double* Root::getInternalRayPosition()
 }
 
 // Get the internal root ray direction
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 const double* Root::getInternalRayDirection()
 {
   // Make sure root has been initialized
@@ -435,6 +478,9 @@ const double* Root::getInternalRayDirection()
 }
 
 // Get the cell containing the internal root ray position
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 ModuleTraits::InternalCellHandle Root::findCellContainingInternalRay()
 {
   // Make sure root has been initialized
@@ -446,6 +492,9 @@ ModuleTraits::InternalCellHandle Root::findCellContainingInternalRay()
 }
 
 // Get the distance from the internal root ray position to the next boundary
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 double Root::fireInternalRay()
 {
   // Make sure root has been initialized
@@ -459,6 +508,9 @@ double Root::fireInternalRay()
 }
 
 // Advance the internal root ray to the next boundary
+/*! \details This method is thread safe as long as enableThreadSupport has
+ * been called.
+ */
 void Root::advanceInternalRayToCellBoundary()
 {
   // Make sure root has been initialized
@@ -467,6 +519,27 @@ void Root::advanceInternalRayToCellBoundary()
   testPrecondition( Root::isInternalRaySet() );
   
   TGeoNode* next_node = s_manager->Step();
+}
+
+// Advance the internal root ray a substep
+void Root::advanceInternalRayBySubstep( const double substep_distance )
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  // Make sure the substep distance is valid
+  testPrecondition( substep_distance > 0.0 );
+  testPrecondition( substep_distance < s_manager->GetStep() );
+
+  // Set the step size
+  s_manager->SetStep( substep_distance );
+
+  // Advance the root ray
+  TGeoNode* next_node s_manager->Step();
+
+  // Update the distance information
+  double new_distance = Root::fireInternalRay();
 }
 
 } // end Geoemtry namespace

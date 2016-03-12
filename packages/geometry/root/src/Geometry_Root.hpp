@@ -2,7 +2,7 @@
 //!
 //! \file   Geometry_Root.hpp
 //! \author Alex Robinson, Eli Moll
-//! \brief  Root singleton wrapper class declaration
+//! \brief  Root wrapper class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,9 +17,6 @@
 
 // Root Includes
 #include <TGeoManager.h>
-
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Geometry_Ray.hpp"
@@ -86,11 +83,11 @@ public:
   static double getCellVolume( const ModuleTraits::InternalCellHandle cell_id);
   
   //! Check if the cell is a termination cell
-  static double isTerminationCell( 
+  static bool isTerminationCell( 
                               const ModuleTraits::InternalCellHandle cell_id );
 
   //! Check if the cell is a void cell
-  static double isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
+  static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the cell materials
   template<typename Map>
@@ -131,6 +128,9 @@ public:
   //! Initialize (or reset) an internal root ray
   static void setInternalRay( const Ray& ray );
 
+  //! Change the internal ray direction (without changing its location)
+  static void changeInternalRayDirection( const double direction[3] );
+
   //! Get the internal root ray position
   static const double* getInternalRayPosition();
 
@@ -145,6 +145,9 @@ public:
 
   //! Advance the internal root ray to the next boundary
   static void advanceInternalRayToCellBoundary();
+
+  //! Advance the internal root ray a substep
+  static void advanceInternalRayBySubstep( const double substep_distance );
   
   //! Destructor
   ~Root()
