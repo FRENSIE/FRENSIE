@@ -74,18 +74,6 @@ private:
   // The cutoff_elastic scattering distribution
   Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> 
     d_scattering_distribution;
-
-  // The incoming energy grid (logarithms)
-  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
-
-  // The cross section values evaluated on the incoming energy grid
-  Teuchos::ArrayRCP<const double> d_cross_section;
-
-  // The threshold energy
-  const unsigned d_threshold_energy_index;
-
-  // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 } // end MonteCarlo namespace

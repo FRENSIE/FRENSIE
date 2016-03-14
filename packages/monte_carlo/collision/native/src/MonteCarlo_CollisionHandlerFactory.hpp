@@ -98,14 +98,14 @@ protected:
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                            Teuchos::Array<double> >& material_id_fraction_map,
+   Teuchos::Array<double> >& material_id_fraction_map,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                      Teuchos::Array<std::string> >& material_id_component_map,
+   Teuchos::Array<std::string> >& material_id_component_map,
    const boost::unordered_set<std::string>& photoatom_aliases,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                              std::vector<std::string> >& cell_id_mat_id_map,
+   std::vector<std::string> >& cell_id_mat_id_map,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               std::vector<std::string> >& cell_id_density_map,
+   std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
@@ -120,18 +120,20 @@ protected:
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                            Teuchos::Array<double> >& material_id_fraction_map,
+   Teuchos::Array<double> >& material_id_fraction_map,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                      Teuchos::Array<std::string> >& material_id_component_map,
+   Teuchos::Array<std::string> >& material_id_component_map,
    const boost::unordered_set<std::string>& electroatom_aliases,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                              std::vector<std::string> >& cell_id_mat_id_map,
+   std::vector<std::string> >& cell_id_mat_id_map,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               std::vector<std::string> >& cell_id_density_map,
+   std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-   atomic_relaxation_model_factory,
+        atomic_relaxation_model_factory,
+   const unsigned hash_grid_bins,
    const BremsstrahlungAngularDistributionType photon_distribution_function,
-   const bool use_atomic_relaxation_data );
+   const bool use_atomic_relaxation_data,
+   const double cutoff_angle_cosine );
 
   //! Create the material name data maps
   template<typename ScatteringCenterType, typename MaterialType>

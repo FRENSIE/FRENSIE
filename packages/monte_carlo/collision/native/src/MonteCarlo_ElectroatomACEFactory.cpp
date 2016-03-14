@@ -25,12 +25,14 @@ namespace MonteCarlo{
  * Otherwize a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatomCore(
-            const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            Teuchos::RCP<ElectroatomCore>& electroatom_core,
-            const BremsstrahlungAngularDistributionType 
-                    photon_distribution_function,
-            const bool use_atomic_relaxation_data )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+    Teuchos::RCP<ElectroatomCore>& electroatom_core,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType 
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -42,6 +44,12 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
+
+  // Create a hash based energy grid seacher
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+						     energy_grid,
+						     hash_grid_bins ) );
 
   // Create the hard elastic scattering reaction
   {
@@ -83,9 +91,10 @@ void ElectroatomACEFactory::createElectroatomCore(
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
 
     ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-							   raw_electroatom_data,
-							   energy_grid,
-							   reaction_pointers );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
@@ -95,14 +104,14 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
   else
   {
-   //! \todo Get data for Total Electroionization Reaction
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
+        scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-							    raw_electroatom_data,
-							    energy_grid,
-							    reaction_pointer );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
   }
 			
   // Create the electroatom core
@@ -125,11 +134,13 @@ void ElectroatomACEFactory::createElectroatom(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const std::string& electroatom_name,
         const double atomic_weight,
+	    const unsigned hash_grid_bins,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
-	    const bool use_atomic_relaxation_data )
+	    const bool use_atomic_relaxation_data,
+        const double cutoff_angle_cosine )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -141,8 +152,10 @@ void ElectroatomACEFactory::createElectroatom(
   ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
                                                atomic_relaxation_model,
                                                core,
+                                               hash_grid_bins, 
                                                photon_distribution_function,
-                                               use_atomic_relaxation_data );
+                                               use_atomic_relaxation_data,
+                                               cutoff_angle_cosine );
 					    
   // Create the electroatom
   electroatom.reset(

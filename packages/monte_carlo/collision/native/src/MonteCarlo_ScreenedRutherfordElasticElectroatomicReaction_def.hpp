@@ -28,9 +28,6 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
     d_scattering_distribution( scattering_distribution ),
     d_upper_cutoff_angle( upper_cutoff_angle )
 {
@@ -67,9 +64,6 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
                                                     cross_section,
                                                     threshold_energy_index,
                                                     grid_searcher ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
     d_scattering_distribution( scattering_distribution ),
     d_upper_cutoff_angle( upper_cutoff_angle )
 {

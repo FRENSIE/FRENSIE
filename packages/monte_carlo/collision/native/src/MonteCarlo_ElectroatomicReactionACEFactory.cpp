@@ -11,12 +11,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -155,9 +155,10 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 
 // Create the total electroionization electroatomic reaction
 void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& total_electroionization_reaction )
+		const Data::XSSEPRDataExtractor& raw_electroatom_data,
+		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+		Teuchos::RCP<ElectroatomicReaction>& total_electroionization_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -165,7 +166,7 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  // Atomic Excitation cross section with zeros removed
+  // Electroionization cross section with zeros removed
   Teuchos::ArrayRCP<double> total_electroionization_cross_section;
   
   // Index of first non zero cross section in the energy grid
@@ -180,18 +181,19 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 
   total_electroionization_reaction.reset(
 	new ElectroionizationElectroatomicReaction<Utility::LinLin>(
-						  energy_grid,
-						  total_electroionization_cross_section,
-						  threshold_energy_index ) );
+					energy_grid,
+					total_electroionization_cross_section,
+					threshold_energy_index ) );
 }
 
 
 // Create the subshell electroionization electroatomic reactions
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
-		   electroionization_subshell_reactions )
+		const Data::XSSEPRDataExtractor& raw_electroatom_data,
+		const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+		Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
+		electroionization_subshell_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -256,66 +258,49 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
     // Subshell table loc realtive to the EION Block
     unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
 
-    // Extract the energies for which knock-on sampling tables are given
-    Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
-                                                         num_tables[subshell] ) );
- 
-    // Extract the length of the knock-on sampling tables
-    Teuchos::Array<double> table_length(eion_block( 
-                                   subshell_info + num_tables[subshell],
-                                   num_tables[subshell] ) );
 
-    // Extract the offset of the knock-on sampling tables
-    Teuchos::Array<double> table_offset(eion_block( 
-                                        subshell_info + 2*num_tables[subshell],
-                                        num_tables[subshell] ) );
+    // Subshell cross section without zeros removed  
+    Teuchos::ArrayView<const double> raw_subshell_cross_section =
+    raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
 
-
-    // Create the electroionization sampling table for the subshell
-    ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      subshell_distribution( num_tables[subshell] );
+    // Electroionization cross section with zeros removed
+    Teuchos::ArrayRCP<double> subshell_cross_section;
   
-    for( unsigned n = 0; n < num_tables[subshell]; ++n )
-    {
-      subshell_distribution[n].first = table_energy_grid[n];
+    // Index of first non zero cross section in the energy grid
+    unsigned threshold_energy_index;
 
-      subshell_distribution[n].second.reset( 
-	    new Utility::HistogramDistribution(
-	  	   eion_block( subshell_loc + table_offset[n], table_length[n] ),
-		   eion_block( subshell_loc + table_offset[n] + table_length[n] + 1, 
-                       table_length[n] - 1 ),
-           true ) );
-    }
-
- // Subshell cross section without zeros removed  
- Teuchos::ArrayView<const double> raw_subshell_cross_section =
-   raw_subshell_cross_sections( subshell*num_energy_points,num_energy_points );
-
-  // Atomic Excitation cross section with zeros removed
-  Teuchos::ArrayRCP<double> subshell_cross_section;
-  
-  // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
-
-  // Remove all cross sections equal to zero
-  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+    // Remove all cross sections equal to zero
+    ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
                            energy_grid,
                            raw_subshell_cross_section,
                            subshell_cross_section,
                            threshold_energy_index );
 
+    // The electroionization subshell distribution
+    Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+      electroionization_subshell_distribution;
+
+    // Create the electroionization subshell distribution
+    ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+        subshell_info,
+        subshell_loc,
+        num_tables[subshell],
+        binding_energies[subshell],
+	eion_block,
+	electroionization_subshell_distribution );
+
+
     // Create the subshell electroelectric reaction
     electroionization_subshell_reaction.reset(
-	      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-						energy_grid,
-						subshell_cross_section,
-						threshold_energy_index,
-						subshell_order[subshell],
-                        binding_energies[subshell],
-                        subshell_distribution ) );
+      new ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+              energy_grid,
+              subshell_cross_section,
+              threshold_energy_index,
+              subshell_order[subshell],
+              electroionization_subshell_distribution ) );
 
     electroionization_subshell_reactions.push_back( 
-					     electroionization_subshell_reaction );
+					  electroionization_subshell_reaction );
   }
 
   // Make sure the subshell electroelectric reactions have been created

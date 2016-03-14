@@ -27,9 +27,6 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -45,13 +42,6 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
-
-  // Construct the grid searcher
-  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
-			   incoming_energy_grid,
-			   incoming_energy_grid[0],
-			   incoming_energy_grid[incoming_energy_grid.size()-1],
-			   incoming_energy_grid.size()/10+1 ) );
 }
 
 // Constructor
@@ -68,10 +58,6 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
                                                     cross_section,
                                                     threshold_energy_index,
                                                     grid_searcher ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
-    d_grid_searcher( grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -146,24 +132,8 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
   double cross_section;
 
-  if( energy >= this->getThresholdEnergy() )
-  {
-    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
-
-    unsigned cs_index = energy_index - d_threshold_energy_index;
-
-    cross_section =
-      InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
-				 d_incoming_energy_grid[energy_index+1],
-				 energy,
-				 d_cross_section[cs_index],
-				 d_cross_section[cs_index+1] );
-  }
-  else if( energy < this->getThresholdEnergy() )
-    cross_section = 0.0;
-
-  // Make sure the cross section is valid
-  testPostcondition( cross_section >= 0.0 );
+  cross_section =
+    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );
@@ -178,40 +148,14 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
     const double energy,
     const unsigned bin_index ) const
 {
-  // Make sure the bin index is valid
-  testPrecondition( d_incoming_energy_grid[bin_index] <=
-		    InterpPolicy::processIndepVar( energy ) );
-  testPrecondition( d_incoming_energy_grid[bin_index+1] >=
-		    InterpPolicy::processIndepVar( energy ) );
-
   // Get the cross section ratio for the cutoff angle
   double cross_section_ratio = 
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   double cross_section;
 
-  if( bin_index >= d_threshold_energy_index )
-  {
-    unsigned cs_index = bin_index - d_threshold_energy_index;
-    
-    double processed_slope = 
-      (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
-      (d_incoming_energy_grid[bin_index+1]-
-       d_incoming_energy_grid[bin_index]);
-
-    double processed_energy = InterpPolicy::processIndepVar( energy );
-    
-    cross_section =
-        InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
-				      processed_energy,
-				      d_cross_section[cs_index],
-				      processed_slope );
-  }
-  else
-    cross_section = 0.0;
-
-  // Make sure the cross section is valid
-  testPostcondition( cross_section >= 0.0 );
+  cross_section =
+    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( energy );
 
   // Make sure the cross section ratio is valid
   testPostcondition( cross_section_ratio >= 0.0 );

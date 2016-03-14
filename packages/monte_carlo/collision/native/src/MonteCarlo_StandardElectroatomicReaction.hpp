@@ -50,7 +50,6 @@ public:
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
 
-
   //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
@@ -63,7 +62,6 @@ public:
 
   //! Return the threshold energy
   double getThresholdEnergy() const;
-
 
 protected:
 
@@ -104,12 +102,11 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
-
   //! Destructor
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
 
-//! Test if the energy falls within the energy grid
+  //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
   //! Return the cross section at the given energy
@@ -141,7 +138,6 @@ private:
   // The hash-based grid searcher
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
-
 
 
 } // end MonteCarlo namespace

@@ -33,6 +33,12 @@ bool SimulationElectronProperties::atomic_relaxation_mode_on = true;
 BremsstrahlungAngularDistributionType 
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = 
                              TWOBS_DISTRIBUTION;
+
+// The elastic cutoff angle cosine (default 0.999999)
+double SimulationElectronProperties::elastic_cutoff_angle_cosine = 0.999999;
+
+// The number of electron has grid bins
+unsigned SimulationElectronProperties::num_electron_hash_grid_bins = 1000;
     
 // Set the minimum electron energy (MeV)
 void SimulationElectronProperties::setMinElectronEnergy( const double energy )
@@ -65,6 +71,24 @@ void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
                           const BremsstrahlungAngularDistributionType function )
 {
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = function;
+}
+
+
+// Set the elastic cutoff angle cosine (mu = 0.999999 by default)
+void SimulationElectronProperties::setElasticCutoffAngleCosine( 
+                          const double cutoff_angle_cosine )
+{
+  SimulationElectronProperties::elastic_cutoff_angle_cosine = 
+    cutoff_angle_cosine;
+}
+
+// Set the number of electron hash grid bins
+void SimulationElectronProperties::setNumberOfElectronHashGridBins( const unsigned bins )
+{
+  // Make sure the number of bins is valid
+  testPrecondition( bins >= 1 );
+
+  SimulationElectronProperties::num_electron_hash_grid_bins = bins;
 }
 
 } // end MonteCarlo namespace
