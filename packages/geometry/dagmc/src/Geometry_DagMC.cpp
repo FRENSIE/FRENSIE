@@ -14,9 +14,7 @@
 #include "Geometry_DagMC.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
-#include "Utility_MOABException.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Geometry{
@@ -25,10 +23,14 @@ namespace Geometry{
 moab::DagMC* DagMC::s_dagmc = NULL;
 moab::Range DagMC::s_cells;
 moab::Range DagMC::s_surfaces;
-std::unordered_set<ModuleTraits::InternalCellHandle> DagMC::s_termination_cells;
+std::unordered_set<ModuleTraits::InternalCellHandle> 
+  DagMC::s_termination_cells;
+boost::bimap<ModuleTraits::InternalSurfaceHandle,moab::EntityHandle> 
+  DagMC::s_reflecting_surfaces;
 std::unordered_set<moab::EntityHandle> DagMC::s_found_cell_cache;
 std::vector<DagMC::DagMCRay> DagMC::s_internal_rays;
 std::string DagMC::termination_cell_property = "termination.cell";
+std::string DagMC::reflecting_surface_property = "reflecting.surface";
 std::string DagMC::material_property = "material";
 std::string DagMC::density_property = "density";
 std::string DagMC::estimator_property = "estimator";
@@ -51,6 +53,21 @@ void DagMC::setTerminationCellPropertyName( const std::string& name )
 const std::string& DagMC::getTerminationCellPropertyName()
 {
   return DagMC::termination_cell_property;
+}
+
+// Set the reflecting surface property name
+void setReflectingSurfacePropertyName( const std::string& name )
+{
+  // Make sure the name is valid
+  testPrecondition( name.find( "_" ) >= name.size() );
+
+  DagMC::reflecting_surface_property = name;
+}
+
+// Get the reflecting surface property name
+const std::string& getReflectingSurfacePropertyName()
+{
+  return DagMC::reflecting_surface_property;
 }
 
 // Set the material property name
@@ -222,12 +239,6 @@ bool DagMC::isCellEstimatorTypeValid(
     estimator_type.compare( DagMC::cell_collision_flux_name ) == 0;
 }
 
-// Check if the cell observer type is valid
-bool DagMC::isCellObserverTypeValid( const std::string& observer_type )
-{
-  return DagMC::isCellEstimatorTypeValid( observer_type );
-}
-
 // Check if the surface estimator type is valid
 bool DagMC::isSurfaceEstimatorTypeValid( 
 					    const std::string& estimator_type )
@@ -236,23 +247,11 @@ bool DagMC::isSurfaceEstimatorTypeValid(
     estimator_type.compare( DagMC::surface_current_name ) == 0;
 }
 
-// Check if the surface observer type is valid
-bool DagMC::isSurfaceObserverTypeValid( const std::string& observer_type )
-{
-  return DagMC::isSurfaceEstimatorTypeValid( observer_type );
-}
-
 // Check if the estimator type is valid
 bool DagMC::isEstimatorTypeValid( const std::string& estimator_type )
 {
   return DagMC::isCellEstimatorTypeValid( estimator_type ) ||
     DagMC::isSurfaceEstimatorTypeValid( estimator_type );
-}
-
-// Check if the observer type is valid
-bool DagMC::isObserverTypeValid( const std::string& observer_type )
-{
-  return DagMC::isEstimatorTypeValid( observer_type );
 }
 
 // Check if the particle type is valid
@@ -264,15 +263,55 @@ bool DagMC::isParticleTypeValid( const std::string& particle_type )
 }
 
 // Get all of the properties
-void DagMC::getProperties( std::vector<std::string>& properties )
+void DagMC::getPropertyNames( std::vector<std::string>& properties )
 {
   properties.clear();
-  properties.resize( 4 );
+  properties.resize( 5 );
 
   properties[0] = DagMC::termination_cell_property;
-  properties[1] = DagMC::material_property;
-  properties[2] = DagMC::density_property;
-  properties[3] = DagMC::estimator_property;
+  properties[1] = DagMC::reflecting_surface_property;
+  properties[2] = DagMC::material_property;
+  properties[3] = DagMC::density_property;
+  properties[4] = DagMC::estimator_property;
+}
+
+// validate the properties
+  void validatePropertyNames( const std::vector<std::string>& properties,
+                              std::ostream& os_warn )
+{
+  // Get the valid property names
+  std::vector<std::string> valid_properties;
+  DagMC::getPropertyNames( valid_properties );
+
+  // Record any invalid property names
+  std::string invalid_properties;
+  
+  for( unsigned i = 0; i < properties; ++i )
+  {
+    bool valid_property = false;
+
+    for( unsigned j = 0; j < valid_properties.size(); ++j )
+    {
+      if( properties[i] == valid_properties[j] )
+      {
+        valid_property = true;
+        
+        break;
+      }
+    }
+
+    if( !valid_property )
+    {
+      if( invalid_properties.size() > 0 )
+        invalid_properties += ", ";
+      
+      invalid_properties += properties[i];
+    }
+  }
+
+  os_warn << "Warning: Unknown properties were detected in the DagMC " <<
+          << "geometry! Here are the unknown properties: "
+          << invalid_properties << std::endl;
 }
 
 // Check if DagMC has been initialized
@@ -282,7 +321,9 @@ bool DagMC::isInitialized()
 }
 
 // Initialize the DagMC geometry manager
-void DagMC::initialize( const std::string& filename, const double facet_tol )
+void DagMC::initialize( const std::string& filename, 
+                        const double facet_tol,
+                        std::ostream& os_warn )
 {
   // Make sure that the file name is valid
   testPrecondition( filename.size() > 0 );
@@ -317,7 +358,7 @@ void DagMC::initialize( const std::string& filename, const double facet_tol )
                         moab::ErrorCodeStr[return_value] );
 
     try{
-      DagMC::validatePropertyNames( detected_property_names );
+      DagMC::validatePropertyNames( detected_property_names, os_warn );
     }
     EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
                              "Error: Could not initialize the DagMC "
@@ -328,7 +369,7 @@ void DagMC::initialize( const std::string& filename, const double facet_tol )
   {
     std::vector<std::string> properties;
 
-    DagMC::getProperties( properties );
+    DagMC::getPropertyNames( properties );
     
     return_value = s_dagmc->parse_properties( properties );
 
@@ -383,17 +424,43 @@ void DagMC::initialize( const std::string& filename, const double facet_tol )
 
   // Get the termination cells
   {
-    moab::Range::const_iterator cell_handle_it = s_cells.begin();
+    std::vector<moab::EntityHandle> cells_with_property;
 
-    while( cell_handle_it != s_cells.end() )
+    try{
+      DagMC::getCellsWithProperty( cells_with_property,
+                                   DagMC::getTerminationCellPropertyName() );
+    }
+    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                             "Error: Unable to parse the termination cells." );
+
+    for( unsigned i = 0; i < cells_with_property.size(); ++i )
+      s_termination_cells.insert( DagMC::getCellId( cells_with_property[i] ) );
+
+    // Make sure that at least one termination cell has been set
+    TEST_FOR_EXCEPTION( s_termination_cells.size() == 0,
+                        InvalidDagMCGeometry,
+                        "Error: At least one termination cell must be set!" );
+  }
+
+  // Get the reflecting surfaces
+  {
+    std::vector<moab::EntityHandle> surfaces_with_property;
+    
+    try{
+      DagMC::getSurfacesWithProperty(
+                                   surfaces_with_property,
+                                   DagMC::getReflectingSurfacePropertyName() );
+    }
+    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+                             "Error: Unable to parse the reflecting "
+                             "surfaces!" );
+
+    for( unsigned i = 0; i < surfaces_with_property.size(); ++i )
     {
-      if( s_dagmc->has_prop( *cell_handle_it,
-                             DagMC::getTerminationCellPropertyName() ) )
-      {
-        s_termination_cells.insert( DagMC::getCellId( *cell_handle_it ) );
-      }
+      ModuleTraits::InternalSurfaceHandle surface_id = 
+        DagMC::getSurfaceId( surfaces_with_property[i] );
       
-      ++cell_handle_it;
+      s_reflecting_surfaces.left[surface_id] = surfaces_with_property[i];
     }
   }
 }
@@ -408,6 +475,58 @@ void DagMC::enableThreadSupport( const unsigned num_threads )
 
   // Create an internal ray for each thread
   s_internal_rays.resize( num_threads );
+}
+
+// Extract estimator property values
+void DagMC::extractEstimatorPropertyValues( const std::string& prop_value,
+                                            unsigned& estimator_id,
+                                            std::string& estimator_type,
+                                            std::string& particle_type )
+{
+  unsigned first_pos = prop_value.find_first_of( "." );
+  unsigned last_pos = prop_value.find_last_of( "." );
+
+  // Make sure the estimator property format is valid
+  TEST_FOR_EXCEPTION( first_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( last_pos > prop_value.size(),
+                      std::runtime_error,
+                      "Error: the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+  TEST_FOR_EXCEPTION( first_pos == last_pos,
+                      std::runtime_error,
+                      "Error: the estimator property " << prop_value <<
+                      " found in the .sat file is invalid (the form needs to "
+                      "be id.type.ptype)!" );
+
+  std::string id_string = prop_value.substr( 0, first_pos );
+
+  std::istringstream iss( id_string );
+
+  iss >> estimator_id;
+
+  estimator_type = prop_value.substr( first_pos+1, last_pos-first_pos-1 );
+
+  // Make sure the estimator type is valid
+  TEST_FOR_EXCEPTION( !DagMC::isValidEstimatorType( estimator_type ),
+                      InvalidDagMCGeometry,
+                      "Error: estimator " << id << " has an invalid estimator "
+                      "type (" << estimator_type << ") specified in the .sat "
+                      "file!" );
+
+  particle_type = prop_value.substr( last_pos+1, prop_value.size()-last_pos-1);
+
+  // Make sure the particle type is valid
+  TEST_FOR_EXCEPTION( !DagMC::isParticleTypeValid( particle_type ),
+                      InvalidDagMCGeometry,
+                      "Error: estimator " << id << " has particle type "
+                      << particle_type << " specified in the .sat file, "
+                      "which is an invalid particle type (choose n, p or "
+                      "e)!" );
 }
 
 // Check if a cell exists
@@ -519,7 +638,8 @@ bool DagMC::isReflectingSurface(
   // Make sure the surface exists
   testPrecondition( DagMC::doesSurfaceExist( surface_id ) );
 
-  
+  return s_reflecting_surfaces.left.find( surface_id ) !=
+    s_reflecting_surfaces.left.end();
 }
 
 // Get the point location w.r.t. a given cell
@@ -639,17 +759,12 @@ getBoundaryCell(
 }
 
 // Get the surface normal at a point on the surface
-void DagMC::getSurfaceNormal( 
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
-                          const double position[3],
-                          double norma[3] )
+void getSurfaceNormal( const moab::EntityHandle surface_handle,
+                       const double position[3],
+                       double normal[3] )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-  // Make sure the surface exists
-  testPrecondition( DagMC::doesSurfaceExist( surface_id ) );
-
-  moab::EntityHandle surface_handle = DagMC::getSurfaceHandle( surface_id );
 
   moab::ErrorCode return_value = s_dagmc->get_angle( surface_handle,
                                                      position,
@@ -658,6 +773,22 @@ void DagMC::getSurfaceNormal(
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      InvalidDagMCGeometry,
 		      moab::ErrorCodeStr[return_value] );
+}
+
+// Get the surface normal at a point on the surface
+void DagMC::getSurfaceNormal( 
+                          const ModuleTraits::InternalSurfaceHandle surface_id,
+                          const double position[3],
+                          double normal[3] )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+  // Make sure the surface exists
+  testPrecondition( DagMC::doesSurfaceExist( surface_id ) );
+
+  moab::EntityHandle surface_handle = DagMC::getSurfaceHandle( surface_id );
+
+  DagMC::getSurfaceNormal( surface_handle, position, normal );
 }
 
 // Clear the found cell cache
@@ -933,18 +1064,18 @@ double DagMC::fireExternalRay(
   // or by gaps in the surface facets, which can occur for properly created
   // geometries.
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                      DagMCRayMisfire,
+                      DagMCGeometryError,
                       moab::ErrorCodeStr[return_value] );
 
   TEST_FOR_EXCEPTION( surface_hit_handle == 0,
-                      DagMCRayMisfire,
+                      DagMCGeometryError,
                       "Error: DagMC had a ray misfire! Here are the "
                       "details...\nCurrent Cell: "
                       << DagMC::getCellId( current_cell_handle ) << "\n"
                       "Ray: " << ray );
 
   TEST_FOR_EXCEPTION( distance_to_surface < 0.0,
-                      DagMCRayMisfire,
+                      DagMCGeometryError,
                       "Error: DagMC had a ray misfire! Here are the "
                       "details...\nCurrent Cell: "
                       << DagMC::getCellId( current_cell_handle ) << "\n"
@@ -1168,11 +1299,11 @@ double DagMC::fireInternalRay(
     // or by gaps in the surface facets, which can occur for properly created
     // geometries.
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                        DagMCRayMisfire,
+                        DagMCGeometryError,
                         moab::ErrorCodeStr[return_value] );
 
     TEST_FOR_EXCEPTION( surface_hit_handle == 0,
-                        DagMCRayMisfire,
+                        DagMCGeometryError,
                         "Error: DagMC had a ray misfire! Here are the "
                         "details...\nCurrent Cell: "
                         << DagMC::getCellId( current_cell_handle ) << "\n"
@@ -1186,7 +1317,7 @@ double DagMC::fireInternalRay(
                         << ray.getDirection()[2] << "}" );
     
     TEST_FOR_EXCEPTION( distance_to_surface < 0.0,
-                        DagMCRayMisfire,
+                        DagMCGeometryError,
                         "Error: DagMC had a ray misfire! Here are the "
                         "details...\nCurrent Cell: "
                         << DagMC::getCellId( current_cell_handle ) << "\n"
@@ -1212,28 +1343,61 @@ double DagMC::fireInternalRay(
 
 // Advance the internal DagMC ray to the next boundary
 /*! \details Upon reaching the boundary the internal ray will enter the
- * boundary cell and
+ * boundary cell if the boundary surface is not a reflecting surface. The
+ * ray will be reflected at the boundary if a reflecting surface is
+ * encountered. This method will return true if a reflecting boundary
+ * was encountered.
  */
-void DagMC::advanceInternalRayToCellBoundary()
+bool DagMC::advanceInternalRayToCellBoundary()
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
+
+  bool reflecting_boundary = false;
   
   DagMCRay& ray = DagMC::getInternalRay();
 
-  moab::EntityHandle next_cell_handle = 
-    DagMC::getBoundaryCell( ray.getCurrentCell(),
-                            ray.getIntersectionSurface() );
+  // Reflect the ray if a reflecting surface is encountered
+  if( DagMC::isReflectingSurface( ray.getIntersectionSurface() ) )
+  {
+    // Advance the ray to the cell boundary and enter the next cell
+    ray.advanceToIntersectionSurface( ray.getCurrentCell() );
 
-  // Advance the ray to the cell boundary and enter the next cell
-  ray.advanceToIntersectionSurface( next_cell_handle );
+    // Reflect the ray
+    double surface_normal[3];
+
+    DagMC::getSurfaceNormal( ray.getIntersectionSurface(),
+                             ray.getPosition(),
+                             surface_normal );
+
+    double reflected_direction[3];
+
+    Utility::reflectDirection( ray.getDirection(), 
+                               surface_normal, 
+                               reflected_direction );
+
+    ray.changeDirection( reflected_direction );
+
+    reflecting_boundary = true;
+  }
+  // Pass into the next cell if a normal surface is encountered
+  else
+  {
+    moab::EntityHandle next_cell_handle = 
+      DagMC::getBoundaryCell( ray.getCurrentCell(),
+                              ray.getIntersectionSurface() );
+    
+    ray.advanceToIntersectionSurface( next_cell_handle );
+  }
 
   // Fire the ray so the new intersection data is set
   ModuleTraits::InternalSurfaceHandle& dummy_surface;
   
   double distance = DagMC::fireInternalRay( dummy_surface );
+
+  return reflecting_boundary;
 }
 
 // Advance the internal DagMC ray a substep
@@ -1282,6 +1446,50 @@ ModuleTraits::InternalSurfaceHandle getSurfaceId(
                                      const moab::EntityHandle surface_handle )
 {
   return s_dagmc->get_entity_id( surface_handle );
+}
+
+// Get the cells associated with a property name
+// Note: If a property value is passed only the cells with both the property
+// and value will be returned.
+void DagMC::getCellsWithProperty( std::vector<moab::EntityHandle>& cells, 
+                                  const std::string& property,
+                                  const std::string* property_value )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+  
+  moab::ErrorCode return_value = 
+    s_dagmc->entities_by_property( property, cells, 3, property_value );
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+                      InvalidDagMCGeometry,
+		      moab::ErrorCodeStr[return_value] );
+}
+
+// Get the surfaces associated with a property name
+void DagMC::getSurfacesWithProperty( std::vector<moab::EntityHandle>& surfaces,
+                                     const std::string& property,
+                                     const std::string* property_value )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+
+  moab::ErrorCode return_value = 
+    s_dagmc->entities_by_property( property, cells, 2, property_value );
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+                      InvalidDagMCGeometry,
+		      moab::ErrorCodeStr[return_value] );
+}
+
+// Check if the surface is a reflecting surface
+bool DagMC::isReflectingSurface( const moab::EntityHandle surface_handle )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+  
+  return s_reflecting_surfaces.right.find( surface_handle ) !=
+    s_reflecting_surfaces.right.end();
 }
 
 }  // end Geometry namespace

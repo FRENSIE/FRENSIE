@@ -81,13 +81,6 @@ public:
   
   //! Get the cell volume
   static double getCellVolume( const ModuleTraits::InternalCellHandle cell_id);
-  
-  //! Check if the cell is a termination cell
-  static bool isTerminationCell( 
-                              const ModuleTraits::InternalCellHandle cell_id );
-
-  //! Check if the cell is a void cell
-  static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the cell materials
   template<typename Map>
@@ -100,6 +93,13 @@ public:
   //! Get the cell densities
   template<typename Map>
   static void getCellDensities( Map& cell_id_density_map );
+  
+  //! Check if the cell is a termination cell
+  static bool isTerminationCell( 
+                              const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Check if the cell is a void cell
+  static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
