@@ -95,7 +95,7 @@ void Root::getCellMaterialNames( Map& cell_id_mat_name_map )
 
 // Get the cell material ids
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be a string. This method is thread safe as long as 
+ * mapped type must be an unsigned int. This method is thread safe as long as 
  * enableThreadSupport has been called.
  */
 template<typename Map>

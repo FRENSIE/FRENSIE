@@ -14,6 +14,10 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
+#include <iostream>
+
+// Boost Includes
+#include <bimap>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -39,6 +43,12 @@ public:
 
   //! Get the termination cell property name
   static const std::string& getTerminationCellPropertyName();
+
+  //! Set the reflecting surface property name
+  static void setReflectingSurfacePropertyName( const std::string& name );
+
+  //! Get the reflecting surface property name
+  static const std::string& getReflectingSurfacePropertyName();
 
   //! Set the material property name
   static void setMaterialPropertyName( const std::string& name );
@@ -91,47 +101,40 @@ public:
   //! Check if the cell estimator type is valid
   static bool isCellEstimatorTypeValid( const std::string& estimator_type );
 
-  //! Check if the cell observer type is valid
-  static bool isCellObserverTypeValid( const std::string& observer_type );
-
   //! Check if the surface estimator type is valid
   static bool isSurfaceEstimatorTypeValid( const std::string& estimator_type );
-
-  //! Check if the surface observer type is valid
-  static bool isSurfaceObserverTypeValid( const std::string& observer_type );
 
   //! Check if the estimator type is valid
   static bool isEstimatorTypeValid( const std::string& estimator_type );
 
-  //! Check if the observer type is valid
-  static bool isObserverTypeValid( const std::string& observer_type );
-
   //! Check if the particle type is valid
   static bool isParticleTypeValid( const std::string& particle_type );
-
-  //! Extract estimator property values
-  static void extractEstimatorPropertyValues( const std::string& prop_value,
-					      unsigned& estimator_id,
-					      std::string& estimator_type,
-					      std::string& particle_type );
 
   //! Check if DagMC has been initialized
   static bool isInitialized();
 
   //! Initialize the DagMC geometry manager
   static void initialize( const std::string& filename,
-                          const std::vector<std::string>& property_names,
-                          const double facet_tol );
+                          const double facet_tol,
+                          std::ostream& os_warn = std::cerr );
 
   //! Enable thread support
   static void enableThreadSupport( const unsigned num_threads );
 
+  //! Get the material ids
+  template<typename Set>
+  static void getMaterialIds( Set& material_ids );
+
+  //! Get the cell estimator data
+  template<typename Map>
+  static void getCellEstimatorData( Map& estimator_id_data_map );
+
+  //! Get the surface estimator data
+  template<typename Map>
+  static void getSurfaceEstimatorData( Map& estimator_id_data_map );
+
   //! Check if a cell exists
   static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
-
-  //! Check if the surface exists
-  static bool doesSurfaceExist( 
-                        const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Get the problem cells
   template<typename Set>
@@ -139,28 +142,8 @@ public:
                         const bool include_void_cells = true,
                         const bool include_termination_cells = false );
 
-  //! Get the problem surfaces
-  template<typename Set>
-  static void getSurfaces( Set& surface_set );
-                           
-
   //! Get the cell volume
   static double getCellVolume( const ModuleTraits::InternalCellHandle cell_id);
-
-  //! Get the surface area
-  static double getSurfaceArea( 
-                        const ModuleTraits::InternalSurfaceHandle surface_id );
-
-  //! Check if the cell is a termination cell
-  static bool isTerminationCell(
-                              const ModuleTraits::InternalCellHandle cell_id );
-
-  //! Check if the cell is a void cell
-  static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
-
-  //! Check if the surface is a reflecting surface
-  static bool isReflectingSurface( 
-                        const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Get the cell material ids
   template<typename Map>
@@ -169,6 +152,33 @@ public:
   //! Get the cell densities
   template<typename Map>
   static void getCellDensities( Map& cell_id_density_map );
+
+  //! Check if the cell is a termination cell
+  static bool isTerminationCell(
+                              const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Check if the cell is a void cell
+  static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Check if the surface exists
+  static bool doesSurfaceExist( 
+                        const ModuleTraits::InternalSurfaceHandle surface_id );
+  
+  //! Get the problem surfaces
+  template<typename Set>
+  static void getSurfaces( Set& surface_set );
+
+  //! Get the surface area
+  static double getSurfaceArea( 
+                        const ModuleTraits::InternalSurfaceHandle surface_id );
+
+  //! Get the surface ids associated with each estimator
+  template<typename Map>
+  static void getEstimatorSurfaceIds( Map& estimator_surface_id_map );
+
+  //! Check if the surface is a reflecting surface
+  static bool isReflectingSurface( 
+                        const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
@@ -185,7 +195,7 @@ public:
   static void getSurfaceNormal( 
                           const ModuleTraits::InternalSurfaceHandle surface_id,
                           const double position[3],
-                          double norma[3] );
+                          double normal[3] );
 
   //! Clear the found cell cache
   static void clearFoundCellCache();
@@ -255,7 +265,7 @@ public:
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Advance the internal DagMC ray to the next boundary
-  static void advanceInternalRayToCellBoundary();
+  static bool advanceInternalRayToCellBoundary();
 
   //! Advance the internal DagMC ray a substep
   static void advanceInternalRayBySubstep( const double substep_distance );
@@ -270,16 +280,17 @@ private:
   DagMC();
 
   // Get all of the properties
-  static void getProperties( std::vector<std::string>& properties );
+  static void getPropertyNames( std::vector<std::string>& properties );
 
   // validate the properties
-  static void validateProperties( const std::vector<std::string>& properties );
+  static void validatePropertyNames(const std::vector<std::string>& properties,
+                                    std::ostream& os_warn );
 
-  // Get the cell handle
+  // Get the cell handle from a cell id
   static moab::EntityHandle getCellHandle( 
                               const ModuleTraits::InternalCellHandle cell_id );
 
-  // Get the cell id
+  // Get the cell id from a cell handle
   static ModuleTraits::InternalCellHandle getCellId( 
                                         const moab::EntityHandle cell_handle );
   
@@ -290,6 +301,56 @@ private:
   // Get the surface id
   static ModuleTraits::InternalSurfaceHandle getSurfaceId( 
                                      const moab::EntityHandle surface_handle );
+
+  // Get the surface normal at a point on the surface
+  static void getSurfaceNormal( const moab::EntityHandle surface_handle,
+                                const double position[3],
+                                double normal[3] );
+
+  // Get the property values associated with a property name
+  template<typename StringArray>
+  static void getPropertyValues( const std::string& property,
+                                 StringArray& values );
+
+  // Get the cells associated with a property name
+  static void getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
+                                    const std::string& property,
+                                    const std::string* property_value = NULL );
+
+  // Get the surfaces associated with a property name
+  static void getSurfacesWithProperty( 
+                                    std::vector<moab::EntityHandle>& surfaces,
+                                    const std::string& property,
+                                    const std::string* property_value = NULL );
+
+  // Get the property values associated with a property name and cell id
+  template<typename Map>
+  static void getCellPropertyValues( const std::string& property,
+                                     Map& cell_id_prop_val_map );
+
+  // Get the cell ids with a property value
+  template<typename Map>
+  static void getCellIdsWithPropertyValue( const std::string& property,
+                                           Map& prop_val_cell_id_map );
+
+  // Get the property values associated with a property name and surface id
+  template<typename Map>
+  static void getSurfacePropertyValues( const std::string& property,
+                                        Map& surface_id_prop_val_map );
+
+  // Get the surface ids with a property value
+  template<typename Map>
+  static void getSurfaceIdsWithPropertyValue( const std::string& property,
+                                              Map& prop_val_surface_id_map );
+
+  // Extract estimator property values
+  static void extractEstimatorPropertyValues( const std::string& prop_value,
+					      unsigned& estimator_id,
+					      std::string& estimator_type,
+					      std::string& particle_type );
+
+  //! Check if the surface is a reflecting surface
+  static bool isReflectingSurface( const moab::EntityHandle surface_handle );
 
   // Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
@@ -350,6 +411,10 @@ private:
   static std::unordered_set<ModuleTraits::InternalCellHandle>
   s_termination_cells;
 
+  // The reflecting surfaces
+  static boost::bimap<ModuleTraits::InternalSurfaceHandle,moab::EntityHandle>
+  s_reflecting_surfaces;
+
   // The found cell cache
   static std::unordered_set<moab::EntityHandle> s_found_cell_cache;
 
@@ -358,6 +423,9 @@ private:
 
   //! The termination cell property name
   static std::string termination_cell_property;
+
+  //! The reflecting surface property name
+  static std::string reflecting_surface_property;
 
   //! The material property name
   static std::string material_property;
@@ -395,10 +463,10 @@ public:
   { /* ... */ }
 };
 
-/*! The DagMC ray misfire error
+/*! The DagMC geometry error
  * \details This error class can be used to record geometry gaps.
  */
-class DagMCRayMisfire : public std::runtime_error
+class DagMCGeometryError : public std::runtime_error
 {
  
 public:
