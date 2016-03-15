@@ -446,7 +446,9 @@ void Root::changeInternalRayDirection( const double direction[3] )
   // Make sure the direction is valid
   testPrecondition( Utility::validDirection( direction ) );
 
-  s_manager->SetCurrentDirection( direction );
+  // Note: The TGeoManager interface should take a const double* array
+  // but the array it takes is non-const.
+  s_manager->SetCurrentDirection( const_cast<double*>( direction ) );
 }
 
 // Get the internal root ray position
@@ -536,7 +538,7 @@ void Root::advanceInternalRayBySubstep( const double substep_distance )
   s_manager->SetStep( substep_distance );
 
   // Advance the root ray
-  TGeoNode* next_node s_manager->Step();
+  TGeoNode* next_node = s_manager->Step();
 
   // Update the distance information
   double new_distance = Root::fireInternalRay();

@@ -39,7 +39,7 @@ void DagMCInstanceFactory::initializeDagMC(
     std::string property_name = 
       geom_rep.get<std::string>( "Termination Cell Property Name" ); 
     
-    TEST_FOR_EXCEPTION( property_name.find( "_" ) < properties_name.size(),
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
 			"Error: the termination cell property name cannot "
                         "have an underscore character!" );
@@ -50,7 +50,7 @@ void DagMCInstanceFactory::initializeDagMC(
   if( geom_rep.isParameter( "Reflecting Surface Property Name" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Reflecting Surface Property Name" )
+      geom_rep.get<std::string>( "Reflecting Surface Property Name" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
@@ -96,7 +96,7 @@ void DagMCInstanceFactory::initializeDagMC(
 			"Error: the estimator property name cannot have an "
 			"underscore character!" );
 
-    DagMC::setEstimatorPropertyName( properties[3] );
+    DagMC::setEstimatorPropertyName( property_name );
   }
 
   // Get the estimator type names
@@ -106,7 +106,7 @@ void DagMCInstanceFactory::initializeDagMC(
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the surface current synonym cannot have an "
+			"Error: the surface current name cannot have an "
 			"underscore character!" );
 
     DagMC::setSurfaceCurrentName( name );
@@ -118,7 +118,7 @@ void DagMCInstanceFactory::initializeDagMC(
     
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the surface flux synonym cannot have an "
+			"Error: the surface flux name cannot have an "
 			"underscore character!" );
 
     DagMC::setSurfaceFluxName( name );
@@ -130,7 +130,7 @@ void DagMCInstanceFactory::initializeDagMC(
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell pulse height synonym cannot have an "
+			"Error: the cell pulse height name cannot have an "
 			"underscore character!" );
 
     DagMC::setCellPulseHeightName( name );
@@ -142,7 +142,7 @@ void DagMCInstanceFactory::initializeDagMC(
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell track-length flux synonym cannot "
+			"Error: the cell track-length flux name cannot "
 			"have an underscore character!" );
 
     DagMC::setCellTrackLengthFluxName( name );
@@ -154,7 +154,7 @@ void DagMCInstanceFactory::initializeDagMC(
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell collision flux synonym cannot "
+			"Error: the cell collision flux name cannot "
 			"have an underscore character!" );
 
     DagMC::setCellCollisionFluxName( name );

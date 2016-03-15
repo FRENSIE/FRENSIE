@@ -170,6 +170,21 @@ void Ray::changeDirection( const double direction[3] )
   d_direction[2] = direction[2];
 }
 
+// Change the direction of the ray
+void Ray::changeDirection( const double x_direction,
+                           const double y_direction,
+                           const double z_direction )
+{
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( x_direction, 
+                                             y_direction, 
+                                             z_direction ) );
+
+  d_direction[0] = x_direction;
+  d_direction[1] = y_direction;
+  d_direction[2] = z_direction;
+}
+
 // Advance the head along its direction by the requested distance
 void Ray::advanceHead( const double distance )
 {
