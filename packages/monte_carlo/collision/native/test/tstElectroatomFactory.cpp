@@ -35,6 +35,7 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory>
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 MonteCarlo::BremsstrahlungAngularDistributionType function;
+unsigned hash_grid_bins = 100;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -48,13 +49,17 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
+  double cutoff_angle_cosine = 0.999999;
+
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					      cross_section_table_info,
-                                              electroatom_aliases,
-					      atomic_relaxation_model_factory,
-                                              function,
-                                              false ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        false,
+        cutoff_angle_cosine ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -219,20 +224,17 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TABULAR_DISTRIBUTION;
-
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               function,
-                                              false ) );
-
+                                              false,
+                                              1.0 ) );
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
-
   electroatom_factory->createElectroatomMap( electroatom_map );
-
   TEST_EQUALITY_CONST( electroatom_map.size(), 1 );
   TEST_ASSERT( electroatom_map.count( "Pb" ) );
   TEST_ASSERT( !electroatom_map["Pb"].is_null() );
@@ -250,14 +252,17 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					      cross_section_table_info,
-                                              electroatom_aliases,
-					      atomic_relaxation_model_factory,
-                                              function,
-                                              false ) );
+  double cutoff_angle_cosine = 0.999999;
 
+  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        false,
+        cutoff_angle_cosine ) );
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
@@ -422,13 +427,17 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
+  double cutoff_angle_cosine = 0.999999;
+
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					      cross_section_table_info,
-                                              electroatom_aliases,
-					      atomic_relaxation_model_factory,
-                                              function,
-                                              true ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        true,
+        cutoff_angle_cosine ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -608,13 +617,17 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
+  double cutoff_angle_cosine = 0.999999;
+
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					      cross_section_table_info,
-                                              electroatom_aliases,
-					      atomic_relaxation_model_factory,
-                                              function,
-                                              true ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        true,
+        cutoff_angle_cosine ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;

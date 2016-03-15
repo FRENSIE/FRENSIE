@@ -26,13 +26,22 @@ class AtomicExcitationElectroatomicReaction : public StandardElectroatomicReacti
 
 public:
 
+  //! Basic Constructor
+  AtomicExcitationElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+            energy_loss_distribution );
+
   //! Constructor
   AtomicExcitationElectroatomicReaction(
-		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		const Teuchos::ArrayRCP<const double>& cross_section,
-		const unsigned threshold_energy_index,
-        const AtomicExcitationElectronScatteringDistribution::AtomicDistribution& 
-          energy_loss_distribution );
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+            energy_loss_distribution );
 
   //! Destructor
   ~AtomicExcitationElectroatomicReaction()
@@ -54,8 +63,9 @@ public:
 
 private:
 
-  // The atomic excitation scattering distribution
-  AtomicExcitationElectronScatteringDistribution d_scattering_distribution;
+  // The atomic excitation energy loss distribution
+  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>
+    d_energy_loss_distribution;
 };
 
 } // end MonteCarlo namespace

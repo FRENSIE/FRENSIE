@@ -188,19 +188,28 @@ int main( int argc, char** argv )
   Teuchos::Array<double> excitation_energy_loss(excit_block(size,size));
 
   // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> excitation_energy_loss_distribution;
+  Teuchos::RCP<Utility::OneDDistribution> energy_loss_function;
   
-  excitation_energy_loss_distribution.reset( 
+  energy_loss_function.reset( 
   new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                             excitation_energy_loss ) );
+		                                     excitation_energy_loss ) );
+
+  Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+                      excitation_energy_loss_distribution;
+
+  excitation_energy_loss_distribution.reset( 
+    new MonteCarlo::AtomicExcitationElectronScatteringDistribution( 
+                      energy_loss_function ) );
+
+  
   
   // Create the reaction
   ace_excitation_reaction.reset(
-		new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      excitation_cross_section,
-						      excitation_threshold_index,
-						      excitation_energy_loss_distribution ) );
+    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+				      energy_grid,
+				      excitation_cross_section,
+				      excitation_threshold_index,
+				      excitation_energy_loss_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

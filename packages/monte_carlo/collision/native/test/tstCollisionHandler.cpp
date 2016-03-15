@@ -24,6 +24,8 @@
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "Data_ACEFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -33,6 +35,11 @@ Teuchos::RCP<MonteCarlo::NeutronMaterial> cold_hydrogen;
 Teuchos::RCP<MonteCarlo::NeutronMaterial> hot_hydrogen;
 Teuchos::RCP<MonteCarlo::PhotonMaterial> photon_lead;
 Teuchos::RCP<MonteCarlo::ElectronMaterial> electron_lead;
+
+std::string test_cross_sections_xml_directory;
+Teuchos::ParameterList cross_section_table_info;
+boost::unordered_set<std::string> electroatom_aliases;
+Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -671,12 +678,10 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   electron.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_electron_stream( 5 );
+  std::vector<double> fake_electron_stream( 3 );
   fake_electron_stream[0] = 0.5; // select the pb atom
   fake_electron_stream[1] = 0.36; // select the elastic reaction
-  fake_electron_stream[2] = 0.2; // sample upper energy bin
-  fake_electron_stream[3] = 9.9990E-01; // choose angle from distribution
-  fake_electron_stream[4] = 0.5; // sample mu = 0.9874366113907
+  fake_electron_stream[2] = 0.5; // sample mu = 9.874339332031E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_electron_stream );
 
@@ -685,7 +690,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   //! \todo Double check the distribution type (Histogram)
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 
-			  0.999997677294356846, 
+			  9.874339332031E-01, 
 			  1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -702,8 +707,8 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
-		 &test_cross_sections_xml_directory,
-		 "Test cross_sections.xml file name" );
+                 &test_cross_sections_xml_directory,
+                 "Test cross_sections.xml file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -804,14 +809,19 @@ int main( int argc, char** argv )
                                                        atom_fractions,
                                                        atom_names ) );
 
+    double upper_cutoff_angle_cosine = 0.999999;
+    unsigned hash_grid_bins = 1000;
+
     // Create the electroatom factory
     MonteCarlo::ElectroatomFactory electroatom_factory( 
-					     test_cross_sections_xml_directory,
-					     cross_section_table_info,
-					     atom_aliases,
-					     atomic_relaxation_model_factory,
-					     MonteCarlo::TWOBS_DISTRIBUTION,
-					     true );
+                test_cross_sections_xml_directory,
+                cross_section_table_info,
+                atom_aliases,
+                atomic_relaxation_model_factory,
+                hash_grid_bins,   
+                MonteCarlo::TWOBS_DISTRIBUTION,
+                true,
+                upper_cutoff_angle_cosine );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       electroatom_map;

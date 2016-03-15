@@ -13,8 +13,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
-//#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{

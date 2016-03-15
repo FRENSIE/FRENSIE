@@ -51,15 +51,17 @@ void ElectroatomACEFactory::createElectroatomCore(
 						     energy_grid,
 						     hash_grid_bins ) );
 
-  // Create the hard elastic scattering reaction
+  // Create the cutoff elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createHardElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   reaction_pointer );
+    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer,
+        cutoff_angle_cosine );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -68,10 +70,11 @@ void ElectroatomACEFactory::createElectroatomCore(
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
     
     ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-						 raw_electroatom_data,
-						 energy_grid,
-						 reaction_pointer, 
-                         photon_distribution_function );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer,
+        photon_distribution_function );
   }
   
   // Create the atomic excitation scattering reaction
@@ -80,9 +83,10 @@ void ElectroatomACEFactory::createElectroatomCore(
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
     
     ElectroatomicReactionACEFactory::createAtomicExcitationReaction( 
-                               raw_electroatom_data,
-	                           energy_grid,
-                               reaction_pointer );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
   }
     
   // Create the electroionization reaction(s)
