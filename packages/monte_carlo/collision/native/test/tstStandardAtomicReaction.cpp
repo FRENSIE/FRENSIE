@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardPhotoatomicReaction.cpp
+//! \file   tstStandardAtomicReaction.cpp
 //! \author Alex Robinson
 //! \brief  Standard photoatomic reaction unit tests.
 //!
@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
+#include "MonteCarlo_StandardAtomicReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSPhotoatomicDataExtractor.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -26,8 +26,8 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::PhotoatomicReaction> ace_pp_reaction;
-Teuchos::RCP<MonteCarlo::PhotoatomicReaction> ace_pe_reaction;
+Teuchos::RCP<MonteCarlo::AtomicReaction> ace_pp_reaction;
+Teuchos::RCP<MonteCarlo::AtomicReaction> ace_pe_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -41,17 +41,17 @@ bool notEqualZero( double value )
 // Testing Structs.
 //---------------------------------------------------------------------------//
 template<typename InterpPolicy, bool processed_cross_section>
-class TestPhotoatomicReaction : public MonteCarlo::StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class TestAtomicReaction : public MonteCarlo::StandardAtomicReaction<InterpPolicy,processed_cross_section>
 {
 public:
-  TestPhotoatomicReaction(
+  TestAtomicReaction(
         const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
         const Teuchos::ArrayRCP<const double>& cross_section,
         const double threshold_energy )
-    : MonteCarlo::StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy )
+    : MonteCarlo::StandardAtomicReaction<InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy )
   { /* ... */ }
 
-  ~TestPhotoatomicReaction()
+  ~TestAtomicReaction()
   { /* ... */ }
 
   unsigned getNumberOfEmittedPhotons( const double energy ) const
@@ -59,21 +59,13 @@ public:
 
   unsigned getNumberOfEmittedElectrons( const double energy ) const
   { return 0u; }
-
-  MonteCarlo::PhotoatomicReactionType getReactionType() const
-  { return MonteCarlo::TOTAL_PHOTOATOMIC_REACTION; }
-
-  void react( MonteCarlo::PhotonState& photon,
-	      MonteCarlo::ParticleBank& bank,
-	      MonteCarlo::SubshellType& shell_of_interaction ) const
-  { /* ... */ }
 };
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getThresholdEnergy_ace_pp )
+TEUCHOS_UNIT_TEST( StandardAtomicReaction, getThresholdEnergy_ace_pp )
 {
   TEST_EQUALITY_CONST( ace_pp_reaction->getThresholdEnergy(), 
 		       exp( 2.17614917816E-02 ) );
@@ -81,7 +73,7 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getThresholdEnergy_ace_pp )
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
-TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getThresholdEnergy_ace_pe )
+TEUCHOS_UNIT_TEST( StandardAtomicReaction, getThresholdEnergy_ace_pe )
 {
   TEST_EQUALITY_CONST( ace_pe_reaction->getThresholdEnergy(), 
 		       exp( -6.90775527898E+00 ) );    
@@ -90,7 +82,7 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getThresholdEnergy_ace_pe )
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 // \todo Complete tests using the raw EPDL cross section data
-TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pp )
+TEUCHOS_UNIT_TEST( StandardAtomicReaction, getCrossSection_ace_pp )
 {
   double cross_section = 
     ace_pp_reaction->getCrossSection( ace_pp_reaction->getThresholdEnergy() );
@@ -109,7 +101,7 @@ TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pp )
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 // \todo Complete tests using the raw EPDL cross section data
-TEUCHOS_UNIT_TEST( StandardPhotoatomicReaction, getCrossSection_ace_pe )
+TEUCHOS_UNIT_TEST( StandardAtomicReaction, getCrossSection_ace_pe )
 {
   double cross_section = 
     ace_pe_reaction->getCrossSection( ace_pe_reaction->getThresholdEnergy() );
@@ -184,12 +176,12 @@ int main( int argc, char** argv )
   pe_cross_section.deepCopy( xss_data_extractor->extractPhotoelectricCrossSection() );
 
   ace_pp_reaction.reset(
-    new TestPhotoatomicReaction<Utility::LogLog,true>( energy_grid,
+    new TestAtomicReaction<Utility::LogLog,true>( energy_grid,
 						       pp_cross_section,
 						       pp_threshold_index ) );
 
   ace_pe_reaction.reset(
-	   new TestPhotoatomicReaction<Utility::LogLog,true>( energy_grid,
+	   new TestAtomicReaction<Utility::LogLog,true>( energy_grid,
 							      pe_cross_section,
 							      0u ) );
 
@@ -213,5 +205,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstStandardPhotoatomicReaction.cpp
+// end tstStandardAtomicReaction.cpp
 //---------------------------------------------------------------------------//
