@@ -10,7 +10,7 @@
 #define GEOMETRY_DAGMC_RAY_HPP
 
 // Boost Includes
-#include <scoped_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -31,6 +31,14 @@ public:
 
   //! Constructor
   DagMCRay( const Ray& ray, moab::EntityHandle cell_handle );
+
+  //! Constructor
+  DagMCRay( const double position[3],
+            const double direction[3],
+            const moab::EntityHandle cell_handle );
+
+  // Copy constructor
+  DagMCRay( const DagMCRay& ray );
 
   //! Destructor
   ~DagMCRay()
@@ -64,7 +72,7 @@ public:
 
   //! Set the intersection surface data
   void setIntersectionSurfaceData( const moab::EntityHandle surface_handle,
-                                   const double distance ) const;
+                                   const double distance );
 
   //! Rest the intersection surface data
   void resetIntersectionSurfaceData();
@@ -83,15 +91,12 @@ public:
 
   //! Advance the ray to the intersection surface
   void advanceToIntersectionSurface( 
-                              const moab::EntityHandle next_cell_handle) const;
+                                   const moab::EntityHandle next_cell_handle );
 
   //! Advance the ray a substep
-  void advanceSubstep( const double substep_distance ) const;
+  void advanceSubstep( const double substep_distance );
 
 private:
-
-  // Copy constructor
-  DagMCRay( const DagMCRay& ray );
 
   // The basic ray
   boost::scoped_ptr<Ray> d_basic_ray;

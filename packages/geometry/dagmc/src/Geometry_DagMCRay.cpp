@@ -24,7 +24,7 @@ DagMCRay::DagMCRay()
 
 // Constructor
 DagMCRay::DagMCRay( const Ray& ray, moab::EntityHandle cell_handle )
-  : d_basic_ray.reset( new Ray( ray.getPosition(), ray.getDirection() ) ),
+  : d_basic_ray( new Ray( ray.getPosition(), ray.getDirection() ) ),
     d_cell_handle( cell_handle ),
     d_history(),
     d_intersection_distance( -1.0 ),
@@ -33,6 +33,31 @@ DagMCRay::DagMCRay( const Ray& ray, moab::EntityHandle cell_handle )
   // Make sure the cell handle is valid
   testPrecondition( cell_handle != 0 );
 }
+
+// Constructor
+DagMCRay::DagMCRay( const double position[3],
+                    const double direction[3], 
+                    moab::EntityHandle cell_handle )
+  : d_basic_ray( new Ray( position, direction ) ),
+    d_cell_handle( cell_handle ),
+    d_history(),
+    d_intersection_distance( -1.0 ),
+    d_intersection_surface_handle( 0 )
+{ 
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( direction ) );
+  // Make sure the cell handle is valid
+  testPrecondition( cell_handle != 0 );
+}
+
+// Copy constructor
+DagMCRay::DagMCRay( const DagMCRay& ray )
+  : d_basic_ray( new Ray( ray.getPosition(), ray.getDirection() ) ),
+    d_cell_handle( ray.d_cell_handle ),
+    d_history( ray.d_history ),
+    d_intersection_distance( ray.d_intersection_distance ),
+    d_intersection_surface_handle( ray.d_intersection_surface_handle )
+{ /* ... */ }
   
 // Check if the ray is ready (basic ray, current cell handle set)
 bool DagMCRay::isReady() const
@@ -70,9 +95,8 @@ void DagMCRay::set( const double position[3],
   d_cell_handle = cell_handle;
 
   // Reset the extra data
+  this->resetIntersectionSurfaceData();
   d_history.reset();
-  d_intersection_distance = -1.0;
-  d_intersection_surface_handle = 0;  
 }
 
 // Change the direction
@@ -85,6 +109,8 @@ void DagMCRay::changeDirection( const double direction[3] )
   
   d_basic_ray->changeDirection( direction );
 
+  // Reset the extra data
+  this->resetIntersectionSurfaceData();
   d_history.reset();
 }
 
@@ -142,7 +168,7 @@ moab::EntityHandle DagMCRay::getIntersectionSurface() const
 // Set the intersection surface handle
 void DagMCRay::setIntersectionSurfaceData( 
                                        const moab::EntityHandle surface_handle,
-                                       const double distance ) const
+                                       const double distance )
 {
   // Make sure the surface handle is valid
   testPrecondition( surface_handle != 0 );
@@ -178,7 +204,7 @@ moab::DagMC::RayHistory& DagMCRay::getHistory()
 /*! \details This method will reset the intersection data.
  */
 void DagMCRay::advanceToIntersectionSurface( 
-                               const moab::EntityHandle next_cell_handle) const
+                                    const moab::EntityHandle next_cell_handle )
 {
   // Make sure the next cell is valid
   testPrecondition( next_cell_handle != 0 );
@@ -186,16 +212,18 @@ void DagMCRay::advanceToIntersectionSurface(
   // Advance the basic ray to the surface
   d_basic_ray->advanceHead( d_intersection_distance );
 
+  // Set the new cell
+  d_cell_handle = next_cell_handle;
+
   // Reset the intersection data
-  d_intersection_distance = -1.0;
-  d_intersection_surface_handle = 0;
+  this->resetIntersectionSurfaceData();
 }
 
 // Advance the ray a substep
 /*! \details This method should only be used to move the ray a distance
  * that is less than the intersection distance.
  */
-void DagMCRay::advanceSubstep( const double substep_distance ) const
+void DagMCRay::advanceSubstep( const double substep_distance )
 {
   // Make sure the substep is less than the intersection distance
   testPrecondition( substep_distance < d_intersection_distance );

@@ -21,7 +21,6 @@
 
 // FRENSIE Includes
 #include "Geometry_ModuleInterfaceDecl.hpp"
-#include "Geometry_DagMCProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ContractException.hpp"
@@ -220,12 +219,7 @@ inline void ModuleInterface<moab::DagMC>::newRay()
 inline bool ModuleInterface<moab::DagMC>::isTerminationCell( 
 						const InternalCellHandle cell )
 {
-  ExternalCellHandle cell_external = 
-    ModuleInterface<moab::DagMC>::getExternalCellHandle( cell );
-                                                                               
-  return ModuleInterface<moab::DagMC>::dagmc_instance->has_prop( 
-	cell_external,
-	DagMCProperties::getTerminationCellPropertyName() );
+  
 }
 
 // Calculate the surface normal at a point on the surface

@@ -13,11 +13,12 @@
 #include <string>
 #include <stdexcept>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <iostream>
 
 // Boost Includes
-#include <bimap>
+#include <boost/bimap.hpp>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -172,10 +173,6 @@ public:
   static double getSurfaceArea( 
                         const ModuleTraits::InternalSurfaceHandle surface_id );
 
-  //! Get the surface ids associated with each estimator
-  template<typename Map>
-  static void getEstimatorSurfaceIds( Map& estimator_surface_id_map );
-
   //! Check if the surface is a reflecting surface
   static bool isReflectingSurface( 
                         const ModuleTraits::InternalSurfaceHandle surface_id );
@@ -229,7 +226,7 @@ public:
   //! Initialize (or reset) an internal DagMC ray
   static void setInternalRay( const double position[3],
                               const double direction[3],
-                              const bool cache_start_cell );
+                              const bool cache_start_cell = false );
 
   //! Initialize (or reset) an internal DagMC ray
   static void setInternalRay( 
@@ -303,9 +300,9 @@ private:
                                      const moab::EntityHandle surface_handle );
 
   // Get the surface normal at a point on the surface
-  static void getSurfaceNormal( const moab::EntityHandle surface_handle,
-                                const double position[3],
-                                double normal[3] );
+  static void getSurfaceHandleNormal( const moab::EntityHandle surface_handle,
+                                      const double position[3],
+                                      double normal[3] );
 
   // Get the property values associated with a property name
   template<typename StringArray>
@@ -349,19 +346,21 @@ private:
 					      std::string& estimator_type,
 					      std::string& particle_type );
 
-  //! Check if the surface is a reflecting surface
-  static bool isReflectingSurface( const moab::EntityHandle surface_handle );
+  //! Check if the surface handle is a reflecting surface
+  static bool isReflectingSurfaceHandle( 
+                                     const moab::EntityHandle surface_handle );
 
   // Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
-                                       const double position[3],
-                                       const double direction[3],
-                                       const moab::EntityHandle& cell_handle );
+                               const double position[3],
+                               const double direction[3],
+                               const moab::EntityHandle& cell_handle,
+                               const moab::DagMC::RayHistory* history = NULL );
 
-  // Get the boundary cell 
+  // Get the boundary cell handle
   static moab::EntityHandle
-  getBoundaryCell( const moab::EntityHandle cell_handle,
-                   const moab::EntityHandle boundary_surface_handle );
+  getBoundaryCellHandle( const moab::EntityHandle cell_handle,
+                         const moab::EntityHandle boundary_surface_handle );
 
   // Find the cell handle that contains the external ray 
   static moab::EntityHandle findCellHandleContainingExternalRay( 
@@ -369,8 +368,9 @@ private:
 
   // Find the cell handle that contains the external ray 
   static moab::EntityHandle findCellHandleContainingRay( 
-                                                   const double position[3],
-                                                   const double direction[3] );
+                                        const double position[3],
+                                        const double direction[3],
+                                        const bool check_on_boundary = false );
 
   // Find and cache the cell handle that contains the external ray 
   static moab::EntityHandle findAndCacheCellHandleContainingRay( 
@@ -378,10 +378,11 @@ private:
                                                    const double direction[3] );
 
   // Get the distance from the external ray position to the nearest boundary
-  static double fireExternalRay( 
-                            const Ray& ray,
+  static double fireExternalRayWithCellHandle( 
+                            const double position[3],
+                            const double direction[3],
                             const moab::EntityHandle current_cell_handle,
-                            ModuleTraits::InternalSurfaceHandle& surface_hit );
+                            moab::EntityHandle& surface_hit_handle );
 
   // Set an internal DagMC ray
   static void setInternalRay( const double position[3],
@@ -392,11 +393,14 @@ private:
   static DagMCRay& getInternalRay();
 
   // Check the found cell cache for a cell that contains the point
-  moab::EntityHandle checkFoundCellCache( const double position[3],
-                                          const double direction[3] );
+  static moab::EntityHandle checkFoundCellCache( const double position[3],
+                                                 const double direction[3] );
 
   // Add cell to found cell cache
-  void addCellToFoundCellCache( const moab::EntityHandle cell_handle );
+  static void addCellToFoundCellCache( const moab::EntityHandle cell_handle );
+
+  // Convert an array to a string
+  static std::string arrayToString( const double data[3] );
 
   // The DagMC instance
   static moab::DagMC* s_dagmc;
@@ -412,12 +416,13 @@ private:
   s_termination_cells;
 
   // The reflecting surfaces
-  static boost::bimap<ModuleTraits::InternalSurfaceHandle,moab::EntityHandle>
-  s_reflecting_surfaces;
+  typedef boost::bimap<ModuleTraits::InternalSurfaceHandle,moab::EntityHandle>
+  ReflectingSurfaceIdHandleMap;
+  static ReflectingSurfaceIdHandleMap s_reflecting_surfaces;
 
   // The found cell cache
   static std::unordered_set<moab::EntityHandle> s_found_cell_cache;
-
+  
   // The internal rays
   static std::vector<DagMCRay> s_internal_rays;
 
@@ -471,12 +476,20 @@ class DagMCGeometryError : public std::runtime_error
  
 public:
 
-  DagMCRayMisfire( const std::string& what_arg )
+  DagMCGeometryError( const std::string& what_arg )
     : std::runtime_error( what_arg )
   { /* ... */ }
 };
 
 } // end Geometry namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Geometry_DagMC_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end GEOMETRY_DAGMC_HPP
 

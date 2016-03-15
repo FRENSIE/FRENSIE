@@ -91,7 +91,7 @@ double reflectDirection( const double direction[3],
 
   reflected_direction[0] = direction[0] - 2.0*angle_cosine*unit_normal[0];
   reflected_direction[1] = direction[1] - 2.0*angle_cosine*unit_normal[1];
-  relfected_direction[2] = direction[2] - 2.0*angle_cosine*unit_normal[2];
+  reflected_direction[2] = direction[2] - 2.0*angle_cosine*unit_normal[2];
 }
 
 // Rotate a direction (unit vector) through a polar and azimuthal angle

@@ -82,6 +82,199 @@ TEUCHOS_UNIT_TEST( DirectionHelpers, calculateCosineOfAngleBetweenVectors )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a direction can be reflected about a unit normal
+TEUCHOS_UNIT_TEST( DirectionHelpers, reflectDirection )
+{
+  // X-axis reflection
+  double direction[3] = {1.0, 0.0, 0.0};
+
+  double unit_normal[3] = {1.0, 0.0, 0.0};
+
+  double reflected_direction[3];
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], -1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  unit_normal[0] = -1.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], -1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  direction[0] = -1.0;
+  direction[1] = 0.0;
+  direction[2] = 0.0;
+
+  unit_normal[0] = 1.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  unit_normal[0] = -1.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  // Y-axis reflection
+  direction[0] = 0.0;
+  direction[1] = 1.0;
+  direction[2] = 0.0;
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 1.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], -1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = -1.0;
+  unit_normal[2] = 0.0;
+  
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], -1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  direction[0] = 0.0;
+  direction[1] = -1.0;
+  direction[2] = 0.0;
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 1.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = -1.0;
+  unit_normal[2] = 0.0;
+  
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 1.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  // Z-axis reflection
+  direction[0] = 0.0;
+  direction[1] = 0.0;
+  direction[2] = 1.0;
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = 1.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], -1.0 );
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = -1.0;
+  
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], -1.0 );
+
+  direction[0] = 0.0;
+  direction[1] = 0.0;
+  direction[2] = -1.0;
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = 1.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 1.0 );
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = -1.0;
+  
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_EQUALITY_CONST( reflected_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 1.0 );
+
+  // Off-axis reflection
+  direction[0] = 1/sqrt(2.0);
+  direction[1] = 1/sqrt(2.0);
+  direction[2] = 0.0;
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 1.0;
+  unit_normal[2] = 0.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_FLOATING_EQUALITY( reflected_direction[0], 1/sqrt(2.0), 1e-12 );
+  TEST_FLOATING_EQUALITY( reflected_direction[1], -1/sqrt(2.0), 1e-12 );
+  TEST_EQUALITY_CONST( reflected_direction[2], 0.0 );
+
+  direction[0] = 1/sqrt(3.0);
+  direction[1] = 1/sqrt(3.0);
+  direction[2] = 1/sqrt(3.0);
+
+  unit_normal[0] = 0.0;
+  unit_normal[1] = 0.0;
+  unit_normal[2] = -1.0;
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_FLOATING_EQUALITY( reflected_direction[0], 1/sqrt(3.0), 1e-12 );
+  TEST_FLOATING_EQUALITY( reflected_direction[1], 1/sqrt(3.0), 1e-12 );
+  TEST_FLOATING_EQUALITY( reflected_direction[2], -1/sqrt(3.0), 1e-12 );
+
+  direction[0] = 0.0;
+  direction[1] = 0.0;
+  direction[2] = 1.0;
+
+  unit_normal[0] = -1/sqrt(3.0);
+  unit_normal[1] = -1/sqrt(3.0);
+  unit_normal[2] = -1/sqrt(3.0);
+
+  Utility::reflectDirection( direction, unit_normal, reflected_direction );
+
+  TEST_FLOATING_EQUALITY( reflected_direction[0], -2.0/3, 1e-12 );
+  TEST_FLOATING_EQUALITY( reflected_direction[1], -2.0/3, 1e-12 );
+  TEST_FLOATING_EQUALITY( reflected_direction[2], 1.0/3.0, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a direction can be rotated through a polar and azimuthal angle
 TEUCHOS_UNIT_TEST( DirectionHelpers, 
 		   rotateDirectionThroughPolarAndAzimuthalAngle )
