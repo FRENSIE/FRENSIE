@@ -91,12 +91,12 @@ void DagMC::getCells( Set& cell_set,
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
-  moab::Range::const_iterator cell_handle_it = s_cells.begin();
+  moab::Range::const_iterator cell_handle_it = s_cell_handler->begin();
 
-  while( cell_handle_it != s_cells.end() )
+  while( cell_handle_it != s_cell_handler->end() )
   {
     ModuleTraits::InternalCellHandle cell_id = 
-      DagMC::getCellId( *cell_handle_it );
+      s_cell_handler->getCellId( *cell_handle_it );
 
     // Check if it is a termination cell
     if( DagMC::isTerminationCell( cell_id ) )
@@ -145,7 +145,7 @@ void DagMC::getCellPropertyValues( const std::string& property,
   for( unsigned i = 0u; i < cells_with_property.size(); ++i )
   {
     ModuleTraits::InternalCellHandle cell_id = 
-      DagMC::getCellId( cells_with_property[i] );
+      s_cell_handler->getCellId( cells_with_property[i] );
     
     moab::ErrorCode return_value = 
       s_dagmc->prop_values( cells_with_property[i],
@@ -202,7 +202,7 @@ void DagMC::getCellIdsWithPropertyValue( const std::string& property,
       
       // Convert the entity handles to cell ids
       for( unsigned j = 0u; j < cells.size(); ++j )
-	cell_ids[j] = DagMC::getCellId( cells[j] );
+	cell_ids[j] = s_cell_handler->getCellId( cells[j] );
       
       cells.clear();
     }
@@ -410,12 +410,12 @@ void DagMC::getSurfaces( Set& surface_set )
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   
-  moab::Range::const_iterator surface_handle_it = s_surfaces.begin();
+  moab::Range::const_iterator surface_handle_it = s_surface_handler->begin();
 
-  while( surface_handle_it != s_surfaces.end() )
+  while( surface_handle_it != s_surface_handler->end() )
   {
     ModuleTraits::InternalCellHandle surface_id = 
-      DagMC::getSurfaceId( *surface_handle_it );
+      s_surface_handler->getSurfaceId( *surface_handle_it );
 
     surface_set.insert( surface_id );
 
@@ -450,7 +450,7 @@ void DagMC::getSurfacePropertyValues( const std::string& property,
   for( unsigned i = 0u; i < surfaces_with_property.size(); ++i )
   {
     ModuleTraits::InternalSurfaceHandle surface_id = 
-      DagMC::getSurfaceId( surfaces_with_property[i] );
+      s_surface_handler->getSurfaceId( surfaces_with_property[i] );
     
     moab::EntityHandle return_value = 
       s_dagmc->prop_values( surfaces_with_property[i],
@@ -508,7 +508,7 @@ void DagMC::getSurfaceIdsWithPropertyValue( const std::string& property,
       
       // Convert the entity handles to surface ids
       for( unsigned j = 0u; j < surfaces.size(); ++j )
-	surface_ids[j] = DagMC::getSurfaceId( surfaces[j] );
+	surface_ids[j] = s_surface_handler->getSurfaceId( surfaces[j] );
       
       surfaces.clear();
     }
@@ -612,7 +612,7 @@ void DagMC::getFoundCellCache( Set& cached_cells )
 
   while( cached_cell_it != s_found_cell_cache.end() )
   {
-    cached_cells.insert( DagMC::getCellId( *cached_cell_it ) );
+    cached_cells.insert( s_cell_handler->getCellId( *cached_cell_it ) );
     
     ++cached_cell_it;
   }

@@ -19,12 +19,15 @@
 
 // Boost Includes
 #include <boost/bimap.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
 #include <DagMC.hpp>
 
 // FRENSIE Includes
 #include "Geometry_DagMCRay.hpp"
+#include "Geometry_DagMCCellHandler.hpp"
+#include "Geometry_DagMCSurfaceHandler.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Utility_ContractException.hpp"
@@ -117,6 +120,7 @@ public:
   //! Initialize the DagMC geometry manager
   static void initialize( const std::string& filename,
                           const double facet_tol,
+                          const bool use_fast_id_lookup = false,
                           std::ostream& os_warn = std::cerr );
 
   //! Enable thread support
@@ -283,22 +287,6 @@ private:
   static void validatePropertyNames(const std::vector<std::string>& properties,
                                     std::ostream& os_warn );
 
-  // Get the cell handle from a cell id
-  static moab::EntityHandle getCellHandle( 
-                              const ModuleTraits::InternalCellHandle cell_id );
-
-  // Get the cell id from a cell handle
-  static ModuleTraits::InternalCellHandle getCellId( 
-                                        const moab::EntityHandle cell_handle );
-  
-  // Get the surface handle
-  static moab::EntityHandle getSurfaceHandle(
-                        const ModuleTraits::InternalSurfaceHandle surface_id );
-
-  // Get the surface id
-  static ModuleTraits::InternalSurfaceHandle getSurfaceId( 
-                                     const moab::EntityHandle surface_handle );
-
   // Get the surface normal at a point on the surface
   static void getSurfaceHandleNormal( const moab::EntityHandle surface_handle,
                                       const double position[3],
@@ -405,11 +393,11 @@ private:
   // The DagMC instance
   static moab::DagMC* s_dagmc;
 
-  // The problem cells
-  static moab::Range s_cells;
+  // The DagMC cell handler
+  static boost::scoped_ptr<Geometry::DagMCCellHandler> s_cell_handler;
 
-  // The problem surfaces
-  static moab::Range s_surfaces;
+  // The DagMC surface handle
+  static boost::scoped_ptr<Geometry::DagMCSurfaceHandler> s_surface_handler;
 
   // The termination cells
   static std::unordered_set<ModuleTraits::InternalCellHandle>

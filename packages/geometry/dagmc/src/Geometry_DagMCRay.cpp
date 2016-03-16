@@ -52,12 +52,29 @@ DagMCRay::DagMCRay( const double position[3],
 
 // Copy constructor
 DagMCRay::DagMCRay( const DagMCRay& ray )
-  : d_basic_ray( new Ray( ray.getPosition(), ray.getDirection() ) ),
-    d_cell_handle( ray.d_cell_handle ),
-    d_history( ray.d_history ),
-    d_intersection_distance( ray.d_intersection_distance ),
-    d_intersection_surface_handle( ray.d_intersection_surface_handle )
-{ /* ... */ }
+  : d_basic_ray(),
+    d_cell_handle( 0 ),
+    d_history(),
+    d_intersection_distance( -1.0 ),
+    d_intersection_surface_handle( 0 )
+{  
+  if( ray.isReady() )
+  {
+    d_basic_ray.reset( new Ray( ray.getPosition(), 
+                                ray.getDirection() ) );
+
+    d_cell_handle = ray.d_cell_handle;
+
+    d_history = ray.d_history;
+
+    if( ray.knowsIntersectionSurface() )
+    {
+      d_intersection_distance = ray.d_intersection_distance;
+      
+      d_intersection_surface_handle = ray.d_intersection_surface_handle;
+    }
+  }
+}
   
 // Check if the ray is ready (basic ray, current cell handle set)
 bool DagMCRay::isReady() const

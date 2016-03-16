@@ -42,7 +42,8 @@ TEUCHOS_UNIT_TEST( DagMC, initialize )
   TEST_ASSERT( !Geometry::DagMC::isInitialized() );
   
   TEST_NOTHROW( Geometry::DagMC::initialize( test_dagmc_geom_file_name,
-                                             1e-3 ) );
+                                             1e-3,
+                                             false ) );
 
   TEST_ASSERT( Geometry::DagMC::isInitialized() );
 }
@@ -1178,7 +1179,55 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace )
 // Check that an internal ray trace can be done
 TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace_with_reflection )
 {
+  // Initialize the ray
+  {
+    Geometry::Ray ray( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
+    
+    Geometry::DagMC::setInternalRay( ray, false );
+  }
 
+  // Find the cell that contains the ray
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::DagMC::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 82 );
+
+  // Fire the ray
+  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  
+  double distance_to_surface_hit = 
+    Geometry::DagMC::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.474, 1e-6 );
+  TEST_EQUALITY_CONST( surface_hit, 394 );
+
+  // Advance the ray to the boundary surface
+  bool reflection = Geometry::DagMC::advanceInternalRayToCellBoundary();
+
+  TEST_ASSERT( !reflection );
+
+  cell = Geometry::DagMC::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 83 );
+
+  distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
+  TEST_EQUALITY_CONST( surface_hit, 408 );
+
+  // Advance the ray to the boundary surface (reflecting)
+  reflection = Geometry::DagMC::advanceInternalRayToCellBoundary();
+
+  TEST_ASSERT( reflection );
+
+  cell = Geometry::DagMC::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 83 );
+
+  distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
+  TEST_EQUALITY_CONST( surface_hit, 394 );
 }
 
 //---------------------------------------------------------------------------//

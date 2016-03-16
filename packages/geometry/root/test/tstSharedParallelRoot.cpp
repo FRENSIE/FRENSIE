@@ -181,6 +181,12 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  // Initialize the global MPI session
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
+  out->setOutputToRootOnly( 0 );
+
   // Initialize root
   Geometry::Root::initialize( test_root_geom_file_name );
   Geometry::Root::enableThreadSupport( threads );
@@ -188,12 +194,6 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-
-  // Initialize the global MPI session
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
-  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  out->setOutputToRootOnly( 0 );
   
   mpiSession.barrier();
   
