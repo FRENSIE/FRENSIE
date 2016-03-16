@@ -6,9 +6,32 @@ ADD_EXECUTABLE(tstDagMCRay
 TARGET_LINK_LIBRARIES(tstDagMCRay geometry_core geometry_dagmc)
 ADD_TEST(DagMCRay_test tstDagMCRay)
 
+ADD_EXECUTABLE(tstStandardDagMCCellHandler tstStandardDagMCCellHandler.cpp)
+TARGET_LINK_LIBRARIES(tstStandardDagMCCellHandler geometry_core geometry_dagmc)
+ADD_TEST(StandardDagMCCellHandler_test tstStandardDagMCCellHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+ADD_EXECUTABLE(tstFastDagMCCellHandler tstFastDagMCCellHandler.cpp)
+TARGET_LINK_LIBRARIES(tstFastDagMCCellHandler geometry_core geometry_dagmc)
+ADD_TEST(FastDagMCCellHandler_test tstFastDagMCCellHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+ADD_EXECUTABLE(tstStandardDagMCSurfaceHandler tstStandardDagMCSurfaceHandler.cpp)
+TARGET_LINK_LIBRARIES(tstStandardDagMCSurfaceHandler geometry_core geometry_dagmc)
+ADD_TEST(StandardDagMCSurfaceHandler_test tstStandardDagMCSurfaceHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+ADD_EXECUTABLE(tstFastDagMCSurfaceHandler tstFastDagMCSurfaceHandler.cpp)
+TARGET_LINK_LIBRARIES(tstFastDagMCSurfaceHandler geometry_core geometry_dagmc)
+ADD_TEST(FastDagMCSurfaceHandler_test tstFastDagMCSurfaceHandler --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
 ADD_EXECUTABLE(tstDagMC tstDagMC.cpp)
 TARGET_LINK_LIBRARIES(tstDagMC geometry_core geometry_dagmc)
 ADD_TEST(DagMC_test tstDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_EXECUTABLE(tstSharedParallelDagMC tstSharedParallelDagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstSharedParallelDagMC geometry_core geometry_dagmc)
+  ADD_TEST(SharedParallelDagMC_2_test tstSharedParallelDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat" --threads=2)
+  ADD_TEST(SharedParallelDagMC_4_test tstSharedParallelDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat" --threads=4)
+ENDIF()
 
 # ADD_EXECUTABLE(tstDagMCInstanceFactoryBasic
 #   tstDagMCInstanceFactoryBasic.cpp)
