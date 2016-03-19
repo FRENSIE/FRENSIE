@@ -58,6 +58,11 @@ public:
   //! change the direction
   void changeDirection( const double direction[3] );
 
+  //! change the direction
+  void changeDirection( const double x_direction,
+                        const double y_direction,
+                        const double z_direction );
+
   //! Get the position
   const double* getPosition() const;
 

@@ -131,6 +131,11 @@ public:
   //! Change the internal ray direction (without changing its location)
   static void changeInternalRayDirection( const double direction[3] );
 
+  //! Change the internal ray direction( without changing its location)
+  static void changeInternalRayDirection( const double x_direction,
+                                          const double y_direction,
+                                          const double z_direction );
+
   //! Get the internal root ray position
   static const double* getInternalRayPosition();
 

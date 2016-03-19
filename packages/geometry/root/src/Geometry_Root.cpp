@@ -31,6 +31,9 @@ std::string Root::s_material_property_name = "mat";
 // Set the material property name
 void Root::setMaterialPropertyName( const std::string& material_property_name )
 {
+  // Make sure Root has not been initialized
+  testPrecondition( !Root::isInitialized() );
+  
   testPrecondition( material_property_name.size() > 0 );
   
   s_material_property_name = material_property_name;
@@ -39,6 +42,8 @@ void Root::setMaterialPropertyName( const std::string& material_property_name )
 // Set the void material property name
 void Root::setVoidMaterialName( const std::string& void_material_name )
 {
+  // Make sure Root has not been initialized
+  testPrecondition( !Root::isInitialized() );
   // Make sure the void material name is valid
   testPrecondition( void_material_name.size() > 0 );
   
@@ -48,6 +53,8 @@ void Root::setVoidMaterialName( const std::string& void_material_name )
 // Set the terminal material property name
 void Root::setTerminalMaterialName( const std::string& terminal_material_name )
 {
+  // Make sure Root has not been initialized
+  testPrecondition( !Root::isInitialized() );
   // Make sure the terminal property name is valid
   testPrecondition( terminal_material_name.size() > 0 );
   
@@ -450,6 +457,24 @@ void Root::changeInternalRayDirection( const double direction[3] )
   // but the array it takes is non-const.
   s_manager->SetCurrentDirection( const_cast<double*>( direction ) );
 }
+
+// Change the internal ray direction( without changing its location)
+void Root::changeInternalRayDirection( const double x_direction,
+                                       const double y_direction,
+                                       const double z_direction )
+{
+  // Make sure root has been initialized
+  testPrecondition( Root::isInitialized() );
+  // Make sure the internal ray is set
+  testPrecondition( Root::isInternalRaySet() );
+  // Make sure the direction is valid
+  testPrecondition( Utility::validDirection( x_direction, 
+                                             y_direction,
+                                             z_direction ) );
+
+  s_manager->SetCurrentDirection( x_direction, y_direction, z_direction );
+}
+
 
 // Get the internal root ray position
 /*! \details This method is thread safe as long as enableThreadSupport has

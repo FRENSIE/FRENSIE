@@ -124,7 +124,20 @@ void DagMCRay::changeDirection( const double direction[3] )
   // Make sure the ray is ready
   testPrecondition( this->isReady() );
   
-  d_basic_ray->changeDirection( direction );
+  this->changeDirection( direction[0], direction[1], direction[2] );
+}
+
+// Change the direction
+/*! \details This method will reset the history.
+ */
+void DagMCRay::changeDirection( const double x_direction,
+                                const double y_direction,
+                                const double z_direction )
+{
+  // Make sure the ray is ready
+  testPrecondition( this->isReady() );
+  
+  d_basic_ray->changeDirection( x_direction, y_direction, z_direction );
 
   // Reset the extra data
   this->resetIntersectionSurfaceData();

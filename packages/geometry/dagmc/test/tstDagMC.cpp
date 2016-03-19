@@ -31,6 +31,277 @@ std::string test_dagmc_geom_file_name;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check the default property names
+TEUCHOS_UNIT_TEST( DagMC, default_property_names )
+{
+  std::string default_property = 
+    Geometry::DagMC::getTerminationCellPropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "termination.cell" );
+
+  default_property = 
+    Geometry::DagMC::getReflectingSurfacePropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "reflecting.surface" );
+
+  default_property = 
+    Geometry::DagMC::getMaterialPropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "material" );
+
+  default_property = 
+    Geometry::DagMC::getDensityPropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "density" );
+
+  default_property = 
+    Geometry::DagMC::getEstimatorPropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "estimator" );
+
+  std::string default_estimator_name = 
+    Geometry::DagMC::getSurfaceCurrentName();
+
+  TEST_EQUALITY_CONST( default_estimator_name, "surface.current" );
+
+  default_estimator_name = 
+    Geometry::DagMC::getSurfaceFluxName();
+
+  TEST_EQUALITY_CONST( default_estimator_name, "surface.flux" );
+
+  default_estimator_name = 
+    Geometry::DagMC::getCellPulseHeightName();
+
+  TEST_EQUALITY_CONST( default_estimator_name, "cell.pulse.height" );
+
+  default_estimator_name = 
+    Geometry::DagMC::getCellTrackLengthFluxName();
+
+  TEST_EQUALITY_CONST( default_estimator_name, "cell.tl.flux" );
+
+  default_estimator_name = 
+    Geometry::DagMC::getCellCollisionFluxName();
+
+  TEST_EQUALITY_CONST( default_estimator_name, "cell.c.flux" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the termination cell property name can be set
+TEUCHOS_UNIT_TEST( DagMC, setTerminationCellPropertyName )
+{
+  std::string default_property = 
+    Geometry::DagMC::getTerminationCellPropertyName();
+
+  Geometry::DagMC::setTerminationCellPropertyName( "graveyard" );
+
+  std::string new_property = 
+    Geometry::DagMC::getTerminationCellPropertyName();
+
+  TEST_EQUALITY_CONST( new_property, "graveyard" );
+
+  Geometry::DagMC::setTerminationCellPropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reflecting surface property name can be set
+TEUCHOS_UNIT_TEST( DagMC, setReflectingSurfacePropertyName )
+{
+  std::string default_property = 
+    Geometry::DagMC::getReflectingSurfacePropertyName();
+
+  Geometry::DagMC::setReflectingSurfacePropertyName( "spec.reflect" );
+
+  std::string new_property = 
+    Geometry::DagMC::getReflectingSurfacePropertyName();
+
+  TEST_EQUALITY_CONST( new_property, "spec.reflect" );
+
+  Geometry::DagMC::setReflectingSurfacePropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the material property name can be set
+TEUCHOS_UNIT_TEST( DagMC, setMaterialPropertyName )
+{
+  std::string default_property = 
+    Geometry::DagMC::getMaterialPropertyName();
+
+  Geometry::DagMC::setMaterialPropertyName( "mat" );
+
+  std::string new_property = 
+    Geometry::DagMC::getMaterialPropertyName();
+
+  TEST_EQUALITY_CONST( new_property, "mat" );
+
+  Geometry::DagMC::setMaterialPropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the density property name can be set
+TEUCHOS_UNIT_TEST( DagMC, setDensityPropertyName )
+{
+  std::string default_property = 
+    Geometry::DagMC::getDensityPropertyName();
+
+  Geometry::DagMC::setDensityPropertyName( "rho" );
+
+  std::string new_property = 
+    Geometry::DagMC::getDensityPropertyName();
+
+  TEST_EQUALITY_CONST( new_property, "rho" );
+
+  Geometry::DagMC::setDensityPropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the estimator property name can be set
+TEUCHOS_UNIT_TEST( DagMC, setEstimatorPropertyName )
+{
+  std::string default_property = 
+    Geometry::DagMC::getEstimatorPropertyName();
+
+  Geometry::DagMC::setEstimatorPropertyName( "tally" );
+
+  std::string new_property = 
+    Geometry::DagMC::getEstimatorPropertyName();
+
+  TEST_EQUALITY_CONST( new_property, "tally" );
+
+  Geometry::DagMC::setEstimatorPropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface current name can be set
+TEUCHOS_UNIT_TEST( DagMC, setSurfaceCurrentName )
+{
+  std::string default_estimator_name = 
+    Geometry::DagMC::getSurfaceCurrentName();
+
+  Geometry::DagMC::setSurfaceCurrentName( "surf.cur" );
+
+  std::string estimator_name = 
+    Geometry::DagMC::getSurfaceCurrentName();
+
+  TEST_EQUALITY_CONST( estimator_name, "surf.cur" );
+
+  Geometry::DagMC::setSurfaceCurrentName( default_estimator_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface flux name can be set
+TEUCHOS_UNIT_TEST( DagMC, setSurfaceFluxName )
+{
+  std::string default_estimator_name = 
+    Geometry::DagMC::getSurfaceFluxName();
+
+  Geometry::DagMC::setSurfaceFluxName( "surf.flux" );
+
+  std::string estimator_name = 
+    Geometry::DagMC::getSurfaceFluxName();
+
+  TEST_EQUALITY_CONST( estimator_name, "surf.flux" );
+
+  Geometry::DagMC::setSurfaceFluxName( default_estimator_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell pulse height name can be set
+TEUCHOS_UNIT_TEST( DagMC, setCellPulseHeightName )
+{
+  std::string default_estimator_name = 
+    Geometry::DagMC::getCellPulseHeightName();
+
+  Geometry::DagMC::setCellPulseHeightName( "cell.ph" );
+
+  std::string estimator_name = 
+    Geometry::DagMC::getCellPulseHeightName();
+
+  TEST_EQUALITY_CONST( estimator_name, "cell.ph" );
+
+  Geometry::DagMC::setCellPulseHeightName( default_estimator_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell track-length flux name can be set
+TEUCHOS_UNIT_TEST( DagMC, setCellTrackLengthFluxName )
+{
+  std::string default_estimator_name = 
+    Geometry::DagMC::getCellTrackLengthFluxName();
+
+  Geometry::DagMC::setCellTrackLengthFluxName( "cell.tl" );
+
+  std::string estimator_name = 
+    Geometry::DagMC::getCellTrackLengthFluxName();
+
+  TEST_EQUALITY_CONST( estimator_name, "cell.tl" );
+
+  Geometry::DagMC::setCellTrackLengthFluxName( default_estimator_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell collision flux name can be set
+TEUCHOS_UNIT_TEST( DagMC, setCellCollisionFluxName )
+{
+  std::string default_estimator_name = 
+    Geometry::DagMC::getCellCollisionFluxName();
+
+  Geometry::DagMC::setCellCollisionFluxName( "cell.c" );
+
+  std::string estimator_name = 
+    Geometry::DagMC::getCellCollisionFluxName();
+
+  TEST_EQUALITY_CONST( estimator_name, "cell.c" );
+
+  Geometry::DagMC::setCellCollisionFluxName( default_estimator_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the estimator type is valid
+TEUCHOS_UNIT_TEST( DagMC, isEstimatorTypeValid )
+{
+  TEST_ASSERT( Geometry::DagMC::isEstimatorTypeValid( "surface.current" ) );
+  TEST_ASSERT( Geometry::DagMC::isEstimatorTypeValid( "surface.flux" ) );
+  TEST_ASSERT( Geometry::DagMC::isEstimatorTypeValid( "cell.pulse.height" ) );
+  TEST_ASSERT( Geometry::DagMC::isEstimatorTypeValid( "cell.tl.flux" ) );
+  TEST_ASSERT( Geometry::DagMC::isEstimatorTypeValid( "cell.c.flux" ) );
+  TEST_ASSERT( !Geometry::DagMC::isEstimatorTypeValid( "what?" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell estimator type is valid
+TEUCHOS_UNIT_TEST( DagMC, isCellEstimatorTypeValid )
+{
+  TEST_ASSERT( !Geometry::DagMC::isCellEstimatorTypeValid( "surface.current" ) );
+  TEST_ASSERT( !Geometry::DagMC::isCellEstimatorTypeValid( "surface.flux" ) );
+  TEST_ASSERT( Geometry::DagMC::isCellEstimatorTypeValid( "cell.pulse.height" ) );
+  TEST_ASSERT( Geometry::DagMC::isCellEstimatorTypeValid( "cell.tl.flux" ) );
+  TEST_ASSERT( Geometry::DagMC::isCellEstimatorTypeValid( "cell.c.flux" ) );
+  TEST_ASSERT( !Geometry::DagMC::isCellEstimatorTypeValid( "what?" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface estimator type is valid
+TEUCHOS_UNIT_TEST( DagMC, isSurfaceEstimatorValid )
+{
+  TEST_ASSERT( Geometry::DagMC::isSurfaceEstimatorTypeValid( "surface.current" ) );
+  TEST_ASSERT( Geometry::DagMC::isSurfaceEstimatorTypeValid( "surface.flux" ) );
+  TEST_ASSERT( !Geometry::DagMC::isSurfaceEstimatorTypeValid( "cell.pulse.height" ) );
+  TEST_ASSERT( !Geometry::DagMC::isSurfaceEstimatorTypeValid( "cell.tl.flux" ) );
+  TEST_ASSERT( !Geometry::DagMC::isSurfaceEstimatorTypeValid( "cell.c.flux" ) );
+  TEST_ASSERT( !Geometry::DagMC::isSurfaceEstimatorTypeValid( "what?" ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the particle type is valid
+TEUCHOS_UNIT_TEST( DagMC, isParticleTypeValid )
+{
+  TEST_ASSERT( Geometry::DagMC::isParticleTypeValid( "n" ) );
+  TEST_ASSERT( Geometry::DagMC::isParticleTypeValid( "p" ) );
+  TEST_ASSERT( Geometry::DagMC::isParticleTypeValid( "e" ) );
+  TEST_ASSERT( !Geometry::DagMC::isParticleTypeValid( "z" ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that DagMC can be initialized
 TEUCHOS_UNIT_TEST( DagMC, initialize )
 {
@@ -1173,6 +1444,24 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace )
   cell = Geometry::DagMC::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 55 );
+
+  // Fire the ray
+  distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 2.54, 1e-6 );
+  TEST_EQUALITY_CONST( surface_hit, 254 );
+
+  // Advance the ray a substep
+  Geometry::DagMC::advanceInternalRayBySubstep( 0.5*distance_to_surface_hit );
+
+  // Change the ray direction
+  Geometry::DagMC::changeInternalRayDirection( 0.0, 0.0, -1.0 );
+
+  // Fire the ray
+  distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.27, 1e-6 );
+  TEST_EQUALITY_CONST( surface_hit, 248 );
 }
 
 //---------------------------------------------------------------------------//

@@ -197,7 +197,7 @@ void ParticleSimulationManager<GeometryHandler,
 	  typename GMI::InternalCellHandle start_cell;
 	  
 	  try{
-	    start_cell = GMI::findCellContainingPoint( bank.top().ray() );
+	    start_cell = GMI::findCellContainingStartRay( bank.top().ray() );
 	  }
 	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 	  
@@ -269,36 +269,31 @@ void ParticleSimulationManager<GeometryHandler,
   ray_start_point[2] = particle.getZPosition();
 
   // Surface information
-  typename GMI::InternalSurfaceHandle surface_hit;
+  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   Teuchos::Array<double> surface_normal( 3 );
 
   // Cell information
-  typename GMI::InternalCellHandle cell_entering;
+  Geometry::ModuleTraits::InternalCellHandle cell_entering;
   double cell_total_macro_cross_section;
 
   // Check if the particle energy is below the cutoff
   if( particle.getEnergy() < SimulationGeneralProperties::getMinParticleEnergy<ParticleStateType>() )
     particle.setAsGone();
+
+  // Set the ray
+  GMI::setInternalRay( particle.getRay(), particle.getCell() );
   
   while( !particle.isLost() && !particle.isGone() )
   {
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
     
-    // Initialize new ray here
-    // GMI::newRay( particle.ray() )
-    
     // Ray trace until the necessary number of optical paths have be traveled
     while( true )
     {
       // Fire a ray at the cell currently containing the particle
       try{
-  	distance_to_surface_hit = 0.0;
-	
-  	GMI::fireRay( particle.ray(),
-  		      particle.getCell(),
-  		      surface_hit,
-  		      distance_to_surface_hit );
+        distance_to_surface_hit = GMI::fireInternalRay( surface_hit );
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
@@ -335,21 +330,34 @@ void ParticleSimulationManager<GeometryHandler,
                                                           particle.getCell() );
                                                                   
         
-  	// Get the surface normal at the intersection point
-  	GMI::getSurfaceNormal( surface_hit,
-  			       particle.getPosition(),
-  			       surface_normal.getRawPtr() );
+        // Advance the ray to the cell boundary
+        // Note: this is done after so that the particle direction is not
+        // altered before the estimators are updated
+        bool reflected = GMI::advanceRayToCellBoundary(
+                                                  surface_normal.getRawPtr() );
 
         // Update the observers: particle crossing surface event
-        EMI::updateObserversFromParticleCrossingSurfaceEvent( particle,
-                                                              surface_hit,
-                                                              surface_normal.getRawPtr() );
+        EMI::updateObserversFromParticleCrossingSurfaceEvent( 
+                                                  particle,
+                                                  surface_hit,
+                                                  surface_normal.getRawPtr() );
+
+        
+
+        if( reflected )
+        {
+          particle.setDirection( GMI::getInternalRayDirection() );
+
+          // Update the observers: particle crossing surface event
+          EMI::updateObserversFromParticleCrossingSurfaceEvent( 
+                                                  particle,
+                                                  surface_hit,
+                                                  surface_normal.getRawPtr() );
+        }
 
         // Find the cell on the other side of the surface hit
   	try{
-  	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
-  							particle.getCell(),
-  							surface_hit );
+  	  cell_entering = GMI::findCellContainingInternalRay();
   	}
   	CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
@@ -380,6 +388,8 @@ void ParticleSimulationManager<GeometryHandler,
 	
   	particle.advance( distance_to_collision );
 
+        GMI::advanceRayBySubstep( distance_to_collision );
+
 	// Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle,
@@ -401,8 +411,7 @@ void ParticleSimulationManager<GeometryHandler,
   	// Undergo a collision with the material in the cell
   	CMI::collideWithCellMaterial( particle, bank, true );
 
-  	// Start a new ray (clear ray tracing acceleration cache)
-  	GMI::newRay();
+        GMI::changeInternalRayDirection( particle.getDirection() );
 
   	// Cache the current position of the new ray
   	ray_start_point[0] = particle.getXPosition();
@@ -424,9 +433,6 @@ void ParticleSimulationManager<GeometryHandler,
   						      particle,
   						      ray_start_point,
   						      particle.getPosition() );
-
-  // Start a new ray (clear ray tracing acceleration cache)
-  GMI::newRay();
 }
 
 // Return the number of histories
