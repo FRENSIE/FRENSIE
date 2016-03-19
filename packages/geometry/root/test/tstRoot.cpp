@@ -34,6 +34,74 @@ std::string test_root_geom_file_name;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check the default property names
+TEUCHOS_UNIT_TEST( Root, default_property_names )
+{
+  std::string default_property = 
+    Geometry::Root::getMaterialPropertyName();
+
+  TEST_EQUALITY_CONST( default_property, "mat" );
+
+  std::string default_void_mat_name = 
+    Geometry::Root::getVoidMaterialName();
+
+  TEST_EQUALITY_CONST( default_void_mat_name, "void" );
+
+  std::string default_terminal_mat_name = 
+    Geometry::Root::getTerminalMaterialName();
+
+  TEST_EQUALITY_CONST( default_terminal_mat_name, "graveyard" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the material property name can be set
+TEUCHOS_UNIT_TEST( Root, setMaterialPropertyName )
+{
+  std::string default_property = 
+    Geometry::Root::getMaterialPropertyName();
+
+  Geometry::Root::setMaterialPropertyName( "material" );
+    
+  std::string new_property = Geometry::Root::getMaterialPropertyName();
+    
+  TEST_EQUALITY_CONST( new_property, "material" );
+
+  Geometry::Root::setMaterialPropertyName( default_property );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the void material name can be set
+TEUCHOS_UNIT_TEST( Root, setVoidMaterialName )
+{
+  std::string default_void_mat_name = 
+    Geometry::Root::getVoidMaterialName();
+
+  Geometry::Root::setVoidMaterialName( "empty" );
+
+  std::string new_name = Geometry::Root::getVoidMaterialName();
+
+  TEST_EQUALITY_CONST( new_name, "empty" );
+
+  Geometry::Root::setVoidMaterialName( default_void_mat_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the terminal material name can be set
+TEUCHOS_UNIT_TEST( Root, setTerminalMaterialName )
+{
+  std::string default_terminal_mat_name = 
+    Geometry::Root::getTerminalMaterialName();
+
+  Geometry::Root::setTerminalMaterialName( "terminal_mat" );
+
+  std::string new_name = Geometry::Root::getTerminalMaterialName();
+
+  TEST_EQUALITY_CONST( new_name, "terminal_mat" );
+
+  Geometry::Root::setTerminalMaterialName( default_terminal_mat_name );
+}
+
+//---------------------------------------------------------------------------//
 // Check that Root can be initialized
 TEUCHOS_UNIT_TEST( Root, initialize )
 {
@@ -400,6 +468,34 @@ TEUCHOS_UNIT_TEST( Root, isInternalRaySet )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the internal ray direction can be changed
+TEUCHOS_UNIT_TEST( Root, changeInternalRayDirection )
+{
+  // Initailize the ray
+  {
+    Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+    
+    Geometry::Root::setInternalRay( ray );
+  }
+  
+  Geometry::Root::changeInternalRayDirection( 1.0, 0.0, 0.0 );
+
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[0], 1.0 );
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[1], 0.0 );
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[2], 0.0 );
+
+  {
+    const double direction[3] = {0.0, 1.0, 0.0};
+
+    Geometry::Root::changeInternalRayDirection( direction );
+  }
+
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[0], 0.0 );
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[1], 1.0 );
+  TEST_EQUALITY_CONST( Geometry::Root::getInternalRayDirection()[2], 0.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cell containing the internal ray can be found
 TEUCHOS_UNIT_TEST( Root, findCellContainingInternalRay )
 {
@@ -467,6 +563,8 @@ TEUCHOS_UNIT_TEST( Root, internal_ray_trace )
 
   // Fire a ray through the geometry
   double distance_to_boundary = Geometry::Root::fireInternalRay();
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
  
   // Advance the ray to the cell boundary
   Geometry::Root::advanceInternalRayToCellBoundary();
@@ -479,6 +577,20 @@ TEUCHOS_UNIT_TEST( Root, internal_ray_trace )
   // Fire a ray through the geometry
   distance_to_boundary = Geometry::Root::fireInternalRay();
 
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-6 );
+
+  // Advance the ray a substep
+  Geometry::Root::advanceInternalRayBySubstep( 0.5*distance_to_boundary );
+
+  // Change the ray direction
+  Geometry::Root::changeInternalRayDirection( 0.0, 1.0, 0.0 );
+
+  // Fire a ray through the geometry
+  distance_to_boundary = Geometry::Root::fireInternalRay();
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 5.0, 1e-9 );
+
+  // Advance the ray to the cell boundary
   Geometry::Root::advanceInternalRayToCellBoundary();
   
   // Find the new cell

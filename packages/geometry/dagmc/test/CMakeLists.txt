@@ -33,15 +33,15 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelDagMC_4_test tstSharedParallelDagMC --test_cad_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat" --threads=4)
 ENDIF()
 
-# ADD_EXECUTABLE(tstDagMCInstanceFactoryBasic
-#   tstDagMCInstanceFactoryBasic.cpp)
-# TARGET_LINK_LIBRARIES(tstDagMCInstanceFactoryBasic geometry_core geometry_dagmc)
-# ADD_TEST(DagMCInstanceFactoryBasic_test tstDagMCInstanceFactoryBasic --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
+ADD_EXECUTABLE(tstDagMCInstanceFactoryBasic
+  tstDagMCInstanceFactoryBasic.cpp)
+TARGET_LINK_LIBRARIES(tstDagMCInstanceFactoryBasic geometry_core geometry_dagmc)
+ADD_TEST(DagMCInstanceFactoryBasic_test tstDagMCInstanceFactoryBasic --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
 
-# ADD_EXECUTABLE(tstDagMCInstanceFactoryAdvanced
-#   tstDagMCInstanceFactoryAdvanced.cpp)
-# TARGET_LINK_LIBRARIES(tstDagMCInstanceFactoryAdvanced geometry_core geometry_dagmc)
-# ADD_TEST(DagMCInstanceFactoryAdvanced_test tstDagMCInstanceFactoryAdvanced --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
+ADD_EXECUTABLE(tstDagMCInstanceFactoryAdvanced
+  tstDagMCInstanceFactoryAdvanced.cpp)
+TARGET_LINK_LIBRARIES(tstDagMCInstanceFactoryAdvanced geometry_core geometry_dagmc)
+ADD_TEST(DagMCInstanceFactoryAdvanced_test tstDagMCInstanceFactoryAdvanced --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
 
 # ADD_EXECUTABLE(tstGeometryModuleInterface_DagMC
 #   tstModuleInterface.cpp)

@@ -252,6 +252,11 @@ public:
   //! Change the internal ray direction (without changing its location)
   static void changeInternalRayDirection( const double direction[3] );
 
+  //! Change the internal ray direction (without changing its location)
+  static void changeInternalRayDirection( const double x_direction,
+                                          const double y_direction,
+                                          const double z_direction );
+
   //! Get the internal DagMC ray position
   static const double* getInternalRayPosition();
 
@@ -266,7 +271,7 @@ public:
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Advance the internal DagMC ray to the next boundary
-  static bool advanceInternalRayToCellBoundary();
+  static bool advanceInternalRayToCellBoundary( double surface_normal* = NULL);
 
   //! Advance the internal DagMC ray a substep
   static void advanceInternalRayBySubstep( const double substep_distance );

@@ -26,6 +26,8 @@
 #include "Geometry_Root.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_Tuple.hpp"
+#include "Utility_DirectionHelpers.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Check that a parallel external ray trace can be done
@@ -84,7 +86,7 @@ TEUCHOS_UNIT_TEST( Root, parallel_external_ray_trace )
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 2, 1, 3 );
   
-  TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
+  UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 }
 
 //---------------------------------------------------------------------------//
@@ -95,6 +97,9 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+
+  Teuchos::Array<Utility::Trip<double,double,double> >
+    distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
@@ -122,6 +127,9 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
 
     // Fire a ray through the geometry
     double distance_to_boundary = Geometry::Root::fireInternalRay();
+
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+      distance_to_boundary;
  
     // Advance the ray to the cell boundary
     Geometry::Root::advanceInternalRayToCellBoundary();
@@ -131,7 +139,31 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
 
     // Fire a ray through the geometry
     distance_to_boundary = Geometry::Root::fireInternalRay();
+
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+      distance_to_boundary;
+
+    // Advance the ray a substep
+    Geometry::Root::advanceInternalRayBySubstep( 0.5*distance_to_boundary );
+
+    // Change the ray direction
+    double new_direction[3];
+
+    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
+                                     0.0, 
+                                     0.0,
+                                     Geometry::Root::getInternalRayDirection(),
+                                     new_direction );
+
+    Geometry::Root::changeInternalRayDirection( new_direction );
+
+    // Fire a ray through the geometry
+    distance_to_boundary = Geometry::Root::fireInternalRay();
+
+    distances[Utility::GlobalOpenMPSession::getThreadId()].third = 
+      distance_to_boundary;
   
+    // Advance the ray to the cell boundary
     Geometry::Root::advanceInternalRayToCellBoundary();
 
     // Find the new cell
@@ -148,7 +180,15 @@ TEUCHOS_UNIT_TEST( Root, parallel_internal_ray_trace )
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 2, 1, 3 );
   
-  TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
+  UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
+
+  Teuchos::Array<Utility::Trip<double,double,double> >
+    correct_distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+
+  for( unsigned i = 0; i < correct_distances.size(); ++i )
+    correct_distances[i]( 2.5, 2.5, 5.0 );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( distances, correct_distances, 1e-6 );
 }
 
 //---------------------------------------------------------------------------//

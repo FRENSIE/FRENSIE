@@ -34,10 +34,10 @@ void DagMCInstanceFactory::initializeDagMC(
   if( geom_rep.isParameter( "Facet Tolerance" ) )
     facet_tol = geom_rep.get<double>( "Facet Tolerance" );
 
-  if( geom_rep.isParameter( "Termination Cell Property Name" ) )
+  if( geom_rep.isParameter( "Termination Cell Property" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Termination Cell Property Name" ); 
+      geom_rep.get<std::string>( "Termination Cell Property" ); 
     
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
@@ -47,10 +47,10 @@ void DagMCInstanceFactory::initializeDagMC(
     DagMC::setTerminationCellPropertyName( property_name );
   }
 
-  if( geom_rep.isParameter( "Reflecting Surface Property Name" ) )
+  if( geom_rep.isParameter( "Reflecting Surface Property" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Reflecting Surface Property Name" );
+      geom_rep.get<std::string>( "Reflecting Surface Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
@@ -60,10 +60,10 @@ void DagMCInstanceFactory::initializeDagMC(
     DagMC::setReflectingSurfacePropertyName( property_name );
   }
 
-  if( geom_rep.isParameter( "Material Property Name" ) )
+  if( geom_rep.isParameter( "Material Property" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Material Property Name" );
+      geom_rep.get<std::string>( "Material Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
@@ -73,10 +73,10 @@ void DagMCInstanceFactory::initializeDagMC(
     DagMC::setMaterialPropertyName( property_name );
   }
 
-  if( geom_rep.isParameter( "Density Property Name" ) )
+  if( geom_rep.isParameter( "Density Property" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Density Property Name" );
+      geom_rep.get<std::string>( "Density Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
@@ -86,10 +86,10 @@ void DagMCInstanceFactory::initializeDagMC(
     DagMC::setDensityPropertyName( property_name );
   }
   
-  if( geom_rep.isParameter( "Estimator Property Name" ) )
+  if( geom_rep.isParameter( "Estimator Property" ) )
   {
     std::string property_name = 
-      geom_rep.get<std::string>( "Estimator Property Name" );
+      geom_rep.get<std::string>( "Estimator Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,

@@ -47,6 +47,8 @@ std::string DagMC::cell_collision_flux_name = "cell.c.flux";
 // Set the termination cell property name
 void DagMC::setTerminationCellPropertyName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -62,6 +64,8 @@ const std::string& DagMC::getTerminationCellPropertyName()
 // Set the reflecting surface property name
 void DagMC::setReflectingSurfacePropertyName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
 
@@ -77,6 +81,8 @@ const std::string& DagMC::getReflectingSurfacePropertyName()
 // Set the material property name
 void DagMC::setMaterialPropertyName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -92,6 +98,8 @@ const std::string& DagMC::getMaterialPropertyName()
 // Set the density property name
 void DagMC::setDensityPropertyName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -107,6 +115,8 @@ const std::string& DagMC::getDensityPropertyName()
 // Set the estimator property name
 void DagMC::setEstimatorPropertyName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -122,6 +132,8 @@ const std::string& DagMC::getEstimatorPropertyName()
 // Set the surface current name
 void DagMC::setSurfaceCurrentName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -137,6 +149,8 @@ const std::string& DagMC::getSurfaceCurrentName()
 // Set the surface flux name
 void DagMC::setSurfaceFluxName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
 
@@ -152,6 +166,8 @@ const std::string& DagMC::getSurfaceFluxName()
 // Set the cell pulse height name
 void DagMC::setCellPulseHeightName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
 
@@ -167,6 +183,8 @@ const std::string& DagMC::getCellPulseHeightName()
 // Set the cell track-length flux name
 void DagMC::setCellTrackLengthFluxName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -182,6 +200,8 @@ const std::string& DagMC::getCellTrackLengthFluxName()
 // Set the cell collision flux name
 void DagMC::setCellCollisionFluxName( const std::string& name )
 {
+  // Make sure DagMC has not been initialized
+  testPrecondition( !DagMC::isInitialized() );
   // Make sure the name is valid
   testPrecondition( name.find( "_" ) >= name.size() );
   
@@ -600,34 +620,6 @@ bool DagMC::isReflectingSurface(
 }
 
 // Get the point location w.r.t. a given cell
-/*! \details This function will only return if a point is inside of or
- * outside of the cell of interest (not on the cell). The ray direction will be
- * used when it is close to the surface.
- */
-PointLocation DagMC::getPointLocation( 
-                             const Ray& ray,
-                             const ModuleTraits::InternalCellHandle& cell_id )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-  // Make sure the cell exists
-  testPrecondition( DagMC::doesCellExist( cell_id ) );
-  
-  moab::EntityHandle cell_handle = s_cell_handler->getCellHandle( cell_id );
-
-  try{
-    return DagMC::getPointLocation( ray.getPosition(),
-                                    ray.getDirection(),
-                                    cell_handle );
-  }
-  EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
-                           "Error: Could not determing the location of the "
-                           "ray with respect to cell " 
-                           << cell_id << "! Here are the details...\n"
-                           "Ray: " << ray  );
-}
-
-// Get the point location w.r.t. a given cell
 PointLocation DagMC::getPointLocation( const double position[3],
                                        const double direction[3],
                                        const moab::EntityHandle& cell_handle,
@@ -649,7 +641,7 @@ PointLocation DagMC::getPointLocation( const double position[3],
                                                            history );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-		      InvalidDagMCGeometry,
+		      DagMCGeometryError,
 		      moab::ErrorCodeStr[return_value] );
 
   switch( test_result )
@@ -678,12 +670,12 @@ DagMC::getBoundaryCellHandle( const moab::EntityHandle cell_handle,
                                                     boundary_cell_handle );
     
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-		      InvalidDagMCGeometry,
+		      DagMCGeometryError,
 		      moab::ErrorCodeStr[return_value] );
 
   TEST_FOR_EXCEPTION( 
                boundary_cell_handle == 0,
-               InvalidDagMCGeometry,
+               DagMCGeometryError,
                "Error: Could not find the boundary cell! "
                " Here are the details...\n"
                "Current cell: " 
@@ -692,37 +684,6 @@ DagMC::getBoundaryCellHandle( const moab::EntityHandle cell_handle,
                << s_surface_handler->getSurfaceId( boundary_surface_handle ) );
 
   return boundary_cell_handle;
-}
-
-// Get the boundary cell 
-/*! \details DagMC geometry are set up so that every surface belongs to
- * exactly two cells. When a ray crosses a boundary surface finding the
- * next cell that will be entered is simply a matter of knowing the current
- * cell and the boundary surface.
- */
-ModuleTraits::InternalCellHandle
-DagMC::getBoundaryCell(
-                const ModuleTraits::InternalCellHandle cell_id,
-                const ModuleTraits::InternalSurfaceHandle boundary_surface_id )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-  // Make sure the cell exists
-  testPrecondition( DagMC::doesCellExist( cell_id ) );
-  // Make sure the surface exists
-  testPrecondition( DagMC::doesSurfaceExist( boundary_surface_id ) );
-
-  moab::EntityHandle current_cell_handle = 
-    s_cell_handler->getCellHandle( cell_id );
-
-  moab::EntityHandle boundary_surface_handle = 
-    s_surface_handler->getSurfaceHandle( boundary_surface_id );
-
-  moab::EntityHandle boundary_cell_handle =
-    DagMC::getBoundaryCellHandle( current_cell_handle, 
-                                  boundary_surface_handle );
-                      
-  return s_cell_handler->getCellId( boundary_cell_handle );
 }
 
 // Get the surface normal at a point on the surface
@@ -738,25 +699,8 @@ void DagMC::getSurfaceHandleNormal( const moab::EntityHandle surface_handle,
                                                      normal );
                                                      
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-		      InvalidDagMCGeometry,
+		      DagMCGeometryError,
 		      moab::ErrorCodeStr[return_value] );
-}
-
-// Get the surface normal at a point on the surface
-void DagMC::getSurfaceNormal( 
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
-                          const double position[3],
-                          double normal[3] )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-  // Make sure the surface exists
-  testPrecondition( DagMC::doesSurfaceExist( surface_id ) );
-
-  moab::EntityHandle surface_handle = 
-    s_surface_handler->getSurfaceHandle( surface_id );
-
-  DagMC::getSurfaceHandleNormal( surface_handle, position, normal );
 }
 
 // Clear the found cell cache
@@ -815,7 +759,7 @@ moab::EntityHandle DagMC::checkFoundCellCache( const double position[3],
                                  found_cell_cache_vector[i] );
     }
     EXCEPTION_CATCH_RETHROW( 
-                  InvalidDagMCGeometry,
+                  DagMCGeometryError,
                   "Error: Could not find the location of the ray "
                   "with respect to cell "
                   << s_cell_handler->getCellId( found_cell_cache_vector[i] ) <<
@@ -860,7 +804,7 @@ moab::EntityHandle DagMC::findCellHandleContainingRay(
       test_point_location = 
         DagMC::getPointLocation( position, direction, *cell_handle_it );
     }
-    EXCEPTION_CATCH_RETHROW( InvalidDagMCGeometry,
+    EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
                              "Error: Could not find the location of the ray "
                              "with respect to cell "
                              << s_cell_handler->getCellId( *cell_handle_it ) <<
@@ -882,7 +826,7 @@ moab::EntityHandle DagMC::findCellHandleContainingRay(
   
   // Make sure a cell handle was found
   TEST_FOR_EXCEPTION( cell_handle == 0,
-                      InvalidDagMCGeometry,
+                      DagMCGeometryError,
                       "Error: Could not find a cell that contains the "
                       "requested ray! Here are the details...\n"
                       "Position: "
@@ -937,45 +881,6 @@ moab::EntityHandle DagMC::findAndCacheCellHandleContainingRay(
   }
 
   return cell_handle;
-}
-
-// Find the cell handle that contains the external ray
-moab::EntityHandle DagMC::findCellHandleContainingExternalRay( const Ray& ray )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-
-  return DagMC::findCellHandleContainingRay( ray.getPosition(),
-                                             ray.getDirection(),
-                                             true );
-}
-
-// Find the cell that contains the external ray
-ModuleTraits::InternalCellHandle DagMC::findCellContainingExternalRay(
-                                                               const Ray& ray )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-
-  moab::EntityHandle cell_handle =
-    DagMC::findCellHandleContainingExternalRay( ray );
-
-  return s_cell_handler->getCellId( cell_handle );
-}
-
-// Find and cache the cell that contains the external ray
-ModuleTraits::InternalCellHandle DagMC::findAndCacheCellContainingExternalRay(
-                                                               const Ray& ray )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-  
-  moab::EntityHandle cell_handle =
-    DagMC::findAndCacheCellHandleContainingRay( ray.getPosition(),
-                                                ray.getDirection() );
-
-  // Return the cell that contains the point
-  return s_cell_handler->getCellId( cell_handle );
 }
 
 // Get the distance from the external ray position to the nearest boundary
@@ -1170,36 +1075,6 @@ void DagMC::setInternalRay( const double position[3],
   double distance = DagMC::fireInternalRay( dummy_surface );
 }
 
-// Initialize (or reset) an internal DagMC ray
-void DagMC::setInternalRay( const Ray& ray, const bool cache_start_cell )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-
-  DagMC::setInternalRay( ray.getPosition(), 
-                         ray.getDirection(), 
-                         cache_start_cell );
-}
-
-// Initialize (or reset) an internal DagMC ray
-void DagMC::setInternalRay(const Ray& ray,
-                           const ModuleTraits::InternalCellHandle current_cell,
-                           const bool cache_start_cell )
-{
-  // Make sure DagMC has been initialized
-  testPrecondition( DagMC::isInitialized() );
-    // Make sure the cell exists
-  testPrecondition( DagMC::doesCellExist( current_cell ) );
-  // Make sure the cell contains the ray
-  testPrecondition( DagMC::findCellContainingExternalRay( ray ) ==
-                    current_cell );
-
-  DagMC::setInternalRay( ray.getPosition(), 
-                         ray.getDirection(), 
-                         current_cell,
-                         cache_start_cell );
-}
-
 // Get the internal DagMC ray
 DagMCRay& DagMC::getInternalRay()
 {
@@ -1213,19 +1088,23 @@ DagMCRay& DagMC::getInternalRay()
 }
 
 // Change the internal ray direction (without changing its location)
-void DagMC::changeInternalRayDirection( const double direction[3] )
+void DagMC::changeInternalRayDirection( const double x_direction,
+                                        const double y_direction,
+                                        const double z_direction )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( direction ) );
+  testPrecondition( Utility::validDirection( x_direction,
+                                             y_direction,
+                                             z_direction ) );
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
 
   DagMCRay& internal_ray = DagMC::getInternalRay();
 
   // Change the direction
-  internal_ray.changeDirection( direction );
+  internal_ray.changeDirection( x_direction, y_direction, z_direction );
 
   // Fire the ray so the new intersection data is set
   ModuleTraits::InternalSurfaceHandle dummy_surface;
@@ -1349,7 +1228,7 @@ double DagMC::fireInternalRay(
  * encountered. This method will return true if a reflecting boundary
  * was encountered.
  */
-bool DagMC::advanceInternalRayToCellBoundary()
+bool DagMC::advanceInternalRayToCellBoundary( double surface_normal* )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
@@ -1362,25 +1241,31 @@ bool DagMC::advanceInternalRayToCellBoundary()
   
   DagMCRay& ray = DagMC::getInternalRay();
 
+  moab::EntityHandle intersection_surface = ray.getIntersectionSurface();
+
   // Reflect the ray if a reflecting surface is encountered
   if( DagMC::isReflectingSurfaceHandle( ray.getIntersectionSurface() ) )
-  {
-    moab::EntityHandle intersection_surface = ray.getIntersectionSurface();
-    
+  {    
     // Advance the ray to the cell boundary and enter the next cell
     ray.advanceToIntersectionSurface( ray.getCurrentCell() );
     
-    // Reflect the ray
-    double surface_normal[3];
+    double local_surface_normal[3];
 
     DagMC::getSurfaceHandleNormal( intersection_surface,
                                    ray.getPosition(),
-                                   surface_normal );
+                                   local_surface_normal );
+    
+    if( surface_normal != NULL )
+    {
+      surface_normal[0] = local_surface_normal[0];
+      surface_normal[1] = local_surface_normal[1];
+      surface_normal[2] = local_surface_normal[2];
+    }
 
     double reflected_direction[3];
 
     Utility::reflectDirection( ray.getDirection(), 
-                               surface_normal, 
+                               local_surface_normal, 
                                reflected_direction );
     
     // This will also fire a ray to fill the new intersection data
@@ -1396,6 +1281,13 @@ bool DagMC::advanceInternalRayToCellBoundary()
                                     ray.getIntersectionSurface() );
     
     ray.advanceToIntersectionSurface( next_cell_handle );
+
+    if( surface_normal != NULL )
+    {
+      DagMC::getSurfaceHandleNormal( intersection_surface,
+                                     ray.getPosition(),
+                                     surface_normal );
+    }
 
     // Fire the ray so the new intersection data is set
     ModuleTraits::InternalSurfaceHandle dummy_surface;
