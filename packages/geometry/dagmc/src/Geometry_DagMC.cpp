@@ -1226,9 +1226,10 @@ double DagMC::fireInternalRay(
  * boundary cell if the boundary surface is not a reflecting surface. The
  * ray will be reflected at the boundary if a reflecting surface is
  * encountered. This method will return true if a reflecting boundary
- * was encountered.
+ * was encountered. If the surface normal at the intersection point is 
+ * required an array can be passed to the method.
  */
-bool DagMC::advanceInternalRayToCellBoundary( double surface_normal* )
+bool DagMC::advanceInternalRayToCellBoundary( double* surface_normal )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );

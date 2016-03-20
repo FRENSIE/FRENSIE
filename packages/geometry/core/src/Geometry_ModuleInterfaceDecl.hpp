@@ -123,9 +123,13 @@ public:
   static inline void changeInternalRayDirection( const double direction[3] )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }         
 
+  //! Get the internal ray position
+  static inline const double* getInternalRayPosition()
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
   //! Get the internal ray direction
   static inline const double* getInternalRayDirection()
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Check if the cell is a termination cell
   static inline bool isTerminationCell( 
