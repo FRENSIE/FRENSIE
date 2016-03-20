@@ -1376,7 +1376,7 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayBySubstep )
 
 //---------------------------------------------------------------------------//
 // Check that an internal ray can be advanced
-TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary )
+TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_basic )
 {
   // Initialize the ray
   {
@@ -1393,6 +1393,39 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary )
 
   // Advance the ray to the boundary surface
   Geometry::DagMC::advanceInternalRayToCellBoundary();
+
+  cell = Geometry::DagMC::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 54 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an internal ray can be advanced
+TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_advanced )
+{
+  // Initialize the ray
+  {
+    Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+    
+    Geometry::DagMC::setInternalRay( ray, false );
+  }
+
+  // Find the cell that contains the ray
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::DagMC::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 53 );
+
+  // Advance the ray to the boundary surface
+  double surface_normal[3];
+  
+  bool reflection = 
+    Geometry::DagMC::advanceInternalRayToCellBoundary( surface_normal );
+
+  TEST_ASSERT( !reflection );
+  TEST_EQUALITY_CONST( surface_normal[0], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[1], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[2], 1.0 );
 
   cell = Geometry::DagMC::findCellContainingInternalRay();
 
@@ -1505,9 +1538,15 @@ TEUCHOS_UNIT_TEST( DagMC, internal_ray_trace_with_reflection )
   TEST_EQUALITY_CONST( surface_hit, 408 );
 
   // Advance the ray to the boundary surface (reflecting)
-  reflection = Geometry::DagMC::advanceInternalRayToCellBoundary();
+  double surface_normal[3];
+  
+  reflection = 
+    Geometry::DagMC::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( reflection );
+  TEST_EQUALITY_CONST( surface_normal[0], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[1], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[2], 1.0 );
 
   cell = Geometry::DagMC::findCellContainingInternalRay();
 

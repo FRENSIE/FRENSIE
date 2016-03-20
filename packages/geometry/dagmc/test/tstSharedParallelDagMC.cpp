@@ -384,7 +384,9 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace_with_reflection )
     correct_reflection( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   for( unsigned i = 0; i < correct_reflection.size(); ++i )
-    correct_reflection( false, true );
+    correct_reflection[i]( false, true );
+
+  UTILITY_TEST_COMPARE_ARRAYS( reflection, correct_reflection );
 }
 
 //---------------------------------------------------------------------------//

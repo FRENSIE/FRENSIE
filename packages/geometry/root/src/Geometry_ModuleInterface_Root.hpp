@@ -69,11 +69,14 @@ public:
   //! Change the internal ray direction
   static void changeInternalRayDirection( const double direction[3] );
 
+  //! Get the internal ray position
+  static const double* getInternalRayPosition();
+
   //! Get the internal ray direction
   static const double* getInternalRayDirection();
 
   //! Check if the cell is a termination cell
-  static bool isTerminationCell( const InternalCellHandle cell );
+  static bool isTerminationCell( const ModuleTraits::InternalCellHandle cell );
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
@@ -121,7 +124,7 @@ inline void ModuleInterface<Root>::setInternalRay(
 }
 
 // Find the cell that contains a given start ray
-inline ModuleInterface<Root>::InternalCellHandle 
+inline ModuleTraits::InternalCellHandle 
 ModuleInterface<Root>::findCellContainingStartRay( const Ray& ray )
 {
   // Make sure root is initialized
@@ -131,7 +134,7 @@ ModuleInterface<Root>::findCellContainingStartRay( const Ray& ray )
 }
 
 // Find the cell that contains the internal ray
-inline ModuleInterface<Root>::InternalCellHandle 
+inline ModuleTraits::InternalCellHandle 
 ModuleInterface<Root>::findCellContainingInternalRay()
 {
   // Make sure root is initialized
@@ -154,7 +157,7 @@ inline double ModuleInterface<Root>::fireInternalRay(
   surface_hit = 0;
   
   // Fire the internal root ray
-  return = Root::fireInternalRay();
+  return Root::fireInternalRay();
 }
 
 // Advance the internal ray to the cell boundary
@@ -165,7 +168,7 @@ inline bool ModuleInterface<Root>::advanceInternalRayToCellBoundary(
                                                      double surface_normal[3] )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( Root::isInitialied() );
+  testPrecondition( Root::isInitialized() );
 
   // The dummy surface normal
   surface_normal[0] = 0.0;
@@ -182,7 +185,7 @@ inline void ModuleInterface<Root>::advanceInternalRayBySubstep(
                                                        const double step_size )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( Root::isInitialied() );
+  testPrecondition( Root::isInitialized() );
 
   Root::advanceInternalRayBySubstep( step_size );
 }
@@ -192,9 +195,27 @@ inline void ModuleInterface<Root>::changeInternalRayDirection(
                                                     const double direction[3] )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( Root::isInitialied() );
+  testPrecondition( Root::isInitialized() );
 
   Root::changeInternalRayDirection( direction );
+}
+
+// Get the internal ray position
+inline const double* ModuleInterface<Root>::getInternalRayPosition()
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( Root::isInitialized() );
+
+  return Root::getInternalRayPosition();
+}
+
+// Get the internal ray direction
+inline const double* ModuleInterface<Root>::getInternalRayDirection()
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( Root::isInitialized() );
+
+  return Root::getInternalRayDirection();
 }
 
 // Check if the cell is a termination cell
@@ -202,15 +223,15 @@ inline bool ModuleInterface<Root>::isTerminationCell(
                                   const ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( Root::isInitialied() );
+  testPrecondition( Root::isInitialized() );
 
   return Root::isTerminationCell( cell );
 }
 
 // Get the point location w.r.t. a given cell
 inline PointLocation ModuleInterface<Root>::getPointLocation( 
-                         const Ray& ray,
-			 const ModuleInterface<Root>::InternalCellHandle cell )
+                                  const Ray& ray,
+			          const ModuleTraits::InternalCellHandle cell )
 {
   return Root::getPointLocation( ray, cell );
 }

@@ -30,7 +30,7 @@ public:
   
   //! Set the geometry handler instance
   static void setHandlerInstance( 
-                               const std::shared_ptr<DagMC>& handler_instance);
+                              const std::shared_ptr<DagMC>& handler_instance );
 
   //! Do just in time initialization of interface members
   static void initialize();  
@@ -48,7 +48,7 @@ public:
                                                               const Ray& ray );
 
   //! Find the cell that contain the internal ray
-  static InternalCellHandle findCellContainingInternalRay();
+  static ModuleTraits::InternalCellHandle findCellContainingInternalRay();
 
   //! Fire the internal ray through the geometry
   static double fireInternalRay( 
@@ -64,14 +64,18 @@ public:
   static void changeInternalRayDirection( const double direction[3] );
 
   //! Get the internal ray direction
+  static const double* getInternalRayPosition();
+
+  //! Get the internal ray direction
   static const double* getInternalRayDirection();
 
   //! Check if the cell is a termination cell
-  static bool isTerminationCell( const InternalCellHandle cell );
+  static bool isTerminationCell( const ModuleTraits::InternalCellHandle cell );
 
   //! Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( const Ray& ray,
-					 const InternalCellHandle cell );
+  static PointLocation getPointLocation( 
+                                 const Ray& ray,
+				 const ModuleTraits::InternalCellHandle cell );
 };
 
 // Set the geometry handler instance
@@ -89,7 +93,7 @@ inline void ModuleInterface<DagMC>::setHandlerInstance(
 inline void ModuleInterface<DagMC>::initialize()
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 }
 
 // Enable support for multiple threads
@@ -97,7 +101,7 @@ inline void ModuleInterface<DagMC>::enableThreadSupport(
                                                    const unsigned num_threads )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
   
   DagMC::enableThreadSupport( num_threads );
 }
@@ -108,19 +112,24 @@ inline void ModuleInterface<DagMC>::setInternalRay(
                             const ModuleTraits::InternalCellHandle start_cell )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   DagMC::setInternalRay( ray, start_cell, false );
 }
 
 // Find the cell that contains a given start ray
+/*! \details This function will first check a found cell cache for the
+ * cell that contains the ray. If none of the cells in the cache contain
+ * the ray all of the cells will be searched. Any new cells found will be
+ * added to the found cell cache. 
+ */
 inline ModuleTraits::InternalCellHandle 
 ModuleInterface<DagMC>::findCellContainingStartRay( const Ray& ray )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
-  DagMC::findAndCacheCellContianingExternalRay( ray );
+  DagMC::findAndCacheCellContainingExternalRay( ray );
 }
 
 // Find the cell that contain the internal ray
@@ -128,7 +137,7 @@ inline ModuleTraits::InternalCellHandle
 ModuleInterface<DagMC>::findCellContainingInternalRay()
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   return DagMC::findCellContainingInternalRay();
 }
@@ -138,9 +147,9 @@ inline double ModuleInterface<DagMC>::fireInternalRay(
                              ModuleTraits::InternalSurfaceHandle& surface_hit )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
-  return DagMC::fireInternalray( surface_hit );
+  return DagMC::fireInternalRay( surface_hit );
 }
 
 // Advance the internal ray to the cell boundary
@@ -148,7 +157,7 @@ inline bool ModuleInterface<DagMC>::advanceInternalRayToCellBoundary(
                                                      double surface_normal[3] )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   return DagMC::advanceInternalRayToCellBoundary( surface_normal );
 }
@@ -158,7 +167,7 @@ inline void ModuleInterface<DagMC>::advanceInternalRayBySubstep(
                                                        const double step_size )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   DagMC::advanceInternalRayBySubstep( step_size );
 }
@@ -168,18 +177,27 @@ inline void ModuleInterface<DagMC>::changeInternalRayDirection(
                                                     const double direction[3] )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   DagMC::changeInternalRayDirection( direction );
+}
+
+// Get the internal ray position
+inline const double* ModuleInterface<DagMC>::getInternalRayPosition()
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( DagMC::isInitialized() );
+
+  return DagMC::getInternalRayPosition();
 }
 
 // Get the internal ray direction
 inline const double* ModuleInterface<DagMC>::getInternalRayDirection()
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
-  return DagMC::getIntenralRayDirection();
+  return DagMC::getInternalRayDirection();
 }
 
 // Check if the cell is a termination cell
@@ -187,7 +205,7 @@ inline bool ModuleInterface<DagMC>::isTerminationCell(
                                   const ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   return DagMC::isTerminationCell( cell );
 }
@@ -198,7 +216,7 @@ inline PointLocation ModuleInterface<DagMC>::getPointLocation(
                                   const ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the DagMC wrapper is initialized
-  testPrecondition( DagMC::isInitialied() );
+  testPrecondition( DagMC::isInitialized() );
 
   return DagMC::getPointLocation( ray, cell );
 }

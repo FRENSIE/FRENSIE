@@ -271,7 +271,7 @@ public:
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Advance the internal DagMC ray to the next boundary
-  static bool advanceInternalRayToCellBoundary( double surface_normal* = NULL);
+  static bool advanceInternalRayToCellBoundary( double* surface_normal = NULL);
 
   //! Advance the internal DagMC ray a substep
   static void advanceInternalRayBySubstep( const double substep_distance );
