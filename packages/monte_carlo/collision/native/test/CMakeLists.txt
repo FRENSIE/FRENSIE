@@ -5,6 +5,74 @@ ADD_EXECUTABLE(tstTwoDDistributionHelpers
 TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
 ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
 
+ADD_EXECUTABLE(tstAceLaw1NuclearScatteringEnergyDistribution
+  tstAceLaw1NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw1NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw1NuclearScatteringEnergyDistribution_test
+tstAceLaw1NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw4NuclearScatteringEnergyDistribution
+  tstAceLaw4NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw4NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw4NuclearScatteringEnergyDistribution_test
+tstAceLaw4NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw5NuclearScatteringEnergyDistribution
+  tstAceLaw5NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw5NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw5NuclearScatteringEnergyDistribution_test
+tstAceLaw5NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw7NuclearScatteringEnergyDistribution
+  tstAceLaw7NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw7NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw7NuclearScatteringEnergyDistribution_test
+tstAceLaw7NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw9NuclearScatteringEnergyDistribution
+  tstAceLaw9NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw9NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw9NuclearScatteringEnergyDistribution_test
+tstAceLaw9NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw11NuclearScatteringEnergyDistribution
+  tstAceLaw11NuclearScatteringEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw11NuclearScatteringEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw11NuclearScatteringEnergyDistribution_test
+tstAceLaw9NuclearScatteringEnergyDistribution)
+
+ADD_EXECUTABLE(tstAceLaw44NuclearScatteringDistribution
+  tstAceLaw44NuclearScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw44NuclearScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw44NuclearScatteringDistribution_test
+tstAceLaw44NuclearScatteringDistribution)
+
+ADD_EXECUTABLE(tstLabSystemConversionPolicy
+  tstLabSystemConversionPolicy.cpp)
+TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy monte_carlo_collision_native)
+ADD_TEST(LabSystemConversionPolicy_test
+tstLabSystemConversionPolicy)
+
+ADD_EXECUTABLE(tstCrossSectionsXMLProperties
+  tstCrossSectionsXMLProperties.cpp)
+TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties monte_carlo_collision_native)
+ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+ADD_EXECUTABLE(tstMaterialHelpers
+  tstMaterialHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMaterialHelpers monte_carlo_collision_native)
+ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
+
+ADD_EXECUTABLE(tstStandardAtomicReaction
+  tstStandardAtomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstStandardAtomicReaction monte_carlo_collision_native)
+ADD_TEST(StandardAtomicReaction_test tstStandardAtomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
+
+##----------------------------------------------------------------------------##
+##      neutron class tests                                                   ##
+##----------------------------------------------------------------------------##
+
 ADD_EXECUTABLE(tstNuclearScatteringDistribution
   tstNuclearScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearScatteringDistribution monte_carlo_collision_native)
@@ -37,30 +105,6 @@ tstNeutronNuclearScatteringDistributionACEFactory
 --test_basic_h1_ace_table="1001.70c"
 --test_basic_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt"
 --test_basic_o16_ace_table="8016.70c")
-
-ADD_EXECUTABLE(tstAceLaw1NuclearScatteringEnergyDistribution
-  tstAceLaw1NuclearScatteringEnergyDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstAceLaw1NuclearScatteringEnergyDistribution monte_carlo_collision_native)
-ADD_TEST(AceLaw1NuclearScatteringEnergyDistribution_test
-tstAceLaw1NuclearScatteringEnergyDistribution)
-
-ADD_EXECUTABLE(tstAceLaw4NuclearScatteringEnergyDistribution
-  tstAceLaw4NuclearScatteringEnergyDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstAceLaw4NuclearScatteringEnergyDistribution monte_carlo_collision_native)
-ADD_TEST(AceLaw4NuclearScatteringEnergyDistribution_test
-tstAceLaw4NuclearScatteringEnergyDistribution)
-
-ADD_EXECUTABLE(tstAceLaw44NuclearScatteringDistribution
-  tstAceLaw44NuclearScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstAceLaw44NuclearScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(AceLaw44NuclearScatteringDistribution_test
-tstAceLaw44NuclearScatteringDistribution)
-
-ADD_EXECUTABLE(tstLabSystemConversionPolicy
-  tstLabSystemConversionPolicy.cpp)
-TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy monte_carlo_collision_native)
-ADD_TEST(LabSystemConversionPolicy_test
-tstLabSystemConversionPolicy)
 
 ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionACEFactory
   tstFissionNeutronMultiplicityDistributionACEFactory.cpp)
@@ -112,41 +156,112 @@ ADD_EXECUTABLE(tstNuclide
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
-ADD_EXECUTABLE(tstCrossSectionsXMLProperties
-  tstCrossSectionsXMLProperties.cpp)
-TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties monte_carlo_collision_native)
-ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
-
 ADD_EXECUTABLE(tstNuclideFactory
   tstNuclideFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)
 ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
-
-ADD_EXECUTABLE(tstMaterialHelpers
-  tstMaterialHelpers.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstMaterialHelpers monte_carlo_collision_native)
-ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
 
 ADD_EXECUTABLE(tstNeutronMaterial
   tstNeutronMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
-ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistribution
-  tstIncoherentPhotonScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(IncoherentPhotonScatteringDistribution_test tstIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+##----------------------------------------------------------------------------##
+##      photon class tests                                                    ##
+##----------------------------------------------------------------------------##
+
+ADD_EXECUTABLE(tstPhotonuclearNeutronScatteringDistributionACEFactory
+	tstPhotonuclearNeutronScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearNeutronScatteringDistributionACEFactory
+ monte_carlo_collision_native)
+ADD_TEST(PhotonuclearNeutronScatteringDistributionACEFactory_test tstPhotonuclearNeutronScatteringDistributionACEFactory --test_basic_h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --test_basic_h2_ace_table=1002.24u )
+
+ADD_EXECUTABLE(tstPhotonuclearScatteringDistributionACEFactory
+	tstPhotonuclearScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearScatteringDistributionACEFactory
+ monte_carlo_collision_native)
+ADD_TEST(PhotonuclearScatteringDistributionACEFactory_test tstPhotonuclearScatteringDistributionACEFactory --test_basic_c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u )
+
+ADD_EXECUTABLE(tstPhotonuclearReaction
+               tstPhotonuclearReaction.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
+  monte_carlo_collision_native)
+ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
+
+ADD_EXECUTABLE(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution
+  tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(CoupledCompleteDopplerBroadenedPhotonEnergyDistribution_test tstCoupledCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution
+  tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution_test tstDecoupledCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstSubshellDopplerBroadenedPhotonEnergyDistribution
+  tstSubshellDopplerBroadenedPhotonEnergyDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
+ADD_TEST(SubshellDopplerBroadenedPhotonEnergyDistribution_test tstSubshellDopplerBroadenedPhotonEnergyDistribution --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
+ADD_EXECUTABLE(tstKleinNishinaPhotonScatteringDistribution
+  tstKleinNishinaPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstKleinNishinaPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(KleinNishinaPhotonScatteringDistribution_test tstKleinNishinaPhotonScatteringDistribution)
+
+ADD_EXECUTABLE(tstDetailedWHIncoherentPhotonScatteringDistribution
+  tstDetailedWHIncoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedWHIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(DetailedWHIncoherentPhotonScatteringDistribution_test tstDetailedWHIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution
+  tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(DopplerBroadenedHybridIncoherentPhotonScatteringDistribution_test tstDopplerBroadenedHybridIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstSubshellIncoherentPhotonScatteringDistribution
   tstSubshellIncoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(SubshellIncoherentPhotonScatteringDistribution_test tstSubshellIncoherentPhotonScatteringDistribution --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
-ADD_EXECUTABLE(tstCoherentPhotonScatteringDistribution
-  tstCoherentPhotonScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstCoherentPhotonScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(CoherentPhotonScatteringDistribution_test tstCoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
+ADD_EXECUTABLE(tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution
+  tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution_test tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
+ADD_EXECUTABLE(tstThompsonScatteringDistribution
+  tstThompsonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstThompsonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(ThompsonScatteringDistribution_test tstThompsonScatteringDistribution)
+
+ADD_EXECUTABLE(tstBasicCoherentScatteringDistribution
+  tstBasicCoherentScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstBasicCoherentScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(BasicCoherentScatteringDistribution_test tstBasicCoherentScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstEfficientCoherentScatteringDistribution
+  tstEfficientCoherentScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstEfficientCoherentScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(EfficientCoherentScatteringDistribution_test tstEfficientCoherentScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistributionACEFactory
+  tstIncoherentPhotonScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(IncoherentPhotonScatteringDistributionACEFactory_test tstIncoherentPhotonScatteringDistributionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistributionNativeFactory
+  tstIncoherentPhotonScatteringDistributionNativeFactory.cpp)
+TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistributionNativeFactory monte_carlo_collision_native)
+ADD_TEST(IncoherentPhotonScatteringDistributionNativeFactory_test tstIncoherentPhotonScatteringDistributionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
+ADD_EXECUTABLE(tstCoherentScatteringDistributionACEFactory
+  tstCoherentScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(CoherentScatteringDistributionACEFactory_test tstCoherentScatteringDistributionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstCoherentScatteringDistributionNativeFactory
+  tstCoherentScatteringDistributionNativeFactory.cpp)
+TARGET_LINK_LIBRARIES(tstCoherentScatteringDistributionNativeFactory monte_carlo_collision_native)
+ADD_TEST(CoherentScatteringDistributionNativeFactory_test tstCoherentScatteringDistributionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
 ADD_EXECUTABLE(tstStandardPhotoatomicReaction
   tstStandardPhotoatomicReaction.cpp)
@@ -188,16 +303,6 @@ ADD_EXECUTABLE(tstAbsorptionPhotoatomicReaction
 TARGET_LINK_LIBRARIES(tstAbsorptionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(AbsorptionPhotoatomicReaction_test tstAbsorptionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
-  tstDetailedSubshellRelaxationModel.cpp)
-TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
-ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-
-ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
-  tstDetailedAtomicRelaxationModel.cpp)
-TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
-ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-
 ADD_EXECUTABLE(tstPhotoatomCore tstPhotoatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomCore monte_carlo_collision_native)
 ADD_TEST(PhotoatomCore_test tstPhotoatomCore --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
@@ -216,11 +321,6 @@ ADD_EXECUTABLE(tstPhotoatomicReactionNativeFactory
 TARGET_LINK_LIBRARIES(tstPhotoatomicReactionNativeFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomicReactionNativeFactory_test tstPhotoatomicReactionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
-ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
-  tstAtomicRelaxationModelFactory.cpp)
-TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
-ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
-
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
@@ -235,10 +335,41 @@ ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
+ADD_EXECUTABLE(tstIncoherentAdjointPhotonScatteringDistribution
+  tstIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(IncoherentAdjointPhotonScatteringDistribution_test tstIncoherentAdjointPhotonScatteringDistribution)
+
+ADD_EXECUTABLE(tstKleinNishinaAdjointPhotonScatteringDistribution
+  tstKleinNishinaAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstKleinNishinaAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution_test tstKleinNishinaAdjointPhotonScatteringDistribution)
+
+ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
+  tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+##----------------------------------------------------------------------------##
+##      electron class tests                                                  
+##----------------------------------------------------------------------------##
+
+
+##      electron distribution tests                                           
 ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
   tstHardElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstHardElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(HardElasticElectronScatteringDistribution_test tstHardElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstCutoffElasticElectronScatteringDistribution
+  tstCutoffElasticElectronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstCutoffElasticElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(CutoffElasticElectronScatteringDistribution_test tstCutoffElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstScreenedRutherfordElasticElectronScatteringDistribution
+  tstScreenedRutherfordElasticElectronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstScreenedRutherfordElasticElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(ScreenedRutherfordElasticElectronScatteringDistribution_test tstScreenedRutherfordElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
   tstAtomicExcitationElectronScatteringDistribution.cpp)
@@ -255,6 +386,11 @@ ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(ElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+##      electron distribution ace factory tests 
+
+##      electron distribution native factory tests 
+
+##      electroatomic reaction tests  
 ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
   tstAbsorptionElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
@@ -280,11 +416,17 @@ ADD_EXECUTABLE(tstHardElasticElectroatomicReaction
 TARGET_LINK_LIBRARIES(tstHardElasticElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(HardElasticElectroatomicReaction_test tstHardElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstCutoffElasticElectroatomicReaction
+  tstCutoffElasticElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstCutoffElasticElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(CutoffElasticElectroatomicReaction_test tstCutoffElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+##      electroatom tests  
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
@@ -305,9 +447,33 @@ ADD_EXECUTABLE(tstElectroatomFactory
 TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
+##      electron materials tests 
 ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
 ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
+##----------------------------------------------------------------------------##
+##      atomic relaxation class tests                                         ##
+##----------------------------------------------------------------------------##
+
+ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
+  tstDetailedSubshellRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
+  tstDetailedAtomicRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
+  tstAtomicRelaxationModelFactory.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
+ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
+##----------------------------------------------------------------------------##
+##      collision handler class tests                                         ##
+##----------------------------------------------------------------------------##
 
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
@@ -315,44 +481,71 @@ TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
 ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode
-    tstCollisionHandlerFactoryNeutronMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryNeutronMode_test tstCollisionHandlerFactoryNeutronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_DagMC
+    tstCollisionHandlerFactoryNeutronMode_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronMode_DagMC_test tstCollisionHandlerFactoryNeutronMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode
-    tstCollisionHandlerFactoryPhotonMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryPhotonMode_test tstCollisionHandlerFactoryPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode_DagMC
+    tstCollisionHandlerFactoryPhotonMode_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryPhotonMode_DagMC_test tstCollisionHandlerFactoryPhotonMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode
-    tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode_DagMC
+    tstCollisionHandlerFactoryNeutronPhotonMode_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_DagMC_test tstCollisionHandlerFactoryNeutronPhotonMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode
-    tstCollisionHandlerFactoryElectronMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryElectronMode_test tstCollisionHandlerFactoryElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode_DagMC
+    tstCollisionHandlerFactoryElectronMode_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryElectronMode_DagMC_test tstCollisionHandlerFactoryElectronMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode_Root
+    tstCollisionHandlerFactoryNeutronMode_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode_Root monte_carlo_collision_native geometry_root)
+  ADD_TEST(CollisionHandlerFactoryNeutronMode_Root_test tstCollisionHandlerFactoryNeutronMode_Root --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode_Root
+    tstCollisionHandlerFactoryPhotonMode_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode_Root monte_carlo_collision_native geometry_root)
+  ADD_TEST(CollisionHandlerFactoryPhotonMode_Root_test tstCollisionHandlerFactoryPhotonMode_Root --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode_Root
+    tstCollisionHandlerFactoryNeutronPhotonMode_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode_Root monte_carlo_collision_native geometry_root)
+  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_Root_test tstCollisionHandlerFactoryNeutronPhotonMode_Root --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode_Root
+    tstCollisionHandlerFactoryElectronMode_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode_Root monte_carlo_collision_native geometry_root)
+  ADD_TEST(CollisionHandlerFactoryElectronMode_Root_test tstCollisionHandlerFactoryElectronMode_Root --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material_root.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionModuleInterface_Native
-    tstModuleInterface.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native monte_carlo_collision_native)
-  ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionModuleInterface_Native_DagMC
+    tstModuleInterface_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionModuleInterface_Native_DagMC_test tstCollisionModuleInterface_Native_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionModuleInterface_NativeElectronMode
-    tstModuleInterface_ElectronMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode monte_carlo_collision_native)
-  ADD_TEST(CollisionModuleInterface_NativeElectronMode_test tstCollisionModuleInterface_NativeElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionModuleInterface_NativeElectronMode_DagMC
+    tstModuleInterface_ElectronMode_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode_DagMC monte_carlo_collision_native)
+  ADD_TEST(CollisionModuleInterface_NativeElectronMode_DagMC_test tstCollisionModuleInterface_NativeElectronMode_DagMC --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
-

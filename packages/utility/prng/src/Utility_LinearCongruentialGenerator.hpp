@@ -25,7 +25,7 @@ public:
   LinearCongruentialGenerator();
 
   //! Destructor
-  ~LinearCongruentialGenerator()
+  virtual ~LinearCongruentialGenerator()
   { /* ... */}
 
   //! Return a random number for the current history

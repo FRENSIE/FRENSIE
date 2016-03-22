@@ -9,12 +9,16 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceFactory.hpp"
 #include "MonteCarlo_StateSource.hpp"
+#include "Utility_DeltaDistribution.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-
+// Initialize static member data
+const Teuchos::RCP<Utility::OneDDistribution> 
+ParticleSourceFactory::s_default_time_dist( 
+				       new Utility::DeltaDistribution( 0.0 ) );
 
 // Validate a source representation
 void ParticleSourceFactory::validateSourceRep( 
@@ -40,20 +44,10 @@ void ParticleSourceFactory::validateSourceRep(
 			InvalidParticleSourceRepresentation,
 			"Error: A distributed source needs to have a spatial "
 			"distribution specified!" );
-    
-    TEST_FOR_EXCEPTION( !source_rep.isParameter( "Directional Distribution" ),
-			InvalidParticleSourceRepresentation,
-			"Error: A distributed source needs to have a "
-			"directional distribution specified!" );
 
     TEST_FOR_EXCEPTION( !source_rep.isParameter( "Energy Distribution" ),
 			InvalidParticleSourceRepresentation,
 			"Error: A distributed source needs to have an energy "
-			"distribution specified!" );
-
-    TEST_FOR_EXCEPTION( !source_rep.isParameter( "Time Distribution" ),
-			InvalidParticleSourceRepresentation,
-			"Error: A distributed source needs to have a time "
 			"distribution specified!" );
     
     TEST_FOR_EXCEPTION( !source_rep.isParameter( "Id" ),
@@ -107,9 +101,31 @@ void ParticleSourceFactory::validateParticleTypeName(
 		      "valid names!" );
 }
 
+// Get the particle type enum
+ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterList& source_rep,
+			      			     const ParticleModeType& particle_mode )
+{
+  // Extract the particle type
+  std::string particle_type_name = 
+    source_rep.get<std::string>( "Particle Type" );
+
+  ParticleSourceFactory::validateParticleTypeName( particle_type_name );
+
+  ParticleType particle_type = convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+
+  TEST_FOR_EXCEPTION( !isParticleModeTypeCompatible( particle_mode, particle_type ),
+		      InvalidParticleSourceRepresentation,
+		      "Error: particle type ("
+		      << particle_type << ") is not compatible with particle mode ("
+		      << particle_mode << ")" );
+
+  return particle_type;
+}
+
 // Create a state source
 double ParticleSourceFactory::createStateSource( 
 				      const Teuchos::ParameterList& source_rep,
+			  	      const ParticleModeType& particle_mode,
 				      Teuchos::RCP<ParticleSource>& source,
 				      const unsigned num_sources )
 {

@@ -25,7 +25,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -37,8 +37,8 @@ public:
 
   //! Typedef for the  bremsstrahlung distribution
   typedef Teuchos::Array<Utility::Pair<double,
-                               Teuchos::RCP<const Utility::OneDDistribution> > >
-                               BremsstrahlungDistribution;
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  BremsstrahlungDistribution;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
@@ -58,6 +58,34 @@ public:
 
   //! Destructor 
   virtual ~BremsstrahlungElectronScatteringDistribution()
+  { /* ... */ }
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+               double& outgoing_energy,
+               double& scattering_angle_cosine ) const
+  { /* ... */ }
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+                              double& outgoing_energy,
+                              double& scattering_angle_cosine,
+                              unsigned& trials ) const
   { /* ... */ }
 
   //! Randomly scatter the electron

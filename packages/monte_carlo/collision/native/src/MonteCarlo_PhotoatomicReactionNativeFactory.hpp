@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReaction.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
 
@@ -25,23 +26,16 @@ class PhotoatomicReactionNativeFactory
 {
 
 public:
-  
-  //! Create the total incoherent photoatomic reaction
-  static void createTotalIncoherentReaction(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-       const bool use_doppler_broadening_data );
 
-  //! Create the subshell incoherent photoatomic reactions
-  static void createSubshellIncoherentReactions(
+  //! Create the incoherent photoatomic reaction(s)
+  static void createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-       subshell_incoherent_reactions,
-       const bool use_doppler_broadening_data );
+       incoherent_reactions,
+       const IncoherentModelType incoherent_model,
+       const double kahn_sampling_cutoff_energy );
 
   //! Create the coherent scattering photoatomic reaction
   static void createCoherentReaction(

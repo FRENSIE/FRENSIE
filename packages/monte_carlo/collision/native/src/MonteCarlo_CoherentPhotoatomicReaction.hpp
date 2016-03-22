@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
-#include "MonteCarlo_CoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_CoherentScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,18 +27,20 @@ public:
 
   //! Basic Constructor
   CoherentPhotoatomicReaction( 
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::OneDDistribution>& form_factor );
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const unsigned threshold_energy_index,
+		   const Teuchos::RCP<const CoherentScatteringDistribution>&
+		   scattering_distribution );
 
   //! Constructor
   CoherentPhotoatomicReaction( 
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const Utility::OneDDistribution>& form_factor );
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const CoherentScatteringDistribution>&
+       scattering_distribution );
 
   //! Destructor
   virtual ~CoherentPhotoatomicReaction()
@@ -46,6 +48,9 @@ public:
 
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
+
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
@@ -58,7 +63,7 @@ public:
 private:
 
   // The coherent scattering distribution
-  CoherentPhotonScatteringDistribution d_scattering_distribution;
+  Teuchos::RCP<const CoherentScatteringDistribution> d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

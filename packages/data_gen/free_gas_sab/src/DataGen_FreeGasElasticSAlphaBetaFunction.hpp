@@ -20,7 +20,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
@@ -71,7 +71,7 @@ public:
   //! Return the temperature
   double getTemperature() const;
 
-  //! Evaluate the kernel factor integrand
+  //! Evaluate the gkq_set factor integrand
   double evaluateIntegrand( const double alpha,
 			    const double beta,
 			    const double E,
@@ -117,8 +117,8 @@ private:
   // The min exponential argument that can be used before returning zero
   static double min_exp_arg;
 
-  // The integration kernel
-  Utility::GaussKronrodQuadratureKernel d_kernel;
+  // The integration gkq_set
+  Utility::GaussKronrodIntegrator d_gkq_set;
 
   // The zero temperature cross section
   Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;

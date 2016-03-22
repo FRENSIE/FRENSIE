@@ -18,38 +18,40 @@
 
 namespace Utility{
 
-//! Calculate the dimensionless speed of a massive particle: velocity / speed of light
-double calculateDimensionlessRelativisticSpeed( const double rest_mass_energy,
-                                                const double kinetic_energy );
-
-//! Calculate the speed of a massive particle (cm/s)
-double calculateRelativisticSpeed( const double rest_mass_energy,
-                                   const double kinetic_energy );
-
-//! Calculate the kinetic energy of a massive particle (MeV)
+//! Calculate the kinetic energy of a relativistic particle (MeV)
 double calculateRelativisticKineticEnergy( const double rest_mass_energy,
                                            const double speed );
-
-//! Calculate the classical speed (cm/s)
-double calculateSpeed( const double rest_mass_energy,
-                       const double kinetic_energy );
 
 //! Calculate the classical kinetic energy of a massive particle (MeV)
 double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
-//! Calculate the dimensionless momentum of a massive particle ( momentum/mass*c )
-double calculateDimensionlessRelativisticMomentum(const double rest_mass_energy,
+//! Calculate the dimensionless speed of a relativistic particle: velocity / speed of light
+double calculateDimensionlessRelativisticSpeedSquared( 
+                                                  const double rest_mass_energy,
+                                                  const double kinetic_energy );
+
+//! Calculate the speed of a relativistic particle (cm/s)
+double calculateRelativisticSpeed( const double rest_mass_energy,
+                                   const double kinetic_energy );
+
+//! Calculate the classical speed (cm/s)
+double calculateSpeed( const double rest_mass_energy,
+                       const double kinetic_energy );
+
+//! Calculate the momentum-energy squared of a relativistic particle ( MeV^2 )
+double calculateRelativisticMomentumEnergySquared( 
+                                                  const double rest_mass_energy,
+                                                  const double kinetic_energy );
+
+//! Calculate the dimensionless momentum**2 of a relativistic particle ( momentum/mass*c )**2
+double calculateDimensionlessRelativisticMomentumSquared(
+                                                  const double rest_mass_energy,
                                                   const double kinetic_energy );
 
 //! Calculate the momentum of a massive particle ( MeV*s/cm )
 double calculateRelativisticMomentum( const double rest_mass_energy,
                                       const double kinetic_energy );
-
-//! Calculate the momentum-energy squared of a massive particle ( MeV^2 )
-//! \todo write unit test
-double calculateRelativisticMomentumSquared( const double rest_mass_energy,
-                                             const double kinetic_energy );
 
 //! Calculate the beta min value
 double calculateBetaMin( const double kinetic_energy,
@@ -67,40 +69,6 @@ double calculateAlphaMax( const double kinetic_energy,
 			  const double A,
 			  const double kT );
 
-//! Calculate the dimensionless speed of a massive particle (beta = v/c)
-//! \todo Add Unit Test
-inline double calculateDimensionlessRelativisticSpeed( 
-                                                const double rest_mass_energy,
-                                                const double kinetic_energy )
-{
-  // Make sure the rest mass energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
-  testPrecondition( rest_mass_energy > 0.0 );
-  // Make sure the kinetic energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
-  testPrecondition( kinetic_energy > 0.0 );
-
-  double energy = kinetic_energy + rest_mass_energy;
-
-  return sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
-}
-
-// Calculate the speed of a relativistic particle 
-inline double calculateRelativisticSpeed(const double rest_mass_energy,
-                                         const double kinetic_energy )
-{
-  // Make sure the rest mass energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
-  testPrecondition( rest_mass_energy > 0.0 );
-  // Make sure the kinetic energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
-  testPrecondition( kinetic_energy > 0.0 );
-
-  double energy = kinetic_energy + rest_mass_energy;
-
-  return Utility::PhysicalConstants::speed_of_light*
-    sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
-}
 
 // Calculate the kinetic enery of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
@@ -120,20 +88,6 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                  speed*speed ) - 1.0);
 }
 
-// Calculate the speed of a massive particle 
-inline double calculateSpeed( const double rest_mass_energy,
-                              const double kinetic_energy )
-{
-  // Make sure the rest mass energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
-  testPrecondition( rest_mass_energy > 0.0 );
-  // Make sure the kinetic energy is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
-  testPrecondition( kinetic_energy > 0.0 );
-
-  return Utility::PhysicalConstants::speed_of_light * sqrt( 2 * kinetic_energy /
-                  rest_mass_energy);
-}
 
 // Calculate the kinetic enery of a massive particle (MeV)
 inline double calculateKineticEnergy( const double rest_mass_energy,
@@ -152,34 +106,85 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
           Utility::PhysicalConstants::speed_of_light );
 }
 
-// Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )
-//! Write Unit Test
-inline double calculateDimensionlessRelativisticMomentum( 
+//! Calculate the dimensionless speed**2 of a massive particle (beta = v/c)**2
+inline double calculateDimensionlessRelativisticSpeedSquared( 
+                                                const double rest_mass_energy,
+                                                const double kinetic_energy )
+{
+  // Make sure the rest mass energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the kinetic energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( kinetic_energy > 0.0 );
+
+  double energy = kinetic_energy + rest_mass_energy;
+
+  return 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy);
+}
+
+// Calculate the speed of a relativistic particle 
+inline double calculateRelativisticSpeed( const double rest_mass_energy,
+                                          const double kinetic_energy )
+{
+  double energy = kinetic_energy + rest_mass_energy;
+
+  return Utility::PhysicalConstants::speed_of_light*
+    sqrt( calculateDimensionlessRelativisticSpeedSquared( rest_mass_energy,
+                                                          kinetic_energy ) );
+}
+
+// Calculate the speed of a massive particle 
+inline double calculateSpeed( const double rest_mass_energy,
+                              const double kinetic_energy )
+{
+  // Make sure the rest mass energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the kinetic energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( kinetic_energy > 0.0 );
+
+  return Utility::PhysicalConstants::speed_of_light * sqrt( 2 * kinetic_energy /
+                  rest_mass_energy);
+}
+
+// Calculate the momentum-energy squared of a relativistic particle ( momentum*c )^2
+inline double calculateRelativisticMomentumEnergySquared( 
                                                   const double rest_mass_energy,
                                                   const double kinetic_energy )
 {
-  return sqrt( kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy ) )
-             /rest_mass_energy;
+  // Make sure the rest mass energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the kinetic energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( kinetic_energy > 0.0 );
+
+  return kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy );
 }
 
+// Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )**2
+//! Write Unit Test
+inline double calculateDimensionlessRelativisticMomentumSquared( 
+                                                  const double rest_mass_energy,
+                                                  const double kinetic_energy )
+{
+  return calculateRelativisticMomentumEnergySquared( 
+               rest_mass_energy, kinetic_energy ) /
+               (rest_mass_energy*rest_mass_energy);
+}
 
 // Calculate the momentum of a relativistic particle ( MeV*s/cm )
 //! \todo Write Unit Test
 inline double calculateRelativisticMomentum( const double rest_mass_energy,
                                              const double kinetic_energy )
 {
-  return sqrt( kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy ) )
-             /Utility::PhysicalConstants::speed_of_light;
+  return sqrt( calculateRelativisticMomentumEnergySquared( 
+                    rest_mass_energy, kinetic_energy ) ) /
+                    Utility::PhysicalConstants::speed_of_light;
 }
 
-// Calculate the momentum-energy squared of a relativistic particle ( momentum*c )^2
-//! Write Unit Test
-inline double calculateRelativisticMomentumSquared( 
-                                                  const double rest_mass_energy,
-                                                  const double kinetic_energy )
-{
-  return kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy );
-}
 
 } // end Utility namespace
 

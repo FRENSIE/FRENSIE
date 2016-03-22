@@ -16,7 +16,7 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -35,37 +35,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
   MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
 								  properties );
 
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationGeneralProperties::getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
-		      10 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
-		       600.0 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
-		       1e-2 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxNeutronEnergy(),
-		       10.0 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinPhotonEnergy(),
-		       1e-2 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
-		       10.0 );
-  TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getMinElectronEnergy(),
-		      1e-2 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
-		       10.0 );
-  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
-		       500 );
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
-
-  TEST_EQUALITY_CONST( 
-    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
-	MonteCarlo::DIPOLE_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//

@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -628,6 +629,279 @@ TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
   					1e-15 );
 
   processed_total_data[0]( 352.0/3, 0.0, 0.0, 0.0 );
+
+  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  					       1u, processed_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  					processed_total_data_copy,
+  					1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator - 
+// special case (|mu| < mu_cut)
+TEUCHOS_UNIT_TEST( SurfaceFluxEstimator,
+		   updateFromParticleCrossingSurfaceEvent_special_case )
+{
+  Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier> >
+    estimator_1;
+  Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base;
+
+  Teuchos::RCP<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
+    estimator_2;
+  Teuchos::RCP<MonteCarlo::Estimator> estimator_2_base;
+
+  {
+    // Set the surface ids
+    Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
+    surface_ids( 1 );
+    surface_ids[0] = 0;
+    
+    // Set the surface areas
+    Teuchos::Array<double> surface_areas( 1 );
+    surface_areas[0] = 1.0;
+    
+    estimator_1.reset( 
+	    new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightMultiplier>(
+							     0u,
+							     10.0,
+							     surface_ids,
+							     surface_areas ) );
+    estimator_1_base = estimator_1;
+    
+    estimator_2.reset(
+     new MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
+							     1u,
+							     10.0,
+							     surface_ids,
+							     surface_areas ) );
+    estimator_2_base = estimator_2;
+
+    // Set the cosine bins
+    Teuchos::Array<double> cosine_bins( 3 );
+    cosine_bins[0] = -1.0;
+    cosine_bins[1] = 0.0;
+    cosine_bins[2] = 1.0;
+
+    estimator_1_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( 
+								 cosine_bins );
+    estimator_2_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+								 cosine_bins );
+
+    // Set the particle types
+    Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+    particle_types[0] = MonteCarlo::PHOTON;
+
+    estimator_1_base->setParticleTypes( particle_types );
+    estimator_2_base->setParticleTypes( particle_types );
+
+    // Set the angle cosine cutoff
+    MonteCarlo::SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff(
+									 0.1 );
+  }
+
+  TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
+
+  // bin 0
+  MonteCarlo::PhotonState particle( 0u );
+  particle.setEnergy( 0.1 );
+
+  estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.05 );
+  estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, -0.01 );
+
+  TEST_ASSERT( estimator_1_base->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_2_base->hasUncommittedHistoryContribution() );
+
+  // bin 1
+  estimator_1->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.01 );
+  estimator_2->updateFromParticleCrossingSurfaceEvent( particle, 0, 0.05 );
+
+  TEST_ASSERT( estimator_1_base->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_2_base->hasUncommittedHistoryContribution() );
+
+  // Commit the contributions
+  estimator_1_base->commitHistoryContribution();
+  estimator_2_base->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator_1_base->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2_base->hasUncommittedHistoryContribution() );
+
+  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
+  MonteCarlo::Estimator::setEndTime( 1.0 );
+
+  // Initialize the hfd5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+				    "test_surface_flux_estimator-special.h5" );
+
+  estimator_1_base->exportData( hdf5_file_handler, true );
+  estimator_2_base->exportData( hdf5_file_handler, true );
+
+  typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType SurfaceId;
+
+  // Retrieve the raw bin data for each entity
+  Teuchos::Array<Utility::Pair<double,double> >
+    raw_bin_data( 2, Utility::Pair<double,double>( 20.0, 400.0 ) ),
+    raw_bin_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  						   0u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  					raw_bin_data_copy,
+  					1e-15 );
+
+  raw_bin_data[0]( 2.0, 4.0 );
+  raw_bin_data[1]( 2.0, 4.0 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<SurfaceId>( 
+  						   1u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+  					raw_bin_data_copy,
+  					1e-15 );
+
+  // Retrieve the processed bin data for each entity
+  Teuchos::Array<Utility::Pair<double,double> >
+    processed_bin_data( 2, Utility::Pair<double,double>( 200.0, 0.0 ) ),
+    processed_bin_data_copy;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
+  					     0u, 0u, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  					processed_bin_data_copy,
+  					1e-15 );
+
+  processed_bin_data[0]( 20.0, 0.0 );
+  processed_bin_data[1]( 20.0, 0.0 );
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<SurfaceId>(
+  					     1u, 0u, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+  					processed_bin_data_copy,
+  					1e-15 );
+
+  // Retrieve the raw total bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    raw_total_bin_data( 2.0, Utility::Pair<double,double>( 20.0, 400.0 ) ),
+    raw_total_bin_data_copy;
+    
+  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+  					raw_total_bin_data_copy,
+  					1e-15 );
+
+  raw_total_bin_data[0]( 2.0, 4.0 );
+  raw_total_bin_data[1]( 2.0, 4.0 );
+
+  hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+  					raw_total_bin_data_copy,
+  					1e-15 );
+
+  // Retrieve the processed total bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    processed_total_bin_data( 2, Utility::Pair<double,double>( 200.0, 0.0 )),
+    processed_total_bin_data_copy;
+
+  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  					   0u, processed_total_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
+  					processed_total_bin_data_copy,
+  					1e-15 );
+
+  processed_total_bin_data[0]( 20.0, 0.0 );
+  processed_total_bin_data[1]( 20.0, 0.0 );
+
+  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  					   1u, processed_total_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data,
+  					processed_total_bin_data_copy,
+  					1e-15 );
+
+  // Retrieve the raw estimator total data for each entity
+  Utility::Quad<double,double,double,double> 
+    raw_moments( 40.0, 1600.0, 64000, 2560000 );
+  
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
+    raw_total_data( 1, raw_moments ),
+    raw_total_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+  						 0u, 0u, raw_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  					raw_total_data_copy,
+  					1e-15 );
+			       
+  raw_total_data[0]( 4.0, 16.0, 64.0, 256.0 );
+  
+  hdf5_file_handler.getRawEstimatorEntityTotalData<SurfaceId>( 
+  						 1u, 0u, raw_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  					raw_total_data_copy,
+  					1e-15 );
+			       
+  // Retrieve the processed estimator total data for each entity
+  Utility::Quad<double,double,double,double>
+    processed_moments( 400.0, 0.0, 0.0, 0.0 );
+
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
+    processed_total_data( 1, processed_moments ),
+    processed_total_data_copy;
+
+  hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
+  					   0u, 0u, processed_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  					processed_total_data_copy,
+  					1e-15 );
+
+  processed_total_data[0]( 40.0, 0.0, 0.0, 0.0 );
+  
+  hdf5_file_handler.getProcessedEstimatorEntityTotalData<SurfaceId>(
+  					   1u, 0u, processed_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  					processed_total_data_copy,
+  					1e-15 );
+
+  // Retrieve the raw total data
+  raw_total_data[0]( 40.0, 1600.0, 64000, 2560000 );
+
+  hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  					raw_total_data_copy,
+  					1e-15 );
+
+  raw_total_data[0]( 4.0, 16.0, 64.0, 256.0 );
+
+  hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+  					raw_total_data_copy,
+  					1e-15 );
+
+  // Retrieve the processed total data
+  processed_total_data[0]( 400.0, 0.0, 0.0, 0.0 );
+
+  hdf5_file_handler.getProcessedEstimatorTotalData( 
+  					       0u, processed_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+  					processed_total_data_copy,
+  					1e-15 );
+
+  processed_total_data[0]( 40.0, 0.0, 0.0, 0.0 );
 
   hdf5_file_handler.getProcessedEstimatorTotalData( 
   					       1u, processed_total_data_copy );

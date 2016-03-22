@@ -114,21 +114,25 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   UTILITY_TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getXDirection(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( photon->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( photon->getGenerationNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 2 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_EQUALITY_CONST( bank.top()->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top().getZDirection(), 1.0 );
   TEST_EQUALITY_CONST( 
-	       bank.top()->getEnergy(),
+	       bank.top().getEnergy(),
 	       2.0 - 2*Utility::PhysicalConstants::electron_rest_mass_energy );
   
   bank.pop();
 
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(),
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( bank.top().getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getYDirection(), -1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
   TEST_EQUALITY_CONST( subshell, MonteCarlo::UNKNOWN_SUBSHELL );
   
   Utility::RandomNumberGenerator::unsetFakeStream();

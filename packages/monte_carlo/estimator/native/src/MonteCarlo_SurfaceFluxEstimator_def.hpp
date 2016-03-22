@@ -10,6 +10,7 @@
 #define FACEMC_SURFACE_FLUX_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -51,10 +52,13 @@ void SurfaceFluxEstimator<
     // If the angle cosine is very close to zero, set it to eps/2 to
     // prevent large contributions to the estimator
     if( ST::magnitude( angle_cosine ) > 
-	StandardSurfaceEstimator::getAngleCosineCutoff() )
+        SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff() )
       contribution = 1.0/ST::magnitude( angle_cosine );
     else
-      contribution = StandardSurfaceEstimator::getAngleCosineCutoff()/2;
+    {
+      contribution = 
+	2.0/SimulationGeneralProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+    }
 
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
   

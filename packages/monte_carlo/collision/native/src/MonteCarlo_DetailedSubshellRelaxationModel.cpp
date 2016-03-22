@@ -8,7 +8,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationElectronProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_DiscreteDistribution.hpp"
@@ -29,6 +30,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const bool interpret_as_cdf )
   : SubshellRelaxationModel( vacancy_subshell ),
     d_transition_distribution(),
+    d_outgoing_particle_energies( outgoing_particle_energies ),
     d_transition_vacancy_shells( primary_transition_vacancy_shells.size() )
 {
   // Make sure the vacancy subshell is valid
@@ -44,10 +46,12 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
 		    primary_transition_vacancy_shells.size() );
 
   // Create the transition distribution
+  Teuchos::Array<double> dummy_indep_values( transition_pdf_or_cdf.size() );
+  
   d_transition_distribution.reset( new Utility::DiscreteDistribution(
-						    outgoing_particle_energies,
-						    transition_pdf_or_cdf,
-						    interpret_as_cdf ) );
+						         dummy_indep_values,
+						         transition_pdf_or_cdf,
+							 interpret_as_cdf ) );
 
   // Store the transition vacancy shells
   for( unsigned i = 0; i < primary_transition_vacancy_shells.size(); ++i )
@@ -69,7 +73,6 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
  * new vacancies are created (the new secondary vacancy shell will always
  * be set to INVALID_SUBSHELL). In a non-radiative the secondary vacancy shell 
  * corresponds to the shell where the Auger electron is actually emitted from.
- * \todo Bank electrons that are emitted.
  * \todo Determine whether incrementing the collision number and/or generation
  * number is appropriate.
  */ 
@@ -81,9 +84,11 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 {
   // Sample the transition that occurs
   unsigned transition_index;
-  double new_particle_energy =
-    d_transition_distribution->sample( transition_index );
-
+  
+  d_transition_distribution->sampleAndRecordBinIndex( transition_index );
+  
+  double new_particle_energy = d_outgoing_particle_energies[transition_index];
+   
   // Set the new vacancies shells
   new_primary_vacancy_shell = 
     d_transition_vacancy_shells[transition_index].first;
@@ -91,41 +96,93 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
   new_secondary_vacancy_shell = 
     d_transition_vacancy_shells[transition_index].second;
 
-  // Create the new particle if it is above the cutoff energy
-  if( new_particle_energy >= SimulationProperties::getMinPhotonEnergy() )
-  {
-    Teuchos::RCP<ParticleState> relaxation_particle;
-    
-    if( new_secondary_vacancy_shell == INVALID_SUBSHELL ||
-	new_secondary_vacancy_shell == UNKNOWN_SUBSHELL )
-      relaxation_particle.reset( new PhotonState( particle, true, true ) );
-    else
-      relaxation_particle.reset( new ElectronState( particle, true, true ) );
+  // A secondary transition will only occur with Auger electron emission
+  if( new_secondary_vacancy_shell == INVALID_SUBSHELL ||
+      new_secondary_vacancy_shell == UNKNOWN_SUBSHELL )
+    this->generateFluorescencePhoton( particle, new_particle_energy, bank );
+  else
+    this->generateAugerElectron( particle, new_particle_energy, bank );
+}
 
-    // Sample an isotropic outgoing angle cosine for the relaxation particle
-    double angle_cosine = -1.0 + 
-      2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
-    // Sample the azimuthal angle
-    double azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
-    // Make sure the scattering angle cosine is valid
-    testPostcondition( angle_cosine >= -1.0 );
-    testPostcondition( angle_cosine <= 1.0 );
-    // Make sure the azimuthal angle is valid
-    testPostcondition( azimuthal_angle >= 0.0 );
-    testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
-    
+// Generate a fluorescence photon
+void DetailedSubshellRelaxationModel::generateFluorescencePhoton( 
+						const ParticleState& particle,
+					        const double new_photon_energy,
+						ParticleBank& bank ) const     
+{
+  // Make sure the new energy is valid
+  testPrecondition( new_photon_energy > 0.0 );
+
+  // Only generate the photon if it is above the cutoff energy
+  if( new_photon_energy >= SimulationPhotonProperties::getMinPhotonEnergy() )
+  {
+    Teuchos::RCP<ParticleState> fluorescence_photon( 
+				     new PhotonState( particle, true, true ) );
+
     // Set the new energy
-    relaxation_particle->setEnergy( new_particle_energy );
-    
+    fluorescence_photon->setEnergy( new_photon_energy );
+
+    double angle_cosine, azimuthal_angle;
+
+    this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
+
     // Set the new direction
-    relaxation_particle->rotateDirection( angle_cosine, azimuthal_angle );
-    
+    fluorescence_photon->rotateDirection( angle_cosine, azimuthal_angle );
+  
     // Bank the relaxation particle
-    bank.push( relaxation_particle ); 
+    bank.push( fluorescence_photon );
   }
+}
+
+// Generate an Auger electron
+void DetailedSubshellRelaxationModel::generateAugerElectron( 
+					      const ParticleState& particle,
+					      const double new_electron_energy,
+					      ParticleBank& bank ) const       
+{
+  // Make sure the new energy is valid - surprisingly, 0.0 can appear in the
+  // table
+  testPrecondition( new_electron_energy >= 0.0 );
+
+  if( new_electron_energy >= SimulationElectronProperties::getMinElectronEnergy() )
+  {
+    Teuchos::RCP<ParticleState> auger_electron( 
+				   new ElectronState( particle, true, true ) );
+
+    // Set the new energy
+    auger_electron->setEnergy( new_electron_energy );
+
+    double angle_cosine, azimuthal_angle;
+
+    this->sampleEmissionDirection( angle_cosine, azimuthal_angle );
+
+    // Set the new direction
+    auger_electron->rotateDirection( angle_cosine, azimuthal_angle );
+  
+    // Bank the relaxation particle
+    bank.push( auger_electron );
+  }
+}
+
+// Sample emission direction
+void DetailedSubshellRelaxationModel::sampleEmissionDirection( 
+					        double& angle_cosine,
+						double& azimuthal_angle ) const
+{
+  // Sample an isotropic outgoing angle cosine for the relaxation particle
+  angle_cosine = -1.0 + 
+    2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+  
+  // Sample the azimuthal angle
+  azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( angle_cosine >= -1.0 );
+  testPostcondition( angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPostcondition( azimuthal_angle >= 0.0 );
+  testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 }
 
 } // end MonteCarlo namespace

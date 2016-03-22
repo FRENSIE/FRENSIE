@@ -24,8 +24,11 @@ std::string convertOneDDistributionTypeToString(
   case DELTA_DISTRIBUTION: return "Delta Distribution";
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
+  case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
-  case THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION: return "32 Equiprobable Bin Distribution";
+  case MAXWELLFISSION_DISTRIBUTION: return "Maxwell Fission Distribution";
+  case WATT_DISTRIBUTION: return "Watt Distribution";
+  case EQUIPROBABLE_BIN_DISTRIBUTION: return "32 Equiprobable Bin Distribution";
   case NORMAL_DISTRIBUTION: return "Normal Distribution";
   case POWER_1_DISTRIBUTION: return "Power 1 Distribution";
   case POWER_2_DISTRIBUTION: return "Power 2 Distribution";
@@ -33,7 +36,7 @@ std::string convertOneDDistributionTypeToString(
   case TABULAR_DISTRIBUTION: return "Tabular Distribution";
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
-  case KLEIN_NISHINA_DISTRIBUTION: return "Klien-Nishina Distribution";
+  case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
   default:
     THROW_EXCEPTION( std::logic_error, 
 		     "The distribution type is missin a name. Please add it!");

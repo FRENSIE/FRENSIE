@@ -53,9 +53,10 @@ namespace Search{
  */ 
 template<TupleMember member, 
 	 typename Iterator>
-inline Iterator binaryLowerBound( Iterator start,
-			   Iterator end,
-			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+inline Iterator binaryLowerBound( 
+    Iterator start,
+	Iterator end,
+	const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be random access iterators (support +/- ops)
   //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -104,7 +105,7 @@ template<typename Iterator>
 inline Iterator binaryLowerBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
-{
+{  
   return binaryLowerBound<FIRST>( start, end, value );
 }
 
@@ -140,7 +141,7 @@ template<TupleMember member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type 
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename std::iterator_traits<Iterator>::value_type value )
+		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;
@@ -161,7 +162,7 @@ inline typename std::iterator_traits<Iterator>::difference_type
 binaryLowerBoundIndex( Iterator start,
 		       Iterator end,
 		       const typename std::iterator_traits<Iterator>::value_type value )
-{
+{  
   return binaryLowerBoundIndex<FIRST>( start, end, value );
 }
 
@@ -196,11 +197,11 @@ binaryLowerBoundIndex( Iterator start,
  */
 template<TupleMember member, typename Iterator>
 inline Iterator binaryUpperBound( Iterator start,
-			   Iterator end,
-			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+				  Iterator end,
+				  const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be random access iterators (support +/- ops)
-  testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
+  //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
   remember( Iterator true_end = end );
   remember( --true_end );
   // The iterators must be from a valid container (size > 0)
@@ -211,15 +212,20 @@ inline Iterator binaryUpperBound( Iterator start,
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
   
+  Iterator mid_point;
+
   typename std::iterator_traits<Iterator>::difference_type distance = 
     std::distance( start, end );
   
   while( distance > 1 )
   {
-    if( value >= get<member>( *(start+distance/2) ) )
-      start += distance/2;
+    mid_point = start;
+    std::advance( mid_point, distance/2 );
+    
+    if( value >= get<member>( *mid_point ) )
+      start = mid_point;
     else
-      end = start+distance/2;
+      end = mid_point;
     
     distance = std::distance( start, end );
   }
@@ -248,7 +254,7 @@ template<typename Iterator>
 inline Iterator binaryUpperBound( Iterator start,
 				  Iterator end,
 				  const typename std::iterator_traits<Iterator>::value_type value )
-{
+{  
   return binaryUpperBound<FIRST>( start, end, value );
 }
 
@@ -285,7 +291,7 @@ template<TupleMember member, typename Iterator>
 inline typename std::iterator_traits<Iterator>::difference_type  
 binaryUpperBoundIndex( Iterator start,
 		       Iterator end,
-		       const typename std::iterator_traits<Iterator>::value_type value )
+		       const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // Make sure the container size can fit in an unsigned integer
   Iterator start_copy = start;

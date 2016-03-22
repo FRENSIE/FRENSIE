@@ -17,19 +17,50 @@
 
 namespace MonteCarlo{
 
+// Basic Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::AtomicExcitationElectroatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+            energy_loss_distribution )
+  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
+				                   incoming_energy_grid,
+		                           cross_section,
+		                           threshold_energy_index ),
+    d_energy_loss_distribution( energy_loss_distribution )
+{
+  // Make sure the incoming energy grid is valid
+  testPrecondition( incoming_energy_grid.size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						incoming_energy_grid.begin(),
+						incoming_energy_grid.end() ) );
+  // Make sure the cross section is valid
+  testPrecondition( cross_section.size() > 0 );
+  testPrecondition( cross_section.size() == 
+		    incoming_energy_grid.size() - threshold_energy_index );    
+  // Make sure the threshold energy is valid
+  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure the energy loss distribution data is valid
+  testPrecondition( !energy_loss_distribution.is_null() );
+}
+
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::AtomicExcitationElectroatomicReaction(
-		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const unsigned threshold_energy_index,
-           const AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
-             energy_loss_distribution )
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+            energy_loss_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
-						                         incoming_energy_grid,
-						                         cross_section,
-						                         threshold_energy_index ),
-    d_scattering_distribution( energy_loss_distribution )
+                incoming_energy_grid,
+                cross_section,
+                threshold_energy_index,
+                grid_searcher ),
+    d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -76,9 +107,9 @@ void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>
 						     ParticleBank& bank,
                              SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution.scatterElectron( electron, 
-                                             bank, 
-                                             shell_of_interaction);
+  d_energy_loss_distribution->scatterElectron( electron, 
+                                               bank, 
+                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();
 

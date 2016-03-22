@@ -26,7 +26,8 @@ namespace MonteCarlo{
 template<typename GeometryHandler>
 Teuchos::RCP<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
-				     const Teuchos::ParameterList& source_rep )
+				     const Teuchos::ParameterList& source_rep,
+		    		     const ParticleModeType& particle_mode )
 {
   // Get the number of parameters in the list
   unsigned num_params = source_rep.numParams();
@@ -57,13 +58,15 @@ ParticleSourceFactory::createSourceImpl(
     {
       ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							            sub_source,
+								    particle_mode,	
 								    source );
     }
     else
-      ParticleSourceFactory::createStateSource( sub_source, source );
+      ParticleSourceFactory::createStateSource( sub_source, particle_mode, source );
   }
   else
     ParticleSourceFactory::createCompoundSource<GeometryHandler>( source_rep, 
+								  particle_mode,
 								  source );
   
   // Make sure the source has been created
@@ -79,6 +82,7 @@ ParticleSourceFactory::createSourceImpl(
 template<typename GeometryHandler>
 double ParticleSourceFactory::createDistributedSource(
 				      const Teuchos::ParameterList& source_rep,
+			  	      const ParticleModeType& particle_mode,
 				      Teuchos::RCP<ParticleSource>& source,
 				      const unsigned num_sources )
 {
@@ -99,34 +103,36 @@ double ParticleSourceFactory::createDistributedSource(
 							    spatial_dist_rep );
 					      
   }
-  catch( Utility::InvalidSpatialDistributionRepresentation& error )
-  {
-    std::string message = "Error: An invalid spatial distribution was ";
-    message += "specified in the distributed source!";
-    message += error.what();
-    
-    throw InvalidParticleSourceRepresentation( message );
-  }
+  EXCEPTION_CATCH_RETHROW_AS(Utility::InvalidSpatialDistributionRepresentation,
+			     InvalidParticleSourceRepresentation,
+			     "Error: An invalid spatial distribution was "
+			     "specified in the distributed source!" );
   
   // Extract the directional distribution
-  entry = source_rep.getEntryRCP( "Directional Distribution" );
+  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
   
-  const Teuchos::ParameterList& directional_dist_rep = 
+  if( source_rep.isParameter( "Directional Distribution" ) )
+  {
+    entry = source_rep.getEntryRCP( "Directional Distribution" );
+  
+    const Teuchos::ParameterList& directional_dist_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
   
-  Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
-  try{
-    directional_distribution = 
-      Utility::DirectionalDistributionFactory::createDistribution(
+    try{
+      directional_distribution = 
+	Utility::DirectionalDistributionFactory::createDistribution(
 							directional_dist_rep );
+    }
+    EXCEPTION_CATCH_RETHROW_AS(
+			 Utility::InvalidDirectionalDistributionRepresentation,
+			 InvalidParticleSourceRepresentation,
+			 "Error: An invalid directional distribution was "
+			 "specified in the distributed source!" );
   }
-  catch( Utility::InvalidDirectionalDistributionRepresentation& error )
+  else // create an isotropic distribution
   {
-    std::string message = "Error: An invalid directional distribution was ";
-    message += "specified in the distributed source!";
-    message += error.what();
-    
-    throw InvalidParticleSourceRepresentation( message );
+    directional_distribution = 
+      Utility::DirectionalDistributionFactory::createIsotropicDistribution();
   }
 
   // Extract the energy distribution
@@ -136,19 +142,26 @@ double ParticleSourceFactory::createDistributedSource(
     Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
 
   // Extract the time distribution
-  entry = source_rep.getEntryRCP( "Time Distribution" );
+  Teuchos::RCP<Utility::OneDDistribution> time_distribution;
+  
+  if( source_rep.isParameter( "Time Distribution" ) )
+  {
+    entry = source_rep.getEntryRCP( "Time Distribution" );
 
-  Teuchos::RCP<Utility::OneDDistribution> time_distribution = 
-    Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
-
+    time_distribution = 
+      Utility::OneDDistributionEntryConverterDB::convertEntry( entry );
+  }
+  else // use the default time distribution
+    time_distribution = s_default_time_dist;
+/*
   // Extract the particle type
   std::string particle_type_name = 
     source_rep.get<std::string>( "Particle Type" );
 
   ParticleSourceFactory::validateParticleTypeName( particle_type_name );
-
-  ParticleType particle_type = 
-    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+*/
+  ParticleType particle_type = getParticleType( source_rep, particle_mode );
+//    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
   
   // Create the new source
   Teuchos::RCP<DistributedSource> source_tmp( new DistributedSource( 
@@ -193,14 +206,11 @@ double ParticleSourceFactory::createDistributedSource(
 	Utility::SpatialDistributionFactory::createDistribution( 
 							    spatial_dist_rep );
     }
-    catch( Utility::InvalidSpatialDistributionRepresentation& error )
-    {
-      std::string message = "Error: An invalid spatial importance function ";
-	message += "was specified in the distributed source!";
-      message += error.what();
-    
-      throw InvalidParticleSourceRepresentation( message );
-    }
+    EXCEPTION_CATCH_RETHROW_AS(
+			     Utility::InvalidSpatialDistributionRepresentation,
+			     InvalidParticleSourceRepresentation,
+			     "Error: An invalid spatial importance function "
+			     "was specified in the distributed source!" );
 
     // Make sure the importance function is compatible with the spatial dist
     TEST_FOR_EXCEPTION( 
@@ -225,14 +235,11 @@ double ParticleSourceFactory::createDistributedSource(
 	Utility::DirectionalDistributionFactory::createDistribution(
 							directional_dist_rep );
     }
-    catch( Utility::InvalidDirectionalDistributionRepresentation& error )
-    {
-      std::string message = "Error: An invalid direcional importance ";
-	message += "function was specified in the distributed source!";
-      message += error.what();
-    
-      throw InvalidParticleSourceRepresentation( message );
-    }
+    EXCEPTION_CATCH_RETHROW_AS( 
+		         Utility::InvalidDirectionalDistributionRepresentation,
+			 InvalidParticleSourceRepresentation,
+			 "Error: An invalid direcional importance "
+			 "function was specified in the distributed source!" );
 
     // Make sure the importance function is compatible with the direct. dist
     TEST_FOR_EXCEPTION( 
@@ -299,6 +306,7 @@ double ParticleSourceFactory::createDistributedSource(
 template<typename GeometryHandler>
 void ParticleSourceFactory::createCompoundSource(
 				      const Teuchos::ParameterList& source_rep,
+			  	      const ParticleModeType& particle_mode,
 				      Teuchos::RCP<ParticleSource>& source )
 {
   unsigned num_sources = source_rep.numParams();
@@ -319,6 +327,7 @@ void ParticleSourceFactory::createCompoundSource(
       source_weights[source_index] = 
 	ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							 sub_source,
+							 particle_mode,
 							 sources[source_index],
 							 num_sources );
     }
@@ -326,6 +335,7 @@ void ParticleSourceFactory::createCompoundSource(
     {
       source_weights[source_index] = 
 	ParticleSourceFactory::createStateSource( sub_source,
+						  particle_mode,
 						  sources[source_index],
 						  num_sources );
     }

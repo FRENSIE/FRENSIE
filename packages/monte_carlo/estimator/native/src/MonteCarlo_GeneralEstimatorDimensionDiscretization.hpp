@@ -23,7 +23,7 @@ template<PhaseSpaceDimension dimension>
 class GeneralEstimatorDimensionDiscretization : public EstimatorDimensionDiscretization
 {
 
-private:
+protected:
 
   // Estimator phase space dimension traits typedef
   typedef PhaseSpaceDimensionTraits<dimension> DT;
@@ -36,7 +36,7 @@ public:
 			      dimension_bin_boundaries );
 
   //! Destructor
-  ~GeneralEstimatorDimensionDiscretization()
+  virtual ~GeneralEstimatorDimensionDiscretization()
   { /* ... */ }
 
   //! Return the dimension name that has been discretized
@@ -49,7 +49,7 @@ public:
   bool isValueInDiscretization( const Teuchos::any& any_container ) const;
 
   //! Calculate the index of the bin that the value falls in
-  unsigned calculateBinIndex( const Teuchos::any& any_container ) const;
+  virtual unsigned calculateBinIndex( const Teuchos::any& any_container) const;
 
   //! Print the boundaries of a bin
   void printBoundariesOfBin( std::ostream& os, const unsigned bin_index) const;

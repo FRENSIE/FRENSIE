@@ -12,9 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
@@ -22,58 +19,119 @@
 namespace Utility{
 
 //! Normal distribution class
-class NormalDistribution : public OneDDistribution,
-			   public ParameterListCompatibleObject<NormalDistribution>
+template<typename IndependentUnit, typename DependentUnit = void>
+class UnitAwareNormalDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+				    public ParameterListCompatibleObject<UnitAwareNormalDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
 
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for QuantityTraits<double>
+  typedef QuantityTraits<double> QT;
+
+  // Typedef for QuantityTraits<IndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IQT;
+
+  // Typedef for QuantityTraits<InverseIndepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef QuantityTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity> DQT;
 
 public:
 
-  //! Constructor
-  NormalDistribution( const double mean = 0.0,
-		      const double standard_deviation = 1.0,
-		      const double min_independent_value = 
-		      -std::numeric_limits<double>::infinity(),
-		      const double max_independent_value = 
-		      std::numeric_limits<double>::infinity() );
+  //! This distribution type
+  typedef UnitAwareNormalDistribution<IndependentUnit,DependentUnit> ThisType;
+
+  //! The independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
+  //! Default Constructor ( exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
+  UnitAwareNormalDistribution( 
+			   const IndepQuantity mean = IQT::zero(),
+			   const IndepQuantity standard_deviation = IQT::one(),
+			   const IndepQuantity min_independent_value = 
+			   -QuantityTraits<IndepQuantity>::inf(),
+			   const IndepQuantity max_independent_value = 
+			   QuantityTraits<IndepQuantity>::inf() );
+
+  //! Constructor ( a*exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
+  template<typename InputDepQuantity,
+	   typename InputIndepQuantityA,
+	   typename InputIndepQuantityB,
+	   typename InputIndepQuantityC>
+  UnitAwareNormalDistribution(const InputDepQuantity constant_multiplier,
+			      const InputIndepQuantityA mean,
+			      const InputIndepQuantityB standard_deviation,
+			      const InputIndepQuantityC min_independent_value,
+			      const InputIndepQuantityC max_independent_value =
+			      QuantityTraits<InputIndepQuantityC>::inf() );
+			      
 
   //! Copy constructor
-  NormalDistribution( const NormalDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareNormalDistribution( const UnitAwareNormalDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
+
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareNormalDistribution fromUnitlessDistribution( const UnitAwareNormalDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  NormalDistribution& operator=( const NormalDistribution& dist_instance );
+  UnitAwareNormalDistribution& operator=( const UnitAwareNormalDistribution& dist_instance );
 
   //! Destructor
-  ~NormalDistribution()
+  ~UnitAwareNormalDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
+  static IndepQuantity sample( const IndepQuantity mean,
+			       const IndepQuantity standard_deviation,
+			       const IndepQuantity min_independent_value = 
+			       -QuantityTraits<IndepQuantity>::inf(),
+			       const IndepQuantity max_independent_value = 
+			       QuantityTraits<IndepQuantity>::inf() );
 
+  //! Return a random sample from the distribution and record the trials
+  static IndepQuantity sampleAndRecordTrials( 
+			       unsigned& trials,
+			       const IndepQuantity mean,
+			       const IndepQuantity standard_deviation,
+			       const IndepQuantity min_independent_value = 
+			       -QuantityTraits<IndepQuantity>::inf(),
+			       const IndepQuantity max_independent_value = 
+			       QuantityTraits<IndepQuantity>::inf() );
+  
   //! Return a random sample from the distribution
-  double sample() const;
-
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
-
+  IndepQuantity sample() const;
+  
+  //! Return a random sample from the distribution and record the trials
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
+  
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -82,37 +140,45 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const NormalDistribution& other ) const;
+  bool isEqual( const UnitAwareNormalDistribution& other ) const;
+
+protected:
+  
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareNormalDistribution( const UnitAwareNormalDistribution<void,void>& unitless_dist_instance, int );
 
 private:
 
-  // Sample a value from the distribution, count the number of trials
-  double sample( unsigned& number_of_trials ) const;
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareNormalDistribution;
 
   // The distribution type
   static const OneDDistributionType distribution_type = NORMAL_DISTRIBUTION;
 
-  // Constant multiplier (1/sqrt(2*pi))
-  static const double constant_multiplier;
+  // Constant normalization factor (1/sqrt(2*pi))
+  static const double constant_norm_factor;
+
+  // The constant multiplier
+  DepQuantity d_constant_multiplier;
 
   // The mean of the distribution
-  double d_mean;
+  IndepQuantity d_mean;
 
   // The standard deviation of the distribution
-  double d_standard_deviation;
+  IndepQuantity d_standard_deviation;
 
   // The min independent value
-  double d_min_independent_value;
+  IndepQuantity d_min_independent_value;
 
   // The max independent value
-  double d_max_independent_value;
-
-  // The number of trials
-  unsigned d_trials;
-
-  // The number of random samples returned
-  unsigned d_samples;
+  IndepQuantity d_max_independent_value;
 };
+
+/*! The normal distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareNormalDistribution<void,void> NormalDistribution;
 
 } // end Utility namespace
 
@@ -138,7 +204,38 @@ public:
   }
 };
 
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareNormalDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U, typename V>
+class TypeNameTraits<Utility::UnitAwareNormalDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Normal Distribution (" +
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName( 
+		    const Utility::UnitAwareNormalDistribution<U,V>& instance )
+  {
+    return name();
+  }
+};
+
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_NormalDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_NORMAL_DISTRIBUTION_HPP
 

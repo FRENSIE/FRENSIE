@@ -15,6 +15,7 @@
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
+#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationManager.hpp"
@@ -29,14 +30,15 @@ public:
 
   //! Create the requested manager
   static Teuchos::RCP<SimulationManager> createManager( 
-		       const Teuchos::ParameterList& simulation_info,
-		       const Teuchos::ParameterList& geom_def,
-		       const Teuchos::ParameterList& source_def,
-		       const Teuchos::ParameterList& response_def,
-		       const Teuchos::ParameterList& estimator_def,
-		       const Teuchos::ParameterList& material_def,
-		       const Teuchos::ParameterList& cross_sections_table_info,
-		       const std::string& cross_sections_xml_directory );
+	  const Teuchos::ParameterList& simulation_info,
+	  const Teuchos::ParameterList& geom_def,
+	  const Teuchos::ParameterList& source_def,
+	  const Teuchos::ParameterList& response_def,
+	  const Teuchos::ParameterList& estimator_def,
+	  const Teuchos::ParameterList& material_def,
+	  const Teuchos::ParameterList& cross_sections_table_info,
+	  const std::string& cross_sections_xml_directory,
+	  const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm );
 
 private:
 

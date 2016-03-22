@@ -212,7 +212,7 @@ TEUCHOS_UNIT_TEST( Estimator, setResponseFunctions )
     response_functions( 2 );
   
   Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
     response_functions( 2 );
   
   Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,
@@ -407,7 +407,7 @@ TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
     response_functions( 2 );
   
   Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,
@@ -503,7 +503,7 @@ TEUCHOS_UNIT_TEST( Estimator, calculateResponseFunctionIndex )
     response_functions( 2 );
   
   Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,
@@ -701,7 +701,7 @@ TEUCHOS_UNIT_TEST( Estimator, exportData )
       response_functions( 2 );
   
     Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
     response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,
@@ -835,7 +835,7 @@ TEUCHOS_UNIT_TEST( Estimator, getBinName )
     response_functions( 2 );
   
   Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
-			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+			   new Utility::UniformDistribution( 0.0, 10., 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
 						       0,

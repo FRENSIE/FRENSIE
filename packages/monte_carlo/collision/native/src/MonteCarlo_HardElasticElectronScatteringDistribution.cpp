@@ -34,15 +34,23 @@ double HardElasticElectronScatteringDistribution::s_delta_cutoff =
   1.0 - s_mu_cutoff;
 
 // The fine structure constant squared
-double HardElasticElectronScatteringDistribution::s_fine_structure_const_square=
-  1.0/( Utility::PhysicalConstants::inverse_fine_structure_constant *
-        Utility::PhysicalConstants::inverse_fine_structure_constant );
+double HardElasticElectronScatteringDistribution::s_fine_structure_const_squared=
+        Utility::PhysicalConstants::fine_structure_constant *
+        Utility::PhysicalConstants::fine_structure_constant;
+
+// A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
+double HardElasticElectronScatteringDistribution::s_screening_param1 = 
+      HardElasticElectronScatteringDistribution::s_fine_structure_const_squared/
+      ( 2.0*0.885*0.885 );
 
 // Constructor 
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
     const ElasticDistribution& elastic_scattering_distribution)
   : d_atomic_number( atomic_number ),
+    d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
+    d_screening_param2( 3.76*s_fine_structure_const_squared*
+                              d_atomic_number*d_atomic_number ),
     d_elastic_scattering_distribution( elastic_scattering_distribution )
 {
   // Make sure the array is valid
@@ -78,28 +86,24 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
 }
 
 
-// Evaluate the screening angle at the given electron energy
+// Evaluate the screening factor at the given electron energy
 double HardElasticElectronScatteringDistribution::evaluateScreeningFactor(
                                               const double energy ) const
 {
-  // get the momentum of the electron in units of electron_rest_mass * speed of light
-  double electron_momentum = Utility::calculateDimensionlessRelativisticMomentum( 
-                           Utility::PhysicalConstants::electron_rest_mass_energy,
-                           energy );
+  // get the momentum**2 of the electron in units of electron_rest_mass_energy
+  double electron_momentum_squared = 
+           Utility::calculateDimensionlessRelativisticMomentumSquared( 
+                          Utility::PhysicalConstants::electron_rest_mass_energy,
+                          energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta = Utility::calculateDimensionlessRelativisticSpeed( 
+  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared( 
            Utility::PhysicalConstants::electron_rest_mass_energy,
            energy );
 
- double arg1 = 1.0/( 0.885 * electron_momentum );
-
- double arg2 = d_atomic_number/beta ;
-
- // Calculate the screening angle
- return arg1*arg1*s_fine_structure_const_square/2.0 * 
-        pow(d_atomic_number, 2.0/3.0) * 
-        ( 1.13 + 3.76*arg2*arg2*s_fine_structure_const_square );
+ // Calculate the screening factor
+ return s_screening_param1 * 1.0/electron_momentum_squared * 
+        d_Z_two_thirds_power * ( 1.13 + d_screening_param2/beta_squared );
 }
 
 // Evaluate the scattering angle from the analytical function
@@ -115,7 +119,7 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
  // Calculate the screened scattering angle
   double arg = random_number*s_delta_cutoff;
 
-  return ( screening_factor*( 1.0 - s_delta_cutoff ) + 
+  return ( screening_factor*s_mu_cutoff + 
            arg*( screening_factor + 1.0 ) ) /
          ( screening_factor + arg );
 }
@@ -137,8 +141,7 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
   if( energy < d_elastic_scattering_distribution.front().first )
   {
     cutoff_cdf_value = 
-      d_elastic_scattering_distribution.front().second->evaluateCDF( 
-                                                                  s_mu_cutoff );
+      d_elastic_scattering_distribution.front().second->evaluateCDF( s_mu_cutoff );
 
     random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
@@ -146,20 +149,18 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     if( cutoff_cdf_value > random_number )
     {
       scattering_angle_cosine = 
-        d_elastic_scattering_distribution.front().second->sample( cutoff_cdf_value );
+        d_elastic_scattering_distribution.front().second->sampleInSubrange( 
+						       s_mu_cutoff );
     }
     // Sample from the analytical function
     else
-    {
       scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
-    }
   }
   // Energy is above the highest grid point
   else if( energy >= d_elastic_scattering_distribution.back().first )
   {
     cutoff_cdf_value = 
-      d_elastic_scattering_distribution.back().second->evaluateCDF( 
-                                                                  s_mu_cutoff );
+      d_elastic_scattering_distribution.back().second->evaluateCDF( s_mu_cutoff );
 
     random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
@@ -167,13 +168,12 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     if( cutoff_cdf_value > random_number )
     {
       scattering_angle_cosine = 
-        d_elastic_scattering_distribution.back().second->sample( cutoff_cdf_value );
+        d_elastic_scattering_distribution.back().second->sampleInSubrange( 
+						       s_mu_cutoff );
     }
     // Sample from the analytical function
     else
-    {
       scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
-    }
   }
   // Energy is inbetween two grid point
   else
@@ -216,24 +216,18 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
      ( s_delta_cutoff + screening_factor )*( s_delta_cutoff );
 
     double alternative_cutoff_cdf = cutoff_cdf_value/( cutoff_cdf_value + analytical_cdf );
-/*
-std::cout << "analytical_cdf = " << analytical_cdf << std::endl
-          << "cutoff_cdf_value = " << cutoff_cdf_value << std::endl
-          << "SUM = " << cutoff_cdf_value + analytical_cdf << std::endl
-          << "alternative_cutoff_cdf = " << alternative_cutoff_cdf << std::endl
-          << "diff in cdf = " <<  cutoff_cdf_value - alternative_cutoff_cdf << std::endl
-          << "1.0 - alternative_cutoff_cdf = " << 1.0 - alternative_cutoff_cdf << std::endl;
- */    
+  
     double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
     // Correlated sample from the distribution
     if( cutoff_cdf_value > random_number )
     {
-    scattering_angle_cosine = correlatedSample( upper_dist_boundary->second,
-                                                lower_dist_boundary->second,
-                                                interpolation_fraction,
-                                                s_mu_cutoff );
+    scattering_angle_cosine = 
+        correlatedSampleInSubrange( upper_dist_boundary->second,
+                                    lower_dist_boundary->second,
+                                    interpolation_fraction,
+                                    s_mu_cutoff );
     }
     // Sample from the analytical function
     else

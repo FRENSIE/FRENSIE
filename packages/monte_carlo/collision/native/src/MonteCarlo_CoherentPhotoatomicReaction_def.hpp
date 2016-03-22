@@ -17,15 +17,16 @@ namespace MonteCarlo{
 // Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction( 
-             const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	     const Teuchos::ArrayRCP<const double>& cross_section,
-	     const unsigned threshold_energy_index,
-	     const Teuchos::RCP<const Utility::OneDDistribution>& form_factor )
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const unsigned threshold_energy_index,
+		   const Teuchos::RCP<const CoherentScatteringDistribution>&
+		   scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
-    d_scattering_distribution( form_factor )
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index ),
+    d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -39,23 +40,24 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the form factor is valid
-  testPrecondition( !form_factor.is_null() );
+  testPrecondition( !scattering_distribution.is_null() );
 }
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhotoatomicReaction( 
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const Utility::OneDDistribution>& form_factor )
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::RCP<const CoherentScatteringDistribution>&
+      scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
-    d_scattering_distribution( form_factor )
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher ),
+    d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -69,7 +71,7 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the form factor is valid
-  testPrecondition( !form_factor.is_null() );
+  testPrecondition( !scattering_distribution.is_null() );
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );
 }
@@ -82,6 +84,15 @@ unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getN
     return 1u;
   else
     return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */ 
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
 }
 
 // Return the reaction type
@@ -98,9 +109,9 @@ void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution.scatterPhoton( photon, 
-					   bank, 
-					   shell_of_interaction );
+  d_scattering_distribution->scatterPhoton( photon, 
+					    bank, 
+					    shell_of_interaction );
 
   photon.incrementCollisionNumber();
 

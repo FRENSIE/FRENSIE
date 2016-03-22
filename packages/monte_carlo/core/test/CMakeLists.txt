@@ -1,9 +1,3 @@
-ADD_EXECUTABLE(tstParticleStateCore
-  tstParticleStateCore.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleStateCore monte_carlo_core)
-ADD_TEST(ParticleStateCore_test tstParticleStateCore)
-
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -15,6 +9,18 @@ ADD_EXECUTABLE(tstPhotonState
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
 ADD_TEST(PhotonState_test tstPhotonState)
+
+ADD_EXECUTABLE(tstAdjointPhotonState
+  tstAdjointPhotonState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
+ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
+
+ADD_EXECUTABLE(tstAdjointPhotonProbeState
+  tstAdjointPhotonProbeState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
+ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
 
 ADD_EXECUTABLE(tstNeutronState
   tstNeutronState.cpp
@@ -28,51 +34,75 @@ ADD_EXECUTABLE(tstElectronState
 TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
 ADD_TEST(ElectronState_test tstElectronState)
 
+ADD_EXECUTABLE(tstAdjointElectronState
+  tstAdjointElectronState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronState monte_carlo_core)
+ADD_TEST(AdjointElectronState_test tstAdjointElectronState)
+
+ADD_EXECUTABLE(tstAdjointElectronProbeState
+  tstAdjointElectronProbeState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
+ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
+
 ADD_EXECUTABLE(tstParticleBank
-  tstParticleBank.cpp)
+  tstParticleBank.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
 
-IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelParticleBank_2_test
-    tstParticleBank --threads=2)
-  ADD_TEST(SharedParallelParticleBank_4_test
-    tstParticleBank --threads=4)
-ENDIF()
-
-IF(${FRENSIE_ENABLE_MPI})
-  ADD_TEST(DistributedParallelParticleBank_2_test
-    ${MPIEXEC} -n 2 tstParticleBank)
-  ADD_TEST(DistributedParallelParticleBank_4_test
-    ${MPIEXEC} -n 4 tstParticleBank)
-ENDIF()
-
-IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
-  ADD_TEST(HybridParallelParticleBank_2_2_test
-    ${MPIEXEC} -n 2 tstParticleBank --threads=2)
-  ADD_TEST(HybridParallelParticleBank_4_4_test
-    ${MPIEXEC} -n 4 tstParticleBank --threads=4)
-ENDIF()
-
-ADD_EXECUTABLE(tstStandardComptonProfileSubshellConverter
-  tstStandardComptonProfileSubshellConverter.cpp
+ADD_EXECUTABLE(tstSimulationGeneralProperties 
+  tstSimulationGeneralProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardComptonProfileSubshellConverter monte_carlo_core)
-ADD_TEST(StandardComptonProfileSubshellConverter_test tstStandardComptonProfileSubshellConverter)
+TARGET_LINK_LIBRARIES(tstSimulationGeneralProperties monte_carlo_core)
+ADD_TEST(SimulationGeneralProperties_test tstSimulationGeneralProperties)
 
-ADD_EXECUTABLE(tstComptonProfileHelpers
-  tstComptonProfileHelpers.cpp
+ADD_EXECUTABLE(tstSimulationNeutronProperties 
+  tstSimulationNeutronProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstComptonProfileHelpers monte_carlo_core)
-ADD_TEST(ComptonProfileHelpers_test tstComptonProfileHelpers)
+TARGET_LINK_LIBRARIES(tstSimulationNeutronProperties monte_carlo_core)
+ADD_TEST(SimulationNeutronProperties_test tstSimulationNeutronProperties)
 
-ADD_EXECUTABLE(tstSimulationProperties 
-  tstSimulationProperties.cpp
+ADD_EXECUTABLE(tstSimulationPhotonProperties 
+  tstSimulationPhotonProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
-ADD_TEST(SimulationProperties_test tstSimulationProperties)
+TARGET_LINK_LIBRARIES(tstSimulationPhotonProperties monte_carlo_core)
+ADD_TEST(SimulationPhotonProperties_test tstSimulationPhotonProperties)
+
+ADD_EXECUTABLE(tstSimulationElectronProperties 
+  tstSimulationElectronProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationElectronProperties monte_carlo_core)
+ADD_TEST(SimulationElectronProperties_test tstSimulationElectronProperties)
 
 ADD_EXECUTABLE(tstSimulationPropertiesFactory 
   tstSimulationPropertiesFactory.cpp)
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationGeneralPropertiesFactory 
+  tstSimulationGeneralPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationGeneralPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationGeneralPropertiesFactory_test tstSimulationGeneralPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationNeutronPropertiesFactory 
+  tstSimulationNeutronPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationNeutronPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationNeutronPropertiesFactory_test tstSimulationNeutronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationPhotonPropertiesFactory 
+  tstSimulationPhotonPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationPhotonPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationPhotonPropertiesFactory_test tstSimulationPhotonPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstSimulationElectronPropertiesFactory 
+  tstSimulationElectronPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationElectronPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationElectronPropertiesFactory_test tstSimulationElectronPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+ADD_EXECUTABLE(tstParticleModeType 
+  tstParticleModeType.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
+ADD_TEST(ParticleModeType_test tstParticleModeType)

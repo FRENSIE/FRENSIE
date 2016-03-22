@@ -25,45 +25,22 @@ class SubshellIncoherentPhotoatomicReaction : public StandardPhotoatomicReaction
 
 public:
 
-  //! Basic constructor without Doppler broadening
+  //! Basic constructor 
   SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const SubshellType interaction_subshell,
-      const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
+      const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
+      scattering_distribution );
 
-  //! Constructor without Doppler broadening
+  //! Constructor
   SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const SubshellType interaction_subshell,
-      const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
-
-  //! Basic constructor for Doppler broadening
-  SubshellIncoherentPhotoatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const SubshellType interaction_subshell,
-      const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-      const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
-
-  //! Constructor for Doppler broadening
-  SubshellIncoherentPhotoatomicReaction(
-      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-      const Teuchos::ArrayRCP<const double>& cross_section,
-      const unsigned threshold_energy_index,
-      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const SubshellType interaction_subshell,
-      const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-      const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
+      const Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution>&
+      scattering_distribution );
 
   //! Destructor
   ~SubshellIncoherentPhotoatomicReaction()
@@ -71,6 +48,9 @@ public:
 
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
+
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
@@ -89,7 +69,8 @@ public:
 private:
 
   // The incoherent scattering distribution
-  SubshellIncoherentPhotonScatteringDistribution d_scattering_distribution;
+  Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
+  d_scattering_distribution;
   
   // The reaction type
   PhotoatomicReactionType d_reaction_type;

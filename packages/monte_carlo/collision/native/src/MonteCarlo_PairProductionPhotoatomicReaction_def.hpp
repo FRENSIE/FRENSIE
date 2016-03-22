@@ -81,6 +81,13 @@ unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+    return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -99,8 +106,6 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
   testPrecondition( photon.getEnergy() >= this->getThresholdEnergy() );
 
   d_interaction_model( photon, bank );
-
-  photon.incrementCollisionNumber();
 
   // The shell of interaction, which will be important for triplet production
   // is currently ignored
@@ -142,7 +147,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   photon.resetCollisionNumber();
 
   // Create the second annihilation photon
-  Teuchos::RCP<ParticleState> annihilation_photon(
+  Teuchos::RCP<PhotonState> annihilation_photon(
 				       new PhotonState( photon, true, true ) );
   
   // Reverse the direction of the second annihilation photon

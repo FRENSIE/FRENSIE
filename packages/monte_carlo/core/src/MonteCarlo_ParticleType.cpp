@@ -9,11 +9,6 @@
 // FRENSIE Includes
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_ParticleType.hpp"
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCProperties.hpp"
-#endif 
-
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{

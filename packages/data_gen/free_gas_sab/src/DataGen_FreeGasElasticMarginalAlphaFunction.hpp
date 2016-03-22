@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace DataGen{
@@ -66,8 +66,8 @@ private:
   // Update cached values
   void updateCachedValues();
 
-  // The integration kernel
-  Utility::GaussKronrodQuadratureKernel d_kernel;
+  // The integration gkq_set
+  Utility::GaussKronrodIntegrator d_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

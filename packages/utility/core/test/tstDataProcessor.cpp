@@ -335,23 +335,37 @@ typedef Utility::SqrSqrDataProcessing SqrSqrDataProcessing;
 template<typename ProcessingPolicy>
 struct ProcessingPolicyTestingTraits
 {
-  static const double referenceIndepValue = 0.0;
-  static const double referenceDepValue = 0.0;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+template<typename ProcessingPolicy>
+const double ProcessingPolicyTestingTraits<ProcessingPolicy>::referenceIndepValue = 0.0;
+
+template<typename ProcessingPolicy>
+const double ProcessingPolicyTestingTraits<ProcessingPolicy>::referenceDepValue = 0.0;
 
 template<>
 struct ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>
 {
-  static const double referenceIndepValue = LOG_INDEP_VAR;
-  static const double referenceDepValue = LOG_DEP_VAR;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+const double ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>::referenceIndepValue = LOG_INDEP_VAR;
+
+const double ProcessingPolicyTestingTraits<Utility::LogLogDataProcessing>::referenceDepValue = LOG_DEP_VAR;
 
 template<>
 struct ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>
 {
-  static const double referenceIndepValue = SQR_INDEP_VAR;
-  static const double referenceDepValue = SQR_DEP_VAR;
+  static const double referenceIndepValue;
+  static const double referenceDepValue;
 };
+
+const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::referenceIndepValue = SQR_INDEP_VAR;
+
+const double ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>::referenceDepValue = SQR_DEP_VAR;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -682,6 +696,55 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
 
 UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, Array );
 UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, ArrayView );
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can calculate a continuous pdf from an array
+// of data and store in the desired tuple member
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
+							calculateContinuousPDF,
+							member,
+							Tuple,
+							array )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  Teuchos::Array<Tuple> raw_data( 10 );
+  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( raw_data );
+  array<Tuple> processed_data;
+  Utility::copyArrayView( processed_data, raw_data() );
+
+  // Load the reference array
+  Teuchos::Array<Tuple> ref_data( 10 );
+  fillArrayTwoTupleMemberData<Utility::FIRST,Utility::SECOND>( ref_data );
+  double pdf_value;
+  
+  for( unsigned int i = 0; i < ref_data.size(); ++i )
+  {    
+    if( i != 0 )
+    {
+      pdf_value = (ref_data[i].second - ref_data[i-1].second)/
+	(ref_data[i].first - ref_data[i-1].first);
+    }
+    else
+    {
+      pdf_value = (ref_data[i+1].second - ref_data[i].second)/
+	(ref_data[i+1].first - ref_data[i].second);
+    }
+      
+    Utility::set<member>( ref_data[i], pdf_value );
+  }
+  
+  // Processes the array
+  data_processor.calculateContinuousPDF<Utility::FIRST,
+					member,
+					Utility::SECOND>( processed_data );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+}
+
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, Array );
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousPDF, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate a discrete cdf from an array

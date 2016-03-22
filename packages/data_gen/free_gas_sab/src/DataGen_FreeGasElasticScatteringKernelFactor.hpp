@@ -2,7 +2,7 @@
 //!
 //! \file   DataGen_FreeGasElasticScatteringKernelFactor.hpp
 //! \author Alex Robinson
-//! \brief  Free gas elastic scattering kernel factor decl.
+//! \brief  Free gas elastic scattering gkq_set factor decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -20,12 +20,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
 
-//! The free gas elastic scattering kernel factor class
+//! The free gas elastic scattering gkq_set factor class
 class FreeGasElasticScatteringKernelFactor
 {
   
@@ -97,8 +97,8 @@ private:
   // The min exponential argument that can be used before returning zero
   static double min_exp_arg;
 
-  // The integration kernel
-  Utility::GaussKronrodQuadratureKernel d_kernel;
+  // The integration gkq_set
+  Utility::GaussKronrodIntegrator d_gkq_set;
 
   // The zero temperature cross section
   Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;

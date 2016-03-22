@@ -30,28 +30,100 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
-  basic_subshell_incoherent_distribution;
-
-Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
-  detailed_subshell_incoherent_distribution;
+  distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluate )
+{
+  double dist_value = distribution->evaluate(
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+
+  dist_value = distribution->evaluate( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+
+  dist_value = distribution->evaluate( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  
+  dist_value = distribution->evaluate( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 0.1309675807668618, 1e-15 );
+
+  dist_value = distribution->evaluate( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );	
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution pdf can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluatePDF )
+{
+  double pdf_value = distribution->evaluatePDF( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.468206881760033666, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.361055269849248517, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.291507803998082682, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluateIntegratedCrossSection )
+{
+  double cross_section = distribution->evaluateIntegratedCrossSection( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1e-3 );
+  std::cout.precision( 18 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.38880309491689713, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.362735546891601146, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.0603100615156834663, 1e-15 );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the subshell can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getSubshell )
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_basic_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( basic_subshell_incoherent_distribution );
+    derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_basic_dist->getSubshell(), 
-		       MonteCarlo::K_SUBSHELL);
-
-  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_detailed_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( detailed_subshell_incoherent_distribution );
-  TEST_EQUALITY_CONST( derived_detailed_dist->getSubshell(),
-		       MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( derived_dist->getSubshell(), MonteCarlo::K_SUBSHELL);
 }
 
 //---------------------------------------------------------------------------//
@@ -60,21 +132,16 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getBindingEnergy )
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_basic_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( basic_subshell_incoherent_distribution );
+    derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_basic_dist->getBindingEnergy(), 
-		       8.82899999999999935e-02 );
-
-  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
-    derived_detailed_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( detailed_subshell_incoherent_distribution );
-  TEST_EQUALITY_CONST( derived_detailed_dist->getBindingEnergy(),
+  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(), 
 		       8.82899999999999935e-02 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a photon can be scattered incoherently without Doppler broadening
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
-		   scatterPhoton_no_doppler )
+		   scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -93,75 +160,27 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_subshell_incoherent_distribution->scatterPhoton( photon,
-							 bank,
-							 shell_of_interaction);
+  distribution->scatterPhoton( photon,
+			       bank,
+			       shell_of_interaction);
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
 			  0.9996898054103247, 
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
 			  -0.024905681252821114, 
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a photon can be scattered incoherently with Doppler broadening
-TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
-		   scatterPhoton_doppler )
-{
-  MonteCarlo::ParticleBank bank;
-  
-  MonteCarlo::PhotonState photon( 0 );
-  photon.setEnergy( 20.0 );
-  photon.setDirection( 0.0, 0.0, 1.0 );
-  
-  MonteCarlo::SubshellType shell_of_interaction;
-
-  // Set up the random number stream
-  std::vector<double> fake_stream( 5 );
-  fake_stream[0] = 0.001; // sample from first term of koblinger's method
-  fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
-  fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
-  fake_stream[3] = 0.5; // select pz = 0.0
-  fake_stream[4] = 0.0; // azimuthal_angle = pi
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  detailed_subshell_incoherent_distribution->scatterPhoton( photon,
-							 bank,
-							 shell_of_interaction);
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
-			  19.50173181484825,
-			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
-			  0.9996898054103247, 
-			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
-			  0.024905681252821114, 
-			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
@@ -196,43 +215,27 @@ int main( int argc, char** argv )
     Data::ElectronPhotonRelaxationDataContainer 
       data_container( test_native_file_name );
     
-    // Extract the Compton profile and occupation number for the first subshell
-    const std::vector<double>& compton_profile_grid_s1 = 
-      data_container.getComptonProfileMomentumGrid( 1 );
-    
-    const std::vector<double>& compton_profile_s1 = 
-      data_container.getComptonProfile( 1 );
-    
+    // Extract the occupation number for the first subshell
     const std::vector<double>& occupation_number_grid_s1 = 
       data_container.getOccupationNumberMomentumGrid( 1 );
     
     const std::vector<double>& occupation_number_s1 = 
       data_container.getOccupationNumber( 1 );
     
-    // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::OneDDistribution> compton_profile_s1_dist(
-			    new Utility::TabularDistribution<Utility::LinLin>( 
-						       compton_profile_grid_s1,
-						       compton_profile_s1 ) );
-
+    // Create the occupation number distributions
     Teuchos::RCP<const Utility::OneDDistribution> occupation_number_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>(
 						    occupation_number_grid_s1,
 						    occupation_number_s1 ) );
 
     // Create the subshell incoherent distributions
-    basic_subshell_incoherent_distribution.reset(
+    distribution.reset(
 		new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution(
 			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist ) );
-
-    detailed_subshell_incoherent_distribution.reset(
-		new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution(
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+			  data_container.getSubshellOccupancy( 1 ),
 			  data_container.getSubshellBindingEnergy( 1 ),
 			  occupation_number_s1_dist,
-			  compton_profile_s1_dist ) );
+			  3.0 ) );
   }
 
   // Initialize the random number generator

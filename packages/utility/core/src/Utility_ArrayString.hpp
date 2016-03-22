@@ -76,6 +76,9 @@ public:
 
 private:
 
+  // Initialize the array string class
+  static bool initialize();
+
   // replace occurances of pi within a substring
   static void replacePiInSubstring( const std::string::size_type start,
 				    const std::string::size_type true_end,
@@ -86,6 +89,9 @@ private:
 					    const std::string& left_element,
 					    std::string& middle_element,
 					    const std::string& right_element );
+
+  // Records if the array string class has been initialized
+  static const bool s_initialized;
 
   // The array representation string
   std::string d_array_string;  

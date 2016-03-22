@@ -20,7 +20,7 @@
 
 // FRENSIE Includes
 #include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace DataGen{
@@ -69,11 +69,11 @@ private:
   // multiplied by exp(-beta/2)
   double integratedSAlphaBetaFunction( const double beta );
 
-  // The integration kernel for integrating over alpha values
-  Utility::GaussKronrodQuadratureKernel d_alpha_kernel;
+  // The integration gkq_set for integrating over alpha values
+  Utility::GaussKronrodIntegrator d_alpha_gkq_set;
 
-  // The integration kernel for integrating over beta values
-  Utility::GaussKronrodQuadratureKernel d_beta_kernel;
+  // The integration gkq_set for integrating over beta values
+  Utility::GaussKronrodIntegrator d_beta_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

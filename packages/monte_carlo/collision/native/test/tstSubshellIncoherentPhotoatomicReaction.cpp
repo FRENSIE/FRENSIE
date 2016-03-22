@@ -17,6 +17,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -221,17 +224,17 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_basic )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
 			  0.9996898054103247, 
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
 			  -0.024905681252821114, 
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
@@ -268,17 +271,17 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, react_detailed )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
 			  0.9996898054103247, 
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
 			  0.024905681252821114, 
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
@@ -344,7 +347,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
     
     // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::OneDDistribution> compton_profile_s1_dist(
+    Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>( 
 						       compton_profile_grid_s1,
 						       compton_profile_s1 ) );
@@ -354,25 +357,42 @@ int main( int argc, char** argv )
 						    occupation_number_grid_s1,
 						    occupation_number_s1 ) );
 
+    // Create the subshell incoherent distributions
+    Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+      basic_distribution( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
+			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+			  data_container.getSubshellOccupancy( 1 ),
+			  data_container.getSubshellBindingEnergy( 1 ),
+			  occupation_number_s1_dist,
+			  3.0 ) );
+
+    Teuchos::RCP<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
+      doppler_dist( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
+		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+		    data_container.getSubshellOccupancy( 1 ),
+		    data_container.getSubshellBindingEnergy( 1 ),
+		    compton_profile_s1_dist ) );
+
+    Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+      detailed_distribution( new MonteCarlo::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
+						     doppler_dist,
+						     occupation_number_s1_dist,
+						     3.0 ) );
+
     // Create the subshell incoherent reaction
     basic_subshell_incoherent_reaction.reset(
          new MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
-			  photon_energy_grid,
-			  subshell_incoherent_cs,
-			  threshold_index,
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist ) );
+			                                photon_energy_grid,
+			                                subshell_incoherent_cs,
+							threshold_index,
+							basic_distribution ) );
 
     detailed_subshell_incoherent_reaction.reset(
 	 new MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
 			  photon_energy_grid,
 			  subshell_incoherent_cs,
 			  threshold_index,
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist,
-			  compton_profile_s1_dist ) );
+			  detailed_distribution ) );
   }
 
   // Initialize the random number generator

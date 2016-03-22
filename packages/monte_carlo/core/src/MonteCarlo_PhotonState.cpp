@@ -9,44 +9,45 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ArchiveHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
+PhotonState::PhotonState()
+  : MasslessParticleState()
+{ /* ... */ }
+
+// Constructor
 PhotonState::PhotonState(const ParticleState::historyNumberType history_number)
-  : ParticleState( history_number, PHOTON )
+  : MasslessParticleState( history_number, PHOTON )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 PhotonState::PhotonState( const ParticleState& existing_base_state,
 			  const bool increment_generation_number,
 			  const bool reset_collision_number )
-  : ParticleState( existing_base_state, 
-		   PHOTON,
-		   increment_generation_number,
-		   reset_collision_number )
+  : MasslessParticleState( existing_base_state, 
+			   PHOTON,
+			   increment_generation_number,
+			   reset_collision_number )
 { /* ... */ }
 
-// Core constructor
-PhotonState::PhotonState( const ParticleStateCore& core )
-  : ParticleState( core )
-{
-  // Make sure the core is a photon core
-  testPrecondition( core.particle_type == PHOTON );
-}
+// Copy constructor (with possible creation of new generation)
+PhotonState::PhotonState( const PhotonState& existing_base_state,
+			  const bool increment_generation_number,
+			  const bool reset_collision_number )
+  : MasslessParticleState( existing_base_state, 
+			   PHOTON,
+			   increment_generation_number,
+			   reset_collision_number )
+{ /* ... */ }
 
-// Return the speed of the particle (cm/s)
-double PhotonState::getSpeed() const
+// Clone the particle state (do not use to generate new particles!)
+PhotonState* PhotonState::clone() const
 {
-  return Utility::PhysicalConstants::speed_of_light;
-}
-
-// Calculate the time to traverse a distance
-ParticleState::timeType 
-PhotonState::calculateTraversalTime( const double distance ) const
-{
-  return distance/Utility::PhysicalConstants::speed_of_light;
+  return new PhotonState( *this, false, false );
 }
 
 // Print the photon state
@@ -54,10 +55,13 @@ void PhotonState::print( std::ostream& os ) const
 {
   os << "Particle Type: Photon" << std::endl;
   
-  this->printImplementation( os );
+  this->printImplementation<PhotonState>( os );
 }
 
 } // end MonteCarlo namespace
+
+UTILITY_CLASS_EXPORT_IMPLEMENT_SERIALIZE( MonteCarlo::PhotonState );
+BOOST_CLASS_EXPORT_IMPLEMENT( MonteCarlo::PhotonState );
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonState.cpp

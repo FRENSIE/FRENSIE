@@ -21,6 +21,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "MonteCarlo_ParticleModeType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -59,8 +60,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
   SMI::sampleParticleState( bank, 0 );
 
   TEST_ASSERT( bank.size() > 0 );
-  TEST_ASSERT( !bank.top().is_null() );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -68,8 +68,6 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_source_xml_file",
@@ -105,7 +103,7 @@ int main( int argc, char** argv )
     MonteCarlo::StandardParticleSourceFactory<moab::DagMC>::getInstance();
   
   Teuchos::RCP<MonteCarlo::ParticleSource> source = 
-    source_factory->createSource( *source_rep );
+    source_factory->createSource( *source_rep, MonteCarlo::NEUTRON_MODE );
 
   setSourceHandlerInstance( source );
 

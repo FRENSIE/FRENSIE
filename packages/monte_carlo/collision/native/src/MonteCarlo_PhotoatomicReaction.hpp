@@ -13,12 +13,13 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
 //! The photoatomic reaction base class
-class PhotoatomicReaction
+class PhotoatomicReaction : public AtomicReaction
 {
 
 public:
@@ -31,25 +32,6 @@ public:
   virtual ~PhotoatomicReaction()
   { /* ... */ }
   
-  //! Test if two photoatomic reactions share the same energy grid
-  bool isEnergyGridShared( const PhotoatomicReaction& other_reaction ) const;
-  
-  //! Test if the energy falls within the energy grid
-  virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
-
-  //! Return the cross section at the given energy
-  virtual double getCrossSection( const double energy ) const = 0;
-
-  //! Return the cross section at the given energy (efficient)
-  virtual double getCrossSection( const double energy,
-				  const unsigned bin_index ) const = 0;
-
-  //! Return the threshold energy
-  virtual double getThresholdEnergy() const = 0;
-
-  //! Return the number of photons emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
-  
   //! Return the reaction type
   virtual PhotoatomicReactionType getReactionType() const = 0;
 
@@ -58,17 +40,23 @@ public:
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const = 0;
 
-protected:
+  //! Simulate the reaction and track the number of sampling trials
+  virtual void react( PhotonState& photon, 
+		      ParticleBank& bank,
+		      SubshellType& shell_of_interaction,
+		      unsigned& trials ) const;
 
-  //! Return the head of the energy grid
-  virtual const double* getEnergyGridHead() const = 0;
 };
 
-// Test if two photoatomic reactions share the same energy grid
-inline bool PhotoatomicReaction::isEnergyGridShared( 
-			      const PhotoatomicReaction& other_reaction ) const
+// Simulate the reaction and track the number of sampling trials
+inline void PhotoatomicReaction::react( PhotonState& photon, 
+					ParticleBank& bank,
+					SubshellType& shell_of_interaction,
+					unsigned& trials ) const
 {
-  return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
+  ++trials;
+
+  this->react( photon, bank, shell_of_interaction );
 }
 
 } // end MonteCarlo namespace
