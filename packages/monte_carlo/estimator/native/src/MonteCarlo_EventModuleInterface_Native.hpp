@@ -24,14 +24,6 @@ class EventModuleInterface<MonteCarlo::EventHandler>
 {
 
 public:
-  //! The external event observer handle class
-  typedef ModuleTraits::InternalEventObserverHandle ExternalEventObserverHandle;
-  
-  //! The internal event observer handle class
-  typedef ModuleTraits::InternalEventObserverHandle InternalEventObserverHandle;
-
-  //! The value of an invalid external event observer handle
-  static const ExternalEventObserverHandle invalid_external_event_observer_handle;
 
   //! Set the event handler instance
   static void setHandlerInstance(
@@ -92,20 +84,13 @@ public:
 	    const int root_process );
 
   //! Export the observer data
-  static void exportObserverData(const std::string& data_file_name,
-				  const unsigned long long last_history_number,
-				  const unsigned long long histories_completed,
-				  const double start_time,
-				  const double end_time,
-				  const bool process_data );
-
-  //! Get the internal observer handle corresponding to the external handle
-  static InternalEventObserverHandle getInternalEventObserverHandle(
-			 const ExternalEventObserverHandle observer_external );
-
-  //! Get the external observer handle corresponding to the internal handle
-  static ExternalEventObserverHandle getExternalEventObserverHandle(
-                         const InternalEventObserverHandle observer_internal );
+  static void exportObserverData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const unsigned long long last_history_number,
+                    const unsigned long long histories_completed,
+                    const double start_time,
+                    const double end_time,
+                    const bool process_data );
 
 private:
 
@@ -240,35 +225,19 @@ EventModuleInterface<MonteCarlo::EventHandler>::reduceObserverData(
 // Export the observer data
 inline void 
 EventModuleInterface<MonteCarlo::EventHandler>::exportObserverData( 
-				 const std::string& data_file_name,
-				 const unsigned long long last_history_number,
-				 const unsigned long long histories_completed,
-				 const double start_time,
-				 const double end_time,
-				 const bool process_data )
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const unsigned long long last_history_number,
+                    const unsigned long long histories_completed,
+                    const double start_time,
+                    const double end_time,
+                    const bool process_data )
 {
-  s_event_handler->exportObserverData( data_file_name,
+  s_event_handler->exportObserverData( hdf5_file,
                                        last_history_number,
                                        histories_completed,
                                        start_time,
                                        end_time,
                                        process_data );
-}
-
-// Get the internal observer handle corresponding to the external handle
-inline EventModuleInterface<MonteCarlo::EventHandler>::InternalEventObserverHandle 
-EventModuleInterface<MonteCarlo::EventHandler>::getInternalEventObserverHandle(
-			 const ExternalEventObserverHandle observer_external )
-{
-  return observer_external;
-}
-
-// Get the external estimator handle corresponding to the internal handle
-inline EventModuleInterface<MonteCarlo::EventHandler>::ExternalEventObserverHandle 
-EventModuleInterface<MonteCarlo::EventHandler>::getExternalEventObserverHandle(
-			 const InternalEventObserverHandle observer_internal )
-{
-  return observer_internal;
 }
 
 } // end MonteCarlo namespace

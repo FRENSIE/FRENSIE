@@ -12,9 +12,6 @@
 // Std Includes
 #include <limits>
 
-// GSL Includes
-#include <gsl/gsl_errno.h>
-
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_ConstTypeTraits.hpp>
@@ -27,19 +24,6 @@
 #include "Utility_GaussKronrodQuadratureSetTraits.hpp"
 
 namespace Utility{
-
-// Function wrapper for evaluating the functor
-template<typename Functor>
-double GaussKronrodIntegrator::functorWrapper( const double x, 
-						     void* indirected_functor )
-{
-  // Make sure the functor is valid
-  testPrecondition( indirected_functor );
-
-  Functor* functor = (Functor*)( indirected_functor );
-
-  return (*functor)( x );
-}
 
 // Integrate the function adaptively with BinQueue
 /*! \details Functor must have operator()( double ) defined. This function

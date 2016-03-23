@@ -12,7 +12,8 @@
 namespace MonteCarlo{
 
 // Initialize the static source pointer
-std::shared_ptr<ParticleSource> SourceModuleInterface<ParticleSource>::source;
+std::shared_ptr<ParticleSource> 
+SourceModuleInterface<ParticleSource>::s_source;
 
 // Constructor
 SourceModuleInterface<ParticleSource>::SourceModuleInterface()
@@ -22,9 +23,10 @@ SourceModuleInterface<ParticleSource>::SourceModuleInterface()
 void SourceModuleInterface<ParticleSource>::setHandlerInstance( 
 				const std::shared_ptr<ParticleSource>& source )
 {
+  // Make sure the source is valid
   testPrecondition( source.get() );
 
-  SourceModuleInterface::source = source;
+  s_source = source;
 }
 
 } // end MonteCarlo namespace

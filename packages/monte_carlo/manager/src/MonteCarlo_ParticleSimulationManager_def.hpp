@@ -605,13 +605,21 @@ void ParticleSimulationManager<GeometryHandler,
 {
   os << "Exporting simulation data ... ";
   os.flush();
+
+  // Initialize the HDF5 file
+  std::shared_ptr<Utility::HDF5FileHandler> 
+    hdf5_file( new Utility::HDF5FileHandler );
+
+  hdf5_file->openHDF5FileAndOverwrite( data_file_name );
   
-  EMI::exportObserverData( data_file_name,
+  EMI::exportObserverData( hdf5_file,
                            d_start_history+d_histories_completed,
                            d_histories_completed,
                            d_start_time,
                            d_end_time+d_previous_run_time,
                            true );
+
+  SMI::exportSourceData( hdf5_file );
 
   os << "done." << std::endl;
 }

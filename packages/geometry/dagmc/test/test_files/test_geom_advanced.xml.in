@@ -15,5 +15,6 @@
   <Parameter name="Cell Pulse Height Name" type="string" value="c.pulse"/>
   <Parameter name="Cell Track-Length Flux Name" type="string" value="c.tl.f"/>
   <Parameter name="Cell Collision Flux Name" type="string" value="c.c.f"/>
+  <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
 
 </ParameterList>

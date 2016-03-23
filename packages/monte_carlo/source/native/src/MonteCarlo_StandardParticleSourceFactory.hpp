@@ -31,7 +31,8 @@ public:
   //! Create the particle source represented by the parameter list
   std::shared_ptr<ParticleSource>
   createSource( const Teuchos::ParameterList& source_rep,
-		const ParticleModeType& particle_mode );
+		const ParticleModeType& particle_mode,
+                std::ostream& os_warn = std::cerr );
 
 private:
 
@@ -62,9 +63,11 @@ template<typename GeometryHandler>
 inline std::shared_ptr<ParticleSource>
 StandardParticleSourceFactory<GeometryHandler>::createSource( 
 				     const Teuchos::ParameterList& source_rep,
-				     const ParticleModeType& particle_mode )
+				     const ParticleModeType& particle_mode,
+                                     std::ostream& os_warn )
 {
-  return ParticleSourceFactory::createSourceImpl<GeometryHandler>(source_rep, particle_mode );
+  return ParticleSourceFactory::createSourceImpl<GeometryHandler>( 
+                                          source_rep, particle_mode, os_warn );
 } 
 
 } // end MonteCarlo namespace

@@ -132,21 +132,15 @@ void EventHandler::reduceObserverData(
 
 // Export the observer data
 void EventHandler::exportObserverData( 
-				  const std::string& data_file_name,
-				  const unsigned long long last_history_number,
-				  const unsigned long long histories_completed,
-				  const double start_time,
-				  const double end_time,
-				  const bool process_data )
+		    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const unsigned long long last_history_number,
+                    const unsigned long long histories_completed,
+                    const double start_time,
+                    const double end_time,
+                    const bool process_data )
 {
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
-  // Initialize the HDF5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
-    hdf5_file( new Utility::HDF5FileHandler );
-
-  hdf5_file->openHDF5FileAndOverwrite( data_file_name );
 
   // Create a particle history observer HDF5 file handler
   {

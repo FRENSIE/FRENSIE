@@ -620,9 +620,37 @@ bool DagMC::isReflectingSurface(
 }
 
 // Get the point location w.r.t. a given cell
+/*! \details This function will only return if a point is inside of or
+ * outside of the cell of interest (not on the cell). The ray direction will be
+ * used when it is close to the surface.
+ */
+PointLocation DagMC::getPointLocation( 
+                               const Ray& ray,
+                               const ModuleTraits::InternalCellHandle cell_id )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+  // Make sure the cell exists
+  testPrecondition( DagMC::doesCellExist( cell_id ) );
+  
+  moab::EntityHandle cell_handle = s_cell_handler->getCellHandle( cell_id );
+
+  try{
+    return DagMC::getPointLocation( ray.getPosition(),
+                                    ray.getDirection(),
+                                    cell_handle );
+  }
+  EXCEPTION_CATCH_RETHROW( DagMCGeometryError,
+                           "Error: Could not determing the location of the "
+                           "ray with respect to cell " 
+                           << cell_id << "! Here are the details...\n"
+                           "Ray: " << ray  );
+}
+
+// Get the point location w.r.t. a given cell
 PointLocation DagMC::getPointLocation( const double position[3],
                                        const double direction[3],
-                                       const moab::EntityHandle& cell_handle,
+                                       const moab::EntityHandle cell_handle,
                                        const moab::DagMC::RayHistory* history )
 {
   // Make sure DagMC has been initialized

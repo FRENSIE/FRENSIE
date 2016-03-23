@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDistributedSource.cpp
+//! \file   tstDistributedParticleSource.cpp
 //! \author Alex Robinson
-//! \brief  Distributed source unit tests
+//! \brief  Distributed particle source unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,15 +18,9 @@
 #include <Teuchos_Ptr.hpp>
 #include <Teuchos_RCP.hpp>
 
-// Moab Includes
-#include <moab/EntityHandle.hpp>
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_DistributedSource.hpp"
-#include "Geometry_DagMCHelpers.hpp"
-#include "Geometry_ModuleInterface.hpp"
+#include "MonteCarlo_DistributedParticleSource.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
@@ -35,28 +29,15 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-
-std::shared_ptr<MonteCarlo::ParticleSource> source;
-
-//---------------------------------------------------------------------------//
-// Test Sat File Name
-//---------------------------------------------------------------------------//
-std::string test_geometry_file_name;
-
-//---------------------------------------------------------------------------//
-// Instantiation Macros.
-//---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name )				\
-  typedef moab::DagMC dagmc;						\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, dagmc ) 
+#include "Utility_GlobalOpenMPSession.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the source (uniform spherical source)
-template<typename GeometryHandler>
-void initializeSource( const bool set_importance_functions = false,
-		       const bool set_rejection_cell = false )
+template<typename ParticleSourceType>
+void initializeSource( std::shared_ptr<ParticleSourceType>& source,
+                       const bool set_importance_functions = false )
 {
   // Power distribution in r dimension
   std::shared_ptr<Utility::OneDDistribution> 
@@ -97,14 +78,13 @@ void initializeSource( const bool set_importance_functions = false,
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
   // Create the distributed source
-  source.reset( new MonteCarlo::DistributedSource( 
-     0u,
-     spatial_distribution,
-     directional_distribution,
-     energy_distribution,
-     time_distribution,
-     MonteCarlo::PHOTON,
-     &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
+  source.reset( new MonteCarlo::DistributedParticleSource( 
+                                                      0u,
+                                                      spatial_distribution,
+                                                      directional_distribution,
+                                                      energy_distribution,
+                                                      time_distribution,
+                                                      MonteCarlo::PHOTON ) );
 
   // Set the importance functions if requested
   if( set_importance_functions )
@@ -156,8 +136,8 @@ void initializeSource( const bool set_importance_functions = false,
 								bin_boundaries,
 								bin_values ) );
     
-    std::shared_ptr<MonteCarlo::DistributedSource> distributed_source = 
-      std::dynamic_pointer_cast<MonteCarlo::DistributedSource>( source );
+    std::shared_ptr<MonteCarlo::DistributedParticleSource> 
+      distributed_source = std::dynamic_pointer_cast<MonteCarlo::DistributedParticleSource>( source );
 									     
     distributed_source->setSpatialImportanceDistribution( 
 					     spatial_importance_distribution );
@@ -166,44 +146,34 @@ void initializeSource( const bool set_importance_functions = false,
     distributed_source->setEnergyImportanceDistribution( 
 					      energy_importance_distribution );
   }
-
-  // Set the rejection cell if requested
-  if( set_rejection_cell )
-  {
-    std::shared_ptr<MonteCarlo::DistributedSource> distributed_source = 
-      std::dynamic_pointer_cast<MonteCarlo::DistributedSource>( source );
-
-    // Cell (id=2) of the test geometry will be used as the rejection cell
-    distributed_source->setRejectionCell( 2 );
-  }
-}
-
-// Initialize DagMC
-// Note: This function must be called before the initializeSource function
-// when setting a rejection cell
-void initializeDagMC()
-{
-  // Set up the valid property names
-  std::vector<std::string> property_names( 1 );
-  property_names[0] = "graveyard";
-
-  Geometry::initializeDagMC( test_geometry_file_name,
-			     property_names,
-			     1e-3 );
-
-  Geometry::ModuleInterface<moab::DagMC>::initialize();
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the source id can be returned
+TEUCHOS_UNIT_TEST( DistributedParticleSource, getId )
+{
+  std::shared_ptr<MonteCarlo::DistributedParticleSource> source;
+  
+  initializeSource( source, false );
+
+  TEST_EQUALITY_CONST( source->getId(), 0u );
+
+  initializeSource( source, true );
+
+  TEST_EQUALITY_CONST( source->getId(), 0u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that particle states can be sampled (no importance functions, no
 // rejection cell )
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
-				   sampleParticleState_no_importance_no_reject,
-				   GeometryHandler )
+TEUCHOS_UNIT_TEST( DistributedParticleSource,
+                   sampleParticleState_no_importance_no_reject )
 {
-  initializeSource<GeometryHandler>();
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source );
   
   MonteCarlo::ParticleBank bank;
   
@@ -231,17 +201,50 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   TEST_EQUALITY_CONST( particle.getWeight(), 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( DistributedSource, 
-			 sampleParticleState_no_importance_no_reject );
+//---------------------------------------------------------------------------//
+// Check that particle states can be sampled (no importance functions, no
+// rejection cell )
+TEUCHOS_UNIT_TEST( DistributedParticleSource,
+                   sampleParticleState_no_importance_no_reject_thread_safe )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source );
+
+  unsigned threads = 
+    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  
+  std::vector<MonteCarlo::ParticleBank> banks( threads );
+
+  source->enableThreadSupport( 
+                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+
+  // Create a sample for each thread
+  #pragma omp parallel num_threads( threads )
+  {
+    source->sampleParticleState( 
+                            banks[Utility::GlobalOpenMPSession::getThreadId()],
+                            Utility::GlobalOpenMPSession::getThreadId() );
+  }
+  
+  // Splice all of the banks
+  MonteCarlo::ParticleBank combined_bank;
+  
+  for( unsigned i = 0; i < banks.size(); ++i )
+    combined_bank.splice( banks[i] );
+
+  TEST_EQUALITY_CONST( combined_bank.size(), threads );
+}
 
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled (importance functions, no 
 // rejection cells )
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
-				   sampleParticleState_importance_no_reject,
-				   GeometryHandler )
+TEUCHOS_UNIT_TEST( DistributedParticleSource,
+                   sampleParticleState_importance_no_reject )
 {
-  initializeSource<GeometryHandler>( true );
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, true );
   
   std::vector<double> fake_stream( 10 );
   fake_stream[0] = 0.0;
@@ -278,54 +281,107 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( DistributedSource, 
-			 sampleParticleState_importance_no_reject );
-
 //---------------------------------------------------------------------------//
-// Check that particle states can be sampled (no importance functions,
-// rejection cell )
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
-				   sampleParticleState_no_importance_reject,
-				   GeometryHandler )
+// Check that particle states can be sampled (importance functions, no 
+// rejection cells )
+TEUCHOS_UNIT_TEST( DistributedParticleSource,
+                   sampleParticleState_importance_no_reject_thread_safe )
 {
-  initializeSource<GeometryHandler>( false, true );
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
   
-  MonteCarlo::ParticleBank bank;
-  
-  source->sampleParticleState( bank, 0 );
+  initializeSource( source, true );
 
-  MonteCarlo::ParticleState& particle = bank.top();
+  unsigned threads = 
+    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
   
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 0 );
-  TEST_COMPARE( particle.getXPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle.getXPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle.getYPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle.getYPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle.getZPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle.getZPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle.getXDirection(), >=, -1.0 );
-  TEST_COMPARE( particle.getXDirection(), <=, 1.0 );
-  TEST_COMPARE( particle.getYDirection(), >=, -1.0 );
-  TEST_COMPARE( particle.getYDirection(), <=, 1.0 );
-  TEST_COMPARE( particle.getZDirection(), >=, -1.0 );
-  TEST_COMPARE( particle.getZDirection(), <=, 1.0 );
-  TEST_COMPARE( particle.getEnergy(), >=, 1e-3 );
-  TEST_COMPARE( particle.getEnergy(), <=, 1.0 );
-  TEST_EQUALITY_CONST( particle.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getWeight(), 1.0 );
+  std::vector<MonteCarlo::ParticleBank> banks( threads );
+
+  source->enableThreadSupport( 
+                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+
+  // Create a sample for each thread
+  #pragma omp parallel num_threads( threads )
+  {
+    source->sampleParticleState( 
+                            banks[Utility::GlobalOpenMPSession::getThreadId()],
+                            Utility::GlobalOpenMPSession::getThreadId() );
+  }
+  
+  // Splice all of the banks
+  MonteCarlo::ParticleBank combined_bank;
+  
+  for( unsigned i = 0; i < banks.size(); ++i )
+    combined_bank.splice( banks[i] );
+
+  TEST_EQUALITY_CONST( combined_bank.size(), threads );
 }
 
-UNIT_TEST_INSTANTIATION( DistributedSource, 
-			 sampleParticleState_no_importance_reject );
+//---------------------------------------------------------------------------//
+// Check that the source data can be exported
+TEUCHOS_UNIT_TEST( DistributedParticleSource, exportData )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, true );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of trials can be returned
+TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfTrials )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, true );
+
+  unsigned threads = 
+    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+
+  source->enableThreadSupport( threads );
+  
+  // Create a sample for each thread
+  #pragma omp parallel num_threads( threads )
+  {
+    MonteCarlo::ParticleBank bank;
+    
+    source->sampleParticleState( bank, 
+                                 Utility::GlobalOpenMPSession::getThreadId() );
+  }
+
+  TEST_COMPARE( source->getNumberOfTrials(), >=, threads );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of samples can be returned
+TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfSamples )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, true );
+
+  unsigned threads = 
+    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+
+  source->enableThreadSupport( threads );
+  
+  // Conduct a sample for each thread
+  #pragma omp parallel num_threads( threads )
+  {
+    MonteCarlo::ParticleBank bank;
+    
+    source->sampleParticleState( bank, 
+                                 Utility::GlobalOpenMPSession::getThreadId() );
+  }
+
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), threads );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
-				   getSamplingEfficiency,
-				   GeometryHandler )
+TEUCHOS_UNIT_TEST( DistributedParticleSource, getSamplingEfficiency )
 {
-  initializeSource<GeometryHandler>( false, true );
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, false );
   
   MonteCarlo::ParticleBank bank;
   
@@ -333,31 +389,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   for( unsigned i = 0; i < 10; ++i )
     source->sampleParticleState( bank, i );
 
-  // Theoretical efficiency: (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552
-  TEST_COMPARE( source->getSamplingEfficiency(), >, 0.0 );
-  TEST_COMPARE( source->getSamplingEfficiency(), <=, 1.0 );
+  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 }
-
-UNIT_TEST_INSTANTIATION( DistributedSource, getSamplingEfficiency );
 
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_sat_file",
-		 &test_geometry_file_name,
-		 "Test sat file name" );
+  int threads = 1;
+
+  clp.setOption( "threads",
+		 &threads,
+		 "Number of threads to use" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
-
-  //Teuchos::UnitTestRepository::setUpCLP( Teuchos::outArg(clp) );
 
   Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
     clp.parse(argc,argv);
@@ -367,10 +416,14 @@ int main( int argc, char** argv )
     return parse_return;
   }
   
-  // Initialize DagMC with the test geometry
-  initializeDagMC();
-
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  // Set up the global OpenMP session
+  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
+    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
   
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
@@ -385,5 +438,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstDistributedSource.cpp
+// end tstDistributedParticleSource.cpp
 //---------------------------------------------------------------------------//

@@ -249,8 +249,8 @@ bool Root::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
  * been called.
  */
 PointLocation Root::getPointLocation( 
-                             const Ray& ray,
-                             const ModuleTraits::InternalCellHandle& cell_id )
+                              const Ray& ray,
+                              const ModuleTraits::InternalCellHandle cell_id )
 {
   return Root::getPointLocation( ray.getPosition(), cell_id );
 }
@@ -263,8 +263,8 @@ PointLocation Root::getPointLocation(
  * has been called.
  */
 PointLocation Root::getPointLocation( 
-                             const double position[3],
-                             const ModuleTraits::InternalCellHandle& cell_id )
+                               const double position[3],
+                               const ModuleTraits::InternalCellHandle cell_id )
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );

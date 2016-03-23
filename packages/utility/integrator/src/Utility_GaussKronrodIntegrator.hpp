@@ -122,10 +122,7 @@ public:
 			  double& absolute_error ) const;
 
 protected:
-  // Function wrapper for evaluating the functor
-  template<typename Functor>
-  static double functorWrapper( const double x, void* indirected_functor );
-
+  
   // Calculate the quadrature upper and lower integrand values at an abscissa
   template<typename Functor>
   void calculateQuadratureIntegrandValuesAtAbscissa( 

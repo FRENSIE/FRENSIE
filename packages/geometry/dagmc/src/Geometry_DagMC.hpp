@@ -183,8 +183,8 @@ public:
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
-                             const Ray& ray,
-                             const ModuleTraits::InternalCellHandle& cell_id );
+                              const Ray& ray,
+                              const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the boundary cell 
   static ModuleTraits::InternalCellHandle
@@ -347,7 +347,7 @@ private:
   static PointLocation getPointLocation( 
                                const double position[3],
                                const double direction[3],
-                               const moab::EntityHandle& cell_handle,
+                               const moab::EntityHandle cell_handle,
                                const moab::DagMC::RayHistory* history = NULL );
 
   // Get the boundary cell handle

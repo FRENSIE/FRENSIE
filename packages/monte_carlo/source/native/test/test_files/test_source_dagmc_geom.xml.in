@@ -1,0 +1,9 @@
+<ParameterList name="Geometry">
+
+  <Parameter name="Handler" type="string" value="DagMC"/>
+  <Parameter name="CAD File" type="string"
+             value="${CMAKE_CURRENT_SOURCE_DIR}/test_source_geom.sat"/>
+  <Parameter name="Termination Cell Property" type="string" value="graveyard"/>
+  <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
+
+</ParameterList>
