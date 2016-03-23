@@ -23,7 +23,7 @@
 
 namespace MonteCarlo{
 
-//! The Estimator hdf5 file handler
+//! The estimator hdf5 file handler
 class EstimatorHDF5FileHandler
 {
 

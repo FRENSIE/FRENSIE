@@ -1,5 +1,11 @@
 ADD_SUBDIRECTORY(test_files)
 
+ADD_EXECUTABLE(tstSourceHDF5FileHandler
+  tstSourceHDF5FileHandler.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSourceHDF5FileHandler monte_carlo_source_native)
+ADD_TEST(SourceHDF5FileHandler_test tstSourceHDF5FileHandler)
+
 ADD_EXECUTABLE(tstStandardParticleSource
   tstStandardParticleSource.cpp)
 TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)

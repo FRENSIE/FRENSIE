@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CompoundStandardParticleSource.hpp"
+#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -96,9 +97,24 @@ void CompoundStandardParticleSource::exportData(
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure the hdf5 file is valid
+  testPrecondition( hdf5_file.get() != NULL );
   
   for( unsigned i = 0; i < d_sources.size(); ++i )
     d_sources[i].first->exportData( hdf5_file );
+
+  // Open the source hdf5 file
+  SourceHDF5FileHandler source_hdf5_file( hdf5_file );
+
+  // Set the number of trials
+  unsigned long long trials = this->getNumberOfTrials();
+
+  source_hdf5_file.setNumberOfDefaultSourceSamplingTrials( trials );
+
+  // Set the number of samples
+  unsigned long long samples = this->getNumberOfSamples();
+
+  source_hdf5_file.setNumberOfDefaultSourceSamples( samples );  
 }
 
 // Print a summary of the source data

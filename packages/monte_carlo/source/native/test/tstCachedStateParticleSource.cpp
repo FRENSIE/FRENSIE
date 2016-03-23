@@ -21,6 +21,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CachedStateParticleSource.hpp"
+#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ElectronState.hpp"
@@ -361,6 +362,32 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, exportData )
 
   initializeSource( source );
   
+  MonteCarlo::ParticleBank bank;
+  
+  // Conduct 10 samples
+  for( unsigned i = 0; i < 8; ++i )
+    source->sampleParticleState( bank, i );
+
+  // Export the source data
+  std::string source_data_file_name( "test_standard_particle_source.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler> hdf5_file(
+                                                new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( source_data_file_name );
+
+    source->exportData( hdf5_file );
+  }
+
+  // Check that the source data was written correctly
+  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+               source_data_file_name,
+               MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
+
+  TEST_EQUALITY_CONST(
+             source_file_handler.getNumberOfDefaultSourceSamplingTrials(), 9 );
+  TEST_EQUALITY_CONST(
+                    source_file_handler.getNumberOfDefaultSourceSamples(), 9 );
 }
 
 //---------------------------------------------------------------------------//

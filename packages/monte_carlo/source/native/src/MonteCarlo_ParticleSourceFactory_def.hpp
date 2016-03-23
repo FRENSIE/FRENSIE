@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 #define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
+// Std Lib Includes
+#include <set>
+
 // FRENSIE Includes
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_CachedStateParticleSource.hpp"
@@ -346,6 +349,8 @@ void ParticleSourceFactory::createCompoundStandardSource(
   unsigned num_sources = source_rep.numParams();
   unsigned source_index = 0u;
 
+  std::set<unsigned> source_ids;
+
   Teuchos::Array<std::shared_ptr<StandardParticleSource> > 
     sources( num_sources );
   Teuchos::Array<double> source_weights( num_sources );
@@ -364,6 +369,17 @@ void ParticleSourceFactory::createCompoundStandardSource(
 							 sources[source_index],
                                                          os_warn,
 							 num_sources );
+
+    TEST_FOR_EXCEPTION( source_ids.find( sources[source_index]->getId() ) !=
+                        source_ids.end(),
+                        InvalidParticleSourceRepresentation,
+                        "Error: The compound source is invalid because source "
+                        "id " << sources[source_index]->getId() <<
+                        " appears multiple times! Every source id must be "
+                        "unique." );
+
+    source_ids.insert( sources[source_index]->getId() );
+    
     ++source_index;
     ++param_iter;
   }

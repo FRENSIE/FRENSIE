@@ -26,6 +26,7 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_CompoundStandardParticleSource.hpp"
+#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"
@@ -111,7 +112,47 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource,
 // Check that the source data can be exported
 TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, exportData )
 {
+  source->resetData();
+
+  MonteCarlo::ParticleBank bank;
   
+  // Conduct 10 samples
+  for( unsigned i = 0; i < 10; ++i )
+    source->sampleParticleState( bank, i );
+
+  // Export the source data
+  std::string source_data_file_name( 
+                                 "test_compound_standard_particle_source.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler> hdf5_file(
+                                                new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( source_data_file_name );
+
+    source->exportData( hdf5_file );
+  }
+
+  // Check that the source data was written correctly
+  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+               source_data_file_name,
+               MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
+
+  TEST_ASSERT( source_file_handler.doesSourceExist( 0 ) );
+  TEST_ASSERT( source_file_handler.doesSourceExist( 1 ) );
+
+  unsigned long long total_trials = 
+    source_file_handler.getNumberOfSourceSamplingTrials( 0 ) +
+    source_file_handler.getNumberOfSourceSamplingTrials( 1 );
+  
+  TEST_EQUALITY( source_file_handler.getNumberOfDefaultSourceSamplingTrials(),
+                 total_trials );
+  
+  unsigned long long total_samples = 
+    source_file_handler.getNumberOfSourceSamples( 0 ) +
+    source_file_handler.getNumberOfSourceSamples( 1 );
+  
+  TEST_EQUALITY( source_file_handler.getNumberOfDefaultSourceSamples(),
+                 total_samples );
 }
 
 //---------------------------------------------------------------------------//
