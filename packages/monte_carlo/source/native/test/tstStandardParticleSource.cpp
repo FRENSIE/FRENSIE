@@ -21,6 +21,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
+#include "MonteCarlo_SourceHDF5FileHandler.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
@@ -390,6 +391,37 @@ TEUCHOS_UNIT_TEST( StandardParticleSource, exportData )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
   
   initializeSource( source, true );
+
+  MonteCarlo::ParticleBank bank;
+  
+  // Conduct 10 samples
+  for( unsigned i = 0; i < 10; ++i )
+    source->sampleParticleState( bank, i );
+
+  // Export the source data
+  std::string source_data_file_name( "test_standard_particle_source.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler> hdf5_file(
+                                                new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( source_data_file_name );
+
+    source->exportData( hdf5_file );
+  }
+
+  // Check that the source data was written correctly
+  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+               source_data_file_name,
+               MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
+
+  TEST_ASSERT( source_file_handler.doesSourceExist( 0 ) );
+  TEST_EQUALITY_CONST(
+                source_file_handler.getNumberOfSourceSamplingTrials( 0 ), 10 );
+  TEST_EQUALITY_CONST(
+            source_file_handler.getNumberOfDefaultSourceSamplingTrials(), 10 );
+  TEST_EQUALITY_CONST( source_file_handler.getNumberOfSourceSamples( 0 ), 10 );
+  TEST_EQUALITY_CONST(
+                   source_file_handler.getNumberOfDefaultSourceSamples(), 10 );
 }
 
 //---------------------------------------------------------------------------//
