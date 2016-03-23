@@ -16,7 +16,6 @@
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_CachedStateParticleSource.hpp"
 #include "MonteCarlo_CompoundStandardParticleSource.hpp"
-#include "Geometry_ModuleInterface.hpp"
 #include "Utility_SpatialDistributionFactory.hpp"
 #include "Utility_DirectionalDistributionFactory.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
@@ -27,7 +26,7 @@
 namespace MonteCarlo{
 
 // Create the source represented by the parameter list
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 std::shared_ptr<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
 				     const Teuchos::ParameterList& source_rep,
@@ -43,18 +42,18 @@ ParticleSourceFactory::createSourceImpl(
   
   while( param_iter != source_rep.end() )
   {
-    const Teuchos::ParameterList sub_source;
+    Teuchos::ParameterList sub_source;
     
     try{
       sub_source = 
         Teuchos::any_cast<Teuchos::ParameterList>( 
                                                  param_iter->second.getAny() );
     }
-     EXCEPTION_CATCH_RETHROW_AS( std::exception,
-                                 InvalidParticleSourceRepresentation,
-                                 "Error: The source xml file is not valid! "
-                                 "The source definition must be a "
-                                 "ParameterList." );
+    EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                InvalidParticleSourceRepresentation,
+                                "Error: The source xml file is not valid! "
+                                "The source definition must be a "
+                                "ParameterList." );
     
     ParticleSourceFactory::validateSourceRep( sub_source, num_params );
     
@@ -71,7 +70,7 @@ ParticleSourceFactory::createSourceImpl(
     
     if( sub_source.isParameter( "Spatial Distribution" ) )
     {
-      ParticleSourceFactory::createStandardSource<GeometryHandler>( 
+      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>( 
 							         sub_source,
                                                                  particle_mode,
                                                                  source,
@@ -87,7 +86,7 @@ ParticleSourceFactory::createSourceImpl(
   }
   else
   {
-    ParticleSourceFactory::createCompoundStandardSource<GeometryHandler>(
+    ParticleSourceFactory::createCompoundStandardSource<GeometryModuleInterface>(
                                                                  source_rep, 
 								 particle_mode,
                                                                  source,
@@ -104,7 +103,7 @@ ParticleSourceFactory::createSourceImpl(
 }
 
 // Create a standard source
-template<typename GeometryHandler, typename SourceType>
+template<typename GeometryModuleInterface, typename SourceType>
 double ParticleSourceFactory::createStandardSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
@@ -195,7 +194,7 @@ double ParticleSourceFactory::createStandardSource(
   // Add optional importance functions
   if( source_rep.isParameter( "Rejection Cells" ) )
   {
-    Utility::ArrayString& array_string =
+    const Utility::ArrayString& array_string =
       source_rep.get<Utility::ArrayString>( "Rejection Cells" );
 
     Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> rejection_cells;
@@ -210,22 +209,21 @@ double ParticleSourceFactory::createStandardSource(
                                 "in the xml file are not valid!" );
 
     // Make sure the rejection cells exist
-    typedef Geometry::ModuleInterface<GeometryHandler> GMI;
-    
     for( unsigned i = 0; i < rejection_cells.size(); ++i )
     {
-      TEST_FOR_EXCEPTION( !GMI::doesCellExist( rejection_cells[i] ),
-                          InvalidParticleSourceRepresentation,
-                          "Error: Rejection cell " << rejection_cells[i] <<
-                          " requested for standard source " << id <<
-                          " does not exist!" );
+      TEST_FOR_EXCEPTION( 
+                 !GeometryModuleInterface::doesCellExist( rejection_cells[i] ),
+                 InvalidParticleSourceRepresentation,
+                 "Error: Rejection cell " << rejection_cells[i] <<
+                 " requested for standard source " << id <<
+                 " does not exist!" );
     }
 
     // Add the rejection cells
     for( unsigned i = 0; i < rejection_cells.size(); ++i )
     {
-      source_tmp->setRejectionCell( rejection_cells[i], 
-                                    GMI::getPointLocation );
+      source_tmp->setRejectionCell(rejection_cells[i], 
+                                   GeometryModuleInterface::getPointLocation );
     }
   }
 
@@ -339,7 +337,7 @@ double ParticleSourceFactory::createStandardSource(
 }
 
 // Create a compound source
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 void ParticleSourceFactory::createCompoundStandardSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
@@ -363,7 +361,7 @@ void ParticleSourceFactory::createCompoundStandardSource(
       Teuchos::any_cast<Teuchos::ParameterList>( param_iter->second.getAny() );
     
     source_weights[source_index] = 
-      ParticleSourceFactory::createStandardSource<GeometryHandler>( 
+      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>( 
 							 sub_source,
 							 particle_mode,
 							 sources[source_index],

@@ -48,7 +48,7 @@ public:
 protected:
 
   // Create the particle source represented by the parameter list
-  template<typename GeometryHandler>
+  template<typename GeometryModuleInterface>
   static std::shared_ptr<ParticleSource>
   createSourceImpl( const Teuchos::ParameterList& source_rep,
 		    const ParticleModeType& particle_mode,
@@ -68,7 +68,7 @@ private:
   static void validateParticleTypeName( const std::string& particle_type_name);
 
   // Create a standard source
-  template<typename GeometryHandler, typename SourceType>
+  template<typename GeometryModuleInterface, typename SourceType>
   static double 
   createStandardSource( const Teuchos::ParameterList& source_rep,
                         const ParticleModeType& particle_mode,
@@ -84,7 +84,7 @@ private:
                            std::ostream& os_warn );
 
   // Create a compound standard source
-  template<typename GeometryHandler>
+  template<typename GeometryModuleInterface>
   static void
   createCompoundStandardSource( const Teuchos::ParameterList& compound_source,
                                 const ParticleModeType& particle_mode,

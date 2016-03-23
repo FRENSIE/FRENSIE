@@ -15,7 +15,7 @@
 namespace MonteCarlo{
 
 //! The standard particle source factory
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 class StandardParticleSourceFactory : public ParticleSourceFactory
 {
   
@@ -45,28 +45,28 @@ private:
 };
 
 // Initialize static member data
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 std::shared_ptr<ParticleSourceFactory> 
-StandardParticleSourceFactory<GeometryHandler>::factory_instance(
-			new StandardParticleSourceFactory<GeometryHandler>() );
+StandardParticleSourceFactory<GeometryModuleInterface>::factory_instance(
+		new StandardParticleSourceFactory<GeometryModuleInterface>() );
 
 // Get an instance of the factory
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 inline std::shared_ptr<ParticleSourceFactory>
-StandardParticleSourceFactory<GeometryHandler>::getInstance()
+StandardParticleSourceFactory<GeometryModuleInterface>::getInstance()
 {
   return factory_instance;
 }
 
 // Create the particle source represented by the parameter list
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 inline std::shared_ptr<ParticleSource>
-StandardParticleSourceFactory<GeometryHandler>::createSource( 
+StandardParticleSourceFactory<GeometryModuleInterface>::createSource( 
 				     const Teuchos::ParameterList& source_rep,
 				     const ParticleModeType& particle_mode,
                                      std::ostream& os_warn )
 {
-  return ParticleSourceFactory::createSourceImpl<GeometryHandler>( 
+  return ParticleSourceFactory::createSourceImpl<GeometryModuleInterface>( 
                                           source_rep, particle_mode, os_warn );
 } 
 
