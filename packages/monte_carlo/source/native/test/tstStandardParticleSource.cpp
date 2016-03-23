@@ -78,7 +78,7 @@ void initializeSource( std::shared_ptr<ParticleSourceType>& source,
   std::shared_ptr<Utility::OneDDistribution>
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
-  // Create the distributed source
+  // Create the source
   source.reset( new MonteCarlo::StandardParticleSource( 
                                                       0u,
                                                       spatial_distribution,

@@ -101,9 +101,21 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_TEST(StandardParticleSourceFactory_Root_test tstStandardParticleSourceFactory_Root --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
 ENDIF()
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstSourceModuleInterface_Native
-#     tstModuleInterface.cpp)
-#   TARGET_LINK_LIBRARIES(tstSourceModuleInterface_Native monte_carlo_source_native)
-#   ADD_TEST(SourceModuleInterface_Native_test tstSourceModuleInterface_Native --test_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
-# ENDIF()
+ADD_EXECUTABLE(tstSourceModuleInterface_Native
+  tstModuleInterface.cpp)
+TARGET_LINK_LIBRARIES(tstSourceModuleInterface_Native monte_carlo_source_native)
+ADD_TEST(SourceModuleInterface_Native_test tstSourceModuleInterface_Native)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedSourceModuleInterface_Native_2_test tstSourceModuleInterface_Native --threads=2)
+  ADD_TEST(SharedSourceModuleInterface_Native_4_test tstSourceModuleInterface_Native --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstDistributedSourceModuleInterface_Native
+  tstDistributedModuleInterface.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedSourceModuleInterface_Native monte_carlo_source_native)
+  ADD_TEST(DistributedSourceModuleInterface_Native_1_test ${MPIEXEC} -n 1 tstDistributedSourceModuleInterface_Native)
+  ADD_TEST(DistributedSourceModuleInterface_Native_2_test ${MPIEXEC} -n 2 tstDistributedSourceModuleInterface_Native)
+  ADD_TEST(DistributedSourceModuleInterface_Native_4_test ${MPIEXEC} -n 4 tstDistributedSourceModuleInterface_Native)
+ENDIF()
