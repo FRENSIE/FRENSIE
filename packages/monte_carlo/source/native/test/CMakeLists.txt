@@ -1,47 +1,47 @@
 ADD_SUBDIRECTORY(test_files)
 
-ADD_EXECUTABLE(tstDistributedParticleSource
-  tstDistributedParticleSource.cpp)
-TARGET_LINK_LIBRARIES(tstDistributedParticleSource monte_carlo_source_native)
-ADD_TEST(DistributedParticleSource_test tstDistributedParticleSource)
+ADD_EXECUTABLE(tstStandardParticleSource
+  tstStandardParticleSource.cpp)
+TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
+ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedDistributedParticleSource_2_test tstDistributedParticleSource --threads=2)
-  ADD_TEST(SharedDistributedParticleSource_4_test tstDistributedParticleSource --threads=4)
+  ADD_TEST(SharedStandardParticleSource_2_test tstStandardParticleSource --threads=2)
+  ADD_TEST(SharedStandardParticleSource_4_test tstStandardParticleSource --threads=4)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstDistributedParticleSourceRejection_DagMC
-    tstDistributedParticleSourceRejection_DagMC.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedParticleSourceRejection_DagMC monte_carlo_source_native geometry_dagmc)
-  ADD_TEST(DistributedParticleSourceRejection_DagMC_test tstDistributedParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+  ADD_EXECUTABLE(tstStandardParticleSourceRejection_DagMC
+    tstStandardParticleSourceRejection_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardParticleSourceRejection_DagMC monte_carlo_source_native geometry_dagmc)
+  ADD_TEST(StandardParticleSourceRejection_DagMC_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    ADD_TEST(SharedDistributedParticleSourceRejection_DagMC_2_test tstDistributedParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
-    ADD_TEST(SharedDistributedParticleSourceRejection_DagMC_4_test tstDistributedParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
+    ADD_TEST(SharedStandardParticleSourceRejection_DagMC_2_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
+    ADD_TEST(SharedStandardParticleSourceRejection_DagMC_4_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
   ENDIF()
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
-  ADD_EXECUTABLE(tstDistributedParticleSourceRejection_Root
-    tstDistributedParticleSourceRejection_Root.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedParticleSourceRejection_Root monte_carlo_source_native geometry_root)
-  ADD_TEST(DistributedParticleSourceRejection_Root_test tstDistributedParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+  ADD_EXECUTABLE(tstStandardParticleSourceRejection_Root
+    tstStandardParticleSourceRejection_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardParticleSourceRejection_Root monte_carlo_source_native geometry_root)
+  ADD_TEST(StandardParticleSourceRejection_Root_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    ADD_TEST(SharedDistributedParticleSourceRejection_Root_2_test tstDistributedParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
-    ADD_TEST(SharedDistributedParticleSourceRejection_Root_4_test tstDistributedParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
+    ADD_TEST(SharedStandardParticleSourceRejection_Root_2_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
+    ADD_TEST(SharedStandardParticleSourceRejection_Root_4_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
   ENDIF()
 ENDIF()
 
-ADD_EXECUTABLE(tstCompoundDistributedParticleSource
-  tstCompoundDistributedParticleSource.cpp)
-TARGET_LINK_LIBRARIES(tstCompoundDistributedParticleSource monte_carlo_source_native)
-ADD_TEST(CompoundDistributedParticleSource_test tstCompoundDistributedParticleSource)
+ADD_EXECUTABLE(tstCompoundStandardParticleSource
+  tstCompoundStandardParticleSource.cpp)
+TARGET_LINK_LIBRARIES(tstCompoundStandardParticleSource monte_carlo_source_native)
+ADD_TEST(CompoundStandardParticleSource_test tstCompoundStandardParticleSource)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedCompoundDistributedParticleSource_2_test tstCompoundDistributedParticleSource --threads=2)
-  ADD_TEST(SharedCompoundDistributedParticleSource_4_test tstCompoundDistributedParticleSource --threads=4)
+  ADD_TEST(SharedCompoundStandardParticleSource_2_test tstCompoundStandardParticleSource --threads=2)
+  ADD_TEST(SharedCompoundStandardParticleSource_4_test tstCompoundStandardParticleSource --threads=4)
 ENDIF()
 
 ADD_EXECUTABLE(tstCachedStateParticleSource

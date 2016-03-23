@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DistributedParticleSource.hpp
+//! \file   MonteCarlo_StandardParticleSource.hpp
 //! \author Alex Robinson
-//! \brief  Distributed source class declaration.
+//! \brief  Standard source class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
-#define MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
+#ifndef MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
+#define MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -31,8 +31,8 @@
 
 namespace MonteCarlo{
 
-//! The distributed source class
-class DistributedParticleSource : public ParticleSource
+//! The standard source class
+class StandardParticleSource : public ParticleSource
 {
 
 private:
@@ -42,12 +42,9 @@ private:
 
 
 public:
-
-  //! Typedef for get particle location geometry module interface function
-  //typedef boost::function<Geometry::PointLocation (const Geometry::Ray&, const Geometry::ModuleTraits::InternalCellHandle)> PointLocationFunction;
   
   //! Constructor
-  DistributedParticleSource( 
+  StandardParticleSource( 
      const ModuleTraits::InternalSourceHandle id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
      const std::shared_ptr<Utility::DirectionalDistribution>& 
@@ -59,7 +56,7 @@ public:
      const ParticleType particle_type );
   
   //! Destructor
-  ~DistributedParticleSource()
+  ~StandardParticleSource()
   { /* ... */ }
 
   //! Enable thread support
@@ -189,7 +186,7 @@ private:
  * method.
  */
 template<typename PointLocationFunction>
-inline void DistributedParticleSource::setRejectionCell( 
+inline void StandardParticleSource::setRejectionCell( 
                         const Geometry::ModuleTraits::InternalCellHandle& cell,
                         PointLocationFunction location_function )
 {
@@ -207,8 +204,8 @@ inline void DistributedParticleSource::setRejectionCell(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_DISTRIBUTED_SOURCE_HPP
+#endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DistributedSource.hpp
+// end MonteCarlo_StandardParticleSource.hpp
 //---------------------------------------------------------------------------//

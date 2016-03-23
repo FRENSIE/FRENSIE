@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCompoundDistributedParticleSource.cpp
+//! \file   tstCompoundStandardParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Compound distributed particle source unit tests
 //!
@@ -24,8 +24,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_DistributedParticleSource.hpp"
-#include "MonteCarlo_CompoundDistributedParticleSource.hpp"
+#include "MonteCarlo_StandardParticleSource.hpp"
+#include "MonteCarlo_CompoundStandardParticleSource.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"
@@ -43,7 +43,7 @@ std::shared_ptr<MonteCarlo::ParticleSource> source;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, sampleParticleState )
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, sampleParticleState )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, sampleParticleState )
 
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, 
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, 
                    sampleParticleState_thread_safe )
 {
   source->resetData();
@@ -105,14 +105,14 @@ TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource,
 
 //---------------------------------------------------------------------------//
 // Check that the source data can be exported
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, exportData )
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, exportData )
 {
   
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of trials can be returned
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, getNumberOfTrials )
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfTrials )
 {
   source->resetData();
 
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, getNumberOfTrials )
 
 //---------------------------------------------------------------------------//
 // Check that the number of samples can be returned
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, getNumberOfSamples )
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfSamples )
 {
   source->resetData();
 
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, getNumberOfSamples )
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( CompoundDistributedParticleSource, getSamplingEfficiency )
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getSamplingEfficiency )
 {
   source->resetData();
   
@@ -247,8 +247,8 @@ int main( int argc, char** argv )
       source_2_energy_distribution( new Utility::DeltaDistribution( 14.1 ) );
   
     // Create the uniform spherical source
-    std::shared_ptr<MonteCarlo::DistributedParticleSource> spherical_source( 
-                                     new MonteCarlo::DistributedParticleSource(
+    std::shared_ptr<MonteCarlo::StandardParticleSource> spherical_source( 
+                                     new MonteCarlo::StandardParticleSource(
                                                  0u,
 	                                         source_1_spatial_distribution,
                                                  directional_distribution,
@@ -257,8 +257,8 @@ int main( int argc, char** argv )
                                                  MonteCarlo::PHOTON ) );
   
     // Create the point source
-    std::shared_ptr<MonteCarlo::DistributedParticleSource> point_source( 
-                                     new MonteCarlo::DistributedParticleSource(
+    std::shared_ptr<MonteCarlo::StandardParticleSource> point_source( 
+                                     new MonteCarlo::StandardParticleSource(
 	                                         1u,
                                                  source_2_spatial_distribution,
                                                  directional_distribution,
@@ -267,7 +267,7 @@ int main( int argc, char** argv )
                                                  MonteCarlo::NEUTRON ) );
     
 
-    Teuchos::Array<std::shared_ptr<MonteCarlo::DistributedParticleSource> > 
+    Teuchos::Array<std::shared_ptr<MonteCarlo::StandardParticleSource> > 
       sources( 2 );
     sources[0] = spherical_source;
     sources[1] = point_source;
@@ -277,7 +277,7 @@ int main( int argc, char** argv )
     source_weights[1] = 0.5;
     
     // Create the compound source
-    source.reset( new MonteCarlo::CompoundDistributedParticleSource( 
+    source.reset( new MonteCarlo::CompoundStandardParticleSource( 
                                                    sources, source_weights ) );
   }
 
@@ -301,6 +301,6 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCompoundDistributedParticleSource.cpp
+// end tstCompoundStandardParticleSource.cpp
 //---------------------------------------------------------------------------//
 

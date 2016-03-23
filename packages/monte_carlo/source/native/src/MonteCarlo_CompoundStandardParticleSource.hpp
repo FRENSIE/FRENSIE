@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_CompoundDistributedParticleSource.hpp
+//! \file   MonteCarlo_CompoundStandardParticleSource.hpp
 //! \author Alex Robinson
-//! \brief  Compound distributed particle source class declaration.
+//! \brief  Compound standard particle source class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_COMPOUND_DISTRIBUTED_PARTICLE_SOURCE_HPP
-#define MONTE_CARLO_COMPOUND_DISTRIBUTED_PARTICLE_SOURCE_HPP
+#ifndef MONTE_CARLO_COMPOUND_STANDARD_PARTICLE_SOURCE_HPP
+#define MONTE_CARLO_COMPOUND_STANDARD_PARTICLE_SOURCE_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_DistributedParticleSource.hpp"
+#include "MonteCarlo_StandardParticleSource.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -28,18 +28,18 @@ namespace MonteCarlo{
  * multiple locations). Each source will have an associated value that is used 
  * to sample the source that will be used for sampling a particle state.
  */
-class CompoundDistributedParticleSource : public ParticleSource
+class CompoundStandardParticleSource : public ParticleSource
 {
 
 public:
   
   //! Constructor
-  CompoundDistributedParticleSource( 
-    const Teuchos::Array<std::shared_ptr<DistributedParticleSource> >& sources,
+  CompoundStandardParticleSource( 
+    const Teuchos::Array<std::shared_ptr<StandardParticleSource> >& sources,
     const Teuchos::Array<double>& source_sampling_weights );
 
   //! Destructor
-  ~CompoundDistributedParticleSource()
+  ~CompoundStandardParticleSource()
   { /* ... */ }
   
   //! Enable thread support
@@ -76,15 +76,15 @@ public:
 private:
 
   // The sources (first = source, second = source weight CDF)
-  Teuchos::Array<Utility::Pair<std::shared_ptr<DistributedParticleSource>,double> > 
+  Teuchos::Array<Utility::Pair<std::shared_ptr<StandardParticleSource>,double> > 
   d_sources;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_COMPOUND_DISTRIBUTED_PARTICLE_SOURCE_HPP
+#endif // end MONTE_CARLO_COMPOUND_STANDARD_PARTICLE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CompoundDistributedParticleSource.hpp
+// end MonteCarlo_CompoundStandardParticleSource.hpp
 //---------------------------------------------------------------------------//
 

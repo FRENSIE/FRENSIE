@@ -67,42 +67,42 @@ private:
   // Validate the particle type name
   static void validateParticleTypeName( const std::string& particle_type_name);
 
-  // Create a distributed source
+  // Create a standard source
   template<typename GeometryHandler, typename SourceType>
   static double 
-  createDistributedSource(const Teuchos::ParameterList& source_rep,
-			  const ParticleModeType& particle_mode,
-			  std::shared_ptr<SourceType>& source,
-                          std::ostream& os_warn,
-			  const unsigned num_sources = 1u );
+  createStandardSource( const Teuchos::ParameterList& source_rep,
+                        const ParticleModeType& particle_mode,
+                        std::shared_ptr<SourceType>& source,
+                        std::ostream& os_warn,
+                        const unsigned num_sources = 1u );
 
-  // Create a state source
+  // Create a cached state source
   static void
-  createStateSource( const Teuchos::ParameterList& source_rep,
-		     const ParticleModeType& particle_mode,
-		     std::shared_ptr<ParticleSource>& source,
-                     std::ostream& os_warn );
+  createCachedStateSource( const Teuchos::ParameterList& source_rep,
+                           const ParticleModeType& particle_mode,
+                           std::shared_ptr<ParticleSource>& source,
+                           std::ostream& os_warn );
 
-  // Create a compound source
+  // Create a compound standard source
   template<typename GeometryHandler>
   static void
-  createCompoundSource( const Teuchos::ParameterList& compound_source,
-			const ParticleModeType& particle_mode,
-			std::shared_ptr<ParticleSource>& source,
-                        std::ostream& os_warn );
+  createCompoundStandardSource( const Teuchos::ParameterList& compound_source,
+                                const ParticleModeType& particle_mode,
+                                std::shared_ptr<ParticleSource>& source,
+                                std::ostream& os_warn );
 
   // The default time distribution
   static const std::shared_ptr<Utility::OneDDistribution> s_default_time_dist;
 };
 
 //! The invalid particle source representation error
-class InvalidParticleSourceRepresentation : public std::logic_error
+class InvalidParticleSourceRepresentation : public std::runtime_error
 {
   
 public:
 
   InvalidParticleSourceRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
+    : std::runtime_error( what_arg )
   { /* ... */ }
 };
 
