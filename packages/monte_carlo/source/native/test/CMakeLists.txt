@@ -87,12 +87,19 @@ IF(${FRENSIE_ENABLE_MPI})
   ADD_TEST(DistributedCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedCachedStateParticleSource)
 ENDIF()
 
-# IF(FRENSIE_ENABLE_DAGMC)
-#   ADD_EXECUTABLE(tstStandardParticleSourceFactory
-#     tstStandardParticleSourceFactory.cpp)
-#   TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory monte_carlo_source_native)
-#   ADD_TEST(StandardParticleSourceFactory_test tstStandardParticleSourceFactory --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
-# ENDIF()
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstStandardParticleSourceFactory_DagMC
+    tstStandardParticleSourceFactory_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_DagMC monte_carlo_source_native geometry_dagmc)
+  ADD_TEST(StandardParticleSourceFactory_DagMC_test tstStandardParticleSourceFactory_DagMC --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  ADD_EXECUTABLE(tstStandardParticleSourceFactory_Root
+    tstStandardParticleSourceFactory_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardParticleSourceFactory_Root monte_carlo_source_native geometry_root)
+  ADD_TEST(StandardParticleSourceFactory_Root_test tstStandardParticleSourceFactory_Root --test_simple_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_simple_source.xml" --test_complex_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_complex_source.xml" --test_compound_source_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_compound_source.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
+ENDIF()
 
 # IF(FRENSIE_ENABLE_DAGMC)
 #   ADD_EXECUTABLE(tstSourceModuleInterface_Native
