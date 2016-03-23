@@ -317,15 +317,6 @@ TEUCHOS_UNIT_TEST( StandardParticleSource,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the source data can be exported
-TEUCHOS_UNIT_TEST( StandardParticleSource, exportData )
-{
-  std::shared_ptr<MonteCarlo::ParticleSource> source;
-  
-  initializeSource( source, true );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the number of trials can be returned
 TEUCHOS_UNIT_TEST( StandardParticleSource, getNumberOfTrials )
 {
@@ -390,6 +381,15 @@ TEUCHOS_UNIT_TEST( StandardParticleSource, getSamplingEfficiency )
     source->sampleParticleState( bank, i );
 
   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the source data can be exported
+TEUCHOS_UNIT_TEST( StandardParticleSource, exportData )
+{
+  std::shared_ptr<MonteCarlo::ParticleSource> source;
+  
+  initializeSource( source, true );
 }
 
 //---------------------------------------------------------------------------//

@@ -10,6 +10,15 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedStandardParticleSource_4_test tstStandardParticleSource --threads=4)
 ENDIF()
 
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstDistributedStandardParticleSource
+  tstDistributedStandardParticleSource.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedStandardParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedStandardParticleSource)
+  ADD_TEST(DistributedStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedStandardParticleSource)
+  ADD_TEST(DistributedStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedStandardParticleSource)
+ENDIF()
+
 IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstStandardParticleSourceRejection_DagMC
     tstStandardParticleSourceRejection_DagMC.cpp)
@@ -44,6 +53,15 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedCompoundStandardParticleSource_4_test tstCompoundStandardParticleSource --threads=4)
 ENDIF()
 
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstDistributedCompoundStandardParticleSource
+  tstDistributedCompoundStandardParticleSource.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedCompoundStandardParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedCompoundStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedCompoundStandardParticleSource)
+  ADD_TEST(DistributedCompoundStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedCompoundStandardParticleSource)
+  ADD_TEST(DistributedCompoundStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedCompoundStandardParticleSource)
+ENDIF()
+
 ADD_EXECUTABLE(tstCachedStateParticleSource
   tstCachedStateParticleSource.cpp)
 TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
@@ -52,6 +70,15 @@ ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
   ADD_TEST(SharedCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstDistributedCachedStateParticleSource
+  tstDistributedCachedStateParticleSource.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedCachedStateParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedCachedStateParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedCachedStateParticleSource)
+  ADD_TEST(DistributedCachedStateParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedCachedStateParticleSource)
+  ADD_TEST(DistributedCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedCachedStateParticleSource)
 ENDIF()
 
 # IF(FRENSIE_ENABLE_DAGMC)

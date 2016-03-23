@@ -829,9 +829,16 @@ int main( int argc, char** argv )
 
   event_handler->addGlobalEventObserver( mesh_estimator );
 
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
+  // Run the unit tests
+  Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
+  
+  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
 
-  if (success)
+  mpiSession.barrier();
+
+  out->setOutputToRootOnly( 0 );
+
+  if( success )
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;
