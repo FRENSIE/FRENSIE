@@ -96,6 +96,14 @@ public:
 					  const unsigned long long history )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
+  //! Return the number of trials
+  static inline unsigned long long getNumberOfTrials()
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); return 0; }
+
+  //! Return the number of samples
+  static inline unsigned long long getNumberOfSamples()
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); return 0; }
+
   //! Return the sampling efficiency
   static inline double getSamplingEfficiency()
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); return 0; }

@@ -59,6 +59,12 @@ public:
   static void sampleParticleState( ParticleBank& bank,
 				   const unsigned long long history );
 
+  //! Return the number of trials
+  static unsigned long long getNumberOfTrials();
+
+  //! Return the number of samples
+  static unsigned long long getNumberOfSamples();
+
   //! Return the sampling efficiency
   static double getSamplingEfficiency();
 
@@ -131,6 +137,30 @@ inline void SourceModuleInterface<ParticleSource>::sampleParticleState(
   testPrecondition( s_source.get() );
   
   s_source->sampleParticleState( bank, history );
+}
+
+// Return the number of trials
+inline unsigned long long 
+SourceModuleInterface<ParticleSource>::getNumberOfTrials()
+{
+  // Make sure the source has been set
+  testPrecondition( s_source.get() );
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  s_source->getNumberOfTrials();
+}
+
+// Return the number of samples
+inline unsigned long long 
+SourceModuleInterface<ParticleSource>::getNumberOfSamples()
+{
+  // Make sure the source has been set
+  testPrecondition( s_source.get() );
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  s_source->getNumberOfSamples();
 }
 
 // Get the sampling efficiency
