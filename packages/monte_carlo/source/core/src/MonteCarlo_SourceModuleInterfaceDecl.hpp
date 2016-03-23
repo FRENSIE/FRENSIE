@@ -12,9 +12,14 @@
 // Std Lib Includes
 #include <memory>
 
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+#include <Teuchos_Comm.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_HDF5FileHandler.hpp"
 
 /*! \defgroup source_module Source Module
  * \ingroup physics_simulation_modules
@@ -67,6 +72,25 @@ public:
 			const std::shared_ptr<SourceHandler>& source_instance )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
+  //! Enable support for multiple threads
+  static inline void enableThreadSupport( const unsigned num_threads )
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
+
+  //! Reset the source data
+  static inline void resetSourceData()
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
+
+  //! Reduce the source data on all processes in comm and collect on the root
+  static inline void reduceSourceData(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
+
+  //! Export the source data
+  static inline void exportSourceData( 
+                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
+
   //! Sample a particle state (or possibly states)
   static inline void sampleParticleState( ParticleBank& bank,
 					  const unsigned long long history )
@@ -75,6 +99,10 @@ public:
   //! Return the sampling efficiency
   static inline double getSamplingEfficiency()
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); return 0; }
+
+  //! Print the source data
+  static inline void printSourceSummary( std::ostream& os )
+  { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 };
 
 //! Set the source handler instance

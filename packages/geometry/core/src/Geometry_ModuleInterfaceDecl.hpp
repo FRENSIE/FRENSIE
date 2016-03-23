@@ -65,6 +65,16 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+  
+  //! Check if a cell exists
+  static inline bool doesCellExist(
+                                  const ModuleTraits::InternalCellHandle cell )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Check if a surface exists
+  static inline bool doesSurfaceExist(
+                            const ModuleTraits::InternalSurfaceHandle surface )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   /*! Set the internal ray
    *

@@ -30,6 +30,7 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Utility_HDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -93,12 +94,13 @@ public:
 	    const int root_process );
 
   //! Export the observer data and process
-  void exportObserverData( const std::string& data_file_name,
-                           const unsigned long long last_history_number,
-                           const unsigned long long histories_completed,
-                           const double start_time,
-                           const double end_time,
-                           const bool process_data );
+  void exportObserverData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const unsigned long long last_history_number,
+                    const unsigned long long histories_completed,
+                    const double start_time,
+                    const double end_time,
+                    const bool process_data );
   
 private:
 

@@ -160,8 +160,13 @@ void DagMCInstanceFactory::initializeDagMC(
     DagMC::setCellCollisionFluxName( name );
   }
 
+  bool use_fast_id_lookup = false;
+
+  if( geom_rep.isParameter( "Use Fast Id Lookup" ) )
+     use_fast_id_lookup = geom_rep.get<bool>( "Use Fast Id Lookup" );
+
   // Initialize DagMC
-  DagMC::initialize( cad_file_name, facet_tol, os_warn );
+  DagMC::initialize( cad_file_name, facet_tol, use_fast_id_lookup, os_warn );
 
   // Print the unused parameters
   geom_rep.unused( os_warn );

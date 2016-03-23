@@ -38,6 +38,13 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads );
 
+  //! Check if a cell exists
+  static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Check if the surface exists
+  static bool doesSurfaceExist( 
+                        const ModuleTraits::InternalSurfaceHandle surface_id );
+
   //! Set the internal ray
   static void setInternalRay( 
                            const Ray& ray,
@@ -219,6 +226,26 @@ inline PointLocation ModuleInterface<DagMC>::getPointLocation(
   testPrecondition( DagMC::isInitialized() );
 
   return DagMC::getPointLocation( ray, cell );
+}
+
+// Check if a cell exists
+inline bool ModuleInterface<DagMC>::doesCellExist(
+                               const ModuleTraits::InternalCellHandle cell_id )
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( DagMC::isInitialized() );
+
+  return DagMC::doesCellExist( cell_id );
+}
+
+// Check if the surface exists
+inline bool ModuleInterface<DagMC>::doesSurfaceExist( 
+                         const ModuleTraits::InternalSurfaceHandle surface_id )
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( DagMC::isInitialized() );
+
+  return DagMC::doesSurfaceExist( surface_id );
 }
 
 } // end Geometry namespace

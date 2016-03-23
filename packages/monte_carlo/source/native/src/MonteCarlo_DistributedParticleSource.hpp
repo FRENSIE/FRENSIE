@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DistributedSource.hpp
+//! \file   MonteCarlo_DistributedParticleSource.hpp
 //! \author Alex Robinson
 //! \brief  Distributed source class declaration.
 //!
@@ -12,23 +12,27 @@
 // Std Lib Includes
 #include <memory>
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_Array.hpp>
 
 // MONTE_CARLO Includes
 #include "MonteCarlo_ParticleSource.hpp"
+#include "Geometry_ModuleTraits.hpp"
+#include "Geometry_PointLocation.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_SpatialDistribution.hpp"
 #include "Utility_DirectionalDistribution.hpp"
-#include "MonteCarlo_ParticleType.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
-#include "Geometry_ModuleTraits.hpp"
-#include "Geometry_PointLocation.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace MonteCarlo{
 
 //! The distributed source class
-class DistributedSource : public ParticleSource
+class DistributedParticleSource : public ParticleSource
 {
 
 private:
@@ -40,11 +44,11 @@ private:
 public:
 
   //! Typedef for get particle location geometry module interface function
-  typedef Geometry::PointLocation (*getLocationFunction)(const Geometry::Ray&, Geometry::ModuleTraits::InternalCellHandle );
+  //typedef boost::function<Geometry::PointLocation (const Geometry::Ray&, const Geometry::ModuleTraits::InternalCellHandle)> PointLocationFunction;
   
   //! Constructor
-  DistributedSource( 
-     const unsigned id,
+  DistributedParticleSource( 
+     const ModuleTraits::InternalSourceHandle id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
      const std::shared_ptr<Utility::DirectionalDistribution>& 
      directional_distribution,
@@ -52,12 +56,29 @@ public:
      energy_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& 
      time_distribution,
-     const ParticleType particle_type,
-     getLocationFunction get_particle_location_func );
+     const ParticleType particle_type );
   
   //! Destructor
-  ~DistributedSource()
+  ~DistributedParticleSource()
   { /* ... */ }
+
+  //! Enable thread support
+  void enableThreadSupport( const unsigned threads );
+
+  //! Reset the source data
+  void resetData();
+
+  //! Reduce the source data
+  void reduceData(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process );
+
+  //! Export the source data
+  void exportData( 
+            const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const;
+
+  //! Print a summary of the source data
+  void printSummary( std::ostream& os ) const;
 
   //! Set the spatial importance distribution
   void setSpatialImportanceDistribution( 
@@ -77,12 +98,19 @@ public:
 	 const std::shared_ptr<Utility::OneDDistribution>& time_distribution );
 
   //! Set the rejection cell
-  void setRejectionCell( 
-		      const Geometry::ModuleTraits::InternalCellHandle& cell );
+  template<typename PointLocationFunction>
+  void setRejectionCell(const Geometry::ModuleTraits::InternalCellHandle& cell,
+                        PointLocationFunction location_function );
 
   //! Sample a particle state from the source
   void sampleParticleState( ParticleBank& bank,
 			    const unsigned long long history );
+  
+  //! Return the number of sampling trials
+  unsigned long long getNumberOfTrials() const;
+
+  //! Return the number of samples
+  unsigned long long getNumberOfSamples() const;
 
   //! Get the sampling efficiency from the source distribution
   double getSamplingEfficiency() const;
@@ -103,6 +131,12 @@ private:
   
   // Sample the particle time
   void sampleParticleTime( ParticleState& particle );
+
+  // Reduce the local samples counters
+  unsigned long long reduceLocalSamplesCounters() const;
+
+  // Reduce the local trials counters
+  unsigned long long reduceLocalTrialsCounters() const;
 
   // The spatial distribution of the source 
   std::shared_ptr<Utility::SpatialDistribution> d_spatial_distribution;
@@ -136,18 +170,40 @@ private:
   // The type of particle emitted
   ParticleType d_particle_type;
 
-  // The cell handle of the cell used for rejection sampling of the position
-  Geometry::ModuleTraits::InternalCellHandle d_rejection_cell;
+  // The cell rejection functions
+  typedef boost::function<Geometry::PointLocation (const Geometry::Ray&)> CellRejectionFunction; 
+  Teuchos::Array<CellRejectionFunction> d_cell_rejection_functions;
 
   // The number of trials
-  unsigned d_number_of_trials;
+  Teuchos::Array<unsigned long long> d_number_of_trials;
 
   // The number of valid samples
-  unsigned d_number_of_samples;
-
-  // A pointer to the desired getParticleLocation geometry module function
-  getLocationFunction d_get_particle_location_func;
+  Teuchos::Array<unsigned long long> d_number_of_samples;
 };
+
+// Set a rejection cell
+/*! \details A rejection cell is used to determine if a sampled particle
+ * position should be kept or rejected. If the sampled point is inside of 
+ * one of the rejection cells, it is kept. This function can be used to 
+ * set multiple rejection cells. Only the master thread should call this
+ * method.
+ */
+template<typename PointLocationFunction>
+inline void DistributedParticleSource::setRejectionCell( 
+                        const Geometry::ModuleTraits::InternalCellHandle& cell,
+                        PointLocationFunction location_function )
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure the cell is valid
+  testPrecondition( cell != 
+                    Geometry::ModuleTraits::invalid_internal_cell_handle );
+  
+  CellRejectionFunction new_cell_rejection_function = 
+    boost::bind<Geometry::PointLocation>( location_function, _1, cell );
+
+  d_cell_rejection_functions.push_back( new_cell_rejection_function );
+}
 
 } // end MonteCarlo namespace
 

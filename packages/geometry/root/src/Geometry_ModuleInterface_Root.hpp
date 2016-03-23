@@ -44,6 +44,13 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads );
 
+  //! Check if a cell exists
+  static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
+
+  //! Check if the surface exists
+  static bool doesSurfaceExist( 
+                        const ModuleTraits::InternalSurfaceHandle surface_id );
+
   //! Set the internal ray
   static void setInternalRay( 
                            const Ray& ray, 
@@ -233,7 +240,33 @@ inline PointLocation ModuleInterface<Root>::getPointLocation(
                                   const Ray& ray,
 			          const ModuleTraits::InternalCellHandle cell )
 {
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( Root::isInitialized() );
+  
   return Root::getPointLocation( ray, cell );
+}
+
+// Check if a cell exists
+inline bool ModuleInterface<Root>::doesCellExist( 
+                               const ModuleTraits::InternalCellHandle cell_id )
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( Root::isInitialized() );
+  
+  return Root::doesCellExist( cell_id );
+}
+
+// Check if the surface exists
+/*! \details Root does not keep track of surfaces so this method will
+ * always return false.
+ */
+inline bool ModuleInterface<Root>::doesSurfaceExist( 
+                         const ModuleTraits::InternalSurfaceHandle surface_id )
+{
+  // Make sure the DagMC wrapper is initialized
+  testPrecondition( Root::isInitialized() );
+  
+  return false;
 }
 
 } // end Geometry namespace

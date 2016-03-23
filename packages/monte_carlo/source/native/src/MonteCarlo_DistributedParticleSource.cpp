@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DistributedSource.cpp
+//! \file   MonteCarlo_DistributedParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Distributed source class definition.
 //!
@@ -8,11 +8,20 @@
 
 // Std Lib Includes
 #include <limits>
+#include <numeric>
 
 // FRENSIE Includes
-#include "MonteCarlo_DistributedSource.hpp"
+#include "MonteCarlo_DistributedParticleSource.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "Utility_ContractException.hpp"
+#include "FRENSIE_mpi_config.hpp"
+
+// Trilinos Includes
+#include <Teuchos_GlobalMPISession.hpp>
+
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_CommHelpers.hpp>
+#endif
 
 namespace MonteCarlo{
 
@@ -24,7 +33,7 @@ namespace MonteCarlo{
  * used to calculate the necessary starting particle weight to keep the 
  * estimators unbiased.
  */
-DistributedSource::DistributedSource( 
+DistributedParticleSource::DistributedParticleSource( 
      const unsigned id,
      const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution,
      const std::shared_ptr<Utility::DirectionalDistribution>& 
@@ -33,8 +42,7 @@ DistributedSource::DistributedSource(
      energy_distribution,
      const std::shared_ptr<Utility::OneDDistribution>& 
      time_distribution,
-     const ParticleType particle_type,
-     getLocationFunction get_particle_location_func )
+     const ParticleType particle_type )
   : d_id( id ),
     d_spatial_distribution( spatial_distribution ),
     d_spatial_importance_distribution( NULL ),
@@ -45,10 +53,9 @@ DistributedSource::DistributedSource(
     d_time_distribution( time_distribution ),
     d_time_importance_distribution( NULL ),
     d_particle_type( particle_type ),
-    d_rejection_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-    d_number_of_trials( 0u ),
-    d_number_of_samples( 0u ),
-    d_get_particle_location_func( get_particle_location_func )
+    d_cell_rejection_functions(),
+    d_number_of_trials( 1, 0ull ),
+    d_number_of_samples( 1, 0ull )
 {
   // Make sure that the distributions have been set
   testPrecondition( spatial_distribution.get() );
@@ -57,14 +64,116 @@ DistributedSource::DistributedSource(
   testPrecondition( time_distribution.get() );
 }
 
+// Enable thread support
+/*! \details Only the master thread should call this method.
+ */
+void DistributedParticleSource::enableThreadSupport( const unsigned threads )
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure a valid number of threads has been requested
+  testPrecondition( threads > 0 );
+
+  d_number_of_trials.resize( threads, 0ull );
+  d_number_of_samples.resize( threads, 0ull );
+}
+
+// Reset the source data
+/*! \details Only the master thread should call this method.
+ */
+void DistributedParticleSource::resetData()
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  for( unsigned i = 0; i < d_number_of_trials.size(); ++i )
+  {
+    d_number_of_trials[i] = 0ull;
+    d_number_of_samples[i] = 0ull;
+  }
+}
+
+// Reduce the source data
+/*! \details Only the master thread should call this method.
+ */
+void DistributedParticleSource::reduceData(
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            const int root_process )
+{
+#ifdef HAVE_FRENSIE_MPI
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure the global MPI session has been initialized
+  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
+  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
+  // Make sure the communicator is valid
+  testPrecondition( !comm.is_null() );
+  testPrecondition( comm->getSize() > 1 );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
+  
+  try{
+    Teuchos::reduceAll<unsigned long long>( *comm,
+                                            Teuchos::REDUCE_SUM,
+                                            d_number_of_trials.size(),
+                                            d_number_of_trials.getRawPtr(),
+                                            d_number_of_trials.getRawPtr() );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: unable to reduce the source trials!" );
+
+  try{
+    Teuchos::reduceAll<unsigned long long>( *comm,
+                                            Teuchos::REDUCE_SUM,
+                                            d_number_of_samples.size(),
+                                            d_number_of_samples.getRawPtr(),
+                                            d_number_of_samples.getRawPtr() );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: unable to reduce the source samples!" );
+
+  // Reset the sampling data if not the root process
+  if( comm->getRank() != root_process )
+    this->resetData();
+#endif // end HAVE_FRENSIE_MPI
+}
+
+// Export the source data
+/*! \details Only the master thread should call this method.
+ */
+void DistributedParticleSource::exportData( 
+             const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+}
+
+// Print a summary of the source data
+/*! \details Only the master thread should call this method.
+ */
+void DistributedParticleSource::printSummary( std::ostream& os ) const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  this->printStandardSummary( "Distributed Source",
+                              this->getNumberOfTrials(),
+                              this->getNumberOfSamples(),
+                              this->getSamplingEfficiency(),
+                              os );
+}
+
 // Set the spatial importance distribution
 /*! \details The spatial importance distribution will be used to sample 
  * particle positions. The spatial distribution will only be used to determine
  * the necessary weight of the particle to prevent biasing the estimators.
+ * Only the master thread should call this method.
  */ 
-void DistributedSource::setSpatialImportanceDistribution(
+void DistributedParticleSource::setSpatialImportanceDistribution(
     const std::shared_ptr<Utility::SpatialDistribution>& spatial_distribution )
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure that the distribution has been set
   testPrecondition( spatial_distribution.get() );
   
@@ -75,12 +184,14 @@ void DistributedSource::setSpatialImportanceDistribution(
 /*! \details The directional importance distribution will be used to sample
  * particle positions. The directional distribution will only be used to 
  * determine the necessary weight of the particle to prevent biasing the 
- * estimators.
+ * estimators. Only the master thread should call this method.
  */ 
-void DistributedSource::setDirectionalImportanceDistribution( 
+void DistributedParticleSource::setDirectionalImportanceDistribution( 
                        const std::shared_ptr<Utility::DirectionalDistribution>&
 		       directional_distribution )
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure that the distribution has been set
   testPrecondition( directional_distribution.get() );
 
@@ -91,10 +202,13 @@ void DistributedSource::setDirectionalImportanceDistribution(
 /*! \details The energy importance distribution will be used to sample
  * particle positions. The energy distribution will only be used to determine
  * the necessary weight of the particle to prevent biasing the estimators.
+ * Only the master thread should call this method.
  */
-void DistributedSource::setEnergyImportanceDistribution(
+void DistributedParticleSource::setEnergyImportanceDistribution(
 	const std::shared_ptr<Utility::OneDDistribution>& energy_distribution )
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure that the distribution has been set
   testPrecondition( energy_distribution.get() );
 
@@ -105,26 +219,32 @@ void DistributedSource::setEnergyImportanceDistribution(
 /*! \details The time importance distribution will be used to sample
  * particle start times. The time distribution will only be used to determine
  * the necessary weight of the particle to prevent biasing the estimators.
+ * Only the master thread should call this method.
  */ 
-void DistributedSource::setTimeImportanceDistribution(
+void DistributedParticleSource::setTimeImportanceDistribution(
 	  const std::shared_ptr<Utility::OneDDistribution>& time_distribution )
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure that the distribution has been set
   testPrecondition( time_distribution.get() );
 
   d_time_importance_distribution = time_distribution;
 }
 
-void DistributedSource::setRejectionCell( 
-		       const Geometry::ModuleTraits::InternalCellHandle& cell )
-{
-  d_rejection_cell = cell;
-}
-
 // Sample the particle state from the source
-void DistributedSource::sampleParticleState( ParticleBank& bank,
+/*! \details If enableThreadSupport has been called, this method is 
+ * thread-safe. The cell that contains the sampled particle state will
+ * not be set and must be determined by the geometry module.
+ */
+void DistributedParticleSource::sampleParticleState( 
+                                             ParticleBank& bank,
 					     const unsigned long long history )
 {  
+  // Make sure thread support has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+                    d_number_of_samples.size() );
+  
   // Initialize the particle
   std::shared_ptr<ParticleState> particle;
   
@@ -151,14 +271,50 @@ void DistributedSource::sampleParticleState( ParticleBank& bank,
   bank.push( *particle );
 }
 
-// Get the sampling efficiency from the source distribution
-double DistributedSource::getSamplingEfficiency() const
+// Return the number of sampling trials
+/*! \details Only the master thread should call this method.
+ */
+unsigned long long DistributedParticleSource::getNumberOfTrials() const
 {
-  return static_cast<double>( d_number_of_samples )/d_number_of_trials;
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  return this->reduceLocalTrialsCounters();
+}
+
+// Return the number of samples
+/*! \details Only the master thread should call this method.
+ */
+unsigned long long DistributedParticleSource::getNumberOfSamples() const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+
+  return this->reduceLocalSamplesCounters();
+}
+
+// Get the sampling efficiency from the source distribution
+/*! \details Only the master thread should call this method.
+ */
+double DistributedParticleSource::getSamplingEfficiency() const
+{
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  // Reduce the number of samples
+  unsigned long long total_samples = this->reduceLocalSamplesCounters();
+
+  // Reduce the number of trials
+  unsigned long long total_trials = this->reduceLocalTrialsCounters();
+  
+  if( total_trials > 0ull )
+    return static_cast<double>( total_samples )/total_trials;
+  else
+    return 1.0;
 }
 
 // Get the source id
-unsigned DistributedSource::getId() const
+unsigned DistributedParticleSource::getId() const
 {
   return d_id;
 }
@@ -175,8 +331,12 @@ unsigned DistributedSource::getId() const
  * \note The particle direction must be sampled first in case cell rejection
  * sampling is done (which requires a particle direction to work effectively).
  */
-void DistributedSource::sampleParticlePosition( ParticleState& particle )
+void DistributedParticleSource::sampleParticlePosition( ParticleState& particle )
 {
+  // Make sure thread support has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() < 
+                    d_number_of_trials.size() );
+  
   double position[3];
   double position_weight = 1.0;
   
@@ -199,43 +359,51 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
 	position_weight = spatial_weight_numerator/spatial_weight_denominator;
     }
 
-    if( d_rejection_cell != 
-	Geometry::ModuleTraits::invalid_internal_cell_handle )
+    // Assign the position to the particle
+    particle.setPosition( position );
+
+    // Check if the position is acceptable
+    if( d_cell_rejection_functions.size() > 0 )
     {
-      Geometry::Ray ray( position, particle.getDirection() );
-            
-      Geometry::PointLocation location = (*d_get_particle_location_func)( 
-							    ray,
-							    d_rejection_cell );
+      bool valid_position = false;
       
-      if( location == Geometry::POINT_INSIDE_CELL )
-	break;
-      else
+      for( unsigned i = 0; i < d_cell_rejection_functions.size(); ++i )
+      {
+        Geometry::PointLocation location = 
+          d_cell_rejection_functions[i]( particle.ray() );
+        
+        if( location == Geometry::POINT_INSIDE_CELL )
+        {
+          valid_position = true;
+
+          break;
+        }
+      }
+
+      if( valid_position )
+        break;
+      else // Position rejected - sample a new one
       {
 	position_weight = 1.0;
 	
-	#pragma omp atomic update
-	++d_number_of_trials;
+        ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
       }
     }
-    // No rejection cell to test
+    // No rejection cells to test
     else
       break;
   }
+  
+  // Increment the number of trials and samples
+  ++d_number_of_trials[Utility::GlobalOpenMPSession::getThreadId()];
+
+  ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
 
   // Make sure the weight is valid
   testPostcondition( !ST::isnaninf( position_weight ) );
   testPostcondition( position_weight > 0.0 );
   
-  particle.setPosition( position );
   particle.multiplyWeight( position_weight );
-
-  // Increment the number of trials and samples
-  #pragma omp atomic update
-  ++d_number_of_trials;
-
-  #pragma omp atomic update
-  ++d_number_of_samples;
 }
 
 // Sample the particle direction
@@ -246,7 +414,7 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void DistributedSource::sampleParticleDirection( ParticleState& particle )
+void DistributedParticleSource::sampleParticleDirection( ParticleState& particle )
 {
   double direction[3];
   double direction_weight = 1.0;
@@ -288,7 +456,7 @@ void DistributedSource::sampleParticleDirection( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void DistributedSource::sampleParticleEnergy( ParticleState& particle )
+void DistributedParticleSource::sampleParticleEnergy( ParticleState& particle )
 {
   double energy;
   double energy_weight = 1.0;
@@ -326,7 +494,7 @@ void DistributedSource::sampleParticleEnergy( ParticleState& particle )
  * PDF value of the original function divided by the importance PDF value
  * corresponding to the sampled point.
  */
-void DistributedSource::sampleParticleTime( ParticleState& particle )
+void DistributedParticleSource::sampleParticleTime( ParticleState& particle )
 {
   
   double time;
@@ -357,8 +525,25 @@ void DistributedSource::sampleParticleTime( ParticleState& particle )
   particle.multiplyWeight( time_weight );
 }
 
+// Reduce the local samples counters
+unsigned long long 
+DistributedParticleSource::reduceLocalSamplesCounters() const
+{
+  return std::accumulate( d_number_of_samples.begin(),
+                          d_number_of_samples.end(),
+                          0ull );
+}
+
+// Reduce the local trials counters
+unsigned long long DistributedParticleSource::reduceLocalTrialsCounters() const
+{
+  return std::accumulate( d_number_of_trials.begin(),
+                          d_number_of_trials.end(),
+                          0ull );
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DistributedSource.cpp
+// end MonteCarlo_DistributedParticleSource.cpp
 //---------------------------------------------------------------------------//

@@ -10,13 +10,14 @@
 #define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_DEF_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_DistributedSource.hpp"
-#include "MonteCarlo_StateSource.hpp"
-#include "MonteCarlo_CompoundSource.hpp"
+#include "MonteCarlo_DistributedParticleSource.hpp"
+#include "MonteCarlo_CachedStateParticleSource.hpp"
+#include "MonteCarlo_CompoundDistributedParticleSource.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_SpatialDistributionFactory.hpp"
 #include "Utility_DirectionalDistributionFactory.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -27,7 +28,8 @@ template<typename GeometryHandler>
 std::shared_ptr<ParticleSource>
 ParticleSourceFactory::createSourceImpl( 
 				     const Teuchos::ParameterList& source_rep,
-		    		     const ParticleModeType& particle_mode )
+		    		     const ParticleModeType& particle_mode,
+                                     std::ostream& os_warn )
 {
   // Get the number of parameters in the list
   unsigned num_params = source_rep.numParams();
@@ -38,8 +40,18 @@ ParticleSourceFactory::createSourceImpl(
   
   while( param_iter != source_rep.end() )
   {
-    const Teuchos::ParameterList& sub_source = 
-      Teuchos::any_cast<Teuchos::ParameterList>( param_iter->second.getAny() );
+    const Teuchos::ParameterList sub_source;
+    
+    try{
+      sub_source = 
+        Teuchos::any_cast<Teuchos::ParameterList>( 
+                                                 param_iter->second.getAny() );
+    }
+     EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                                 InvalidParticleSourceRepresentation,
+                                 "Error: The source xml file is not valid! "
+                                 "The source definition must be a "
+                                 "ParameterList." );
     
     ParticleSourceFactory::validateSourceRep( sub_source, num_params );
     
@@ -57,33 +69,41 @@ ParticleSourceFactory::createSourceImpl(
     if( sub_source.isParameter( "Spatial Distribution" ) )
     {
       ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
-							            sub_source,
-								    particle_mode,	
-								    source );
+							         sub_source,
+                                                                 particle_mode,
+                                                                 source,
+                                                                 os_warn );
     }
     else
-      ParticleSourceFactory::createStateSource( sub_source, particle_mode, source );
+    {
+      ParticleSourceFactory::createStateSource( sub_source, 
+                                                particle_mode, 
+                                                source,
+                                                os_warn );
+    }
   }
   else
-    ParticleSourceFactory::createCompoundSource<GeometryHandler>( source_rep, 
-								  particle_mode,
-								  source );
+    ParticleSourceFactory::createCompoundSource<GeometryHandler>(source_rep, 
+								 particle_mode,
+                                                                 source,
+                                                                 os_warn );
   
   // Make sure the source has been created
   testPostcondition( source.get() );
 
   // Print out unused parameters
-  source_rep.unused( std::cout );
+  source_rep.unused( os_warn );
   
   return source;
 }
 
 // Create a distributed source
-template<typename GeometryHandler>
+template<typename GeometryHandler, typename SourceType>
 double ParticleSourceFactory::createDistributedSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      std::shared_ptr<ParticleSource>& source,
+				      std::shared_ptr<SourceType>& source,
+                                      std::ostream& os_warn,
 				      const unsigned num_sources )
 {
   // Extract the source id
@@ -153,44 +173,54 @@ double ParticleSourceFactory::createDistributedSource(
   }
   else // use the default time distribution
     time_distribution = s_default_time_dist;
-/*
-  // Extract the particle type
-  std::string particle_type_name = 
-    source_rep.get<std::string>( "Particle Type" );
-
-  ParticleSourceFactory::validateParticleTypeName( particle_type_name );
-*/
+ 
   ParticleType particle_type = getParticleType( source_rep, particle_mode );
-//    convertParticleTypeNameToParticleTypeEnum( particle_type_name );
   
   // Create the new source
-  std::shared_ptr<DistributedSource> source_tmp( new DistributedSource( 
-	     id,
-	     spatial_distribution,
-	     directional_distribution,
-	     energy_distribution,
-	     time_distribution,
-	     particle_type,
-	     &Geometry::ModuleInterface<GeometryHandler>::getPointLocation ) );
+  std::shared_ptr<DistributedParticleSource> source_tmp( 
+                                           new DistributedParticleSource( 
+                                                      id,
+                                                      spatial_distribution,
+	                                              directional_distribution,
+                                                      energy_distribution,
+                                                      time_distribution,
+                                                      particle_type ) );
 
   // Add optional importance functions
-  if( source_rep.isParameter( "Rejection Cell" ) )
+  if( source_rep.isParameter( "Rejection Cells" ) )
   {
-    int rejection_cell_id = 
-      source_rep.get<typename Geometry::ModuleInterface<GeometryHandler>::ExternalCellId>( "Rejection Cell" );
+    Utility::ArrayString& array_string =
+      source_rep.get<Utility::ArrayString>( "Rejection Cells" );
 
-    TEST_FOR_EXCEPTION( 
-		   !Geometry::ModuleInterface<GeometryHandler>::doesCellExist( 
-							   rejection_cell_id ),
-		   InvalidParticleSourceRepresentation,
-		   "Error: Rejection cell " << rejection_cell_id <<
-		   " does not exist!" );
+    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> rejection_cells;
+
+    try{
+      rejection_cells = array_string.getConcreteArray<Geometry::ModuleTraits::InternalCellHandle>();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+                                InvalidParticleSourceRepresentation,
+                                "Error: The rejection cells requested for "
+                                "distributed source " << id <<
+                                "in the xml file are not valid!" );
+
+    // Make sure the rejection cells exist
+    typedef Geometry::ModuleInterface<GeometryHandler> GMI;
     
-    Geometry::ModuleTraits::InternalCellHandle rejection_cell_internal = 
-      Geometry::ModuleInterface<GeometryHandler>::getInternalCellHandle( 
-						           rejection_cell_id );
+    for( unsigned i = 0; i < rejection_cells.size(); ++i )
+    {
+      TEST_FOR_EXCEPTION( !GMI::doesCellExist( rejection_cells[i] ),
+                          InvalidParticleSourceRepresentation,
+                          "Error: Rejection cell " << rejection_cells[i] <<
+                          " requested for distributed source " << id <<
+                          " does not exist!" );
+    }
 
-    source_tmp->setRejectionCell( rejection_cell_internal );
+    // Add the rejection cells
+    for( unsigned i = 0; i < rejection_cells.size(); ++i )
+    {
+      source_tmp->setRejectionCell( rejection_cells[i], 
+                                    GMI::getPointLocation );
+    }
   }
 
   if( source_rep.isParameter( "Spatial Importance Function" ) )
@@ -287,7 +317,7 @@ double ParticleSourceFactory::createDistributedSource(
   }
   
   // Set the return source
-  source = std::dynamic_pointer_cast<ParticleSource>( source_tmp );
+  source = source_tmp;
 
   double weight;
   // Return the weight of the source
@@ -297,7 +327,7 @@ double ParticleSourceFactory::createDistributedSource(
     weight = source_rep.get<double>( "Weight" );
 
   // Print out unused parameters
-  source_rep.unused( std::cout );
+  source_rep.unused( os_warn );
 
   return weight;
 }
@@ -307,12 +337,14 @@ template<typename GeometryHandler>
 void ParticleSourceFactory::createCompoundSource(
 				      const Teuchos::ParameterList& source_rep,
 			  	      const ParticleModeType& particle_mode,
-				      std::shared_ptr<ParticleSource>& source )
+				      std::shared_ptr<ParticleSource>& source,
+                                      std::ostream& os_warn )
 {
   unsigned num_sources = source_rep.numParams();
   unsigned source_index = 0u;
 
-  Teuchos::Array<std::shared_ptr<ParticleSource> > sources( num_sources );
+  Teuchos::Array<std::shared_ptr<DistributedParticleSource> > 
+    sources( num_sources );
   Teuchos::Array<double> source_weights( num_sources );
   
   Teuchos::ParameterList::ConstIterator param_iter = source_rep.begin();
@@ -322,31 +354,20 @@ void ParticleSourceFactory::createCompoundSource(
     const Teuchos::ParameterList& sub_source = 
       Teuchos::any_cast<Teuchos::ParameterList>( param_iter->second.getAny() );
     
-    if( sub_source.isParameter( "Spatial Distribution" ) )
-    {
-      source_weights[source_index] = 
-	ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
+    source_weights[source_index] = 
+      ParticleSourceFactory::createDistributedSource<GeometryHandler>( 
 							 sub_source,
 							 particle_mode,
 							 sources[source_index],
+                                                         os_warn,
 							 num_sources );
-    }
-    else
-    {
-      source_weights[source_index] = 
-	ParticleSourceFactory::createStateSource( sub_source,
-						  particle_mode,
-						  sources[source_index],
-						  num_sources );
-    }
-
     ++source_index;
     ++param_iter;
   }
   
-  source.reset( new CompoundSource( sources, source_weights ) );
+  source.reset( new CompoundDistributedParticleSource( 
+                                                   sources, source_weights ) );
 }
-
 
 } // end MonteCarlo namespace
 

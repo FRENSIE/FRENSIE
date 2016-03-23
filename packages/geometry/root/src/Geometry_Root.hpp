@@ -103,13 +103,13 @@ public:
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
-                             const double position[3],
-                             const ModuleTraits::InternalCellHandle& cell_id );
+                              const double position[3],
+                              const ModuleTraits::InternalCellHandle cell_id );
 
   //! Get the point location w.r.t. a given cell
   static PointLocation getPointLocation( 
-                             const Ray& ray,
-                             const ModuleTraits::InternalCellHandle& cell_id );
+                              const Ray& ray,
+                              const ModuleTraits::InternalCellHandle cell_id );
 
   //! Find the cell that contains the external ray
   static ModuleTraits::InternalCellHandle findCellContainingExternalRay( 
