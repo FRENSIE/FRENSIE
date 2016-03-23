@@ -269,14 +269,19 @@ int main( int argc, char** argv )
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  // out->setOutputToRootOnly( 0 );
-
+  
   mpiSession.barrier();
 
   // Run the unit tests
+  Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
+  
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
-  if (success)
+  mpiSession.barrier();
+
+  out->setOutputToRootOnly( 0 );
+
+  if( success )
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;

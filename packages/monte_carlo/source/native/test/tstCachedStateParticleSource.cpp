@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   tstStateSource.cpp
+//! \file   tstCachedStateParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Cached state particle source unit tests.
 //!

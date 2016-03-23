@@ -199,7 +199,10 @@ double CompoundStandardParticleSource::getSamplingEfficiency() const
   unsigned long long trials = this->getNumberOfTrials();
   unsigned long long samples = this->getNumberOfSamples();
 
-  return static_cast<double>( samples )/trials;
+  if( trials > 0ull )
+    return static_cast<double>( samples )/trials;
+  else
+    return 1.0;
 }
 
 } // end MonteCarlo namespace

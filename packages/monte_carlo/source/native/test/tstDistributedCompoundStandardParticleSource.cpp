@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCompoundStandardParticleSource.cpp
+//! \file   tstDistributedCompoundStandardParticleSource.cpp
 //! \author Alex Robinson
-//! \brief  Compound distributed particle source unit tests
+//! \brief  Compound distributed particle source parallel unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,7 +18,7 @@
 #include <Teuchos_UnitTestRepository.hpp>
 #include <Teuchos_GlobalMPISession.hpp>
 #include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_Ptr.hpp>
+#include <Teuchos_DefaultComm.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
@@ -26,7 +26,6 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_StandardParticleSource.hpp"
 #include "MonteCarlo_CompoundStandardParticleSource.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"
 #include "Utility_SphericalDirectionalDistribution.hpp"
@@ -44,136 +43,44 @@
 std::shared_ptr<MonteCarlo::ParticleSource> source;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// Tests
 //---------------------------------------------------------------------------//
-// Check that particle states can be sampled
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, sampleParticleState )
+// Check that the source data can be reduced
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, reduceData )
 {
   MonteCarlo::ParticleBank bank;
-  
-  source->sampleParticleState( bank, 0 );
 
-  TEST_ASSERT( bank.top().getParticleType() == MonteCarlo::PHOTON ||
-	       bank.top().getParticleType() == MonteCarlo::NEUTRON );
-  TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0 );
-  TEST_COMPARE( bank.top().getXPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top().getXPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top().getYPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top().getYPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top().getZPosition(), >=, -2.0 );
-  TEST_COMPARE( bank.top().getZPosition(), <=, 2.0 );
-  TEST_COMPARE( bank.top().getXDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top().getXDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top().getYDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top().getYDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top().getZDirection(), >=, -1.0 );
-  TEST_COMPARE( bank.top().getZDirection(), <=, 1.0 );
-  TEST_COMPARE( bank.top().getEnergy(), >=, 1e-3 );
-  TEST_ASSERT( bank.top().getEnergy() <= 1.0 ||
-	       bank.top().getEnergy() == 14.1 );
-  TEST_EQUALITY_CONST( bank.top().getTime(), 0.0 );
-  TEST_EQUALITY_CONST( bank.top().getWeight(), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that particle states can be sampled
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, 
-                   sampleParticleState_thread_safe )
-{
-  source->resetData();
-
-  unsigned threads = 
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
-  std::vector<MonteCarlo::ParticleBank> banks( threads );
-
-  source->enableThreadSupport( 
-                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-
-  // Create a sample for each thread
-  #pragma omp parallel num_threads( threads )
-  {
-    source->sampleParticleState( 
-                            banks[Utility::GlobalOpenMPSession::getThreadId()],
-                            Utility::GlobalOpenMPSession::getThreadId() );
-  }
-
-  // Splice all of the banks
-  MonteCarlo::ParticleBank combined_bank;
-  
-  for( unsigned i = 0; i < banks.size(); ++i )
-    combined_bank.splice( banks[i] );
-
-  TEST_EQUALITY_CONST( combined_bank.size(), threads );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the source data can be exported
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, exportData )
-{
-  
-}
-
-//---------------------------------------------------------------------------//
-// Check that the number of trials can be returned
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfTrials )
-{
-  source->resetData();
-
-  unsigned threads = 
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
-  // Create a sample for each thread
-  #pragma omp parallel num_threads( threads )
-  {
-    MonteCarlo::ParticleBank bank;
-    
-    source->sampleParticleState( bank, 
-                                 Utility::GlobalOpenMPSession::getThreadId() );
-  }
-
-  TEST_COMPARE( source->getNumberOfTrials(), >=, threads );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the number of samples can be returned
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfSamples )
-{
-  source->resetData();
-
-  unsigned threads = 
-    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
-  // Create a sample for each thread
-  #pragma omp parallel num_threads( threads )
-  {
-    MonteCarlo::ParticleBank bank;
-    
-    source->sampleParticleState( bank, 
-                                 Utility::GlobalOpenMPSession::getThreadId() );
-  }
-
-  TEST_EQUALITY_CONST( source->getNumberOfSamples(), threads );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getSamplingEfficiency )
-{
-  source->resetData();
-  
-  MonteCarlo::ParticleBank bank;
-  
-  // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
-    source->sampleParticleState( bank, i );
+  {
+    source->sampleParticleState( bank, 
+                                 Teuchos::GlobalMPISession::getRank()*10+i );
+  }
 
-  // Theoretical efficiency: eff_a*eff_b/(p_a*eff_b+p_b*eff_a)
-  // eff_a = (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552
-  TEST_COMPARE( source->getSamplingEfficiency(), >, 0.0 );
-  TEST_COMPARE( source->getSamplingEfficiency(), <=, 1.0 );
+  TEST_EQUALITY_CONST( source->getNumberOfTrials(), 10 );
+  TEST_EQUALITY_CONST( source->getNumberOfSamples(), 10 );
+  TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-  source->printSummary( std::cout );
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+    Teuchos::DefaultComm<unsigned long long>::getComm();
+  
+  comm->barrier();
+
+  source->reduceData( comm, 0 );
+
+  // Check that the source data has been gathered on the root process
+  if( comm->getRank() == 0 )
+  {
+    TEST_EQUALITY_CONST( source->getNumberOfTrials(), comm->getSize()*10 );
+    TEST_EQUALITY_CONST( source->getNumberOfSamples(), comm->getSize()*10 );
+    TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
+  }
+  // Check that the source data on the non-root processes has been reset
+  else
+  {
+    TEST_EQUALITY_CONST( source->getNumberOfTrials(), 0 );
+    TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0 );
+    TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -182,12 +89,6 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getSamplingEfficiency )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  int threads = 1;
-
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -201,6 +102,10 @@ int main( int argc, char** argv )
   }
   
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
+
+  mpiSession.barrier();
 
   // Initialize the source
   {
@@ -285,16 +190,19 @@ int main( int argc, char** argv )
                                                    sources, source_weights ) );
   }
 
-  // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
   
-  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
+  // Run the unit tests
+  Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
+  
+  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
 
-  if (success)
+  mpiSession.barrier();
+
+  out->setOutputToRootOnly( 0 );
+
+  if( success )
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;
@@ -305,6 +213,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCompoundStandardParticleSource.cpp
+// end tstDistributedCompoundStandardParticleSource.cpp
 //---------------------------------------------------------------------------//
-

@@ -103,12 +103,8 @@ void StandardParticleSource::reduceData(
 #ifdef HAVE_FRENSIE_MPI
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );
-  testPrecondition( comm->getSize() > 1 );
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
   
