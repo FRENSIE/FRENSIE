@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CompoundDistributedParticleSource.cpp
+//! \file   MonteCarlo_CompoundStandardParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Compound source class definition.
 //!
@@ -11,7 +11,7 @@
 #include <sstream>
 
 // FRENSIE Includes
-#include "MonteCarlo_CompoundDistributedParticleSource.hpp"
+#include "MonteCarlo_CompoundStandardParticleSource.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -20,8 +20,8 @@
 namespace MonteCarlo{
 
 // Constructor
-CompoundDistributedParticleSource::CompoundDistributedParticleSource( 
-    const Teuchos::Array<std::shared_ptr<DistributedParticleSource> >& sources,
+CompoundStandardParticleSource::CompoundStandardParticleSource( 
+    const Teuchos::Array<std::shared_ptr<StandardParticleSource> >& sources,
     const Teuchos::Array<double>& source_sampling_weights )
   : d_sources( sources.size() )
 {
@@ -50,7 +50,7 @@ CompoundDistributedParticleSource::CompoundDistributedParticleSource(
 // Enable thread support
 /*! \details Only the master thread should call this method
  */
-void CompoundDistributedParticleSource::enableThreadSupport( 
+void CompoundStandardParticleSource::enableThreadSupport( 
                                                        const unsigned threads )
 {
   // Make sure only the root process calls this function
@@ -65,7 +65,7 @@ void CompoundDistributedParticleSource::enableThreadSupport(
 // Reset the source data
 /*! \details Only the master thread should call this method
  */
-void CompoundDistributedParticleSource::resetData()
+void CompoundStandardParticleSource::resetData()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -77,7 +77,7 @@ void CompoundDistributedParticleSource::resetData()
 // Reduce the source data
 /*! \details Only the master thread should call this method.
  */
-void CompoundDistributedParticleSource::reduceData(
+void CompoundStandardParticleSource::reduceData(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
 {
@@ -91,7 +91,7 @@ void CompoundDistributedParticleSource::reduceData(
 // Export the source data
 /*! \details Only the master thread should call this method.
  */
-void CompoundDistributedParticleSource::exportData(
+void CompoundStandardParticleSource::exportData(
              const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file ) const
 {
   // Make sure only the root process calls this function
@@ -104,13 +104,13 @@ void CompoundDistributedParticleSource::exportData(
 // Print a summary of the source data
 /*! \details Only the master thread should call this method.
  */
-void CompoundDistributedParticleSource::printSummary( std::ostream& os ) const
+void CompoundStandardParticleSource::printSummary( std::ostream& os ) const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
 
   // Print the compound source summary
-  this->printStandardSummary( "Compound Distributed Source",
+  this->printStandardSummary( "Compound Standard Source",
                               this->getNumberOfTrials(),
                               this->getNumberOfSamples(),
                               this->getSamplingEfficiency(),
@@ -120,7 +120,7 @@ void CompoundDistributedParticleSource::printSummary( std::ostream& os ) const
   for( unsigned i = 0; i < d_sources.size(); ++i )
   {
     std::ostringstream oss;
-    oss << "Distributed Source " << d_sources[i].first->getId();
+    oss << "Standard Source " << d_sources[i].first->getId();
     
     // Print the compound source summary
     this->printStandardSummary( oss.str(),
@@ -136,7 +136,7 @@ void CompoundDistributedParticleSource::printSummary( std::ostream& os ) const
  * thread-safe. The cell that contains the sampled particle state will
  * not be set and must be determined by the geometry module.
  */
-void CompoundDistributedParticleSource::sampleParticleState( 
+void CompoundStandardParticleSource::sampleParticleState( 
                                           ParticleBank& bank,
                                           const unsigned long long history )
 {
@@ -144,7 +144,7 @@ void CompoundDistributedParticleSource::sampleParticleState(
     Utility::RandomNumberGenerator::getRandomNumber<double>();
   
   // Sample the source that will be sampled from
-  Teuchos::Array<Utility::Pair<std::shared_ptr<DistributedParticleSource>,
+  Teuchos::Array<Utility::Pair<std::shared_ptr<StandardParticleSource>,
 			       double> >::iterator
     selected_source = Utility::Search::binaryUpperBound<Utility::SECOND>( 
 							d_sources.begin(),
@@ -157,7 +157,7 @@ void CompoundDistributedParticleSource::sampleParticleState(
 // Return the number of sampling trials
 /*! \details Only the master thread should call this method.
  */
-unsigned long long CompoundDistributedParticleSource::getNumberOfTrials() const
+unsigned long long CompoundStandardParticleSource::getNumberOfTrials() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -174,7 +174,7 @@ unsigned long long CompoundDistributedParticleSource::getNumberOfTrials() const
 /*! \details Only the master thread should call this method.
  */
 unsigned long long 
-CompoundDistributedParticleSource::getNumberOfSamples() const
+CompoundStandardParticleSource::getNumberOfSamples() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -190,7 +190,7 @@ CompoundDistributedParticleSource::getNumberOfSamples() const
 // Return the sampling efficiency from the source
 /*! \details Only the master thread should call this method.
  */
-double CompoundDistributedParticleSource::getSamplingEfficiency() const
+double CompoundStandardParticleSource::getSamplingEfficiency() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
@@ -205,5 +205,5 @@ double CompoundDistributedParticleSource::getSamplingEfficiency() const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CompoundDistributedParticleSource.cpp
+// end MonteCarlo_CompoundStandardParticleSource.cpp
 //---------------------------------------------------------------------------//

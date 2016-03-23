@@ -141,7 +141,7 @@ ParticleType ParticleSourceFactory::getParticleType(
 }
 
 // Create a state source
-void ParticleSourceFactory::createStateSource( 
+void ParticleSourceFactory::createCachedStateSource( 
 				      const Teuchos::ParameterList& source_rep,
                                       const ParticleModeType& particle_mode,
                                       std::shared_ptr<ParticleSource>& source,

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDistributedParticleSourceRejection_Root.cpp
+//! \file   tstStandardParticleSourceRejection_DagMC.cpp
 //! \author Alex Robinson
-//! \brief  Distributed particle source with cell rejection unit tests
+//! \brief  Standard particle source with cell rejection unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,9 +21,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
-#include "MonteCarlo_DistributedParticleSource.hpp"
-#include "Geometry_RootInstanceFactory.hpp"
-#include "Geometry_ModuleInterface_Root.hpp"
+#include "MonteCarlo_StandardParticleSource.hpp"
+#include "Geometry_DagMCInstanceFactory.hpp"
+#include "Geometry_ModuleInterface_DagMC.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
@@ -81,7 +81,7 @@ void initializeSource( std::shared_ptr<ParticleSourceType>& source,
     time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
   // Create the distributed source
-  source.reset( new MonteCarlo::DistributedParticleSource( 
+  source.reset( new MonteCarlo::StandardParticleSource( 
                                                       0u,
                                                       spatial_distribution,
                                                       directional_distribution,
@@ -91,12 +91,12 @@ void initializeSource( std::shared_ptr<ParticleSourceType>& source,
 
   // Set the rejection cell
   {
-    std::shared_ptr<MonteCarlo::DistributedParticleSource> distributed_source =
-      std::dynamic_pointer_cast<MonteCarlo::DistributedParticleSource>(source);
+    std::shared_ptr<MonteCarlo::StandardParticleSource> distributed_source =
+      std::dynamic_pointer_cast<MonteCarlo::StandardParticleSource>(source);
 
     // Cell (id=2) of the test geometry will be used as the rejection cell
     distributed_source->setRejectionCell( 
-            2, &Geometry::ModuleInterface<Geometry::Root>::getPointLocation );
+            2, &Geometry::ModuleInterface<Geometry::DagMC>::getPointLocation );
   }
 
   // Set the importance functions if requested
@@ -149,8 +149,8 @@ void initializeSource( std::shared_ptr<ParticleSourceType>& source,
 								bin_boundaries,
 								bin_values ) );
     
-    std::shared_ptr<MonteCarlo::DistributedParticleSource> 
-      distributed_source = std::dynamic_pointer_cast<MonteCarlo::DistributedParticleSource>( source );
+    std::shared_ptr<MonteCarlo::StandardParticleSource> 
+      distributed_source = std::dynamic_pointer_cast<MonteCarlo::StandardParticleSource>( source );
 									     
     distributed_source->setSpatialImportanceDistribution( 
 					     spatial_importance_distribution );
@@ -166,7 +166,7 @@ void initializeSource( std::shared_ptr<ParticleSourceType>& source,
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled (no importance functions,
 // rejection cell )
-TEUCHOS_UNIT_TEST( DistributedParticleSource,
+TEUCHOS_UNIT_TEST( StandardParticleSource,
                    sampleParticleState_no_importance_reject )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
@@ -201,7 +201,7 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource,
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled (no importance functions,
 // rejection cell )
-TEUCHOS_UNIT_TEST( DistributedParticleSource,
+TEUCHOS_UNIT_TEST( StandardParticleSource,
                    sampleParticleState_no_importance_reject_thread_safe )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
@@ -236,7 +236,7 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource,
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled (importance functions, no 
 // rejection cells )
-TEUCHOS_UNIT_TEST( DistributedParticleSource,
+TEUCHOS_UNIT_TEST( StandardParticleSource,
                    sampleParticleState_importance_reject )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
@@ -281,7 +281,7 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource,
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled (importance functions, no 
 // rejection cells )
-TEUCHOS_UNIT_TEST( DistributedParticleSource,
+TEUCHOS_UNIT_TEST( StandardParticleSource,
                    sampleParticleState_importance_reject_thread_safe )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
@@ -315,7 +315,7 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource,
 
 //---------------------------------------------------------------------------//
 // Check that the number of trials can be returned
-TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfTrials )
+TEUCHOS_UNIT_TEST( StandardParticleSource, getNumberOfTrials )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
   
@@ -340,7 +340,7 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfTrials )
 
 //---------------------------------------------------------------------------//
 // Check that the number of samples can be returned
-TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfSamples )
+TEUCHOS_UNIT_TEST( StandardParticleSource, getNumberOfSamples )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
   
@@ -365,12 +365,12 @@ TEUCHOS_UNIT_TEST( DistributedParticleSource, getNumberOfSamples )
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( DistributedSource, getSamplingEfficiency )
+TEUCHOS_UNIT_TEST( StandardSource, getSamplingEfficiency )
 {
   std::shared_ptr<MonteCarlo::ParticleSource> source;
   
   initializeSource( source, false );
-  
+
   unsigned threads = 
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
   
@@ -411,7 +411,7 @@ int main( int argc, char** argv )
 
   clp.setOption( "test_geom_xml_file",
 		 &test_geometry_xml_file_name,
-                 "Test Root geom xml file name" );
+                 "Test DagMC geom xml file name" );
 
   clp.setOption( "threads",
 		 &threads,
@@ -437,11 +437,11 @@ int main( int argc, char** argv )
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 
-  // Initialize Root
+  // Initialize DagMC
   Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
     Teuchos::getParametersFromXmlFile( test_geometry_xml_file_name );
 
-  Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
+  Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
   
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
@@ -456,5 +456,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstDistrutedParticleSourceRejection_Root.cpp
+// end tstDistrutedParticleSourceRejection_DagMC.cpp
 //---------------------------------------------------------------------------//
