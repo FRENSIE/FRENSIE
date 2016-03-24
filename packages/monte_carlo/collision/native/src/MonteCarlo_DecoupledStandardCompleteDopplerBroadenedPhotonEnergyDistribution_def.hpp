@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -168,7 +168,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   double abs_error, diff_cs;
 
-  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+  Utility::GaussKronrodIntegrator quadrature_set( precision );
 
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
                                           0.0,

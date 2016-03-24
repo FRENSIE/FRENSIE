@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -135,7 +135,7 @@ double StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
   
   const double binding_energy = this->getSubshellBindingEnergy();
 
-  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+  Utility::GaussKronrodIntegrator quadrature_set( precision );
 
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
                                           0.0,

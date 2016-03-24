@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution_def.hpp
+//! \file   MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The Waller-Hartree adjoint incoherent photon scattering dist. def.
 //!
@@ -14,29 +14,25 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "Utility_InverseLengthConversionPolicy.hpp"
+#include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::WHIncoherentAdjointPhotonScatteringDistribution(
+WHIncoherentAdjointPhotonScatteringDistribution::WHIncoherentAdjointPhotonScatteringDistribution(
      const double max_energy,
      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
   : IncoherentAdjointPhotonScatteringDistribution( max_energy ),
     d_scattering_function( scattering_function )
 {
-  // Make sure the unit conversion policy is valid
-  testStaticPrecondition( (boost::is_same<typename ScatteringFunctionArgUnitConversionPolicy::Dimension,Utility::InverseLengthDimension>::value) );
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
 }
 
 // Evaluate the distribution
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluate( 
+double WHIncoherentAdjointPhotonScatteringDistribution::evaluate( 
 				   const double incoming_energy,
 				   const double max_energy,
 				   const double scattering_angle_cosine ) const
@@ -64,8 +60,7 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 }
 
 // Evaluate the integrated cross section (b)
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateIntegratedCrossSection( 
+double WHIncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
 						 const double incoming_energy,
 						 const double max_energy,
 						 const double precision ) const
@@ -105,8 +100,7 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 /*! \details This function will only sample an adjoint Compton line energy (no
  * Doppler broadening).
  */ 
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::sample( 
+void WHIncoherentAdjointPhotonScatteringDistribution::sample( 
 					const double incoming_energy,
 					double& outgoing_energy,
 					double& scattering_angle_cosine ) const
@@ -127,8 +121,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
 /*! \details This function will only sample an adjoint Compton line energy (no
  * Doppler broadening).
  */ 
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::sampleAndRecordTrials( 
+void WHIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrials( 
 					       const double incoming_energy,
 					       double& outgoing_energy,
 					       double& scattering_angle_cosine,
@@ -172,8 +165,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::scatterAdjointPhoton( 
+void WHIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton( 
 				     AdjointPhotonState& adjoint_photon,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
@@ -204,8 +196,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
  * the scattering angle cosine is 1.0, the scattering window upper bound must
  * exclude the energy of interest.
  */
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::isEnergyAboveScatteringWindow( 
+bool WHIncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow( 
 				            const double energy_of_interest,
 				            const double initial_energy ) const
 {
@@ -218,8 +209,7 @@ bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
 }
 
 // Evaluate the scattering function
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateScatteringFunction(
+inline double WHIncoherentAdjointPhotonScatteringDistribution::evaluateScatteringFunction(
 				   const double incoming_energy,
 				   const double max_energy,
 				   const double scattering_angle_cosine ) const
@@ -247,9 +237,6 @@ inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunction
   double scattering_function_arg = 
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
 
-  ScatteringFunctionArgUnitConversionPolicy::convertFromNativeUnits( 
-						     scattering_function_arg );
-
   if( scattering_function_arg >=
       d_scattering_function->getUpperBoundOfIndepVar() )
     scattering_function_arg = d_scattering_function->getUpperBoundOfIndepVar();
@@ -264,8 +251,7 @@ inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunction
 }
 
 // Evaluate the scattering function
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateScatteringFunction(
+inline double WHIncoherentAdjointPhotonScatteringDistribution::evaluateScatteringFunction(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
