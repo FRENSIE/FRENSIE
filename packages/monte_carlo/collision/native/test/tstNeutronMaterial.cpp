@@ -40,7 +40,7 @@ void initializeSolidHydrogen()
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
   
-  boost::unordered_set<std::string> nuclide_aliases;
+  std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
 
   MonteCarlo::NuclideFactory nuclide_factory(test_cross_sections_xml_directory,
@@ -49,7 +49,7 @@ void initializeSolidHydrogen()
 					     false,
 					     false );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
     nuclide_map;
 
   nuclide_factory.createNuclideMap( nuclide_map );

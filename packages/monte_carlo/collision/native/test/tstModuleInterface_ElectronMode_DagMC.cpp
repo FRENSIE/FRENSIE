@@ -304,7 +304,7 @@ int main( int argc, char** argv )
     Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
 					  Teuchos::inoutArg(material_reps) );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+    MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::DagMC>()->initializeHandler( 
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );

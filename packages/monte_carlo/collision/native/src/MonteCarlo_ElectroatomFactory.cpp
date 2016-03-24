@@ -22,7 +22,7 @@ namespace MonteCarlo{
 ElectroatomFactory::ElectroatomFactory(
 		  const std::string& cross_sections_xml_directory,
 		  const Teuchos::ParameterList& cross_section_table_info,
-		  const boost::unordered_set<std::string>& electroatom_aliases,
+		  const std::unordered_set<std::string>& electroatom_aliases,
 		  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		  atomic_relaxation_model_factory,
 		  const BremsstrahlungAngularDistributionType 
@@ -35,7 +35,7 @@ ElectroatomFactory::ElectroatomFactory(
   testPrecondition( os_message != NULL );
   
   // Create each electroatom in the set
-  boost::unordered_set<std::string>::const_iterator electroatom_name = 
+  std::unordered_set<std::string>::const_iterator electroatom_name = 
     electroatom_aliases.begin();
 
   while( electroatom_name != electroatom_aliases.end() )
@@ -88,7 +88,7 @@ ElectroatomFactory::ElectroatomFactory(
 
 // Create the map of electroatoms
 void ElectroatomFactory::createElectroatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
 		    electroatom_map ) const
 {
   // Reset the electroatom map
