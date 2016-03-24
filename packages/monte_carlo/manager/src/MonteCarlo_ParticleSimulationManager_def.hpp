@@ -194,7 +194,7 @@ void ParticleSimulationManager<GeometryHandler,
 	// Determine the starting cell of the particle
 	for( unsigned i = 0; i < bank.size(); ++i )
 	{
-	  typename GMI::InternalCellHandle start_cell;
+          Geometry::ModuleTraits::InternalCellHandle start_cell;
 	  
 	  try{
 	    start_cell = GMI::findCellContainingStartRay( bank.top().ray() );
@@ -281,7 +281,7 @@ void ParticleSimulationManager<GeometryHandler,
     particle.setAsGone();
 
   // Set the ray
-  GMI::setInternalRay( particle.getRay(), particle.getCell() );
+  GMI::setInternalRay( particle.ray(), particle.getCell() );
   
   while( !particle.isLost() && !particle.isGone() )
   {
@@ -333,7 +333,7 @@ void ParticleSimulationManager<GeometryHandler,
         // Advance the ray to the cell boundary
         // Note: this is done after so that the particle direction is not
         // altered before the estimators are updated
-        bool reflected = GMI::advanceRayToCellBoundary(
+        bool reflected = GMI::advanceInternalRayToCellBoundary(
                                                   surface_normal.getRawPtr() );
 
         // Update the observers: particle crossing surface event
@@ -388,7 +388,7 @@ void ParticleSimulationManager<GeometryHandler,
 	
   	particle.advance( distance_to_collision );
 
-        GMI::advanceRayBySubstep( distance_to_collision );
+        GMI::advanceInternalRayBySubstep( distance_to_collision );
 
 	// Update the observers: particle subtrack ending in cell event
         EMI::updateObserversFromParticleSubtrackEndingInCellEvent(

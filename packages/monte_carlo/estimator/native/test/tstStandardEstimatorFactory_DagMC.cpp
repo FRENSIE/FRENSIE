@@ -17,16 +17,12 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_EventHandler.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
-#include "Geometry_ModuleInterface.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 
 //---------------------------------------------------------------------------//
@@ -48,7 +44,7 @@ std::shared_ptr<MonteCarlo::EstimatorFactory> estimator_factory;
 TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, constructor )
 {
   TEST_NOTHROW( estimator_factory = 
-                MonteCarlo::getEstimatorFactoryInstance<moab::DagMC>(
+                MonteCarlo::getEstimatorFactoryInstance<Geometry::DagMC>(
                                                   event_handler,
                                                   response_function_id_map ) );
   
@@ -108,17 +104,25 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   // Check that all of the estimators got created
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 11 );
 
-  event_handler->exportObserverData( "estimator_factory_dagmc_partial.h5",
-                                     1,
-                                     1,
-                                     0.0,
-                                     1.0,
-                                     false );
+  std::string estimator_file_name( "estimator_factory_dagmc_partial.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+    
+    event_handler->exportObserverData( hdf5_file,
+                                       1,
+                                       1,
+                                       0.0,
+                                       1.0,
+                                       false );
+  }
 
   // Initialize the hdf5 file
   std::shared_ptr<Utility::HDF5FileHandler> 
     hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndReadOnly( "estimator_factory_dagmc_partial.h5" );
+  hdf5_file->openHDF5FileAndReadOnly( estimator_file_name );
 
   // Create an estimator hdf5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
@@ -484,17 +488,25 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC,
   // Check that all of the estimators got created
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 17 );
 
-  event_handler->exportObserverData( "estimator_factory_dagmc_full.h5",
-                                     1,
-                                     1,
-                                     0.0,
-                                     1.0,
-                                     false );
+  std::string estimator_file_name( "estimator_factory_dagmc_full.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+
+    event_handler->exportObserverData( hdf5_file,
+                                       1,
+                                       1,
+                                       0.0,
+                                       1.0,
+                                       false );
+  }
 
   // Initialize the hdf5 file
   std::shared_ptr<Utility::HDF5FileHandler> 
     hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndReadOnly( "estimator_factory_dagmc_full.h5" );
+  hdf5_file->openHDF5FileAndReadOnly( estimator_file_name );
 
   // Create an estimator hdf5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
@@ -705,8 +717,6 @@ int main( int argc, char** argv )
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
-
-  Geometry::ModuleInterface<moab::DagMC>::initialize();
 
   // Load the observer parameter lists
   observer_reps = 

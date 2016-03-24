@@ -46,6 +46,30 @@ private:
   // Constructor
   ParticleSimulationManagerFactory();
 
+  // create the handler using DagMC
+  static std::shared_ptr<SimulationManager> createManagerWithDagMC( 
+            const Teuchos::ParameterList& geom_def,
+            const Teuchos::ParameterList& source_def,
+            const Teuchos::ParameterList& response_def,
+            const Teuchos::ParameterList& observer_def,
+            const Teuchos::ParameterList& material_def,
+            const Teuchos::ParameterList& cross_sections_table_info,
+            const std::string& cross_sections_xml_directory,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            std::ostream* os_warn );
+
+  // Initialize the modules with Root
+  static std::shared_ptr<SimulationManager> createManagerWithRoot(
+            const Teuchos::ParameterList& geom_def,
+            const Teuchos::ParameterList& source_def,
+            const Teuchos::ParameterList& response_def,
+            const Teuchos::ParameterList& observer_def,
+            const Teuchos::ParameterList& material_def,
+            const Teuchos::ParameterList& cross_sections_table_info,
+            const std::string& cross_sections_xml_directory,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            std::ostream* os_warn );
+
   // Initialize the non-geometry modules
   template<typename GeometryHandler>
   static void initializeNonGeometryModules( 

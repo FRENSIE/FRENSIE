@@ -659,16 +659,24 @@ TEUCHOS_UNIT_TEST( EventHandler, commitObserverHistoryContributions )
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
-  event_handler->exportObserverData( "test_estimator_handler.h5",
-                                     1,
-                                     1,
-                                     0.0,
-                                     1.0,
-                                     false );
+  std::string estimator_file_name( "test_estimator_handler.h5" );
+  
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+      
+    event_handler->exportObserverData( hdf5_file,
+                                       1,
+                                       1,
+                                       0.0,
+                                       1.0,
+                                       false );
+  }
 
   // Open the HDF5 file
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-	 "test_estimator_handler.h5",
+         estimator_file_name,
 	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
 
   typedef MonteCarlo::StandardCellEstimator::cellIdType cellIdType;
@@ -988,16 +996,23 @@ TEUCHOS_UNIT_TEST( EventHandler,
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
-  event_handler->exportObserverData( "test_estimator_handler2.h5",
-                                     threads,
-                                     threads,
-                                     0.0,
-                                     1.0,
-                                     false );
+  std::string estimator_file_name( "test_estimator_handler2.h5" );
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+    
+    event_handler->exportObserverData( hdf5_file,
+                                       threads,
+                                       threads,
+                                       0.0,
+                                       1.0,
+                                       false );
+  }
 
   // Open the HDF5 file
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-	 "test_estimator_handler2.h5",
+         estimator_file_name,
 	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
 
   typedef MonteCarlo::StandardCellEstimator::cellIdType cellIdType;

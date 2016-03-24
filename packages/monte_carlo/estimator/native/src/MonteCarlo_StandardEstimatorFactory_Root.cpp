@@ -13,12 +13,8 @@
 #include "Utility_ContractException.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
-#include "Geometry_Root.hpp"
-#endif
 
 namespace MonteCarlo{
-
-#ifdef HAVE_FRENSIE_ROOT
 
 // Constructor
 StandardEstimatorFactory<Geometry::Root>::StandardEstimatorFactory(
@@ -152,9 +148,9 @@ void StandardEstimatorFactory<Geometry::Root>::updateEstimatorCacheInfo(
                                                             const unsigned id )
 { /* ... */ }
 
-#endif // end HAVE_FRENSIE_ROOT
-
 } // end MonteCarlo namespace
+
+#endif // end HAVE_FRENSIE_ROOT
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEstimatorFactory_Root.cpp

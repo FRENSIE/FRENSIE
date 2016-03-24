@@ -10,12 +10,13 @@
 #define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_ROOT_HPP
 
 // FRENSIE Includes
-#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_StandardEstimatorFactory.hpp"
-
-namespace MonteCarlo{
+#include "Geometry_Config.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
+#include "Geometry_Root.hpp"
+
+namespace MonteCarlo{
 
 //! The standard estimator factory class specialization for Root
 template<>
@@ -104,9 +105,9 @@ private:
   d_surface_area_map;
 };
 
-#endif // end HAVE_FRENSIE_ROOT
-
 } // end MonteCarlo namespace
+
+#endif // end HAVE_FRENSIE_ROOT
 
 #endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_ROOT_HPP
 

@@ -317,16 +317,24 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   // Export the estimator data
   if( comm->getRank() == 0 )
   {
-    event_handler->exportObserverData( "test_estimator_handler_rank_0.h5",
-                                       procs,
-                                       procs,
-                                       0.0,
-                                       1.0,
-                                       false );
+    std::string estimator_file_name( "test_estimator_handler_rank_0.h5" );
+    
+    {
+      std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+      hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+      
+      event_handler->exportObserverData( hdf5_file,
+                                         procs,
+                                         procs,
+                                         0.0,
+                                         1.0,
+                                         false );
+    }
 
     // Initialize the HDF5 file
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
-	 "test_estimator_handler_rank_0.h5",
+         estimator_file_name,
 	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
 
     // Check the bin data
@@ -539,12 +547,18 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
     std::ostringstream oss;
     oss << "test_estimator_handler_rank_ " << comm->getRank() << ".h5";
     
-    event_handler->exportObserverData( oss.str(),
-                                       procs,
-                                       procs,
-                                       0.0,
-                                       1.0,
-                                       false );
+    {
+      std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+      hdf5_file->openHDF5FileAndOverwrite( oss.str() );
+      
+      event_handler->exportObserverData( hdf5_file,
+                                         procs,
+                                         procs,
+                                         0.0,
+                                         1.0,
+                                         false );
+    }
     
     // Initialize the HDF5 file
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
