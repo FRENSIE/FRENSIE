@@ -113,6 +113,18 @@ TEUCHOS_UNIT_TEST( Root, initialize )
 }
 
 //---------------------------------------------------------------------------//
+// Get the material ids
+TEUCHOS_UNIT_TEST( Root, getMaterialIds )
+{
+  std::set<unsigned> material_ids;
+
+  Geometry::Root::getMaterialIds( material_ids );
+
+  TEST_EQUALITY_CONST( material_ids.size(), 1 );
+  TEST_ASSERT( material_ids.count( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the cell exists
 TEUCHOS_UNIT_TEST( Root, doesCellExists )
 {

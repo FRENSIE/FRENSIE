@@ -22,6 +22,29 @@
 
 namespace Geometry{
 
+// Get the material ids
+/*! \details The set value type should be any unsigned integer type.
+ * This method is thread safe as long as enableThreadSupport has been called.
+ */
+template<typename Set>
+void Root::getMaterialIds( Set& material_ids )
+{
+  std::unordered_map<ModuleTraits::InternalCellHandle,typename Set::value_type>
+    cell_id_mat_id_map;
+
+  Root::getCellMaterialIds( cell_id_mat_id_map );
+
+  typename std::unordered_map<ModuleTraits::InternalCellHandle,typename Set::value_type>::const_iterator 
+    cell_id_mat_id_it = cell_id_mat_id_map.begin();
+
+  while( cell_id_mat_id_it != cell_id_mat_id_map.end() )
+  {
+    material_ids.insert( cell_id_mat_id_it->second );
+    
+    ++cell_id_mat_id_it;
+  }
+}
+
 // Get the problem cells
 /*! \details The set value type should be a ModuleTraits::InternalCellHandle. 
  * This method is thread safe as long as enableThreadSupport has been called.

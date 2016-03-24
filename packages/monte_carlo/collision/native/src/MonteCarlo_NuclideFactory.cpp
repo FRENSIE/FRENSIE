@@ -25,7 +25,7 @@ namespace MonteCarlo{
 NuclideFactory::NuclideFactory( 
 		     const std::string& cross_sections_xml_directory,
 		     const Teuchos::ParameterList& cross_section_table_info,
-		     const boost::unordered_set<std::string>& nuclide_aliases,
+		     const std::unordered_set<std::string>& nuclide_aliases,
 		     const bool use_unresolved_resonance_data,
 		     const bool use_photon_production_data,
 		     std::ostream* os_message )
@@ -35,7 +35,7 @@ NuclideFactory::NuclideFactory(
   testPrecondition( os_message != NULL );
   
   // Create each nuclide in the set
-  boost::unordered_set<std::string>::const_iterator nuclide_name = 
+  std::unordered_set<std::string>::const_iterator nuclide_name = 
     nuclide_aliases.begin();
   
   std::string nuclide_file_path, nuclide_file_type, nuclide_table_name;
@@ -93,7 +93,7 @@ NuclideFactory::NuclideFactory(
  * will be used as its key in the map that is populated.
  */
 void NuclideFactory::createNuclideMap( 
-  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
+  std::unordered_map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
 {   
   // Reset the nuclide map
   nuclide_map.clear();

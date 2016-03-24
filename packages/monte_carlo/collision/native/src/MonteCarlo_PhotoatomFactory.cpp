@@ -25,7 +25,7 @@ namespace MonteCarlo{
 PhotoatomFactory::PhotoatomFactory(
 		    const std::string& cross_sections_xml_directory,
 		    const Teuchos::ParameterList& cross_section_table_info,
-		    const boost::unordered_set<std::string>& photoatom_aliases,
+		    const std::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
 		    const unsigned hash_grid_bins,
@@ -40,7 +40,7 @@ PhotoatomFactory::PhotoatomFactory(
   testPrecondition( os_message != NULL );
   
   // Create each photoatom in the set
-  boost::unordered_set<std::string>::const_iterator photoatom_name = 
+  std::unordered_set<std::string>::const_iterator photoatom_name = 
     photoatom_aliases.begin();
 
   std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
@@ -105,7 +105,7 @@ PhotoatomFactory::PhotoatomFactory(
 
 // Create the map of photoatoms
 void PhotoatomFactory::createPhotoatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Photoatom> >&
 		    photoatom_map ) const
 {
   // Reset the photoatom map

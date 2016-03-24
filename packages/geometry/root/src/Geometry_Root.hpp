@@ -70,6 +70,10 @@ public:
   //! Enable thread support
   static void enableThreadSupport( const unsigned num_threads );
 
+  //! Get the material ids
+  template<typename Set>
+  static void getMaterialIds( Set& material_ids );
+
   //! Check if a cell exists
   static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
 
