@@ -4,9 +4,9 @@
   <Parameter name="CAD File" type="string" 
 	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_geom2.sat"/>
   <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
-  <Parameter name="Termination Cell Synonym" type="string" value="graveyard"/>
-  <Parameter name="Material Synonym" type="string" value="mat"/>
-  <Parameter name="Density Synonym" type="string" value="rho"/>
-  <Parameter name="Estimator Synonym" type="string" value="tally"/>
+  <Parameter name="Termination Cell Property" type="string" value="graveyard"/>
+  <Parameter name="Material Property" type="string" value="mat"/>
+  <Parameter name="Density Property" type="string" value="rho"/>
+  <Parameter name="Estimator Property" type="string" value="tally"/>
   
 </ParameterList>

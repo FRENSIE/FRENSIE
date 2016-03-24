@@ -203,10 +203,10 @@ ADD_EXECUTABLE(tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistributio
 TARGET_LINK_LIBRARIES(tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
 ADD_TEST(CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstCoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
-  tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
-ADD_TEST(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+# ADD_EXECUTABLE(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution
+#   tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.cpp)
+# TARGET_LINK_LIBRARIES(tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution monte_carlo_collision_native)
+# ADD_TEST(DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution_test tstDecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution
   tstStandardSubshellDopplerBroadenedPhotonEnergyDistribution.cpp)
@@ -355,10 +355,10 @@ ADD_EXECUTABLE(tstKleinNishinaAdjointPhotonScatteringDistribution
 TARGET_LINK_LIBRARIES(tstKleinNishinaAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution_test tstKleinNishinaAdjointPhotonScatteringDistribution)
 
-ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
-  tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+# ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
+#   tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
+# TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+# ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ##----------------------------------------------------------------------------##
 ##      electron class tests                                                  
