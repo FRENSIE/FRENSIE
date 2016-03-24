@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_DiscreteDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -271,7 +271,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
   double abs_error, diff_cs;
 
-  Utility::GaussKronrodQuadratureSet quadrature_set( precision );
+  Utility::GaussKronrodIntegrator quadrature_set( precision );
 
   // Evaluate the minimum and maximum energy for integration (not the
   // true minimum and maximum energy)
