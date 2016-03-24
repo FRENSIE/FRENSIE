@@ -41,11 +41,11 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_EXECUTABLE(tstStandardParticleSourceRejection_Root
     tstStandardParticleSourceRejection_Root.cpp)
   TARGET_LINK_LIBRARIES(tstStandardParticleSourceRejection_Root monte_carlo_source_native geometry_root)
-  ADD_TEST(StandardParticleSourceRejection_Root_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
+  ADD_TEST(StandardParticleSourceRejection_Root_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    ADD_TEST(SharedStandardParticleSourceRejection_Root_2_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
-    ADD_TEST(SharedStandardParticleSourceRejection_Root_4_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
+    ADD_TEST(SharedStandardParticleSourceRejection_Root_2_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=2)
+    ADD_TEST(SharedStandardParticleSourceRejection_Root_4_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=4)
   ENDIF()
 ENDIF()
 
