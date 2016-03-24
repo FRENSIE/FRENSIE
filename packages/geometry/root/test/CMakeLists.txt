@@ -14,12 +14,12 @@ ENDIF()
 ADD_EXECUTABLE(tstRootInstanceFactoryBasic
   tstRootInstanceFactoryBasic.cpp)
 TARGET_LINK_LIBRARIES(tstRootInstanceFactoryBasic geometry_root)
-ADD_TEST(RootInstanceFactoryBasic_test tstRootInstanceFactory --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
+ADD_TEST(RootInstanceFactoryBasic_test tstRootInstanceFactoryBasic --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_basic.xml")
 
 ADD_EXECUTABLE(tstRootInstanceFactoryAdvanced
   tstRootInstanceFactoryAdvanced.cpp)
 TARGET_LINK_LIBRARIES(tstRootInstanceFactoryAdvanced geometry_root)
-ADD_TEST(RootInstanceFactoryAdvanced_test tstRootInstanceFactory --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
+ADD_TEST(RootInstanceFactoryAdvanced_test tstRootInstanceFactoryAdvanced --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_advanced.xml")
 
 ADD_EXECUTABLE(tstGeometryModuleInterface_Root
   tstModuleInterface.cpp)

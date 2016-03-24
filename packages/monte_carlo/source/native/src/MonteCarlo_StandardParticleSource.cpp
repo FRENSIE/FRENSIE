@@ -18,8 +18,6 @@
 #include "FRENSIE_mpi_config.hpp"
 
 // Trilinos Includes
-#include <Teuchos_GlobalMPISession.hpp>
-
 #ifdef HAVE_FRENSIE_MPI
 #include <Teuchos_CommHelpers.hpp>
 #endif
