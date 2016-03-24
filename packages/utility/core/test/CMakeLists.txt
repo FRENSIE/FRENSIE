@@ -146,12 +146,6 @@ ADD_EXECUTABLE(tstKinematicHelpers
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
 
-ADD_EXECUTABLE(tstGaussKronrodQuadratureSet 
-  tstGaussKronrodQuadratureSet.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureSet utility_core)
-ADD_TEST(GaussKronrodQuadratureSet_test tstGaussKronrodQuadratureSet)
-
 ADD_EXECUTABLE(tstGridGenerator 
   tstGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -178,3 +172,21 @@ ADD_EXECUTABLE(tstMeasurement
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
+
+ADD_EXECUTABLE(tstActiveCounter
+  tstActiveCounter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstActiveCounter utility_core)
+ADD_TEST(ActiveCounter_test tstActiveCounter)
+
+ADD_EXECUTABLE(tstInactiveCounter
+  tstInactiveCounter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInactiveCounter utility_core)
+ADD_TEST(InactiveCounter_test tstInactiveCounter)
+
+ADD_EXECUTABLE(tstIncrementPolicy
+  tstIncrementPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
+ADD_TEST(IncrementPolicy_test tstIncrementPolicy)

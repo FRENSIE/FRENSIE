@@ -6,15 +6,24 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#define MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 
+/*! \defgroup particle_subtrack_ending_global_event Particle Subtrack Ending Global Event
+ * \ingroup global_events
+ *
+ * Infrastructure used to acquire information from particle subtrack ending
+ * global events.
+ */
+
 namespace MonteCarlo{
 
-//! The particle subtrack ending event global observer
+/*! The particle subtrack ending event global observer
+ * \ingroup particle_subtrack_ending_global_event
+ */
 class ParticleSubtrackEndingGlobalEventObserver
 {
 
@@ -43,7 +52,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_SUBTRACK_ENDING_GLOBAL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp

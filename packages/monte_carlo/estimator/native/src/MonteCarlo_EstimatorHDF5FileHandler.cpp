@@ -51,18 +51,21 @@ EstimatorHDF5FileHandler::EstimatorHDF5FileHandler(
     }
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Ownership Constructor Error" );
+			   "Error: Unable to construct the estimator HDF5 file"
+                           " handler!" );
 }
 
 // Constructor (file sharing)
 EstimatorHDF5FileHandler::EstimatorHDF5FileHandler( 
-		      const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file )
+                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
   : d_hdf5_file( hdf5_file ),
     d_hdf5_file_ownership( false )
 {
   // Make sure the file is valid
-  testPrecondition( !hdf5_file.is_null() );
+  testPrecondition( hdf5_file.get() );
   testPrecondition( hdf5_file->hasOpenFile() );
+
+  Utility::HDF5FileHandler::throwExceptions();
 }
 
 // Destructor
@@ -70,88 +73,6 @@ EstimatorHDF5FileHandler::~EstimatorHDF5FileHandler()
 {
   if( d_hdf5_file_ownership )
     d_hdf5_file->closeHDF5File();
-}
-
-// Set the simulation time
-void EstimatorHDF5FileHandler::setSimulationTime( 
-						const double simulation_time )
-{
-  // Make sure the simulation time is valid
-  testPrecondition( simulation_time > 0.0 );
-  
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( simulation_time,
-					     estimator_group_loc_name,
-					     "simulation_time" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Set Simulation Time Error" );
-}
-
-// Get the simulation time
-void EstimatorHDF5FileHandler::getSimulationTime( 
-						double& simulation_time ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( simulation_time,
-					      estimator_group_loc_name,
-					      "simulation_time" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Get Simulation Time Error" );
-}
-
-// Set the last history simulated
-void EstimatorHDF5FileHandler::setLastHistorySimulated( 
-			     const unsigned long long last_history_simulated )
-{
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( last_history_simulated,
-					     estimator_group_loc_name,
-					     "last_history_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Last History Simulated Error" );
-}
-
-// Get the last history simulated
-void EstimatorHDF5FileHandler::getLastHistorySimulated(
-			     unsigned long long& last_history_simulated ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( last_history_simulated,
-					      estimator_group_loc_name,
-					      "last_history_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Last History Simulated Error" );
-}
-
-// Set the number of histories simulated
-void EstimatorHDF5FileHandler::setNumberOfHistoriesSimulated(
-			  const unsigned long long number_histories_simulated )
-{
-  // Make sure the number of histories simulated is valid
-  testPrecondition( number_histories_simulated > 0ull );
-  
-  try{
-    d_hdf5_file->writeValueToGroupAttribute( number_histories_simulated,
-					     estimator_group_loc_name,
-					     "number_of_histories_simulated" );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Number of Histories Simulated Error" );
-}
-
-// Get the number of histories simulated
-void EstimatorHDF5FileHandler::getNumberOfHistoriesSimulated(
-			 unsigned long long& number_histories_simulated ) const
-{
-  try{
-    d_hdf5_file->readValueFromGroupAttribute( number_histories_simulated,
-					      estimator_group_loc_name,
-					      "number_of_histories_simulated");
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Number of Histories Simulated Error" );
 }
 
 // Check if an estimator exists
@@ -173,7 +94,8 @@ void EstimatorHDF5FileHandler::setSurfaceEstimator(
 			       "entity_type" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Surface Estimator Error" );
+			   "Error: Unable to set estimator " << estimator_id <<
+                           " as a surface estimator!" );
 }
 
 // Check if the estimator is a surface estimator
@@ -189,7 +111,8 @@ bool EstimatorHDF5FileHandler::isSurfaceEstimator(
 			       "entity_type" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Is Surface Estimator Error" );
+			   "Error: Unable to determine if estimator "
+                           << estimator_id << " is a surface estimator!" );
 
   return (type == SURFACE_ENTITY);
 					  
@@ -205,7 +128,8 @@ void EstimatorHDF5FileHandler::setCellEstimator( const unsigned estimator_id )
 			       "entity_type" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Cell Estimator Error" );
+			   "Error: Unable to set estimator " << estimator_id <<
+                           " as a cell estimator!" );
 }
 
 // Check if the estimator is a cell estimator
@@ -221,9 +145,43 @@ bool EstimatorHDF5FileHandler::isCellEstimator(
 			       "entity_type" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Is Cell Estimator Error" );
+			   "Error: Unable to determine if estimator "
+                           << estimator_id << " is a cell estimator!" );
 
   return (type == CELL_ENTITY);
+}
+
+// Set the estimator as a mesh estimator
+void EstimatorHDF5FileHandler::setMeshEstimator( const unsigned estimator_id )
+{
+  try{
+    d_hdf5_file->writeValueToGroupAttribute( 
+			       MESH_VOLUME_ENTITY, 
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "entity_type" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Error: Unable to set estimator " << estimator_id <<
+                           " as a mesh estimator!" );
+}
+
+// Check if the estimator is a mesh estimator
+bool EstimatorHDF5FileHandler::isMeshEstimator( 
+					    const unsigned estimator_id ) const
+{
+  EntityType type;
+
+  try{
+    d_hdf5_file->readValueFromGroupAttribute( 
+			       type,
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "entity_type" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Error: Unable to determine if estimator "
+                           << estimator_id << " is a mesh estimator!" );
+
+  return (type == MESH_VOLUME_ENTITY);
 }
 
 // Set the estimator multiplier
@@ -238,7 +196,8 @@ void EstimatorHDF5FileHandler::setEstimatorMultiplier(
 			       "multiplier" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Estimator Multiplier Error" );
+			   "Error: Unable to set the multiplier for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the estimator multiplier
@@ -253,7 +212,8 @@ void EstimatorHDF5FileHandler::getEstimatorMultiplier(
 			       "multiplier" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Estimator Multiplier Error" );
+			   "Error: Unable to get the multiplier for estimator "
+                           << estimator_id << "!" );
 }
 
 // Set the estimator response function ordering
@@ -268,7 +228,8 @@ void EstimatorHDF5FileHandler::setEstimatorResponseFunctionOrdering(
 			       "response_function_ordering" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Estimator Response Function Ordering Error" );
+			   "Error: Unable to set the response function "
+                           "ordering for estimator " << estimator_id << "!" );
 }
 
 // Get the estimator response function ordering
@@ -283,7 +244,8 @@ void EstimatorHDF5FileHandler::getEstimatorResponseFunctionOrdering(
 			       "response_function_ordering" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Estimator Response Function Ordering Error" );
+			   "Error: Unable to get the response function "
+                           "ordering for estimator " << estimator_id << "!" );
 }
 
 // Set the estimator dimension ordering
@@ -298,7 +260,8 @@ void EstimatorHDF5FileHandler::setEstimatorDimensionOrdering(
 			       "dimension_ordering" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Estimator Dimension Ordering Error" );
+			   "Error: Unable to set the dimension ordering for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Get the estimator dimension ordering
@@ -321,7 +284,8 @@ void EstimatorHDF5FileHandler::getEstimatorDimensionOrdering(
     }
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Estimator Dimension Ordering Error" );
+			   "Error: Unable to get the dimension ordering for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Set the total normalization constant
@@ -336,7 +300,8 @@ void EstimatorHDF5FileHandler::setEstimatorTotalNormConstant(
 			       "total_norm_constant" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Total Norm Constant Error" );
+			   "Error: Unable to set the normalization constant "
+                           "for estimator " << estimator_id << "!" );
 }
 
 // Get the total normalization constant
@@ -351,7 +316,8 @@ void EstimatorHDF5FileHandler::getEstimatorTotalNormConstant(
 			       "total_norm_constant" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Total Norm Constant Error" );
+			   "Error: Unable to get the normalization constant "
+                           "for estimator " << estimator_id << "!" );
 }
 
 // Set the raw estimator bin data over all entities (1st, 2nd moments)
@@ -371,7 +337,8 @@ void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
     d_hdf5_file->writeArrayToDataSet( raw_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Raw Estimator Total Bin Data Error" );
+			   "Error: Unable to set the raw total bin data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Get the raw estimator bin data over all entities (1st, 2nd moments)
@@ -388,7 +355,8 @@ void EstimatorHDF5FileHandler::getRawEstimatorTotalBinData(
     d_hdf5_file->readArrayFromDataSet( raw_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Raw Estimator Total Bin Data Error" );
+			   "Error: Unable to get the raw total bin data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Set the processed estimator bin data over all entities (mean, rel. err.)
@@ -408,7 +376,8 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorTotalBinData(
     d_hdf5_file->writeArrayToDataSet( processed_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Processed Estimator Total Bin Data Error" );
+			   "Error: Unable to set the processed total bin data "
+                           "for estimator " << estimator_id << "!" );
 }
 
 // Get the processed estimator bin data over all entities (mean, rel. err.)
@@ -425,7 +394,8 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorTotalBinData(
     d_hdf5_file->readArrayFromDataSet( processed_bin_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Processed Estimator Total Bin Data Error" );
+			   "Error: Unable to get the processed total bin data "
+                           "for estimator " << estimator_id << "!" );
 }
 
 // Set the raw estimator total data over all entities 
@@ -446,7 +416,8 @@ void EstimatorHDF5FileHandler::setRawEstimatorTotalData(
     d_hdf5_file->writeArrayToDataSet( raw_total_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Raw Estimator Total Data Error" );
+			   "Error: Unable to set the raw total data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Get the raw estimator total data over all entities
@@ -464,7 +435,8 @@ void EstimatorHDF5FileHandler::getRawEstimatorTotalData(
     d_hdf5_file->readArrayFromDataSet( raw_total_data, data_set_location );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Raw Estimator Total Data Error" );
+			   "Error: Unable to get the raw total data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Set the processed estimator total data over all entities
@@ -485,7 +457,8 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorTotalData(
     d_hdf5_file->writeArrayToDataSet( processed_total_data, data_set_location);
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Processed Estimator Total Data Error" );
+			   "Error: Unable to set the processed total data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Get the processed estimator total data over all entities
@@ -503,7 +476,8 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorTotalData(
     d_hdf5_file->readArrayFromDataSet(processed_total_data, data_set_location);
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Processed Estimator Total Data Error" );
+			   "Error: Unable to get the processed total data for "
+                           "estimator " << estimator_id << "!" );
 }
 
 // Get the estimator location

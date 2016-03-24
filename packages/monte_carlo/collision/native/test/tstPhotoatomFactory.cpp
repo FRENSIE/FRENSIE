@@ -29,7 +29,7 @@
 
 std::string cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-boost::unordered_set<std::string> photoatom_aliases;
+std::unordered_set<std::string> photoatom_aliases;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::PhotoatomFactory> photoatom_factory;
@@ -55,7 +55,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_basic )
 					       false,
 					       false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
 					       false,
 					       false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -415,7 +415,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_doppler )
 		 false,
 		 false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -612,7 +612,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_doppler )
 		   false,
 		   false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -776,7 +776,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 					  false,
 					  false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -951,7 +951,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 					       false,
 					       false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -1123,7 +1123,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 // 					       false,
 // 					       false ) );
 
-//   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+//   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
 //     photoatom_map;
 
 //   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -1152,7 +1152,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_ace_pe_subshells )
 					       false,
 					       true ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -1334,7 +1334,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_pe_subshells )
 					       false,
 					       true ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );
@@ -1490,7 +1490,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 					       false,
 					       true ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> > 
     photoatom_map;
 
   photoatom_factory->createPhotoatomMap( photoatom_map );

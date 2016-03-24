@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
-#define FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#ifndef MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#define MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -33,7 +33,8 @@ CellTrackLengthFluxEstimator<
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
 			   ContributionMultiplierPolicy>::setResponseFunctions(
-    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   for( unsigned i = 0; i < response_functions.size(); ++i )
   {
@@ -66,20 +67,21 @@ void CellTrackLengthFluxEstimator<
   {
     double contribution = track_length*
       ContributionMultiplierPolicy::multiplier( particle );
+
+    EstimatorParticleStateWrapper particle_state_wrapper( particle );
   
     StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
-							      cell_of_subtrack,
-							      particle, 
-							      0.0,
-							      contribution);
+                                                        cell_of_subtrack,
+							particle_state_wrapper,
+                                                        contribution);
   }
 }
 
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
-		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+		 ContributionMultiplierPolicy>::printSummary( std::ostream& os ) const
 {
   os << "Cell Track Length Flux Estimator: " << getId() << std::endl;
 
@@ -90,7 +92,7 @@ void CellTrackLengthFluxEstimator<
 template<typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<
                             ContributionMultiplierPolicy>::assignBinBoundaries(
-         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == TIME_DIMENSION )
   {
@@ -107,7 +109,7 @@ void CellTrackLengthFluxEstimator<
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
+#endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator_def.hpp

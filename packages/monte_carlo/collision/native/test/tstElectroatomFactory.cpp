@@ -30,7 +30,7 @@
 
 std::string cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-boost::unordered_set<std::string> electroatom_aliases;
+std::unordered_set<std::string> electroatom_aliases;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
                                               function,
                                               false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -228,7 +228,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
                                               function,
                                               false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_2BS_brem )
                                               function,
                                               false ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -430,7 +430,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
                                               function,
                                               true ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -616,7 +616,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
                                               function,
                                               true ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );

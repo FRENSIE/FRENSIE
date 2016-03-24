@@ -728,7 +728,7 @@ int main( int argc, char** argv )
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
 
-    boost::unordered_set<std::string> nuclide_aliases;
+    std::unordered_set<std::string> nuclide_aliases;
     nuclide_aliases.insert( "H-1_293.6K" );
     nuclide_aliases.insert( "H-1_900K" );
 
@@ -740,7 +740,7 @@ int main( int argc, char** argv )
 					     false,
 					     false );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
       nuclide_map;
 
     nuclide_factory.createNuclideMap( nuclide_map );
@@ -768,7 +768,7 @@ int main( int argc, char** argv )
 							 nuclide_names ) );
 
     // Assign the atom fractions and names
-    boost::unordered_set<std::string> atom_aliases;
+    std::unordered_set<std::string> atom_aliases;
     atom_aliases.insert( "Pb" );
 
     Teuchos::Array<double> atom_fractions( 1 );
@@ -793,7 +793,7 @@ int main( int argc, char** argv )
 		 false,
 		 true );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       photoatom_map;
 
     photoatom_factory.createPhotoatomMap( photoatom_map );
@@ -814,7 +814,7 @@ int main( int argc, char** argv )
 					     MonteCarlo::TWOBS_DISTRIBUTION,
 					     true );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       electroatom_map;
 
     electroatom_factory.createElectroatomMap( electroatom_map );

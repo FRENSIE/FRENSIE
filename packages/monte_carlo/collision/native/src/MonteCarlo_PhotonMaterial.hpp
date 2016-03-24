@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_PHOTON_MATERIAL_HPP
 #define MONTE_CARLO_PHOTON_MATERIAL_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
+// Std Lib Includes
+#include <unordered_map>
 
 // Trilinos Includes
 #include "Teuchos_RCP.hpp"
@@ -35,7 +35,7 @@ private:
 public:
   
   //! Typedef for photoatom name map
-  typedef boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
+  typedef std::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   PhotoatomNameMap;
 
   //! Constructor 

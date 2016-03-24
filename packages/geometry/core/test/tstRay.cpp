@@ -55,6 +55,31 @@ TEUCHOS_UNIT_TEST( Ray, getDirection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the direction can be changed
+TEUCHOS_UNIT_TEST( Ray, changeDirection )
+{
+  Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+  ray.changeDirection( 1.0, 0.0, 0.0 );
+
+  const double* ray_direction = ray.getDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 1.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 0.0 );
+
+  const double new_direction[3] = {0.0, 1.0, 0.0};
+
+  ray.changeDirection( new_direction );
+  
+  ray_direction = ray.getDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 1.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 0.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Advance the ray head along its direction by a specified distance
 TEUCHOS_UNIT_TEST( Ray, advanceHead )
 {

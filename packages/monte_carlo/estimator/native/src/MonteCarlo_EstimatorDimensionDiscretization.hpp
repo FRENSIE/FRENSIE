@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
-#define FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#ifndef MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#define MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
@@ -44,11 +45,18 @@ public:
   
   //! Check if the value is contained in the discretization
   virtual bool isValueInDiscretization( 
-				 const Teuchos::any& any_container ) const = 0;
+       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+
+  //! Check if the value is contained in the discretization
+  virtual bool isValueInDiscretization(
+                                     const Teuchos::any& any_value ) const = 0;
 
   //! Calculate the index of the bin that the value falls in
   virtual unsigned calculateBinIndex( 
-				 const Teuchos::any& any_container ) const = 0;
+       const EstimatorParticleStateWrapper& particle_state_wrapper ) const = 0;
+
+  //! Calculate the index of the bin that the value falls in
+  virtual unsigned calculateBinIndex( const Teuchos::any& any_value) const = 0;
 
   //! Print the boundaries of a bin
   virtual void printBoundariesOfBin( std::ostream& os, 
@@ -68,7 +76,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
+#endif // end MONTE_CARLO_ESTIMATOR_DIMENSION_DISCRETIZATION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EstimatorDimensionDiscretization.hpp

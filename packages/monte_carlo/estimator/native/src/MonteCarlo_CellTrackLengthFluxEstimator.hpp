@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
-#define FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#define MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -19,7 +19,9 @@
 
 namespace MonteCarlo{
 
-//! The cell track length flux estimator class
+/*! The cell track length flux estimator class
+ * \ingroup particle_subtrack_ending_in_cell_event
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellTrackLengthFluxEstimator : public StandardCellEstimator,
 				     public ParticleSubtrackEndingInCellEventObserver
@@ -44,7 +46,8 @@ public:
 
   //! Set the response functions
   void setResponseFunctions(
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Add current history estimator contribution
   void updateFromParticleSubtrackEndingInCellEvent(
@@ -52,14 +55,14 @@ public:
 		      const StandardCellEstimator::cellIdType cell_of_subtrack,
 		      const double track_length );
 
-  //! Print the estimator data
-  void print( std::ostream& os ) const;
+  //! Print the estimator data summary
+  void printSummary( std::ostream& os ) const;
 
 private:
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+     const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end MonteCarlo namespace
@@ -72,7 +75,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CellTrackLengthFluxEstimator.hpp

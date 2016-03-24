@@ -16,9 +16,6 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
@@ -27,6 +24,7 @@
 #include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
+#include "Geometry_DagMC.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -59,7 +57,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   // Set the particle mode to ELECTRON_MODE
   MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler( 
+  MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::DagMC>()->initializeHandler( 
 					   material_reps,
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );

@@ -30,8 +30,8 @@ FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
 	  const double A,
 	  const double kT,
 	  const double E )
-  : d_alpha_gkq_set( 1e-4, 0.0, 10000, 10000 ),
-    d_beta_gkq_set( 1e-4, 0.0, 10000, 10000 ),
+  : d_alpha_gkq_set( 1e-4, 0.0, 10000 ),
+    d_beta_gkq_set( 1e-4, 0.0, 10000 ),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,
 		    A,

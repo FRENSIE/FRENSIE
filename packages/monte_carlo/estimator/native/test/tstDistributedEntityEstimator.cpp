@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -18,6 +19,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EntityEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -55,7 +57,7 @@ public:
   ~TestEntityEstimator()
   { /* ... */ }
   
-  void print( std::ostream& os ) const
+  void printSummary( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
   void commitHistoryContribution()
@@ -146,17 +148,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   entity_estimator->reduceData( comm, 0 );
 
   unsigned procs = comm->getSize();
-  MonteCarlo::Estimator::setNumberOfHistories( procs );
-  MonteCarlo::Estimator::setEndTime( 1.0 );
+  MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( procs );
+  MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
   
   if( comm->getRank() == 0 )
   {
     // Initialize the hdf5 file
-    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( 
-  					   "test_entity_estimator_rank_0.h5" );
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( "test_entity_estimator_rank_0.h5" );
 
     // Export the estimator data
-    entity_estimator->exportData( hdf5_file_handler, true );
+    entity_estimator->exportData( hdf5_file, true );
+
+    // Create an estimator hdf5 file handler
+    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
     
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> >
@@ -193,10 +199,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     oss << "test_entity_estimator_rank_" << comm->getRank() << ".h5";
     
     // Initialize the hdf5 file
-    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( oss.str() );
+    std::shared_ptr<Utility::HDF5FileHandler>
+      hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( oss.str() );
 
     // Export the estimator data
-    entity_estimator->exportData( hdf5_file_handler, true );
+    entity_estimator->exportData( hdf5_file, true );
+
+    // Create an estimator hdf5 file handler
+    MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
     
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> >
@@ -258,14 +269,19 @@ int main( int argc, char** argv )
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  // out->setOutputToRootOnly( 0 );
-
+  
   mpiSession.barrier();
 
   // Run the unit tests
+  Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
+  
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
-  if (success)
+  mpiSession.barrier();
+
+  out->setOutputToRootOnly( 0 );
+
+  if( success )
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;
