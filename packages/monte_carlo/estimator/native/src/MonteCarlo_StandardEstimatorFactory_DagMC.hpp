@@ -9,17 +9,19 @@
 #ifndef MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
 #define MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
 
-// Moab Includes
-#include <DagMC.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory.hpp"
+#include "Geometry_Config.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
+#include "Geometry_DagMC.hpp"
 
 namespace MonteCarlo{
 
 //! The standard estimator factory class specialization for DagMC
 template<>
-class StandardEstimatorFactory<moab::DagMC> : public EstimatorFactory
+class StandardEstimatorFactory<Geometry::DagMC> : public EstimatorFactory
 {
 
 public:
@@ -129,6 +131,8 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+#endif // end HAVE_FRENSIE_DAGMC
 
 #endif // end MONTE_CARLO_STANDARD_ESTIMATOR_FACTORY_DAGMC_HPP
 

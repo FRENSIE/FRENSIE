@@ -37,7 +37,7 @@ void EstimatorHDF5FileHandler::setEntityNormConstant(
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
                            "Error: Unable to set entity " << entity_id <<  
                            " normalization constant for estimator " 
-                           << estimator_id "!" );
+                           << estimator_id << "!" );
 }
 
 // Get the entity normalization constant
@@ -56,7 +56,7 @@ void EstimatorHDF5FileHandler::getEntityNormConstant(
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
                            "Error: Unable to get entity " << entity_id <<  
                            " normalization constant for estimator " 
-                           << estimator_id "!" );
+                           << estimator_id << "!" );
 }
 
 // Set the estimator bin boundaries

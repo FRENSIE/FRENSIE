@@ -16,7 +16,6 @@
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_StandardParticleSourceFactory.hpp"
-#include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EventHandlerFactory.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
@@ -46,11 +45,12 @@ void ParticleSimulationManagerFactory::initializeNonGeometryModules(
   // Initialize the source handler and interface
   {
     std::shared_ptr<ParticleSourceFactory> source_factory = 
-      StandardParticleSourceFactory<GeometryHandler>::getInstance();
+      StandardParticleSourceFactory<Geometry::ModuleInterface<GeometryHandler> >::getInstance();
 
     std::shared_ptr<ParticleSource> source = source_factory->createSource( 
                               source_def, 
-                              SimulationGeneralProperties::getParticleMode() );
+                              SimulationGeneralProperties::getParticleMode(),
+                              *os_warn );
 
     setSourceHandlerInstance( source );
   }

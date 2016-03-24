@@ -17,9 +17,6 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory_Root.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
@@ -104,17 +101,25 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   // Check that all of the estimators got created
   TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 3 );
 
-  event_handler->exportObserverData( "estimator_factory_root.h5",
-                                     1,
-                                     1,
-                                     0.0,
-                                     1.0,
-                                     false );
+  std::string estimator_file_name( "estimator_factory_root.h5" );
+
+  {
+    std::shared_ptr<Utility::HDF5FileHandler>
+        hdf5_file( new Utility::HDF5FileHandler );
+    hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
+
+    event_handler->exportObserverData( hdf5_file,
+                                       1,
+                                       1,
+                                       0.0,
+                                       1.0,
+                                       false );
+  }
 
   // Initialize the hdf5 file
   std::shared_ptr<Utility::HDF5FileHandler> 
     hdf5_file( new Utility::HDF5FileHandler );
-  hdf5_file->openHDF5FileAndReadOnly( "estimator_factory_root.h5" );
+  hdf5_file->openHDF5FileAndReadOnly( estimator_file_name );
 
   // Create an estimator hdf5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
@@ -254,8 +259,6 @@ int main( int argc, char** argv )
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
-
-  Geometry::ModuleInterface<Geometry::Root>::initialize();
 
   // Load the observer parameter lists
   observer_reps = 

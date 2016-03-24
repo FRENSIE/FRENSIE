@@ -16,9 +16,6 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Moab Includes
-#include <DagMC.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_EventHandlerFactory.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
@@ -41,7 +38,7 @@ boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
 TEUCHOS_UNIT_TEST( EventHandlerFactoryDagMC, initializeHandlerUsingDagMC )
 {
   std::shared_ptr<MonteCarlo::EventHandler> event_handler = 
-    MonteCarlo::EventHandlerFactory<moab::DagMC>::createHandler( 
+    MonteCarlo::EventHandlerFactory<Geometry::DagMC>::createHandler( 
                                                     *observer_reps,
                                                     response_function_id_map );
 
@@ -88,7 +85,7 @@ int main( int argc, char** argv )
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
-  Geometry::ModuleInterface<moab::DagMC>::initialize();
+  Geometry::ModuleInterface<Geometry::DagMC>::initialize();
 
   // Load the observer parameter lists
   observer_reps = 
