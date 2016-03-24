@@ -28,7 +28,7 @@ bool SimulationGeneralProperties::display_warnings = true;
 bool SimulationGeneralProperties::implicit_capture_mode_on = false;
                              
 // The ideal number of batches per processor
-unsigned SimulationGeneralProperties::number_of_batches_per_processor = 25;
+unsigned SimulationGeneralProperties::number_of_batches_per_processor = 1;
 
 // Set the particle mode
 void SimulationGeneralProperties::setParticleMode( 

@@ -9,8 +9,10 @@
 #ifndef UTILITY_SPHERICAL_DIRECTIONAL_DISTRIBUTION_HPP
 #define UTILITY_SPHERICAL_DIRECTIONAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -34,9 +36,9 @@ public:
 
   //! Constructor
   SphericalDirectionalDistribution( 
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const Axis axis = Z_AXIS );
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& mu_distribution,
+                   const Axis axis = Z_AXIS );
 
   //! Destructor
   ~SphericalDirectionalDistribution()
@@ -66,10 +68,10 @@ protected:
 private:
 
   // The theta distribution
-  Teuchos::RCP<OneDDistribution> d_theta_distribution;
+  std::shared_ptr<OneDDistribution> d_theta_distribution;
 
   // The mu distribution
-  Teuchos::RCP<OneDDistribution> d_mu_distribution;
+  std::shared_ptr<OneDDistribution> d_mu_distribution;
 
   // The spherical axis (direction of the mu distribution)
   Axis d_axis;

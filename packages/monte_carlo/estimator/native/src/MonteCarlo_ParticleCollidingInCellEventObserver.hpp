@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
+#ifndef MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
+#define MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -17,9 +17,18 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
+/*! \defgroup particle_colliding_in_cell_event Particle Colliding In Cell Event
+ * \ingroup entity_events
+ * 
+ * Infrastructure used to acquire information from particle colliding
+ * in cell events. 
+ */
+
 namespace MonteCarlo{
 
-//! The particle colliding in cell event observer base class
+/*! The particle colliding in cell event observer base class
+ * \ingroup particle_colliding_in_cell_event
+ */
 class ParticleCollidingInCellEventObserver
 {
   
@@ -48,7 +57,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
+#endif // end MONTE_CARLO_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleCollidingInCellEventObserver.hpp

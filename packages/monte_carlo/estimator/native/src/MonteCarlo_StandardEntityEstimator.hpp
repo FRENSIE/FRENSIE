@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
-#define FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
@@ -79,7 +79,8 @@ public:
 
   //! Set the response functions
   virtual void setResponseFunctions( 
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
@@ -96,8 +97,9 @@ public:
 	    const int root_process );
 
   //! Export the estimator data
-  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
-			   const bool process_data ) const;
+  virtual void exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const;
   
 protected:
 
@@ -111,10 +113,10 @@ protected:
   
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const EntityId entity_id,
-				      const ParticleState& particle,
-				      const double angle_cosine,
-				      const double contribution );
+  void addPartialHistoryContribution( 
+                   const EntityId entity_id,
+                   const EstimatorParticleStateWrapper& particle_state_wrapper,
+                   const double contribution );
 
   //! Print the estimator data
   void printImplementation( std::ostream& os,
@@ -168,9 +170,6 @@ private:
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
 
-  // The generic particle state map (avoids having to make a new map for cont.)
-  Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
-
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;
 
@@ -191,7 +190,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_ENTITY_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardEntityEstimator.hpp

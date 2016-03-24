@@ -34,7 +34,10 @@ void EstimatorHDF5FileHandler::setEntityNormConstant(
 	      this->getEstimatorEntityGroupLocation( estimator_id, entity_id ),
 	      "norm_constant" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Set Entity Norm Constant" );
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+                           "Error: Unable to set entity " << entity_id <<  
+                           " normalization constant for estimator " 
+                           << estimator_id "!" );
 }
 
 // Get the entity normalization constant
@@ -50,7 +53,10 @@ void EstimatorHDF5FileHandler::getEntityNormConstant(
 	      this->getEstimatorEntityGroupLocation( estimator_id, entity_id ),
 	      "norm_constant" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Get Entity Norm Constant" );
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+                           "Error: Unable to get entity " << entity_id <<  
+                           " normalization constant for estimator " 
+                           << estimator_id "!" );
 }
 
 // Set the estimator bin boundaries
@@ -68,7 +74,9 @@ void EstimatorHDF5FileHandler::setEstimatorBinBoundaries(
     d_hdf5_file->writeArrayToDataSet( bin_boundaries, bin_boundary_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Estimator Bin Boundaries Error" );
+			   "Error: Unable to set the " << dimension <<
+                           " bin boundaries for estimator " 
+                           << estimator_id << "!" );
 }
 
 // Get the estimator bin boundaries
@@ -86,7 +94,9 @@ void EstimatorHDF5FileHandler::getEstimatorBinBoundaries(
     d_hdf5_file->readArrayFromDataSet( bin_boundaries, bin_boundary_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Estimator Bin Boundaries Error" );
+			   "Error: Unable to get the " << dimension <<
+                           " bin boundaries for estimator " 
+                           << estimator_id << "!" );
 }
 
 // Set the estimator entities and norm constants
@@ -111,7 +121,8 @@ void EstimatorHDF5FileHandler::setEstimatorEntities(
     // 			       "estimator_entity_ids" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Estimator Entities Error" );
+			   "Error: Unable to set the entity normalization "
+                           "constants for estimator " << estimator_id << "!" );
 }
 
 // Set the estimator entities and norm constants
@@ -166,7 +177,8 @@ void EstimatorHDF5FileHandler::getEstimatorEntities(
     // 			       "estimator_entity_ids" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Estimator Entities Error" );
+			   "Error: Unable to get the entity normalization "
+                           "constants for estimator " << estimator_id << "!" );
 }
 
 // Get the estimator entities and norm constants
@@ -210,7 +222,9 @@ void EstimatorHDF5FileHandler::setRawEstimatorEntityBinData(
     d_hdf5_file->writeArrayToDataSet( raw_bin_data, bin_boundaries_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Raw Estimator Entity Bin Data Error" );
+			   "Error: Unable to set the raw entity "
+                           << entity_id << " bin data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the raw estimator bin data for an entity (1st, 2nd moments)
@@ -229,7 +243,9 @@ void EstimatorHDF5FileHandler::getRawEstimatorEntityBinData(
     d_hdf5_file->readArrayFromDataSet( raw_bin_data, bin_boundaries_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Raw Estimator Entity Bin Data Error" );
+			   "Error: Unable to get the raw entity "
+                           << entity_id << " bin data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Set the processed estimator bin data for an entity (mean, relative error)
@@ -249,7 +265,9 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorEntityBinData(
 				      bin_boundaries_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Processed Estimator Entity Bin Data Error" );
+			   "Error: Unable to set the processed entity " 
+                           << entity_id << " bin data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the processed estimator bin data for an entity (mean, relative error)
@@ -269,7 +287,9 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorEntityBinData(
 				       bin_boundaries_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Processed Estimator Entity Bin Data Error" );
+			   "Error: Unable to get the processed entity " 
+                           << entity_id << " bin data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Set the raw estimator total data for an entity 
@@ -289,7 +309,9 @@ void EstimatorHDF5FileHandler::setRawEstimatorEntityTotalData(
     d_hdf5_file->writeArrayToDataSet( raw_total_data, total_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Raw Estimator Entity Total Data Error" );
+			   "Error: Unable to set the raw entity "
+                           << entity_id << " total data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the raw estimator total data for an entity 
@@ -309,7 +331,9 @@ void EstimatorHDF5FileHandler::getRawEstimatorEntityTotalData(
     d_hdf5_file->readArrayFromDataSet( raw_total_data, total_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Raw Estimator Entity Total Data Error" );
+			   "Error: Unable to get the raw entity "
+                           << entity_id << " total data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Set the processed estimator total data for an entity 
@@ -329,7 +353,9 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorEntityTotalData(
     d_hdf5_file->writeArrayToDataSet( processed_total_data, total_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Set Processed Estimator Entity Total Data Error" );
+			   "Error: Unable to set the processed entity "
+                           << entity_id << " total data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the processed estimator total data for an entity
@@ -349,7 +375,9 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorEntityTotalData(
     d_hdf5_file->readArrayFromDataSet( processed_total_data, total_data_set );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
-			   "Get Processed Estimator Entity Total Data Error" );
+			   "Error: Unable to get the processed entity "
+                           << entity_id << " total data for estimator "
+                           << estimator_id << "!" );
 }
 
 // Get the estimator entity location

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
-#define FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
+#ifndef MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
+#define MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -52,13 +52,13 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
+#endif // end MONTE_CARLO_STANDARD_SURFACE_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardSurfaceEstimator.hpp

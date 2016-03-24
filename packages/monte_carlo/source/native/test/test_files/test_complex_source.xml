@@ -5,11 +5,11 @@
     
     <ParameterList name="Spatial Distribution">
       <Parameter name="X Distribution" type="Uniform Distribution" 
-		 value="{0,1,1}"/>
+		 value="{0,1}"/>
       <Parameter name="Y Distribution" type="Uniform Distribution" 
-		 value="{0,1,1}"/>
+		 value="{0,1}"/>
       <Parameter name="Z Distribution" type="Uniform Distribution" 
-		 value="{0,1,1}"/>
+		 value="{0,1}"/>
     </ParameterList>
 
     <ParameterList name="Spatial Importance Function">
@@ -20,24 +20,27 @@
       <Parameter name="Z Distribution" type="Histogram Distribution"
 		 value="{{0,0.5,1},{2,1}}"/>
     </ParameterList>
-    
-    <ParameterList name="Directional Distribution">
-      <Parameter name="Mu Distribution" type="Uniform Distribution" 
-		 value="{-1,1,2}"/>
-      <Parameter name="Theta Distribution" type="Uniform Distribution"
-		 value="{0,6.283185307179586,1}"/>
+
+    <ParameterList name="Directional Importance Function">
+      <Parameter name="Mu Distribution" type="Histogram Distribution" 
+		 value="{{-1,0,1},{2,1}}"/>
+      <Parameter name="Theta Distribution" type="Histogram Distribution"
+		 value="{{0,pi,2pi},{2,1}}"/>
     </ParameterList>
     
     <Parameter name="Energy Distribution" type="Uniform Distribution" 
-	       value="{1e-5,1,1}"/>
+	       value="{1e-5,1}"/>
     
     <Parameter name="Energy Importance Function" 
 	       type="Normal Distribution" value="{1,1,1e-5,1}"/>
     
-    <Parameter name="Time Distribution" type="Delta Distribution"
-	       value="{0}"/>
+    <Parameter name="Time Distribution" type="Uniform Distribution"
+	       value="{0,10}"/>
 
-    <Parameter name="Rejection Cell" type="int" value="2"/>
+    <Parameter name="Time Importance Function" type="Uniform Distribution"
+               value="{0,10}"/>
+
+    <Parameter name="Rejection Cells" type="Array" value="{2}"/>
 
     <Parameter name="Particle Type" type="string" value="Neutron"/>
   </ParameterList>

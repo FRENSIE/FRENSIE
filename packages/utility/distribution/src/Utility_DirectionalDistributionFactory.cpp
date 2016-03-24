@@ -15,22 +15,22 @@
 namespace Utility{
 
 // Initialize static member data
-const Teuchos::RCP<Utility::OneDDistribution> 
+const std::shared_ptr<Utility::OneDDistribution> 
 DirectionalDistributionFactory::s_default_mu_dist( 
 			     new Utility::UniformDistribution( -1., 1., 2. ) );
 
-const Teuchos::RCP<Utility::OneDDistribution>
+const std::shared_ptr<Utility::OneDDistribution>
 DirectionalDistributionFactory::s_default_theta_dist(
    new Utility::UniformDistribution( 0., 2*PhysicalConstants::pi, 1. ) );
 
-const Teuchos::RCP<Utility::SphericalDirectionalDistribution>
+const std::shared_ptr<Utility::SphericalDirectionalDistribution>
 DirectionalDistributionFactory::s_isotropic_directional_dist(
 	      new Utility::SphericalDirectionalDistribution( 
 		      DirectionalDistributionFactory::s_default_theta_dist,
 		      DirectionalDistributionFactory::s_default_mu_dist ) );
 
 // Create the directional distribution represented by the parameter list
-Teuchos::RCP<DirectionalDistribution>
+std::shared_ptr<DirectionalDistribution>
 DirectionalDistributionFactory::createDistribution( 
 			       const Teuchos::ParameterList& distribution_rep )
 {
@@ -48,7 +48,7 @@ DirectionalDistributionFactory::createDistribution(
 			"Error: the direction is invalid - size ("
 			<< direction.size() << ") != 3" );
 
-    return Teuchos::RCP<DirectionalDistribution>(
+    return std::shared_ptr<DirectionalDistribution>(
 			     new MonoDirectionalDistribution( direction[0],
 							      direction[1],
 							      direction[2] ) );
@@ -58,8 +58,8 @@ DirectionalDistributionFactory::createDistribution(
     Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
       distribution_rep.getEntryRCP( "Mu Distribution" );
     
-    Teuchos::RCP<OneDDistribution> mu_distribution = 
-      OneDDistributionEntryConverterDB::convertEntry( entry );
+    std::shared_ptr<OneDDistribution> mu_distribution = 
+      OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
     // Make sure the mu distribution is valid
     TEST_FOR_EXCEPTION( mu_distribution->getLowerBoundOfIndepVar() < -1.0,
@@ -73,14 +73,14 @@ DirectionalDistributionFactory::createDistribution(
 			"the interval [-1,1]!" );
 
     // Optional argument
-    Teuchos::RCP<OneDDistribution> theta_distribution;
+    std::shared_ptr<OneDDistribution> theta_distribution;
 
     if( distribution_rep.isParameter( "Theta Distribution" ) )
     {
       entry = distribution_rep.getEntryRCP( "Theta Distribution" );
       
       theta_distribution = 
-	OneDDistributionEntryConverterDB::convertEntry( entry );
+	OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
     }
     else
       theta_distribution = s_default_theta_dist;
@@ -109,7 +109,7 @@ DirectionalDistributionFactory::createDistribution(
     
     Axis axis = convertAxisNameToAxisEnum( axis_name );
     
-    return Teuchos::RCP<DirectionalDistribution>(
+    return std::shared_ptr<DirectionalDistribution>(
 		     new SphericalDirectionalDistribution( theta_distribution,
 							   mu_distribution,
 							   axis ) );
@@ -117,7 +117,7 @@ DirectionalDistributionFactory::createDistribution(
 }
 
 // Create an isotropic distribution
-Teuchos::RCP<DirectionalDistribution> 
+std::shared_ptr<DirectionalDistribution> 
 DirectionalDistributionFactory::createIsotropicDistribution()
 {
   return s_isotropic_directional_dist;

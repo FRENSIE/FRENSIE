@@ -6,23 +6,12 @@
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     
     <ParameterList name="Spatial Distribution">
-      <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
-    </ParameterList>
-    
-    <ParameterList name="Directional Distribution">
-      <Parameter name="Mu Distribution" type="Uniform Distribution" 
-		 value="{-1,1,2}"/>
-      <Parameter name="Theta Distribution" type="Uniform Distribution"
-		 value="{0,2pi,1}"/>
+      <Parameter name="Position" type="Array(double)" value="{0,0,0}"/>
     </ParameterList>
     
     <Parameter name="Energy Distribution" type="Delta Distribution" 
 	       value="{1}"/>
     
-    <Parameter name="Time Distribution" type="Delta Distribution"
-	       value="{0}"/>
     <Parameter name="Weight" type="double" value="0.2"/>
   </ParameterList>
 
@@ -32,13 +21,11 @@
     <Parameter name="Particle Type" type="string" value="Photon"/>
     
     <ParameterList name="Spatial Distribution">
-      <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+      <Parameter name="Position" type="Array(double)" value="{0,0,0}"/>
     </ParameterList>
     
     <Parameter name="Energy Distribution" type="Delta Distribution" 
-	       value="{1}"/>
+	       value="{2}"/>
     
     <Parameter name="Weight" type="double" value="0.8"/>
   </ParameterList>

@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -31,17 +30,18 @@ bool isValidParticleTypeName( const std::string& particle_type_name )
 std::string convertShortParticleTypeNameToVerboseParticleTypeName(
 				 const std::string& short_particle_type_name )
 {
-  // Make sure the shorthand name is valid
-  #ifdef HAVE_FRENSIE_DAGMC
-  testPrecondition( Geometry::DagMCProperties::isParticleTypeValid( short_particle_type_name ));
-  #endif
-
   if( short_particle_type_name == "n" )
     return "Neutron";
   else if( short_particle_type_name == "p" )
     return "Photon";
   else if( short_particle_type_name == "e" )
     return "Electron";
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: the short particle type name ("
+                     << short_particle_type_name << ") is not valid!" );
+  }
 }
 
 // Convert the particle type name to a ParticleType enum

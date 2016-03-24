@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardCellEstimator.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -46,16 +47,20 @@ void StandardCellEstimator::setParticleTypes(
 }
 
 // Export the estimator data
-void StandardCellEstimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
-					const bool process_data ) const
+void StandardCellEstimator::exportData( 
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
 {
   // Export the lower level data first
   StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData( 
 								hdf5_file,
 								process_data );
 
+  // Open the estimator hdf5 file
+  EstimatorHDF5FileHandler estimator_hdf5_file( hdf5_file );
+
   // Set the estimator as a cell estimator
-  hdf5_file.setCellEstimator( this->getId() );
+  estimator_hdf5_file.setCellEstimator( this->getId() );
 }
 
 // Assign bin boundaries to an estimator dimension
@@ -63,7 +68,7 @@ void StandardCellEstimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
  * cell estimators.
  */
 void StandardCellEstimator::assignBinBoundaries(
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == COSINE_DIMENSION )
   {

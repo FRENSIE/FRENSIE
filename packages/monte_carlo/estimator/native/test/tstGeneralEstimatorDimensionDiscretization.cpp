@@ -18,6 +18,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_EstimatorParticleStateWrapper.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 
@@ -171,7 +173,7 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 //---------------------------------------------------------------------------//
 // Check that a bin index can be calculated
 MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
-				   calculateBinIndex,
+				   calculateBinIndex_any,
 				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
@@ -260,7 +262,179 @@ MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 }
 
 UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
-			 calculateBinIndex );
+			 calculateBinIndex_any );
+
+//---------------------------------------------------------------------------//
+// Check that a bin index can be calculated
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   calculateBinIndex_particle_state_wrapper,
+				   dimension )
+{
+  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
+
+  initialize<dimension>( discretized_dimension, true );
+
+  typedef MonteCarlo::PhaseSpaceDimensionTraits<dimension> EPSDT;
+
+  typename EPSDT::dimensionType value_1, value_2, value_3, value_4,
+    value_5, value_6, value_7, value_8, value_9, value_10, value_11,
+    value_12, value_13, value_14, value_15, value_16, value_17;
+
+  if( dimension != MonteCarlo::COLLISION_NUMBER_DIMENSION )
+  {
+    MonteCarlo::NeutronState particle( 0ull );
+    MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+
+    particle.setEnergy( 1e-15 );
+    particle.setTime( 0.0 );
+    particle_wrapper.setAngleCosine( 0.0 );
+    
+    value_17 = 1.0;
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 0u );
+
+    particle.setEnergy( 5e-6 );
+    particle.setTime( 5e-6 );
+    particle_wrapper.setAngleCosine( 5e-6 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 0u );
+
+    particle.setEnergy( 1e-5 );
+    particle.setTime( 1e-5 );
+    particle_wrapper.setAngleCosine( 1e-5 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 0u );
+
+    particle.setEnergy( 5e-5 );
+    particle.setTime( 5e-5 );
+    particle_wrapper.setAngleCosine( 5e-5 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 1u );
+
+    particle.setEnergy( 1e-4 );
+    particle.setTime( 1e-4 );
+    particle_wrapper.setAngleCosine( 1e-4 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 1u );
+
+    particle.setEnergy( 5e-4 );
+    particle.setTime( 5e-4 );
+    particle_wrapper.setAngleCosine( 5e-4 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 2u );
+
+    particle.setEnergy( 9.9999999999999e-4 );
+    particle.setTime( 9.9999999999999e-4 );
+    particle_wrapper.setAngleCosine( 9.9999999999999e-4 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 2u );
+
+    particle.setEnergy( 1e-3 );
+    particle.setTime( 1e-3 );
+    particle_wrapper.setAngleCosine( 1e-3 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 3u );
+
+    particle.setEnergy( 1.0000000000001e-3 );
+    particle.setTime( 1.0000000000001e-3 );
+    particle_wrapper.setAngleCosine( 1.0000000000001e-3 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 4u );
+
+    particle.setEnergy( 5e-3 );
+    particle.setTime( 5e-3 );
+    particle_wrapper.setAngleCosine( 5e-3 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 4u );
+
+    particle.setEnergy( 1e-2 );
+    particle.setTime( 1e-2 );
+    particle_wrapper.setAngleCosine( 1e-2 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 4u );
+
+    particle.setEnergy( 5e-2 );
+    particle.setTime( 5e-2 );
+    particle_wrapper.setAngleCosine( 5e-2 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 5u );
+
+    particle.setEnergy( 9.999999999999e-2 );
+    particle.setTime( 9.999999999999e-2 );
+    particle_wrapper.setAngleCosine( 9.999999999999e-2 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 5u );
+    
+    particle.setEnergy( 1e-1 );
+    particle.setTime( 1e-1 );
+    particle_wrapper.setAngleCosine( 1e-1 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 6u );
+
+    particle.setEnergy( 1.000000000001e-1 );
+    particle.setTime( 1.000000000001e-1 );
+    particle_wrapper.setAngleCosine( 1.000000000001e-1 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 7u );
+    
+    particle.setEnergy( 5e-1 );
+    particle.setTime( 5e-1 );
+    particle_wrapper.setAngleCosine( 5e-1 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 7u );
+
+    particle.setEnergy( 1.0 );
+    particle.setTime( 1.0 );
+    particle_wrapper.setAngleCosine( 1.0 );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+                                                      particle_wrapper ), 7u );
+  }
+  else
+  {
+    MonteCarlo::NeutronState particle( 0ull );
+    MonteCarlo::EstimatorParticleStateWrapper particle_wrapper( particle );
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+					              particle_wrapper ), 0u );
+
+    particle.incrementCollisionNumber();
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+					              particle_wrapper ), 1u );
+
+    particle.incrementCollisionNumber();
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+					              particle_wrapper ), 2u );
+
+    particle.incrementCollisionNumber();
+    
+    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
+					              particle_wrapper ), 2u );
+  }
+
+  discretized_dimension->print( std::cout );
+}
+
+UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
+			 calculateBinIndex_particle_state_wrapper );
 
 //---------------------------------------------------------------------------//
 // Check that the bin boundaries can be exported

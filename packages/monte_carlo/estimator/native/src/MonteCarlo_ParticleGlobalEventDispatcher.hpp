@@ -6,14 +6,14 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
-#define FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#ifndef MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#define MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+
+// Std Lib Includes
+#include <memory>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
-
-// Teuchos Includes
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
@@ -30,34 +30,38 @@ public:
   //! Typedef for Observer type
   typedef Observer ObserverType;
 
+  //! Constructor
+  ParticleGlobalEventDispatcher();
+
+  //! Destructor
+  virtual ~ParticleGlobalEventDispatcher()
+  { /* ... */ }
+
   //! Attach an observer to the dispatcher
-  static void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
-			      Teuchos::RCP<Observer>& observer );
+  void attachObserver( const ModuleTraits::InternalEventObserverHandle id,
+                       const std::shared_ptr<Observer>& observer );
 
   //! Detach an observer from the dispatcher
-  static void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
+  void detachObserver( const ModuleTraits::InternalEventObserverHandle id );
 
   //! Detach all observers
-  static void detachAllObservers();
+  void detachAllObservers();
 
   //! Get the number of attached observers
-  static unsigned getNumberOfObservers();
+  unsigned getNumberOfObservers();
 
 protected:
 
   // The observer map
-  typedef typename boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
-					Teuchos::RCP<Observer> > ObserverIdMap;
+  typedef typename boost::unordered_map<ModuleTraits::InternalEventObserverHandle,
+					std::shared_ptr<Observer> > ObserverIdMap;
 
   // Get the oberver map
-  static ObserverIdMap& observer_id_map();
+  ObserverIdMap& observer_id_map();
 
 private:
 
-  // Constructor
-  ParticleGlobalEventDispatcher();
-
-  static ObserverIdMap d_observer_map;
+  ObserverIdMap d_observer_map;
 };
 
 } // end MonteCarlo namespace
@@ -70,7 +74,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
+#endif // end MONTE_CARLO_PARTICLE_GLOBAL_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleGlobalEventDispatcher.hpp
