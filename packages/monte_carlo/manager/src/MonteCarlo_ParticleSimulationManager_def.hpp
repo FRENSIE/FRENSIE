@@ -581,13 +581,13 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::printSimulationSummary( 
 						       std::ostream &os ) const
 {
-  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-  os << "!!! Particle Simulation Finished !!!" << std::endl;
-  os << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl << std::endl;
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
-  os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
+  if( d_previous_run_time > 0.0 )
+    os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
+  
+  SMI::printSourceSummary( os );
   
   EMI::printObserverSummaries( os,
                                d_histories_completed,

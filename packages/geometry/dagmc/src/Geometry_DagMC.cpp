@@ -1075,7 +1075,7 @@ void DagMC::setInternalRay(
   
   moab::EntityHandle cell_handle = 
     s_cell_handler->getCellHandle( current_cell );
-
+  
   if( cache_start_cell )
     DagMC::addCellToFoundCellCache( cell_handle );
 
@@ -1096,7 +1096,7 @@ void DagMC::setInternalRay( const double position[3],
 
   // Set the basic ray
   dagmc_ray.set( position, direction, current_cell_handle );
-
+  
   // Fire the ray so the new intersection data is set
   ModuleTraits::InternalSurfaceHandle dummy_surface;
   
@@ -1148,7 +1148,7 @@ const double* DagMC::getInternalRayPosition()
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
   
-  DagMC::getInternalRay().getPosition();
+  return DagMC::getInternalRay().getPosition();
 }
 
 // Get the internal DagMC ray direction
@@ -1159,7 +1159,7 @@ const double* DagMC::getInternalRayDirection()
   // Make sure the ray is set
   testPrecondition( DagMC::isInternalRaySet() );
   
-  DagMC::getInternalRay().getDirection();
+  return DagMC::getInternalRay().getDirection();
 }
 
 // Get the cell containing the internal DagMC ray position
@@ -1185,7 +1185,7 @@ double DagMC::fireInternalRay(
   double distance_to_surface;
 
   DagMCRay& ray = DagMC::getInternalRay();
-
+  
   // Check if the ray has already been fired
   if( ray.knowsIntersectionSurface() )
   {
@@ -1199,8 +1199,7 @@ double DagMC::fireInternalRay(
   {
     moab::EntityHandle surface_hit_handle;
 
-    double distance_to_surface;
-  
+    
     moab::ErrorCode return_value = s_dagmc->ray_fire( ray.getCurrentCell(),
                                                       ray.getPosition(),
                                                       ray.getDirection(),

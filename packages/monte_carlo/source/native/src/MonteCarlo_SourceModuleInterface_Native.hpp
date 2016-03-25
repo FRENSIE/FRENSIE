@@ -31,12 +31,6 @@ class SourceModuleInterface<ParticleSource>
 
 public:
 
-  //! The external source handle class (used within the source handler)
-  typedef int ExternalSourceHandle;
-  
-  //! The internal source handle class (used within FRENSIE)
-  typedef ModuleTraits::InternalSourceHandle InternalSourceHandle;
-
   //! Initialize the source
   static void setHandlerInstance( const std::shared_ptr<ParticleSource>& source );
 
@@ -148,7 +142,7 @@ SourceModuleInterface<ParticleSource>::getNumberOfTrials()
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   
-  s_source->getNumberOfTrials();
+  return s_source->getNumberOfTrials();
 }
 
 // Return the number of samples
@@ -160,7 +154,7 @@ SourceModuleInterface<ParticleSource>::getNumberOfSamples()
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   
-  s_source->getNumberOfSamples();
+  return s_source->getNumberOfSamples();
 }
 
 // Get the sampling efficiency

@@ -136,7 +136,7 @@ ModuleInterface<DagMC>::findCellContainingStartRay( const Ray& ray )
   // Make sure the DagMC wrapper is initialized
   testPrecondition( DagMC::isInitialized() );
 
-  DagMC::findAndCacheCellContainingExternalRay( ray );
+  return DagMC::findAndCacheCellContainingExternalRay( ray );
 }
 
 // Find the cell that contain the internal ray
