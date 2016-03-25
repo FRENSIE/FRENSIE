@@ -236,9 +236,9 @@ TARGET_LINK_LIBRARIES(tstEventHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(EventHandler_2_test 
+  ADD_TEST(SharedParallelEventHandler_2_test 
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
-  ADD_TEST(EventHandler_4_test 
+  ADD_TEST(SharedParallelEventHandler_4_test 
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
 ENDIF()
 
