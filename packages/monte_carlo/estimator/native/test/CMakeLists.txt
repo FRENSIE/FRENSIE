@@ -165,6 +165,30 @@ Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
 TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
 ADD_TEST(TetMeshTrackLengthFluxEstimator_test tstTetMeshTrackLengthFluxEstimator --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
+ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
+  tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
+ADD_TEST(ParticleTrackerHDF5FileHandler_test tstParticleTrackerHDF5FileHandler)
+
+ADD_EXECUTABLE(tstParticleTracker 
+    tstParticleTracker.cpp)
+TARGET_LINK_LIBRARIES(tstParticleTracker monte_carlo_estimator_native)
+ADD_TEST(ParticleTracker_test tstParticleTracker)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelParticleTracker_2_test tstParticleTracker --threads=2)
+  ADD_TEST(SharedParallelParticleTracker_4_test tstParticleTracker --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstDistributedParallelParticleTracker
+    tstDistributedParticleTracker.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedParallelParticleTracker monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelParticleTracker_1_test ${MPIEXEC} -n 1 tstDistributedParallelParticleTracker)
+  ADD_TEST(DistributedParallelParticleTracker_2_test ${MPIEXEC} -n 2 tstDistributedParallelParticleTracker)
+  ADD_TEST(DistributedParallelParticleTracker_4_test ${MPIEXEC} -n 4 tstDistributedParallelParticleTracker)
+ENDIF()
+
 Add_EXECUTABLE(tstParticleSubtrackEndingGlobalEventDispatcher
   tstParticleSubtrackEndingGlobalEventDispatcher.cpp)
 TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingGlobalEventDispatcher monte_carlo_estimator_native ${MOAB})
@@ -234,25 +258,6 @@ ADD_EXECUTABLE(tstEventHandler
   tstEventHandler.cpp)
 TARGET_LINK_LIBRARIES(tstEventHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-
-IF(${FRENSIE_ENABLE_MPI})
-ADD_EXECUTABLE(tstDistributedParticleTracker
-  tstDistributedParticleTracker.cpp ${BOOST_PREFIX})
-TARGET_LINK_LIBRARIES(tstDistributedParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
-ADD_TEST(DistributedParticleTracker_test ${MPIEXEC} -n 4 tstDistributedParticleTracker)
-ENDIF()
-
-IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_EXECUTABLE(tstSharedParallelParticleTracker 
-    tstSharedParallelParticleTracker.cpp ${BOOST_PREFIX})
-  TARGET_LINK_LIBRARIES(tstSharedParallelParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
-  ADD_TEST(SharedParallelParticleTracker_test tstSharedParallelParticleTracker --threads=4)
-ENDIF()
-
-ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
-  tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
-ADD_TEST(ParticleTrackerHDF5FileHandler_test tstParticleTrackerHDF5FileHandler)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEventHandler_2_test 

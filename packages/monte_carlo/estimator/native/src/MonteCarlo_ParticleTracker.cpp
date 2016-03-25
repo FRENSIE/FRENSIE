@@ -9,7 +9,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "Utility_ContractException.hpp"
-#include "Teuchos_DefaultMpiComm.hpp"
+
+// Trilinos Includes
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_CommHelpers.hpp>
+#endif
 
 namespace MonteCarlo{
 
@@ -271,6 +275,9 @@ void ParticleTracker::resetParticleTrackData()
 void ParticleTracker::exportData(  const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                                    const bool process_data ) const
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   ParticleTrackerHDF5FileHandler ptrac_hdf5_file( hdf5_file );
   
   ptrac_hdf5_file.setParticleTrackerData( d_history_number_map );
@@ -364,6 +371,9 @@ bool ParticleTracker::isParticleReset()
 // Reset data
 void ParticleTracker::resetData()
 {
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   ParticleTracker::resetParticleTrackData();
   
   d_history_number_map.clear();
@@ -382,15 +392,15 @@ void ParticleTracker::commitHistoryContribution()
 // Serialize and pack into string
 std::string ParticleTracker::packDataInString()
 {
-  if( Utility::GlobalOpenMPSession::getThreadId() == 0 )
-  {
-    // Serialize the history number map
-    std::ostringstream output_stream("ptrack_data_map");
-    boost::archive::binary_oarchive output_archive(output_stream);
-    output_archive << d_history_number_map;
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  // Serialize the history number map
+  std::ostringstream output_stream("ptrack_data_map");
+  boost::archive::binary_oarchive output_archive(output_stream);
+  output_archive << d_history_number_map;
     
-    return output_stream.str();
-  }
+  return output_stream.str();
 }
 
 // Unpack the data from a string and store into a container
@@ -398,12 +408,12 @@ void ParticleTracker::unpackDataFromString(
               std::string& packed_string,
               ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
 {
-  if( Utility::GlobalOpenMPSession::getThreadId() == 0 )
-  {
-    std::istringstream input_stream( packed_string );
-    boost::archive::binary_iarchive input_archive( input_stream );
-    input_archive >> history_map;
-  }
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  std::istringstream input_stream( packed_string );
+  boost::archive::binary_iarchive input_archive( input_stream );
+  input_archive >> history_map;
 }
 
 // Reduce data
@@ -411,78 +421,78 @@ void ParticleTracker::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
-  if( Utility::GlobalOpenMPSession::getThreadId() == 0 )
-  {
-    #ifdef HAVE_FRENSIE_MPI
-      // Make sure the global MPI session has been initialized
-      testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-      testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-      // Make sure the comm is valid
-      testPrecondition( !comm.is_null() );
+#ifdef HAVE_FRENSIE_MPI
+  // Make sure only the root process calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
 
-      const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
-        dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
-                      comm.getRawPtr() );
+  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
+    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
+                                                            comm.getRawPtr() );
                       
-      // Only proceed to the reduce call if the comm is an mpi comm
-      if( mpi_comm != NULL && comm->getSize() > 1 )
-      {
-        int rank = comm->getRank();
-        MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm()); 
+  // Only proceed to the reduce call if the comm is an mpi comm
+  if( mpi_comm != NULL && comm->getSize() > 1 )
+  {
+    int rank = comm->getRank();
+    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm()); 
 
-        if( rank == root_process ) // Handle the master
-        {
-          int nodes_reporting = 1;
-          
-          while( nodes_reporting < comm->getSize() )
-          {
-            MPI_Status status;
-            int message_size;
-
-            // Probe for incoming sends to determine message size
-            ::MPI_Probe( MPI_ANY_SOURCE,
-                        0,
-                        MPI_COMM_WORLD,
-                        &status);
-
-            // Get the size of the incoming message
-            ::MPI_Get_count( &status, 
-                            MPI_CHAR, 
-                            &message_size );
-
-            char *packaged_data = new char[message_size];
-            
-            ::MPI_Recv( packaged_data,
-                        message_size,
-                        MPI_CHAR,
-                        MPI_ANY_SOURCE,
-                        0,
-                        MPI_COMM_WORLD,
-                        MPI_STATUS_IGNORE );
-                        
-            // Contribute the data from this worker to the node map. 
-            std::string reconstructed( packaged_data, message_size );  
-            this->contributeDataFromWorkers( reconstructed );
+    if( rank == root_process ) // Handle the master
+    {
+      int nodes_reporting = 1;
       
-            ++nodes_reporting;
-            std::cout << "done" << std::endl;
-          }
-          
-        }
-        else // Handle the workers
-        {
-          std::string packaged_data = packDataInString();
-          
-          ::MPI_Send( packaged_data.c_str(), 
-                      packaged_data.size(),
-                      MPI_CHAR, 
-                      root_process, 
-                      0,
-                      MPI_COMM_WORLD );      
-        }  
+      while( nodes_reporting < comm->getSize() )
+      {
+        MPI_Status status;
+        int message_size;
+
+        // Probe for incoming sends to determine message size
+        ::MPI_Probe( MPI_ANY_SOURCE,
+                     0,
+                     MPI_COMM_WORLD,
+                     &status);
+        
+        // Get the size of the incoming message
+        ::MPI_Get_count( &status, 
+                         MPI_CHAR, 
+                         &message_size );
+        
+        char *packaged_data = new char[message_size];
+            
+        ::MPI_Recv( packaged_data,
+                    message_size,
+                    MPI_CHAR,
+                    MPI_ANY_SOURCE,
+                    0,
+                    MPI_COMM_WORLD,
+                    MPI_STATUS_IGNORE );
+        
+        // Contribute the data from this worker to the node map. 
+        std::string reconstructed( packaged_data, message_size );  
+        this->contributeDataFromWorkers( reconstructed );
+        
+        ++nodes_reporting;
+        std::cout << "done" << std::endl;
       }
-    #endif // end HAVE_FRENSIE_MPI
+          
+    }
+    else // Handle the workers
+    {
+      std::string packaged_data = packDataInString();
+      
+      ::MPI_Send( packaged_data.c_str(), 
+                  packaged_data.size(),
+                  MPI_CHAR, 
+                  root_process, 
+                  0,
+                  MPI_COMM_WORLD );
+
+      this->resetData();
+    }  
   }
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Print a summary of the data
