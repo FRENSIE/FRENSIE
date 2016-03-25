@@ -6,7 +6,6 @@ build cmake
 source ../src/scripts/source_deps.sh
 build lapack  
 build mpi
-build gsl
 build trilinos
 build boost
 build doxygen
