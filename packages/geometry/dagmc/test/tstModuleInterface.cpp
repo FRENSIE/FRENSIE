@@ -32,6 +32,97 @@ TEUCHOS_UNIT_TEST( ModuleInterface, initialize )
 }
 
 //---------------------------------------------------------------------------//
+// Check if cells exist
+TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
+{
+  typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
+  
+  TEST_ASSERT( !GMI::doesCellExist( 0 ) );
+  TEST_ASSERT( GMI::doesCellExist( 1 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 2 ) );
+  TEST_ASSERT( GMI::doesCellExist( 3 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 4 ) );
+  TEST_ASSERT( GMI::doesCellExist( 5 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 6 ) );
+  TEST_ASSERT( GMI::doesCellExist( 7 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 8 ) );
+  TEST_ASSERT( GMI::doesCellExist( 9 ) );
+  TEST_ASSERT( GMI::doesCellExist( 13 ) );
+  TEST_ASSERT( GMI::doesCellExist( 19 ) );
+  TEST_ASSERT( GMI::doesCellExist( 26 ) );
+  TEST_ASSERT( GMI::doesCellExist( 27 ) );
+  TEST_ASSERT( GMI::doesCellExist( 28 ) );
+  TEST_ASSERT( GMI::doesCellExist( 29 ) );
+  TEST_ASSERT( GMI::doesCellExist( 30 ) );
+  TEST_ASSERT( GMI::doesCellExist( 31 ) );
+  TEST_ASSERT( GMI::doesCellExist( 32 ) );
+  TEST_ASSERT( GMI::doesCellExist( 33 ) );
+  TEST_ASSERT( GMI::doesCellExist( 34 ) );
+  TEST_ASSERT( GMI::doesCellExist( 35 ) );
+  TEST_ASSERT( GMI::doesCellExist( 36 ) );
+  TEST_ASSERT( GMI::doesCellExist( 37 ) );
+  TEST_ASSERT( GMI::doesCellExist( 41 ) );
+  TEST_ASSERT( GMI::doesCellExist( 48 ) );
+  TEST_ASSERT( GMI::doesCellExist( 49 ) );
+  TEST_ASSERT( GMI::doesCellExist( 50 ) );
+  TEST_ASSERT( GMI::doesCellExist( 51 ) );
+  TEST_ASSERT( GMI::doesCellExist( 52 ) );
+  TEST_ASSERT( GMI::doesCellExist( 53 ) );
+  TEST_ASSERT( GMI::doesCellExist( 54 ) );
+  TEST_ASSERT( GMI::doesCellExist( 55 ) );
+  TEST_ASSERT( GMI::doesCellExist( 56 ) );
+  TEST_ASSERT( GMI::doesCellExist( 57 ) );
+  TEST_ASSERT( GMI::doesCellExist( 58 ) );
+  TEST_ASSERT( GMI::doesCellExist( 59 ) );
+  TEST_ASSERT( GMI::doesCellExist( 63 ) );
+  TEST_ASSERT( GMI::doesCellExist( 70 ) );
+  TEST_ASSERT( GMI::doesCellExist( 71 ) );
+  TEST_ASSERT( GMI::doesCellExist( 72 ) );
+  TEST_ASSERT( GMI::doesCellExist( 73 ) );
+  TEST_ASSERT( GMI::doesCellExist( 74 ) );
+  TEST_ASSERT( GMI::doesCellExist( 75 ) );
+  TEST_ASSERT( GMI::doesCellExist( 76 ) );
+  TEST_ASSERT( GMI::doesCellExist( 77 ) );
+  TEST_ASSERT( GMI::doesCellExist( 78 ) );
+  TEST_ASSERT( GMI::doesCellExist( 79 ) );
+  TEST_ASSERT( GMI::doesCellExist( 80 ) );
+  TEST_ASSERT( GMI::doesCellExist( 81 ) );
+  TEST_ASSERT( GMI::doesCellExist( 82 ) );
+  TEST_ASSERT( GMI::doesCellExist( 83 ) );
+  TEST_ASSERT( GMI::doesCellExist( 88 ) );
+  TEST_ASSERT( GMI::doesCellExist( 136 ) );
+  TEST_ASSERT( GMI::doesCellExist( 152 ) );
+  TEST_ASSERT( GMI::doesCellExist( 154 ) );
+  TEST_ASSERT( GMI::doesCellExist( 166 ) );
+  TEST_ASSERT( GMI::doesCellExist( 168 ) );
+  TEST_ASSERT( GMI::doesCellExist( 184 ) );
+  TEST_ASSERT( GMI::doesCellExist( 188 ) );
+  
+  // Implicit compliment cell
+  TEST_ASSERT( GMI::doesCellExist( 189 ) ); 
+}
+
+//---------------------------------------------------------------------------//
+// Check if the surface exists
+TEUCHOS_UNIT_TEST( ModuleInterface, doesSurfaceExist )
+{
+  typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
+  
+  TEST_ASSERT( !GMI::doesSurfaceExist( 0 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 1 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 2 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 3 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 4 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 5 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 6 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 7 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 8 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 9 ) );
+
+  // There are more surfaces than this but too many to feasibly check
+}
+
+//---------------------------------------------------------------------------//
 // Check that an internal ray can be set
 TEUCHOS_UNIT_TEST( ModuleInterface, setInternalRay )
 {
