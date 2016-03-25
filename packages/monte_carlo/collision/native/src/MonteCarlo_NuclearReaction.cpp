@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
+#include "MonteCarlo_NuclearReactionHelper.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -21,7 +22,7 @@ NuclearReaction::NuclearReaction(
 		   const double temperature,
 		   const double q_value,
 		   const unsigned threshold_energy_index,
-	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section)
   : d_reaction_type( reaction_type ),
     d_temperature( temperature ),
@@ -60,29 +61,10 @@ double NuclearReaction::getQValue() const
 // Return the cross section value at a given energy
 double NuclearReaction::getCrossSection( const double energy ) const
 {
-  if( energy >= this->getThresholdEnergy() &&
-      energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    unsigned energy_index = 
-      Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
-					      d_incoming_energy_grid.end(),
-					      energy );
-    
-    unsigned cs_index = energy_index - d_threshold_energy_index;
-    
-    return Utility::LinLin::interpolate( 
-					d_incoming_energy_grid[energy_index],
-					d_incoming_energy_grid[energy_index+1],
-					energy,
-					d_cross_section[cs_index],
-					d_cross_section[cs_index+1] );
-  }
-  else if( energy < this->getThresholdEnergy() )
-    return 0.0;
-  else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-    return d_cross_section[d_cross_section.size()-1];
-  else // energy > this->getThresholdEnergy()
-    return 0.0;    
+  return MonteCarlo::getCrossSection( energy,
+                          d_incoming_energy_grid,
+                          d_cross_section,
+                          d_threshold_energy_index );
 }
 
 } // end MonteCarlo namespace
