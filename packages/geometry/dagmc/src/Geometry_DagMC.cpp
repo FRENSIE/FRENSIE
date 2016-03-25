@@ -768,15 +768,51 @@ moab::EntityHandle DagMC::checkFoundCellCache( const double position[3],
   // Unfortunately the only way to check the cache in a thread-safe way is
   // to create a copy of the cache when checking it. Assuming it is not
   // very big this shouldn't be a problem.
-  std::vector<moab::EntityHandle> found_cell_cache_vector;
+  // std::vector<moab::EntityHandle> found_cell_cache_vector;
+
+  // #pragma omp critical( modify_use_found_cell_cache )
+  // {
+  //   found_cell_cache_vector.assign( s_found_cell_cache.begin(),
+  //                                   s_found_cell_cache.end() );
+  // }
+  
+  // for( unsigned i = 0; i < found_cell_cache_vector.size(); ++i )
+  // {
+  //   PointLocation test_point_location;
+
+  //   try{
+  //     test_point_location = 
+  //       DagMC::getPointLocation( position, 
+  //                                direction,
+  //                                found_cell_cache_vector[i] );
+  //   }
+  //   EXCEPTION_CATCH_RETHROW( 
+  //                 DagMCGeometryError,
+  //                 "Error: Could not find the location of the ray "
+  //                 "with respect to cell "
+  //                 << s_cell_handler->getCellId( found_cell_cache_vector[i] ) <<
+  //                 "! Here are the details...\n"
+  //                 "Position: " << DagMC::arrayToString( position ) << "\n"
+  //                 "Direction: " << DagMC::arrayToString( direction ) );
+    
+  //   if( test_point_location == POINT_INSIDE_CELL )
+  //   {
+  //     cell_handle = found_cell_cache_vector[i];
+      
+  //     break;
+  //   }
+  // }
+
+  std::unordered_set<moab::EntityHandle>::const_iterator cell_handle_it,
+    cell_handle_end;
 
   #pragma omp critical( modify_use_found_cell_cache )
   {
-    found_cell_cache_vector.assign( s_found_cell_cache.begin(),
-                                    s_found_cell_cache.end() );
+    cell_handle_it = s_found_cell_cache.begin();
+    cell_handle_end = s_found_cell_cache.end();
   }
   
-  for( unsigned i = 0; i < found_cell_cache_vector.size(); ++i )
+  while( cell_handle_it != cell_handle_end )
   {
     PointLocation test_point_location;
 
@@ -784,23 +820,25 @@ moab::EntityHandle DagMC::checkFoundCellCache( const double position[3],
       test_point_location = 
         DagMC::getPointLocation( position, 
                                  direction,
-                                 found_cell_cache_vector[i] );
+                                 *cell_handle_it );
     }
     EXCEPTION_CATCH_RETHROW( 
                   DagMCGeometryError,
                   "Error: Could not find the location of the ray "
                   "with respect to cell "
-                  << s_cell_handler->getCellId( found_cell_cache_vector[i] ) <<
+                  << s_cell_handler->getCellId( *cell_handle_it ) <<
                   "! Here are the details...\n"
                   "Position: " << DagMC::arrayToString( position ) << "\n"
                   "Direction: " << DagMC::arrayToString( direction ) );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
-      cell_handle = found_cell_cache_vector[i];
+      cell_handle = *cell_handle_it;
       
       break;
     }
+    
+    ++cell_handle_it;
   }
 
   return cell_handle;
