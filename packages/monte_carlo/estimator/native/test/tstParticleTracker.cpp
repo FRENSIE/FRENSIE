@@ -24,16 +24,17 @@
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 
 //---------------------------------------------------------------------------//
-
 // Construct a particle tracker
 MonteCarlo::ParticleTracker particle_tracker( 100u );
-int threads = 0;
+int threads = 1;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the data is updated appropriately in the GlobalSubtrackEndingEvent
-TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testUpdateFromGlobalSubtrackEndingEvent )
+// Check that the data is updated appropriately in the 
+// GlobalSubtrackEndingEvent
+TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, 
+                   testUpdateFromGlobalSubtrackEndingEvent )
 { 
   particle_tracker.enableThreadSupport( threads );
                
@@ -152,6 +153,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testUpdateFromGlobalSubtrackEn
   particle_tracker.resetData();
 }
 
+//---------------------------------------------------------------------------//
 // Check that the data is committed appropriately
 TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testcommitParticleTrackData )
 {
@@ -195,6 +197,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testcommitParticleTrackData )
   particle_tracker.resetData();
 }
 
+//---------------------------------------------------------------------------//
 // Check that the data can be reset
 TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testParticleReset )
 {
@@ -207,6 +210,7 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testParticleReset )
   }
 }
 
+//---------------------------------------------------------------------------//
 // Check that the data map can be converted into a string and back into a map
 TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testDataPackaging )
 {
@@ -246,13 +250,10 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, testDataPackaging )
   
   mapped_x_position = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
   
-  #pragma omp critical
-  {
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position );
-  }
+  UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position );
 }
 
-
+//---------------------------------------------------------------------------//
 // Check that parallel data can be brought together
 TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, checkParallelData )
 {
@@ -265,23 +266,34 @@ TEUCHOS_UNIT_TEST( SharedParallelParticleTracker, checkParallelData )
   input_x_position.push_back( 2.0 );
   
   // Mapped data
-  std::vector< double > mapped_x_position_0;
-  std::vector< double > mapped_x_position_1;
-  std::vector< double > mapped_x_position_2;
-  std::vector< double > mapped_x_position_3;
-  
-  mapped_x_position_0 = history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-  mapped_x_position_1 = history_map[ 1 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-  mapped_x_position_2 = history_map[ 2 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-  mapped_x_position_3 = history_map[ 3 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
-  
-  #pragma omp critical
+  std::vector< double > mapped_x_position_0 =
+    history_map[ 0 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+
+  UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_0 );
+
+  if( threads > 1 )
   {
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_0 );
+    std::vector< double > mapped_x_position_1 =
+      history_map[ 1 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+
     UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_1 );
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_2 );
-    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_3 );
   }
+
+  if( threads > 2 )
+  {
+    std::vector< double > mapped_x_position_2 =
+      history_map[ 2 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_2 );
+  }
+
+  if( threads > 3 )
+  {
+    std::vector< double > mapped_x_position_3 = 
+      history_map[ 3 ][ MonteCarlo::PHOTON ][ 0 ][ 0 ][ 0 ];
+
+    UTILITY_TEST_COMPARE_ARRAYS( input_x_position, mapped_x_position_3 );
+  }  
 }
 
 //---------------------------------------------------------------------------//

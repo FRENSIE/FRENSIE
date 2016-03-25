@@ -9,15 +9,6 @@
 #ifndef MONTE_CARLO_PARTICLE_TRACKER_HPP
 #define MONTE_CARLO_PARTICLE_TRACKER_HPP
 
-// Trilinos Includes
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif 
-#include <Teuchos_GlobalMPISession.hpp>
-#include <Teuchos_Tuple.hpp>
-#include <Teuchos_any.hpp>
-#include <Teuchos_Comm.hpp>
-
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
@@ -29,9 +20,13 @@
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
-#include "FRENSIE_mpi_config.hpp"
-#include "Utility_GlobalOpenMPSession.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
+#include "FRENSIE_mpi_config.hpp"
+
+// Trilinos Includes 
+#include <Teuchos_Tuple.hpp>
+#include <Teuchos_any.hpp>
 
 namespace MonteCarlo{
 
