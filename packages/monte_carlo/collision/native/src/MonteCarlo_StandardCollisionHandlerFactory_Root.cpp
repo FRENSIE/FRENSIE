@@ -20,8 +20,6 @@
 namespace MonteCarlo{
 
 // Validate the material ids
-/*! \details If ROOT has not been enabled this function will be empty. 
- */
 void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
                                            const MatIdSet& material_ids ) const
 {
@@ -68,8 +66,6 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
 }
 
 // Create the cell id data maps
-/*! If ROOT has not been enabled this function will be empty
- */
 void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
                                   CellIdMatIdMap& cell_id_mat_id_map,
                                   CellIdDensityMap& cell_id_density_map ) const
