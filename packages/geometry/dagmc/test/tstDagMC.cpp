@@ -1333,7 +1333,7 @@ TEUCHOS_UNIT_TEST( DagMC, fireInternalRay )
   // Initialize the ray
   Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
 
-  Geometry::DagMC::setInternalRay( ray, false );
+  Geometry::DagMC::setInternalRay( ray, 53, false );
 
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
@@ -1353,7 +1353,7 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayBySubstep )
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
     
-    Geometry::DagMC::setInternalRay( ray, false );
+    Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   Geometry::DagMC::advanceInternalRayBySubstep( 0.959999084 );
@@ -1382,7 +1382,7 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_basic )
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
     
-    Geometry::DagMC::setInternalRay( ray, false );
+    Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   // Find the cell that contains the ray
@@ -1407,7 +1407,7 @@ TEUCHOS_UNIT_TEST( DagMC, advanceInternalRayToCellBoundary_advanced )
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
     
-    Geometry::DagMC::setInternalRay( ray, false );
+    Geometry::DagMC::setInternalRay( ray, 53, false );
   }
 
   // Find the cell that contains the ray
