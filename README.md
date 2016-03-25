@@ -15,8 +15,8 @@ depends on is listed below.
 7. [Trilinos 11.12.1](http://trilinos.org/)
 8. [ODEPACK](http://computation.llnl.gov/casc/odepack/)
 9. [Boost 1.56.0](http://www.boost.org/)
-10. [GSL 1.16](http://www.gnu.org/software/gsl/)
-11. [Doxygen 1.8.8](http://www.stack.nl/~dimitri/doxygen/index.html)
+10. [Doxygen 1.8.8](http://www.stack.nl/~dimitri/doxygen/index.html)
+11. [ROOT 6.04/02](https://root.cern.ch/content/release-60402)
 
 FRENSIE also requires a GNU compiler (4.7.3 or greater) and CMake version 3.0.1 to build correctly. Doxygen version 1.8.8 is recommended but version 1.8.2 and above will also work. All of the above software libraries will be built from source. This process will be described in the next section.
 
@@ -179,24 +179,9 @@ are described.
 9. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
-### Building the GNU Scientific Library (GSL)
-1. download the [GSL 1.16 source](http://www.gnu.org/software/gsl/)
-2. move the `gsl-1.16.tar.gz` file to the gsl directory (e.g. software/gsl)
-3. move to the gsl directory
-4. run `tar -xvf gsl-1.16.tar.gz`
-5. run `ln -s gsl-1.16 src`
-6. run `mkdir build`
-7. move to the build directory (e.g. software/gsl/build)
-8. run `../src/configure --prefix=absolute-path-to_software/gsl`
-9. run `make -j n`
-10. run `make check`
-11. run `make install`
-12. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/gsl/bin:$LD_LIBRARY_PATH`
-13. run `exec bash`
-
 ### Building Doxygen
 1. download the [Doxygen 1.8.8 source](http://sourceforge.net/projects/doxygen/files/)
-2. move the `doxygen-1.8.8.src.tar.gz` file to the doxygen directory (e.g. software/gsl)
+2. move the `doxygen-1.8.8.src.tar.gz` file to the doxygen directory (e.g. software/doxygen)
 3. move to the doxygen directory
 4. run `tar -xvf doxygen-1.8.8.src.tar.gz`
 5. move to the doxygen-1.8.8 directory
@@ -213,7 +198,7 @@ are described.
 3. move to the root directory
 4. run 'tar -xvf root_v6.04.02*'
 5. update the 'export PATH' line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:absolute-path-to_software/root/bin:$PATH`
-6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/gsl/bin:absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
+6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
