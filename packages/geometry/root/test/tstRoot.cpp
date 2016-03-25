@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( Root, getMaterialIds )
 
 //---------------------------------------------------------------------------//
 // Check if the cell exists
-TEUCHOS_UNIT_TEST( Root, doesCellExists )
+TEUCHOS_UNIT_TEST( Root, doesCellExist )
 {
   TEST_ASSERT( Geometry::Root::doesCellExist( 1 ) );
   TEST_ASSERT( Geometry::Root::doesCellExist( 2 ) );

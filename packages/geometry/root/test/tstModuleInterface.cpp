@@ -36,6 +36,31 @@ TEUCHOS_UNIT_TEST( ModuleInterface, initialize )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the cell exists
+TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
+{
+  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+  
+  TEST_ASSERT( GMI::doesCellExist( 1 ) );
+  TEST_ASSERT( GMI::doesCellExist( 2 ) );
+  TEST_ASSERT( GMI::doesCellExist( 3 ) );
+  
+  TEST_ASSERT( !GMI::doesCellExist( 4 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the surface exists
+TEUCHOS_UNIT_TEST( ModuleInterface, doesSurfaceExist )
+{
+  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+
+  TEST_ASSERT( !GMI::doesSurfaceExist( 1 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 2 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 3 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 4 ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that an internal ray can be set
 TEUCHOS_UNIT_TEST( ModuleInterface, setInternalRay )
 {
