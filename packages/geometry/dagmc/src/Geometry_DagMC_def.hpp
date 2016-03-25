@@ -188,12 +188,12 @@ inline void DagMC::setInternalRay(
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
-    // Make sure the cell exists
+  // Make sure the cell exists
   testPrecondition( DagMC::doesCellExist( current_cell ) );
   // Make sure the cell contains the ray
   testPrecondition( DagMC::findCellContainingExternalRay( ray ) ==
                     current_cell );
-
+  
   DagMC::setInternalRay( ray.getPosition(), 
                          ray.getDirection(), 
                          current_cell,

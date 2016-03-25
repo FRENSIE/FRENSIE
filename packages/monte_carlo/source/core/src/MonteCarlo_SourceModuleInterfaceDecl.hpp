@@ -58,15 +58,6 @@ class SourceModuleInterface
 
 public:
 
-  //! The external source handle class (used within the source handler)
-  typedef int ExternalSourceHandle;
-  
-  //! The internal source handle class (used within FRENSIE)
-  typedef ModuleTraits::InternalSourceHandle InternalSourceHandle;
-
-  //! The value of an invalid external source handle
-  static const ExternalSourceHandle invalid_external_source_handle = 0;
-
   //! Set the source handler instance
   static inline void setHandlerInstance( 
 			const std::shared_ptr<SourceHandler>& source_instance )
