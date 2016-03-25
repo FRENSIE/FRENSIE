@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardEstimatorFactory_DagMC.hpp"
 #include "MonteCarlo_StandardEstimatorFactory_Root.hpp"
+#include "MonteCarlo_ParticleTrackerFactory.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -43,6 +44,18 @@ EventHandlerFactory<GeometryHandler>::createHandler(
                               InvalidObserverRepresentation,
                               "Error: The observers could not be created!" );
 
+  // Create the particle tracker factory
+  std::shared_ptr<ParticleTrackerFactory> ptrac_factory;
+  
+  try{
+    ptrac_factory =
+      getParticleTrackerFactoryInstance( event_handler,
+                                         os_warn );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::exception,
+                              InvalidObserverRepresentation,
+                              "Error: The particle tracker could not be created!" );
+
   // Create the observers
   Teuchos::ParameterList::ConstIterator observer_rep_it = 
     observer_reps.begin();
@@ -64,6 +77,10 @@ EventHandlerFactory<GeometryHandler>::createHandler(
       // Create the estimator
       if( estimator_factory->isEstimatorRep( observer_rep ) )
         estimator_factory->createAndRegisterEstimator( observer_rep );
+      
+      // Create the particle tracker
+      else if( ptrac_factory->isParticleTrackerRep( observer_rep ) )
+        ptrac_factory->createAndRegisterParticleTracker( observer_rep );
       
       // Invalid observer
       else

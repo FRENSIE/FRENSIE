@@ -114,5 +114,10 @@
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
   </ParameterList>
-  
+
+  <ParameterList name="Particle Tracker 1">
+    <Parameter name="Id" type="unsigned int" value="17"/>
+    <Parameter name="Type" type="string" value="Particle Tracker"/>
+  </ParameterList>
+
 </ParameterList>

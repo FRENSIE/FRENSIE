@@ -38,7 +38,7 @@ public:
   { GeometryHandler::geometry_handler_is_missing_specialization(); }
 };
 
-//! Helper function for creating an estimatory factory instance
+//! Helper function for creating an estimator factory instance
 template<typename GeometryHandler>
 inline std::shared_ptr<EstimatorFactory>
 getEstimatorFactoryInstance( 

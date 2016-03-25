@@ -235,6 +235,25 @@ ADD_EXECUTABLE(tstEventHandler
 TARGET_LINK_LIBRARIES(tstEventHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
+IF(${FRENSIE_ENABLE_MPI})
+ADD_EXECUTABLE(tstDistributedParticleTracker
+  tstDistributedParticleTracker.cpp ${BOOST_PREFIX})
+TARGET_LINK_LIBRARIES(tstDistributedParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
+ADD_TEST(DistributedParticleTracker_test ${MPIEXEC} -n 4 tstDistributedParticleTracker)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_EXECUTABLE(tstSharedParallelParticleTracker 
+    tstSharedParallelParticleTracker.cpp ${BOOST_PREFIX})
+  TARGET_LINK_LIBRARIES(tstSharedParallelParticleTracker monte_carlo_estimator_native ${Boost_LIBRARIES})
+  ADD_TEST(SharedParallelParticleTracker_test tstSharedParallelParticleTracker --threads=4)
+ENDIF()
+
+ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
+  tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
+ADD_TEST(ParticleTrackerHDF5FileHandler_test tstParticleTrackerHDF5FileHandler)
+
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEventHandler_2_test 
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
@@ -282,12 +301,12 @@ IF(FRENSIE_ENABLE_DAGMC)
 ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
   tstEventHandlerFactory_DagMC.cpp)
 TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
-ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
+ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc_factory.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
 ADD_EXECUTABLE(tstEventHandlerFactory_Root
   tstEventHandlerFactory_Root.cpp)
 TARGET_LINK_LIBRARIES(tstEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
-ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
+ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root_factory.xml")
 ENDIF()

@@ -350,7 +350,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock_u238 )
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_h1 )
 {
   Teuchos::ArrayView<const double> lsigp_block = 
-    xss_data_extractor_h1->extractLISGPBlock();
+    xss_data_extractor_h1->extractLSIGPBlock();
 
   TEST_EQUALITY_CONST( lsigp_block.size(), 1 );
   TEST_EQUALITY_CONST( lsigp_block.front(), 1 );
@@ -359,7 +359,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_h1 )
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_u238 )
 {
   Teuchos::ArrayView<const double> lsigp_block = 
-    xss_data_extractor_u238->extractLISGPBlock();
+    xss_data_extractor_u238->extractLSIGPBlock();
 
   TEST_EQUALITY_CONST( lsigp_block.size(), 6 );
   TEST_EQUALITY_CONST( lsigp_block.front(), 1 );
