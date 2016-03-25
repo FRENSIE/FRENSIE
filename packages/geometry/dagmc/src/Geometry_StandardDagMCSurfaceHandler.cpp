@@ -52,7 +52,10 @@ moab::EntityHandle StandardDagMCSurfaceHandler::getSurfaceHandle(
 bool StandardDagMCSurfaceHandler::doesSurfaceExist( 
                    const ModuleTraits::InternalSurfaceHandle surface_id ) const
 {
-  return const_cast<moab::DagMC*>( d_dagmc_instance )->entity_by_id( 2, surface_id ) != 0;
+  moab::EntityHandle entity_handle = 
+    const_cast<moab::DagMC*>( d_dagmc_instance )->entity_by_id( 2, surface_id);
+
+  return this->doesEntityHandleExist( entity_handle );
 }
 
 } // end Geometry namespace
