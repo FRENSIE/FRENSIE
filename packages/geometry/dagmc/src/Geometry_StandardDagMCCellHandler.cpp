@@ -52,7 +52,10 @@ moab::EntityHandle StandardDagMCCellHandler::getCellHandle(
 bool StandardDagMCCellHandler::doesCellExist( 
                          const ModuleTraits::InternalCellHandle cell_id ) const
 {
-  return const_cast<moab::DagMC*>( d_dagmc_instance )->entity_by_id( 3, cell_id ) != 0;
+  moab::EntityHandle entity_handle = 
+    const_cast<moab::DagMC*>( d_dagmc_instance )->entity_by_id( 3, cell_id );
+
+  return this->doesEntityHandleExist( entity_handle );
 }
 
 } // end Geometry namespace
