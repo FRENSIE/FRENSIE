@@ -293,9 +293,11 @@ private:
                                     std::ostream& os_warn );
 
   // Get the surface normal at a point on the surface
-  static void getSurfaceHandleNormal( const moab::EntityHandle surface_handle,
-                                      const double position[3],
-                                      double normal[3] );
+  static void getSurfaceHandleNormal( 
+                               const moab::EntityHandle surface_handle,
+                               const double position[3],
+                               double normal[3],
+                               const moab::DagMC::RayHistory* history = NULL );
 
   // Get the property values associated with a property name
   template<typename StringArray>

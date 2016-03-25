@@ -717,14 +717,16 @@ DagMC::getBoundaryCellHandle( const moab::EntityHandle cell_handle,
 // Get the surface normal at a point on the surface
 void DagMC::getSurfaceHandleNormal( const moab::EntityHandle surface_handle,
                                     const double position[3],
-                                    double normal[3] )
+                                    double normal[3],
+                                    const moab::DagMC::RayHistory* history )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
   moab::ErrorCode return_value = s_dagmc->get_angle( surface_handle,
                                                      position,
-                                                     normal );
+                                                     normal,
+                                                     history );
                                                      
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      DagMCGeometryError,
@@ -1319,7 +1321,8 @@ bool DagMC::advanceInternalRayToCellBoundary( double* surface_normal )
 
     DagMC::getSurfaceHandleNormal( intersection_surface,
                                    ray.getPosition(),
-                                   local_surface_normal );
+                                   local_surface_normal,
+                                   &ray.getHistory() );
     
     if( surface_normal != NULL )
     {
@@ -1352,14 +1355,15 @@ bool DagMC::advanceInternalRayToCellBoundary( double* surface_normal )
     {
       DagMC::getSurfaceHandleNormal( intersection_surface,
                                      ray.getPosition(),
-                                     surface_normal );
+                                     surface_normal,
+                                     &ray.getHistory() );
     }
-
-    // Fire the ray so the new intersection data is set
-    ModuleTraits::InternalSurfaceHandle dummy_surface;
-  
-    double distance = DagMC::fireInternalRay( dummy_surface );
   }
+
+  // Fire the ray so the new intersection data is set
+  ModuleTraits::InternalSurfaceHandle dummy_surface;
+  
+  double distance = DagMC::fireInternalRay( dummy_surface );
 
   return reflecting_boundary;
 }
