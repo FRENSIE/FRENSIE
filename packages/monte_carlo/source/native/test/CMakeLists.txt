@@ -12,17 +12,17 @@ TARGET_LINK_LIBRARIES(tstStandardParticleSource monte_carlo_source_native)
 ADD_TEST(StandardParticleSource_test tstStandardParticleSource)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedStandardParticleSource_2_test tstStandardParticleSource --threads=2)
-  ADD_TEST(SharedStandardParticleSource_4_test tstStandardParticleSource --threads=4)
+  ADD_TEST(SharedParallelStandardParticleSource_2_test tstStandardParticleSource --threads=2)
+  ADD_TEST(SharedParallelStandardParticleSource_4_test tstStandardParticleSource --threads=4)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedStandardParticleSource
+  ADD_EXECUTABLE(tstDistributedParallelStandardParticleSource
   tstDistributedStandardParticleSource.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedStandardParticleSource monte_carlo_source_native)
-  ADD_TEST(DistributedStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedStandardParticleSource)
-  ADD_TEST(DistributedStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedStandardParticleSource)
-  ADD_TEST(DistributedStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedStandardParticleSource)
+  TARGET_LINK_LIBRARIES(tstDistributedParallelStandardParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedParallelStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelStandardParticleSource)
+  ADD_TEST(DistributedParallelStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelStandardParticleSource)
+  ADD_TEST(DistributedParallelStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelStandardParticleSource)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -32,8 +32,8 @@ IF(FRENSIE_ENABLE_DAGMC)
   ADD_TEST(StandardParticleSourceRejection_DagMC_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml")
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    ADD_TEST(SharedStandardParticleSourceRejection_DagMC_2_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
-    ADD_TEST(SharedStandardParticleSourceRejection_DagMC_4_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
+    ADD_TEST(SharedParallelStandardParticleSourceRejection_DagMC_2_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=2)
+    ADD_TEST(SharedParallelStandardParticleSourceRejection_DagMC_4_test tstStandardParticleSourceRejection_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_dagmc_geom.xml" --threads=4)
   ENDIF()
 ENDIF()
 
@@ -44,8 +44,8 @@ IF(FRENSIE_ENABLE_ROOT)
   ADD_TEST(StandardParticleSourceRejection_Root_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml")
 
   IF(${FRENSIE_ENABLE_OPENMP})
-    ADD_TEST(SharedStandardParticleSourceRejection_Root_2_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=2)
-    ADD_TEST(SharedStandardParticleSourceRejection_Root_4_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=4)
+    ADD_TEST(SharedParallelStandardParticleSourceRejection_Root_2_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=2)
+    ADD_TEST(SharedParallelStandardParticleSourceRejection_Root_4_test tstStandardParticleSourceRejection_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_source_root_geom.xml" --threads=4)
   ENDIF()
 ENDIF()
 
@@ -55,17 +55,17 @@ TARGET_LINK_LIBRARIES(tstCompoundStandardParticleSource monte_carlo_source_nativ
 ADD_TEST(CompoundStandardParticleSource_test tstCompoundStandardParticleSource)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedCompoundStandardParticleSource_2_test tstCompoundStandardParticleSource --threads=2)
-  ADD_TEST(SharedCompoundStandardParticleSource_4_test tstCompoundStandardParticleSource --threads=4)
+  ADD_TEST(SharedParallelCompoundStandardParticleSource_2_test tstCompoundStandardParticleSource --threads=2)
+  ADD_TEST(SharedParallelCompoundStandardParticleSource_4_test tstCompoundStandardParticleSource --threads=4)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedCompoundStandardParticleSource
+  ADD_EXECUTABLE(tstDistributedParallelCompoundStandardParticleSource
   tstDistributedCompoundStandardParticleSource.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedCompoundStandardParticleSource monte_carlo_source_native)
-  ADD_TEST(DistributedCompoundStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedCompoundStandardParticleSource)
-  ADD_TEST(DistributedCompoundStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedCompoundStandardParticleSource)
-  ADD_TEST(DistributedCompoundStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedCompoundStandardParticleSource)
+  TARGET_LINK_LIBRARIES(tstDistributedParallelCompoundStandardParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedParallelCompoundStandardParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelCompoundStandardParticleSource)
+  ADD_TEST(DistributedParallelCompoundStandardParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelCompoundStandardParticleSource)
+  ADD_TEST(DistributedParallelCompoundStandardParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelCompoundStandardParticleSource)
 ENDIF()
 
 ADD_EXECUTABLE(tstCachedStateParticleSource
@@ -74,17 +74,17 @@ TARGET_LINK_LIBRARIES(tstCachedStateParticleSource monte_carlo_source_native)
 ADD_TEST(CachedStateParticleSource_test tstCachedStateParticleSource)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
-  ADD_TEST(SharedCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)
+  ADD_TEST(SharedParallelCachedStateParticleSource_2_test tstCachedStateParticleSource --threads=2)
+  ADD_TEST(SharedParallelCachedStateParticleSource_4_test tstCachedStateParticleSource --threads=4)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedCachedStateParticleSource
+  ADD_EXECUTABLE(tstDistributedParallelCachedStateParticleSource
   tstDistributedCachedStateParticleSource.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedCachedStateParticleSource monte_carlo_source_native)
-  ADD_TEST(DistributedCachedStateParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedCachedStateParticleSource)
-  ADD_TEST(DistributedCachedStateParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedCachedStateParticleSource)
-  ADD_TEST(DistributedCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedCachedStateParticleSource)
+  TARGET_LINK_LIBRARIES(tstDistributedParallelCachedStateParticleSource monte_carlo_source_native)
+  ADD_TEST(DistributedParallelCachedStateParticleSource_1_test ${MPIEXEC} -n 1 tstDistributedParallelCachedStateParticleSource)
+  ADD_TEST(DistributedParallelCachedStateParticleSource_2_test ${MPIEXEC} -n 2 tstDistributedParallelCachedStateParticleSource)
+  ADD_TEST(DistributedParallelCachedStateParticleSource_4_test ${MPIEXEC} -n 4 tstDistributedParallelCachedStateParticleSource)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -107,15 +107,15 @@ TARGET_LINK_LIBRARIES(tstSourceModuleInterface_Native monte_carlo_source_native)
 ADD_TEST(SourceModuleInterface_Native_test tstSourceModuleInterface_Native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedSourceModuleInterface_Native_2_test tstSourceModuleInterface_Native --threads=2)
-  ADD_TEST(SharedSourceModuleInterface_Native_4_test tstSourceModuleInterface_Native --threads=4)
+  ADD_TEST(SharedParallelSourceModuleInterface_Native_2_test tstSourceModuleInterface_Native --threads=2)
+  ADD_TEST(SharedParallelSourceModuleInterface_Native_4_test tstSourceModuleInterface_Native --threads=4)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_EXECUTABLE(tstDistributedSourceModuleInterface_Native
+  ADD_EXECUTABLE(tstDistributedParallelSourceModuleInterface_Native
   tstDistributedModuleInterface.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedSourceModuleInterface_Native monte_carlo_source_native)
-  ADD_TEST(DistributedSourceModuleInterface_Native_1_test ${MPIEXEC} -n 1 tstDistributedSourceModuleInterface_Native)
-  ADD_TEST(DistributedSourceModuleInterface_Native_2_test ${MPIEXEC} -n 2 tstDistributedSourceModuleInterface_Native)
-  ADD_TEST(DistributedSourceModuleInterface_Native_4_test ${MPIEXEC} -n 4 tstDistributedSourceModuleInterface_Native)
+  TARGET_LINK_LIBRARIES(tstDistributedParallelSourceModuleInterface_Native monte_carlo_source_native)
+  ADD_TEST(DistributedParallelSourceModuleInterface_Native_1_test ${MPIEXEC} -n 1 tstDistributedParallelSourceModuleInterface_Native)
+  ADD_TEST(DistributedParallelSourceModuleInterface_Native_2_test ${MPIEXEC} -n 2 tstDistributedParallelSourceModuleInterface_Native)
+  ADD_TEST(DistributedParallelSourceModuleInterface_Native_4_test ${MPIEXEC} -n 4 tstDistributedSourceModuleInterface_Native)
 ENDIF()
