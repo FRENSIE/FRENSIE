@@ -140,6 +140,10 @@ void ParticleSimulationManager<GeometryHandler,
   GMI::enableThreadSupport(
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
+  // Enable source thread support
+  SMI::enableThreadSupport(
+                 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  
   // Enable estimator thread support
   EMI::enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
