@@ -15,5 +15,3 @@ INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_ca
 ADD_SUBDIRECTORY(data_gen)
 INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src)
 
-# ADD_SUBDIRECTORY(transmutation)
-# INCLUDE_DIRECTORIES(transmutation/src)
