@@ -13,12 +13,13 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardAtomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
 //! The electron/positron reaction base class
-class ElectroatomicReaction
+class ElectroatomicReaction : public StandardAtomicReaction
 {
 
 public:
@@ -30,7 +31,7 @@ public:
   //!Destructor
   virtual ~ElectroatomicReaction()
   { /* ... */}
-	
+	/*
   //! Test if two electroatomic reactions share the same energy grid
   bool isEnergyGridShared( const ElectroatomicReaction& other_reaction ) const;
   
@@ -52,7 +53,7 @@ public:
 
   //! Return the number of electrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
-  
+  */
   //! Return the reaction type
   virtual ElectroatomicReactionType getReactionType() const = 0;
 
@@ -66,20 +67,20 @@ public:
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction,
 		      unsigned& trials ) const;
-
+/*
 protected:
 
   //! Return the head of the energy grid
-  virtual const double* getEnergyGridHead() const = 0;
+  virtual const double* getEnergyGridHead() const = 0;*/
 };
-
+/*
 // Test if two electroatomic reactions share the same energy grid
 inline bool ElectroatomicReaction::isEnergyGridShared( 
 			      const ElectroatomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }
-
+*/
 // Simulate the reaction and track the number of sampling trials
 inline void ElectroatomicReaction::react( ElectronState& electron, 
 					ParticleBank& bank,

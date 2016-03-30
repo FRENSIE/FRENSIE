@@ -143,6 +143,62 @@ private:
   Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
+//! Partial template specialization for raw data
+template<typename InterpPolicy>
+class StandardAtomicReaction<InterpPolicy,true> : public AtomicReaction
+{
+public:
+
+  //! Basic constructor
+  StandardAtomicReaction( 
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const unsigned threshold_energy_index );
+
+  //! Constructor
+  StandardAtomicReaction( 
+     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+     const Teuchos::ArrayRCP<const double>& cross_section,
+     const unsigned threshold_energy_index,
+     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
+
+  //! Destructor
+  virtual ~StandardAtomicReaction()
+  { /* ... */ }
+
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const;
+
+  //! Return the cross section at the given energy
+  double getCrossSection( const double energy ) const;
+  
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+			  const unsigned bin_index ) const;
+
+  //! Return the threshold energy
+  double getThresholdEnergy() const;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const;
+
+private:
+
+  // The incoming energy grid
+  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+
+  // The cross section values evaluated on the incoming energy grid
+  Teuchos::ArrayRCP<const double> d_cross_section;
+
+  // The threshold energy
+  const unsigned d_threshold_energy_index;
+
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
+};
+
 
 } // end MonteCarlo namespace
 

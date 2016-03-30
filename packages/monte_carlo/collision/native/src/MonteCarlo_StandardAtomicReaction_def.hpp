@@ -22,9 +22,9 @@ namespace MonteCarlo{
 // Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 StandardAtomicReaction<InterpPolicy,processed_cross_section>::StandardAtomicReaction(
-	       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	       const Teuchos::ArrayRCP<const double>& cross_section,
-	       const unsigned threshold_energy_index )
+        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const unsigned threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index )
@@ -32,8 +32,8 @@ StandardAtomicReaction<InterpPolicy,processed_cross_section>::StandardAtomicReac
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
+                    incoming_energy_grid.begin(),
+                    incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
   testPrecondition( cross_section.size() == 
@@ -42,7 +42,7 @@ StandardAtomicReaction<InterpPolicy,processed_cross_section>::StandardAtomicReac
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
   // Construct the grid searcher
-  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>(
+  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,processed_cross_section>(
 			   incoming_energy_grid,
 			   incoming_energy_grid[0],
 			   incoming_energy_grid[incoming_energy_grid.size()-1],
