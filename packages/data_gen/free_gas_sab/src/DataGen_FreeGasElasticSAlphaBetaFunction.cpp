@@ -190,9 +190,6 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   testPrecondition( E > 0.0 );
   testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
 
-  // Force the integration gkq_set to throw exceptions
-  Utility::GaussKronrodQuadratureSet::throwExceptions( true );
-
   double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT);
   double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT);
    
@@ -227,7 +224,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 					  value,
 					  value_error );
       }
-      catch( Utility::GSLException& integration_exception )
+      catch( Utility::IntegratorException& integration_exception )
       {
 	std::cerr << "Warning: difficulty computing S("
 		  << alpha << "," << beta << "," << E

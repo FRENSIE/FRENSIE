@@ -223,10 +223,11 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     // Correlated sample from the distribution
     if( cutoff_cdf_value > random_number )
     {
-    scattering_angle_cosine = correlatedSample( upper_dist_boundary->second,
-                                                lower_dist_boundary->second,
-                                                interpolation_fraction,
-                                                s_mu_cutoff );
+    scattering_angle_cosine = 
+        correlatedSampleInSubrange( upper_dist_boundary->second,
+                                    lower_dist_boundary->second,
+                                    interpolation_fraction,
+                                    s_mu_cutoff );
     }
     // Sample from the analytical function
     else

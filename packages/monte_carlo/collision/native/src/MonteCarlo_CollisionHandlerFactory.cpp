@@ -190,8 +190,10 @@ void CollisionHandlerFactory::initializeHandler(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
+		     SimulationElectronProperties::getNumberOfElectronHashGridBins(),
 		     SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
-		     SimulationElectronProperties::isAtomicRelaxationModeOn() );
+		     SimulationElectronProperties::isAtomicRelaxationModeOn(),
+		     SimulationElectronProperties::getElasticCutoffAngleCosine() );
     break;
   }
   default:
@@ -448,28 +450,32 @@ void CollisionHandlerFactory::createElectronMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                            Teuchos::Array<double> >& material_id_fraction_map,
+   Teuchos::Array<double> >& material_id_fraction_map,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                      Teuchos::Array<std::string> >& material_id_component_map,
+   Teuchos::Array<std::string> >& material_id_component_map,
    const boost::unordered_set<std::string>& electroatom_aliases,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                              std::vector<std::string> >& cell_id_mat_id_map,
+   std::vector<std::string> >& cell_id_mat_id_map,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               std::vector<std::string> >& cell_id_density_map,
+   std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-   atomic_relaxation_model_factory,
+    atomic_relaxation_model_factory,
+   const unsigned hash_grid_bins,
    const BremsstrahlungAngularDistributionType photon_distribution_function,
-   const bool use_atomic_relaxation_data )
+   const bool use_atomic_relaxation_data,
+   const double cutoff_angle_cosine )
 {
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
 
   ElectroatomFactory electroatom_factory( cross_sections_xml_directory,
                                           cross_sections_table_info,
-					  electroatom_aliases,
+                                          electroatom_aliases,
                                           atomic_relaxation_model_factory,
+                                          hash_grid_bins,
                                           photon_distribution_function,
                                           use_atomic_relaxation_data,
-					  d_os_warn );
+                                          cutoff_angle_cosine,
+                                          d_os_warn );
     
   electroatom_factory.createElectroatomMap( electroatom_map );
 
@@ -478,17 +484,17 @@ void CollisionHandlerFactory::createElectronMaterials(
     material_name_pointer_map;
   
   boost::unordered_map<std::string,
-                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
-    material_name_cell_ids_map;
+    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
+        material_name_cell_ids_map;
 
   CollisionHandlerFactory::createMaterialNameDataMaps( 
-						  material_id_fraction_map,
-						  material_id_component_map,
-						  electroatom_map,
-						  cell_id_mat_id_map,
-						  cell_id_density_map,
-						  material_name_pointer_map,
-						  material_name_cell_ids_map );
+    material_id_fraction_map,
+    material_id_component_map,
+    electroatom_map,
+    cell_id_mat_id_map,
+    cell_id_density_map,
+    material_name_pointer_map,
+    material_name_cell_ids_map );
 
   // Register materials with the collision handler
   CollisionHandlerFactory::registerMaterials( material_name_pointer_map,

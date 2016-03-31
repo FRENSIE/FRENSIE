@@ -156,6 +156,89 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint differential cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+		   evaluateAdjointDifferentialCrossSection )
+{
+ /* 
+  double diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
+						    1.584900000000E-05 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  6.582854525864990E+11,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
+						    7.054100000000E-05 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  6.582854525864990E+11,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
+						    1.009140000000E-03 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  9.362881076230510E+05,
+				  1e-12 );
+				  
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
+						    3.154110000000E-02 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  2.802751399940720E+03,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
+						    1.042750000000E+01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  1.959197477405080E-03,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
+						    9.999999510161E+04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  9.534573269680380E+03,
+				  1e-12 );	
+*/			  				  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+		   evaluateAdjointCrossSection )
+{/*
+  double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 1e-4);
+  
+  
+  
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+				  2.050,
+  				  1e-15 );
+
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 
+  						      0.0010039292814978508 );
+
+  
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
+				  8.523,
+  				  1e-15 );
+  				  */
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
@@ -278,16 +361,16 @@ int main( int argc, char** argv )
                              first_subshell_info + 2*num_tables[first_subshell],
                              num_tables[first_subshell] ) );
 
-   // Create the electroionization sampling table for the first_subshell
+   // Create the electroionization sampling table for the first subshell
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      first_subshell_distribution( num_tables[first_subshell] );
+      first_subshell_function( num_tables[first_subshell] );
 
 
   for( unsigned n = 0; n < num_tables[first_subshell]; ++n )
   {
-    first_subshell_distribution[n].first = first_energy_grid[n];
+    first_subshell_function[n].first = first_energy_grid[n];
 
-    first_subshell_distribution[n].second.reset( 
+    first_subshell_function[n].second.reset( 
      new Utility::HistogramDistribution(
        eion_block( first_subshell_loc + first_table_offset[n], 
                    first_table_length[n] ),
@@ -296,15 +379,23 @@ int main( int argc, char** argv )
        true ) );
   }
   
+  // Create the subshell distribution from the function
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+    first_subshell_distribution;
+    
+    first_subshell_distribution.reset( 
+      new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
+                                           first_subshell_function, 
+                                           binding_energies[first_subshell] ) );
+
   // Create the reaction
   ace_first_subshell_reaction.reset(
-		new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      first_subshell_cross_section,
-						      first_subshell_threshold_index,
-                              interaction_first_subshell,
-                              binding_energies[first_subshell],
-						      first_subshell_distribution ) );
+    new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      first_subshell_cross_section,
+                      first_subshell_threshold_index,
+                      interaction_first_subshell,
+                      first_subshell_distribution ) );
 
 //---------------------------------------------------------------------------//
   // Use the last subshell for test
@@ -359,14 +450,14 @@ int main( int argc, char** argv )
 
    // Create the electroionization sampling table for the last_subshell
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      last_subshell_distribution( num_tables[last_subshell] );
+      last_subshell_function( num_tables[last_subshell] );
 
 
   for( unsigned n = 0; n < num_tables[last_subshell]; ++n )
   {
-    last_subshell_distribution[n].first = last_energy_grid[n];
+    last_subshell_function[n].first = last_energy_grid[n];
 
-    last_subshell_distribution[n].second.reset( 
+    last_subshell_function[n].second.reset( 
      new Utility::HistogramDistribution(
        eion_block( last_subshell_loc + last_table_offset[n], 
                    last_table_length[n] ),
@@ -374,16 +465,24 @@ int main( int argc, char** argv )
                    last_table_length[n] - 1),
        true ) );
   }
-  
+
+  // Create the subshell distribution from the function
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+    last_subshell_distribution;
+    
+  last_subshell_distribution.reset( 
+    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
+                                           last_subshell_function, 
+                                           binding_energies[last_subshell] ) );
+
   // Create the reaction
   ace_last_subshell_reaction.reset(
-		new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      last_subshell_cross_section,
-						      last_subshell_threshold_index,
-                              interaction_last_subshell,
-                              binding_energies[last_subshell],
-						      last_subshell_distribution ) );
+    new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      last_subshell_cross_section,
+                      last_subshell_threshold_index,
+                      interaction_last_subshell,
+                      last_subshell_distribution ) );
 
 
   // Clear setup data

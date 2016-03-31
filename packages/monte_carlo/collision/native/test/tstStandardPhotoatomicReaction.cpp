@@ -45,9 +45,9 @@ class TestPhotoatomicReaction : public MonteCarlo::StandardPhotoatomicReaction<I
 {
 public:
   TestPhotoatomicReaction(
-                   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const double threshold_energy )
+        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const double threshold_energy )
     : MonteCarlo::StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>( incoming_energy_grid, cross_section, threshold_energy )
   { /* ... */ }
 
@@ -56,6 +56,9 @@ public:
 
   unsigned getNumberOfEmittedPhotons( const double energy ) const
   { return 1u; }
+
+  unsigned getNumberOfEmittedElectrons( const double energy ) const
+  { return 0u; }
 
   MonteCarlo::PhotoatomicReactionType getReactionType() const
   { return MonteCarlo::TOTAL_PHOTOATOMIC_REACTION; }
