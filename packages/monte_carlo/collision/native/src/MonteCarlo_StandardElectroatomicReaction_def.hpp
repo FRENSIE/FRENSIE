@@ -25,10 +25,9 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		  const Teuchos::ArrayRCP<const double>& cross_section,
 		  const unsigned threshold_energy_index )
-  : StandardAtomicReaction<InterpPolicy,true>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -41,13 +40,13 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-/*
+
   // Construct the grid searcher
   d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>(
 			   incoming_energy_grid,
 			   incoming_energy_grid[0],
 			   incoming_energy_grid[incoming_energy_grid.size()-1],
-			   incoming_energy_grid.size()/10+1 ) );*/
+			   incoming_energy_grid.size()/10+1 ) );
 }
 
 // Basic Constructor
@@ -56,10 +55,9 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
 		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		  const Teuchos::ArrayRCP<const double>& cross_section,
 		  const unsigned threshold_energy_index )
-  : StandardAtomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -72,13 +70,13 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-/*
+
   // Construct the grid searcher
   d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
 			   incoming_energy_grid,
 			   incoming_energy_grid[0],
 			   incoming_energy_grid[incoming_energy_grid.size()-1],
-			   incoming_energy_grid.size()/10+1 ) );*/
+			   incoming_energy_grid.size()/10+1 ) );
 }
 
 
@@ -89,11 +87,10 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
-  : StandardAtomicReaction<InterpPolicy,true>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index,
-        grid_searcher )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index ),
+    d_grid_searcher( grid_searcher )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -117,11 +114,10 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
-  : StandardAtomicReaction<InterpPolicy,processed_cross_section>(
-        incoming_energy_grid,
-        cross_section,
-        threshold_energy_index,
-        grid_searcher )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index ),
+    d_grid_searcher( grid_searcher )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -137,7 +133,7 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );
 }
-/*
+
 // Test if the energy falls within the energy grid
 template<typename InterpPolicy>
 inline bool StandardElectroatomicReaction<InterpPolicy,true>::isEnergyWithinEnergyGrid(
@@ -306,7 +302,7 @@ inline const double* StandardElectroatomicReaction<InterpPolicy,processed_cross_
 {
   return d_incoming_energy_grid.getRawPtr();
 }
-*/
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_STANDARD_ELECTROATOMIC_REACTION_DEF_HPP

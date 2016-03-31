@@ -64,11 +64,6 @@ ADD_EXECUTABLE(tstMaterialHelpers
 TARGET_LINK_LIBRARIES(tstMaterialHelpers monte_carlo_collision_native)
 ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
 
-ADD_EXECUTABLE(tstStandardAtomicReaction
-  tstStandardAtomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstStandardAtomicReaction monte_carlo_collision_native)
-ADD_TEST(StandardAtomicReaction_test tstStandardAtomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-
 ##----------------------------------------------------------------------------##
 ##      neutron class tests                                                   ##
 ##----------------------------------------------------------------------------##

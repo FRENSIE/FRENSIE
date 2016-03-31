@@ -13,7 +13,6 @@
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardAtomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -29,8 +28,7 @@ namespace MonteCarlo{
  * the policy is used to indicate how the data was processed.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-class StandardElectroatomicReaction : public ElectroatomicReaction, 
-    public StandardAtomicReaction<InterpPolicy,processed_cross_section>
+class StandardElectroatomicReaction : public ElectroatomicReaction
 {
 
 public:
@@ -51,7 +49,7 @@ public:
   //! Destructor
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
-/*
+
   //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
@@ -82,13 +80,12 @@ private:
   unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;*/
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 //! Partial template specialization for raw data
 template<typename InterpPolicy>
-class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicReaction, 
-    public StandardAtomicReaction<InterpPolicy,true>
+class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicReaction
 {
   public:
 
@@ -109,20 +106,6 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
   virtual ~StandardElectroatomicReaction()
   { /* ... */ }
 
-  //! Return the reaction type
-  ElectroatomicReactionType getReactionType() const = 0;
-
-  //! Simulate the reaction
-  void react( ElectronState& electron, 
-		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const = 0;
-
-  //! Simulate the reaction and track the number of sampling trials
-  void react( ElectronState& electron, 
-		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction,
-		      unsigned& trials ) const;
-/*
   //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
 
@@ -153,7 +136,7 @@ private:
   const unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;*/
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 

@@ -53,22 +53,7 @@ public:
 
   //! Return the number of electrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
-/*
-  //! Return the reaction type
-  template<typename AtomicReactionType>
-  AtomicReactionType getReactionType() const;
 
-  //! Simulate the reaction
-  virtual void react( ParticleState& particle, 
-		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const = 0;
-
-  //! Simulate the reaction and track the number of sampling trials
-  virtual void react( ParticleState& particle, 
-		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction,
-		      unsigned& trials ) const;
-*/
 protected:
 
   //! Return the head of the energy grid
@@ -81,18 +66,7 @@ inline bool AtomicReaction::isEnergyGridShared(
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }
-/*
-// Simulate the reaction and track the number of sampling trials
-inline void AtomicReaction::react( ParticleState& particle, 
-					ParticleBank& bank,
-					SubshellType& shell_of_interaction,
-					unsigned& trials ) const
-{
-  ++trials;
 
-  this->react( particle, bank, shell_of_interaction );
-}
-*/
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ATOMIC_REACTION_HPP

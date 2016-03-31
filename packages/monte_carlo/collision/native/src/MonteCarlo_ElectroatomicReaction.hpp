@@ -13,13 +13,13 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "MonteCarlo_StandardAtomicReaction.hpp"
+#include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
 //! The electron/positron reaction base class
-class ElectroatomicReaction : public StandardAtomicReaction
+class ElectroatomicReaction : public AtomicReaction
 {
 
 public:
