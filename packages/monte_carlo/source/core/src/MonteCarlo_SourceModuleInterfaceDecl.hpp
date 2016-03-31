@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP
-#define FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP
+#ifndef FRENSIE_SOURCE_MODULE_INTERFACE_DECL_HPP
+#define FRENSIE_SOURCE_MODULE_INTERFACE_DECL_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -114,7 +114,7 @@ inline void setSourceHandlerInstance(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP
+#endif // end FRENSIE_SOURCE_MODULE_INTERFACE_DECL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SourceModuleInterfaceDecl.hpp

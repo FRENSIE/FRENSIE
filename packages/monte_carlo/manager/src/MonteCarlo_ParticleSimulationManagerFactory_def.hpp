@@ -97,8 +97,7 @@ ParticleSimulationManagerFactory::createManager(
             const int root_process )
 {
   // Create a distributed simulation manager
-  if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
-      Teuchos::GlobalMPISession::getNProc() > 1 )
+  if( comm->getSize() > 1 )
   {
     return std::shared_ptr<SimulationManager>(
              new BatchedDistributedParticleSimulationManager<GeometryHandler,ParticleSource,EventHandler,CollisionHandler>(

@@ -10,6 +10,20 @@ ADD_EXECUTABLE(tstContractException
 TARGET_LINK_LIBRARIES(tstContractException utility_core)
 ADD_TEST(ContractException_test tstContractException)
 
+ADD_EXECUTABLE(tstSerialCommHelpers
+  tstSerialCommHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSerialCommHelpers utility_core)
+ADD_TEST(SerialCommHelpers_test tstSerialCommHelpers)
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstMpiCommHelpers
+    tstMpiCommHelpers.cpp)
+  TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
+  ADD_TEST(MpiCommHelpers_2_test ${MPI_EXEC} -n 2 tstMpiCommHelpers)
+  ADD_TEST(MpiCommHelpers_4_test ${MPI_EXEC} -n 4 tstMpiCommHelpers)
+ENDIF()
+
 ADD_EXECUTABLE(tstSortAlgorithms 
   tstSortAlgorithms.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

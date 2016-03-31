@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SIMULATION_MANAGER_HPP
-#define FACEMC_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_SIMULATION_MANAGER_HPP
+#define FRENSIE_SIMULATION_MANAGER_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -47,7 +47,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_SIMULATION_MANAGER_HPP
 
 //--------------------------------------------------------------------------//
 // end SimulationManager.hpp

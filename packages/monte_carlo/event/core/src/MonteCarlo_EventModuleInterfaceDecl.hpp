@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_EVENT_MODULE_INTERFACE_DECL_HPP
-#define FACEMC_EVENT_MODULE_INTERFACE_DECL_HPP
+#ifndef FRENSIE_EVENT_MODULE_INTERFACE_DECL_HPP
+#define FRENSIE_EVENT_MODULE_INTERFACE_DECL_HPP
 
 // Std Lib Includes
 #include <string>
@@ -165,7 +165,7 @@ inline void setEventHandlerInstance(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ESTIMATOR_MODULE_INTERFACE_DECL_HPP
+#endif // end FRENSIE_ESTIMATOR_MODULE_INTERFACE_DECL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_EventModuleInterfaceDecl.hpp

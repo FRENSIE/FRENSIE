@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "PhotonData.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -37,7 +37,7 @@ TEUCHOS_UNIT_TEST( PhotonData, basic_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<false,false> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<false,false> photon_data( ATOMIC_NUMBER,
 					       ENERGY_MIN,
 					       ENERGY_MAX );
 
@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( PhotonData, fluorescence_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<true,false> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<true,false> photon_data( ATOMIC_NUMBER,
 					      ENERGY_MIN,
 					      ENERGY_MAX );
 
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<false,true> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<false,true> photon_data( ATOMIC_NUMBER,
 					      ENERGY_MIN,
 					      ENERGY_MAX );
 
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( PhotonData, all_physics_constructor_test )
 {
   // The constructor will throw an exception and exit if an error occurs,
   // therefore no tesing macros are needed.
-  FACEMC::PhotonData<true,true> photon_data( ATOMIC_NUMBER,
+  FRENSIE::PhotonData<true,true> photon_data( ATOMIC_NUMBER,
 					     ENERGY_MIN,
 					     ENERGY_MAX );
 

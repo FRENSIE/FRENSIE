@@ -230,7 +230,7 @@ Octant getOctantFromInteger( const T value )
   return octant;
 }
 
-} // end FACEMC namespace
+} // end FRENSIE namespace
 
 //---------------------------------------------------------------------------//
 // Template includes.

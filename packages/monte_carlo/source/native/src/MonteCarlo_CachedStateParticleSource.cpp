@@ -21,15 +21,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_CachedStateParticleSource.hpp"
 #include "MonteCarlo_SourceHDF5FileHandler.hpp"
+#include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "FRENSIE_mpi_config.hpp"
-
-// Trilinos Includes
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif
 
 namespace MonteCarlo{
 
@@ -137,7 +132,6 @@ void CachedStateParticleSource::reduceData(
             const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
             const int root_process )
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure the communicator is valid
@@ -158,7 +152,6 @@ void CachedStateParticleSource::reduceData(
   // Reset the sampling data if not the root process
   if( comm->getRank() != root_process )
     this->resetData();
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Export the source data
