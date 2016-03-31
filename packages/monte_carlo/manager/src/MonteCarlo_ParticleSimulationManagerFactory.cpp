@@ -10,7 +10,6 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_mpi_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"

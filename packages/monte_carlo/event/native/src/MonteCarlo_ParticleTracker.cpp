@@ -8,12 +8,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
+#include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
+#include "MonteCarlo_ParticleType.hpp"
+#include "Utility_CommHelpers.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
-
-// Trilinos Includes
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif
 
 namespace MonteCarlo{
 
@@ -421,90 +421,96 @@ void ParticleTracker::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
-
-  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
-    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
-                                                            comm.getRawPtr() );
                       
-  // Only proceed to the reduce call if the comm is an mpi comm
-  if( mpi_comm != NULL && comm->getSize() > 1 )
+  // Handle the master
+  if( comm->getRank() == root_process )
   {
-    int rank = comm->getRank();
-    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm()); 
-
-    if( rank == root_process ) // Handle the master
-    {
-      int nodes_reporting = 1;
+    // Start at one since the root process does not need to report
+    int nodes_reporting = 1; 
       
-      while( nodes_reporting < comm->getSize() )
-      {
-        MPI_Status status;
-        int message_size;
-
-        // Probe for incoming sends to determine message size
-        ::MPI_Probe( MPI_ANY_SOURCE,
-                     0,
-                     MPI_COMM_WORLD,
-                     &status);
-        
-        // Get the size of the incoming message
-        ::MPI_Get_count( &status, 
-                         MPI_CHAR, 
-                         &message_size );
-        
-        char *packaged_data = new char[message_size];
-            
-        ::MPI_Recv( packaged_data,
-                    message_size,
-                    MPI_CHAR,
-                    MPI_ANY_SOURCE,
-                    0,
-                    MPI_COMM_WORLD,
-                    MPI_STATUS_IGNORE );
-        
-        // Contribute the data from this worker to the node map. 
-        std::string reconstructed( packaged_data, message_size );  
-        this->contributeDataFromWorkers( reconstructed );
-        
-        ++nodes_reporting;
-        std::cout << "done" << std::endl;
+    while( nodes_reporting < comm->getSize() )
+    {
+      Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
+      
+      // Probe for incoming sends to determine message size
+      try{
+        Utility::probe( *comm, status );
       }
-          
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Error: Root process (" << root_process <<
+                               " was unable to probe for particle tracker "
+                               "data sent by non-root processes!" );
+        
+      // Get the size of the incoming message
+      std::string packaged_data;
+
+      try{
+        int message_size = Utility::getMessageSize<char>( *status );
+
+        packaged_data.resize( message_size );
+      }
+
+      // Get the message
+      try{
+        Teuchos::receive( *comm,
+                          status->getSourceRank(),
+                          packaged_data.size(),
+                          &packaged_data[0] );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Error: Root process (" << root_process <<
+                               " was unable to receive particle tracker data "
+                               "from process "
+                               << status->getSourceRank() << "!" );
+              
+      // Contribute the data from this worker to the node map.       
+      this->contributeDataFromWorkers( packaged_data );
+        
+      ++nodes_reporting;
     }
     else // Handle the workers
     {
-      std::string packaged_data = packDataInString();
-      
-      ::MPI_Send( packaged_data.c_str(), 
-                  packaged_data.size(),
-                  MPI_CHAR, 
-                  root_process, 
-                  0,
-                  MPI_COMM_WORLD );
+      std::string packaged_data = this->packDataInString();
 
+      try{
+        Teuchos::send( *comm,
+                       packaged_data.size(),
+                       &packaged_data[0],
+                       root_process );
+      }
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Error: Process " << comm->getRank() <<
+                               " was unable to send particle tracker data "
+                               "to the root process ("
+                               << root_process << "!" );
+
+      // Reset the non-root process data
       this->resetData();
     }  
   }
-#endif // end HAVE_FRENSIE_MPI
+
+  comm->barrier();
 }
 
 // Print a summary of the data
 void ParticleTracker::printSummary( std::ostream& os ) const
-{ /*...*/ }
+{ 
+  os << "Particle tracker " << this->getId() << ": " << std::endl
+     << "\t Histories tracked: " << d_number_of_histories << std::endl;
+}
 
 void ParticleTracker::contributeDataFromWorkers( std::string packaged_data )
 {
-#ifdef HAVE_FRENSIE_MPI
   ParticleTrackerHDF5FileHandler::OverallHistoryMap worker_history_map;
   
   unpackDataFromString( packaged_data, worker_history_map );
+  
   ParticleTrackerHDF5FileHandler::OverallHistoryMap::const_iterator
     history_number, end_history_number;
   history_number = worker_history_map.begin();
@@ -516,7 +522,6 @@ void ParticleTracker::contributeDataFromWorkers( std::string packaged_data )
     
     ++history_number;
   }
-#endif // end HAVE_FRENSIE_MPI
 }
 
 } // end MonteCarlo namespace

@@ -6,12 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
-#define FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#define FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManager.hpp"
-#include "FRENSIE_mpi_config.hpp"
 
 namespace MonteCarlo{
 
@@ -70,8 +69,7 @@ private:
 
   // Check for idle worker
   bool isIdleWorkerPresent( 
-                  Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> >&
-		  idle_worker_info );
+    Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info );
   
   // Assign work to idle workers
   void assignWorkToIdleWorker(
@@ -104,7 +102,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BatchedDistributedParticleSimulationManager.hpp

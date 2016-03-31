@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
-#define FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
+#define FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 
 // Boost Function
 #include <boost/function.hpp>
@@ -189,7 +189,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManager.hpp

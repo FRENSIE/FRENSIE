@@ -6,14 +6,14 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COLLISION_MODULE_INTERFACE_HPP
-#define FACEMC_COLLISION_MODULE_INTERFACE_HPP
+#ifndef FRENSIE_COLLISION_MODULE_INTERFACE_HPP
+#define FRENSIE_COLLISION_MODULE_INTERFACE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionModuleInterfaceDecl.hpp"
 #include "MonteCarlo_CollisionModuleInterface_Native.hpp"
 
-#endif // end FACEMC_COLLISION_MODULE_INTERFACE_HPP
+#endif // end FRENSIE_COLLISION_MODULE_INTERFACE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionModuleInterface.hpp

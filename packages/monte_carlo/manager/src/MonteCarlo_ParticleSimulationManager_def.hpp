@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
-#define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+#ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+#define FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
 // Boost Includes
 #include <boost/bind.hpp>
@@ -696,7 +696,7 @@ void ParticleSimulationManager<GeometryHandler,
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+#endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManager_def.hpp

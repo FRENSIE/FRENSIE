@@ -11,10 +11,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "FRENSIE_mpi_config.hpp"
 
 namespace MonteCarlo{
 
@@ -235,31 +235,19 @@ void StandardEntityEstimator<EntityId>::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )  
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure only the root thread calls this
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  // Make sure that mpi has been initialized
-  remember( int mpi_initialized );
-  remember( ::MPI_Initialized( &mpi_initialized ) );
-  testPrecondition( mpi_initialized );
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
+  // Make sure the root process is valid
+  testPrecondition( root_process < comm->getSize() );
 
+  // Reduce the bin data first
   EntityEstimator<EntityId>::reduceData( comm, root_process );
 
-  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
-    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
-							    comm.getRawPtr() );
-  
-  // Only proceed to the reduce call if the comm is an mpi comm
-  if( mpi_comm != NULL && comm->getSize() > 1 )
-  {
-    int rank = comm->getRank();
-    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm());
-    
-    // Reduce total data for each entity
-    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
-      end_entity_data;
+  // Reduce total data for each entity
+  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+    end_entity_data;
     entity_data = d_entity_total_estimator_moments_map.begin();
     end_entity_data = d_entity_total_estimator_moments_map.end();
 
@@ -267,131 +255,47 @@ void StandardEntityEstimator<EntityId>::reduceData(
     {
       for( unsigned i = 0; i < entity_data->second.size(); ++i )
       {
-	int return_value;
-	
-	if( rank == root_process )
-	{
-	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				       &entity_data->second[i].first,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-	else
-	{
-	  return_value = ::MPI_Reduce( &entity_data->second[i].first,
-				       NULL,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
+	double first_reduced_value, second_reduced_value,
+          third_reduced_value, fourth_reduced_value;
 
-	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			    std::runtime_error,
-			    "Error: unable to perform mpi reduction in "
-			    "standard entity estimator " << this->getId() <<
-			    " for entity " << entity_data->first <<
-			    " and array index " << i << 
-			    "! MPI_Reduce failed with the following error: " 
-			    << return_value );
+        try{
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].first,
+                              Teuchos::inOutArg( first_reduced_value ) );
 
-	if( rank == root_process )
-	{
-	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				       &entity_data->second[i].second,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-	else
-	{
-	  return_value = ::MPI_Reduce( &entity_data->second[i].second,
-				       NULL,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].second,
+                              Teuchos::inOutArg( second_reduced_value ) );
 
-	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			    std::runtime_error,
-			    "Error: unable to perform mpi reduction in "
-			    "standard entity estimator " << this->getId() <<
-			    " for entity " << entity_data->first <<
-			    " and array index " << i << 
-			    "! MPI_Reduce failed with the following error: " 
-			    << return_value );
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].third,
+                              Teuchos::inOutArg( third_reduced_value ) );
 
-	if( rank == root_process )
-	{
-	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				       &entity_data->second[i].third,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-	else
-	{
-	  return_value = ::MPI_Reduce( &entity_data->second[i].third,
-				       NULL,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-
-	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			    std::runtime_error,
-			    "Error: unable to perform mpi reduction in "
-			    "standard entity estimator " << this->getId() <<
-			    " for entity " << entity_data->first <<
-			    " and array index " << i << 
-			    "! MPI_Reduce failed with the following error: " 
-			    << return_value );
-
-	if( rank == root_process )
-	{
-	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				       &entity_data->second[i].fourth,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-	else
-	{
-	  return_value = ::MPI_Reduce( &entity_data->second[i].fourth,
-				       NULL,
-				       1,
-				       MPI_DOUBLE,
-				       MPI_SUM,
-				       root_process,
-				       raw_mpi_comm );
-	}
-
-	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			    std::runtime_error,
-			    "Error: unable to perform mpi reduction in "
-			    "standard entity estimator " << this->getId() <<
-			    " for entity " << entity_data->first <<
-			    " and array index " << i << 
-			    "! MPI_Reduce failed with the following error: " 
-			    << return_value );
-
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].fourth,
+                              Teuchos::inOutArg( fourth_reduced_value ) );
+        }
+        EXCEPTION_CATCH_RETHROW(
+                               std::runtime_error,
+                               "Error: unable to perform mpi reduction in "
+                               "standard entity estimator " << this->getId() <<
+                               " for entity " << entity_data->first <<
+                               " and array index " << i << "!" );
+        
 	// Reset the data on all but the root process
-	if( rank != root_process )
-	  entity_data->second[i]( 0.0, 0.0, 0.0, 0.0 );
+	if( comm->getRank() == root_process )
+        {
+          entity_data->second[i]( first_reduced_value,
+                                  second_reduced_value,
+                                  third_reduced_value,
+                                  fourth_reduced_value );
+        }
+        else
+          entity_data->second[i]( 0.0, 0.0, 0.0, 0.0 );
 
 	comm->barrier();
       }
@@ -402,136 +306,50 @@ void StandardEntityEstimator<EntityId>::reduceData(
     // Reduce the total data
     for( unsigned i = 0; i < d_total_estimator_moments.size(); ++i )
     {
-      int return_value;
+      double first_reduced_value, second_reduced_value,
+          third_reduced_value, fourth_reduced_value;
       
-      if( rank == root_process )
-      {
-	return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				     &d_total_estimator_moments[i].first,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
-      else
-      {
-	return_value = ::MPI_Reduce( &d_total_estimator_moments[i].first,
-				     NULL,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
+      try{
+        Teuchos::reduceAll( *comm,
+                            Teuchos::REDUCE_SUM,
+                            d_total_estimator_moments[i].first,
+                            Teuchos::inOutArg( first_reduced_value ) );
 
-      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			  std::runtime_error,
-			  "Error: unable to perform mpi reduction in "
-			  "standard entity estimator " << this->getId() <<
-			  " for total " << entity_data->first <<
-			  " and array index " << i <<
-			  "! MPI_Reduce failed with the following error: " 
-			    << return_value );
+        Teuchos::reduceAll( *comm,
+                            Teuchos::REDUCE_SUM,
+                            d_total_estimator_moments[i].second,
+                            Teuchos::inOutArg( second_reduced_value ) );
 
-      if( rank == root_process )
-      {
-	return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				     &d_total_estimator_moments[i].second,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
-      else
-      {
-	return_value = ::MPI_Reduce( &d_total_estimator_moments[i].second,
-				     NULL,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
+        Teuchos::reduceAll( *comm,
+                            Teuchos::REDUCE_SUM,
+                            d_total_estimator_moments[i].third,
+                            Teuchos::inOutArg( third_reduced_value ) );
 
-      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			  std::runtime_error,
-			  "Error: unable to perform mpi reduction in "
-			  "standard entity estimator " << this->getId() <<
-			  " for total " << entity_data->first <<
-			  " and array index " << i <<
-			  "! MPI_Reduce failed with the following error: " 
-			    << return_value );
-
-      if( rank == root_process )
-      {
-	return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				     &d_total_estimator_moments[i].third,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
+        Teuchos::reduceAll( *comm,
+                            Teuchos::REDUCE_SUM,
+                            d_total_estimator_moments[i].fourth,
+                            Teuchos::inOutArg( fourth_reduced_value ) );
       }
-      else
-      {
-	return_value = ::MPI_Reduce( &d_total_estimator_moments[i].third,
-				     NULL,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
-	
-      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			  std::runtime_error,
-			  "Error: unable to perform mpi reduction in "
-			  "standard entity estimator " << this->getId() <<
-			  " for total " << entity_data->first <<
-			  " and array index " << i <<
-			  "! MPI_Reduce failed with the following error: " 
-			    << return_value );
-
-      if( rank == root_process )
-      {
-	return_value = ::MPI_Reduce( MPI_IN_PLACE,
-				     &d_total_estimator_moments[i].fourth,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
-      else
-      {
-	return_value = ::MPI_Reduce( &d_total_estimator_moments[i].fourth,
-				     NULL,
-				     1,
-				     MPI_DOUBLE,
-				     MPI_SUM,
-				     root_process,
-				     raw_mpi_comm );
-      }
-	
-      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-			  std::runtime_error,
-			  "Error: unable to perform mpi reduction in "
-			  "standard entity estimator " << this->getId() <<
-			  " for total " << entity_data->first <<
-			  " and array index " << i <<
-			  "! MPI_Reduce failed with the following error: " 
-			    << return_value );
+      EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                               "Error: unable to perform mpi reduction in "
+                               "standard entity estimator " << this->getId() <<
+                               " for total " << entity_data->first <<
+                               " and array index " << i << "!" );
 
       // Reset the data on all but the root process
-      if( rank != root_process )
+      if( comm->getRank() == root_process )
+      {
+        d_total_estimator_moments[i]( first_reduced_value,
+                                      second_reduced_value,
+                                      third_reduced_value,
+                                      fourth_reduced_value );
+      }
+      else
 	d_total_estimator_moments[i]( 0.0, 0.0, 0.0, 0.0 );
 
       comm->barrier();
     }
   }    
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Export the estimator data

@@ -6,21 +6,17 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
-#define FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
-
-// FRENSIE Includes
-#include "Utility_ContractException.hpp"
-#include "Utility_ExceptionCatchMacros.hpp"
-#include "FRENSIE_mpi_config.hpp"
+#ifndef FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+#define FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
 // Trilinos Includes
 #include <Teuchos_GlobalMPISession.hpp>
 #include <Teuchos_Tuple.hpp>
 
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif
+// FRENSIE Includes
+#include "Utility_CommHelpers.hpp"
+#include "Utility_ContractException.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -59,7 +55,6 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::runSimulation()
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
@@ -101,14 +96,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   if( d_comm->getRank() == d_root_process )
     std::cout << "done." << std::endl;
-
-#else
-  if( d_comm->getRank() == d_root_process )
-  {
-    std::cout << "The simulation cannot be run without building with MPI!"
-	      << std::endl;
-  }
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Coordinate the workers (master only)
@@ -186,7 +173,6 @@ template<typename GeometryHandler,
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::stopWorkersAndRecordWork()
 	       
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
@@ -242,7 +228,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     total_histories_completed += *worker_histories_completed[i];
 
   this->setHistoriesCompleted( total_histories_completed );
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Check for idle worker
@@ -251,10 +236,8 @@ template<typename GeometryHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 bool BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::isIdleWorkerPresent(
-		  Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> >&
-		  idle_worker_info )
+     Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info )
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
@@ -264,35 +247,16 @@ bool BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   testPrecondition( d_comm->getRank() == d_root_process );
   
   // Probe for an idle worker
-  int waiting = false;
-  MPI_Status raw_status;
+  bool idle_worker_present = false;
 
-  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
-    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 
-                                                          d_comm.getRawPtr() );
-          
-  int return_value = MPI_Iprobe( MPI_ANY_SOURCE,
-				 mpi_comm->getTag(),
-				 *mpi_comm->getRawMpiComm(),
-				 &waiting,
-				 &raw_status );
-  
-  TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
-		      std::runtime_error,
-		      "Error: unable to perform mpi probe in "
-		      "batched distributed particle simulation manager! "
-		      "MPI_Probe failed with the following error: "
-		      << Teuchos::mpiErrorCodeToString( return_value ) );
-
-  // Set the idle worker info
-  if( waiting )
-  {
-    idle_worker_info.reset( 
-		new Teuchos::MpiCommStatus<unsigned long long>( raw_status ) );
+  try{
+    idle_worker_present = Utility::iprobe( *d_comm, idle_worker_info );
   }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                           "Error: unable to probe for idle worker on root "
+                           "process " << d_root_process << "!" );
 
-  return waiting;
-#endif // end HAVE_FRENSIE_MPI
+  return idle_worker_present;
 }
 
 // Assign work to idle workers
@@ -304,7 +268,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 	    const Teuchos::CommStatus<unsigned long long>& c_idle_worker_info,
 	    const Teuchos::Tuple<unsigned long long,2>& task )
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
@@ -345,7 +308,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
                            "root process " << d_root_process << "to worker "
                            "process " 
                            << idle_worker_info.getSourceRank() << "! " );
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Complete work for the master
@@ -355,7 +317,6 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::work()
 {
-#ifdef HAVE_FRENSIE_MPI
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
@@ -405,7 +366,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     else
       break;
   }
-#endif // end HAVE_FRENSIE_MPI
 }
 
 // Print the data in all estimators to the desired stream
@@ -477,7 +437,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
+#endif // end FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BatchedDistributedParticleSimulationManager_def.hpp

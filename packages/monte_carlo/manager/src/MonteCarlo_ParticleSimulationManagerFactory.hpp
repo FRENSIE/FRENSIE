@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
-#define FACEMC_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
+#ifndef FRENSIE_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
+#define FRENSIE_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -112,7 +112,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
+#endif // end FRENSIE_PARTICLE_SIMULATION_MANAGER_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSimulationManagerFactory.hpp
