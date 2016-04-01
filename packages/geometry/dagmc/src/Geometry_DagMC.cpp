@@ -1110,7 +1110,7 @@ void DagMC::setInternalRay(
   testPrecondition( DagMC::doesCellExist( current_cell ) );
   // Make sure the cell contains the ray
   remember( Ray test_ray( position, direction ) );
-  testPrecondition( DagMC::findCellContainingExternalRay( test_ray ) ==
+  testPrecondition( DagMC::findCellContainingExternalRay( test_ray, false ) ==
                     current_cell );
   
   moab::EntityHandle cell_handle = 

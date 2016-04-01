@@ -207,7 +207,8 @@ public:
 
   //! Find the cell that contains the external ray
   static ModuleTraits::InternalCellHandle findCellContainingExternalRay(
-                                                              const Ray& ray );
+                                            const Ray& ray,
+                                            const bool boundary_check = true );
 
   //! Find and cached the cell that contains the external ray
   static ModuleTraits::InternalCellHandle 
@@ -359,7 +360,8 @@ private:
 
   // Find the cell handle that contains the external ray 
   static moab::EntityHandle findCellHandleContainingExternalRay( 
-                                                              const Ray& ray );
+                                            const Ray& ray,
+                                            const bool boundary_check = true );
 
   // Find the cell handle that contains the external ray 
   static moab::EntityHandle findCellHandleContainingRay( 

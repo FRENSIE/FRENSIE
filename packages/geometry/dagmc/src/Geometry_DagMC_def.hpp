@@ -130,25 +130,27 @@ void DagMC::getMaterialIds( Set& material_ids )
 
 // Find the cell handle that contains the external ray
 inline moab::EntityHandle 
-DagMC::findCellHandleContainingExternalRay( const Ray& ray )
+DagMC::findCellHandleContainingExternalRay( const Ray& ray,
+                                            const bool boundary_check )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
   return DagMC::findCellHandleContainingRay( ray.getPosition(),
                                              ray.getDirection(),
-                                             true );
+                                             boundary_check );
 }
 
 // Find the cell that contains the external ray
 inline ModuleTraits::InternalCellHandle DagMC::findCellContainingExternalRay(
-                                                               const Ray& ray )
+                                                    const Ray& ray,
+                                                    const bool boundary_check )
 {
   // Make sure DagMC has been initialized
   testPrecondition( DagMC::isInitialized() );
 
   moab::EntityHandle cell_handle =
-    DagMC::findCellHandleContainingExternalRay( ray );
+    DagMC::findCellHandleContainingExternalRay( ray, boundary_check );
 
   return s_cell_handler->getCellId( cell_handle );
 }
@@ -191,7 +193,7 @@ inline void DagMC::setInternalRay(
   // Make sure the cell exists
   testPrecondition( DagMC::doesCellExist( current_cell ) );
   // Make sure the cell contains the ray
-  testPrecondition( DagMC::findCellContainingExternalRay( ray ) ==
+  testPrecondition( DagMC::findCellContainingExternalRay( ray, false ) ==
                     current_cell );
   
   DagMC::setInternalRay( ray.getPosition(), 
