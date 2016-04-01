@@ -446,7 +446,7 @@ protected:
   //! Set the impulse approx. total cross section
   void setImpulseApproxTotalCrossSection(
 			      const std::vector<double>& total_cross_section );
-
+/*
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -607,7 +607,7 @@ protected:
   //! Set the bremsstrahlung cross section threshold energy bin index
   void setAtomicExcitationCrossSectionThresholdEnergyIndex( 
                                 const unsigned index );
-
+*/
 private:
 
   // Test if a value is less than or equal to zero
@@ -750,7 +750,7 @@ private:
   // The impulse approx. total cross section (b)
   std::vector<double> d_impulse_approx_total_cross_section;
 
-
+/*
 //---------------------------------------------------------------------------//
 // ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -850,7 +850,7 @@ private:
   std::vector<double> d_atomic_excitation_cross_section;
 
   // The atomic excitation electron cross section threshold energy index
-  unsigned d_atomic_excitation_cross_section_threshold_index;
+  unsigned d_atomic_excitation_cross_section_threshold_index;*/
 };
 
 } // end Data namespace

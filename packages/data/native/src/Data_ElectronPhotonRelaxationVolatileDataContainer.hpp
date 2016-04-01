@@ -63,7 +63,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection;
   using ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection;
-
+/*
   // Electron functions
   using ElectronPhotonRelaxationDataContainer::setCutoffAngle;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
@@ -102,7 +102,7 @@ public:
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSection;
   using ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThresholdEnergyIndex;
-
+*/
   // Add the export member function to the public interface
   using ElectronPhotonRelaxationDataContainer::exportData;
 

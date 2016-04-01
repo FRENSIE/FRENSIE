@@ -77,10 +77,10 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
 {
   // Set the atomic number
   this->setAtomicNumber( data_container );
-
+/*
   // Set cutoff angle
   data_container.setCutoffAngle( d_cutoff_angle );
-
+*/
   // Set the relaxation data
   std::cout << "Setting the relaxation data...";
   std::cout.flush();
@@ -740,7 +740,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
  */
 void StandardElectronPhotonRelaxationDataGenerator::setElectronData( 
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
-{ 
+{ /*
   // Information in first header of the EEDL file
   int atomic_number_in_table, 
       outgoing_particle_designator, 
@@ -1121,7 +1121,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
                              elastic_energy_grid, 
                              elastic_pdf,
                              data_container );
-*/
+*//*
   // Create the union energy grid
   std::cout << " Creating union energy grid";
   std::cout.flush();
@@ -1294,7 +1294,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 				    electroionization_cross_section[i].first,
 				    threshold );
     std::cout << "done." << std::endl;
-  }
+  }*/
 }
 
 
@@ -1307,7 +1307,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
     const std::vector<double>& elastic_energy_grid,
     const std::map<double,std::vector<double> >& elastic_pdf,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
-{
+{/*
   // Calculate Moliere's screening constant and the screened rutherford normalization constant
   std::vector<double> moliere_screening_constant, 
                       screened_rutherford_normalization_constant;
@@ -1330,7 +1330,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
      * enough to give a negligable contribution to the overall cross section.
      * This can be accomplished by setting eta slightly greater then the cutoff
      * angle.
-     */
+     *//*
     // get the pdf value at the cutoff angle for the given energy
     double cutoff_pdf = elastic_pdf.find( energy )->second.front(); 
 
@@ -1361,7 +1361,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
 
   // Set the screened rutherford normalization constant
   data_container.setScreenedRutherfordNormalizationConstant( 
-    screened_rutherford_normalization_constant );  
+    screened_rutherford_normalization_constant );  */
 }
 
 // Extract the half Compton profile from the ACE table

@@ -520,7 +520,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_COMPARE_ARRAYS( epr_data_container.getImpulseApproxTotalCrossSection(),
 		       cross_section );
 }
-
+/*
 // Electron Tests
 
 //---------------------------------------------------------------------------//
@@ -1152,7 +1152,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
                        0 );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
@@ -1236,6 +1236,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
+/*
+  // Electron Tests
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -1329,7 +1331,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -1415,6 +1417,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
+/*
+  // Electron Tests
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -1508,7 +1512,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -1594,6 +1598,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
+/*
+  // Electron Tests
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -1687,7 +1693,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -1770,6 +1776,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
+/*
+  // Electron Tests
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffAngle(), 0.10 );
   TEST_EQUALITY_CONST( 
@@ -1863,7 +1871,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
