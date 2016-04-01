@@ -3,3 +3,4 @@ ADD_EXECUTABLE(tstElectronPhotonRelaxationDataContainer
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronPhotonRelaxationDataContainer data_native)
 ADD_TEST(ElectronPhotonRelaxationDataContainer_test tstElectronPhotonRelaxationDataContainer)
+

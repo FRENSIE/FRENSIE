@@ -136,7 +136,6 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   os_warn );
-
   // Create the manager
   return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
   
@@ -177,7 +176,6 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   os_warn );
-
   // Create the manager
   return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
   
