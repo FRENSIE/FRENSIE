@@ -136,16 +136,16 @@ ParticleSimulationManagerFactory::createManagerWithDagMC(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   os_warn );
+
+  // Create the manager
+  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,
                    "Error: a DagMC geometry handler was requested without "
                    "having DagMC enabled! The particle simulation manager "
                    "cannot be created." );
-#endif // end HAVE_FRENSIE_DAGMC
-
-  // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );    
-    
+#endif // end HAVE_FRENSIE_DAGMC   
 }
 
 // Initialize the modules with Root
@@ -177,15 +177,16 @@ ParticleSimulationManagerFactory::createManagerWithRoot(
                                                   cross_sections_table_info,
                                                   cross_sections_xml_directory,
                                                   os_warn );
+
+  // Create the manager
+  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  
 #else
   THROW_EXCEPTION( InvalidSimulationInfo,
                    "Error: a Root geometry handler was requested without "
                    "having Root enabled! The particle simulation manager "
                    "cannot be created." );
 #endif // end HAVE_FRENSIE_ROOT
-
-  // Create the manager
-  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );  
 }
 
 } // end MonteCarlo namespace

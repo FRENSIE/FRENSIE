@@ -118,9 +118,9 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   }
 }
 
-#endif // end HAVE_FRENSIE_ROOT
-
 } // end MonteCarlo namespace
+
+#endif // end HAVE_FRENSIE_ROOT
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionHandlerFactory.cpp
