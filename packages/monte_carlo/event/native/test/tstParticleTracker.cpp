@@ -20,8 +20,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
 #include "MonteCarlo_PhotonState.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Construct a particle tracker

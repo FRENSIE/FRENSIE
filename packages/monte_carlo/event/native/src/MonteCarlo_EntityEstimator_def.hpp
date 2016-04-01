@@ -220,80 +220,84 @@ void EntityEstimator<EntityId>::reduceData(
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
-  
-  // Reduce bin data for each entity
-  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
-    end_entity_data;
-  entity_data = d_entity_estimator_moments_map.begin();
-  end_entity_data = d_entity_estimator_moments_map.end();
-    
-  while( entity_data != end_entity_data )
+
+  // Only do the reduction if there is more than one process
+  if( comm->getSize() > 1 )
   {
-    for( unsigned i = 0; i < entity_data->second.size(); ++i )
+    // Reduce bin data for each entity
+    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+      end_entity_data;
+    entity_data = d_entity_estimator_moments_map.begin();
+    end_entity_data = d_entity_estimator_moments_map.end();
+    
+    while( entity_data != end_entity_data )
+    {
+      for( unsigned i = 0; i < entity_data->second.size(); ++i )
+      {
+        double first_reduced_value, second_reduced_value;
+        
+        try{
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].first,
+                              Teuchos::inOutArg( first_reduced_value ) );
+
+          Teuchos::reduceAll( *comm,
+                              Teuchos::REDUCE_SUM,
+                              entity_data->second[i].second,
+                              Teuchos::inOutArg( second_reduced_value ) );
+        }
+        EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                                 "Error: unable to perform mpi reduction in "
+                                 "entity estimator " << this->getId() <<
+                                 " for entity " << entity_data->first <<
+                                 " and array index " << i << "!" );
+        
+        // Reset data on all but the root process
+        if( comm->getRank() == root_process )
+          entity_data->second[i]( first_reduced_value, second_reduced_value );
+        else
+          entity_data->second[i]( 0.0, 0.0 );
+        
+        comm->barrier();
+      }
+      
+      ++entity_data;
+    }
+    
+    // Reduce bin data of total
+    for( unsigned i = 0; i < d_estimator_total_bin_data.size(); ++i )
     {
       double first_reduced_value, second_reduced_value;
       
       try{
         Teuchos::reduceAll( *comm,
                             Teuchos::REDUCE_SUM,
-                            entity_data->second[i].first,
+                            d_estimator_total_bin_data[i].first,
                             Teuchos::inOutArg( first_reduced_value ) );
-
+        
         Teuchos::reduceAll( *comm,
                             Teuchos::REDUCE_SUM,
-                            entity_data->second[i].second,
+                            d_estimator_total_bin_data[i].second,
                             Teuchos::inOutArg( second_reduced_value ) );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Error: unable to perform mpi reduction in "
                                "entity estimator " << this->getId() <<
-                               " for entity " << entity_data->first <<
+                               " for total " << entity_data->first <<
                                " and array index " << i << "!" );
-
+      
       // Reset data on all but the root process
       if( comm->getRank() == root_process )
-        entity_data->second[i]( first_reduced_value, second_reduced_value );
+      {
+        d_estimator_total_bin_data[i]( first_reduced_value,
+                                       second_reduced_value );
+      }
       else
-        entity_data->second[i]( 0.0, 0.0 );
+        d_estimator_total_bin_data[i]( 0.0, 0.0 );
       
       comm->barrier();
     }
-    
-    ++entity_data;
-  }
-
-  // Reduce bin data of total
-  for( unsigned i = 0; i < d_estimator_total_bin_data.size(); ++i )
-  {
-    double first_reduced_value, second_reduced_value;
-      
-    try{
-      Teuchos::reduceAll( *comm,
-                          Teuchos::REDUCE_SUM,
-                          d_estimator_total_bin_data[i].first,
-                          Teuchos::inOutArg( first_reduced_value ) );
-      
-      Teuchos::reduceAll( *comm,
-                          Teuchos::REDUCE_SUM,
-                          d_estimator_total_bin_data[i].second,
-                          Teuchos::inOutArg( second_reduced_value ) );
-    }
-    EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Error: unable to perform mpi reduction in "
-                             "entity estimator " << this->getId() <<
-                             " for total " << entity_data->first <<
-                             " and array index " << i << "!" );
-
-    // Reset data on all but the root process
-    if( comm->getRank() == root_process )
-    {
-      d_estimator_total_bin_data[i]( first_reduced_value,
-                                     second_reduced_value );
-    }
-    else
-      d_estimator_total_bin_data[i]( 0.0, 0.0 );
-
-    comm->barrier();
   }
 }
 

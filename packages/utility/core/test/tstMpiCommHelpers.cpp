@@ -19,12 +19,6 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing variables
-//---------------------------------------------------------------------------//
-
-Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
-
-//---------------------------------------------------------------------------//
 // Instantiation macros
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name )   \
@@ -38,6 +32,25 @@ Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint32 )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, uint64 )
 
+#define UNIT_TEST_2_INSTANTIATION( type, name ) \
+  typedef long long int64;                      \
+  typedef unsigned long long uint64;            \
+  typedef unsigned long uint32;                 \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int64, double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, unsigned, double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, uint32, double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, uint64, double )    \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, float )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, int )          \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, long )         \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, int64 )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, unsigned )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, uint32 )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, uint64 )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, char )         \
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -46,6 +59,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    iprobe_source_no_status,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+  
   // No message sent yet
   if( comm->getRank() == 0 )
   {
@@ -55,19 +71,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
     if( comm->getSize() > 2 )
       TEST_ASSERT( !Utility::iprobe( *comm, 2 ) );
     if( comm->getSize() > 3 )
-      TEST_ASSERT( !Utility::iprobe( *comm, 4 ) );
+      TEST_ASSERT( !Utility::iprobe( *comm, 3 ) );
   }
 
   comm->barrier();
 
-  // Send messages and probe
-  if( comm->getRank() != 0 )
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
   {
-    double message = 1.0;
-    
-    Teuchos::send( *comm, message, 0 );
+    Teuchos::RCP<const double> message( new double( comm->getRank() ) );
+
+    Teuchos::RCP<Teuchos::CommRequest<Ordinal> > request =
+      Teuchos::isend( *comm, message, 0 );
   }
-  else
+
+  comm->barrier();
+
+  // Probe for and receive messages
+  if( comm->getRank() == 0 )
   {
     double message = 0.0;
     
@@ -76,18 +97,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
       TEST_ASSERT( Utility::iprobe( *comm, 1 ) );
 
       Teuchos::receive( *comm, 1, &message );
+
+      TEST_EQUALITY_CONST( message, 1.0 );
     }
     if( comm->getSize() > 2 )
     {
       TEST_ASSERT( Utility::iprobe( *comm, 2 ) );
 
       Teuchos::receive( *comm, 2, &message );
+
+      TEST_EQUALITY_CONST( message, 2.0 );
     }
     if( comm->getSize() > 3 )
     {
       TEST_ASSERT( Utility::iprobe( *comm, 3 ) );
 
       Teuchos::receive( *comm, 3, &message );
+
+      TEST_EQUALITY_CONST( message, 3.0 );
     }
   }
 
@@ -102,7 +129,74 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    iprobe_source_status,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
   
+  // No message sent yet
+  if( comm->getRank() == 0 )
+  {
+    TEST_ASSERT( !Utility::iprobe( *comm, 0, status ) );
+    if( comm->getSize() > 1 )
+      TEST_ASSERT( !Utility::iprobe( *comm, 1, status ) );
+    if( comm->getSize() > 2 )
+      TEST_ASSERT( !Utility::iprobe( *comm, 2, status ) );
+    if( comm->getSize() > 3 )
+      TEST_ASSERT( !Utility::iprobe( *comm, 3, status ) );
+  }
+
+  comm->barrier();
+
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
+  {
+    Teuchos::RCP<const double> message( new double( comm->getRank() ) );
+
+    Teuchos::RCP<Teuchos::CommRequest<Ordinal> > request =
+      Teuchos::isend( *comm, message, 0 );
+  }
+
+  comm->barrier();
+
+  // Probe for and receive messages
+  if( comm->getRank() == 0 )
+  {
+    double message = 0.0;
+    
+    if( comm->getSize() > 1 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, 1, status ) );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 1 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+      
+      Teuchos::receive( *comm, 1, &message );
+
+      TEST_EQUALITY_CONST( message, 1.0 );
+    }
+    if( comm->getSize() > 2 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, 2, status ) );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 2 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, 2, &message );
+
+      TEST_EQUALITY_CONST( message, 2.0 );
+    }
+    if( comm->getSize() > 3 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, 3, status ) );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, 3, &message );
+
+      TEST_EQUALITY_CONST( message, 3.0 );
+    }
+  }
+
+  comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( CommHelpers, iprobe_source_status );
@@ -113,7 +207,58 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    iprobe_no_status,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
   
+  // No message sent yet
+  if( comm->getRank() == 0 )
+    TEST_ASSERT( !Utility::iprobe( *comm ) );
+
+  comm->barrier();
+
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
+  {
+    Teuchos::RCP<const double> message( new double( comm->getRank() ) );
+
+    Teuchos::RCP<Teuchos::CommRequest<Ordinal> > request =
+      Teuchos::isend( *comm, message, 0 );
+  }
+
+  comm->barrier();
+
+  // Probe for and receive messages
+  if( comm->getRank() == 0 )
+  {
+    double message = 0.0;
+    
+    if( comm->getSize() > 1 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm ) );
+
+      Teuchos::receive( *comm, 1, &message );
+
+      TEST_EQUALITY_CONST( message, 1.0 );
+    }
+    if( comm->getSize() > 2 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm ) );
+
+      Teuchos::receive( *comm, 2, &message );
+
+      TEST_EQUALITY_CONST( message, 2.0 );
+    }
+    if( comm->getSize() > 3 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm ) );
+
+      Teuchos::receive( *comm, 3, &message );
+
+      TEST_EQUALITY_CONST( message, 3.0 );
+    }
+  }
+
+  comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( CommHelpers, iprobe_no_status );
@@ -124,7 +269,69 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    iprobe_status,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
   
+  // No message sent yet
+  if( comm->getRank() == 0 )
+    TEST_ASSERT( !Utility::iprobe( *comm, status ) );
+
+  comm->barrier();
+
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
+  {
+    Teuchos::RCP<const double> message( new double( comm->getRank() ) );
+
+    Teuchos::RCP<Teuchos::CommRequest<Ordinal> > request =
+      Teuchos::isend( *comm, message, 0 );
+  }
+
+  comm->barrier();
+
+  // Probe for and receive messages
+  if( comm->getRank() == 0 )
+  {
+    double message = 0.0;
+    
+    if( comm->getSize() > 1 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, status ) );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+      
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+    if( comm->getSize() > 2 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, status ) );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+    if( comm->getSize() > 3 )
+    {
+      TEST_ASSERT( Utility::iprobe( *comm, 3, status ) );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+  }
+
+  comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( CommHelpers, iprobe_status );
@@ -135,7 +342,56 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    probe_source,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
   
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
+  {
+    double message = comm->getRank();
+
+    Teuchos::send( *comm, message, 0 );
+  }
+  // Probe for and receive messages
+  else if( comm->getRank() == 0 )
+  {
+    double message = 0.0;
+    
+    if( comm->getSize() > 1 )
+    {
+      Utility::probe( *comm, 1, status );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 1 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+      
+      Teuchos::receive( *comm, 1, &message );
+
+      TEST_EQUALITY_CONST( message, 1.0 );
+    }
+    if( comm->getSize() > 2 )
+    {
+      Utility::probe( *comm, 2, status );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 2 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, 2, &message );
+
+      TEST_EQUALITY_CONST( message, 2.0 );
+    }
+    if( comm->getSize() > 3 )
+    {
+      Utility::probe( *comm, 3, status );
+      TEST_EQUALITY_CONST( status->getSourceRank(), 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, 3, &message );
+
+      TEST_EQUALITY_CONST( message, 3.0 );
+    }
+  }
+
+  comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( CommHelpers, probe_source );
@@ -146,10 +402,103 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
                                    probe,
                                    Ordinal )
 {
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
   
+  // Send messages
+  if( comm->getRank() != 0 && comm->getRank() < 4 )
+  {
+    double message = comm->getRank();
+
+    Teuchos::send( *comm, message, 0 );
+  }
+  // Probe for and receive messages
+  else if( comm->getRank() == 0 )
+  {
+    double message = 0.0;
+    
+    if( comm->getSize() > 1 )
+    {
+      Utility::probe( *comm, status );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+      
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+    if( comm->getSize() > 2 )
+    {
+      Utility::probe( *comm, status );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+    if( comm->getSize() > 3 )
+    {
+      Utility::probe( *comm, status );
+      TEST_COMPARE( status->getSourceRank(), >=, 1 );
+      TEST_COMPARE( status->getSourceRank(), <=, 3 );
+      TEST_EQUALITY_CONST( Utility::getMessageSize<double>( *status ), 1 );
+
+      Teuchos::receive( *comm, status->getSourceRank(), &message );
+
+      TEST_EQUALITY_CONST( message, (double)status->getSourceRank() );
+    }
+  }
+
+  comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( CommHelpers, probe );
+
+//---------------------------------------------------------------------------//
+// Check that a serial probe can be done
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( CommHelpers,
+                                   getMessageSize,
+                                   Ordinal,
+                                   Packet )
+{
+  Teuchos::RCP<const Teuchos::Comm<Ordinal> > comm =
+    Teuchos::DefaultComm<Ordinal>::getComm();
+
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
+
+  // Send a message
+  if( comm->getRank() == 1 )
+  {
+    Teuchos::Array<Packet> message( 100 );
+    
+    Teuchos::send( *comm, (Ordinal)message.size(), message.getRawPtr(), 0 );
+  }
+  // Probe to get the message size
+  else if( comm->getRank() == 0 )
+  {
+    if( comm->getSize() > 1 )
+    {
+      Utility::probe( *comm, status );
+
+      int message_size = Utility::getMessageSize<Packet>( *status );
+      
+      TEST_EQUALITY_CONST( message_size, 100 );
+
+      Teuchos::Array<Packet> message( message_size );
+      
+      Teuchos::receive( *comm, 1, (Ordinal)message_size, message.getRawPtr() );
+    }
+  }
+
+  comm->barrier();
+}
+
+UNIT_TEST_2_INSTANTIATION( CommHelpers, getMessageSize );
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -175,9 +524,6 @@ int main( int argc, char** argv )
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
 
   mpiSession.barrier();
-
-  // Initialize the mpi comm
-  comm = Teuchos::DefaultComm<unsigned long long>::getComm();
 
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );

@@ -57,7 +57,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
   Teuchos::RCP<Teuchos::Comm<Ordinal> >
     comm( new Teuchos::SerialComm<Ordinal> );
 
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
 
   // No probing with serial comms
   TEST_THROW( Utility::iprobe( *comm, 0, status ), std::logic_error );
@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
   Teuchos::RCP<Teuchos::Comm<Ordinal> >
     comm( new Teuchos::SerialComm<Ordinal> );
 
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
 
   // No probing with serial comms
   TEST_THROW( Utility::iprobe( *comm, status ), std::logic_error );
@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
   Teuchos::RCP<Teuchos::Comm<Ordinal> >
     comm( new Teuchos::SerialComm<Ordinal> );
 
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
 
   // No probing with serial comms
   TEST_THROW( Utility::probe( *comm, 0, status ), std::logic_error );
@@ -123,7 +123,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CommHelpers,
   Teuchos::RCP<Teuchos::Comm<Ordinal> >
     comm( new Teuchos::SerialComm<Ordinal> );
 
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > status;
 
   // No probing with serial comms
   TEST_THROW( Utility::probe( *comm, status ), std::logic_error );

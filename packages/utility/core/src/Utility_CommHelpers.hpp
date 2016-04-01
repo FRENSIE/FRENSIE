@@ -34,7 +34,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm, const int source_rank );
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm,
              const int source_rank,
-             Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status );
+             Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status );
 
 //! Nonblocking test for a message from any source with no status
 template<typename Ordinal>
@@ -43,18 +43,18 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm );
 //! Nonblocking test for a message from any source with status
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm,
-             Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status );
+             Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status );
 
 //! Blocking test for a message from source with status
 template<typename Ordinal>
 void probe( const Teuchos::Comm<Ordinal>& comm,
             const int source_rank,
-            Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status );
+            Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status );
 
 //! Blocking test for a message from any source with status
 template<typename Ordinal>
 void probe( const Teuchos::Comm<Ordinal>& comm,
-            Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status );
+            Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status );
 
 //! Get the size of a message
 template<typename T, typename Ordinal>

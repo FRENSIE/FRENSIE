@@ -10,7 +10,6 @@
 #define FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
 // Trilinos Includes
-#include <Teuchos_GlobalMPISession.hpp>
 #include <Teuchos_Tuple.hpp>
 
 // FRENSIE Includes
@@ -39,9 +38,6 @@ BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,Estima
     d_initial_histories_completed( previously_completed_histories ),
     d_number_of_batches_per_processor( number_of_batches_per_processor )
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );
   // Make sure the communicator is for mpi
@@ -55,10 +51,6 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::runSimulation()
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
@@ -105,14 +97,6 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::coordinateWorkers()
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  // Make sure an mpi comm is being used
-  testPrecondition( d_comm->getSize() > 1 );
-  // Make sure the root process is calling this function
-  testPrecondition( d_comm->getRank() == d_root_process );
-
   // The number of batches that need to be run
   unsigned long long number_of_batches = 
                          d_number_of_batches_per_processor*d_comm->getSize();
@@ -128,7 +112,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   Teuchos::Tuple<unsigned long long,2> batch_info;
 
   // The idle worker info
-  Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> > 
+  Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > 
     idle_worker_info;
   
   // The root process will handle all batch requests and data collection
@@ -173,17 +157,10 @@ template<typename GeometryHandler,
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::stopWorkersAndRecordWork()
 	       
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  // Make sure an mpi comm is being used
-  testPrecondition( d_comm->getSize() > 1 );
-  // Make sure the root process is calling this function
-  testPrecondition( d_comm->getRank() == d_root_process );
-
   // The number of histories completed by each worker
   Teuchos::Array<Teuchos::RCP<unsigned long long> > 
     worker_histories_completed( d_comm->getSize() );
+  
   for( unsigned i = 0; i < worker_histories_completed.size(); ++i )
     worker_histories_completed[i].reset( new unsigned long long( 0ull ) );
 
@@ -237,15 +214,7 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 bool BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::isIdleWorkerPresent(
      Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info )
-{
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  // Make sure an mpi comm is being used
-  testPrecondition( d_comm->getSize() > 1 );
-  // Make sure the root process is calling this function
-  testPrecondition( d_comm->getRank() == d_root_process );
-  
+{  
   // Probe for an idle worker
   bool idle_worker_present = false;
 
@@ -268,13 +237,6 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 	    const Teuchos::CommStatus<unsigned long long>& c_idle_worker_info,
 	    const Teuchos::Tuple<unsigned long long,2>& task )
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  // Make sure an mpi comm is being used
-  testPrecondition( d_comm->getSize() > 1 );
-  // Make sure the root process is calling this function
-  testPrecondition( d_comm->getRank() == d_root_process );
   // Make sure the task is valid
   testPrecondition( task[1] > task[0] );
 
@@ -317,26 +279,15 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::work()
 {
-  // Make sure the global MPI session has been initialized
-  testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
-  testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  // Make sure an mpi comm is being used
-  testPrecondition( d_comm->getSize() > 1 );
-  // Make sure only the worker process call this method
-  testPrecondition( d_comm->getRank() != d_root_process );
-
   // The batch info array that will be passed to workers
   Teuchos::Tuple<unsigned long long,2> batch_info;
-  
-  // The MPI error code
-  int return_value;
   
   while( true )
   {
     unsigned long long work_completed = 
       this->getNumberOfHistoriesCompleted();
       
-    // Humbly request a new batch - wait patiently until you get one
+    // Wait patiently for some work...
     try{
       Teuchos::send( *d_comm, work_completed, d_root_process );
     }
@@ -346,7 +297,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
                              " unable to request work from root process "
                              << d_root_process << "! " );
         
-    // The master has graciously given you work
+    // Job assigned, lets get to it...
     try{
       Teuchos::receive<unsigned long long>( *d_comm, 
                                             d_root_process, 
