@@ -16,14 +16,6 @@
 // FRENSIE Includes
 #include "FRENSIE_mpi_config.hpp"
 
-// It is possible to build Trilinos with MPI and not FRENSIE. This section
-// ensures that the mpi.h include still gets pulled in.
-#ifdef HAVE_MPI
-#ifndef HAVE_FRENSIE_MPI
-#include <mpi.h>
-#endif // end HAVE_FRENSIE_MPI
-#endif // end HAVE_MPI
-
 namespace Utility{
   
 //! Nonblocking test for a message from source with no status
