@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_ParticleHistoryObserver.hpp"
+#include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 
 // Trilinos Includes 
 #include <Teuchos_Tuple.hpp>

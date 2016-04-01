@@ -242,12 +242,15 @@ void StandardEntityEstimator<EntityId>::reduceData(
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
 
-  // Reduce the bin data first
-  EntityEstimator<EntityId>::reduceData( comm, root_process );
+  // Only do the reduction if there is more than one process
+  if( comm->getSize() > 1 )
+  {
+    // Reduce the bin data first
+    EntityEstimator<EntityId>::reduceData( comm, root_process );
 
-  // Reduce total data for each entity
-  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
-    end_entity_data;
+    // Reduce total data for each entity
+    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+      end_entity_data;
     entity_data = d_entity_total_estimator_moments_map.begin();
     end_entity_data = d_entity_total_estimator_moments_map.end();
 
@@ -349,8 +352,9 @@ void StandardEntityEstimator<EntityId>::reduceData(
 
       comm->barrier();
     }
-  }    
+  }
 }
+
 
 // Export the estimator data
 template<typename EntityId>

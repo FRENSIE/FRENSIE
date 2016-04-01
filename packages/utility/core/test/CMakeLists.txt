@@ -20,8 +20,8 @@ IF(${FRENSIE_ENABLE_MPI})
   ADD_EXECUTABLE(tstMpiCommHelpers
     tstMpiCommHelpers.cpp)
   TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
-  ADD_TEST(MpiCommHelpers_2_test ${MPI_EXEC} -n 2 tstMpiCommHelpers)
-  ADD_TEST(MpiCommHelpers_4_test ${MPI_EXEC} -n 4 tstMpiCommHelpers)
+  ADD_TEST(MpiCommHelpers_2_test ${MPIEXEC} -n 2 tstMpiCommHelpers)
+  ADD_TEST(MpiCommHelpers_4_test ${MPIEXEC} -n 4 tstMpiCommHelpers)
 ENDIF()
 
 ADD_EXECUTABLE(tstSortAlgorithms 

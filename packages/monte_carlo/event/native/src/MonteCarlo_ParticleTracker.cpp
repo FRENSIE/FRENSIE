@@ -8,7 +8,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleTracker.hpp"
-#include "MonteCarlo_ParticleTrackerHDF5FileHandler.hpp"
 #include "MonteCarlo_ParticleType.hpp"
 #include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
@@ -427,60 +426,69 @@ void ParticleTracker::reduceData(
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
-                      
-  // Handle the master
-  if( comm->getRank() == root_process )
+
+  // Only do the reduction if there is more than one process
+  if( comm->getSize() > 1 )
   {
-    // Start at one since the root process does not need to report
-    int nodes_reporting = 1; 
-      
-    while( nodes_reporting < comm->getSize() )
+    // Handle the master
+    if( comm->getRank() == root_process )
     {
-      Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
+      // Start at one since the root process does not need to report
+      int nodes_reporting = 1; 
       
-      // Probe for incoming sends to determine message size
-      try{
-        Utility::probe( *comm, status );
-      }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Error: Root process (" << root_process <<
-                               " was unable to probe for particle tracker "
-                               "data sent by non-root processes!" );
+      while( nodes_reporting < comm->getSize() )
+      {
+        Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
         
-      // Get the size of the incoming message
-      std::string packaged_data;
-
-      try{
-        int message_size = Utility::getMessageSize<char>( *status );
-
-        packaged_data.resize( message_size );
-      }
-
-      // Get the message
-      try{
-        Teuchos::receive( *comm,
-                          status->getSourceRank(),
-                          packaged_data.size(),
-                          &packaged_data[0] );
-      }
-      EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                               "Error: Root process (" << root_process <<
-                               " was unable to receive particle tracker data "
-                               "from process "
-                               << status->getSourceRank() << "!" );
+        // Probe for incoming sends to determine message size
+        try{
+          Utility::probe( *comm, status );
+        }
+        EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                                 "Error: Root process (" << root_process <<
+                                 " was unable to probe for particle tracker "
+                                 "data sent by non-root processes!" );
+        
+        // Get the size of the incoming message
+        std::string packaged_data;
+        
+        try{
+          int message_size = Utility::getMessageSize<char>( *status );
+          
+          packaged_data.resize( message_size );
+        }
+        EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                                 "Error: Root process (" << root_process <<
+                                 " was unable to determine the size of the "
+                                 "particle tracker data sent from process "
+                                 << status->getSourceRank() << "!" );
+        
+        // Get the message
+        try{
+          Teuchos::receive( *comm,
+                            status->getSourceRank(),
+                            (unsigned long long)packaged_data.size(),
+                            &packaged_data[0] );
+        }
+        EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                                 "Error: Root process (" << root_process <<
+                                 " was unable to receive particle tracker data"
+                                 " from process "
+                                 << status->getSourceRank() << "!" );
               
-      // Contribute the data from this worker to the node map.       
-      this->contributeDataFromWorkers( packaged_data );
+        // Contribute the data from this worker to the node map.       
+        this->contributeDataFromWorkers( packaged_data );
         
-      ++nodes_reporting;
+        ++nodes_reporting;
+      }
     }
     else // Handle the workers
     {
       std::string packaged_data = this->packDataInString();
-
+      
       try{
         Teuchos::send( *comm,
-                       packaged_data.size(),
+                       (unsigned long long)packaged_data.size(),
                        &packaged_data[0],
                        root_process );
       }
@@ -489,10 +497,10 @@ void ParticleTracker::reduceData(
                                " was unable to send particle tracker data "
                                "to the root process ("
                                << root_process << "!" );
-
+      
       // Reset the non-root process data
       this->resetData();
-    }  
+    }
   }
 
   comm->barrier();

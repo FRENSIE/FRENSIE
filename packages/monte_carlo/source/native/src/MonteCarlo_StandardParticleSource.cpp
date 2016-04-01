@@ -100,30 +100,34 @@ void StandardParticleSource::reduceData(
   testPrecondition( !comm.is_null() );
   // Make sure the root process is valid
   testPrecondition( root_process < comm->getSize() );
-  
-  try{
-    Teuchos::reduceAll<unsigned long long>( *comm,
-                                            Teuchos::REDUCE_SUM,
-                                            d_number_of_trials.size(),
-                                            d_number_of_trials.getRawPtr(),
-                                            d_number_of_trials.getRawPtr() );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "Error: unable to reduce the source trials!" );
 
-  try{
-    Teuchos::reduceAll<unsigned long long>( *comm,
-                                            Teuchos::REDUCE_SUM,
-                                            d_number_of_samples.size(),
-                                            d_number_of_samples.getRawPtr(),
-                                            d_number_of_samples.getRawPtr() );
-  }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                           "Error: unable to reduce the source samples!" );
+  // Only do the reduction if there is more than one process
+  if( comm->getSize() > 1 )
+  {
+    try{
+      Teuchos::reduceAll<unsigned long long>( *comm,
+                                              Teuchos::REDUCE_SUM,
+                                              d_number_of_trials.size(),
+                                              d_number_of_trials.getRawPtr(),
+                                              d_number_of_trials.getRawPtr() );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: unable to reduce the source trials!" );
 
-  // Reset the sampling data if not the root process
-  if( comm->getRank() != root_process )
-    this->resetData();
+    try{
+      Teuchos::reduceAll<unsigned long long>( *comm,
+                                              Teuchos::REDUCE_SUM,
+                                              d_number_of_samples.size(),
+                                              d_number_of_samples.getRawPtr(),
+                                              d_number_of_samples.getRawPtr());
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error,
+                             "Error: unable to reduce the source samples!" );
+
+    // Reset the sampling data if not the root process
+    if( comm->getRank() != root_process )
+      this->resetData();
+  }
 }
 
 // Export the source data

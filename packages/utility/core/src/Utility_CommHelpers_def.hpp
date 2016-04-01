@@ -23,13 +23,13 @@ namespace Utility{
  * \details This method wouldn't be necessary if the Teuchos::getMpiErrorString
  * located in Teuchos_CommHelpers.cpp was not in an anonymous namespace.
  */
-std::string getMpiErrorString( const int error_code )
+inline std::string getMpiErrorString( const int error_code )
 {
   char error_string[MPI_MAX_ERROR_STRING+1];
 
   int error_string_length = MPI_MAX_ERROR_STRING;
 
-  (void) ::MPI_Error_string( error_code, error_string, &error_string_length );
+  (void)::MPI_Error_string( error_code, error_string, &error_string_length );
 
   if( error_string[error_string_length-1] != '\0' )
     error_string[error_string_length] = '\0';
@@ -71,7 +71,7 @@ public:
 
     int count = 0;
 
-    int return_value = ::MPI_Get_count( &d_status, raw_mpi_type, count );
+    int return_value = ::MPI_Get_count( &d_status, raw_mpi_type, &count );
 
     TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
                         std::runtime_error,
@@ -99,7 +99,7 @@ private:
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm, const int source_rank )
 {
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > dummy_status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > dummy_status;
 
   return iprobe( comm, source_rank, dummy_status );
 }
@@ -110,7 +110,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm, const int source_rank )
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm,
              const int source_rank,
-             Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status )
+             Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status )
 {
 #ifdef HAVE_FRENSIE_MPI
   const Teuchos::MpiComm<Ordinal>* mpi_comm =
@@ -166,7 +166,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm )
 {
-  Teuchos::RCP<const Teuchos::CommStatus<Ordinal> > dummy_status;
+  Teuchos::RCP<Teuchos::CommStatus<Ordinal> > dummy_status;
   
   return iprobe( comm, dummy_status );
 }
@@ -176,7 +176,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm )
  */
 template<typename Ordinal>
 bool iprobe( const Teuchos::Comm<Ordinal>& comm,
-             Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status )
+             Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status )
 {
 #ifdef HAVE_FRENSIE_MPI
   return iprobe( comm, MPI_ANY_SOURCE, status );
@@ -189,7 +189,7 @@ bool iprobe( const Teuchos::Comm<Ordinal>& comm,
 template<typename Ordinal>
 void probe( const Teuchos::Comm<Ordinal>& comm,
             const int source_rank,
-            Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status )
+            Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status )
 {
 #ifdef HAVE_FRENSIE_MPI
   const Teuchos::MpiComm<Ordinal>* mpi_comm =
@@ -236,7 +236,7 @@ void probe( const Teuchos::Comm<Ordinal>& comm,
 // Blocking test for a message from any source with status
 template<typename Ordinal>
 void probe( const Teuchos::Comm<Ordinal>& comm,
-            Teuchos::RCP<const Teuchos::CommStatus<Ordinal> >& status )
+            Teuchos::RCP<Teuchos::CommStatus<Ordinal> >& status )
 {
 #ifdef HAVE_FRENSIE_MPI
   return probe( comm, MPI_ANY_SOURCE, status );
