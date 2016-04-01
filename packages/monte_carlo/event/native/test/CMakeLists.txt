@@ -302,6 +302,11 @@ TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_Root monte_carlo_estimator_nat
 ADD_TEST(StandardEstimatorFactory_Root_test tstStandardEstimatorFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
 ENDIF()
 
+ADD_EXECUTABLE(tstParticleTrackerFactory
+  tstParticleTrackerFactory.cpp)
+TARGET_LINK_LIBRARIES(tstParticleTrackerFactory monte_carlo_estimator_native)
+ADD_TEST(ParticleTrackerFactory_test tstParticleTrackerFactory --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_ptrac.xml")
+
 IF(FRENSIE_ENABLE_DAGMC)
 ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
   tstEventHandlerFactory_DagMC.cpp)
