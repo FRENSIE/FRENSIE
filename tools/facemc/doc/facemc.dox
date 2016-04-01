@@ -1408,6 +1408,77 @@
  * </ParameterList>
  * \endcode
  *
+ * \section ptrac_construction Particle Tracker Construction
+ * The particle tracker is an event tracker, similar to any of the estimators
+ * discussed elsewhere in this manual. However, the particle tracker acts as a
+ * global observer, keeping track of a specified number of particle histories
+ * and each particle's state variables throughout its lifetime. 
+ *
+ * \subsection ptrac_data Particle Tracker Data
+ * The particle tracker keeps track of particle states throughout their lifetimes.
+ * For a given number of histories, all source particles in that history number
+ * range, as well as all progeny (i.e. particles whose generation can be 
+ * traced back to the source particle) will be tracked. For each particle, at 
+ * every collision and particle destruction the following pieces of data are
+ * tracked:
+ *
+ * <ul> 
+ *  <li> X Position </li>
+ *  <li> Y Position </li>
+ *  <li> Z Position </li>
+ *  <li> X Direction </li>
+ *  <li> Y Direction </li>
+ *  <li> Z Direction </li>
+ *  <li> Collision Number </li>
+ *  <li> Energy </li>
+ *  <li> Weight </li>
+ * </ul>
+ *
+ * This data is then organized into maps with the following heirarchy:
+ * [History Number]->[Particle Type]->[Generation Number]->[Individual Particle Number]->[Lifetime Data]
+ *
+ * The data will be output to an HDF5 file (the same as any estimators) in a 
+ * separate directory.
+ *
+ * \subsection required_ptrac_parameters Particle Tracker Parameters
+ * <ol> 
+ *  <li>The first required parameter element is the id. Note that the id for 
+ *      the particle tracker must be unique with respect to all other estimators.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Id" type="int" value="1"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * <li>The second required parameter is the type name. In this case the required
+ *     type name is "Particle Tracker"
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Type" type="string" value="Particle Tracker"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  <li>The final parameter is optional and is the number of histories that will be 
+ *       tracked. Note that the default assignment for this parameter is 100.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Histories" type="unsigned int" value="100"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * </ol>
+ *
+ * \subsection ptrac_example Particle Tracker Example
+ *
+ * \code
+ * <ParameterList name="Observers">
+
+ * <ParameterList name="Particle Tracker 1">
+ *   <Parameter name="Id" type="unsigned int" value="1"/>
+ *   <Parameter name="Type" type="string" value="Particle Tracker"/>
+ *   <Parameter name="Histories" type="unsigned int" value="500" />
+ * </ParameterList>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
  * \section source_construction Source Construction
  * There are currently two types of sources that can be created: the 
  * distributed source and the compound source. 

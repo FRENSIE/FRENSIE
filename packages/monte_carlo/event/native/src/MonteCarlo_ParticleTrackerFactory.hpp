@@ -55,10 +55,10 @@ public:
   unsigned getParticleTrackerID(
                               const Teuchos::ParameterList& ptrac_rep ) const;
 
-private:
-
   // Get the number of histories requested - optional
   void getNumberOfHistories( const Teuchos::ParameterList& ptrac_rep );
+
+private:
 
   // Number of histories requested 
   unsigned d_number_histories;
