@@ -66,6 +66,9 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                 1e-42,
                 1e-15) );
 
+  // Until Electron data added close endl file 
+  eedl_file_handler->closeENDLFile();
+
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
   data_generator_h->populateEPRDataContainer( data_container );
@@ -263,7 +266,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.59008691830915092e-02 );
 
-
+/*
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
@@ -457,7 +460,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
-
+*/
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -486,6 +489,9 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 				     0.001,
 				     1e-32,
 				     1e-16) );
+
+  // Until Electron data added close endl file 
+  eedl_file_handler->closeENDLFile();
 
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
@@ -899,7 +905,7 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.13351484549591885e-01,
 		     1e-15 );
-
+/*
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
@@ -1137,7 +1143,7 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
-		       
+*/
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }

@@ -360,7 +360,7 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
   return d_impulse_approx_total_cross_section;
 }
 
-
+/*
 //---------------------------------------------------------------------------//
 // GET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -637,7 +637,7 @@ ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSectionThresholdE
 {
   return d_atomic_excitation_cross_section_threshold_index;
 }
-
+*/
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -1141,7 +1141,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
   d_impulse_approx_total_cross_section = total_cross_section;
 }
 
-
+/*
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -1257,7 +1257,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAn
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the moment preserving elastic discrete angles are valid
  /* testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
-               d_number_of_discrete_angles.find( incoming_energy )->second );*/
+               d_number_of_discrete_angles.find( incoming_energy )->second );*//*
   testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
                                   moment_preserving_elastic_discrete_angles.end(),
                                   isValueLessThanMinusOne ) ==
@@ -1281,7 +1281,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the weight is valid
   /*testPrecondition( moment_preserving_elastic_weights.size() ==
-               d_number_of_discrete_angles.find( incoming_energy )->second );*/
+               d_number_of_discrete_angles.find( incoming_energy )->second );*//*
   testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
                                   moment_preserving_elastic_weights.end(),
                                   isValueLessThanOrEqualToZero ) ==
@@ -1674,7 +1674,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThres
   
  d_atomic_excitation_cross_section_threshold_index = index;
 }
-
+*/
 // Test if a value is less than or equal to zero
 bool ElectronPhotonRelaxationDataContainer::isValueLessThanOrEqualToZero( 
 							   const double value )

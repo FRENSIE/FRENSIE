@@ -89,6 +89,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 				       d_waller_hartree_total_cross_section );
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
 				       d_impulse_approx_total_cross_section );
+/*  // Electron Data
   ar & boost::serialization::make_nvp( "cutoff_angle", 
                                         d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
@@ -162,7 +163,7 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
                                         d_atomic_excitation_cross_section );
   ar & boost::serialization::make_nvp( 
             "atomic_excitation_cross_section_threshold_index", 
-            d_atomic_excitation_cross_section_threshold_index );
+            d_atomic_excitation_cross_section_threshold_index );*/
 }
   
 // Load the data from an archive
@@ -236,6 +237,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 				       d_waller_hartree_total_cross_section );
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
 				       d_impulse_approx_total_cross_section );
+/*  // Electron Data
   ar & boost::serialization::make_nvp( "cutoff_angle", 
                                         d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
@@ -309,7 +311,7 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
                                         d_atomic_excitation_cross_section );
   ar & boost::serialization::make_nvp( 
             "atomic_excitation_cross_section_threshold_index", 
-            d_atomic_excitation_cross_section_threshold_index );
+            d_atomic_excitation_cross_section_threshold_index );*/
 }
 
 } // end Data namespace
