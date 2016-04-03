@@ -97,9 +97,9 @@ template<typename GeometryHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::coordinateWorkers()
 {
-  // The number of batches that need to be run
+  // The number of batches that need to be run (don't count master proc.)
   unsigned long long number_of_batches = 
-                         d_number_of_batches_per_processor*d_comm->getSize();
+    d_number_of_batches_per_processor*(d_comm->getSize()-1);
   
   // The size of each batch (except possibly the last batch)
   unsigned long long batch_size = 
