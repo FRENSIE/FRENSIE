@@ -68,14 +68,14 @@
  *  <li> \subpage data "data" </li>
  *  <li> \subpage geometry "geometry" </li>
  *  <li> \subpage monte_carlo "monte carlo" </li>
- *  <li> \subpage transmutation "transmutation" </li>
  * </ul>
  * 
  * The utility package provides a collection of low-level classes and functions
  * that can be useful in a variety of applications. Some useful algorithms 
  * include binary searching, efficient exponentiation and numeric quadrature. 
  * Some useful classes include objects that provide stream support
- * (Utility::PrintableObject), XML support (Utilitiy::XMLCompatibleObject), 
+ * (Utility::PrintableObject), XML support 
+ * (Utilitiy::ParameterListCompatibleObject), 
  * HDF5 support (Utility::HDF5FileHandler), random number generation 
  * (Utility::RandomNumberGenerator) and sampling from generic distributions 
  * (Utility::OneDDistribution).
@@ -106,9 +106,6 @@
  * also provided for modeling individual nuclides, materials, and a variety of
  * estimators and sources. A series of manager classes are also provided that
  * manage the simulation of particles (MonteCarlo::ParticleSimulationManager).
- *
- * The transmutation package provides the functionality necessary to perform
- * burnup calculations and to conduct activation analyses.
  *
  * \subsection frensie_high_design_subsec High-Level Software Design Strategy
  * At the lowest level, all software is simply a collection of functions and
@@ -206,6 +203,42 @@
  * API documentation and code development are separate activities. Doxygen
  * allows the two to be combined, which greatly reduces errors in
  * documentation.
+ *
+ * \subsection parallel_considerations Parallel Considerations
+ * FRENSIE is written to take advantage of both shared memory systems and
+ * distributed memory systems. There is currently no support for GPU's or
+ * co-processors (MIC chips). Some considerations that developer's should keep
+ * in mind when writing code that will run in parallel will be discussed 
+ * briefly. 
+ *
+ * Developers that write code that runs in parallel on a shared memory system 
+ * have to be very careful about preventing race conditions since all of the 
+ * parallel threads will be accessing the same objects in memory. Read 
+ * operations (calls to const member functions) are safe and will not result in
+ * race conditions. Write operations (calls to non-const member functions) are 
+ * not safe and will likely result in race conditions. To avoid race conditions
+ * developers must ensure that only one thread does the write operation at a 
+ * time. Since we use <a href=http://openmp.org/wp/>OpenMP</a> to enable and 
+ * manage threads, the simplest way to ensure that only one thread does a write
+ * operation at a time is by placing the write operation inside of an 
+ * <b>omp critical</b> block. These blocks will degrade parallel scaling
+ * efficiency so developers should try to minimize their use if possible.
+ *
+ * FRENSIE developers that write code that runs in parallel on a distributed 
+ * memory system will be using the MPI API, or more accurately, C++ wrappers 
+ * around the MPI API. FRENSIE takes advantage of the 
+ * <a href=https://trilinos.org/docs/dev/packages/teuchos/doc/html/index.html#TeuchosComm_src>Teuchos Communication Subpackage</a>
+ * since it provides a very nice C++ MPI wrapper. Unfortunately the 
+ * package does not provide wrappers around the MPI_Probe and MPI_Iprobe
+ * methods, which are used by FRENSIE. To avoid raw MPI API calls, for 
+ * reasons that will be discussed shortly, wrappers for MPI_Probe and
+ * MPI_Iprobe have been provided (see Utility_CommHelpers.hpp) that mimic
+ * the Teuchos wrappers. If additional wrappers are needed in the future,
+ * they should be added to the Utility_CommHelpers.hpp file. One of the 
+ * primary benefits of using the C++ wrappers is that they can be used
+ * safely whether or not FRENSIE has been built with MPI (no #ifdefs are
+ * required). In addition, the C++ wrappers take advantage of the C++
+ * error handler instead of the MPI error code.
  *
  * \section cpp_primer_sec C++ Primer
  * FRENSIE developers should be familiar with C++ before contributing code.
