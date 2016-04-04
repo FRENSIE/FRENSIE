@@ -129,9 +129,6 @@ public:
   //! Return the screened Rutherford elastic electron cross section
   const std::vector<double>& getScreenedRutherfordElasticCrossSection() const;
 
-  //! Return the screened Rutherford elastic cross section threshold energy bin index
-  unsigned getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() const;
-
   //! Return the screened Rutherford elastic normalization constants
   const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
 

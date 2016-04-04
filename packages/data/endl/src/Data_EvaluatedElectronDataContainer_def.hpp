@@ -143,7 +143,8 @@ template<typename Archive>
 void EvaluatedElectronDataContainer::load( Archive& ar, 
 						  const unsigned version )
 {
-   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "subshells", d_subshells );
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 

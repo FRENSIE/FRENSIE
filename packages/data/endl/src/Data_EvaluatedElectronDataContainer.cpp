@@ -861,7 +861,7 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageScatteredElectro
 {
   // Make sure the average scattered electron energy is valid
   testPrecondition( average_scattered_electron_energy.size() == 
-        d_electroionization_average_scattered_electron_incoming_energy.size() );
+        d_electroionization_average_scattered_electron_incoming_energy[subshell].size() );
   testPreconditionValuesGreaterThanOrEqualToZero(
     average_scattered_electron_energy );
 
@@ -888,11 +888,11 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageRecoilElectronEn
 {
   // Make sure the average recoil electron energy is valid
   testPrecondition( average_recoil_electron_energy.size() == 
-        d_electroionization_average_recoil_electron_incoming_energy.size() );
+        d_electroionization_average_recoil_electron_incoming_energy[subshell].size() );
   testPreconditionValuesGreaterThanOrEqualToZero(
     average_recoil_electron_energy );
 
-  d_electroionization_average_recoil_electron_incoming_energy[subshell] = 
+  d_electroionization_average_recoil_electron_energy[subshell] = 
     average_recoil_electron_energy;
 }
 
@@ -1018,7 +1018,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAveragePhotonEnergy(
   // Make sure the average photon energy is valid
   testPrecondition( bremsstrahlung_average_photon_energy.size() == 
         d_bremsstrahlung_average_photon_incoming_energy.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero(
+  testPreconditionValuesGreaterThanZero(
     bremsstrahlung_average_photon_energy );
 
   d_bremsstrahlung_average_photon_energy = bremsstrahlung_average_photon_energy;
@@ -1099,7 +1099,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronEnergy(
   // Make sure the average electron energy is valid
   testPrecondition( bremsstrahlung_average_electron_energy.size() == 
         d_bremsstrahlung_average_electron_incoming_energy.size() );
-  testPreconditionValuesGreaterThanOrEqualToZero( 
+  testPreconditionValuesGreaterThanZero( 
     bremsstrahlung_average_electron_energy );
 
   d_bremsstrahlung_average_electron_energy = 

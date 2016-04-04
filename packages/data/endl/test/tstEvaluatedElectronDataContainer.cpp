@@ -202,6 +202,79 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
             cross_section );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the residual atom incoming energy grid can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setCutoffElasticResidualIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  evaluated_electron_data_container.setCutoffElasticResidualIncomingEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getCutoffElasticResidualIncomingEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cutoff elastic average energy to the residual atom can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setCutoffElasticResidualEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.0;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  evaluated_electron_data_container.setCutoffElasticResidualEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getCutoffElasticResidualEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the scattered electron incoming energy grid can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setCutoffElasticScatteredElectronIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  evaluated_electron_data_container.setCutoffElasticScatteredElectronIncomingEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getCutoffElasticScatteredElectronIncomingEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the average energy to the scattered electron can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setCutoffElasticScatteredElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.0;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  evaluated_electron_data_container.setCutoffElasticScatteredElectronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getCutoffElasticScatteredElectronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the cutoff elastic angular energy grid can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
                    setCutoffElasticAngularEnergyGrid )
@@ -364,6 +437,133 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // TEST ELECTROIONIZATION DATA 
 //---------------------------------------------------------------------------//
+
+// Check that the electroionization cross section energy grid can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setElectroionizationCrossSectionEnergyGrid )
+{
+  std::vector<double> electron_energy_grid( 3 );
+  electron_energy_grid[0] = 1e-3;
+  electron_energy_grid[1] = 1.0;
+  electron_energy_grid[2] = 20.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationCrossSectionEnergyGrid(
+    subshell,
+    electron_energy_grid );
+
+  TEST_COMPARE_ARRAYS(
+    evaluated_electron_data_container.getElectroionizationCrossSectionEnergyGrid( subshell ),
+    electron_energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setElectroionizationCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationCrossSection(
+    subshell,
+    cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationCrossSection( subshell ),
+    cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoming energy grid for the electroionization scattered electron can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationAverageScatteredElectronIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationAverageScatteredElectronIncomingEnergy(
+    subshell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationAverageScatteredElectronIncomingEnergy( subshell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization average scattered electron energy can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationAverageScatteredElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.0;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationAverageScatteredElectronEnergy(
+    subshell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationAverageScatteredElectronEnergy( subshell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoming energy grid for the electroionization recoil can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationAverageRecoilElectronIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationAverageRecoilElectronIncomingEnergy(
+    subshell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationAverageRecoilElectronIncomingEnergy( subshell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization average recoil energy can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationAverageRecoilElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.0;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  unsigned subshell = 1;
+
+  evaluated_electron_data_container.setElectroionizationAverageRecoilElectronEnergy(
+    subshell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationAverageRecoilElectronEnergy( subshell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electroionization recoil energy grid can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
                    setElectroionizationRecoilEnergyGrid )
@@ -481,6 +681,78 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // TEST BREMSSTRAHLUNG DATA 
 //---------------------------------------------------------------------------//
+// Check that the bremsstrahlung cross section energy grid can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setBremsstrahlungCrossSectionEnergyGrid )
+{
+  std::vector<double> electron_energy_grid( 3 );
+  electron_energy_grid[0] = 1e-3;
+  electron_energy_grid[1] = 1.0;
+  electron_energy_grid[2] = 20.0;
+
+  evaluated_electron_data_container.setBremsstrahlungCrossSectionEnergyGrid(
+    electron_energy_grid );
+
+  TEST_COMPARE_ARRAYS(
+    evaluated_electron_data_container.getBremsstrahlungCrossSectionEnergyGrid(),
+    electron_energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setBremsstrahlungCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  evaluated_electron_data_container.setBremsstrahlungCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            evaluated_electron_data_container.getBremsstrahlungCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung energy grid for the secondary photon can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungAveragePhotonIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  evaluated_electron_data_container.setBremsstrahlungAveragePhotonIncomingEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getBremsstrahlungAveragePhotonIncomingEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung average energy of the secondary photon can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungAveragePhotonEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.001;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  evaluated_electron_data_container.setBremsstrahlungAveragePhotonEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getBremsstrahlungAveragePhotonEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the bremsstrahlung energy grid can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
                    setBremsstrahlungPhotonEnergyGrid )
@@ -576,7 +848,79 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the bremsstrahlung energy grid for the secondary electron can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungAverageElectronIncomingEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  evaluated_electron_data_container.setBremsstrahlungAverageElectronIncomingEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getBremsstrahlungAverageElectronIncomingEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung average energy of the secondary electron can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungAverageElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.001;
+  energy[1] = 0.1;
+  energy[2] = 1.0;
+
+  evaluated_electron_data_container.setBremsstrahlungAverageElectronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getBremsstrahlungAverageElectronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
 // TEST ATOMIC EXCITAION DATA 
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation cross section energy grid can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setAtomicExcitationCrossSectionEnergyGrid )
+{
+  std::vector<double> electron_energy_grid( 3 );
+  electron_energy_grid[0] = 1e-3;
+  electron_energy_grid[1] = 1.0;
+  electron_energy_grid[2] = 20.0;
+
+  evaluated_electron_data_container.setAtomicExcitationCrossSectionEnergyGrid(
+    electron_energy_grid );
+
+  TEST_COMPARE_ARRAYS(
+    evaluated_electron_data_container.getAtomicExcitationCrossSectionEnergyGrid(),
+    electron_energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic excitation electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setAtomicExcitationCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  evaluated_electron_data_container.setAtomicExcitationCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            evaluated_electron_data_container.getAtomicExcitationCrossSection(),
+            cross_section );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation energy grid can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
@@ -611,69 +955,6 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getAtomicExcitationEnergyLoss(), 
                        energy_loss );
 }
-/*
-
-
-//---------------------------------------------------------------------------//
-// Check that the electroionization electron cross section can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
-                   setElectroionizationCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  unsigned subshell = 1;
-
-  evaluated_electron_data_container.setElectroionizationCrossSection( 
-                        subshell,
-                        cross_section );
-
-  TEST_COMPARE_ARRAYS( 
-            evaluated_electron_data_container.getElectroionizationCrossSection( subshell ),
-            cross_section );
-}
-
-
-
-//---------------------------------------------------------------------------//
-// Check that the bremsstrahlung electron cross section can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
-                   setBremsstrahlungCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  evaluated_electron_data_container.setBremsstrahlungCrossSection( 
-                        cross_section );
-
-  TEST_COMPARE_ARRAYS( 
-            evaluated_electron_data_container.getBremsstrahlungCrossSection(),
-            cross_section );
-}
-
-
-
-//---------------------------------------------------------------------------//
-// Check that the atomic excitation electron cross section can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
-                   setAtomicExcitationCrossSection )
-{
-  std::vector<double> cross_section( 3 );
-  cross_section[0] = 1e-6;
-  cross_section[1] = 1e-1;
-  cross_section[2] = 1.0;
-
-  evaluated_electron_data_container.setAtomicExcitationCrossSection( 
-                        cross_section );
-
-  TEST_COMPARE_ARRAYS( 
-            evaluated_electron_data_container.getAtomicExcitationCrossSection(),
-            cross_section );
-}
 
 
 
@@ -700,6 +981,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( 
     !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+
+/*
+//---------------------------------------------------------------------------//
+// TEST RELAXATION DATA
+//---------------------------------------------------------------------------//
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   TEST_EQUALITY_CONST( 
@@ -720,31 +1012,77 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
     1 );
+*/
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
+    evaluated_electron_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+/*
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+*/
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+
+//---------------------------------------------------------------------------//
+// TEST ELECTROIONIZATION DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
+    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
@@ -752,11 +1090,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
     3 );
+
+//---------------------------------------------------------------------------//
+// TEST BREMSSTRAHLUNG DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(), 
+    2 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
@@ -765,55 +1119,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
+    3u );
+
+//---------------------------------------------------------------------------//
+// TEST ATOMIC EXCITATION DATA 
+//---------------------------------------------------------------------------//
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -831,9 +1157,19 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy( test_binary_file_name, 
 			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
-
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+
+/*
+//---------------------------------------------------------------------------//
+// TEST RELAXATION DATA
+//---------------------------------------------------------------------------//
   TEST_ASSERT( 
     evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( 
@@ -860,31 +1196,77 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
     1 );
+*/
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
+    evaluated_electron_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+/*
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+*/
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+
+//---------------------------------------------------------------------------//
+// TEST ELECTROIONIZATION DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
+    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
@@ -892,11 +1274,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
     3 );
+
+//---------------------------------------------------------------------------//
+// TEST BREMSSTRAHLUNG DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(), 
+    2 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
@@ -905,55 +1303,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
+    3u );
+
+//---------------------------------------------------------------------------//
+// TEST ATOMIC EXCITATION DATA 
+//---------------------------------------------------------------------------//
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -971,8 +1341,20 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy( test_xml_file_name, 
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
+
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicNumber(), 1 );
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+
+/*
+//---------------------------------------------------------------------------//
+// TEST RELAXATION DATA
+//---------------------------------------------------------------------------//
   TEST_ASSERT( 
     evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( 
@@ -999,31 +1381,77 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
     1 );
+*/
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
+    evaluated_electron_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+/*
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+*/
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+
+//---------------------------------------------------------------------------//
+// TEST ELECTROIONIZATION DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
+    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
@@ -1031,11 +1459,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
     3 );
+
+//---------------------------------------------------------------------------//
+// TEST BREMSSTRAHLUNG DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(), 
+    2 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
@@ -1044,56 +1488,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
+    3u );
+
+//---------------------------------------------------------------------------//
+// TEST ATOMIC EXCITATION DATA 
+//---------------------------------------------------------------------------//
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1116,6 +1531,17 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( 
     !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
+
+/*
+//---------------------------------------------------------------------------//
+// TEST RELAXATION DATA
+//---------------------------------------------------------------------------//
+  TEST_ASSERT( 
+    evaluated_electron_data_container_copy.getSubshells().count( 1 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 0 ) );
+  TEST_ASSERT( 
+    !evaluated_electron_data_container_copy.getSubshells().count( 2 ) );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
   TEST_EQUALITY_CONST( 
@@ -1136,31 +1562,77 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
     1 );
+*/
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffAngle(), 0.10 );
+    evaluated_electron_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticResidualEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+/*
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
+		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+*/
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+
+//---------------------------------------------------------------------------//
+// TEST ELECTROIONIZATION DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
+    evaluated_electron_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
+    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).size(), 
     1 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
+    evaluated_electron_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
@@ -1168,11 +1640,27 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
     3 );
+
+//---------------------------------------------------------------------------//
+// TEST BREMSSTRAHLUNG DATA 
+//---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
+    3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().size(), 
+    2 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
@@ -1181,57 +1669,29 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
     evaluated_electron_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
+    3u );
+
+//---------------------------------------------------------------------------//
+// TEST ATOMIC EXCITATION DATA 
+//---------------------------------------------------------------------------//
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    3 );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
+    3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // end tstEvaluatedElectronDataContainer.cpp
 //---------------------------------------------------------------------------//
