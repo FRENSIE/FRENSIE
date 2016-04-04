@@ -34,9 +34,7 @@
 
 namespace Geometry{
 
-/*! The DagMC geometry manager wrapper
-  \details
- */
+//! The DagMC geometry manager wrapper
 class DagMC
 {
 
