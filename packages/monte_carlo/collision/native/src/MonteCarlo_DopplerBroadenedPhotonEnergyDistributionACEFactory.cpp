@@ -8,12 +8,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
-#include "MonteCarlo_CoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_ComptonProfilePolicy.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_InverseAtomicMomentumUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -23,7 +28,7 @@ namespace MonteCarlo{
 //! Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -35,14 +40,14 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    subshell_order );
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
   
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
 				    raw_photoatom_data.extractAtomicNumber() );
   
   // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -50,23 +55,37 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    use_full_profile,
 							    compton_profiles );
 
-  doppler_broadened_dist.reset( 
-		  new CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+  if( use_full_profile )
+  {
+    doppler_broadened_dist.reset( 
+      new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>( 
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
 			   subshell_order,
 			   converter,
 			   compton_profiles ) );
+  }
+  // ACE Compton profiles are halved and then doubled so they remain normalized
+  else
+  {
+    doppler_broadened_dist.reset( 
+      new CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>( 
+			   raw_photoatom_data.extractSubshellBindingEnergies(),
+			   raw_photoatom_data.extractSubshellOccupancies(),
+			   subshell_order,
+			   converter,
+			   compton_profiles ) );
+  }
 }
 
 // Create a coupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	  Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution( 
 							    raw_photoatom_data,
@@ -74,13 +93,13 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create a decoupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -91,8 +110,15 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    raw_photoatom_data,
 							    subshell_order );
 
+  // Create the Compton profile subshell converter
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
+  
+  ComptonProfileSubshellConverterFactory::createConverter(
+				    converter,
+				    raw_photoatom_data.extractAtomicNumber() );
+
   // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
@@ -100,23 +126,39 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    use_full_profile,
 							    compton_profiles );
   
-  doppler_broadened_dist.reset( 
-		new DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+  if( use_full_profile )
+  {
+    doppler_broadened_dist.reset(
+       new DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>( 
 			   raw_photoatom_data.extractSubshellOccupancies(),
 			   subshell_order,
 			   raw_photoatom_data.extractLBEPSBlock(),
 			   raw_photoatom_data.extractLNEPSBlock(),
+                           converter,
 			   compton_profiles ) );
+  }
+  // ACE Compton profiles are halved and then doubled so they remain normalized
+  else
+  {
+    doppler_broadened_dist.reset( 
+      new DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>( 
+			   raw_photoatom_data.extractSubshellOccupancies(),
+			   subshell_order,
+			   raw_photoatom_data.extractLBEPSBlock(),
+			   raw_photoatom_data.extractLNEPSBlock(),
+                           converter,
+			   compton_profiles ) );
+  }
 }
 
 // Create a decoupled complete Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	  Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution( 
 							    raw_photoatom_data,
@@ -124,14 +166,14 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const CompleteDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create a subshell Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  const unsigned endf_subshell,
-		  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution>&
+		  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution>&
 		  doppler_broadened_dist,
 		  const bool use_full_profile )
 {
@@ -144,7 +186,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 		      endf_subshell << " is invalid! " );
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<ComptonProfileSubshellConverter> converter;
   
   ComptonProfileSubshellConverterFactory::createConverter(
 				    converter,
@@ -178,7 +220,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
                            swd_block( subshell_index + 1 + num_momentum_points,
 				      num_momentum_points ) );
 
-  Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile;
+  std::shared_ptr<const ComptonProfile> compton_profile;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
 							    half_momentum_grid,
@@ -186,24 +228,35 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 							    use_full_profile,
 							    compton_profile );
 
-  doppler_broadened_dist.reset(
-		      new SubshellDopplerBroadenedPhotonEnergyDistribution(
+  if( use_full_profile )
+  {
+    doppler_broadened_dist.reset(
+        new StandardSubshellDopplerBroadenedPhotonEnergyDistribution<FullComptonProfilePolicy>(
 			 subshell,
 			 raw_photoatom_data.extractLNEPSBlock()[compton_index],
 		         raw_photoatom_data.extractLBEPSBlock()[compton_index],
 			 compton_profile ) );
-			 
+  }
+  else
+  {
+    doppler_broadened_dist.reset(
+        new StandardSubshellDopplerBroadenedPhotonEnergyDistribution<DoubledHalfComptonProfilePolicy>(
+			 subshell,
+			 raw_photoatom_data.extractLNEPSBlock()[compton_index],
+		         raw_photoatom_data.extractLBEPSBlock()[compton_index],
+			 compton_profile ) );
+  }
 }
 
 // Create a subshell Doppler broadened photon energy dist
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  const unsigned endf_subshell,
-	  Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+	  std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_dist,
 	  const bool use_full_profile )
 {
-  Teuchos::RCP<const DopplerBroadenedPhotonEnergyDistribution> dist;
+  std::shared_ptr<const DopplerBroadenedPhotonEnergyDistribution> dist;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution( 
 							    raw_photoatom_data,
@@ -212,7 +265,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 							    use_full_profile );
 
   doppler_broadened_dist = 
-    Teuchos::rcp_dynamic_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
+    std::dynamic_pointer_cast<const SubshellDopplerBroadenedPhotonEnergyDistribution>( dist );
 }
 
 // Create the subshell order array
@@ -237,8 +290,8 @@ DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDistArray(
 	 const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	 const bool use_full_profile,
-	 Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >&
-	 compton_profiles )
+	 DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
+         compton_profiles )
 {
   Teuchos::ArrayView<const double> lswd_block = 
     raw_photoatom_data.extractLSWDBlock();
@@ -271,17 +324,18 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 
 // Create the Compton profile distribution
 void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDist(
-			  Teuchos::Array<double>& raw_half_momentum_grid,
-			  Teuchos::Array<double>& raw_half_profile,
-			  const bool use_full_profile,
-                          Teuchos::RCP<const Utility::TabularOneDDistribution>&
-			  compton_profile_dist )
+		       Teuchos::Array<double>& raw_half_momentum_grid,
+                       Teuchos::Array<double>& raw_half_profile,
+                       const bool use_full_profile,
+                       std::shared_ptr<const ComptonProfile>& compton_profile )
 {
   // Make sure the half grid and profile are valid
   testPrecondition( raw_half_momentum_grid.size() > 1 );
   testPrecondition( raw_half_profile.size() ==
 		    raw_half_momentum_grid.size() );
   
+  std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile;
+
   if( use_full_profile )
   {
     Teuchos::Array<double> full_momentum_grid, full_profile;
@@ -291,33 +345,29 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createComptonProfileDis
 						  raw_half_profile.begin(),
 						  raw_half_profile.end(),
 						  full_momentum_grid,
-						  full_profile );
-    
-    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
-					       full_momentum_grid.end() );
-    
-    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
-						 full_profile.end() );
+						  full_profile,
+                                                  true );
     
     // Ignore interp parameter (always assume lin-lin inerpolation)
-    compton_profile_dist.reset(
-	 new Utility::TabularDistribution<Utility::LinLin>( full_momentum_grid,
-							    full_profile ) );
+    // The Compton profile momentum grid in the ACE tables use atomic units.
+    // The Compton profiles in the ACE tables use inverse atomic units.
+    raw_compton_profile.reset(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                        full_momentum_grid,
+                                                        full_profile ) );
   }
   else
-  {
-    MonteCarlo::convertMomentumGridToMeCUnits( raw_half_momentum_grid.begin(),
-					       raw_half_momentum_grid.end() );
-    
-    MonteCarlo::convertProfileToInverseMeCUnits( raw_half_profile.begin(),
-						 raw_half_profile.end() );
-    
+  {    
     // Ignore interp parameter (always assume lin-lin interpolation)
-    compton_profile_dist.reset(
-		          new Utility::TabularDistribution<Utility::LinLin>( 
-						        raw_half_momentum_grid,
+    raw_compton_profile.reset(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                        raw_half_momentum_grid,
 							raw_half_profile ) );
   }
+
+  compton_profile.reset(
+                   new StandardComptonProfile<Utility::Units::AtomicMomentum>(
+                                                       raw_compton_profile ) );
 }
 
 } // end MonteCarlo namespace

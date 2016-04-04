@@ -25,19 +25,6 @@
 
 namespace Utility{
 
-// Function wrapper for evaluating the functor
-template<typename Functor>
-double GaussKronrodIntegrator::functorWrapper( const double x, 
-						     void* indirected_functor )
-{
-  // Make sure the functor is valid
-  testPrecondition( indirected_functor );
-
-  Functor* functor = (Functor*)( indirected_functor );
-
-  return (*functor)( x );
-}
-
 // Integrate the function adaptively with BinQueue
 /*! \details Functor must have operator()( double ) defined. This function
  * applies the specified integration rule (Points) adaptively until an 

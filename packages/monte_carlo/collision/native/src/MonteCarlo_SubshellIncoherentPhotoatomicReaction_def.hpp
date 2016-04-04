@@ -134,7 +134,7 @@ inline SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed
 template<typename InterpPolicy, bool processed_cross_section>
 inline double SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshellBindingEnergy() const
 {
-  return d_scattering_distribution->getBindingEnergy();
+  return d_scattering_distribution->getSubshellBindingEnergy();
 }
 
 } // end MonteCarlo namespace

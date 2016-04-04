@@ -267,7 +267,7 @@ int main( int argc, char** argv )
 				 cross_section_xml_file,
 				 Teuchos::inoutArg(cross_section_table_info) );
 
-    boost::unordered_set<std::string> atom_aliases;
+    std::unordered_set<std::string> atom_aliases;
     atom_aliases.insert( "Pb" );
 
     // Create the factories
@@ -287,7 +287,7 @@ int main( int argc, char** argv )
                                             true,
                                             upper_cutoff_angle_cosine );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       atom_map;
 
     factory.createElectroatomMap( atom_map );

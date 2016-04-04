@@ -17,16 +17,17 @@
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-
-namespace MonteCarlo{
+#include "Geometry_Config.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
+#include "Geometry_Root.hpp"
+
+namespace MonteCarlo{
 
 /*! The specialization of the CollimatorHandlerFactory class for the Root 
  * geometry handler.
@@ -49,22 +50,27 @@ public:
 
 protected:
 
+  //! The cell id mat id map typedef
+  typedef CollisionHandlerFactory::CellIdMatIdMap CellIdMatIdMap;
+
+  //! The cell id density map typedef
+  typedef CollisionHandlerFactory::CellIdDensityMap CellIdDensityMap;
+
+  //! The material id set typedef
+  typedef CollisionHandlerFactory::MatIdSet MatIdSet;
+
   //! Validate the material ids
-  void validateMaterialIds( 
-			   const Teuchos::ParameterList& material_reps ) const;
+  void validateMaterialIds( const MatIdSet& material_ids ) const;
 
 
   //! Create the cell id data maps
-  void createCellIdDataMaps(
-  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                       std::vector<std::string> >& cell_id_mat_id_map,
-  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                       std::vector<std::string> >& cell_id_density_map ) const;
+  void createCellIdDataMaps( CellIdMatIdMap& cell_id_mat_id_map,
+                             CellIdDensityMap& cell_id_density_map ) const;
 };
 
-#endif // end HAVE_FRENSIE_ROOT
-
 } // end MonteCarlo namespace
+
+#endif // end HAVE_FRENSIE_ROOT
 
 #endif // end MONTE_CARLO_STANDARD_COLLISION_HANDLER_FACTORY_ROOT_HPP
 

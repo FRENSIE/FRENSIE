@@ -17,16 +17,16 @@ namespace Utility{
 
 // Constructor
 SphericalDirectionalDistribution::SphericalDirectionalDistribution( 
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const Axis axis )
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& mu_distribution,
+                   const Axis axis )
   : d_theta_distribution( theta_distribution ),
     d_mu_distribution( mu_distribution ),
     d_axis( axis )
 {
   // Make sure that the distributions have been set
-  testPrecondition( !theta_distribution.is_null() );
-  testPrecondition( !mu_distribution.is_null() );
+  testPrecondition( theta_distribution.get() );
+  testPrecondition( mu_distribution.get() );
   // Make sure that the theta distribution is valid
   testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
 		    <= 2*PhysicalConstants::pi );

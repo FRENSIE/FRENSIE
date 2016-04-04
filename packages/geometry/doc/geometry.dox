@@ -13,47 +13,166 @@
  *  <li>core</li>
  *  <li>dagmc</li>
  *  <li>root</li>
- *  <li>native</li>
  * </ul>
  *
+ * \section geometry_core_sec The Geometry Core Subpackage
  * The core subpackage provides the low-level classes and functions required
  * by the Geometry::ModuleInterface. The most important of which is the
- * Geometry::Ray class. 
+ * Geometry::Ray class. The default Geometry::ModuleInterface 
+ * (Geometry_ModuleInterfaceDecl.hpp) can be found in this subpackage. Note 
+ * that the default interface is designed so that it will not compile. 
+ * Specializations of the interface for specific geometry "handlers" are
+ * needed to actually use the interface. Each of the subpackages described
+ * in the following sections contain a geometry handler for a specific 
+ * external geometry package and a specialization of the 
+ * Geometry::ModuleInterface. 
  *
- * The dagmc subpackage provides the module interface specialization for the
- * DagMC tool (Geometry::ModuleInterface<moab::DagMC>). It also provides
- * some helper functions that can be useful for initializing DagMC.
+ * \section geometry_dagmc_sec The Geometry DagMC Subpackage
+ * The dagmc subpackage provides the Geometry::DagMC handler class. It is
+ * essentially a wrapper around the moab::DagMC tool that allows one to
+ * ray trace on and query properties of a CAD (.sat) file. The 
+ * Geometry::DagMC handler class allows one to check if cells and/or surfaces
+ * exist, get cell volumes and/or surface areas, get estimator properties and
+ * estimator entity associations, get the material ids assigned to cells, 
+ * get cell densities, and ray trace on the CAD geometry. 
  *
- * The root subpackage is under development but it will provide the
- * module interface specialization for the ROOT tool. It will also provide
- * helper functions for initializing ROOT geometries. 
+ * There are currently two ways that one can ray trace on the CAD geometry
+ * using the Geometry::DagMC handler class. The first way is by using
+ * the Geometry::Ray class, which is referred to as external ray tracing. 
+ * The second way is by using the internal ray tracing capabilities. These
+ * internal methods completely hide the internal ray object 
+ * (Geometry::DagMCRay) from the user. If performance is a concern, the
+ * internal ray tracing capabilities should be used. 
+ * 
+ * The dagmc subpackage also provides the module interface specialization for 
+ * the DagMC handler (Geometry::ModuleInterface<Geometry::DagMC>). 
  *
- * The native subpackage is also under development. It will provide a very
- * simple combinatorial geometry capability. A module interface 
- * specialization for the native ray tracer will also be provided.
+ * \section geometry_root_sec The Geometry Root Subpackage
+ * The root subpackage provides the Geometry::Root handler class. It is a
+ * high level interface for ray tracing on and querying properties of a
+ * Root geometry file. The Geometry::Root handler class allows one to check
+ * if cells exist, get cell volumes, get the material ids assigned to cells,
+ * get cell densities, and ray trace on the Root geometry. Note that Root does 
+ * not keep track of surfaces in a way that is conducive to particle transport.
+ * We therefore completely ignore surfaces in the Geometry::Root handler class.
  *
- * \section geometry_spec_sec Specializing the Geometry Module Interface
- * Any software tool that can model a geometry and that provides a robust
- * ray tracing capability can be used in FRENSIE. All ray tracing capabilities
- * are encapsulated within the Geometry::ModuleInterface, which allows 
- * other FRENSIE packages that need ray tracing functionality to be
- * agnostic to the particular type ray tracing tool. 
+ * There are currently two ways that one can ray trace on the Root geometry
+ * using the Geometry::Root handler class. The first way is by using the
+ * Geometry::Ray class, which is referred to as external ray tracing.
+ * The second way is by using the internal ray tracing capabilities present
+ * in the Root TGeoManager class, which are wrapped in the Geometry::Root 
+ * handler class. If performance is a concern, the internal ray tracing
+ * capability should be used.
  *
- * To use a new ray tracing tool in FRENSIE, the Geometry::ModuleInterface
- * must be specialized (template specialization). The Geometry::ModuleInterface
- * is designed to produce a compile time error when one attempts to use
- * a tool that does not have a specialization. The Geometry::ModuleInterface
- * should be used as the template for the specialization - all of the 
- * types and functions declared in the Geometry::ModuleInterface should
- * be declared and defined in the specialized interface. Inside of each 
- * function call of the specialized interface, the appropriate calls to the
- * tool of interest should be made. It may be necessary to have extra calls
- * that are not declared in the Geometry::ModuleInterface. Make these extra
- * calls private whenever possible. If an extra call truely is needed, then
- * the new must be added to the Geometry::ModuleInterface and all other
- * interface specializations. Failure to do this will likely break other
- * FRENSIE packages that rely on the ray tracing interface. 
+ * The root subpackage also provides the module interface specialization for 
+ * the Root handler (Geometry::ModuleInterface<Geometry::Root>).
  *
- * For an example of an interface specialization, refer to the 
- * Geometry::ModuleInterface<moab::DagMC> specialization.
- */ 
+ * \section geometry_config_sec Configuring the Geometry Package
+ * The FRENSIE build system allows one to specify which geometry subpackages
+ * to enable (it is also acceptable to ignore all of the geometry subpackages).
+ * To keep track of which subpackages the user has enabled, the build
+ * system will create a file called Geometry_Config.hpp (found in the
+ * geometry package binary cmake directory). If a subpackage is enabled
+ * this config file will contain a macro called <b>HAVE_FRENSIE_subpackage</b>
+ * where subpackage is the name of the particular subpackage (in all caps). 
+ * Any code in other parts of FRENSIE that relies on a particular geometry
+ * subpackage will have to be placed inside of a 
+ * "#ifdef HAVE_FRENSIE_subpackage" preprocessor block to ensure that the
+ * dependent code is only built if the subpackage is enabled. 
+ *
+ * \section geometry_add_new_subpackage_sec Adding New Subpackages
+ * Before adding a new geometry subpackage for an external geometry
+ * tool, the following questions should be answered:
+ * <ol>
+ *  <li>Does the external tool have a license that is compatible with the
+ *      \ref license "FRENSIE license"?</li>
+ *  <li>Does the external tool provide a robust ray tracing capability?</li>
+ *  <li>Does the external tool assign unique ids to defined cells?</li>
+ *  <li>Does the external tool allow properties to be assigned to cells
+ *      (material name and cell density)?</li>
+ * </ol>
+ * If the answer to any of the first three questions is <b>no</b>, a subpackage
+ * for the external tool cannot be created. Answering <b>no</b> to the
+ * final question is okay as the cell properties can be assigned in the
+ * geometry xml file.
+ *
+ * Once it has been determined that a subpackage can be created for the 
+ * external tool. The following steps should be followed to create the
+ * subpackage:
+ * <ol>
+ *  <li>Update the build system so that it will search for the external tool
+ *      if a user has requested the new subpackage associated with the 
+ *      tool.</li>
+ *  <li>Modify the Geometry_Config.hpp.in file so that the build system will
+ *      correctly configure the Geometry package. This file is found in
+ *      the cmake directory (in the geometry directory).</li>
+ *  <li>Create a new directory (in the geometry directory) that will be used
+ *      to store the source files associated with the new subpackage. The
+ *      name should be similar to the name of the external tool associated
+ *      with the subpackage.</li>
+ *  <li>Add the new subpackage to the build system. Look at the CMakeLists.txt
+ *      files for examples of how to do this.</li>
+ *  <li>Create a handler class that abstracts the process of initializing,
+ *      ray tracing on and querying properties of geometries associated with
+ *      the external tool (see Geometry::DagMC and Geometry::Root for
+ *      examples).</li>
+ *  <li>Create a factory method or class for your new handler class that
+ *      takes a geometry xml file (see the examples directory). This factory
+ *      method will read the xml file, which at the very least must
+ *      specify the name of the geometry handler and the name of the
+ *      geometry file, and initialize the new geometry handler 
+ *      (see Geometry::DagMCInstanceFactory and 
+ *      Geometry::RootInstanceFactory).</li>
+ *  <li>Specialize the Geometry::ModuleInterface for the new geometry 
+ *      handler.</li>
+ *  <li>As always, add unit tests for all added classes and methods.</li>
+ * </ol>
+ *      
+ * After the new geometry subpackage is finished there are several more
+ * steps that must be taken before particle transport can be done with it:</li>
+ * <ol>
+ *  <li><b>Estimator initialization:</b> a specialization of the 
+ *      MonteCarlo::StandardEstimatorFactory must be made for the new
+ *      geometry handler 
+ *      (see MonteCarlo::StandardEstimatorFactory<Geometry::DagMC> and
+ *      MonteCarlo::StandardEstimatorFactory<Geometry::Root>). At the very
+ *      least, this factory will use the handler to get cell volumes used
+ *      to normalize estimators. Don't forget to write unit tests for this
+ *      specialization.</li>
+ *  <li><b>Material initialization:</b> a specialization of the 
+ *      MonteCarlo::StandardCollisionHandlerFactory must be made for
+ *      the new geometry handler
+ *      (see MonteCarlo::StandardCollisionHandlerFactory<Geometry::DagMC> and
+ *      MonteCarlo::StandardCollisionHandlerFactory<Geometry::Root>). This
+ *      factory will use the handler to get the material ids associated with
+ *      cells and the cell densities. Don't forget to write unit tests for this
+ *      specialization.</li>
+ *  <li><b>Particle simulation manager initialization:</b> a method must be 
+ *      added to the MonteCarlo::ParticleSimulationManagerFactory for creating
+ *      a MonteCarlo::ParticleSimulationManager with the new geometry handler.
+ *      The name of this method should be "createManagerWithHandler" where
+ *      "Handler" is the name of the new handler. See the 
+ *      createManagerWithDagMC and createManagerWithRoot methods for 
+ *      examples. Note that the createManager method will have to be
+ *      modified as well.</li>
+ *  <li><b>Verification testing:</b> a verification test suite has also been 
+ *      created. This test suite ensures that FACEMC gives expected answers to 
+ *      some basic problems. These tests are set up so that any geometry 
+ *      handler can be used. New test executables that run the verification 
+ *      tests with the new geometry handler will have to be created (see the
+ *      tools/facemc/test directory for examples).</li>
+ * </ol>
+ *
+ * If you've made it through all of these steps you are officially a
+ * FRENSIE master! Congrats and sincere thanks for all of your contributions.
+ *
+ * \subsection geometry_desired_new_subpackage Desired Additional Subpackages
+ * The following is a list of desired additional subpackages that the 
+ * developers hope to create in the future
+ * <ul>
+ *  <li><b>brlcad:</b> Will allow ray tracing on 
+ *                     <a href=http://brlcad.org/>BRLCAD</a> geometries.</li>
+ *  <li><b>native:</b> Will allow ray tracing on a native geometry format.</li>
+ * </ul>
+ *
+ */

@@ -9,8 +9,8 @@
 #ifndef MONTE_CARLO_ELECTRON_MATERIAL_HPP
 #define MONTE_CARLO_ELECTRON_MATERIAL_HPP
 
-// Boost Includes
-#include <boost/unordered_map.hpp>
+// Std Lib Includes
+#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -35,7 +35,7 @@ private:
 public:
   
   //! Typedef for electroatom name map
-  typedef boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >
+  typedef std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
   ElectroatomNameMap;
 
   //! Constructor 

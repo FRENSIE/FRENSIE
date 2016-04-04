@@ -28,11 +28,6 @@ public:
   static void initializeSimulationProperties( 
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn = &std::cerr );
-
-private:
-
-  // The warning output stream
-  std::ostream* d_os_warn;
 };
 
 } // end MonteCarlo namespace

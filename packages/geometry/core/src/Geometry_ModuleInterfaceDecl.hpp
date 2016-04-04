@@ -9,9 +9,8 @@
 #ifndef GEOMETRY_MODULE_INTERFACE_DECL_HPP
 #define GEOMETRY_MODULE_INTERFACE_DECL_HPP
 
-// Trilinos Inludes
-#include <Teuchos_OrdinalTraits.hpp>
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
@@ -54,30 +53,9 @@ class ModuleInterface
 
 public:
 
-  //! The external surface id class (used within the geometry handler)
-  typedef int ExternalSurfaceId;
-  //! The external cell id class (used within the geometry handler)
-  typedef int ExternalCellId;
-
-  //! The external surface handle class (used within the geometry handler)
-  typedef ExternalSurfaceId ExternalSurfaceHandle;
-  //! The external cell handle class (used within the geometry handler)
-  typedef ExternalCellId ExternalCellHandle;
-  
-  //! The internal surface handle class (used within FRENSIE)
-  typedef ModuleTraits::InternalSurfaceHandle InternalSurfaceHandle;
-  //! The internal cell handle class (used within FRENSIE)
-  typedef ModuleTraits::InternalCellHandle InternalCellHandle;
-
-  //! The value of an invalid surface handle
-  static const ExternalSurfaceHandle invalid_external_surface_handle = 0;
- 
-  //! The value of an invalid cell handle
-  static const ExternalCellHandle invalid_external_cell_handle = 0;
-
   //! Set the geometry handler instance
   static inline void setHandlerInstance( 
-		        const Teuchos::RCP<GeometryHandler>& handler_instance )
+                     const std::shared_ptr<GeometryHandler>& handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   //! Do just in time initialization interface members
@@ -87,107 +65,103 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+  
+  //! Check if a cell exists
+  static inline bool doesCellExist(
+                                  const ModuleTraits::InternalCellHandle cell )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
-  /*! Find the cell that contains a given point (start of history)
+  //! Check if a surface exists
+  static inline bool doesSurfaceExist(
+                            const ModuleTraits::InternalSurfaceHandle surface )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  /*! Set the internal ray
+   *
+   * A std::runtime_error (or class derived from it) must be thrown
+   * if an error occurs. These exceptions will be caught in the main
+   * particle simulation algorithms and are used to indicate lost particles
+   */
+  static inline void setInternalRay( 
+                            const Ray& ray, 
+                            const ModuleTraits::InternalCellHandle start_cell )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+
+  /*! Find the cell that contains a given start ray
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline InternalCellHandle findCellContainingPoint( const Ray& ray )
+  static inline ModuleTraits::InternalCellHandle findCellContainingStartRay( 
+                                                               const Ray& ray )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
-  /*! Find the cell that contains a given point (surface crossing)
+  /*! Find the cell that contains the internal ray
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline InternalCellHandle findCellContainingPoint( 
-					 const Ray& ray,
-					 const InternalCellHandle current_cell,
-					 const InternalSurfaceHandle surface )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+   static inline ModuleTraits::InternalCellHandle findCellContainingInternalRay()
+   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
-  /*! Fire a ray through the geometry
+  /*! Fire the internal ray through the geometry
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if a ray tracing error occurs. These exceptions will be caught in the
    * main particle simulation algorithms and are used to indicate lost 
    * particles.
    */
-  static inline void fireRay( const Ray& ray,
-			      const InternalCellHandle& current_cell,
-			      InternalSurfaceHandle& surface_hit,
-			      double& distance_to_surface_hit )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
-
-  //! Initialize a new ray (after a collision)
-  static inline void newRay()
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
-
-  //! Check if the cell is a termination cell
-  static inline bool isTerminationCell( const InternalCellHandle cell )
+  static inline double fireInternalRay(                           
+                             ModuleTraits::InternalSurfaceHandle& surface_hit )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
-  /*! Get the particle location w.r.t. a given cell
+  /*! Advance the internal ray to the cell boundary
+   *
+   * If a reflecting surface is hit "true" will be returned.
+   */
+  static inline bool advanceInternalRayToCellBoundary( 
+                                                     double surface_normal[3] )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Advance the internal ray by a substep (less than distance to boundary)
+  static inline void advanceInternalRayBySubstep( const double step_size ) 
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Change the internal ray direction
+  static inline void changeInternalRayDirection( const double direction[3] )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }         
+
+  //! Get the internal ray position
+  static inline const double* getInternalRayPosition()
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Get the internal ray direction
+  static inline const double* getInternalRayDirection()
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Check if the cell is a termination cell
+  static inline bool isTerminationCell( 
+                                  const ModuleTraits::InternalCellHandle cell )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  /*! Get the point location w.r.t. a given cell
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline PointLocation getPointLocation( const Ray& ray,
-						const InternalCellHandle cell )
+  static inline PointLocation getPointLocation( 
+                                  const Ray& ray,
+				  const ModuleTraits::InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-  
-  //! Calculate the surface normal at a point on the surface
-  static inline void getSurfaceNormal( const InternalSurfaceHandle surface,
-				       const double position[3],
-				       double normal[3] )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
-
-  //! Get the volume of a cell
-  static inline double getCellVolume( const InternalCellHandle cell )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-  
-  //! Get the surface area of a surface bounding a cell
-  static inline double getCellSurfaceArea( const InternalSurfaceHandle surface,
-					   const InternalCellHandle cell )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Check that an external surface handle exists
-  static inline bool doesSurfaceExist(const ExternalSurfaceId surface )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Check that an external cell handle exists
-  static inline bool doesCellExist( const ExternalCellId cell )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the internal surf. handle corresponding to the external surf. handle
-  static inline InternalSurfaceHandle getInternalSurfaceHandle(
-				 const ExternalSurfaceHandle surface_external )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the internal cell handle corresponding to the external cell handle
-  static inline InternalCellHandle getInternalCellHandle( 
-				       const ExternalCellHandle cell_external )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the external surf. handle corresponding to the internal surf. handle
-  static inline ExternalSurfaceHandle getExternalSurfaceHandle(
-					  const InternalSurfaceHandle surface )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the external cell handle corresponding to the internal cell handle
-  static inline ExternalCellHandle getExternalCellHandle(
-					        const InternalCellHandle cell )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; } 
 };
 
 //! Set the geometry handler instance
 template<typename GeometryHandler>
 void setGeometryHandlerInstance(
-			const Teuchos::RCP<GeometryHandler>& handler_instance )
+                     const std::shared_ptr<GeometryHandler>& handler_instance )
 {
   Geometry::ModuleInterface<GeometryHandler>::setHandlerInstance( 
 							    handler_instance );

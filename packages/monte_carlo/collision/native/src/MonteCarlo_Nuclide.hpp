@@ -104,10 +104,10 @@ public:
 				  const NuclearReactionType reaction ) const;
 
   //! Collide with a neutron
-  void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;
+  virtual void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;
 
   //! Collide with a neutron and survival bias
-  void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const;
+  virtual void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const;
 
 private:
 

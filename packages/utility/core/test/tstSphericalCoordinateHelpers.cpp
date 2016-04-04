@@ -12,7 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SphericalCoordinateHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"

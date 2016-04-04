@@ -9,6 +9,9 @@
 #ifndef UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_HPP
 #define UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -27,7 +30,11 @@ public:
   virtual const std::string getTypeName() const = 0;
 
   //! Return the OneDDistribution represented in the parameter entry
-  virtual Teuchos::RCP<OneDDistribution> getDistribution( 
+  virtual Teuchos::RCP<OneDDistribution> getDistributionRCP( 
+	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const = 0;
+
+  //! Return the OneDDistribution represented in the parameter entry
+  virtual std::shared_ptr<OneDDistribution> getDistributionSharedPtr( 
 	  const Teuchos::RCP<const Teuchos::ParameterEntry>& entry ) const = 0;
 
   //! Return the parameter entry corresponding to the OneDDistribution object

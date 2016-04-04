@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <string>
+
 // FRENSIE Includes
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationGeneralPropertiesFactory.hpp"
@@ -23,104 +26,100 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn )
 {  
-  // Get the particle mode - required
-  TEST_FOR_EXCEPTION( !properties.isParameter( "Mode" ),
-		      std::runtime_error,
-		      "Error: the particle mode must be specified!" );
-  {
-    std::string raw_mode = properties.get<std::string>( "Mode" );
-    
-    ParticleModeType mode;
-    
-    if( raw_mode == "N" || raw_mode == "n" || raw_mode == "Neutron" )
-      {
-        mode = NEUTRON_MODE;
-
-       // Get the neutron properties - optional
-       if ( properties.isParameter( "Neutron Properties" ) )
-         {
-           Teuchos::ParameterList neutron_properties = 
-             properties.get<Teuchos::ParameterList>( "Neutron Properties" );
-
-           SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( 
-		neutron_properties );
-         }
-      }
-    else if( raw_mode == "P" || raw_mode == "p" || raw_mode == "Photon" )
-      {
-        mode = PHOTON_MODE;
-
-       // Get the photon properties - optional
-       if ( properties.isParameter( "Photon Properties" ) )
-         {
-           Teuchos::ParameterList photon_properties = 
-             properties.get<Teuchos::ParameterList>( "Photon Properties" );
-
-           SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties( 
-		photon_properties );
-         }
-      }
-    else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
-      {
-        mode = NEUTRON_PHOTON_MODE;
-
-       // Get the neutron properties - optional
-       if ( properties.isParameter( "Neutron Properties" ) )
-         {
-           Teuchos::ParameterList neutron_properties = 
-             properties.get<Teuchos::ParameterList>( "Neutron Properties" );
-
-           SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( 
-		neutron_properties );
-         }
-
-       // Get the photon properties - optional
-       if ( properties.isParameter( "Photon Properties" ) )
-         {
-           Teuchos::ParameterList photon_properties = 
-             properties.get<Teuchos::ParameterList>( "Photon Properties" );
-
-           SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties( 
-		photon_properties );
-         }
-      }
-    else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
-      {
-        mode = ELECTRON_MODE;
-
-       // Get the electron properties - optional
-       if ( properties.isParameter( "Electron Properties" ) )
-         {
-           Teuchos::ParameterList electron_properties = 
-             properties.get<Teuchos::ParameterList>( "Electron Properties" );
-
-           SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
-		electron_properties );
-         }
-      }
-    else
-    {
-      THROW_EXCEPTION( std::runtime_error,
-		       "Error: mode " << raw_mode << " is not currently "
-		       "supported!" );
-    }
-   
-    SimulationGeneralProperties::setParticleMode( mode );
-  }
-
+  // Set the property list names
+  std::string general_props_name = "General Properties";
+  std::string neutron_props_name = "Neutron Properties";
+  std::string photon_props_name = "Photon Properties";
+  std::string electron_props_name = "Electron Properties";
+  
   // Get the general properties - required
-  TEST_FOR_EXCEPTION( !properties.isParameter( "General Properties" ),
+  TEST_FOR_EXCEPTION( !properties.isParameter( general_props_name ),
 		      std::runtime_error,
 		      "Error: the general properties must be specified!" );
   {
     Teuchos::ParameterList general_properties = 
-      properties.get<Teuchos::ParameterList>( "General Properties" );
+      properties.get<Teuchos::ParameterList>( general_props_name );
 
     SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties( 
-      general_properties );
+							    general_properties,
+							    os_warn );
   }
   
+  // Get the neutron properties - optional
+  if( properties.isParameter( neutron_props_name ) )
+  {
+    if( SimulationGeneralProperties::getParticleMode() == NEUTRON_MODE ||
+	SimulationGeneralProperties::getParticleMode() == NEUTRON_PHOTON_MODE )
+    {
+      Teuchos::ParameterList neutron_properties = 
+	properties.get<Teuchos::ParameterList>( neutron_props_name );
+      
+      SimulationNeutronPropertiesFactory::initializeSimulationNeutronProperties( neutron_properties, os_warn );
+    }
+    else
+    {
+      *os_warn << "Warning: the neutron simulation properties will be ignored "
+	       << "since neutrons are not being simulated! " << std::endl;
+    }
+  }
+  
+  // Get the photon properties - optional
+  if( properties.isParameter( photon_props_name ) )
+  {
+    if( SimulationGeneralProperties::getParticleMode() == PHOTON_MODE ||
+	SimulationGeneralProperties::getParticleMode() == NEUTRON_PHOTON_MODE )
+    {
+      Teuchos::ParameterList photon_properties = 
+	properties.get<Teuchos::ParameterList>( photon_props_name );
+      
+      SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties( photon_properties, os_warn );
+    }
+    else
+    {
+      *os_warn << "Warning: the photon simulation properties will be ignored "
+	       << "since photons are not being simulated! " << std::endl;
+    }
+  }
+  
+  // Get the electron properties - optional
+  if( properties.isParameter( electron_props_name ) )
+  {
+    if( SimulationGeneralProperties::getParticleMode() == ELECTRON_MODE )
+    {
+      Teuchos::ParameterList electron_properties = 
+	properties.get<Teuchos::ParameterList>( electron_props_name );
+
+      SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( electron_properties, os_warn );
+    }
+    else
+    {
+      *os_warn << "Warning: the electron simulation properties will be "
+	       << "ignored since electrons are not being simulated! " 
+	       << std::endl;
+    }
+  }
+
   properties.unused( *os_warn );
+
+  // For some reason, unused parameter lists do not get printed by the
+  // unused member function - we need to do this manually for now
+  Teuchos::ParameterList::ConstIterator parameter = properties.begin();
+
+  while( parameter != properties.end() )
+  {
+    const std::string& param_name = properties.name( parameter );
+    
+    if( param_name != general_props_name &&
+	param_name != neutron_props_name &&
+	param_name != photon_props_name &&
+	param_name != electron_props_name )
+    {
+      *os_warn << "Warning: parameter list " << param_name
+	       << " is unused!" << std::endl;      
+    }
+
+    ++parameter;
+  }
 }
 
 } // end MonteCarlo namespace

@@ -21,125 +21,349 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "Geometry_Root.hpp"
+#include "Geometry_RootInstanceFactory.hpp"
 #include "Geometry_ModuleInterface_Root.hpp"
 #include "Geometry_Ray.hpp"
 
 //---------------------------------------------------------------------------//
-// Test Sat File Name
-//---------------------------------------------------------------------------//
-std::string test_geom_root_file_name;
-
-//---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that cells can be checked for existence
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, canBeCheckedForExist )
+// Check that the interface can be initialized
+TEUCHOS_UNIT_TEST( ModuleInterface, initialize )
+{
+  // Initialize the Module Interface
+  TEST_NOTHROW( Geometry::ModuleInterface<Geometry::Root>::initialize() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the cell exists
+TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
 {
   typedef Geometry::ModuleInterface<Geometry::Root> GMI;
   
-  // Test that cell 1 exists
   TEST_ASSERT( GMI::doesCellExist( 1 ) );
-  
-  // Test that cell 2 exists
   TEST_ASSERT( GMI::doesCellExist( 2 ) );
-  
-  // Test that cell 3 does exist
   TEST_ASSERT( GMI::doesCellExist( 3 ) );
   
-  // Test that cell 4 does not exist
   TEST_ASSERT( !GMI::doesCellExist( 4 ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a cell containing a point can be determined (birth)
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointBirth )
+// Check if the surface exists
+TEUCHOS_UNIT_TEST( ModuleInterface, doesSurfaceExist )
 {
   typedef Geometry::ModuleInterface<Geometry::Root> GMI;
 
+  TEST_ASSERT( !GMI::doesSurfaceExist( 1 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 2 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 3 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 4 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an internal ray can be set
+TEUCHOS_UNIT_TEST( ModuleInterface, setInternalRay )
+{
+  {
+    std::shared_ptr<Geometry::Ray> 
+      ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+
+    Geometry::ModuleInterface<Geometry::Root>::setInternalRay( *ray, 2 );
+  }
+
+  const double* ray_position = 
+    Geometry::ModuleInterface<Geometry::Root>::getInternalRayPosition();
+  
+  TEST_EQUALITY_CONST( ray_position[0], 0.0 );
+  TEST_EQUALITY_CONST( ray_position[1], 0.0 );
+  TEST_EQUALITY_CONST( ray_position[2], 0.0 );
+
+  const double* ray_direction =
+    Geometry::ModuleInterface<Geometry::Root>::getInternalRayDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell containing the start ray can be found
+TEUCHOS_UNIT_TEST( ModuleInterface, findCellContainingStartRay )
+{
   // Initialize the ray
-  Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
-  
-  // Find cell containing ray
-  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
-  
+  std::shared_ptr<Geometry::Ray> 
+    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+
+  Geometry::ModuleTraits::InternalCellHandle cell;
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingStartRay( *ray );
+
+  TEST_EQUALITY_CONST( cell, 2 );
+
+  // Check that the direction is used to correctly determine the cell when
+  // on a boundary
+  ray.reset( new Geometry::Ray( 0.0, 0.0, 2.5, 0.0, 0.0, 1.0 ) );
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingStartRay( *ray );
+
+  TEST_EQUALITY_CONST( cell, 1 );
+
+  ray.reset( new Geometry::Ray( 0.0, 0.0, 2.5, 0.0, 0.0, -1.0 ) );
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingStartRay( *ray );
+
   TEST_EQUALITY_CONST( cell, 2 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distance to surface is calculated correctly
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, distanceToCrossing )
+// Check that the cell containing the internal ray can be found
+TEUCHOS_UNIT_TEST( ModuleInterface, findCellContainingInternalRay )
 {
-  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+  // Initialize the ray
+  std::shared_ptr<Geometry::Ray> 
+    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+
+  Geometry::ModuleInterface<Geometry::Root>::setInternalRay( *ray, 2 );
+
+  Geometry::ModuleTraits::InternalCellHandle cell;
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 2 );
 
   // Initialize the ray
-  Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
-  
-  // Find the cell that contains the point
-  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
- 
-  // Fire a ray through the geometry
-  GMI::InternalSurfaceHandle surface_hit;
-  double distance_to_surface_hit;
+  ray.reset( new Geometry::Ray( 0.0, 0.0, 3.0, 0.0, 0.0, 1.0 ) );
 
-  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
-  
-  TEST_FLOATING_EQUALITY( distance_to_surface_hit, 2.5, 1e-9 );
-}
+  Geometry::ModuleInterface<Geometry::Root>::setInternalRay( *ray, 1 );
 
-//---------------------------------------------------------------------------//
-// Check that the correct cell is found after a surface crossing
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointSurfaceCrossing )
-{
-  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 1 );
 
   // Initialize the ray
+  ray.reset( new Geometry::Ray( 0.0, 0.0, 6.0, 0.0, 0.0, 1.0 ) );
+
+  Geometry::ModuleInterface<Geometry::Root>::setInternalRay( *ray, 3 );
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the internal ray can be fired
+TEUCHOS_UNIT_TEST( ModuleInterface, fireInternalRay )
+{
+  // Initialize the ray
   Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
-  
-  // Find the cell that contains the point
-  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
- 
+
+  Geometry::ModuleInterface<Geometry::Root>::setInternalRay( ray, 2 );
+
   // Fire a ray through the geometry
-  GMI::InternalSurfaceHandle surface_hit;
-  double distance_to_surface_hit;
-
-  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
+  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   
-  int cell_internal = GMI::findCellContainingPoint( ray, cell, surface_hit );
+  double distance_to_boundary = 
+    Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
   
-  TEST_EQUALITY_CONST( cell_internal, 1 );
+  // Dummy return surface
+  TEST_EQUALITY_CONST( surface_hit, 0 );
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
-// Check if cell is a termination cell
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellIsTerminationCell )
+// Check that the internal ray can be advanced to a surface boundary
+TEUCHOS_UNIT_TEST( ModuleInterface, advanceInternalRayToCellBoundary )
 {
-  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+  // Initialize the ray
+  {
+    Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
 
-  // Test that the cube is full of termination material
-  TEST_ASSERT( !GMI::isTerminationCell( 1 ) );
+    Geometry::ModuleInterface<Geometry::Root>::setInternalRay( ray, 2 );
+  }
+
+  // Find the cell that contains the ray
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 2 );
+
+  // Advance the ray to the boundary surface
+  double surface_normal[3];
+
+  bool reflection = 
+    Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayToCellBoundary( surface_normal );
+
+  TEST_ASSERT( !reflection );
   
-  // Test that the sphere is not full of termination material
-  TEST_ASSERT( !GMI::isTerminationCell( 2 ) );
+  // Dummy surface normal
+  TEST_EQUALITY_CONST( surface_normal[0], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[1], 0.0 );
+  TEST_EQUALITY_CONST( surface_normal[2], 1.0 );
+
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 1 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a cell volume can be calculated
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellVolumeCanBeFound )
+// Check that the internal ray can be advanced by a substep
+TEUCHOS_UNIT_TEST( ModuleInterface, advanceInternalRayBySubstep )
 {
-  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+  // Initialize the ray
+  {
+    Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
 
-  double vol_sphere_calcluated = 65.4498469497874;
-  double vol_cube_calculated   = 934.550153050213;
-  double vol_term_cube_calculated = 1744.0;
+    Geometry::ModuleInterface<Geometry::Root>::setInternalRay( ray, 2 );
+  }
+
+  // Find the cell that contains the ray
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 2 );
+
+  // Fire a ray through the geometry
+  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
   
-  Double_t vol_sphere = GMI::getCellVolume( 2 );
-  Double_t vol_cube   = GMI::getCellVolume( 1 );
-  Double_t vol_term   = GMI::getCellVolume( 3 );
+  double distance_to_boundary = 
+    Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
+
+  // Advance the internal ray by the substep
+  Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayBySubstep( 
+                                                    0.5*distance_to_boundary );
+
+  // Fire a ray through the geometry
+  distance_to_boundary = 
+    Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 1.25, 1e-6 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the internal ray direction can be changed
+TEUCHOS_UNIT_TEST( ModuleInterface, changeInternalRayDirection )
+{
+  // Initailize the ray
+  std::shared_ptr<Geometry::Ray> ray( 
+                           new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+    
+  Geometry::ModuleInterface<Geometry::Root>::setInternalRay( *ray, 2 );
+
+  ray.reset( new Geometry::Ray( 0.0, 0.0, 0.0, 1.0, 0.0, 0.0 ) );
   
-  TEST_FLOATING_EQUALITY( vol_sphere_calcluated, vol_sphere, 1e-9 );
-  TEST_FLOATING_EQUALITY( vol_cube_calculated, vol_cube, 1e-9 );
-  TEST_FLOATING_EQUALITY( vol_term_cube_calculated, vol_term, 1e-9 );
+  Geometry::ModuleInterface<Geometry::Root>::changeInternalRayDirection( 
+                                                         ray->getDirection() );
+
+  const double* ray_direction = 
+    Geometry::ModuleInterface<Geometry::Root>::getInternalRayDirection();
+
+  TEST_EQUALITY_CONST( ray_direction[0], 1.0 );
+  TEST_EQUALITY_CONST( ray_direction[1], 0.0 );
+  TEST_EQUALITY_CONST( ray_direction[2], 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that termination cells can be tested
+TEUCHOS_UNIT_TEST( ModuleInterface, isTerminationCell )
+{
+  TEST_ASSERT( !Geometry::ModuleInterface<Geometry::Root>::isTerminationCell( 1 ) );
+  TEST_ASSERT( !Geometry::ModuleInterface<Geometry::Root>::isTerminationCell( 2 ) );
+  TEST_ASSERT( Geometry::ModuleInterface<Geometry::Root>::isTerminationCell( 3 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point location can be tested
+TEUCHOS_UNIT_TEST( ModuleInterface, getPointLocation )
+{
+  // Initialize the ray
+  std::shared_ptr<Geometry::Ray> 
+    ray( new Geometry::Ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 ) );
+
+  // Point inside of cell 2
+  Geometry::PointLocation location =
+    Geometry::ModuleInterface<Geometry::Root>::getPointLocation( *ray, 2 );
+
+  TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
+
+  location = 
+    Geometry::ModuleInterface<Geometry::Root>::getPointLocation( *ray, 1 );
+
+  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+
+  location = 
+    Geometry::ModuleInterface<Geometry::Root>::getPointLocation( *ray, 3 );
+
+  TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a ray trace can be done
+TEUCHOS_UNIT_TEST( ModuleInterface, ray_trace )
+{
+  // Initialize the ray
+  {
+    Geometry::Ray ray( 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
+
+    Geometry::ModuleTraits::InternalCellHandle start_cell = 
+      Geometry::ModuleInterface<Geometry::Root>::findCellContainingStartRay(
+                                                                         ray );
+
+    Geometry::ModuleInterface<Geometry::Root>::setInternalRay( 
+                                                             ray, start_cell );
+  }
+
+  Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+  
+  TEST_EQUALITY_CONST( cell, 2 );
+
+  // Fire a ray through the geometry
+  Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
+  
+  double distance_to_boundary = 
+    Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-9 );
+ 
+  // Advance the ray to the cell boundary
+  double surface_normal[3];
+  
+  bool reflection = Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayToCellBoundary( surface_normal );
+
+  // Find the new cell
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+  
+  TEST_EQUALITY_CONST( cell, 1 );
+
+  // Fire a ray through the geometry
+  distance_to_boundary = Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 2.5, 1e-6 );
+
+  // Advance the ray a substep
+  Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayBySubstep( 0.5*distance_to_boundary );
+
+  // Change the ray direction
+  {
+    double new_direction[3] = {0.0, 1.0, 0.0};
+
+    Geometry::ModuleInterface<Geometry::Root>::changeInternalRayDirection( 
+                                                               new_direction );
+  }
+
+  // Fire a ray through the geometry
+  distance_to_boundary = 
+    Geometry::ModuleInterface<Geometry::Root>::fireInternalRay( surface_hit );
+
+  TEST_FLOATING_EQUALITY( distance_to_boundary, 5.0, 1e-9 );
+
+  // Advance the ray to the cell boundary
+  reflection = Geometry::ModuleInterface<Geometry::Root>::advanceInternalRayToCellBoundary( surface_normal );
+  
+  // Find the new cell
+  cell = Geometry::ModuleInterface<Geometry::Root>::findCellContainingInternalRay();
+
+  TEST_EQUALITY_CONST( cell, 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -149,16 +373,12 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  int threads = 1;
+  std::string test_geom_xml_file_name;
 
-  clp.setOption( "test_root_file",
-		 &test_geom_root_file_name,
-		 "Test root geometry file name" );
+  clp.setOption( "test_xml_file",
+		 &test_geom_xml_file_name,
+		 "Test xml geometry file name" );
 
-  clp.setOption( "threads",
-		 &threads,
-		 "Number of threads to use" );
-  
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -170,21 +390,17 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Set up the global OpenMP session
-  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
-    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-
   // Initialize the global MPI session
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
-  
-  // Initialize Root
-  Geometry::Root::initialize( test_geom_root_file_name );
 
-  // Initialize the Module Interface
-  Geometry::ModuleInterface<Geometry::Root>::initialize();
+  // Initialize Root
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+    Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
+  
+  Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
   
   mpiSession.barrier();
   

@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_PHOTON_SCATTEIRNG_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
@@ -29,7 +32,7 @@ public:
 
   //! Constructor
   DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    const std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
     const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy = 3.0 );
@@ -46,7 +49,7 @@ public:
 private:
 
   // The compton profile for the subshell
-  Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution> 
+  std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution> 
   d_doppler_broadened_energy_dist;
 };
 

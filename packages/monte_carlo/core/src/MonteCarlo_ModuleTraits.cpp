@@ -16,9 +16,9 @@ const ModuleTraits::InternalSourceHandle
 ModuleTraits::invalid_internal_source_handle = 
   std::numeric_limits<ModuleTraits::InternalSourceHandle>::max();
   
-const ModuleTraits::InternalEstimatorHandle
-ModuleTraits::invalid_internal_estimator_handle =
-  std::numeric_limits<ModuleTraits::InternalEstimatorHandle>::max();
+const ModuleTraits::InternalEventObserverHandle
+ModuleTraits::invalid_internal_event_observer_handle =
+  std::numeric_limits<ModuleTraits::InternalEventObserverHandle>::max();
 
 const ModuleTraits::InternalMaterialHandle
 ModuleTraits::invalid_internal_material_handle = 

@@ -21,7 +21,7 @@ namespace MonteCarlo{
 NeutronMaterial::NeutronMaterial(
 	        const ModuleTraits::InternalMaterialHandle id,
 	        const double density,
-	        const boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+	        const std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
 	        nuclide_name_map,
 	        const Teuchos::Array<double>& nuclide_fractions,
 	        const Teuchos::Array<std::string>& nuclide_names )

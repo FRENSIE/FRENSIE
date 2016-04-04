@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <algorithm>
 #include <limits>
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"

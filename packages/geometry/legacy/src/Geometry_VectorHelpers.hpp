@@ -9,7 +9,7 @@
 #ifndef GEOMETRY_VECTOR_HELPERS_HPP
 #define GEOMETRY_VECTOR_HELPERS_HPP
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "Geometry_Vector.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_Axis.hpp"

@@ -37,7 +37,7 @@ namespace Data{
  * all the energy levels. The concludes the independent yields section. The 
  * cumulative yields section is given in the same was as the independent yields
  * section. The task of reading in this data is handled by
- * FACEMC::ENDFFissionYieldsFileHandler.
+ * FRENSIE::ENDFFissionYieldsFileHandler.
  */
 
 //! The ENDF Fission Yields file handler class

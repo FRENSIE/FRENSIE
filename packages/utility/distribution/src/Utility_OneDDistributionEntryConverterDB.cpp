@@ -22,14 +22,14 @@ const bool OneDDistributionEntryConverterDB::initialized =
 
 // Add a converter to the database
 void OneDDistributionEntryConverterDB::addConverter(
-	 const Teuchos::RCP<OneDDistributionEntryConverter>& converter_to_add )
+      const std::shared_ptr<OneDDistributionEntryConverter>& converter_to_add )
 {
   OneDDistributionEntryConverterDB::master_map[converter_to_add->getTypeName()]
     = converter_to_add;
 }
 
 // Get the appropriate converter for the given parameter entry
-Teuchos::RCP<OneDDistributionEntryConverter>
+const OneDDistributionEntryConverter&
 OneDDistributionEntryConverterDB::getConverter(
 		     const Teuchos::RCP<const Teuchos::ParameterEntry>& entry )
 {
@@ -43,17 +43,21 @@ OneDDistributionEntryConverterDB::getConverter(
   		      << entry->getAny().typeName()
   		      << " is not currently supported!" );
 
-  return it->second;
+  return *(it->second);
 } 
 
 // Get the OneDDistribution from the given parameter entry
-Teuchos::RCP<OneDDistribution> OneDDistributionEntryConverterDB::convertEntry(
+Teuchos::RCP<OneDDistribution> OneDDistributionEntryConverterDB::convertEntryToRCP(
                      const Teuchos::RCP<const Teuchos::ParameterEntry>& entry )
 {
-  Teuchos::RCP<OneDDistributionEntryConverter> converter = 
-    OneDDistributionEntryConverterDB::getConverter( entry );
+  return OneDDistributionEntryConverterDB::getConverter( entry ).getDistributionRCP( entry );
+}
 
-  return converter->getDistribution( entry );
+// Get the OneDDistribution from the given parameter entry
+std::shared_ptr<OneDDistribution> OneDDistributionEntryConverterDB::convertEntryToSharedPtr(
+                     const Teuchos::RCP<const Teuchos::ParameterEntry>& entry )
+{
+  return OneDDistributionEntryConverterDB::getConverter( entry ).getDistributionSharedPtr( entry );
 }
 
 // Initialize the class
