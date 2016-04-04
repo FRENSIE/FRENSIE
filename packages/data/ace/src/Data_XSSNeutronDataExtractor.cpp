@@ -182,7 +182,7 @@ XSSNeutronDataExtractor::extractLSIGBlock() const
  * Subtract by one to get the corresponding C array indices.
  */
 Teuchos::ArrayView<const double> 
-XSSNeutronDataExtractor::extractLISGPBlock() const
+XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
     return d_xss( d_jxs[13], d_nxs[5] );

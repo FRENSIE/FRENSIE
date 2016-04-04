@@ -14,18 +14,18 @@ namespace Utility{
 
 // Constructor
 CartesianSpatialDistribution::CartesianSpatialDistribution( 
-			 const Teuchos::RCP<OneDDistribution>& x_distribution,
-			 const Teuchos::RCP<OneDDistribution>& y_distribution,
-			 const Teuchos::RCP<OneDDistribution>& z_distribution )
+		      const std::shared_ptr<OneDDistribution>& x_distribution,
+                      const std::shared_ptr<OneDDistribution>& y_distribution,
+                      const std::shared_ptr<OneDDistribution>& z_distribution )
   : d_x_distribution( x_distribution ),
     d_y_distribution( y_distribution ),
     d_z_distribution( z_distribution ),
     d_uniform( true )
 {
   // Make sure that the distributions have been set
-  testPrecondition( !x_distribution.is_null() );
-  testPrecondition( !y_distribution.is_null() );
-  testPrecondition( !z_distribution.is_null() );
+  testPrecondition( x_distribution.get() );
+  testPrecondition( y_distribution.get() );
+  testPrecondition( z_distribution.get() );
 
   // Determine if the distribution is uniform
   if( x_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )

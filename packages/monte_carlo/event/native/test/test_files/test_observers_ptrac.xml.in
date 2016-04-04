@@ -1,0 +1,8 @@
+<ParameterList name="Observers">
+
+  <ParameterList name="Particle Tracker 1">
+    <Parameter name="Id" type="unsigned int" value="1"/>
+    <Parameter name="Type" type="string" value="Particle Tracker"/>
+  </ParameterList>
+  
+</ParameterList>

@@ -15,7 +15,7 @@
 // FRENSIE Includes
 #include "PhotonDataBasic.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -44,13 +44,13 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestingPhotonDataBasic : public FACEMC::PhotonDataBasic
+class TestingPhotonDataBasic : public FRENSIE::PhotonDataBasic
 {
 public:
   TestingPhotonDataBasic( unsigned int atomic_number,
 			  double energy_min,
 			  double energy_max )
-    : FACEMC::PhotonDataBasic( atomic_number,
+    : FRENSIE::PhotonDataBasic( atomic_number,
 			       energy_min,
 			       energy_max )
   { /* ... */ }
@@ -58,10 +58,10 @@ public:
   virtual ~TestingPhotonDataBasic()
   { /* ... */ }
 
-  using FACEMC::PhotonDataBasic::getAtomicNumber;
-  using FACEMC::PhotonDataBasic::getAtomicWeight;
-  using FACEMC::PhotonDataBasic::getTotalCrossSection;
-  using FACEMC::PhotonDataBasic::getNonabsorptionProbability;
+  using FRENSIE::PhotonDataBasic::getAtomicNumber;
+  using FRENSIE::PhotonDataBasic::getAtomicWeight;
+  using FRENSIE::PhotonDataBasic::getTotalCrossSection;
+  using FRENSIE::PhotonDataBasic::getNonabsorptionProbability;
 };
 
 //---------------------------------------------------------------------------//

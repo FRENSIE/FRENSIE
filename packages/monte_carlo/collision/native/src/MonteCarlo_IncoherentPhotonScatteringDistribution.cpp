@@ -250,10 +250,9 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
 
     bank.push( electron );
   }
-  
+
   // Make sure the electron energy is valid
-  testPostcondition( electron_energy + compton_line_energy ==
-		     photon.getEnergy() );
+  testPostcondition( fabs(electron_energy + compton_line_energy - photon.getEnergy()) < 1e-12 );
   // Make sure the electron scattering angle cosine is valid
   testPostcondition( electron_scattering_angle_cosine >= -1.0 );
   testPostcondition( electron_scattering_angle_cosine <= 1.0 );

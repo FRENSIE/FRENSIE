@@ -40,6 +40,11 @@ void normalizeDirection( double direction[3] );
 double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
 					     const double direction_b[3] );
 
+//! Reflect direction about the given unit normal
+double reflectDirection( const double direction[3],
+                         const double unit_normal[3],
+                         double reflected_direction[3] );
+
 //! Rotate a direction (unit vector) through a polar and azimuthal angle
 void rotateDirectionThroughPolarAndAzimuthalAngle(
 					       const double polar_angle_cosine,

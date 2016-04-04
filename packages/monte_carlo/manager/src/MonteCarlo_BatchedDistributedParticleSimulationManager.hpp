@@ -6,17 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
-#define FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#define FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSimulationManager.hpp"
-#include "FRENSIE_mpi_config.hpp"
-
-// Trilinos Includes
-#ifdef HAVE_FRENSIE_MPI
-#include <Teuchos_CommHelpers.hpp>
-#endif 
 
 namespace MonteCarlo{
 
@@ -43,7 +37,7 @@ public:
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned long long number_of_histories,
-	    const unsigned number_of_batches_per_processor = 25,
+	    const unsigned number_of_batches_per_processor = 1,
 	    const unsigned long long start_history = 0ull,
 	    const unsigned long long previously_completed_histories = 0ull,
 	    const double previous_run_time = 0.0 );
@@ -59,7 +53,8 @@ public:
   void printSimulationSummary( std::ostream &os ) const;
 
   //! Export the simulation data (to an hdf5 file)
-  void exportSimulationData( const std::string& data_file_name ) const;
+  void exportSimulationData( const std::string& data_file_name,
+                             std::ostream& os ) const;
 
   // Signal handler
   void signalHandler(int signal);
@@ -70,18 +65,14 @@ private:
   void coordinateWorkers();
 
   // Tell workers to stop working
-  void stopWorkersAndRecordWork( 
-		        const Teuchos::MpiComm<unsigned long long>& mpi_comm );
+  void stopWorkersAndRecordWork();
 
   // Check for idle worker
   bool isIdleWorkerPresent( 
-                  const Teuchos::MpiComm<unsigned long long>& mpi_comm,
-                  Teuchos::RCP<const Teuchos::CommStatus<unsigned long long> >&
-		  idle_worker_info );
+    Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info );
   
   // Assign work to idle workers
   void assignWorkToIdleWorker(
-               const Teuchos::MpiComm<unsigned long long>& mpi_comm,
                const Teuchos::CommStatus<unsigned long long>& idle_worker_info,
 	       const Teuchos::Tuple<unsigned long long,2>& task );
   
@@ -111,7 +102,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_BATCHED_DISTRIBUTED_PARTICLE_SIMULATION_MANAGER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_BatchedDistributedParticleSimulationManager.hpp

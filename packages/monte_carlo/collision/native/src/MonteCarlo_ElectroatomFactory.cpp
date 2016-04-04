@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_ElectroatomFactory.cpp
-//! \author Alex Robinson
+//! \author Luke Kersting
 //! \brief  The electroatom factory class definition
 //!
 //---------------------------------------------------------------------------//
@@ -12,6 +12,7 @@
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -21,24 +22,24 @@ namespace MonteCarlo{
 
 // Constructor
 ElectroatomFactory::ElectroatomFactory(
-        const std::string& cross_sections_xml_directory,
-        const Teuchos::ParameterList& cross_section_table_info,
-        const boost::unordered_set<std::string>& electroatom_aliases,
-        const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-          atomic_relaxation_model_factory,
-        const unsigned hash_grid_bins,
-        const BremsstrahlungAngularDistributionType 
-	  photon_distribution_function,
-        const bool use_atomic_relaxation_data,
-        const double cutoff_angle_cosine,
-        std::ostream* os_message )
-  : d_os_message( os_message )
+    const std::string& cross_sections_xml_directory,
+    const Teuchos::ParameterList& cross_section_table_info,
+    const std::unordered_set<std::string>& electroatom_aliases,
+    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+        atomic_relaxation_model_factory,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType 
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine,
+    std::ostream* os_message )
+  :d_os_message( os_message )
 {
   // Make sure the message stream is valid
   testPrecondition( os_message != NULL );
   
   // Create each electroatom in the set
-  boost::unordered_set<std::string>::const_iterator electroatom_name = 
+  std::unordered_set<std::string>::const_iterator electroatom_name = 
     electroatom_aliases.begin();
 
   std::string electroatom_file_path, electroatom_file_type, electroatom_table_name;
@@ -56,7 +57,7 @@ ElectroatomFactory::ElectroatomFactory(
 						  electroatom_table_name,
 						  electroatom_file_start_line,
 						  atomic_weight );
-						   
+					   
     if( electroatom_file_type == CrossSectionsXMLProperties::ace_file )
     {
       createElectroatomFromACETable(  
@@ -89,7 +90,7 @@ ElectroatomFactory::ElectroatomFactory(
 
 // Create the map of electroatoms
 void ElectroatomFactory::createElectroatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
 		    electroatom_map ) const
 {
   // Reset the electroatom map

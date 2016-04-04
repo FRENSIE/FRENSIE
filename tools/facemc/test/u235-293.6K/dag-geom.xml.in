@@ -1,0 +1,12 @@
+<ParameterList name="Geometry">
+
+  <Parameter name="Handler" type="string" value="DagMC"/>
+  <Parameter name="CAD File" type="string" value="${CMAKE_CURRENT_SOURCE_DIR}/u_sphere.sat"/>
+  <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
+  <Parameter name="Termination Cell Property" type="string" 
+	     value="termination.cell"/>
+  <Parameter name="Material Property" type="string" value="mat"/>
+  <Parameter name="Density Property" type="string" value="rho"/>
+  <Parameter name="Estimator Property" type="string" value="estimator"/>
+
+</ParameterList>

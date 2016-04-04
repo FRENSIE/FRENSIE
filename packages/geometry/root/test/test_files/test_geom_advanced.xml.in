@@ -1,0 +1,11 @@
+<ParameterList name="Geometry">
+
+  <Parameter name="Handler" type="string" value="ROOT"/>
+  <Parameter name="Root File" type="string" 
+	     value="${CMAKE_CURRENT_BINARY_DIR}/advanced_root_geometry.root"/>
+  
+  <Parameter name="Void Material Name" type="string" value="empty"/>
+  <Parameter name="Terminal Material Name" type="string" value="killzone"/>
+  <Parameter name="Material Property Name" type="string" value="material"/>
+  
+</ParameterList>

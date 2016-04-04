@@ -32,9 +32,6 @@ public:
   //! Create the number of random number streams required
   static void createStreams();
 
-  //! Create the number of random number streams requested
-  static void createStreams( const unsigned number_of_streams );
-  
   //! Initialize the generator for the desired history
   static void initialize( const unsigned long long history_number = 0ULL );
 

@@ -15,10 +15,12 @@
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -55,7 +57,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     }
     case DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
       
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
@@ -72,7 +74,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     }
     case DECOUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
       
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
@@ -89,7 +91,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     }
     case COUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
       
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
@@ -106,7 +108,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     }
     case COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
     {
-      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+      std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
       
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
@@ -142,7 +144,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
+  std::shared_ptr<const ScatteringFunction> scattering_function;
 
   IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
 							 raw_photoatom_data,
@@ -165,21 +167,21 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 
 // Create a Doppler broadened hybrid incoherent distribution
 void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHybridDistribution(
-    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
-    doppler_broadened_dist,
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-    incoherent_distribution,     
-    const double kahn_sampling_cutoff_energy )
+ const Data::XSSEPRDataExtractor& raw_photoatom_data,
+ const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+ doppler_broadened_dist,
+ Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+ incoherent_distribution,     
+ const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened distribution is valid
-  testPrecondition( !doppler_broadened_dist.is_null() );
+  testPrecondition( doppler_broadened_dist.get() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
+  std::shared_ptr<const ScatteringFunction> scattering_function;
 
   IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
 							 raw_photoatom_data,
@@ -195,7 +197,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
 // Create the scattering function
 void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-	  Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
+	  std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
   Teuchos::ArrayView<const double> jince_block = 
     raw_photoatom_data.extractJINCEBlock();
@@ -204,18 +206,19 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
   
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
   
-  // The stored recoil momemtum has units of inverse Angstroms - convert to
-  // inverse cm
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8;
-  
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
+
   Teuchos::Array<double> scattering_function_values( 
 			     jince_block( scatt_func_size, scatt_func_size ) );
-  
-  scattering_function.reset(
-		     new Utility::TabularDistribution<Utility::LinLin>(
+
+  raw_scattering_function.reset( 
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 						recoil_momentum,
 						scattering_function_values ) );
+  
+  scattering_function.reset( 
+	       new StandardScatteringFunction<Utility::Units::InverseAngstrom>(
+						   raw_scattering_function ) );
 }
 
 } // end MonteCarlo namespace

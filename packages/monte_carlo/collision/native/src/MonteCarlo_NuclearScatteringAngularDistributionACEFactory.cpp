@@ -65,8 +65,16 @@ void NuclearScatteringAngularDistributionACEFactory::createDistribution(
     // Thirty two equiprobable bin distribution
     if( distribution_index > 0 )
     {
+      // Distribution index is relative to beginning of AND block - subtract
+      // off start index of portion of and block for given MT #.
+      distribution_index = abs(distribution_index) - 1 -
+	      and_block_array_start_index;  
+  
       Teuchos::ArrayView<const double> bin_boundaries = 
-	and_block_array( distribution_index, 33 );
+	      and_block_array( distribution_index, 33 );
+	  
+	  //std::cout << distribution_index << std::endl;
+	  //std::cout << bin_boundaries << std::endl;
 
       angular_distribution[i].second.reset( 
 	 new Utility::EquiprobableBinDistribution( bin_boundaries ) );

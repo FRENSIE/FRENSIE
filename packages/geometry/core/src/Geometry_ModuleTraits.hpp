@@ -43,7 +43,7 @@ struct ModuleTraits
   static const InternalSurfaceHandle invalid_internal_surface_handle; 
 };
 
-} // end FACEMC namespace
+} // end FRENSIE namespace
 
 #endif // end GEOMETRY_MODULE_TRAITS_HPP
 

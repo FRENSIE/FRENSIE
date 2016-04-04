@@ -36,6 +36,12 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     SET(CACHED_TRILINOS_C_COMPILER ${Trilinos_C_COMPILER}
       CACHE STRING "The Trilinos C compiler" FORCE)
   ENDIF()
+
+  # Use the trilinos C compiler
+  SET(CMAKE_C_COMPILER ${Trilinos_C_COMPILER})
+  IF(NEW_COMPILER)
+    MESSAGE("-- Switching to Trilinos C Compiler: ${Trilinos_C_COMPILER}")
+  ENDIF()
   
   # Check if CXX compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL 
@@ -56,7 +62,13 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
       CACHE STRING "The Trilinos CXX compiler" FORCE)
   ENDIF()
 
-  # Check if CXX compiler compatibility needs to be checked
+  # Use the trilinos CXX compiler
+  SET(CMAKE_CXX_COMPILER ${Trilinos_CXX_COMPILER})
+  IF(NEW_COMPILER)
+    MESSAGE("-- Switching to Trilinos CXX Compiler: ${Trilinos_CXX_COMPILER}")
+  ENDIF()
+  
+  # Check if Fortran compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL 
     "${CACHED_TRILINOS_Fortran_COMPILER}" "${Trilinos_Fortran_COMPILER}" 
     NEW_COMPILER)
@@ -75,7 +87,15 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     SET(CACHED_TRILINOS_Fortran_COMPILER ${Trilinos_Fortran_COMPILER}
       CACHE STRING "The Trilinos Fortran compiler" FORCE)
   ENDIF()
+
+  # Use the trilinos Fortran compiler
+  SET(CMAKE_Fortran_COMPILER ${Trilinos_Fortran_COMPILER})
+
+  IF(NEW_COMPILER)
+    MESSAGE("-- Switching to Trilinos Fortran Compiler: ${Trilinos_Fortran_COMPILER}")
+  ENDIF()
   
+  UNSET(NEW_COMPILER)
   UNSET(SAME_VENDOR)
   UNSET(SAME_VERSION)
     

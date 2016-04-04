@@ -40,7 +40,7 @@ void initializeNuclideFactory()
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
   
-  boost::unordered_set<std::string> nuclide_aliases;
+  std::unordered_set<std::string> nuclide_aliases;
   nuclide_aliases.insert( "H-1_293.6K" );
   nuclide_aliases.insert( "H-1_300K" );
   nuclide_aliases.insert( "H-1_900K" );
@@ -50,7 +50,7 @@ void initializeNuclideFactory()
 					     cross_section_table_info,
 					     nuclide_aliases,
 					     false,
-					     false ) );
+					     true ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -59,7 +59,7 @@ void initializeNuclideFactory()
 // Check that a nuclide map can be created
 TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
 {
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
 
   nuclide_factory->createNuclideMap( nuclide_map );
 
