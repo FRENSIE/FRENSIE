@@ -49,7 +49,7 @@
  *
  * \section geometry_root_sec The Geometry Root Subpackage
  * The root subpackage provides the Geometry::Root handler class. It is a
- * high level interface for ray tracing on and quering properties of a
+ * high level interface for ray tracing on and querying properties of a
  * Root geometry file. The Geometry::Root handler class allows one to check
  * if cells exist, get cell volumes, get the material ids assigned to cells,
  * get cell densities, and ray trace on the Root geometry. Note that Root does 
@@ -85,7 +85,7 @@
  * tool, the following questions should be answered:
  * <ol>
  *  <li>Does the external tool have a license that is compatible with the
- *      FRENSIE license?</li>
+ *      \ref license "FRENSIE license"?</li>
  *  <li>Does the external tool provide a robust ray tracing capability?</li>
  *  <li>Does the external tool assign unique ids to defined cells?</li>
  *  <li>Does the external tool allow properties to be assigned to cells
