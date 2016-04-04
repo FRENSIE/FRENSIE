@@ -1582,12 +1582,13 @@
  *  <li>The third optional element is the rejection cell. When a source's
  *      spatial distribution is too complicated to be modeled with one of
  *      the available spatial distribution types, one can specify a rejection
- *      cell that will be used in conjunction with the defined spatial 
- *      distribution. After a point is sampled from the spatial distribution,
- *      the point is only used if it falls within the rejection cell. 
+ *      cell (or cells) that will be used in conjunction with the defined 
+ *      spatial distribution. After a point is sampled from the spatial 
+ *      distribution, the point is only used if it falls within one of the
+ *      rejection cells. 
  *      <ul>
  *       <li>\code
- *           <Parameter name="Rejection Cell" type="int" value="2"/>
+ *           <Parameter name="Rejection Cells" type="Array" value="{1,2}"/>
  *           \endcode</li>
  *      </ul></li>
  *
