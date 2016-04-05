@@ -20,7 +20,7 @@
  * are currently five entity events and one global event that are tracked by
  * the event subpackage. 
  *
- *Entity events have the following general layout:
+ * Entity events have the following general layout:
  * \image html Entity_Events.jpg
  * \image latex Entity_Events.eps
  *
@@ -188,12 +188,14 @@
  * methods will be called in a shared memory setting. The reduceData method
  * allows objects of a class that are distributed across nodes (e.g. on a 
  * computing cluster) to communicate with each other and collect all of their
- * data on the root node. Implementation of this method will rely on MPI
- * send/recv methods. 
+ * data on the root node. Implementation of this method will rely on C++ MPI
+ * wrapper methods (see Utility_CommHelpers.hpp and Teuchos_CommHelpers.hpp). 
+ * Before implementing these methods please read the section on
+ * \ref parallel_considerations "Parallel Considerations".
  * 
  * The particle history observer interface also includes a method for
  * exporting data to an hdf5 file, printing a summary of the data to the
- * desired output stream and reseting the data. 
+ * desired output stream and resetting the data. 
  *
  * Currently there are three categories of particle history observers:
  * estimators, particle trackers, and summary tables. These categories will
@@ -338,9 +340,10 @@
  * The Utility::HDF5FileHandler class provides a very general interface for
  * writing/reading from an HDF5 file. A more restrictive interface for
  * writing/reading estimator data to an HDF5 file was required to reduce the
- * complexity associated with process. The MonteCarlo::EstimatorHDF5FileHandler
- * provides this more restrictive interface and should be used whenever
- * estimator data is to be written to or read from an HDF5 file.
+ * complexity associated with this process. The 
+ * MonteCarlo::EstimatorHDF5FileHandler provides this more restrictive 
+ * interface and should be used whenever estimator data needs to be written to 
+ * or read from an HDF5 file.
  *
  * \subsection mc_particle_tracker Particle Tracker
  * The Particle Tracker in FACEMC operates very similarly to the PTRAC function
