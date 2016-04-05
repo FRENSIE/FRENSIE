@@ -84,7 +84,7 @@ are described.
 14. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:$PATH`
 15. run `exec bash`
 
-### Building Open MPI
+### Building Open MPI - Optional
 1. download the [Open MPI 1.8.2 source](http://www.open-mpi.org/software/ompi/v1.8/)
 2. move the openmpi-1.8.2.tar.gz file to the mpi directory (e.g. software/mpi)
 3. move to the mpi directory
@@ -188,7 +188,7 @@ or you can build if from source using the following instructions:
 9. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
-### Building ROOT
+### Building ROOT - Optional
 1. download the appropriate [ROOT 6.04/02 Binaries](https://root.cern.ch/content/release-60402)
 2. move the binary file to the root directory (e.g. software/root)
 3. move to the root directory
