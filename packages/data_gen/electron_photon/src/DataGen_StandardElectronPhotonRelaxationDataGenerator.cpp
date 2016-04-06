@@ -19,7 +19,6 @@
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_SubshellType.hpp"
 
 namespace DataGen{
 

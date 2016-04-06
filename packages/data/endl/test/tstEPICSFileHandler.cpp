@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstENDLFileHandler.cpp
+//! \file   tstEPICSFileHandler.cpp
 //! \author Luke Kersting
-//! \brief  ENLIB97FileHandler class unit tests.
+//! \brief  ENDLFileHandler EPICS2014 class unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -32,7 +32,7 @@ std::string two_two_column_tables_test_file;
 std::string two_three_column_tables_test_file;
 std::string two_four_column_tables_test_file;
 
-bool epics_file_type = false;
+bool epics_file_type = true;
 
 //---------------------------------------------------------------------------//
 // Testing Parameters
@@ -895,6 +895,6 @@ int main( int argc, char* argv[] )
 }
   
 //---------------------------------------------------------------------------//
-// end tstENDLFileHandler.cpp
+// end tstEPICSFileHandler.cpp
 //---------------------------------------------------------------------------//
 

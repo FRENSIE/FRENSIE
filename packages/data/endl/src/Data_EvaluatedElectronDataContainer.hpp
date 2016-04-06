@@ -25,9 +25,7 @@
 
 namespace Data{
 
-/*! The eedl container
- * \details Linear-linear interpolation should be used for all data.
- */
+//! The eedl container
 class EvaluatedElectronDataContainer : public Utility::StandardArchivableObject<EvaluatedElectronDataContainer,false>, public Utility::StandardSerializableObject<EvaluatedElectronDataContainer,false>
 {
 
@@ -215,14 +213,11 @@ public:
 // GET ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
 
-  //! Return the atomic excitation electron cross section energy grid
-  const std::vector<double>& getAtomicExcitationCrossSectionEnergyGrid() const;
+  //! Return the atomic excitation electron energy grid
+  const std::vector<double>& getAtomicExcitationEnergyGrid() const;
 
   //! Return the atomic excitation electron cross section
   const std::vector<double>& getAtomicExcitationCrossSection() const;
-
-  //! Return the atomic excitation average energy loss energy grid
-  const std::vector<double>& getAtomicExcitationEnergyLossIncomingEnergy() const;
 
   //! Return the atomic excitation average energy loss
   const std::vector<double>& getAtomicExcitationEnergyLoss() const;
@@ -464,54 +459,19 @@ protected:
 // SET ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
 
-  //! Set the atomic excitation electron cross section energy grid
-  void setAtomicExcitationCrossSectionEnergyGrid(
-    const std::vector<double>& atomic_excitation_cross_section_energy_grid );
+  //! Set the atomic excitation electron energy grid
+  void setAtomicExcitationEnergyGrid(
+    const std::vector<double>& atomic_excitation_energy_grid );
 
   //! Set the atomic excitation electron cross section 
   void setAtomicExcitationCrossSection(
     const std::vector<double>& atomic_excitation_cross_section );
-
-  //! Set the atomic excitation average energy loss incoming energy grid
-  void setAtomicExcitationEnergyLossIncomingEnergy( 
-    const std::vector<double>& atomic_excitation_energy_loss_incoming_energy );
 
   //! Set the atomic excitation average energy loss
   void setAtomicExcitationEnergyLoss( 
             const std::vector<double>& atomic_excitation_energy_loss );
   
 private:
-
-  // Test preconditions for cross sections
-  void testPreconditionCrossSection( 
-    const std::vector<double>& cross_section,
-    const std::vector<double>& energy_grid );
-
-  // Test preconditions for energy grids
-  void testPreconditionEnergyGrid(
-    const std::vector<double>& energy_grid );
-
-  // Test preconditions for values in array greater than zero
-  template<typename Array>
-  void testPreconditionValuesGreaterThanZero( 
-    const Array& values );
-
-  // Test preconditions for values in array greater than or equal to zero
-  template<typename Array>
-  void testPreconditionValuesGreaterThanOrEqualToZero( 
-    const Array& values );
-
-  // Test if a value is less than or equal to zero
-  static bool isValueLessThanOrEqualToZero( const double value );
-
-  // Test if a value is less than zero
-  static bool isValueLessThanZero( const double value );
-
-  // Test if a value is greater than one
-  static bool isValueGreaterThanOne( const double value );
-
-  // Test if a value is less than minus one
-  static bool isValueLessThanMinusOne( const double value );
 
   // Save the data to an archive
   template<typename Archive>
@@ -681,14 +641,11 @@ private:
 // ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
 
-  // The atomic excitation electron cross section energy grid (MeV)
-  std::vector<double> d_atomic_excitation_cross_section_energy_grid;
+  // The atomic excitation electron energy grid (MeV)
+  std::vector<double> d_atomic_excitation_energy_grid;
 
   // The atomic excitation electron cross section (b)
   std::vector<double> d_atomic_excitation_cross_section;
-
-  // The atomic excitation energy loss energy grid (MeV)
-  std::vector<double> d_atomic_excitation_energy_loss_energy_grid;
 
   // The atomic excitation energy loss
   std::vector<double> d_atomic_excitation_energy_loss;

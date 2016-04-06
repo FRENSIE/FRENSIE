@@ -127,13 +127,10 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 // ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "atomic_excitation_cross_section_energy_grid", 
-    d_atomic_excitation_cross_section_energy_grid );
+    "atomic_excitation_energy_grid", 
+    d_atomic_excitation_energy_grid );
   ar & boost::serialization::make_nvp( "atomic_excitation_cross_section", 
                                         d_atomic_excitation_cross_section );
-  ar & boost::serialization::make_nvp(
-    "atomic_excitation_energy_loss_energy_grid",
-    d_atomic_excitation_energy_loss_energy_grid );
   ar & boost::serialization::make_nvp( "atomic_excitation_energy_loss",
 				                        d_atomic_excitation_energy_loss );
 }
@@ -247,13 +244,10 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 // ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp(
-    "atomic_excitation_cross_section_energy_grid", 
-    d_atomic_excitation_cross_section_energy_grid );
+    "atomic_excitation_energy_grid", 
+    d_atomic_excitation_energy_grid );
   ar & boost::serialization::make_nvp( "atomic_excitation_cross_section", 
                                         d_atomic_excitation_cross_section );
-  ar & boost::serialization::make_nvp(
-    "atomic_excitation_energy_loss_energy_grid",
-    d_atomic_excitation_energy_loss_energy_grid );
   ar & boost::serialization::make_nvp( "atomic_excitation_energy_loss",
 				                        d_atomic_excitation_energy_loss );
 }

@@ -22,6 +22,7 @@
 
 // FRENSIE Includes
 #include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ENDLDataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -457,11 +458,11 @@ EvaluatedElectronDataContainer::getBremsstrahlungAverageElectronEnergy() const
 // GET ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
 
-// Return the atomic excitation electron cross section energy grid
+// Return the atomic excitation electron energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getAtomicExcitationCrossSectionEnergyGrid() const
+EvaluatedElectronDataContainer::getAtomicExcitationEnergyGrid() const
 {
-  return d_atomic_excitation_cross_section_energy_grid;
+  return d_atomic_excitation_energy_grid;
 }
 
 // Return the atomic excitation electron cross section
@@ -469,13 +470,6 @@ const std::vector<double>&
 EvaluatedElectronDataContainer::getAtomicExcitationCrossSection() const
 {
   return d_atomic_excitation_cross_section;
-}
-
-// Return the atomic excitation energy grid
-const std::vector<double>& 
-EvaluatedElectronDataContainer::getAtomicExcitationEnergyLossIncomingEnergy() const
-{
-  return d_atomic_excitation_energy_loss_energy_grid;
 }
 
 // Return the atomic excitation energy loss
@@ -630,9 +624,9 @@ void EvaluatedElectronDataContainer::setElasticTransportCrossSection(
 			 const std::vector<double>& elastic_transport_cross_section )
 {
   // Make sure the elastic transport cross section is valid
-  testPreconditionCrossSection( 
-    elastic_transport_cross_section, 
-    d_elastic_energy_grid );
+  testPrecondition( elastic_transport_cross_section.size() <= 
+    d_elastic_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( elastic_transport_cross_section );
   
   d_elastic_transport_cross_section = elastic_transport_cross_section;
 }
@@ -642,9 +636,9 @@ void EvaluatedElectronDataContainer::setCutoffElasticCrossSection(
 			 const std::vector<double>& cutoff_elastic_cross_section )
 {
   // Make sure the cutoff elastic cross section is valid
-  testPreconditionCrossSection( 
-    cutoff_elastic_cross_section, 
-    d_elastic_energy_grid );
+  testPrecondition( cutoff_elastic_cross_section.size() <= 
+    d_elastic_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( cutoff_elastic_cross_section );
   
   d_cutoff_elastic_cross_section = cutoff_elastic_cross_section;
 }
@@ -769,9 +763,9 @@ void EvaluatedElectronDataContainer::setTotalElasticCrossSection(
 			 const std::vector<double>& total_elastic_cross_section )
 {
   // Make sure the total elastic cross section is valid
-  testPreconditionCrossSection( 
-    total_elastic_cross_section, 
-    d_elastic_energy_grid );
+  testPrecondition( total_elastic_cross_section.size() <= 
+    d_elastic_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( total_elastic_cross_section );
   
   d_total_elastic_cross_section = total_elastic_cross_section;
 }
@@ -831,12 +825,10 @@ void EvaluatedElectronDataContainer::setElectroionizationCrossSection(
             const unsigned subshell,
             const std::vector<double>& electroionization_cross_section )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the electroionization cross section is valid
-  testPreconditionCrossSection( 
-    electroionization_cross_section, 
-    d_electroionization_subshell_cross_section_energy_grid[subshell] );
+  testPrecondition( electroionization_cross_section.size() <= 
+    d_electroionization_subshell_cross_section_energy_grid[subshell].size() );
+  testPreconditionValuesGreaterThanOrEqualToZero( electroionization_cross_section );
   
   d_electroionization_subshell_cross_section[subshell] = 
     electroionization_cross_section;
@@ -901,8 +893,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyGrid(
             const unsigned subshell, 
             const std::vector<double>& recoil_energy_grid )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the recoil energy is valid
   testPrecondition( Utility::Sort::isSortedAscending( 
                         recoil_energy_grid.begin(),
                         recoil_energy_grid.end() ) );
@@ -916,8 +907,6 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingE
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_energy )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >=
                     d_electroionization_recoil_energy_grid[subshell].front() );
@@ -936,8 +925,6 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEner
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_pdf )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >=
                     d_electroionization_recoil_energy_grid[subshell].front() );
@@ -955,9 +942,6 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy(
     const unsigned subshell, 
     const std::map<double,std::vector<double> >& electroionization_recoil_energy )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-
   d_electroionization_recoil_energy[subshell] =
     electroionization_recoil_energy;
 }
@@ -967,9 +951,6 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf )
 {
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-
   d_electroionization_recoil_pdf[subshell] =
     electroionization_recoil_pdf;
 }
@@ -993,9 +974,9 @@ void EvaluatedElectronDataContainer::setBremsstrahlungCrossSection(
 			 const std::vector<double>& bremsstrahlung_cross_section )
 {
   // Make sure the bremsstrahlung cross section is valid
-testPreconditionCrossSection( 
-    bremsstrahlung_cross_section, 
-    d_bremsstrahlung_cross_section_energy_grid );
+  testPrecondition( bremsstrahlung_cross_section.size() <= 
+                    d_bremsstrahlung_cross_section_energy_grid.size() );
+  testPreconditionValuesGreaterThanZero( bremsstrahlung_cross_section );
   
   d_bremsstrahlung_cross_section = bremsstrahlung_cross_section;
 }
@@ -1110,14 +1091,14 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronEnergy(
 // SET ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
 
-// Set the atomic excitation electron cross section energy grid
-void EvaluatedElectronDataContainer::setAtomicExcitationCrossSectionEnergyGrid( 
+// Set the atomic excitation electron energy grid
+void EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid( 
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
   testPreconditionEnergyGrid( energy_grid );
 
-  d_atomic_excitation_cross_section_energy_grid = energy_grid;
+  d_atomic_excitation_energy_grid = energy_grid;
 }
 
 
@@ -1126,21 +1107,11 @@ void EvaluatedElectronDataContainer::setAtomicExcitationCrossSection(
 			 const std::vector<double>& atomic_excitation_cross_section )
 {
   // Make sure the atomic excitation cross section is valid
-testPreconditionCrossSection( 
-    atomic_excitation_cross_section, 
-    d_atomic_excitation_cross_section_energy_grid );
+  testPrecondition( atomic_excitation_cross_section.size() <= 
+                    d_atomic_excitation_energy_grid.size() );
+  testPreconditionValuesGreaterThanOrEqualToZero( atomic_excitation_cross_section );
   
   d_atomic_excitation_cross_section = atomic_excitation_cross_section;
-}
-
-// Set the atomic excitation average energy loss incoming energy grid
-void EvaluatedElectronDataContainer::setAtomicExcitationEnergyLossIncomingEnergy( 
-    const std::vector<double>& energy_loss_incoming_energy )
-{
-  // Make sure the energy grid is valid
-  testPreconditionEnergyGrid( energy_loss_incoming_energy );
-
-  d_atomic_excitation_energy_loss_energy_grid = energy_loss_incoming_energy;
 }
 
 // Set the atomic excitation energy loss for an incoming energy
@@ -1148,86 +1119,13 @@ void EvaluatedElectronDataContainer::setAtomicExcitationEnergyLoss(
 		     const std::vector<double>&  atomic_excitation_energy_loss )
 {
   // Make sure the atomic excitation energy loss are valid
+  testPrecondition( atomic_excitation_energy_loss.size() <= 
+                    d_atomic_excitation_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( atomic_excitation_energy_loss );
 
   d_atomic_excitation_energy_loss = 
     atomic_excitation_energy_loss;
 }
-
-
-//---------------------------------------------------------------------------//
-// TESTS 
-//---------------------------------------------------------------------------//
-
-// Test preconditions for cross sections
-inline void EvaluatedElectronDataContainer::testPreconditionCrossSection( 
-    const std::vector<double>& cross_section,
-    const std::vector<double>& energy_grid )
-{
-  testPrecondition( cross_section.size() <= energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( cross_section );
-}
-
-// Test preconditions for energy grids
-inline void EvaluatedElectronDataContainer::testPreconditionEnergyGrid(
-    const std::vector<double>& energy_grid )
-{
-  testPrecondition( energy_grid.back() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						                              energy_grid.end() ) );
-  testPrecondition( energy_grid.front() > 0.0 );
-}
-
-// Test preconditions for values in array greater than zero
-template<typename Array>
-inline void EvaluatedElectronDataContainer::testPreconditionValuesGreaterThanZero( 
-    const Array& values )
-{
-  testPrecondition( std::find_if( values.begin(),
-                                  values.end(),
-                                  isValueLessThanOrEqualToZero ) ==
-                    values.end() );
-}
-
-// Test preconditions for values in array greater than zero
-template<typename Array>
-inline void EvaluatedElectronDataContainer::testPreconditionValuesGreaterThanOrEqualToZero( 
-    const Array& values )
-{
-  testPrecondition( std::find_if( values.begin(),
-                                  values.end(),
-                                  isValueLessThanZero ) ==
-                    values.end() );
-}
-
-// Test if a value is less than or equal to zero
-bool EvaluatedElectronDataContainer::isValueLessThanOrEqualToZero( 
-							   const double value )
-{
-  return value <= 0.0;
-}
-
-// Test if a value is less than zero
-bool EvaluatedElectronDataContainer::isValueLessThanZero( 
-							   const double value )
-{
-  return value < 0.0;
-}
-
-// Test if a value is greater than one
-bool EvaluatedElectronDataContainer::isValueGreaterThanOne( 
-							   const double value )
-{
-  return value > 1.0;
-}
-
-// Test if a value is less than -1.0
-bool EvaluatedElectronDataContainer::isValueLessThanMinusOne( 
-							   const double value )
-{
-  return value < -1.0;
-}
-
 
 } // end Data namespace
 

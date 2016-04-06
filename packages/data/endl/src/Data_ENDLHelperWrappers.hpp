@@ -36,12 +36,27 @@ extern "C" {
                 double* column_one, 
                 double* column_two, 
                 int* flag );
+  void readEPICSTableTwoColumn( const int file_id, const int table_size, 
+                double* column_one, 
+                double* column_two, 
+                int* flag );
   void readENDLTableThreeColumn( const int file_id, const int table_size,  
                 double* column_one, 
                 double* column_two, 
                 double* column_three, 
                 int* flag );
+  void readEPICSTableThreeColumn( const int file_id, const int table_size,  
+                double* column_one, 
+                double* column_two, 
+                double* column_three, 
+                int* flag );
   void readENDLTableFourColumn( const int file_id, const int table_size,  
+                double* column_one, 
+                double* column_two, 
+                double* column_three, 
+                double* column_four, 
+                int* flag );
+  void readEPICSTableFourColumn( const int file_id, const int table_size,  
                 double* column_one, 
                 double* column_two, 
                 double* column_three, 

@@ -888,18 +888,18 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cross section energy grid can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
-                   setAtomicExcitationCrossSectionEnergyGrid )
+                   setAtomicExcitationEnergyGrid )
 {
   std::vector<double> electron_energy_grid( 3 );
   electron_energy_grid[0] = 1e-3;
   electron_energy_grid[1] = 1.0;
   electron_energy_grid[2] = 20.0;
 
-  evaluated_electron_data_container.setAtomicExcitationCrossSectionEnergyGrid(
+  evaluated_electron_data_container.setAtomicExcitationEnergyGrid(
     electron_energy_grid );
 
   TEST_COMPARE_ARRAYS(
-    evaluated_electron_data_container.getAtomicExcitationCrossSectionEnergyGrid(),
+    evaluated_electron_data_container.getAtomicExcitationEnergyGrid(),
     electron_energy_grid );
 }
 
@@ -919,24 +919,6 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_COMPARE_ARRAYS( 
             evaluated_electron_data_container.getAtomicExcitationCrossSection(),
             cross_section );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the atomic excitation energy grid can be set
-TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setAtomicExcitationEnergyLossIncomingEnergy )
-{
-  std::vector<double> energy_grid(3);
-  energy_grid[0] = 1.0;
-  energy_grid[1] = 5.0;
-  energy_grid[2] = 10.0;
-
-  evaluated_electron_data_container.setAtomicExcitationEnergyLossIncomingEnergy( 
-                                    energy_grid );
-  
-  TEST_COMPARE_ARRAYS( 
-    evaluated_electron_data_container.getAtomicExcitationEnergyLossIncomingEnergy(), 
-    energy_grid );
 }
 
 //---------------------------------------------------------------------------//
@@ -1129,14 +1111,11 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 // TEST ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
-    3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
@@ -1313,14 +1292,11 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 // TEST ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
-    3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
@@ -1498,14 +1474,11 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 // TEST ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
-    3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
@@ -1679,14 +1652,11 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 // TEST ATOMIC EXCITATION DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationCrossSectionEnergyGrid().size(), 
+    evaluated_electron_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationCrossSection().size(),
     3u );
-  TEST_EQUALITY_CONST( 
-    evaluated_electron_data_container_copy.getAtomicExcitationEnergyLossIncomingEnergy().size(), 
-    3 );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );

@@ -41,11 +41,13 @@ public:
   ENDLFileHandler();
 
   //! Constructor for reading all data in file
-  ENDLFileHandler( const std::string& file_name );
+  ENDLFileHandler( const std::string& file_name,
+                   const bool epics_file_type = true );
 
   //! Constructor for reading data specific to a given atomic number
   ENDLFileHandler( const std::string& file_name,
-                   const unsigned atomic_number );
+                   const unsigned atomic_number,
+                   const bool epics_file_type = true  );
 
   //! Destructor
   ~ENDLFileHandler();
@@ -102,6 +104,9 @@ private:
 
   // The current line in the file
   int d_current_line;
+
+  // Bool for EPICS2014 ENDL file type
+  bool d_epics_file_type;
 };
 
 } // end Data namespace

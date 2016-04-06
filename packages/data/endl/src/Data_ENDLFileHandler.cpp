@@ -28,8 +28,10 @@ ENDLFileHandler::ENDLFileHandler()
 
 // Constructor for reading all data in file
 ENDLFileHandler::ENDLFileHandler( 
-    const std::string& file_name )
-  : d_endl_file_id( 1 ),
+    const std::string& file_name,
+    const bool epics_file_type )
+  : d_epics_file_type( epics_file_type ),
+    d_endl_file_id( 1 ),
     d_current_line( 0 ),
     d_valid_file( false ),
     d_end_of_file( false )
@@ -40,8 +42,10 @@ ENDLFileHandler::ENDLFileHandler(
 // Constructor for reading data specific to a given atomic number
 ENDLFileHandler::ENDLFileHandler( 
     const std::string& file_name,
-    const unsigned atomic_number  )
+    const unsigned atomic_number,
+    const bool epics_file_type )
   : d_atomic_number( atomic_number ),
+    d_epics_file_type( epics_file_type ),
     d_endl_file_id( 1 ),
     d_current_line( 0 ),
     d_valid_file( false ),
@@ -230,13 +234,26 @@ void ENDLFileHandler::processTwoColumnTable(
   indep_variable.resize( table_size );
   dep_variable.resize( table_size );
 
-  // Read table data
-  readENDLTableTwoColumn( 
-        d_endl_file_id,
-        table_size, 
-        &indep_variable[0],
-        &dep_variable[0],
-        &io_flag );
+  if ( d_epics_file_type )
+  {
+		// Read table data
+		readEPICSTableTwoColumn( 
+		      d_endl_file_id,
+		      table_size, 
+		      &indep_variable[0],
+		      &dep_variable[0],
+		      &io_flag );
+  }
+  else
+  {
+		// Read table data
+		readENDLTableTwoColumn( 
+		      d_endl_file_id,
+		      table_size, 
+		      &indep_variable[0],
+		      &dep_variable[0],
+		      &io_flag );
+  }
 
   // Update file flags and line number
   d_current_line += table_size+1;
@@ -275,14 +292,28 @@ void ENDLFileHandler::processThreeColumnTable(
   column_two.resize( table_size );
   column_three.resize( table_size );
 
-  // Read table data
-  readENDLTableThreeColumn( 
+  if ( d_epics_file_type )
+  {
+	// Read EPICS2014 table data
+    readEPICSTableThreeColumn( 
         d_endl_file_id,
         table_size, 
         &column_one[0],
         &column_two[0],
         &column_three[0],
         &io_flag );
+  }
+  else
+  {
+	// Read regular table data
+    readENDLTableThreeColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &io_flag );
+  }
 
   // Process the table data
   std::pair<double,std::vector<double> > indep, dep;

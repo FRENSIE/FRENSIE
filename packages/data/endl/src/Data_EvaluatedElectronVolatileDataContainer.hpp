@@ -95,9 +95,8 @@ public:
 //---------------------------------------------------------------------------//
 // SET ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
-  using EvaluatedElectronDataContainer::setAtomicExcitationCrossSectionEnergyGrid;
+  using EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid;
   using EvaluatedElectronDataContainer::setAtomicExcitationCrossSection;
-  using EvaluatedElectronDataContainer::setAtomicExcitationEnergyLossIncomingEnergy;
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyLoss;
 
   // Add the export member function to the public interface
