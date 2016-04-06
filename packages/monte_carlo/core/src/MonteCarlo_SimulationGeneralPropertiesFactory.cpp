@@ -18,9 +18,33 @@
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties( 
-				    const Teuchos::ParameterList& properties )
+void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn )
 {  
+  // Get the particle mode - required
+  TEST_FOR_EXCEPTION( !properties.isParameter( "Mode" ),
+		      std::runtime_error,
+		      "Error: the particle mode must be specified!" );
+  {
+    std::string raw_mode = properties.get<std::string>( "Mode" );
+
+    if( raw_mode == "N" || raw_mode == "n" || raw_mode == "Neutron" )
+      SimulationGeneralProperties::setParticleMode( NEUTRON_MODE );
+    else if( raw_mode == "P" || raw_mode == "p" || raw_mode == "Photon" )
+      SimulationGeneralProperties::setParticleMode( PHOTON_MODE );
+    else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
+      SimulationGeneralProperties::setParticleMode( NEUTRON_PHOTON_MODE );
+    else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
+      SimulationGeneralProperties::setParticleMode( ELECTRON_MODE );
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "Error: mode " << raw_mode << " is not currently "
+		       "supported!" );
+    }
+  }
+
   // Get the number of histories to run - required
   TEST_FOR_EXCEPTION( !properties.isParameter( "Histories" ),
 		      std::runtime_error,
@@ -29,15 +53,15 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
   SimulationGeneralProperties::setNumberOfHistories( 
 				 properties.get<unsigned int>( "Histories" ) );
 				 
-	// Get the number of batches per processor - optional
-	if( properties.isParameter( "Ideal Batches Per Processor" ) )
-	{
-	  unsigned int number_of_batches_per_processor = 
-	    properties.get<unsigned int>( "Ideal Batches Per Processor" );
-	    
-	  SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 
-	                                          number_of_batches_per_processor );
-	}
+  // Get the number of batches per processor - optional
+  if( properties.isParameter( "Ideal Batches Per Processor" ) )
+  {
+    unsigned int number_of_batches_per_processor = 
+      properties.get<unsigned int>( "Ideal Batches Per Processor" );
+    
+    SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 
+					     number_of_batches_per_processor );
+  }
 
   // Get the angle cosine cutoff value for surface flux estimators - optional
   if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )
@@ -72,7 +96,7 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
       SimulationGeneralProperties::setImplicitCaptureModeOn();
   }
   
-  properties.unused( std::cerr );
+  properties.unused( *os_warn );
 }
 
 } // end MonteCarlo namespace

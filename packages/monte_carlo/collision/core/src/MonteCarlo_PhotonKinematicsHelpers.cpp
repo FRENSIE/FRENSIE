@@ -41,7 +41,7 @@ double calculateElectronMomentumProjection(
 {
   // Make sure the energies are valid
   testPrecondition( final_energy >= 0.0 );
-  testPrecondition( initial_energy > final_energy );
+  testPrecondition( initial_energy >= final_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );

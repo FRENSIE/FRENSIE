@@ -463,14 +463,14 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
 
   typedef typename ArrayTraits<Array>::value_type value_type;
-
-  // Create any parent groups that do not exist yet in the location path
-  createParentGroups( group_location );
     
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
   try
   {
+    // Create any parent groups that do not exist yet in the location path
+    createParentGroups( group_location );
+    
     hsize_t dim = getArraySize( data );
     H5::DataSpace space( 1, &dim );
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
@@ -607,13 +607,13 @@ void HDF5FileHandler::writeValueToGroupAttribute(
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
-  // Create any parent groups that do not exist yet in the location path
-  createParentGroups( group_location );
-  
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
   try
   {
+    // Create any parent groups that do not exist yet in the location path
+    createParentGroups( group_location );
+  
     hsize_t dim = 1;
     H5::DataSpace space( 1, &dim );
     H5::Group group(d_hdf5_file->openGroup( group_location ) );

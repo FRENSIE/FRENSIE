@@ -653,8 +653,9 @@ WARN_LOGFILE           = warn.log
 # with spaces.
 
 INPUT                  = ${CMAKE_SOURCE_DIR}/packages/ \
-		        ${CMAKE_SOURCE_DIR}/tools/ \
+                         ${CMAKE_SOURCE_DIR}/tools/ \
 		        ${CMAKE_SOURCE_DIR}/README.md \
+                        ${CMAKE_SOURCE_DIR}/LICENSE.md \
 		        ${CMAKE_CURRENT_SOURCE_DIR} \
 
 # This tag can be used to specify the character encoding of the source files
@@ -735,7 +736,8 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             =
+IMAGE_PATH             = ${CMAKE_SOURCE_DIR}/packages/monte_carlo/event/doc/figures \
+                       ${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/doc/figures
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program

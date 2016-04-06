@@ -29,7 +29,7 @@ namespace Data{
  * the Evaluated Photon Data Library (EPDL), the Evaluated Atomic Data Library
  * (EADL) and the Evaluated Electron Data Library (EEDL). This class only
  * reads the data tables from the files and loads them into arrays. For
- * data processing functionality, refer to the FACEMC::DataProcessor. 
+ * data processing functionality, refer to the FRENSIE::DataProcessor. 
  */
 class ENDLIB97FileHandler
 {

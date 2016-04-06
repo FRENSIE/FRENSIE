@@ -93,6 +93,7 @@
  * have default names, which will be listed below.
  * <ul>
  *  <li> termination.cell </li>
+ *  <li> reflecting.surface </li>
  *  <li> material_\#_density_# </li>
  *  <li> material_\#_density_-# </li>
  *  <li> estimator_#.surface.current.n </li>
@@ -111,10 +112,11 @@
  *  <li> estimator_#.cell.c.flux.p </li>
  *  <li> estimator_#.cell.c.flux.e </li>
  * </ul>
- * The termination.cell, material, density, estimator, surface.current, 
- * surface.flux, cell.pulse.height, cell.tl.flux, cell.c.flux keywords can all 
- * be substituted with any alternative of your choosing (these alternatives 
- * must be specified in the \ref geometry_xml_file "geometry xml file"). 
+ * The termination.cell, reflecting.surface, material, density, estimator, 
+ * surface.current, surface.flux, cell.pulse.height, cell.tl.flux, 
+ * cell.c.flux keywords can all be substituted with any alternative of your 
+ * choosing (these alternatives must be specified in the 
+ * \ref geometry_xml_file "geometry xml file"). 
  *
  * The final step is to export the geometry. Attributes must be set to on
  * to save absolute volumes, surface ids and the group specifications. This
@@ -160,20 +162,31 @@
  * <Parameter name="Handler" type="string" value="DagMC"/>
  * <Parameter name="CAD File" type="string" value="my_cad_geom.sat"/>
  * <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
- * <Parameter name="Termination Cell Synonym" type="string" value="termination.cell"/>
- * <Parameter name="Material Synonym" type="string" value="mat"/>
- * <Parameter name="Density Synonym" type="string" value="rho"/>
- * <Parameter name="Estimator Synonym" type="string" value="estimator"/>
- * <Parameter name="Surface Current Synonym" type="string" value="surface.current"/>
- * <Parameter name="Surface Flux Synonym" type="string" value="surface.flux"/>
- * <Parameter name="Cell Pulse Height Synonym" type="string" value="cell.pulse.height"/>
- * <Parameter name="Cell Track-Length Flux Synonym" type="string" value="cell.tl.flux"/>
- * <Parameter name="Cell Collision Flux Synonym" type="string" value="cell.c.flux"/>
+ *
+ * <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
+ *
+ * <Parameter name="Termination Cell Property" type="string" value="termination.cell"/>
+ * <Parameter name="Reflecting Surface Property" type="string" value="spec.reflect"/>
+ * <Parameter name="Material Property" type="string" value="mat"/>
+ * <Parameter name="Density Property" type="string" value="rho"/>
+ * <Parameter name="Estimator Property" type="string" value="estimator"/>
+ *
+ * <Parameter name="Surface Current Name" type="string" value="surface.current"/>
+ * <Parameter name="Surface Flux Name" type="string" value="surface.flux"/>
+ * <Parameter name="Cell Pulse Height Name" type="string" value="cell.pulse.height"/>
+ * <Parameter name="Cell Track-Length Flux Name" type="string" value="cell.tl.flux"/>
+ * <Parameter name="Cell Collision Flux Name" type="string" value="cell.c.flux"/>
  * 
  * </ParameterList>
  * \endcode
- * Please note that keyword synonyms may not use the underscore ("_") character
- * as this is a reserved character in DagMC.
+ * Please note that keyword properties and estimator names may not use the 
+ * underscore ("_") character as this is a reserved character in DagMC.
+ *
+ * The above input file also includes an option called "Use Fast Id Lookup".
+ * The option causes DagMC to use a different method for looking up cell and
+ * surface ids that can often increase performance. The memory overhead will
+ * increase when this option is turned on so it should not be used with large
+ * problems. 
  *
  * \section geometry_sec_root Geometry Construction - ROOT
  * In order to use Root as the geometry handler for a simulation, a Root
@@ -188,17 +201,16 @@
  * Workflow in ROOT is quite straightforward. In order to construct a ROOT
  * geometry for particle tracking, the following workflow should be followed:
  *
- * \subsection material_construction_root Material Construction
- * Before discussing how materials are specified, the layout of the directory
- * containing the cross section tables must be discussed.
- *
  * <ol>
  *  <li> Construct a standard C file containing the ROOT geometry via a
          collection of volumes (discrete and combined), all embedded within a graveyard volume.</li>
  *   <ul><li> Each volume must have an assigned material and density</li>
- *       <li> Each volume must have an unique user-specified identifer assigned</li></ul>
- *  <li> Ensure that overlapping regions of sister volumes are properly assigned</li>
- *  <li> Ensure that daughters are assigned to a parent, starting from the bottom node</li>
+ *       <li> Each volume must have an unique user-specified identifer 
+ *            assigned</li></ul>
+ *  <li> Ensure that overlapping regions of sister volumes are properly 
+ *       assigned</li>
+ *  <li> Ensure that daughter volumes are assigned to a parent, starting from 
+ *       the bottom node</li>
  *  <li> Visualize the geometry</li>
  *  <li> Export to binary format for use in FRENSIE</li>
  * </ol>     
@@ -257,13 +269,41 @@
  * (pg. 302).
  *
  * The <a href="https://root.cern.ch/root/html/TGeoMaterial.html"> TGeoMaterial</a> 
- * class is used to construct a material in ROOT. For an elemental material,
- * one must provide a name to the material, the mass number, the atomic number,
- * and the density. Note that the material name should follow the FRENSIE naming
- * convention of "mat_#". Further, a positive value for density denotes atomic
- * atomic density (atoms/b-cm), while a negative value denotes mass density 
- * (g/cm^3). The example below defines a material consisting of elemental
- * hydrogen at a density of 0.001 g/cm^3.
+ * class is used to construct an elemental material in ROOT. There is also
+ * a <a href="https://root.cern.ch/root/html/TGeoMixture.html"> TGeoMixture</a>
+ * class that is derived from the TGeoMaterial class, which is used to
+ * construct a material made of many elements. FRENSIE only cares about the
+ * material name and the material density so the TGeoMixture class never
+ * needs to be used. In fact, it should <b>never</b> be used since it does
+ * not accept a negative density, which will be used to denote a mass
+ * density.
+ *
+ * For an elemental material, one must provide a name to the material, 
+ * the mass number, the atomic number, and the density. Again, the mass
+ * number and atomic number will be ignored by FRENSIE so any values can be
+ * used. There are several material names that are recognized by FRENSIE. These
+ * material names have the following defaults:
+ *
+ * <ul>
+ *  <li>mat_#</li>
+ *  <li>void</li>
+ *  <li>graveyard</li>
+ * </ul>
+ *
+ * If a material is assigned a name of "mat_#" then the cell will contain
+ * the material definition associated with material "#" (defined in the 
+ * material xml file). If a material is assigned the name of "void" the cell
+ * will contain no material but particle transport will still be
+ * done on it. Assigning a material name of "graveyard" indicates to 
+ * FRENSIE that any particle entering this cell should be terminated. 
+ * The mat, void and graveyard keywords can all be substituted with any
+ * alternative of your choosing (these alternatives must be specified in the
+ * \ref root_xml_example "root xml file"). 
+ * 
+ * When specifying the density, note that a positive value for the
+ * density denotes atomic density (atoms/b-cm), while a negative value denotes 
+ * a mass density (g/cm^3). The example below defines a material with id 1
+ * and a density of 0.001 g/cm^3.
  *
  * \code{.c}
  * // Material Definition Form:
@@ -273,69 +313,22 @@
  * TGeoMaterial* H = new TGeoMaterial( "mat_1", 1, 1, -0.001 );
  * \endcode
  *
- * <b>Note:</b> There are two important material names: "void" and "graveyard".
- * Assigning a material name of "void" indicates to FRENSIE that this cell
- * contains no material but particle transport should still be done on it. 
- * Assigning a material name of "graveyard" indicates to FRENSIE that any
- * particle entering this cell should be terminated.
- *
- * For materials which are compounds or mixtures, one may need a material which
- * is defined by several different elements. In order to do this, the
- * <a href="https://root.cern.ch/root/html/TGeoMixture.html"> TGeoMixture</a>
- * is derived from the 
- * <a href="https://root.cern.ch/root/html/TGeoMaterial.html"> TGeoMaterial</a> 
- * class, and is designed to allow for multiple elements. In order to define a
- * mixture, the user must provide a name, the number of elements, and the
- * density. Each element is then added individually into the mixture by 
- * providing a unique index [0, number_elements - 1], the mass number, the
- * atomic number, and the weight fraction of that element. Element indices
- * start at 0 and increment to ensure that each element has a unique
- * index. <b>Warning:</b>
- * ROOT will not renormalize weight fractions, thus the user must ensure that
- * the weight fractions sum to unity. The following is a simple definition for
- * water.
- *
- * \code{.c}
- * // Mixture Definition Form:
- * // TGeoMixture( "name", Number_Elements, Density)
- *
- * // Pure Liquid Water at STP ( rho = 1.0 g/cm^3 )
- * TGeoMixture* Water = new TGeoMixture( "mat_1", 2, -1.0 );
- *
- * // Elemental Definition Form:
- * // DefineElement( Index, A, Z, Weight_Fraction )
- *
- * // Add Hydrogen to Water
- * Water->DefineElement( 0, 1, 1, 0.201133 )
- *
- * // Add Oxygen to Water
- * Water->DefineElement( 1, 16, 8, 0.798867 )
- * \endcode
- *
- * A helpful reference for determining appropriate weight fractions of many
- * known mixtures (especially those common in nuclear engineering) is the 
- * <a href="http://www.pnnl.gov/main/publications/external/technical_reports/PNNL-15870Rev1.pdf"> 
- * PNNL Compendium of Material Composition Data for Radiation Transport 
- * Modeling</a>.
- *
  * The final step before proceeding to volume creation is to create a 
  * corresponding
  * <a href="https://root.cern.ch/root/html/TGeoMedium.html"> TGeoMedium</a> for
- * each material/mixture that has been defined. To define a medium, the user 
- * must provide a name, a medium index, and a material/mixture. By convention
- * the name should be "med_#" where the number matches that of the material or
- * mixture to which it corresponds. Further, the index should increment for each
- * medium in the same way that it incremented for the elements in the mixture.
- * This ensures that each medium has a unique index. The following example 
- * shows the medium definition of water assuming the materials were defined
- * as those in the previous example.
+ * each material that has been defined. To define a medium, the user 
+ * must provide a name, a medium index, and a material. By convention
+ * the name should be "med_#" where the number matches that of the material to 
+ * which it corresponds. Make sure that each medium has a unique index. The 
+ * following example shows the medium definition of hydrogen assuming the 
+ * material is defined as in the previous example.
  *
  * \code{.c}
  * // Medium Definition Form:
  * // TGeoMedium( "name", Index, TGeoMaterial (or TGeoMixture) )
  * 
- * // Medium for Pure Liquid Water
- * TGeoMedium* Water_medium = new TGeoMedium( "med_1", 0, Water );
+ * // Medium for Pure Hydrogen
+ * TGeoMedium* H_medium = new TGeoMedium( "med_1", 0, H );
  * \endcode
  *
  * \subsubsection root_volume ROOT Volume Generation 
@@ -366,15 +359,15 @@
  *   <li>See the handbook for the full list of volumes that can be created...</li>
  * </ul>
  * 
- * The simple example of constructing a sphere of water is shown below, assuming
- * the water medium is defined from the previous section.
+ * The simple example of constructing a sphere of hydrogen is shown below, 
+ * assuming the hydrogen medium is defined from the previous section.
  *
  * \code{.c}
  * // Sphere Definition Form:
  * // MakeSphere( "name", TGeoMedium, Minimum_Radius, Maximum_Radius )
  *
- * // Sphere of Water of radius 1.0cm centered at (0,0,0)
- * TGeoVolume *Water_Sphere = gGeoManager->MakeSphere( "Water_Sphere", Water_medium, 0.0, 1.0 );
+ * // Sphere of Hydrogen of radius 1.0cm centered at (0,0,0)
+ * TGeoVolume *H_Sphere = gGeoManager->MakeSphere( "Hydrogen_Sphere", H_medium, 0.0, 1.0 );
  * \endcode
  *
  * It should be noted that most volumes (Box, Sphere, Torus, etc.) are centered
@@ -387,7 +380,7 @@
  * unique identifier.
  *
  * \code{.c}
- * Water_Sphere->SetUniqueID(1);
+ * H_Sphere->SetUniqueID(1);
  * \endcode
  *
  * \subsubsection root_heirarchy ROOT Volume Heirarchy and Positioning 
@@ -404,14 +397,14 @@
  * can be done by using the AddNode() function call.
  *
  * \code{.c}
- * // Assume that Water_Sphere defines a sphere of water of radius 1.0cm 
+ * // Assume that H_Sphere defines a sphere of hydrogen of radius 1.0cm 
  * // and Air_Cube defines a cube of air of side length 3.0cm both centered
  * // at (0,0,0).
  *
  * // AddNode Definition Form:
  * // AddNode( Daughter_Node, Copy_Number )
  *
- * Air_Cube->AddNode( Water_Sphere, 1 );
+ * Air_Cube->AddNode( H_Sphere, 1 );
  * \endcode
  *
  * Taking this one step further, perhaps the user would like to offset the
@@ -421,7 +414,7 @@
  * matrix to be utilized.
  *
  * \code{.c}
- * Air_Cube->AddNode( Water_Sphere, 1, new TGeoTranslation(0.25,0.25,0.25) );
+ * Air_Cube->AddNode( H_Sphere, 1, new TGeoTranslation(0.25,0.25,0.25) );
  * \endcode
  *
  * The final issue to take into account would be overlapping regions. These
@@ -432,8 +425,10 @@
  *
  * <ol>
  *  <li> Overlapping regions are owned by all volumes in which they reside</li>
- *  <li> The geometry handler will assign priority ownership to the volume which was <b>not</b> defined as overlapping
- *  <li> In the event the user fails to specify overlap, the volume which was defined first will assume priority ownership of the region</li>
+ *  <li> The geometry handler will assign priority ownership to the volume 
+ *       which was <b>not</b> defined as overlapping
+ *  <li> In the event the user fails to specify overlap, the volume which was 
+ *       defined first will assume priority ownership of the region</li>
  * </ol> 
  *
  * For a simple example, imagine two spheres, Sphere_Left and Sphere_Right 
@@ -458,12 +453,12 @@
  * then once satisfied (and ROOT does not throw any errors) to export it to
  * a binary which can be read by FRENSIE.
  *
- * When constructing the geometry, one must also include a volume which contains
- * all other volumes. This volume will be the graveyard volume, or the rest of
- * universe region. Note that the material in this volume should be assigned a 
- * material name of "graveyard", so that it can be identified by FRENSIE. 
- * One must also set this volume as the Top volume using the
- * function call SetTopVolume:
+ * When constructing the geometry, one must also include a volume which 
+ * contains all other volumes. This volume will be the graveyard volume, or 
+ * the rest of universe region. Note that the material in this volume should be
+ * assigned a material name of "graveyard" (or the user specified replacement),
+ * so that it can be identified by FRENSIE. One must also set this volume as 
+ * the Top volume using the function call SetTopVolume:
  *
  * \code{.c}
  * gGeoManager->SetTopVolume( Graveyard );
@@ -488,7 +483,7 @@
  * gGeoManager->Export( "output_file_name.root" );
  * \endcode
  *
- * \subsubsection Example ROOT Geometry File
+ * \subsubsection root_xml_example ROOT Geometry File
  *
  * The following is a very simple example ROOT geometry file. It consists of a
  * 1cm radius sphere of hydrogen, inside of a void cube of side length 3cm, all
@@ -589,7 +584,8 @@
  * \subsection root_geom_xml Creating the Geometry XML File
  *
  * The ROOT geometry XML file only requires two parameters, which are the 
- * geometry handler and the name of the ROOT binary geometry file.
+ * geometry handler and the name of the ROOT binary geometry file. A basic
+ * geometry file is shown below.
  *
  * \code
  * <ParameterList name="Geometry">
@@ -600,7 +596,25 @@
  * </ParameterList>
  * \endcode
  *
+ * If different material keywords were chosen, they must be specified in the
+ * XML file as well:
+ *
+ * \code
+ * <ParameterList name="Geometry">
+ *
+ * <Parameter name="Handler" type="string" value="ROOT"/>
+ * <Parameter name="Root File" type="string" value="geometry_file.root"/>
+ * 
+ * <Parameter name="Void Material Name" type="string" value="empty"/>
+ * <Parameter name="Terminal Material Name" type="string" value="killzone"/>
+ * <Parameter name="Material Property Name" type="string" value="material"/>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
  * \section cross_section_dir Cross Section Directory
+ * Before discussing how materials are specified, the layout of the directory
+ * containing the cross section tables must be discussed.
  * The cross section directory must contain all of the cross section tables
  * that will be used in the simulation. It can be set up in a very similar
  * fashion to the MCNP_DATA directory used by MCNP. In this directory, an
@@ -664,11 +678,11 @@
  *
  * \section creating_material_xml_file Creating the Material XML file
  * Three parameter elements must appear in every material file. The first
- * is the material id. Note that any material id specified in the CAD file must
- * have a corresponding material definition in this XML file. The second is
- * the fractions element, which is used to specify the atom or weight fractions
- * of each isotope in the material. To specify weight fractions, negative
- * numbers should be given. Also note that the fractions need not be 
+ * is the material id. Note that any material id specified in the geometry file
+ * must have a corresponding material definition in this XML file. The second 
+ * is the fractions element, which is used to specify the atom or weight 
+ * fractions of each isotope in the material. To specify weight fractions, 
+ * negative numbers should be given. Also note that the fractions need not be 
  * normalized - this will be done internally. The third parameter is the 
  * isotopes element, which is used to specify the isotopes in the material.
  * A valid alias (specified in the cross_sections.xml file) must be used
@@ -685,6 +699,12 @@
  *
  * </ParameterList>
  * \endcode
+ *
+ * A helpful reference for determining appropriate weight fractions of many
+ * known mixtures (especially those common in nuclear engineering) is the 
+ * <a href="http://www.pnnl.gov/main/publications/external/technical_reports/PNNL-15870Rev1.pdf"> 
+ * PNNL Compendium of Material Composition Data for Radiation Transport 
+ * Modeling</a>.
  *
  * \section one_d_distributions One-Dimensional Distributions
  * Before discussing the remaining XML files, a special parameter type must
@@ -1408,6 +1428,77 @@
  * </ParameterList>
  * \endcode
  *
+ * \section ptrac_construction Particle Tracker Construction
+ * The particle tracker is an event tracker, similar to any of the estimators
+ * discussed elsewhere in this manual. However, the particle tracker acts as a
+ * global observer, keeping track of a specified number of particle histories
+ * and each particle's state variables throughout its lifetime. 
+ *
+ * \subsection ptrac_data Particle Tracker Data
+ * The particle tracker keeps track of particle states throughout their lifetimes.
+ * For a given number of histories, all source particles in that history number
+ * range, as well as all progeny (i.e. particles whose generation can be 
+ * traced back to the source particle) will be tracked. For each particle, at 
+ * every collision and particle destruction the following pieces of data are
+ * tracked:
+ *
+ * <ul> 
+ *  <li> X Position </li>
+ *  <li> Y Position </li>
+ *  <li> Z Position </li>
+ *  <li> X Direction </li>
+ *  <li> Y Direction </li>
+ *  <li> Z Direction </li>
+ *  <li> Collision Number </li>
+ *  <li> Energy </li>
+ *  <li> Weight </li>
+ * </ul>
+ *
+ * This data is then organized into maps with the following heirarchy:
+ * [History Number]->[Particle Type]->[Generation Number]->[Individual Particle Number]->[Lifetime Data]
+ *
+ * The data will be output to an HDF5 file (the same as any estimators) in a 
+ * separate directory.
+ *
+ * \subsection required_ptrac_parameters Particle Tracker Parameters
+ * <ol> 
+ *  <li>The first required parameter element is the id. Note that the id for 
+ *      the particle tracker must be unique with respect to all other estimators.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Id" type="int" value="1"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * <li>The second required parameter is the type name. In this case the required
+ *     type name is "Particle Tracker"
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Type" type="string" value="Particle Tracker"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  <li>The final parameter is optional and is the number of histories that will be 
+ *       tracked. Note that the default assignment for this parameter is 100.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Histories" type="unsigned int" value="100"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * </ol>
+ *
+ * \subsection ptrac_example Particle Tracker Example
+ *
+ * \code
+ * <ParameterList name="Observers">
+
+ * <ParameterList name="Particle Tracker 1">
+ *   <Parameter name="Id" type="unsigned int" value="1"/>
+ *   <Parameter name="Type" type="string" value="Particle Tracker"/>
+ *   <Parameter name="Histories" type="unsigned int" value="500" />
+ * </ParameterList>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
  * \section source_construction Source Construction
  * There are currently two types of sources that can be created: the 
  * distributed source and the compound source. 
@@ -1491,12 +1582,13 @@
  *  <li>The third optional element is the rejection cell. When a source's
  *      spatial distribution is too complicated to be modeled with one of
  *      the available spatial distribution types, one can specify a rejection
- *      cell that will be used in conjunction with the defined spatial 
- *      distribution. After a point is sampled from the spatial distribution,
- *      the point is only used if it falls within the rejection cell. 
+ *      cell (or cells) that will be used in conjunction with the defined 
+ *      spatial distribution. After a point is sampled from the spatial 
+ *      distribution, the point is only used if it falls within one of the
+ *      rejection cells. 
  *      <ul>
  *       <li>\code
- *           <Parameter name="Rejection Cell" type="int" value="2"/>
+ *           <Parameter name="Rejection Cells" type="Array" value="{1,2}"/>
  *           \endcode</li>
  *      </ul></li>
  *
@@ -1693,147 +1785,259 @@
  * </ParameterList>
  * \endcode
  *
- * \section runtime_configuration Runtime Configuration
- * There are many runtime configuration options available. Only two of these
- * options are required. These options will be listed below.
+ * \section runtime_configuration Runtime Configuration Settings
+ * There are many runtime configuration settings. Only two of these
+ * settings require specification. Both the required and optional settings
+ * will be discussed in the following subsections.
  *
- * \subsection required_runtime_options Required Runtime Configurations
+ * \subsection required_runtime_options Required Runtime Configuration Settings
+ * The two settings that must be specified are the particle mode and the number
+ * of histories to simulate.
+ *
  * <ol>
- *  <li>The first required runtime configuration parameter is the mode. The
- *      mode is used by facemc to determine which cross section info needs
- *      to be loaded. The acceptable modes are: "Electron", "Photon" and
- *      "Neutron". Coupled physics modes will be available in the future.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Mode" type="string" value="Neutron"/>
- *           \endcode</li>
- *      </ul></li>
+ *  <li>The particle mode is used by facemc to determine which particles will 
+ *      be simulated and which cross section info needs to be loaded. The 
+ *      acceptable modes are "Electron", "Photon", "Neutron" and 
+ *      "Neutron-Photon". More coupled physics modes will be available in the 
+ *      future (e.g. "Photon-Electron"). An example mode specification is shown
+ *      below:
+ *      \code
+ *      <Parameter name="Mode" type="string" value="Neutron"/>
+ *      \endcode</li>
  *
- *  <li>The second required runtime configuration parameter is the number
- *      of histories to simulate. Please note that scientific notation is not
- *      allowed when specifying the number of histories
- *      <ul>
- *       <li>\code
- *           <Parameter name="Histories" type="unsigned int" value="1000000"/>
- *           \endcode</li>
- *      </ul></li>
+ *  <li>The number of histories to simulate must also be specified. The 
+ *      following parameter line is an example of this specification. 
+ *      \code
+ *      <Parameter name="Histories" type="unsigned int" value="1000000"/>
+ *      \endcode
+ *      Please note that scientific notation is not allowed when specifying the
+ *      number of histories (yet).</li>
  * </ol>
- *
- * \subsection optional_runtime_options Optional Runtime Configurations
- * <ol>
- *  <li>The first optional runtime configuration parameter is the surface flux
- *      angle cosine cutoff. This value is used by surface flux estimators
- *      to avoid a divide-by-zero that is possible in the calculation of
- *      surface flux contributions. When the angle cosine is below the angle
- *      cosine cutoff, an approximation for the surface flux contribution is
- *      used. The value must be between 0 and 1. The default value is 0.001 
- *      (MCNP uses a default value of 0.1). 
- *      <ul>
- *       <li>\code
- *           <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.1"/>
- *           \endcode</li>
- *      </ul></li>
- *
- *  <li>The second optional runtime configuration parameter is the free gas
- *      threshold. This value is used by elastic neutron scattering 
- *      to determine when the free gas thermal treatment should be used. 
- *      The threshold is the number of times above the material temperature
- *      that the neutron energy can be before the free gas thermal treatment
- *      is no longer used. The default value is 400.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
- *           \endcode</li>
- *      </ul></li>
- *
- *  <li>The third optional runtime configuration parameter is the minimum
- *      neutron energy. Once the energy of a neutron falls below this value
- *      the neutron history is ended. The default value is 1e-11 MeV.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Min Neutron Energy" type="double" value="1e-10"/>
- *           \endcode</li>
- *      </ul></li>
- *      
- *  <li>The fourth optional runtime configuration parameter is the minimum
- *      photon energy. Once the energy of a photon falls below this value
- *      the photon history is ended. The default value is 0.001 MeV.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
- *           \endcode</li>
- *      </ul></li>
- *  <li>The fifth optional runtime configuration parameter is the minimum
- *      electron energy. Once the energy of an electron falls below this value
- *      the electron history is ended. The default value is 1.5e-5 MeV.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Min Electron Energy" type="double" value="1e-3"/>
- *           \endcode</li>
- *      </ul></li>
- *  <li>The sixth optional runtime configuration parameter is for enabling or
- *      disabling the usage of impulse approximation photon data. The impulse 
- *      approximation is an alternative to the standard Waller-Hartree theory
- *      and will modify the incoherent cross section and the photon
- *      Doppler broadening treatment. This feature is disabled by default.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Impulse Approximation" type="bool" value="true"/>
- *           \endcode</li>
- *      </ul></li>
- *
- *  <li>The seventh optional runtime configuration parameter is for enabling
- *      or disabling photon Doppler broadening. If this feature is enabled,
- *      Compton profiles will be loaded so that the photon energy from an
- *      incoherent scattering event can be broadened by the motion of the
- *      bound electrons (characterized by the Compton profile). This feature
- *      is enabled by default.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Photon Doppler Broadening" type="bool" value="false"/>
- *           \endcode</li>
- *      </ul></li>
- *  
- *  <li>The eigth optional runtime configuration parameter is for enabling
- *      or disabling atomic relaxation. If this feature is enabled, atomic
- *      relaxation data will be loaded and atomic relaxation will be loaded.
- *      Both electrons and photons can be generated from atomic relaxation.
- *      In addition, both photon and electron interactions can cause subshell
- *      vacancies. This feature is enabled by default.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Atomic Relaxation" type="bool" value="false"/>
- *           \endcode</li>
- *      </ul></li>
- *   
- *  <li>The nineth optional runtime configuration parameter is the number
- *      of photon has grid bins. To speed up photon energy look-ups a
- *      hash-based scheme has been employed. The speed up is loosely 
- *      correlated with the number of hash grid bins, though the correlation
- *      is system dependent. The cost of increasing the number of hash grid 
- *      bins is an increase in memory overhead, though this increase should
- *      be relatively small. The default number of hash grid bins is 1000.
- *      <ul>
- *       <li>\code
- *           <Parameter name="Photon Hash Grid Bins" type="unsigned int" value="500"/>
- *           \endcode</li>
- *      </ul></li>
- *
- * \subsection example_runtime_config_xml_file Example Runtime Configuration XML File
+ * 
+ * An example of a basic runtime configuration xml file is shown below:
  *
  * \code
- * <ParameterList name="Runtime Configuration">
- *   <Parameter name="Mode" type="string" value="Photon"/>
- *   <Parameter name="Histories" type="unsigned int" value="1000000"/>
- *   <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.001"/>
- *   <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
- *   <Parameter name="Min Neutron Energy" type="double" value="1e-2"/>
- *   <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
- *   <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
- *   <Parameter name="Impulse Approximation" type="bool" value="true"/>
- *   <Parameter name="Photon Doppler Broadening" type="bool" value="false"/>
- *   <Parameter name="Atomic Relaxation" type="bool" value="false"/>
- *   <Parameter name="Detailed Pair Production" type="bool" value="true"/>
+ * <ParameterList name="Properties">
+ *
+ * <ParameterList name="General Properties">
+ * 
+ *   <Parameter name="Mode" type="string" value="Neutron-Photon"/>
+ *   <Parameter name="Histories" type="unsigned int" value="10"/>
+ *
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
+ *
+ * \subsection optional_general_runtime_settings Optional General Runtime Configuration Settings
+ * There are three optional general runtime configuration settings:
+ * The surface flux angle cosine cutoff, implicit capture mode, and the
+ * ideal batches per processor.
+ *
+ * The surface flux angle cosine cutoff is used by surface flux estimators to 
+ * avoid a divide-by-zero that is possible in the calculation of surface flux 
+ * contributions. When the angle cosine is below the angle cosine cutoff, an 
+ * approximation for the surface flux contribution is used. The value must be 
+ * between 0 and 1. The default value is 0.001 (MCNP uses a default value of 
+ * 0.1). An example specification of this setting is shown below:
+ * \code
+ * <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.1"/>
+ * \endcode
+ *
+ * If you want the simulation to treat capture implicitly (by modifying the 
+ * particle weight) implicit capture should be turned on (it is turned off
+ * by default). The parameter line shown below should be used to turn on
+ * implicit capture mode.
+ * \code
+ * <Parameter name="Implicit Capture" type="bool" value="true"/>
+ * \endcode
+ *
+ * The ideal batches per processor setting is only used when FACEMC has
+ * been built with MPI and is being run with "mpiexec" with more than one
+ * processor. The value given determines the size of batches that will be 
+ * created and assigned to worker nodes. The default value is one, which means 
+ * that each worker node will get one batch of particle histories to simulate 
+ * (the sum of the worker batch sizes is the total number of histories). On 
+ * distributed systems with heterogeneous nodes (i.e. nodes with different 
+ * CPUs, RAM size/speed, etc.) increasing the number of batches per processor 
+ * can improve load balancing. Determining the optimal value for a system will 
+ * require trial and error. On distributed systems with homogeneous nodes, the 
+ * default value of one should be used. An example specification of this 
+ * setting is shown below:
+ * \code
+ * <Parameter name="Ideal Batches Per Processor" type="unsigned int" value="25"/>
+ * \endcode
+ *
+ * Note that all of the required and optional general runtime configuration 
+ * settings are placed within a parameter list with the name 
+ * "General Properties".
+ *
+ * \subsection optional_neutron_runtime_settings Optional Neutron Runtime Configuration Settings
+ * There are two optional neutron runtime configuration settings: the
+ * free gas threshold and the minimum neutron energy.
+ *
+ * The free gas threshold is used by elastic neutron scattering to determine 
+ * when the free gas thermal treatment should be used. The threshold is the 
+ * number of times above the material temperature that the neutron energy can 
+ * be before the free gas thermal treatment is no longer used. The default 
+ * value is 400. An example specification of this setting is shown below:
+ * \code
+ * <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
+ * \endcode
+ *
+ * The minimum neutron energy is used by FACEMC to kill neutrons that fall
+ * below that energy. The default value is 1e-11 MeV. An example specification
+ * of this setting is shown below:
+ * \code
+ * <Parameter name="Min Neutron Energy" type="double" value="1e-10"/>
+ * \endcode
+ *
+ * Note that all of the optional neutron runtime configuration settings are 
+ * placed within a parameter list with the name "Neutron Properties".
+ *
+ * \subsection optional_photon_runtime_settings Optional Photon Runtime Configuration Settings
+ * There are five optional photon runtime configuration settings: the
+ * minimum photon energy, the Kahn sampling cutoff energy, the 
+ * incoherent photon scattering model, the photon atomic relaxation mode and
+ * the number of photon hash grid bins.
+ *      
+ * The minimum photon energy is used by FACEMC to kill photons that fall
+ * below that energy. The default value is 0.001 MeV. An example specification
+ * of this setting is shown below:
+ * \code
+ * <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
+ * \endcode
+ *
+ * The Kahn sampling cutoff energy is used when sampling from the 
+ * Klein-Nishina cross section. When the photon energy is below the
+ * cutoff energy Kahn's rejection sampling technique is used to sample from
+ * the Klein-Nishina cross section. When above the cutoff energy Koblinger's
+ * direct sampling method is used. The default value is 3.0 MeV. Note that the
+ * theoretical minimum value of the cutoff energy is (1+sqrt(3))me*c^2
+ * (~1.4 MeV). An example specification of this setting is shown below.
+ * \code
+ * <Parameter name="Kahn Sampling Cutoff Energy" type="double" value="2.5"/>
+ * \endcode
+ * 
+ * The incoherent photon scattering model specified determines how incoherent
+ * scattering is handled. There are currently eight models that can be
+ * specified:
+ * <ul>
+ *  <li>"Klein-Nishina Model"</li>
+ *  <li>"Waller-Hartree Model"</li>
+ *  <li>"Impulse Model"</li>
+ *  <li>"DHP Doppler Broadened Hybrid Model"</li>
+ *  <li>"DFP Doppler Broadened Hybrid Model"</li>
+ *  <li>"CHP Doppler Broadened Hybrid Model"</li>
+ *  <li>"CFP Doppler Broadened Hybrid Model"</li>
+ *  <li>"FP Doppler Broadened Impulse Model"</li>
+ * </ul>
+ * The "Klein-Nishina Model" assumes that all atomic electrons that are
+ * interacted with are free and at rest (binding effects are ignored). 
+ * The "Waller-Hartree Model" accounts for the effects of electron binding
+ * on the angular distribution of outgoing photons by multiplying the 
+ * Klein-Nishina cross section by the Waller-Hartree scattering function.
+ * The "Impulse Model" also accounts for the effects of electron binding
+ * on the angular distribution of outgoing photons. It, however, uses the
+ * impulse approximation scattering function.
+ * All of the Doppler broadened hybrid models use the "Waller-Hartree Model"
+ * to sample outgoing photon angles and the impulse approximation to
+ * sample the outgoing (Doppler broadened) photon energies. The "DHP" 
+ * (Decoupled Half Profile) model samples the electron shell that is
+ * interacted with independently from the electron shell where the void
+ * is assumed to be after the interaction (decoupled). It also only uses
+ * half of the Compton profiles for Doppler broadening. The "DFP" model
+ * (Decoupled Full Profile) model is the same as the "DHP" model except
+ * that the full Compton profiles are used. The "CHP" and "CFP" models
+ * are the same as the "DHP" and "DFP" models respectively except that the
+ * electron shell that is interacted with is also used for atomic relaxation.
+ * The "FP Doppler Broadened Impulse Model" is the only consistent Doppler
+ * broadening model (the impulse approximation is used to sample the outgoing
+ * photon angle and energy). The full Compton profiles are also used ("FP").
+ * The default model is the "CFP Doppler Broadened Hybrid Model".
+ * Note that some of these models are not supported with certain data files.
+ * If a model is not supported with the data files specified, FACEMC will
+ * display an error message. An example specification of this setting is shown
+ * below:
+ * \code
+ * <Parameter name="Incoherent Photon Scattering Model" type="string" value="DHP Doppler Broadened Hybrid Model"/>
+ * \endcode
+ *
+ * The photon atomic relaxation mode can only be set to on or off (on by
+ * default). It determines whether FACEMC will model atomic relaxation from
+ * subshell vacancies created by photons. An example specification of this 
+ * setting is shown below:  
+ * \code
+ * <Parameter name="Photon Atomic Relaxation" type="bool" value="false"/>
+ * \endcode
+ * 
+ * To speed up photon cross section look-ups a hash-based scheme has been 
+ * employed. The speed up is loosely correlated with the number of hash grid 
+ * bins, though the correlation is system dependent. The cost of increasing the
+ * number of hash grid bins is an increase in memory overhead, though this 
+ * increase should be relatively small for reasonable hash grid sizes. The 
+ * default number of photon hash grid bins is 1000. An example specification of
+ * this setting is shown below: 
+ * \code
+ * <Parameter name="Photon Hash Grid Bins" type="unsigned int" value="500"/>
+ * \endcode
+ *
+ * Note that all of the optional photon runtime configuration settings are 
+ * placed within a parameter list with the name "Photon Properties".
+ *
+ * \subsection optional_electron_runtime_settings Optional Electron Runtime Configuration Settings
+ * There are two optional electron runtime configuration settings: The
+ * minimum electron energy and the electron atomic relaxation mode.
+ *
+ * The minimum electron energy is used by FACEMC to kill electrons that fall
+ * below that energy. The default value is 1.5e-5 MeV. An example specification
+ * of this setting is shown below:
+ * \code
+ * <Parameter name="Min Electron Energy" type="double" value="1e-3"/>
+ * \endcode
+ *
+ * The electron atomic relaxation mode can only be set to on or off (on by
+ * default). It determines whether FACEMC will model atomic relaxation from
+ * subshell vacancies created by electrons. An example specification of this 
+ * setting is shown below:  
+ * \code
+ * <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
+ * \endcode
+ *
+ * Note that all of the optional electron runtime configuration settings are 
+ * placed within a parameter list with the name "Electron Properties".
+ *
+ * \subsection example_runtime_config_xml_file Advanced Runtime Configuration XML File Example
+ *
+ * \code
+ * <ParameterList name="Properties">
+ *
+ * <ParameterList name="General Properties">
+ *  <Parameter name="Mode" type="string" value="Neutron-Photon"/>
+ *  <Parameter name="Histories" type="unsigned int" value="10"/>
+ *  <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.1"/>
+ *  <Parameter name="Implicit Capture" type="bool" value="true"/>
+ *  <Parameter name="Ideal Batches Per Processor" type="unsigned int" value="25"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Neutron Properties">
+ *  <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
+ *  <Parameter name="Min Neutron Energy" type="double" value="1e-2"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Photon Properties">
+ *  <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
+ *  <Parameter name="Kahn Sampling Cutoff Energy" type="double" value="2.5"/>
+ *  <Parameter name="Photon Hash Grid Bins" type="unsigned int" value="500"/>
+ *  <Parameter name="Incoherent Photon Scattering Model" type="string" value="DHP Doppler Broadened Hybrid Model"/>
+ *  <Parameter name="Photon Atomic Relaxation" type="bool" value="false"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Electron Properties">
+ *  <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
+ *  <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
+ * </ParameterList>
+ *
  * </ParameterList>
  * \endcode
  *

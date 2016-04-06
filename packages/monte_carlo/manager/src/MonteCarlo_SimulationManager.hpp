@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SIMULATION_MANAGER_HPP
-#define FACEMC_SIMULATION_MANAGER_HPP
+#ifndef FRENSIE_SIMULATION_MANAGER_HPP
+#define FRENSIE_SIMULATION_MANAGER_HPP
 
 // Std Lib Includes
 #include <iostream>
@@ -35,11 +35,11 @@ public:
   virtual void runSimulation() = 0;
 
   //! Print the data in all estimators to the desired stream
-  virtual void printSimulationSummary( std::ostream &os ) const = 0;
+  virtual void printSimulationSummary( std::ostream& os ) const = 0;
 
   //! Export the simulation data
-  virtual void exportSimulationData( 
-				 const std::string& data_file_name ) const = 0;
+  virtual void exportSimulationData( const std::string& data_file_name,
+                                     std::ostream& os) const = 0;
 
   //! Return a signal handler function
   virtual void signalHandler(int signal) = 0;
@@ -47,7 +47,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SIMULATION_MANAGER_HPP
+#endif // end FRENSIE_SIMULATION_MANAGER_HPP
 
 //--------------------------------------------------------------------------//
 // end SimulationManager.hpp

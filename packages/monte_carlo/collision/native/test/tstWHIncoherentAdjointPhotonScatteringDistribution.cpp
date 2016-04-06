@@ -20,7 +20,6 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_UnitConversionPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
@@ -421,7 +420,8 @@ int main( int argc, char** argv )
     critical_line_energies[2] = 1.0;
 
     Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
-    incoherent_base_dist( new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution<Utility::InverseAngstromConversionPolicy>( 
+    incoherent_base_dist( 
+              new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution( 
 						       20.0,
 						       scattering_function ) );
     

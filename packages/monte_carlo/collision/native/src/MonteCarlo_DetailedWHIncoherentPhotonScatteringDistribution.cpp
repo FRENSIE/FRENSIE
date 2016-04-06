@@ -15,17 +15,17 @@ namespace MonteCarlo{
 
 // Constructor
 DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
-      const double kahn_sampling_cutoff_energy )
+   const std::shared_ptr<const ScatteringFunction>& scattering_function,
+   const Teuchos::Array<double>& subshell_occupancies,
+   const Teuchos::Array<SubshellType>& subshell_order,
+   const double kahn_sampling_cutoff_energy )
   : WHIncoherentPhotonScatteringDistribution( scattering_function,
 					      kahn_sampling_cutoff_energy ),
     d_subshell_occupancy_distribution(),
     d_subshell_order( subshell_order )
 {
   // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  testPrecondition( scattering_function.get() );
   // Make sure the shell interaction data is valid
   testPrecondition( subshell_occupancies.size() > 0 );
   testPrecondition( subshell_occupancies.size() ==

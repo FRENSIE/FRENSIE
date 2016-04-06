@@ -645,15 +645,16 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   photon.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 8 );
+  std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.9; // select the incoherent reaction
   fake_stream[2] = 0.001; // sample from first term of koblinger's method
   fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[4] = 0.5; // accept x in scattering function rejection loop
-  fake_stream[5] = 0.005; // select first shell for collision
-  fake_stream[6] = 6.427713151861e-01; // select pz = 40.0
-  fake_stream[7] = 0.25; // select energy loss
+  fake_stream[5] = 0.005; // select first shell for collision - old
+  fake_stream[6] = 0.005; // select first shell for collision - endf
+  fake_stream[7] = 6.427713151861e-01; // select pz = 40.0
+  fake_stream[8] = 0.25; // select energy loss
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -727,7 +728,7 @@ int main( int argc, char** argv )
 			         cross_section_xml_file,
 			         Teuchos::inoutArg(cross_section_table_info) );
 
-    boost::unordered_set<std::string> nuclide_aliases;
+    std::unordered_set<std::string> nuclide_aliases;
     nuclide_aliases.insert( "H-1_293.6K" );
     nuclide_aliases.insert( "H-1_900K" );
 
@@ -739,7 +740,7 @@ int main( int argc, char** argv )
 					     false,
 					     false );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
       nuclide_map;
 
     nuclide_factory.createNuclideMap( nuclide_map );
@@ -767,7 +768,7 @@ int main( int argc, char** argv )
 							 nuclide_names ) );
 
     // Assign the atom fractions and names
-    boost::unordered_set<std::string> atom_aliases;
+    std::unordered_set<std::string> atom_aliases;
     atom_aliases.insert( "Pb" );
 
     Teuchos::Array<double> atom_fractions( 1 );
@@ -792,7 +793,7 @@ int main( int argc, char** argv )
 		 false,
 		 true );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       photoatom_map;
 
     photoatom_factory.createPhotoatomMap( photoatom_map );
@@ -813,7 +814,7 @@ int main( int argc, char** argv )
 					     MonteCarlo::TWOBS_DISTRIBUTION,
 					     true );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       electroatom_map;
 
     electroatom_factory.createElectroatomMap( electroatom_map );

@@ -11,8 +11,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCInstanceFactory.hpp"
-#include "Geometry_DagMCHelpers.hpp"
-#include "Geometry_DagMCProperties.hpp"
+#include "Geometry_DagMC.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -35,128 +34,139 @@ void DagMCInstanceFactory::initializeDagMC(
   if( geom_rep.isParameter( "Facet Tolerance" ) )
     facet_tol = geom_rep.get<double>( "Facet Tolerance" );
 
-  // Get the property synonyms
-  std::vector<std::string> properties( 4 );
-
-  if( geom_rep.isParameter( "Termination Cell Synonym" ) )
+  if( geom_rep.isParameter( "Termination Cell Property" ) )
   {
-    properties[0] = geom_rep.get<std::string>( "Termination Cell Synonym" ); 
+    std::string property_name = 
+      geom_rep.get<std::string>( "Termination Cell Property" ); 
     
-    TEST_FOR_EXCEPTION( properties[0].find( "_" ) < properties[0].size(),
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
-			"Error: the termination cell synonym cannot have an "
-			"underscore character!" );
+			"Error: the termination cell property name cannot "
+                        "have an underscore character!" );
 
-    DagMCProperties::setTerminationCellPropertyName( properties[0] );
+    DagMC::setTerminationCellPropertyName( property_name );
   }
-  else
-    properties[0] = DagMCProperties::getTerminationCellPropertyName();
 
-  if( geom_rep.isParameter( "Material Synonym" ) )
+  if( geom_rep.isParameter( "Reflecting Surface Property" ) )
   {
-    properties[1] = geom_rep.get<std::string>( "Material Synonym" );
+    std::string property_name = 
+      geom_rep.get<std::string>( "Reflecting Surface Property" );
 
-    TEST_FOR_EXCEPTION( properties[1].find( "_" ) < properties[1].size(),
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
-			"Error: the material synonym cannot have an "
+			"Error: the reflecting surface property name cannot "
+                        "have an underscore character!" );
+
+    DagMC::setReflectingSurfacePropertyName( property_name );
+  }
+
+  if( geom_rep.isParameter( "Material Property" ) )
+  {
+    std::string property_name = 
+      geom_rep.get<std::string>( "Material Property" );
+
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
+			std::runtime_error,
+			"Error: the material property name cannot have an "
 			"underscore character!" );
     
-    DagMCProperties::setMaterialPropertyName( properties[1] );
+    DagMC::setMaterialPropertyName( property_name );
   }
-  else
-    properties[1] = DagMCProperties::getMaterialPropertyName();
 
-  if( geom_rep.isParameter( "Density Synonym" ) )
+  if( geom_rep.isParameter( "Density Property" ) )
   {
-    properties[2] = geom_rep.get<std::string>( "Density Synonym" );
+    std::string property_name = 
+      geom_rep.get<std::string>( "Density Property" );
 
-    TEST_FOR_EXCEPTION( properties[2].find( "_" ) < properties[2].size(),
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
-			"Error: the density synonym cannot have an "
+			"Error: the density property name cannot have an "
 			"underscore character!" );
 
-    DagMCProperties::setDensityPropertyName( properties[2] );
+    DagMC::setDensityPropertyName( property_name );
   }
-  else
-    properties[2] = DagMCProperties::getDensityPropertyName();
-
-  if( geom_rep.isParameter( "Estimator Synonym" ) )
+  
+  if( geom_rep.isParameter( "Estimator Property" ) )
   {
-    properties[3] = geom_rep.get<std::string>( "Estimator Synonym" );
+    std::string property_name = 
+      geom_rep.get<std::string>( "Estimator Property" );
 
-    TEST_FOR_EXCEPTION( properties[3].find( "_" ) < properties[3].size(),
+    TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
-			"Error: the estimator synonym cannot have an "
+			"Error: the estimator property name cannot have an "
 			"underscore character!" );
 
-    DagMCProperties::setEstimatorPropertyName( properties[3] );
+    DagMC::setEstimatorPropertyName( property_name );
   }
-  else
-    properties[3] = DagMCProperties::getEstimatorPropertyName();
 
-  // Get the estimator type synonyms
-  if( geom_rep.isParameter( "Surface Current Synonym" ) )
+  // Get the estimator type names
+  if( geom_rep.isParameter( "Surface Current Name" ) )
   {
-    std::string name = geom_rep.get<std::string>( "Surface Current Synonym" );
+    std::string name = geom_rep.get<std::string>( "Surface Current Name" );
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the surface current synonym cannot have an "
+			"Error: the surface current name cannot have an "
 			"underscore character!" );
 
-    DagMCProperties::setSurfaceCurrentName( name );
+    DagMC::setSurfaceCurrentName( name );
   }
 
-  if( geom_rep.isParameter( "Surface Flux Synonym" ) )
+  if( geom_rep.isParameter( "Surface Flux Name" ) )
   {
-    std::string name = geom_rep.get<std::string>( "Surface Flux Synonym" );
+    std::string name = geom_rep.get<std::string>( "Surface Flux Name" );
     
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the surface flux synonym cannot have an "
+			"Error: the surface flux name cannot have an "
 			"underscore character!" );
 
-    DagMCProperties::setSurfaceFluxName( name );
+    DagMC::setSurfaceFluxName( name );
   }
 
-  if( geom_rep.isParameter( "Cell Pulse Height Synonym" ) )
+  if( geom_rep.isParameter( "Cell Pulse Height Name" ) )
   {
-    std::string name = geom_rep.get<std::string>( "Cell Pulse Height Synonym");
+    std::string name = geom_rep.get<std::string>( "Cell Pulse Height Name");
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell pulse height synonym cannot have an "
+			"Error: the cell pulse height name cannot have an "
 			"underscore character!" );
 
-    DagMCProperties::setCellPulseHeightName( name );
+    DagMC::setCellPulseHeightName( name );
   }
 
-  if( geom_rep.isParameter( "Cell Track-Length Flux Synonym" ) )
+  if( geom_rep.isParameter( "Cell Track-Length Flux Name" ) )
   {
-    std::string name = geom_rep.get<std::string>( "Cell Track-Length Flux Synonym" );
+    std::string name = geom_rep.get<std::string>( "Cell Track-Length Flux Name" );
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell track-length flux synonym cannot "
+			"Error: the cell track-length flux name cannot "
 			"have an underscore character!" );
 
-    DagMCProperties::setCellTrackLengthFluxName( name );
+    DagMC::setCellTrackLengthFluxName( name );
   }
 
-  if( geom_rep.isParameter( "Cell Collision Flux Synonym" ) )
+  if( geom_rep.isParameter( "Cell Collision Flux Name" ) )
   {
-    std::string name = geom_rep.get<std::string>( "Cell Collision Flux Synonym" );
+    std::string name = geom_rep.get<std::string>( "Cell Collision Flux Name" );
 
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
-			"Error: the cell collision flux synonym cannot "
+			"Error: the cell collision flux name cannot "
 			"have an underscore character!" );
 
-    DagMCProperties::setCellCollisionFluxName( name );
+    DagMC::setCellCollisionFluxName( name );
   }
+
+  bool use_fast_id_lookup = false;
+
+  if( geom_rep.isParameter( "Use Fast Id Lookup" ) )
+     use_fast_id_lookup = geom_rep.get<bool>( "Use Fast Id Lookup" );
 
   // Initialize DagMC
-  Geometry::initializeDagMC( cad_file_name, properties, facet_tol );
+  DagMC::initialize( cad_file_name, facet_tol, use_fast_id_lookup, os_warn );
 
   // Print the unused parameters
   geom_rep.unused( os_warn );

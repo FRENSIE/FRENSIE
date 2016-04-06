@@ -9,7 +9,7 @@
 #ifndef GEOMETRY_INTERSECTION_POINT_HELPERS_DEF_HPP
 #define GEOMETRY_INTERSECTION_POINT_HELPERS_DEF_HPP
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "Geometry_Vector.hpp"
 #include "Geometry_VectorHelpers.hpp"
 #include "Geometry_Matrix.hpp"

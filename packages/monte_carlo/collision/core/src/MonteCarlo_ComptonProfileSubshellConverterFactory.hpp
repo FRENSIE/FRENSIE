@@ -23,8 +23,9 @@ class ComptonProfileSubshellConverterFactory
 public:
 
   //! Create the converter
+  template<template<typename> class SmartPointer>
   static void createConverter( 
-		      Teuchos::RCP<ComptonProfileSubshellConverter>& converter,
+		      SmartPointer<ComptonProfileSubshellConverter>& converter,
 		      const unsigned atomic_number );
 
 private:
@@ -34,6 +35,14 @@ private:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_ComptonProfileSubshellConverterFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_FACTORY_HPP
 

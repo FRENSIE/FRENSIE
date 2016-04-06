@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <iostream>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -25,7 +26,8 @@ public:
   
   //! Initialize the simulation electron properties
   static void initializeSimulationElectronProperties( 
-				    const Teuchos::ParameterList& properties );
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn = &std::cerr );
 };
 
 } // end MonteCarlo namespace

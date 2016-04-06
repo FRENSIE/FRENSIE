@@ -9,8 +9,10 @@
 #ifndef UTILITY_SPHERICAL_SPATIAL_DISTRIBUTION_HPP
 #define UTILITY_SPHERICAL_SPATIAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <memory>
+
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -35,13 +37,13 @@ public:
 
   //! Constructor
   SphericalSpatialDistribution(
-		      const Teuchos::RCP<OneDDistribution>& r_distribution,
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const double center_x_position,
-		      const double center_y_position,
-		      const double center_z_position,
-		      const Axis axis = Z_AXIS );
+		   const std::shared_ptr<OneDDistribution>& r_distribution,
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& mu_distribution,
+                   const double center_x_position,
+                   const double center_y_position,
+                   const double center_z_position,
+                   const Axis axis = Z_AXIS );
 
   //! Destructor
   ~SphericalSpatialDistribution()
@@ -74,13 +76,13 @@ protected:
 private:
 
   // r dimension distribution
-  Teuchos::RCP<OneDDistribution> d_r_distribution;
+  std::shared_ptr<OneDDistribution> d_r_distribution;
 
   // theta dimension distribution
-  Teuchos::RCP<OneDDistribution> d_theta_distribution;
+  std::shared_ptr<OneDDistribution> d_theta_distribution;
 
   // mu dimension distribution
-  Teuchos::RCP<OneDDistribution> d_mu_distribution;
+  std::shared_ptr<OneDDistribution> d_mu_distribution;
 
   // The center position of the sphere
   double d_center_x_position;

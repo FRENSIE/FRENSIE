@@ -68,14 +68,14 @@
  *  <li> \subpage data "data" </li>
  *  <li> \subpage geometry "geometry" </li>
  *  <li> \subpage monte_carlo "monte carlo" </li>
- *  <li> \subpage transmutation "transmutation" </li>
  * </ul>
  * 
  * The utility package provides a collection of low-level classes and functions
  * that can be useful in a variety of applications. Some useful algorithms 
  * include binary searching, efficient exponentiation and numeric quadrature. 
  * Some useful classes include objects that provide stream support
- * (Utility::PrintableObject), XML support (Utilitiy::XMLCompatibleObject), 
+ * (Utility::PrintableObject), XML support 
+ * (Utilitiy::ParameterListCompatibleObject), 
  * HDF5 support (Utility::HDF5FileHandler), random number generation 
  * (Utility::RandomNumberGenerator) and sampling from generic distributions 
  * (Utility::OneDDistribution).
@@ -106,9 +106,6 @@
  * also provided for modeling individual nuclides, materials, and a variety of
  * estimators and sources. A series of manager classes are also provided that
  * manage the simulation of particles (MonteCarlo::ParticleSimulationManager).
- *
- * The transmutation package provides the functionality necessary to perform
- * burnup calculations and to conduct activation analyses.
  *
  * \subsection frensie_high_design_subsec High-Level Software Design Strategy
  * At the lowest level, all software is simply a collection of functions and
@@ -206,6 +203,451 @@
  * API documentation and code development are separate activities. Doxygen
  * allows the two to be combined, which greatly reduces errors in
  * documentation.
+ *
+ * \subsection parallel_considerations Parallel Considerations
+ * FRENSIE is written to take advantage of both shared memory systems and
+ * distributed memory systems. There is currently no support for GPU's or
+ * co-processors (MIC chips). Some considerations that developer's should keep
+ * in mind when writing code that will run in parallel will be discussed 
+ * briefly. 
+ *
+ * Developers that write code that runs in parallel on a shared memory system 
+ * have to be very careful about preventing race conditions since all of the 
+ * parallel threads will be accessing the same objects in memory. Read 
+ * operations (calls to const member functions) are safe and will not result in
+ * race conditions. Write operations (calls to non-const member functions) are 
+ * not safe and will likely result in race conditions. To avoid race conditions
+ * developers must ensure that only one thread does the write operation at a 
+ * time. Since we use <a href=http://openmp.org/wp/>OpenMP</a> to enable and 
+ * manage threads, the simplest way to ensure that only one thread does a write
+ * operation at a time is by placing the write operation inside of an 
+ * <b>omp critical</b> block. These blocks will degrade parallel scaling
+ * efficiency so developers should try to minimize their use if possible.
+ *
+ * FRENSIE developers that write code that runs in parallel on a distributed 
+ * memory system will be using the MPI API, or more accurately, C++ wrappers 
+ * around the MPI API. FRENSIE takes advantage of the 
+ * <a href=https://trilinos.org/docs/dev/packages/teuchos/doc/html/index.html#TeuchosComm_src>Teuchos Communication Subpackage</a>
+ * since it provides a very nice C++ MPI wrapper. Unfortunately the 
+ * package does not provide wrappers around the MPI_Probe and MPI_Iprobe
+ * methods, which are used by FRENSIE. To avoid raw MPI API calls, for 
+ * reasons that will be discussed shortly, wrappers for MPI_Probe and
+ * MPI_Iprobe have been provided (see Utility_CommHelpers.hpp) that mimic
+ * the Teuchos wrappers. If additional wrappers are needed in the future,
+ * they should be added to the Utility_CommHelpers.hpp file. One of the 
+ * primary benefits of using the C++ wrappers is that they can be used
+ * safely whether or not FRENSIE has been built with MPI (no #ifdefs are
+ * required). In addition, the C++ wrappers take advantage of the C++
+ * error handler instead of the MPI error code.
+ *
+ * \subsection pre_release_checklist Pre-release Checklist
+ * Before a new version of FRENSIE is released the following checklist
+ * should be followed:
+ * <ol>
+ *  <li>Make sure the build number has been updated (in the Version.cmake 
+ *      file).</li>
+ *  <li>Make sure that all documentation is up-to-date. In addition, make
+ *      sure that all new code has documentation.</li>
+ *  <li>Make sure that all unit and verification tests are passing.</li>
+ *  <li>Make sure that all of the example problems are up-to-date and 
+ *      can be run.</li>
+ *  <li>Make sure that the build script templates are up-to-date (in the
+ *      scripts directory). </li>
+ * </ol> 
+ *
+ *  * \section frensie_collab_workflow FRENSIE Collaboration Workflow
+ * The official FRENSIE code repository is hosted on 
+ * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. To check out
+ * this repository, one would simply type 
+ * `git clone git@github.com:aprobinson/FRENSIE.git` in the command line.
+ * While it is acceptable to check out this repository, any pushes made 
+ * directly to the master branch will be erased. Allowing many people to push
+ * directly to the master branch has the potential to cause merge conflicts and
+ * it becomes more difficult to implement quality control measures such as
+ * code reviews. To avoid these problems, a combination of the 
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking</a> 
+ * and 
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow>branching</a> 
+ * workflows has been adopted for collaboration, which will be called the 
+ * fork-then-branch workflow. 
+ *
+ * \subsection fork_setup Setting Up a Fork
+ * The first step of the fork-then-branch workflow is to fork the main 
+ * FRENSIE repo hosted on 
+ * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. Once the repo
+ * has been forked, you will now own a copy of the FRENSIE repo. Go to the
+ * GitHub page for this new fork and create a clone of it on your personal 
+ * computer: `git clone git@github.com:your-moniker/FRENSIE.git`.
+ * You now have a working fork that you can work with to add features to 
+ * FRENSIE. However, there is still one modification to the fork that must
+ * be made before you can start coding, which will be discussed shortly.
+ *
+ * One of the problems that is commonly encountered when doing collaborative
+ * code development has to do with feature branches getting severely out of
+ * sync with the master branch. Often times developers will work on a new
+ * feature for a long period. If the developer of a new feature does not
+ * sync his or her feature branch with the master branch frequently, it is
+ * likely that there will be many merge conflicts when the code maintainer
+ * tries to merge the feature into the master branch. This situation can be
+ * avoided with forks by setting what is called the "upstream" repository, 
+ * which can be "pulled" from to make sure that the fork is up-to-date.  
+ * The upstream repository will be set to the aprobinson/FRENSIE repo, which is
+ * currently functioning as the main repo. To set the upstream repo, first 
+ * enter your FRENSIE fork. Then run the following command: 
+ * `git remote add upstream https://github.com/aprobinson/FRENSIE`.
+ * If you run the command `git remote -v`, you should see an origin (your
+ * fork) and an upstream (main) remote repo. At this point, your fork is ready!
+ *
+ * \subsection fork_then_branch Fork-then-Branch Workflow
+ * The first step of the fork-then-branch workflow, which involves setting
+ * up a fork, has already been completed. The next step has to do with adding
+ * a new feature to FRENSIE. New features will be developed in remote branches
+ * of forks. To create a branch from your fork's master branch, simply type
+ * the command `git checkout -b branch_name`. This creates a local branch
+ * called branch_name that only exists on the current machine that you're
+ * working on. To make it so that this branch is stored along side the
+ * master branch on GitHub, type the command `git push origin branch_name`.
+ * Now a remote tracking branch for your new feature has been created. At
+ * this point the workflow should follow the order listed below.
+ *
+ * <ul>
+ *  <li>Keep the fork up-to-date (always do this first).
+ *   <ol>
+ *     <li>Checkout the master branch:
+ *         `git checkout master`</li>
+ *     <li>Pull changes down from your fork's master to ensure that your local
+ *         copy is up-to-date:
+ *         `git pull origin master`</li>
+ *     <li>Pull changes down from the upstream master to ensure that your fork
+ *         is up-to-date:
+ *         `git pull upstream master`</li>
+ *     <li>Fix merge conflicts (if any) and push changes (if any) to the fork's
+ *         master: `git push origin master`.
+ *         <ul><li><b>Danger:</b> While possible, you should never push 
+                   upstream.
+	   </ul></li>
+ *   </ol></li>
+ * <li>Work on new feature.
+ *  <ol>
+ *    <li>Checkout your feature branch:
+ *        `git checkout branch_name`</li>
+ *    <li>Pull changes down from your fork's remote feature branch to ensure
+ *        that your local copy is up-to-date:
+ *        `git pull origin branch_name`</li>
+ *    <li>Fix merge conflicts (if any).</li> 
+ *    <li>Add new code to or modify existing code in the branch.</li>
+ *    <li>Check that all unit/regression tests pass.</li>
+ *    <li>Commit your changes to your local feature branch:
+ *        `git commit -a -m "detailed commit message describing changes made"`</li>
+ *    <li>Push your changes to you fork's remote feature branch:
+ *        `git push origin branch_name`.</li>
+ *    <li>When the new feature is complete or a milestone is reached, merge
+ *        your fork's master with the feature branch:
+ *        <ol>
+ *          <li>Checkout master branch: `git checkout master`.</li>
+ *          <li>Update local master: `git pull origin master`.</li>
+ *          <li>Merge master with feature branch: 
+ *              `git merge feature_branch`.</li>
+ *          <li>Fix merge conflicts if any and push changes to the fork's
+ *              master branch: `git push origin master`.</li>
+ *        </ol></li>
+ *    <li>If you feel it is time for your new code to become part of the main
+ *        repo, issue a pull request on GitHub. This is where the main repo
+ *        maintainer will conduct a code review to ensure that the new code 
+ *        is acceptable. If the new code is deemed acceptable, the main
+ *        repo maintainer will pull from your fork's master branch.</li>
+ *   </ol></li>
+ * </ul>
+ *
+ * It is important to note that in this workflow everyones master branch
+ * contains the most up-to-date working state (all unit/regression tests
+ * should pass) of a fork. Developers should avoid working on new features 
+ * directly in the master branch to prevent the master from entering a 
+ * non-working state. If small changes need to be made, it is usually okay
+ * to make them directly in the master branch because the cost of creating
+ * a new branch would outweigh the benefits (too much setup time).
+ *
+ * \subsection github_issue_tracker GitHub Issue Tracker
+ * GitHub also allows collaborators to create and assign issues using the
+ * issue tracker. Issues can range from bugs to proposed new features to
+ * pull requests. Each issue is given a unique number that can be used to
+ * reference it. When committing code, one can reference an issue in the
+ * commit message by adding a the # character followed immediately by the
+ * issue number (e.g. "This commit relates to issue #9"). This will allow 
+ * developers to keep track of their progress dealing with a specific issue.
+ *
+ * \section frensie_naming_conventions FRENSIE Naming Conventions
+ * When looking at a piece of code, it should be impossible to determine
+ * who wrote it without looking at the author declaration. To ensure that
+ * all code is consistent, all FRENSIE developers should adhere to the
+ * following naming conventions.
+ *
+ * \subsection frensie_file_names_conv_subsec File Names
+ * File names should start with the root package name followed by an 
+ * underscore and then followed by an appropriate file name with extension 
+ * (either ".hpp", "_def.hpp", or ".cpp" depending on if the file is a header, 
+ * a template implementation file or a standard implementation file 
+ * respectively). For classes, the class name should be used. Consider the 
+ * following examples:
+ * > Package_MyClass.hpp \n
+ * > Package_MyClass_def.hpp \n
+ * > Package_MyClass.cpp \n
+ * 
+ * \subsection frensie_file_hf_conv_subsec File Organization
+ * All files, whether a header, template implementation or standard 
+ * implementation file should have a header an a footer. All header includes 
+ * should appear before any declarations but after the header protection macro.
+ * Template implementation file includes should appear after all declarations
+ * and implementations but before the final preprocessor conditional statement.
+ * Consider the following header file example:
+ * \code{.cpp}
+ * //---------------------------------------------------------------------------//
+ * // !
+ * // ! \\file   Package_MyClass.hpp
+ * // ! \\author John Doe, Jane Doe
+ * // ! \\brief  The MyClass class declaration.
+ * // !
+ * //---------------------------------------------------------------------------//
+ *
+ * #ifdef PACKAGE_MY_CLASS_HPP
+ * #define PACKAGE_MY_CLASS_HPP
+ *
+ * // Std Lib Includes
+ * #include <iostream>
+ *
+ * // Boost Includes
+ * #include <boost/shared_ptr.hpp>
+ *
+ * // Trilinos Includes
+ * #include <Teuchos_Array.hpp>
+ *
+ * // FRENSIE Includes
+ * #include "Package_MyOtherClass.hpp"
+ *
+ * namespace Package{
+ *
+ * ...
+ *
+ * } // end Package namespace
+ *
+ * //---------------------------------------------------------------------------//
+ * // Template Includes
+ * //---------------------------------------------------------------------------// 
+ *
+ * #include "Package_MyClass_def.hpp"
+ *
+ * //---------------------------------------------------------------------------//
+ *
+ * #endif // end PACKAGE_MY_CLASS_HPP
+ * 
+ * //---------------------------------------------------------------------------//
+ * // end Package_MyClass.hpp
+ * //---------------------------------------------------------------------------//
+ * \endcode
+ *
+ * Now consider the following template implementation file:
+ * \code{.cpp}
+ * //---------------------------------------------------------------------------//
+ * // !
+ * // ! \file   Package_MyClass_def.hpp
+ * // ! \author John Doe, Jane Doe
+ * // ! \brief  The MyClass class template definitions.
+ * // !
+ * //---------------------------------------------------------------------------//
+ *
+ * #ifdef PACKAGE_MY_CLASS_DEF_HPP
+ * #define PACKAGE_MY_CLASS_DEF_HPP
+ *
+ * // FRENSIE Includes
+ * #include "Package_MyFunctionHelpers.hpp"
+ *
+ * namespace Package{
+ * 
+ * ...
+ *
+ * } // end Package namespace
+ *
+ * #endif // end PACKAGE_MY_CLASS_HPP
+ * 
+ * //---------------------------------------------------------------------------//
+ * // end Package_MyClass_def.hpp
+ * //---------------------------------------------------------------------------//
+ * \endcode
+ *
+ * Finally, consider the following standard implementation file:
+ * \code{.cpp}
+ * //---------------------------------------------------------------------------//
+ * // !
+ * // ! \file   Package_MyClass.cpp
+ * // ! \author John Doe, Jane Doe
+ * // ! \brief  The MyClass class definitions.
+ * // !
+ * //---------------------------------------------------------------------------//
+ *
+ * // FRENSIE Includes
+ * #include "Package_MyClass.hpp"
+ *
+ * namespace Package{
+ *
+ * ...
+ *
+ * } // end Package namespace
+ *
+ * //---------------------------------------------------------------------------//
+ * // end Package_MyClass.cpp
+ * //---------------------------------------------------------------------------//
+ * \endcode
+ *
+ * Whenever possible, code should not exceed the 79th character (the 80th
+ * is reserved for a special emacs macro).
+ *
+ * <b>NOTE:</b> In the header of a file, there should be no space to between
+ * the "//" character sequence and the "!" charater. The \"//&zwj;!\" 
+ * character sequence tells Doxygen that the comments should be parsed. It is 
+ * for this reason that it cannot be added directly to the above code blocks.
+ *
+ * \subsection frensie_ifdef_conv_subsec Preprocessor Conditional Statements
+ * Preprocessor conditional statements are always closed with a 
+ * <em>#endif</em>. When there is a lot of code between conditional statements
+ * it can become difficult to determine which conditional statement a
+ * <em>#endif</em> statement is closing. Developers should therefore put
+ * a comment after the <em>#endif</em> statement to indicate which conditional
+ * statement is being closed.
+ *
+ * \code{.cpp}
+ *  #ifdef MACRO_NAME
+ *
+ *  ...
+ *
+ *  #else
+ *
+ *  ...
+ *
+ *  #endif // end MACRO_NAME
+ * \endcode
+ * 
+ * \subsection frensie_namespace_conv_subsec Namespaces
+ * Every FRENSIE package has its own namespace. The namespace is simply the
+ * name of the package with the first letter capitalized. All package code
+ * must be placed within the namespace for the package. When there is a lot
+ * of code between the curly brackets of a namespace, it can become difficult
+ * to determine if a curly bracket belongs to the namespace or some other
+ * software object. Developers should therefore put a comment after the
+ * namespace bracket to indicate the the namespace has been closed.
+ *
+ * \code{.cpp}
+ *  namespace Package{
+ *
+ *  ...
+ * 
+ *  } // end Package namespace
+ * \endcode
+ * 
+ * \subsection frensie_variable_conv_subsec Variables
+ * When declaring variables in routines interfaces and implementations, the
+ * names must be all lowercase with underscores between words. It is important
+ * to create names that are very descriptive. The length of the name is
+ * not important (though most should be able to fit well within 80 characters).
+ * Consider the following examples:
+ * \code{.cpp}
+ *  double particle_weight;
+ *  unsigned number_of_collisions;
+ *  int co;
+ * \endcode
+ * The first two variables have good names - it is very clear what their
+ * purpose is. The third variable, while adhering to the variable naming
+ * convention is poorly named because it is not clear what its purpose is.
+ *
+ * \subsection frensie_function_conv_subsec Routines
+ * All routines (including member functions) should have the first letter
+ * of the first word of the name in lowercase. All subsequent words of the
+ * name should be capitalized. There should be no underscores in routine
+ * names. In addition, good function name should identify the return value.
+ * A good procedure name should typically be an action verb followed by a 
+ * noun (usually the object being operated on). Consider the following
+ * examples:
+ * \code{.cpp}
+ *  double computeMagnitude( const double[3] vector );
+ *  double foo( const double a );
+ *  void plotFunction( boost::function<double (double x)>& function_wrapper,
+ *                     const double x_min,
+ *                     const double x_max );
+ * \endcode
+ * While all routine names adhere to the naming convention, only the first
+ * and third are descriptive and therefore good names. 
+ *
+ * \subsection frensie_class_conv_subsec Classes
+ * All classes should have the first letter of each word in the name
+ * capitalized. There should be no underscores between words. Currently
+ * there is no convention to distinguish between base classes, derived classes
+ * and classes that derive from multiple base classes (multiple inheritance).
+ * Developers who see a use in making that distinction can adopt their own
+ * convention (e.g. "_b", "_d", "_m"). 
+ *
+ * When creating a class, the following order should be followed in the class
+ * declaration:
+ * <ol>
+ *  <li>public typedefs</li>
+ *  <li>private typedefs</li>
+ *  <li>public static member functions</li>
+ *  <li>public member functions</li>
+ *  <li>protected member functions</li>
+ *  <li>protected member data 
+ *   <ul>
+ *    <li>This should rarely be used because it breaks encapsulation.</li>
+ *   </ul>
+ *  </li>
+ *  <li>private static member functions</li>
+ *  <li>private member functions</li>
+ *  <li>private static member data
+ *   <ul>
+ *    <li>There is no required naming convention for static member data. 
+ *        This is because static member data should be used within member 
+ *        functions using the following convention 
+ *        (MyClass::my_static_data).</li>
+ *   </ul>
+ *  </li>
+ *  <li>private member data: All private member data should start with "d_"
+ *       to indicate that it is member data inside of a class routine
+ *       definition.</li>
+ * </ol>
+ *
+ * The following class would be an
+ * example of a class declaration that adheres to the convention outlined:
+ * \code{.cpp}
+ *  class MyClass
+ *  {
+ *    public:
+ *      typedef int MyClassType;
+ *
+ *    private:
+ *      typedef Teuchos::ScalarTraits<double> ST;
+ *
+ *    public:
+ *      static int getDefaultValue();
+ *      static void setDefaultValue( const MyClassType value );
+ *
+ *      MyClass( const int id );
+ *
+ *      ~MyClass();
+ *
+ *      virtual void doMyStuff( const Teuchos::Array<MyClassType>& data );
+ *
+ *   protected:
+ *
+ *	void doStuffImplementation( const Teuchos::Array<MyClassType>& data );
+ *
+ *   private:
+ *
+ *      static bool isValueValid( const MyClassType value );
+ * 
+ *      void doOneThing( const MyClassType data_point );
+ *
+ *      static MyClassType default_value;
+ *      
+ *      int d_id;   
+ *  };
+ * \endcode
  *
  * \section cpp_primer_sec C++ Primer
  * FRENSIE developers should be familiar with C++ before contributing code.
@@ -561,399 +1003,5 @@
  * \subsection cpp_primer_temp_class_subsec Template Classes
  * \subsection cpp_primer_traits_policy_subsec Traits and Policies
  * \subsection cpp_primer_fortran_subsec Fortran 2003 Interoperability
- * \subsection cpp_primer_further_reading Further Reading
- *
- * \section frensie_naming_conventions FRENSIE Naming Conventions
- * When looking at a piece of code, it should be impossible to determine
- * who wrote it without looking at the author declaration. To ensure that
- * all code is consistent, all FRENSIE developers should adhere to the
- * following naming conventions.
- *
- * \subsection frensie_file_names_conv_subsec File Names
- * File names should start with the root package name followed by an 
- * underscore and then followed by an appropriate file name with extension 
- * (either ".hpp", "_def.hpp", or ".cpp" depending on if the file is a header, 
- * a template implementation file or a standard implementation file 
- * respectively). For classes, the class name should be used. Consider the 
- * following examples:
- * > Package_MyClass.hpp \n
- * > Package_MyClass_def.hpp \n
- * > Package_MyClass.cpp \n
- * 
- * \subsection frensie_file_hf_conv_subsec File Organization
- * All files, whether a header, template implementation or standard 
- * implementation file should have a header an a footer. All header includes 
- * should appear before any declarations but after the header protection macro.
- * Template implementation file includes should appear after all declarations
- * and implementations but before the final preprocessor conditional statement.
- * Consider the following header file example:
- * \code{.cpp}
- * //---------------------------------------------------------------------------//
- * // !
- * // ! \\file   Package_MyClass.hpp
- * // ! \\author John Doe, Jane Doe
- * // ! \\brief  The MyClass class declaration.
- * // !
- * //---------------------------------------------------------------------------//
- *
- * #ifdef PACKAGE_MY_CLASS_HPP
- * #define PACKAGE_MY_CLASS_HPP
- *
- * // Std Lib Includes
- * #include <iostream>
- *
- * // Boost Includes
- * #include <boost/shared_ptr.hpp>
- *
- * // Trilinos Includes
- * #include <Teuchos_Array.hpp>
- *
- * // FRENSIE Includes
- * #include "Package_MyOtherClass.hpp"
- *
- * namespace Package{
- *
- * ...
- *
- * } // end Package namespace
- *
- * //---------------------------------------------------------------------------//
- * // Template Includes
- * //---------------------------------------------------------------------------// 
- *
- * #include "Package_MyClass_def.hpp"
- *
- * //---------------------------------------------------------------------------//
- *
- * #endif // end PACKAGE_MY_CLASS_HPP
- * 
- * //---------------------------------------------------------------------------//
- * // end Package_MyClass.hpp
- * //---------------------------------------------------------------------------//
- * \endcode
- *
- * Now consider the following template implementation file:
- * \code{.cpp}
- * //---------------------------------------------------------------------------//
- * // !
- * // ! \file   Package_MyClass_def.hpp
- * // ! \author John Doe, Jane Doe
- * // ! \brief  The MyClass class template definitions.
- * // !
- * //---------------------------------------------------------------------------//
- *
- * #ifdef PACKAGE_MY_CLASS_DEF_HPP
- * #define PACKAGE_MY_CLASS_DEF_HPP
- *
- * // FRENSIE Includes
- * #include "Package_MyFunctionHelpers.hpp"
- *
- * namespace Package{
- * 
- * ...
- *
- * } // end Package namespace
- *
- * #endif // end PACKAGE_MY_CLASS_HPP
- * 
- * //---------------------------------------------------------------------------//
- * // end Package_MyClass_def.hpp
- * //---------------------------------------------------------------------------//
- * \endcode
- *
- * Finally, consider the following standard implementation file:
- * \code{.cpp}
- * //---------------------------------------------------------------------------//
- * // !
- * // ! \file   Package_MyClass.cpp
- * // ! \author John Doe, Jane Doe
- * // ! \brief  The MyClass class definitions.
- * // !
- * //---------------------------------------------------------------------------//
- *
- * // FRENSIE Includes
- * #include "Package_MyClass.hpp"
- *
- * namespace Package{
- *
- * ...
- *
- * } // end Package namespace
- *
- * //---------------------------------------------------------------------------//
- * // end Package_MyClass.cpp
- * //---------------------------------------------------------------------------//
- * \endcode
- *
- * Whenever possible, code should not exceed the 79th character (the 80th
- * is reserved for a special emacs macro).
- *
- * <b>NOTE:</b> In the header of a file, there should be no space to between
- * the "//" character sequence and the "!" charater. The \"//&zwj;!\" 
- * character sequence tells Doxygen that the comments should be parsed. It is 
- * for this reason that it cannot be added directly to the above code blocks.
- *
- * \subsection frensie_ifdef_conv_subsec Preprocessor Conditional Statements
- * Preprocessor conditional statements are always closed with a 
- * <em>#endif</em>. When there is a lot of code between conditional statements
- * it can become difficult to determine which conditional statement a
- * <em>#endif</em> statement is closing. Developers should therefore put
- * a comment after the <em>#endif</em> statement to indicate which conditional
- * statement is being closed.
- *
- * \code{.cpp}
- *  #ifdef MACRO_NAME
- *
- *  ...
- *
- *  #else
- *
- *  ...
- *
- *  #endif // end MACRO_NAME
- * \endcode
- * 
- * \subsection frensie_namespace_conv_subsec Namespaces
- * Every FRENSIE package has its own namespace. The namespace is simply the
- * name of the package with the first letter capitalized. All package code
- * must be placed within the namespace for the package. When there is a lot
- * of code between the curly brackets of a namespace, it can become difficult
- * to determine if a curly bracket belongs to the namespace or some other
- * software object. Developers should therefore put a comment after the
- * namespace bracket to indicate the the namespace has been closed.
- *
- * \code{.cpp}
- *  namespace Package{
- *
- *  ...
- * 
- *  } // end Package namespace
- * \endcode
- * 
- * \subsection frensie_variable_conv_subsec Variables
- * When declaring variables in routines interfaces and implementations, the
- * names must be all lowercase with underscores between words. It is important
- * to create names that are very descriptive. The length of the name is
- * not important (though most should be able to fit well within 80 characters).
- * Consider the following examples:
- * \code{.cpp}
- *  double particle_weight;
- *  unsigned number_of_collisions;
- *  int co;
- * \endcode
- * The first two variables have good names - it is very clear what their
- * purpose is. The third variable, while adhering to the variable naming
- * convention is poorly named because it is not clear what its purpose is.
- *
- * \subsection frensie_function_conv_subsec Routines
- * All routines (including member functions) should have the first letter
- * of the first word of the name in lowercase. All subsequent words of the
- * name should be capitalized. There should be no underscores in routine
- * names. In addition, good function name should identify the return value.
- * A good procedure name should typically be an action verb followed by a 
- * noun (usually the object being operated on). Consider the following
- * examples:
- * \code{.cpp}
- *  double computeMagnitude( const double[3] vector );
- *  double foo( const double a );
- *  void plotFunction( boost::function<double (double x)>& function_wrapper,
- *                     const double x_min,
- *                     const double x_max );
- * \endcode
- * While all routine names adhere to the naming convention, only the first
- * and third are descriptive and therefore good names. 
- *
- * \subsection frensie_class_conv_subsec Classes
- * All classes should have the first letter of each word in the name
- * capitalized. There should be no underscores between words. Currently
- * there is no convention to distinguish between base classes, derived classes
- * and classes that derive from multiple base classes (multiple inheritance).
- * Developers who see a use in making that distinction can adopt their own
- * convention (e.g. "_b", "_d", "_m"). 
- *
- * When creating a class, the following order should be followed in the class
- * declaration:
- * <ol>
- *  <li>public typedefs</li>
- *  <li>private typedefs</li>
- *  <li>public static member functions</li>
- *  <li>public member functions</li>
- *  <li>protected member functions</li>
- *  <li>protected member data 
- *   <ul>
- *    <li>This should rarely be used because it breaks encapsulation.</li>
- *   </ul>
- *  </li>
- *  <li>private static member functions</li>
- *  <li>private member functions</li>
- *  <li>private static member data
- *   <ul>
- *    <li>There is no required naming convention for static member data. 
- *        This is because static member data should be used within member 
- *        functions using the following convention 
- *        (MyClass::my_static_data).</li>
- *   </ul>
- *  </li>
- *  <li>private member data: All private member data should start with "d_"
- *       to indicate that it is member data inside of a class routine
- *       definition.</li>
- * </ol>
- *
- * The following class would be an
- * example of a class declaration that adheres to the convention outlined:
- * \code{.cpp}
- *  class MyClass
- *  {
- *    public:
- *      typedef int MyClassType;
- *
- *    private:
- *      typedef Teuchos::ScalarTraits<double> ST;
- *
- *    public:
- *      static int getDefaultValue();
- *      static void setDefaultValue( const MyClassType value );
- *
- *      MyClass( const int id );
- *
- *      ~MyClass();
- *
- *      virtual void doMyStuff( const Teuchos::Array<MyClassType>& data );
- *
- *   protected:
- *
- *	void doStuffImplementation( const Teuchos::Array<MyClassType>& data );
- *
- *   private:
- *
- *      static bool isValueValid( const MyClassType value );
- * 
- *      void doOneThing( const MyClassType data_point );
- *
- *      static MyClassType default_value;
- *      
- *      int d_id;   
- *  };
- * \endcode
- *
- * \section frensie_collab_workflow FRENSIE Collaboration Workflow
- * The official FRENSIE code repository is hosted on 
- * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. To check out
- * this repository, one would simply type 
- * `git clone git@github.com:aprobinson/FRENSIE.git` in the command line.
- * While it is acceptable to check out this repository, any pushes made 
- * directly to the master branch will be erased. Allowing many people to push
- * directly to the master branch has the potential to cause merge conflicts and
- * it becomes more difficult to implement quality control measures such as
- * code reviews. To avoid these problems, a combination of the 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking</a> 
- * and 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow>branching</a> 
- * workflows has been adopted for collaboration, which will be called the 
- * fork-then-branch workflow. 
- *
- * \subsection fork_setup Setting Up a Fork
- * The first step of the fork-then-branch workflow is to fork the main 
- * FRENSIE repo hosted on 
- * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. Once the repo
- * has been forked, you will now own a copy of the FRENSIE repo. Go to the
- * GitHub page for this new fork and create a clone of it on your personal 
- * computer: `git clone git@github.com:your-moniker/FRENSIE.git`.
- * You now have a working fork that you can work with to add features to 
- * FRENSIE. However, there is still one modification to the fork that must
- * be made before you can start coding, which will be discussed shortly.
- *
- * One of the problems that is commonly encountered when doing collaborative
- * code development has to do with feature branches getting severely out of
- * sync with the master branch. Often times developers will work on a new
- * feature for a long period. If the developer of a new feature does not
- * sync his or her feature branch with the master branch frequently, it is
- * likely that there will be many merge conflicts when the code maintainer
- * tries to merge the feature into the master branch. This situation can be
- * avoided with forks by setting what is called the "upstream" repository, 
- * which can be "pulled" from to make sure that the fork is up-to-date.  
- * The upstream repository will be set to the aprobinson/FRENSIE repo, which is
- * currently functioning as the main repo. To set the upstream repo, first 
- * enter your FRENSIE fork. Then run the following command: 
- * `git remote add upstream https://github.com/aprobinson/FRENSIE`.
- * If you run the command `git remote -v`, you should see an origin (your
- * fork) and an upstream (main) remote repo. At this point, your fork is ready!
- *
- * \subsection fork_then_branch Fork-then-Branch Workflow
- * The first step of the fork-then-branch workflow, which involves setting
- * up a fork, has already been completed. The next step has to do with adding
- * a new feature to FRENSIE. New features will be developed in remote branches
- * of forks. To create a branch from your fork's master branch, simply type
- * the command `git checkout -b branch_name`. This creates a local branch
- * called branch_name that only exists on the current machine that you're
- * working on. To make it so that this branch is stored along side the
- * master branch on GitHub, type the command `git push origin branch_name`.
- * Now a remote tracking branch for your new feature has been created. At
- * this point the workflow should follow the order listed below.
- *
- * <ul>
- *  <li>Keep the fork up-to-date (always do this first).
- *   <ol>
- *     <li>Checkout the master branch:
- *         `git checkout master`</li>
- *     <li>Pull changes down from your fork's master to ensure that your local
- *         copy is up-to-date:
- *         `git pull origin master`</li>
- *     <li>Pull changes down from the upstream master to ensure that your fork
- *         is up-to-date:
- *         `git pull upstream master`</li>
- *     <li>Fix merge conflicts (if any) and push changes (if any) to the fork's
- *         master: `git push origin master`.
- *         <ul><li><b>Danger:</b> While possible, you should never push 
-                   upstream.
-	   </ul></li>
- *   </ol></li>
- * <li>Work on new feature.
- *  <ol>
- *    <li>Checkout your feature branch:
- *        `git checkout branch_name`</li>
- *    <li>Pull changes down from your fork's remote feature branch to ensure
- *        that your local copy is up-to-date:
- *        `git pull origin branch_name`</li>
- *    <li>Fix merge conflicts (if any).</li> 
- *    <li>Add new code to or modify existing code in the branch.</li>
- *    <li>Check that all unit/regression tests pass.</li>
- *    <li>Commit your changes to your local feature branch:
- *        `git commit -a -m "detailed commit message describing changes made"`</li>
- *    <li>Push your changes to you fork's remote feature branch:
- *        `git push origin branch_name`.</li>
- *    <li>When the new feature is complete or a milestone is reached, merge
- *        your fork's master with the feature branch:
- *        <ol>
- *          <li>Checkout master branch: `git checkout master`.</li>
- *          <li>Update local master: `git pull origin master`.</li>
- *          <li>Merge master with feature branch: 
- *              `git merge feature_branch`.</li>
- *          <li>Fix merge conflicts if any and push changes to the fork's
- *              master branch: `git push origin master`.</li>
- *        </ol></li>
- *    <li>If you feel it is time for your new code to become part of the main
- *        repo, issue a pull request on GitHub. This is where the main repo
- *        maintainer will conduct a code review to ensure that the new code 
- *        is acceptable. If the new code is deemed acceptable, the main
- *        repo maintainer will pull from your fork's master branch.</li>
- *   </ol></li>
- * </ul>
- *
- * It is important to note that in this workflow everyones master branch
- * contains the most up-to-date working state (all unit/regression tests
- * should pass) of a fork. Developers should avoid working on new features 
- * directly in the master branch to prevent the master from entering a 
- * non-working state. If small changes need to be made, it is usually okay
- * to make them directly in the master branch because the cost of creating
- * a new branch would outweigh the benefits (too much setup time).
- *
- * \subsection github_issue_tracker GitHub Issue Tracker
- * GitHub also allows collaborators to create and assign issues using the
- * issue tracker. Issues can range from bugs to proposed new features to
- * pull requests. Each issue is given a unique number that can be used to
- * reference it. When committing code, one can reference an issue in the
- * commit message by adding a the # character followed immediately by the
- * issue number (e.g. "This commit relates to issue #9"). This will allow 
- * developers to keep track of their progress dealing with a specific issue. 
+ * \subsection cpp_primer_further_reading Further Reading 
  */

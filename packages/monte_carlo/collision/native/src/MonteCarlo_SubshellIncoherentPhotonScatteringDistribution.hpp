@@ -42,10 +42,10 @@ public:
   SubshellType getSubshell() const;
   
   //! Return the number of electrons in the subshell
-  double getNumberOfElectronsInSubshell() const;
+  double getSubshellOccupancy() const;
 
   //! Return the binding energy
-  double getBindingEnergy() const;
+  double getSubshellBindingEnergy() const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,

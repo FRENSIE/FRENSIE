@@ -146,7 +146,7 @@ public:
   Teuchos::ArrayView<const double> extractLSIGBlock() const;
   
   //! Extract the LSIGP block from the XSS array
-  Teuchos::ArrayView<const double> extractLISGPBlock() const;
+  Teuchos::ArrayView<const double> extractLSIGPBlock() const;
 
   //! Extract the SIG block from the XSS array
   Teuchos::ArrayView<const double> extractSIGBlock() const;

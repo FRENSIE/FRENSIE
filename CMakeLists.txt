@@ -83,25 +83,11 @@ ELSE()
   MESSAGE(FATAL_ERROR "The HDF5_PREFIX must be set!")
 ENDIF()
 
-# Enable ODEPACK Support
-IF(ODEPACK_PREFIX)
-  ENABLE_ODEPACK_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The ODEPACK_PREFIX must be set!")
-ENDIF()
-
 # Enable BOOST Support
 IF(BOOST_PREFIX)
   ENABLE_BOOST_SUPPORT(serialization)
 ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
-ENDIF()
-
-# Enable GSL Support
-IF(GSL_PREFIX)
-  ENABLE_GSL_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
 ENDIF()
 
 # Enable ROOT Support
@@ -112,12 +98,6 @@ IF(${FRENSIE_ENABLE_ROOT})
     MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
   ENDIF()
 ENDIF()
-
-SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
 
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})

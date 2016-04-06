@@ -13,8 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 
-// FACEMC Includes
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+// FRENSIE Includes
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 #include "Cell.hpp"
 #include "Surface.hpp"
 
@@ -37,81 +37,81 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
   
-  std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
+  std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -2 ) );
 
   global_surface_map[1] = surface;
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      2 ) );
 
   global_surface_map[2] = surface;
 
-  surface.reset( new FACEMC::Surface( 3, 
+  surface.reset( new FRENSIE::Surface( 3, 
 				      0, 1, 0,
 				      -2 ) );
 
   global_surface_map[3] = surface;
 
-  surface.reset( new FACEMC::Surface( 4, 
+  surface.reset( new FRENSIE::Surface( 4, 
 				      0, 1, 0,
 				      2 ) );
 
   global_surface_map[4] = surface;
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
 
   global_surface_map[5] = surface;
   
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      2 ) );
 
   global_surface_map[6] = surface;
 
-  surface.reset( new FACEMC::Surface( 7,
+  surface.reset( new FRENSIE::Surface( 7,
 				      1, 0, 0,
 				      -1 ) );
 
   global_surface_map[7] = surface;
 
-  surface.reset( new FACEMC::Surface( 8,
+  surface.reset( new FRENSIE::Surface( 8,
 				      1, 0, 0,
 				      1 ) );
   
   global_surface_map[8] = surface;
 
-  surface.reset( new FACEMC::Surface( 9,
+  surface.reset( new FRENSIE::Surface( 9,
 				      0, 1, 0,
 				      -1 ) );
 
   global_surface_map[9] = surface;
 
-  surface.reset( new FACEMC::Surface( 10,
+  surface.reset( new FRENSIE::Surface( 10,
 				      0, 1, 0,
 				      1 ) );
 
   global_surface_map[10] = surface;
 
-  surface.reset( new FACEMC::Surface( 11,
+  surface.reset( new FRENSIE::Surface( 11,
 				      0, 0, 1,
 				      -1 ) );
   
   global_surface_map[11] = surface;
 
-  surface.reset( new FACEMC::Surface( 12,
+  surface.reset( new FRENSIE::Surface( 12,
 				      0, 0, 1,
 				      1 ) );
 
   global_surface_map[12] = surface;
 
-  Teuchos::RCP<FACEMC::Cell> cell( new FACEMC::Cell( 1,
+  Teuchos::RCP<FRENSIE::Cell> cell( new FRENSIE::Cell( 1,
 						     cell_definition,
 						     global_surface_map,
 						     true ) );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 
   cell_definition = CELL_DEFINITION_2;
 
-  cell.reset( new FACEMC::Cell( 2,
+  cell.reset( new FRENSIE::Cell( 2,
 				cell_definition,
 				global_surface_map,
 				true ) );

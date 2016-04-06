@@ -18,9 +18,10 @@
 #include <boost/unordered_set.hpp>
 
 // Moab Includes
-#include <moab/Interface.hpp>
-#include <moab/AdaptiveKDTree.hpp>
+#include <moab/Core.hpp>
+#include <moab/ScdInterface.hpp>
 #include <moab/Matrix3.hpp>
+
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -117,16 +118,15 @@ private:
   // The hex meshset
   moab::EntityHandle d_hex_meshset;
 
-  // The kd-tree for finding point in hex
-  Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
+  // The kd-tree for finding point in hex - do not need KD tree for this
+//  Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
   
   // The root of the kd-tree
-  moab::EntityHandle d_kd_tree_root;
+//  moab::EntityHandle d_kd_tree_root;
 
   // The map of hex ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
-  d_hex_barycentric_transform_matrices;
-  
+
   // The map of hex ids and reference vertices
   boost::unordered_map<moab::EntityHandle, moab::CartVect>
   d_hex_reference_vertices;

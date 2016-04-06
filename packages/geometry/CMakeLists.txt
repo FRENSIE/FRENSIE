@@ -1,3 +1,14 @@
+# Configure the Geometry_Config.hpp file
+SET(CMAKEDEFINE \#cmakedefine)
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Geometry_Config.hpp.in
+  ${CMAKE_BINARY_DIR}/Geometry_Config.hpp.in)
+
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/Geometry_Config.hpp.in
+  ${CMAKE_BINARY_DIR}/Geometry_Config.hpp)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+
 # Set up the geometry package directory hierarchy
 ADD_SUBDIRECTORY(core)
 INCLUDE_DIRECTORIES(core/src)

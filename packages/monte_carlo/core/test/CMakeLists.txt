@@ -34,6 +34,18 @@ ADD_EXECUTABLE(tstElectronState
 TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
 ADD_TEST(ElectronState_test tstElectronState)
 
+ADD_EXECUTABLE(tstAdjointElectronState
+  tstAdjointElectronState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronState monte_carlo_core)
+ADD_TEST(AdjointElectronState_test tstAdjointElectronState)
+
+ADD_EXECUTABLE(tstAdjointElectronProbeState
+  tstAdjointElectronProbeState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointElectronProbeState monte_carlo_core)
+ADD_TEST(AdjointElectronProbeState_test tstAdjointElectronProbeState)
+
 ADD_EXECUTABLE(tstParticleBank
   tstParticleBank.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

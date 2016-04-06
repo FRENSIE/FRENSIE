@@ -1,0 +1,512 @@
+// This file is used to add material to the monte carlo event subpackage page
+
+/*! \page monte_carlo_event Monte Carlo Event Subpackage
+ *
+ * \tableofcontents
+ *
+ * \section mc_event_overview_sec Overview
+ * The event subpackage provides all of the functions and classes necessary
+ * to calculate quantities of interest and summarize certain charateristics
+ * of a Monte Carlo particle simulation. This subpackage can be divided into
+ * four distinct catagories: events, particle history observers,
+ * the event handler and the module interface.
+ * \image html Event_Module_High_Level.jpg
+ * \image latex Event_Module_High_Level.eps
+ *
+ * \section mc_events_sec Events
+ * There are currently two catagories of events: entity events and global
+ * events. Entity events occur with respect to a geometric entity (cell 
+ * or surface) while global events occur independent of the geometry. There
+ * are currently five entity events and one global event that are tracked by
+ * the event subpackage. 
+ *
+ * Entity events have the following general layout:
+ * \image html Entity_Events.jpg
+ * \image latex Entity_Events.eps
+ *
+ * Global events have the following general layout:
+ * \image html Global_Events.jpg
+ * \image latex Global_Events.eps
+ * 
+ * Note that the infrastructure used to account for an event consists of
+ * an event observer interface (abstract base class), a dispatcher class
+ * and a handler class. To efficiently pass event information to the 
+ * appropriate observers a variant of the observer-sender design pattern was
+ * chosen, which was called the observer-dispatcher pattern. When an event
+ * occurs, a method in the handler for the particular event gets called. The
+ * dispatcher is then used to send the event info to all of the registered
+ * observers (and only those observers). Note that with entity events there is
+ * also a local dispatcher. The local dispatcher is assigned to a single 
+ * geometric entity (a cell or surface). When an entity event dispatcher is
+ * used it first checks if there is a local dispatcher assigned to the 
+ * geometric entity where the event occurred. If there is a dispatcher
+ * assigned it will then be used to send the event info to its registered
+ * observers. 
+ *
+ * From all of the event handlers, the general event handler is constructed
+ * (it is a mixin class). The general event handler was designed in this way
+ * so that new events can be easily added in the future. 
+ * 
+ * \subsection mc_particle_colliding_in_cell_event The Particle Colliding In Cell Event
+ * Any class that will observe particle colliding in cell events must
+ * inherit from the MonteCarlo::ParticleCollidingInCellEventObserver and 
+ * implement the pure virtual interface. 
+ *
+ * The class must declare a type called "EventTags" that stores the event tags 
+ * of all of the events it will observe in a boost::mpl::vector type. The 
+ * MonteCarlo::ParticleCollidingInCellEventObserver::EventTag must be added to 
+ * this vector so that objects of the class will be automatically registered 
+ * with the required MonteCarlo::ParticleCollidingInCellEventLocalDispatcher 
+ * and the MonteCarlo::ParticleCollidingInCellEventDispatcher. Note that this 
+ * automatic registration process occurs when an object is added to the 
+ * MonteCarlo::EventHandler using the addEntityEventObserver method. 
+ *
+ * See the 
+ * \ref particle_colliding_in_cell_event "particle colliding in cell event"
+ * API page and the figure below for more information on this event.
+ * \image html ParticleCollidingInCellEvent.jpg
+ * \image latex ParticleCollidingInCellEvent.eps
+ *
+ * \subsection mc_particle_subtrack_ending_in_cell_event The Particle Subtrack Ending In Cell Event
+ * Any class that will observe particle subtrack ending in cell events
+ * must inherit from the MonteCarlo::ParticleSubtrackEndingInCellEventObserver
+ * and implement the pure virtual interface. 
+ *
+ * The class must declare a type called "EventTags" that stores the event tags
+ * of all of the events it will observe in a boost::mpl::vector type. The
+ * MonteCarlo::ParticleSubtrackEndingInCellEventObserver::EventTag must be
+ * added to this vector so that objects of the class will be automatically
+ * registered with the required 
+ * MonteCarlo::ParticleSubtrackEndingInCellEventLocalDispatcher and the 
+ * MonteCarlo::ParticleSubtrackEndingInCellEventDispatcher. Note that this
+ * automatic registration process occurs when an object is added to the 
+ * MonteCarlo::EventHandler using the addEntityEventObserver method. 
+ *
+ * See the \ref particle_subtrack_ending_in_cell_event "particle subtrack ending in cell event"
+ * API page and the figure below for more information on this event.
+ * \image html ParticleSubtrackEndingInCellEvent.jpg
+ * \image latex ParticleSubtrackEndingInCellEvent.eps
+ *
+ * \subsection mc_particle_entering_cell_event The Particle Entering Cell Event
+ * Any class that will observe particle entering cell events must inherit from
+ * the MonteCarlo::ParticleEnteringCellEventObserver and implement the
+ * pure virtual interface.
+ *
+ * The class must declare a type called "EventTags" that stores the event tags
+ * of all of the events it will observe in a boost::mpl::vector type. The
+ * MonteCarlo::ParticleEnteringCellEventObserver::EventTag must be added
+ * to this vector so that objects of the class will be automatically 
+ * registered with the required
+ * MonteCarlo::ParticleEnteringCellEventLocalDispatcher and the 
+ * MonteCarlo::ParticleEnteringCellEventDispatcher. Note that this automatic
+ * registration process occurs when an object is added to the 
+ * MonteCarlo::EventHandler using the addEntityEventObserver method. 
+ *
+ * See the \ref particle_entering_cell_event "particle entering cell event"
+ * API page and the figure below for more information on this event.
+ * \image html ParticleEnteringCellEvent.jpg
+ * \image latex ParticleEnteringCellEvent.eps
+ *
+ * \subsection mc_particle_leaving_cell_event The Particle Leaving Cell Event
+ * Any class that will observe particle leaving cell events must inherit from
+ * the MonteCarlo::ParticleLeavingCellEventObserver and implement the
+ * pure virtual interface.
+ *
+ * The class must declare a type called "EventTags" that stores the event tags
+ * of all of the events it will observe in a boost::mpl::vector type. The
+ * MonteCarlo::ParticleLeavingCellEventObserver::EventTag must be added to this
+ * vector so that objects of the class will be automatically registered with
+ * the required MonteCarlo::ParticleLeavingCellEventLocalDispatcher and the
+ * MonteCarlo::ParticleLeavingCellEventDispatcher. Note that this automatic
+ * registration process occurs when an object is added to the 
+ * MonteCarlo::EventHandler using the addEntityEventObserver method. 
+ *
+ * See the \ref particle_leaving_cell_event "particle leaving cell event"
+ * API page and the figure below for more information on this event.
+ * \image html ParticleLeavingCellEvent.jpg
+ * \image latex ParticleLeavingCellEvent.eps
+ *
+ * \subsection mc_particle_crossing_surface_event The Particle Crossing Surface Event
+ * Any class that will observe particle crossing surface events must inherit
+ * from the MonteCarlo::ParticleCrossingSurfaceEventObserver and implement the
+ * pure virtual interface.
+ *
+ * The class must declare a type called "EventTags" that stores the event tags
+ * of all of the events it will observe in a boost::mpl::vector type. The
+ * MonteCarlo::ParticleCrossingSurfaceEventObserver::EventTag must be added
+ * to this vector so that objects of the class will be automatically
+ * registered with the required 
+ * MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher and the
+ * MonteCarlo::ParticleCrossingSurfaceEventDispatcher. Note that this
+ * automatic registration prcoess occurs when an object is added to the
+ * MonteCarlo::EventHandler using the addEntityEventObserver method.
+ *
+ * See the 
+ * \ref particle_crossing_surface_event "particle crossing surface event" API
+ * page and the figure below for more information on this event.
+ * \image html ParticleCrossingSurfaceEvent.jpg
+ * \image latex ParticleCrossingSurfaceEvent.eps
+ *
+ * \subsection mc_particle_subtrack_ending_global_event The Particle Subtrack Ending Global Event
+ * Any class that will observe particle subtrack ending global events must
+ * inherit from the MonteCarlo::ParticleSubtrackEndingGlobalEventObserver and
+ * implement the pure virtual interface.
+ *
+ * The class must declare a type called "EventTags" that stores the event tags
+ * of all of the events it will observe in a boost::mpl::vector type. The
+ * MonteCarlo::ParticleSubtrackEndingGlobalEventObserver::EventTag must be
+ * added to this vector so that objects of the class will be automatically
+ * registered with the MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher.
+ * Note that this automatic registration process occurs when an object is
+ * added to the MonteCarlo::EventHandler using the addGlobalEventObserver 
+ * method.
+ *
+ * See the \ref particle_subtrack_ending_global_event "particle subtrack ending global event" 
+ * API page and the figure below for more information on this event.
+ * \image html ParticleSubtrackEndingGlobalEvent.jpg
+ * \image latex ParticleSubtrackEndingGlobalEvent.eps
+ *
+ * \section mc_particle_history_observers Particle History Observers
+ * In the previous section events of interest that occur during a particle
+ * history simulation were discussed. In this section the actual objects that
+ * use the event information will be discussed. 
+ *
+ * Any class that is designed to use event information is a type of 
+ * particle history observer. These classes must inherit from the 
+ * MonteCarlo::ParticleHistoryObserver and implement the pure virtual 
+ * interface. 
+ *
+ * Care must be taken when implementing several of the interface
+ * methods since it is assumed that the classes that inherit from the
+ * MonteCarlo::ParticleHistoryObserver will be used in shared memory and
+ * distributed memory settings. The enableThreadSupport method allows objects
+ * of a class to be used in shared memory settings with no more than the
+ * number of threads requested. Typically, this involves allocating a 
+ * workspace for each thread inside of the class object. Special care must be 
+ * taken to ensure that the commitHistoryContribution and any update methods 
+ * (see the \ref mc_events_sec "event" section) are thread-safe since these
+ * methods will be called in a shared memory setting. The reduceData method
+ * allows objects of a class that are distributed across nodes (e.g. on a 
+ * computing cluster) to communicate with each other and collect all of their
+ * data on the root node. Implementation of this method will rely on C++ MPI
+ * wrapper methods (see Utility_CommHelpers.hpp and Teuchos_CommHelpers.hpp). 
+ * Before implementing these methods please read the section on
+ * \ref parallel_considerations "Parallel Considerations".
+ * 
+ * The particle history observer interface also includes a method for
+ * exporting data to an hdf5 file, printing a summary of the data to the
+ * desired output stream and resetting the data. 
+ *
+ * Currently there are three categories of particle history observers:
+ * estimators, particle trackers, and summary tables. These categories will
+ * be discussed in the following subsections.
+ * 
+ * \subsection mc_estimators Estimators
+ * Estimators calculate an estimate of a quantity of interest (often a flux)
+ * in a Monte Carlo simulation. Estimates can be made with respect to 
+ * geometric entities (cell or surface flux) or independent of them (mesh
+ * flux). To accomodate all of the different types of estimators, the
+ * design shown in the figure below was chosen. 
+ *
+ * \image html Estimator.jpg
+ * \image latex Estimator.eps
+ *
+ * The MonteCarlo::Estimator base class stores the bin information, the 
+ * response functions (MonteCarlo::ResponseFunction), scalar multiplier and 
+ * assigned particle types for the estimator. Currently supported bins are 
+ * energy, time, cosine and collision number. The process for adding additional
+ *  bins is discussed in the 
+ * \ref adding_estimator_bins_subsubsec "adding estimator bins" section. 
+ *
+ * The MonteCarlo::EntityEstimator inherits from the MonteCarlo::Estimator base
+ * class. As its name implies it stores the estimator bin data for each 
+ * assigned entity as well as the entity normalization constants (cell volume, 
+ * surface area or mesh element volume). It also stores the bin data for the 
+ * combination of all entities (total bin data). 
+ *
+ * The MonteCarlo::StandardEntityEstimator inherits from the 
+ * MonteCarlo::EntityEstimator. It accumulates estimator bin data in
+ * a standard way (contributions are added directly to the appropriate bin)
+ * and it also stores/calculates the total data (the sum of each bin
+ * contribution) for each entity and for the combination of all entities. 
+ *
+ * The MonteCarlo::StandardSurfaceEstimator inherits from the 
+ * MonteCarlo::StandardEntityEstimator and the 
+ * MonteCarlo::ParticleCrossingSurfaceEventObserver, while the
+ * MonteCarlo::StandardCellEstimator only inherits from the 
+ * MonteCarlo::StandardEntityEstimator.
+ *
+ * \subsubsection mc_cell_pulse_height_estimator Cell Pulse Height Estimator
+ * The MonteCarlo::CellPulseHeightEstimator estimates the response that
+ * would be seen in a physical detector system. As such, it calculates its
+ * estimates in a non-standard way. It therefore inherits from the
+ * MonteCarlo::EntityEstimator instead of the 
+ * MonteCarlo::StandardCellEstimator. This estimator is also a
+ * \ref mc_particle_entering_cell_event "particle entering cell event" observer
+ * and a \ref particle_leaving_cell_event "particle leaving cell event"
+ * observer.
+ *
+ * Currently only energy binning is supported and only photons and electrons
+ * can be assigned. 
+ *
+ * \subsubsection mc_cell_collision_flux_estimator Cell Collision Flux Estimator
+ * The MonteCarlo::CellCollisionFluxEstimator estimates the particle flux
+ * in a cell using collision sites and cell material information. It inherits
+ * from the  MonteCarlo::StandardCellEstimator and is a
+ * \ref mc_particle_colliding_in_cell_event "particle colliding in cell event"
+ * observer.
+ *
+ * Only cosine binning is not supported and any particle type can be
+ * assigned.
+ * 
+ * \subsubsection mc_cell_track_length_flux_estimator Cell Track-Length Flux Estimator
+ * The MonteCarlo::CellTrackLengthFluxEstimator estimates the particle flux
+ * in a cell using the length of particle tracks that pass through the cell. 
+ * It inherits from the MonteCarlo::StandardCellEstimator and is a 
+ * \ref mc_particle_subtrack_ending_in_cell_event "particle subtrack ending in cell event"
+ * observer.
+ *
+ * Cosine binning and time binning are not supported. Time binning requires
+ * extra work to implement with track length flux estimators, which is
+ * why it is not supported yet. Any particle type can be assigned.
+ *
+ * \subsubsection mc_surface_flux_estimator Surface Flux Estimator
+ * The MonteCarlo::SurfaceFluxEstimator estimates the particle flux on
+ * a surface using the angle cosine between the surface normal and
+ * the particle direction. It inherits from the 
+ * MonteCarlo::StandardSurfaceEstimator and is a 
+ * \ref mc_particle_crossing_surface_event "particle crossing surface event"
+ * observer.
+ *
+ * All binning types are supported and any particle type can be assigned.
+ *
+ * \subsubsection mc_surface_current_estimator Surface Current Estimator
+ * The MonteCarlo::SurfaceCurrentEstimator estimates the scalar particle
+ * current passing through the surface. It inherits from the
+ * MonteCarlo::StandardSurfaceEstimator and is a 
+ * \ref mc_particle_crossing_surface_event "particle crossing surface event"
+ * observer.
+ *
+ * All binning types are supported and any particle type can be assigned.
+ *
+ * \subsubsection mc_tet_mesh_track_length_flux_estimator Tet Mesh Track-Length Flux Estimator
+ * The MonteCarlo::TetMeshTrackLengthFluxEstimator estimates the particle
+ * flux in the tetrahedral mesh elements using the length of particle tracks 
+ * that pass through each element. It inherits from the 
+ * MonteCarlo::StandardEntityEstimator and is a 
+ * \ref mc_particle_subtrack_ending_global_event "particle subtrack ending global event" 
+ * observer.
+ *
+ * Cosine binning and time binning are not supported. Time binning requires
+ * extra work to implement with track length flux estimators, which is
+ * why it is not supported yet. Any particle type can be assigned.
+ *
+ * \subsubsection mc_hex_mesh_track_length_flux_estimator Hex Mesh Track-Length Flux Estimator
+ *
+ * \subsubsection adding_estimator_bins_subsubsec Procedure for Adding Estimator Bins
+ * Before adding a new estimator bin it will likely be necessary to 
+ * add new member data to the MonteCarlo::ParticleState class or to the
+ * MonteCarlo::EstimatorParticleStateWrapper class. The procedure for
+ * modifying the particle state class will not be discussed in this section
+ * (refer to this \ref mc_core_pstate_subsec "section"). There is no
+ * special procedure for modifying the 
+ * MonteCarlo::EstimatorParticleStateWrapper class. Before modifying either
+ * of these classes make sure to carefully consider which class should
+ * be modified. Parameters that do not fit within the particle state class
+ * (e.g. the cosine of the angle between the particle direction and the
+ * last surface crossed) should be placed in the estimator particle state
+ * wrapper. 
+ *
+ * Once any necessary changes have been made to the particle state class
+ * or to the estimator particle state wrapper class, the following procedure
+ * can be followed:
+ * <ol>
+ *  <li>Add the dimension name to the MonteCarlo::PhaseSpaceDimension enum
+ *      (place it right before MonteCarlo::DIMENSION_end).</li>
+ *  <li>Update the convert methods in the MonteCarlo_PhaseSpaceDimension.cpp
+ *      file.</li>
+ *  <li>Add a specialization of the MonteCarlo::PhaseSpaceDimensionTraits
+ *      struct for the new phase space dimension.</li>
+ *  <li>Consider how binning on this dimension should work. If binning
+ *      can be done in a standard way (see the 
+ *      MonteCarlo::StandardBasicEstimatorDimensionDiscretization class)
+ *      then no more work is required. If binning cannot be done in a 
+ *      standard way then a specialization of the 
+ *      MonteCarlo::GeneralEstimatorDimensionDiscretization class must
+ *      be made for the new phase space dimension.</li>
+ * </ol>
+ *
+ * \subsubsection exporting_estimator_data_hdf5 Exporting Estimator Data to HDF5
+ * The Utility::HDF5FileHandler class provides a very general interface for
+ * writing/reading from an HDF5 file. A more restrictive interface for
+ * writing/reading estimator data to an HDF5 file was required to reduce the
+ * complexity associated with this process. The 
+ * MonteCarlo::EstimatorHDF5FileHandler provides this more restrictive 
+ * interface and should be used whenever estimator data needs to be written to 
+ * or read from an HDF5 file.
+ *
+ * \subsection mc_particle_tracker Particle Tracker
+ * The Particle Tracker in FACEMC operates very similarly to the PTRAC function
+ * found in MCNPX/5/6. That is to say, for a given number of source particle 
+ * histories, the particle tracker will document the state of the particle from
+ * birth, through all collision events until the particle is terminated (either 
+ * through a collision event or entering a graveyard). Each subsequent particle 
+ * which is generated by a source particle (or any derivative particle) will 
+ * also be tracked.
+ *
+ * \subsubsection mc_ptrac_motivation Motivation for the Particle Tracker
+ * While this functionality is quite basic, the motivation for its implementation
+ * comes in two distinct classes. The first source of motivation is in preparation
+ * for a high-throughput computing (HTC) mode of FRENSIE. Currently FRENSIE is 
+ * equipped to run on high-performance (HPC) machines, where a set number of 
+ * processors and memory are available for an agreed upon time. While there is 
+ * access to such machines, it is often much easier to gain access to HTC clusters,
+ * where hundreds or even thousands of separate, low-powered machines are 
+ * available for an indeterminite amount of time. In this setting, one would like
+ * a problem which can be run in minutes, and which requires less than a few
+ * gigabytes of RAM. 
+ *
+ * However, a standard MC simulation may require hundreds of computer hours, as
+ * well as tens of gigabytes (or more) of RAM to store the geometry, mesh tallies,
+ * cross-sections, etc. Therefore, geometric domain decomposition and partial 
+ * tally contributions become important. What can be done to simplify the tally 
+ * calculations is to merely keep track of particle histories across all domains,
+ * passing a particle and its random number stream between domains when needed, and
+ * reconstruct the necessary tallies afterwards.
+ *
+ * The second source of motivation for the particle tracker is the development of 
+ * a smarter MC code. In essence, one would like the ability to determine which source
+ * particles contribute to a given tally. These particles can be referred to as 
+ * contributons. If one then takes a look at the general properties of the 
+ * contributions, it would be possible to determine whether or not there are 
+ * specific streaming paths or birthing angles which are more likely to produce 
+ * contributons. Therefore, one could have the code iteratively update source 
+ * angular biasing and weight window meshing to continually improve the fraction
+ * of source particles which are contributons. While much of this can be done with 
+ * a CADIS-like method, the ability to have a code which removes the burden of 
+ * variance reduction from the user could greatly improve the overall efficiency of 
+ * MC codes in the field.
+ *
+ * \subsubsection mc_ptrac_implementation Particle Tracker Implementation
+ * The MonteCarlo::ParticleTracker derives from the MonteCarlo::ParticleHistoryObserver
+ * as well as the MonteCarlo::ParticleSubtrackEndingGlobalEventObserver. This means
+ * that after every collision (and graveyard entry) the particle tracker will be 
+ * supplied with the updated particle state and will commit this particle state 
+ * to its data map. Because of the random nature of the MC process, one cannot 
+ * know a priori the exact number or type of particles which will be generated from each
+ * source particle, or even how many collisions each particle will undergo. 
+ * Therefore, the data structure for the particle tracker is that of nested maps
+ * which ultimately point to an array of particle state data. The typedefs for the
+ * specific data structures will be given below.
+ *
+ * \code
+ * typedef std::vector< std::vector< double > >
+ *   ParticleDataTwoDArray;
+ *   
+ * typedef std::unordered_map< unsigned, ParticleDataTwoDArray >
+ *   IndividualParticleSubmap;
+ *   
+ * typedef std::unordered_map< unsigned, IndividualParticleSubmap >
+ *   GenerationNumberSubmap;
+ *       
+ * typedef std::unordered_map< unsigned, GenerationNumberSubmap >
+ *   ParticleTypeSubmap;
+ *   
+ * typedef std::unordered_map< unsigned, ParticleTypeSubmap >
+ *   OverallHistoryMap;
+ * \endcode
+ *
+ * In order to access the data from a specific particle, one must provide the 
+ * history number, particle type, generation number, and individual particle number 
+ * for that specific combination. This structure allows for data wherein any of
+ * the given variables is allowed to be unknown at compile time. 
+ *
+ * Once the data has been collected in the aformentioned map, it is passed to the 
+ * MonteCarlo::ParticleTrackerHDF5FileHandler which will write it to an HDF5 file 
+ * with the same heirarchy as the previous map. That is to say, an example heirarchy
+ * would look like:
+ *
+ * \code
+ * /Particle_Tracker/History_Number/Particle_Type/Generation_Number/Particle_Number/Data_Component
+ * \endcode
+ *
+ * Where the History_Number, Particle_Type, Generation_Number, and Particle_Number 
+ * are integers, and the Data_Component is one of the pieces of state data contained
+ * in the map. Note that the possible Data_Component types are as follows:
+ *
+ * <ul> 
+ *  <li> X Position </li>
+ *  <li> Y Position </li>
+ *  <li> Z Position </li>
+ *  <li> X Direction </li>
+ *  <li> Y Direction </li>
+ *  <li> Z Direction </li>
+ *  <li> Collision Number </li>
+ *  <li> Energy </li>
+ *  <li> Weight </li>
+ * </ul>
+ *
+ * Again, this data structure was selected with the motivations for the particle
+ * tracker in mind. Since a given history number is handled on an individual node,
+ * having that as the first piece of data allows for simple distributed memory data 
+ * reduction.
+ *
+ * \subsection mc_summary_tables Summary Tables
+ *
+ * \section mc_event_handler The Event Handler
+ * The MonteCarlo::EventHandler is used to report events that have occurred
+ * and to manage the particle history observers. Part of the interface
+ * mimics the MonteCarlo::ParticleHistoryObserver interface. When one of
+ * the methods in this part of the interface is called the corresponding
+ * method in all of the registered particle history observers is also
+ * called. For example, when the enableThreadSupport method is called, the
+ * event handler will loop through all of the registered particle history
+ * observers and call the enableThreadSupport method. 
+ *
+ * The other part of the interface deals with individual events. The
+ * MonteCarlo::EventHandler inherits from all of the specific event
+ * handlers, which define this part of the interface. This is why the 
+ * MonteCarlo::EventHandler is called a mixin class. If more events are 
+ * created in the future the event handler class will simply have to 
+ * inherit from the new event handlers to expand the interface. 
+ *
+ * The event handler also takes care of registering observers with the
+ * appropriate dispatchers using the addEntityEventObserver method and
+ * the addGlobalEventObserver method. In each of the specific event handlers,
+ * there is a protected method called registerObserverWithTag. During
+ * the automatic registration process, this overloaded method will be
+ * called to register the observer with the dispatcher stored in the
+ * handler (this technique is called tag dispatching and is used in the
+ * standard library often). 
+ *
+ * \section mc_event_module_interface The Event Module Interface
+ * The MonteCarlo::EventModuleInterface is a template interface that adds
+ * an "extra level of abstraction" to the 
+ * MonteCarlo::ParticleSimulationManager. The reason this extra level of
+ * abstraction is used is to ensure that FRENSIE stays highly extensible. In
+ * addition, new specializations of the interface can be made without having
+ * to make any changes to the particle simulation manager. 
+ *
+ * Currently, there is only a specialization of the interface for the
+ * MonteCarlo::EventHandler 
+ * (MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler>).
+ * This can be thought of as the native interface specialization. If in the
+ * future another development team releases a software package for
+ * creating estimators this interface can be specialized for that new package.
+ *
+ * Note that if new events are added in the future, the additions made to
+ * the event handler must also be made to the template interface. In the
+ * MonteCarlo::ParticleSimulationManager the calls to the new interface 
+ * method must also be made at the appropriate times.
+ */ 
+
+//---------------------------------------------------------------------------//
+/*! \defgroup entity_events Entity Events
+ *
+ * Events that occur with respect to a geometric entity (cell or surface).
+ */
+
+/*! \defgroup global_events Global Events
+ *
+ * Events that are independent of geometric entities.
+ */

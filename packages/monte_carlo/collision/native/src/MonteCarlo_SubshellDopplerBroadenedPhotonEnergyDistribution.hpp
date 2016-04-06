@@ -9,13 +9,9 @@
 #ifndef MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 #define MONTE_CARLO_SUBSHELL_DOPPLER_BROADENED_PHOTON_ENERGY_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,52 +23,25 @@ public:
 
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
-		    const SubshellType interaction_subshell,
-		    const double num_electrons_in_subshell,
-		    const double binding_energy,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    compton_profile );
+		                       const SubshellType interaction_subshell,
+                                       const double subshell_occupancy,
+                                       const double subshell_binding_energy );
 
   //! Destructor
-  ~SubshellDopplerBroadenedPhotonEnergyDistribution()
+  virtual ~SubshellDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
+
+  //! Check if the distribution is complete (all subshells)
+  bool isComplete() const;
 
   //! Return the subshell
   SubshellType getSubshell() const;
   
   //! Return the number of electrons in the subshell
-  double getNumberOfElectronsInSubshell() const;
+  double getSubshellOccupancy() const;
 
-  //! Return the binding energy
-  double getBindingEnergy() const;
-
-  //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-		   const double outgoing_energy,
-		   const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const double incoming_energy,
-		      const double outgoing_energy,
-		      const double scattering_angle_cosine ) const;
-
-  //! Evaluate the integrated cross section (b/mu)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-					 const double scattering_angle_cosine,
-					 const double precision ) const;
-
-  //! Sample an outgoing energy from the distribution
-  void sample( const double incoming_energy,
-	       const double scattering_angle_cosine,
-	       double& outgoing_energy,
-	       SubshellType& shell_of_interaction ) const;
-
-  //! Sample an outgoing energy and record the number of trials
-  void sampleAndRecordTrials( const double incoming_energy,
-			      const double scattering_angle_cosine,
-			      double& outgoing_energy,
-			      SubshellType& shell_of_interaction,
-			      unsigned& trials ) const;
+  //! Return the subshell binding energy
+  double getSubshellBindingEnergy() const;
   
 private:
 
@@ -80,14 +49,29 @@ private:
   SubshellType d_interaction_subshell;
 
   // The number of electrons in the subshell
-  double d_num_electrons_in_subshell;
+  double d_subshell_occupancy;
 
   // THe subshell binding energy
   double d_subshell_binding_energy;
-
-  // The compton profile for the subshell
-  Teuchos::RCP<const Utility::TabularOneDDistribution> d_compton_profile;
 };
+
+// Return the subshell
+inline SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshell() const
+{
+  return d_interaction_subshell;
+}
+  
+// Return the number of electrons in the subshell
+inline double SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshellOccupancy() const
+{
+  return d_subshell_occupancy;
+}
+
+// Return the binding energy
+inline double SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshellBindingEnergy() const
+{
+  return d_subshell_binding_energy;
+}
 
 } // end MonteCarlo namespace
 

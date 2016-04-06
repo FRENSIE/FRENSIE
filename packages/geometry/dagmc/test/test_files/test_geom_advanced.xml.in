@@ -4,14 +4,17 @@
   <Parameter name="CAD File" type="string" 
 	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_advanced_geom.sat"/>
   <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
-  <Parameter name="Termination Cell Synonym" type="string" value="graveyard"/>
-  <Parameter name="Material Synonym" type="string" value="mat"/>
-  <Parameter name="Density Synonym" type="string" value="rho"/>
-  <Parameter name="Estimator Synonym" type="string" value="tally"/>
-  <Parameter name="Surface Current Synonym" type="string" value="surf.cur"/>
-  <Parameter name="Surface Flux Synonym" type="string" value="surf.flux"/>
-  <Parameter name="Cell Pulse Height Synonym" type="string" value="c.pulse"/>
-  <Parameter name="Cell Track-Length Flux Synonym" type="string" value="c.tl.f"/>
-  <Parameter name="Cell Collision Flux Synonym" type="string" value="c.c.f"/>
+  <Parameter name="Termination Cell Property" type="string" value="graveyard"/>
+  <Parameter name="Reflecting Surface Property" type="string" 
+             value="spec.reflect"/>
+  <Parameter name="Material Property" type="string" value="mat"/>
+  <Parameter name="Density Property" type="string" value="rho"/>
+  <Parameter name="Estimator Property" type="string" value="tally"/>
+  <Parameter name="Surface Current Name" type="string" value="surf.cur"/>
+  <Parameter name="Surface Flux Name" type="string" value="surf.flux"/>
+  <Parameter name="Cell Pulse Height Name" type="string" value="c.pulse"/>
+  <Parameter name="Cell Track-Length Flux Name" type="string" value="c.tl.f"/>
+  <Parameter name="Cell Collision Flux Name" type="string" value="c.c.f"/>
+  <Parameter name="Use Fast Id Lookup" type="bool" value="True"/>
 
 </ParameterList>

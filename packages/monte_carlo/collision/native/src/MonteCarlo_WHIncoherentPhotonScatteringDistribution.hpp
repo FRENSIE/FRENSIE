@@ -9,12 +9,12 @@
 #ifndef MONTE_CARLO_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_ScatteringFunction.hpp"
 
 namespace MonteCarlo{
 
@@ -26,8 +26,8 @@ public:
 
   //! Constructor
   WHIncoherentPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const double kahn_sampling_cutoff_energy = 3.0 );
+   const std::shared_ptr<const ScatteringFunction>& scattering_function,
+   const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
   virtual ~WHIncoherentPhotonScatteringDistribution()
@@ -60,7 +60,7 @@ private:
 				  const double scattering_angle_cosine ) const;
 
   // The scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
+  std::shared_ptr<const ScatteringFunction> d_scattering_function;
 };
 
 // Evaluate the scattering function 
@@ -76,23 +76,14 @@ WHIncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
   testPrecondition( scattering_angle_cosine <= 1.0 );
   
   // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = incoming_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
+  const ScatteringFunction::ArgumentQuantity inverse_wavelength = 
+    incoming_energy/(Utility::PhysicalConstants::planck_constant*
+		     Utility::PhysicalConstants::speed_of_light)*
+    Utility::Units::inverse_centimeter;
 
-  // The scattering function argument
-  double scattering_function_arg = 
+  // The scattering function argument (1/cm)
+  const ScatteringFunction::ArgumentQuantity scattering_function_arg =  
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
-  
-  if( scattering_function_arg >= 
-      d_scattering_function->getUpperBoundOfIndepVar() )
-    scattering_function_arg = d_scattering_function->getUpperBoundOfIndepVar();
-
-  // Make sure the scattering function arg is valid
-  testPostcondition( scattering_function_arg >= 
-		     d_scattering_function->getLowerBoundOfIndepVar() );
-  testPostcondition( scattering_function_arg <=
-		     d_scattering_function->getUpperBoundOfIndepVar() );
 
   return d_scattering_function->evaluate( scattering_function_arg );
 }

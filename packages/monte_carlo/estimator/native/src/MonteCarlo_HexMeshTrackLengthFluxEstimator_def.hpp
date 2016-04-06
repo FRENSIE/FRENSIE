@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_TetMeshTrackLengthFluxEstimator.cpp
-//! \author Alex Robinson, Eli Moll
+//! \author Luke Kersting, Philip Britt
 //! \brief  Tet mesh flux estimator class declaration.
 //!
 //---------------------------------------------------------------------------//
@@ -36,14 +36,14 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
     d_moab_interface( new moab::Core ),
     d_hex_meshset(),
-    d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
-    d_kd_tree_root(),
-    d_hex_face_normals(), 
+//    d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
+//    d_kd_tree_root(), 
     d_output_mesh_name( output_mesh_file_name )
 {
+  moab::ScdInterface *scdiface;
   // Create empty MOAB meshset
   moab::EntityHandle d_hex_meshset;
-  moab::ErrorCode return_value = d_moab_interface->create_meshset(
+  moab::ErrorCode return_value = d_moab_interface->create_box_set(
 					moab::MESHSET_SET, d_hex_meshset);
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -63,7 +63,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                       moab::ErrorCodeStr[return_value] );                
   
   // Range (domain) of all hexahedral elements
-  moab::Range all_hex_elements;
+  moab::Range verts, all_hex_elements;
   
   // Extract 3D elements from meshset
   return_value = d_moab_interface->get_entities_by_dimension(
@@ -90,7 +90,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   
   unsigned int number_of_hexs = all_hex_elements.size();
   
-  boost::unordered_map<moab::EntityHandle,double> entity_volumes;
+  double entity_volume;
   
   for( moab::Range::const_iterator hex = all_hex_elements.begin(); 
        hex != all_hex_elements.end(); 
@@ -120,12 +120,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 				    1, 
 				    vertices[j].array() );
     }
-    
-    // Calculate hex cell's face's normal 
-    Teuchos::TwoDArray<double>& hex_face_normals = d_hex_face_normals[*hex];
-    
-    Utility::calculateFaceNormals( vertices, hex_face_normals );
-    
+        
     // Calculate hex volumes
     entity_volumes[*hex] = Utility::calculateHexahedronVolume(vertices);
   }
@@ -165,7 +160,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 	    << input_mesh_file_name << " ... ";
   std::cout.flush();
     
-  d_kd_tree->build_tree(all_hex_elements, &d_kd_tree_root, &fileopts);
+  scdiface->construct_box(all_hex_elements, &d_kd_tree_root, &fileopts);
 
   std::cout << "done." << std::endl;
 } 
@@ -397,31 +392,8 @@ moab::EntityHandle HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   // Make sure the point is in the mesh
   testPrecondition( this->isPointInMesh( point ) );
   
-  // Find the kd-tree leaf that contains the point
-  moab::AdaptiveKDTreeIter kd_tree_iterator;
+  // Find the box that contains the point --NEED TO FILL IN
   
-  moab::ErrorCode return_value = d_kd_tree->point_search( point,
-                                                          kd_tree_iterator );
-                                                        
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                      Utility::MOABException,
-                      moab::ErrorCodeStr[return_value] );
-
-  TEST_FOR_EXCEPTION( kd_tree_iterator.handle() == 0,
-		      Utility::MOABException,
-		      moab::ErrorCodeStr[return_value] );
-
-  moab::EntityHandle leaf = kd_tree_iterator.handle();
-  moab::Range hexs_in_leaf;
-    
-  return_value = d_moab_interface->get_entities_by_dimension( leaf,
-							      3,
-							      hexs_in_leaf,
-							      false );
-                                                              
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-		      Utility::MOABException,
-		      moab::ErrorCodeStr[return_value] );     
     
   // A hex must be found since a leaf was found - failure to find a hex
   // indicates a tolerance issue usually
