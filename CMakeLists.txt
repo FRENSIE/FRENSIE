@@ -134,12 +134,6 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/$
 SET(${PROJECT_NAME}_DATA_DIRECTORY ${CMAKE_SOURCE_DIR}/data/)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY_DIR}/HDF5DataFileNames.hpp)
 
-# Parse the Fission Product Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/FissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/FissionProductDataPath.hpp)
-
-# Parse the Decay Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/DecayDataPath.hpp.in ${CMAKE_BINARY_DIR}/DecayDataPath.hpp)
-
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
@@ -171,7 +165,7 @@ IF(${SETUP_DASHBOARD_CLIENT})
   INCLUDE(CTest)
 
   # Configure the CTestCustom.cake file for extended output for dashboard
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake.in
     ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()

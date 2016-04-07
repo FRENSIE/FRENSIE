@@ -31,7 +31,7 @@ MACRO(ENABLE_ROOT_SUPPORT)
   FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_PREFIX}/bin)
   SET(ROOT_EXE ${ROOT_EXE} -b -l)
 
-  # Configure the root_config.hpp header file
+  # Indicate that Root has been enabled
   SET(HAVE_${PROJECT_NAME}_ROOT "1")
 
   # Echo ROOT build info if a verbose configure is requested
