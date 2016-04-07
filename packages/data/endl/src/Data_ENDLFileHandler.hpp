@@ -52,7 +52,7 @@ public:
   //! Destructor
   ~ENDLFileHandler();
 
-  // Open the ENDL file
+  //! Open the ENDL file
   void openENDLFile( const std::string& file_name );
 
   //! Close an ENDL data file

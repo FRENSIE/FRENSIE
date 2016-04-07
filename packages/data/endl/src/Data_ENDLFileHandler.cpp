@@ -67,7 +67,6 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
   // Make sure no other endl library is open and assigned the desired id
   testPrecondition( !fileIsOpenUsingFortran( d_endl_file_id ) );
   
-  
   // Check that the file exists
   bool endl_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(), 
 						       file_name.size() );

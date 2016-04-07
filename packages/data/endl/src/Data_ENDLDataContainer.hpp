@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_EvaluatedElectronDataContainer.hpp
+//! \file   Data_ENDLDataContainer.hpp
 //! \author Luke Kersting
-//! \brief  The native eedl container class decl.
+//! \brief  The native eadl container class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_EVALUATED_ELECTRON_DATA_CONTAINER_HPP
-#define DATA_EVALUATED_ELECTRON_DATA_CONTAINER_HPP
+#ifndef DATA_ENDL_DATA_CONTAINER_HPP
+#define DATA_ENDL_DATA_CONTAINER_HPP
 
 // Std Lib Includes
 #include <vector>
@@ -25,63 +25,83 @@
 
 namespace Data{
 
-//! The eedl container
-class EvaluatedElectronDataContainer : public Utility::StandardArchivableObject<EvaluatedElectronDataContainer,false>, public Utility::StandardSerializableObject<EvaluatedElectronDataContainer,false>
+//! The eadl container
+class ENDLDataContainer : public Utility::StandardArchivableObject<ENDLDataContainer,false>, public Utility::StandardSerializableObject<ENDLDataContainer,false>
 {
 
 public:
 
   //! Constructor (from saved archive)
-  EvaluatedElectronDataContainer( 
-		  const std::string& archive_name,
-                  const Utility::ArchivableObject::ArchiveType archive_type =
-		  Utility::ArchivableObject::XML_ARCHIVE );
+  ENDLDataContainer( 
+    const std::string& archive_name,
+    const Utility::ArchivableObject::ArchiveType archive_type =
+        Utility::ArchivableObject::XML_ARCHIVE );
 
   //! Destructor
-  virtual ~EvaluatedElectronDataContainer()
+  virtual ~ENDLDataContainer()
   { /* ... */ }
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
 
-  //! Return the atomic subshells 
-  const std::set<unsigned>& getSubshells() const;
-
 //---------------------------------------------------------------------------//
 // GET RELAXATION DATA
 //---------------------------------------------------------------------------//
-/*
 
   //! Return the atomic subshells 
   const std::set<unsigned>& getSubshells() const;
 
-  //! Return the occupancy for a subshell
-  double getSubshellOccupancy( const unsigned subshell ) const;
+  //! Return the number of electrons for a subshell
+  const unsigned getSubshellNumberOfElectrons( const unsigned subshell ) const;
 
   //! Return the binding energy for a subshell
-  double getSubshellBindingEnergy( const unsigned subshell ) const;
+  const double getSubshellBindingEnergy( const unsigned subshell ) const;
 
-  //! Return if there is relaxation data
-  bool hasRelaxationData() const;
+  //! Return the kinetic energy for a subshell
+  const double getSubshellKineticEnergy( const unsigned subshell ) const;
 
-  //! Return if the subshell has relaxation data
-  bool hasSubshellRelaxationData( const unsigned subshell ) const;
+  //! Return the average radius for a subshell
+  const double getSubshellAverageRadius( const unsigned subshell ) const;
 
-  //! Return the number of transitions that can fill a subshell vacancy
-  unsigned getSubshellRelaxationTransitions( const unsigned subshell ) const;
+  //! Return the radiative level width for a subshell
+  const double getSubshellRadiativeLevel( const unsigned subshell ) const;
 
-  //! Return the relaxation vacancies for a subshell
-  const std::vector<std::pair<unsigned,unsigned> >&
-  getSubshellRelaxationVacancies( const unsigned subshell ) const;
+  //! Return the non radiative level for a subshell
+  const double getSubshellNonRadiativeLevel( const unsigned subshell ) const;
 
-  //! Return the relaxation particle energies for a subshell
-  const std::vector<double>& getSubshellRelaxationParticleEnergies(
-					       const unsigned subshell ) const;
+  //! Return the average energy to the residual atom per initial vacancy
+  const double getLocalDepositionPerInitialVacancy( 
+    const unsigned subshell ) const;
 
-  //! Return the relaxation probabilities for a subshell
-  const std::vector<double>& getSubshellRelaxationProbabilities(
-					       const unsigned subshell ) const;
-*/
+  //! Return the average number of particles per initial vacancy
+  const unsigned getAverageParticlesPerInitialVacancy( 
+    const unsigned subshell ) const;
+
+  //! Return the average energy of particles per initial vacancy
+  const double getAverageParitcleEnergyPerInitialVacancy( 
+    const unsigned subshell ) const;
+
+  //! Return the radiative transition probability
+  const std::vector<double>& getRadiativeTransitionProbability( 
+    const unsigned subshell,
+    const unsigned secondary_subsell ) const;
+
+  //! Return the radiative transition energy
+  const std::vector<double>& getRadiativeTransitionEnergy( 
+    const unsigned subshell,
+    const unsigned secondary_subshell ) const;
+
+  //! Return the non radiative transition probability
+  const std::vector<double>& getNonRadiativeTransitionProbability( 
+    const unsigned subshell,
+    const unsigned secondary_subshell,
+    const unsigned tertiary_subshell ) const;
+
+  //! Return the non radiative transition energy
+  const std::vector<double>& getNonRadiativeTransitionEnergy( 
+    const unsigned subshell,
+    const unsigned secondary_subshell,
+    const unsigned tertiary_subshell ) const;
 
 //---------------------------------------------------------------------------//
 // GET ELASTIC DATA 
@@ -225,16 +245,12 @@ public:
 protected:
 
   //! Default constructor
-  EvaluatedElectronDataContainer()
+  ENDLDataContainer()
   { /* ... */ }
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
 
-  //! Set the atomic subshells
-  void setSubshells( const std::set<unsigned>& subshells );
-
-/*
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -242,33 +258,65 @@ protected:
   //! Set the atomic subshells
   void setSubshells( const std::set<unsigned>& subshells );
 
-  //! Set the occupancy for a subshell
-  void setSubshellOccupancy( const unsigned subshell,
-                             const double occupancy );
-  
-  //! Set the binding energy for a subshell
-  void setSubshellBindingEnergy( const unsigned subshell,
-                                 const double binding_energy );
+  //! Set the number of electrons in subshells
+  void setSubshellNumberOfElectrons( 
+    const std::map<unsigned,unsigned>& number_of_electrons );
 
-  //! Set the number of transitions that can fill a subshell vacancy
-  void setSubshellRelaxationTransitions( const unsigned subshell,
-                                         const unsigned transitions );
+  //! Set the binding energy in subshells
+  void setSubshellBindingEnergy(
+    const std::map<unsigned,double>& binding_energies );
 
-  //! Set the relaxation vacancies for a subshell
-  void setSubshellRelaxationVacancies( 
-      const unsigned subshell,
-      const std::vector<std::pair<unsigned,unsigned> >& relaxation_vacancies );
+  //! Set the kinetic energy in subshells
+  void setSubshellKineticEnergy(
+    const std::map<unsigned,double>& kinetic_energies );
 
-  //! Set the relaxation particle energies for a subshell
-  void setSubshellRelaxationParticleEnergies(
-		     const unsigned subshell,
-		     const std::vector<double>& relaxation_particle_energies );
+  //! Set the average radius in subshells
+  void setSubshellAverageRadius(
+    const std::map<unsigned,double>& average_radii );
 
-  //! Set the relaxation probabilities for a subshell
-  void setSubshellRelaxationProbabilities( 
-			 const unsigned subshell,
-			 const std::vector<double>& relaxation_probabilities );
-*/
+  //! Set the radiative level width in subshells
+  void setSubshellRadiativeLevel(
+    const std::map<unsigned,double>& radiative_levels );
+
+  //! Set the non radiative level in subshells
+  void setSubshellNonRadiativeLevel(
+    const std::map<unsigned,double>& non_radiative_levels );
+
+  //! Set the average energy to the residual atom per initial vacancy
+  void setLocalDepositionPerInitialVacancy(
+    const std::map<unsigned,double>& local_depositions );
+
+  //! Set the average number of particles per initial vacancy
+  void setAverageParticlesPerInitialVacancy(
+    const std::map<unsigned,unsigned>& average_particle_numbers );
+
+  //! Set the average energy of particles per initial vacancy
+  void setAverageParitcleEnergyPerInitialVacancy(
+    const std::map<unsigned,double>& average_particle_energies );
+
+  //! Set the radiative transition probability
+  void setRadiativeTransitionProbability( 
+    const unsigned subshell,
+    const std::map<unsigned,std::vector<double> >& 
+        radiative_transition_probability );
+
+  //! Set the radiative transition energy
+  void setRadiativeTransitionEnergy( 
+    const unsigned subshell,
+    const std::map<unsigned,std::vector<double> >& 
+        radiative_transition_energy );
+
+  //! Set the non radiative transition probability
+  void setNonRadiativeTransitionProbability( 
+    const unsigned subshell,
+    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+        non_radiative_transition_probability );
+
+  //! Set the non radiative transition energy
+  void setNonRadiativeTransitionEnergy( 
+    const unsigned subshell,
+    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+        non_radiative_transition_energy );
 
 //---------------------------------------------------------------------------//
 // SET ELASTIC DATA 
@@ -470,6 +518,7 @@ protected:
   //! Set the atomic excitation average energy loss
   void setAtomicExcitationEnergyLoss( 
             const std::vector<double>& atomic_excitation_energy_loss );
+
   
 private:
 
@@ -489,35 +538,54 @@ private:
   // The atomic number
   unsigned d_atomic_number;
 
-  // The atomic subshells (ENDF designators)
-  std::set<unsigned> d_subshells;
-
-/*
 //---------------------------------------------------------------------------//
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
   // The atomic subshells (ENDF designators)
   std::set<unsigned> d_subshells;
 
-  // The subshell occupancies
-  std::map<unsigned,double> d_subshell_occupancies;
+  // The number of electrons in subshells
+  std::map<unsigned,unsigned> d_subshell_number_of_electrons;
 
-  // The subshell binding energies
+  // The binding energy in subshells
   std::map<unsigned,double> d_subshell_binding_energies;
 
-  // The subshell relaxation transitions
-  std::map<unsigned,unsigned> d_relaxation_transitions;
+  // The kinetic energy in subshells
+  std::map<unsigned,double> d_subshell_kinetic_energies;
 
-  // The subshell relaxation vacancies
-  std::map<unsigned,std::vector<std::pair<unsigned,unsigned> > >
-  d_relaxation_vacancies;
+  // The average radius in subshells
+  std::map<unsigned,double> d_subshell_average_radii;
 
-  // The subshell relaxation particle energies
-  std::map<unsigned,std::vector<double> > d_relaxation_particle_energies;
+  // The radiative level width in subshells
+  std::map<unsigned,double> d_subshell_radiative_levels;
 
-  // The subshell relaxation probabilities
-  std::map<unsigned,std::vector<double> > d_relaxation_probabilities;
-*/
+  // The non radiative level in subshells
+  std::map<unsigned,double> d_subshell_non_radiative_levels;
+
+  // The average energy to the residual atom per initial vacancy
+  std::map<unsigned,double> d_subshell_local_depositions;
+
+  // The average number of particles per initial vacancy
+  std::map<unsigned,unsigned> d_subshell_average_particle_numbers;
+
+  // The average energy of particles per initial vacancy
+  std::map<unsigned,double> d_subshell_average_particle_energies;
+
+  // The radiative transition probability
+  std::map<unsigned,std::map<unsigned,std::vector<double> > > 
+    d_radiative_transition_probabilities;
+
+  // The radiative transition energy
+  std::map<unsigned,std::map<unsigned,std::vector<double> > >
+    d_radiative_transition_energies;
+
+  // The non radiative transition probability
+  std::map<unsigned,std::map<unsigned,std::map<unsigned,std::vector<double> > > >
+    d_non_radiative_transition_probabilities;
+
+  // The non radiative transition energy
+  std::map<unsigned,std::map<unsigned,std::map<unsigned,std::vector<double> > > >
+    d_non_radiative_transition_energies;
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 
@@ -657,12 +725,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Data_EvaluatedElectronDataContainer_def.hpp"
+#include "Data_ENDLDataContainer_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_EVALUATED_ELECTRON_DATA_CONTAINER_HPP
+#endif // end DATA_ENDL_DATA_CONTAINER_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_EvaluatedElectronDataContainer.hpp
+// end Data_ENDLDataContainer.hpp
 //---------------------------------------------------------------------------//

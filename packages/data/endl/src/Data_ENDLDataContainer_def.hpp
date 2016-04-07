@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_EvaluatedElectronDataContainer_def.hpp
+//! \file   Data_ENDLDataContainer_def.hpp
 //! \author Luke Kersting
-//! \brief  The native eedl container template defs.
+//! \brief  The native eadl container template defs.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_EVALUATED_ELECTRON_DATA_CONTAINER_DEF_HPP
-#define DATA_EVALUATED_ELECTRON_DATA_CONTAINER_DEF_HPP
+#ifndef DATA_ENDL_DATA_CONTAINER_DEF_HPP
+#define DATA_ENDL_DATA_CONTAINER_DEF_HPP
 
 // Boost Includes
 #include <boost/serialization/vector.hpp>
@@ -20,11 +20,41 @@ namespace Data{
 
 // Save the data to an archive
 template<typename Archive>
-void EvaluatedElectronDataContainer::save( Archive& ar, 
+void ENDLDataContainer::save( Archive& ar, 
 						  const unsigned version) const
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+
+//---------------------------------------------------------------------------//
+// RELAXATION DATA
+//---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
+  ar & boost::serialization::make_nvp( "subshell_number_of_electrons", 
+        d_subshell_number_of_electrons );
+  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+        d_subshell_binding_energies );
+  ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
+        d_subshell_kinetic_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_radii", 
+        d_subshell_average_radii );
+  ar & boost::serialization::make_nvp( "subshell_radiative_levels", 
+        d_subshell_radiative_levels );
+  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels", 
+        d_subshell_non_radiative_levels );
+  ar & boost::serialization::make_nvp( "subshell_local_depositions", 
+        d_subshell_local_depositions );
+  ar & boost::serialization::make_nvp( "subshell_average_particle_numbers", 
+        d_subshell_average_particle_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_particle_energies", 
+        d_subshell_average_particle_energies );
+  ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
+        d_radiative_transition_probabilities );
+  ar & boost::serialization::make_nvp( "radiative_transition_energies",
+        d_radiative_transition_energies );
+  ar & boost::serialization::make_nvp( "non_radiative_transition_probabilities",
+        d_non_radiative_transition_probabilities );
+  ar & boost::serialization::make_nvp( "non_radiative_transition_energies",
+        d_non_radiative_transition_energies );
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 
@@ -137,11 +167,41 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
   
 // Load the data from an archive
 template<typename Archive>
-void EvaluatedElectronDataContainer::load( Archive& ar, 
+void ENDLDataContainer::load( Archive& ar, 
 						  const unsigned version )
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+
+//---------------------------------------------------------------------------//
+// RELAXATION DATA
+//---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
+  ar & boost::serialization::make_nvp( "subshell_number_of_electrons", 
+        d_subshell_number_of_electrons );
+  ar & boost::serialization::make_nvp( "subshell_binding_energies", 
+        d_subshell_binding_energies );
+  ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
+        d_subshell_kinetic_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_radii", 
+        d_subshell_average_radii );
+  ar & boost::serialization::make_nvp( "subshell_radiative_levels", 
+        d_subshell_radiative_levels );
+  ar & boost::serialization::make_nvp( "subshell_non_radiative_levels", 
+        d_subshell_non_radiative_levels );
+  ar & boost::serialization::make_nvp( "subshell_local_depositions", 
+        d_subshell_local_depositions );
+  ar & boost::serialization::make_nvp( "subshell_average_particle_numbers", 
+        d_subshell_average_particle_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_particle_energies", 
+        d_subshell_average_particle_energies );
+  ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
+        d_radiative_transition_probabilities );
+  ar & boost::serialization::make_nvp( "radiative_transition_energies",
+        d_radiative_transition_energies );
+  ar & boost::serialization::make_nvp( "non_radiative_transition_probabilities",
+        d_non_radiative_transition_probabilities );
+  ar & boost::serialization::make_nvp( "non_radiative_transition_energies",
+        d_non_radiative_transition_energies );
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 
@@ -254,9 +314,9 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 
 } // end Data namespace
 
-#endif // end DATA_EVALUATED_ELECTRON_DATA_CONTAINER_DEF_HPP
+#endif // end DATA_ENDL_DATA_CONTAINER_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_EvaluatedElectronDataContainer_def.hpp
+// end Data_ENDLDataContainer_def.hpp
 //---------------------------------------------------------------------------//
 

@@ -2,7 +2,7 @@
 //!
 //! \file   Data_EvaluatedElectronDataContainer.cpp
 //! \author Luke Kersting
-//! \brief  The native evaluated electron data container class def.
+//! \brief  The native endl container class eedl def.
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,134 +21,12 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Data_ENDLDataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Data{
-
-// Constructor (from saved archive)
-EvaluatedElectronDataContainer::EvaluatedElectronDataContainer( 
-		    const std::string& archive_name,
-		    const Utility::ArchivableObject::ArchiveType archive_type )
-{
-  // Import the data in the archive - no way to use initializer list :(
-  this->importData( archive_name, archive_type );
-}
-
-// Return the atomic number
-unsigned EvaluatedElectronDataContainer::getAtomicNumber() const
-{
-  return d_atomic_number;
-}
-
-// Return the atomic subshells 
-const std::set<unsigned>& 
-EvaluatedElectronDataContainer::getSubshells() const
-{
-  return d_subshells;
-}
-
-/*
-//---------------------------------------------------------------------------//
-// GET RELAXATION DATA
-//---------------------------------------------------------------------------//
-
-// Return the atomic subshells 
-const std::set<unsigned>& 
-EvaluatedElectronDataContainer::getSubshells() const
-{
-  return d_subshells;
-}
-
-// Return the subshell occupancies
-double EvaluatedElectronDataContainer::getSubshellOccupancy(
-					        const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
-		    d_subshells.end() );
-  
-  return d_subshell_occupancies.find( subshell )->second;
-}
-
-// Return the subshell binding energies
-double EvaluatedElectronDataContainer::getSubshellBindingEnergy(
-						const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != 
-		    d_subshells.end() );
-  
-  return d_subshell_binding_energies.find( subshell )->second;
-}
-
-// Return if there is relaxation data
-bool EvaluatedElectronDataContainer::hasRelaxationData() const
-{
-  return d_relaxation_transitions.size() > 0;
-}
-
-// Return if the subshell has relaxation data
-bool EvaluatedElectronDataContainer::hasSubshellRelaxationData( 
-						const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() );
-  
-  return d_relaxation_transitions.find( subshell ) != 
-    d_relaxation_transitions.end();
-}
-
-// Return the number of transitions that can fill a subshell vacancy
-unsigned EvaluatedElectronDataContainer::getSubshellRelaxationTransitions( 
-						const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() );
-
-  return d_relaxation_transitions.find( subshell )->second;
-}
-
-// Return the relaxation vacancies for a subshell
-const std::vector<std::pair<unsigned,unsigned> >&
-EvaluatedElectronDataContainer::getSubshellRelaxationVacancies( 
-						const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() );
-
-  return d_relaxation_vacancies.find( subshell )->second;
-}
-
-// Return the relaxation particle energies for a subshell
-const std::vector<double>& 
-EvaluatedElectronDataContainer::getSubshellRelaxationParticleEnergies(
-					        const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() );
-
-  return d_relaxation_particle_energies.find( subshell )->second;
-}
-
-// Return the relaxation probabilities for a subshell
-const std::vector<double>& 
-EvaluatedElectronDataContainer::getSubshellRelaxationProbabilities(
-					        const unsigned subshell ) const
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) !=
-		    d_subshells.end() );
-
-  return d_relaxation_probabilities.find( subshell )->second;
-}
-*/
 
 //---------------------------------------------------------------------------//
 // GET ELASTIC DATA 
@@ -156,63 +34,63 @@ EvaluatedElectronDataContainer::getSubshellRelaxationProbabilities(
 
 // Return the elastic energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElasticEnergyGrid() const
+ENDLDataContainer::getElasticEnergyGrid() const
 {
   return d_elastic_energy_grid;
 }
 
 // Return the elastic transport electron cross section
 const std::vector<double>&
-EvaluatedElectronDataContainer::getElasticTransportCrossSection() const
+ENDLDataContainer::getElasticTransportCrossSection() const
 {
   return d_elastic_transport_cross_section;
 }
 
 // Return the cutoff elastic electron cross section
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticCrossSection() const
+ENDLDataContainer::getCutoffElasticCrossSection() const
 {
   return d_cutoff_elastic_cross_section;
 }
 
 // Return the cutoff elastic average energy to the residual atom incoming energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticResidualIncomingEnergy() const
+ENDLDataContainer::getCutoffElasticResidualIncomingEnergy() const
 {
   return d_cutoff_elastic_residual_incoming_energy;;
 }
 
 // Return the cutoff elastic average energy to the residual atom
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticResidualEnergy() const
+ENDLDataContainer::getCutoffElasticResidualEnergy() const
 {
   return d_cutoff_elastic_residual_energy;
 }
 
 // Return the cutoff elastic average energy to the scattered electron incoming energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticScatteredElectronIncomingEnergy() const
+ENDLDataContainer::getCutoffElasticScatteredElectronIncomingEnergy() const
 {
   return d_cutoff_elastic_scattered_electron_incoming_energy;
 }
 
 // Return the cutoff elastic average energy to the scattered electron
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticScatteredElectronEnergy() const
+ENDLDataContainer::getCutoffElasticScatteredElectronEnergy() const
 {
   return d_cutoff_elastic_scattered_electron_energy;
 }
 
 // Return the cutoff elastic angular energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticAngularEnergyGrid() const
+ENDLDataContainer::getCutoffElasticAngularEnergyGrid() const
 {
   return d_cutoff_elastic_angular_energy_grid;
 }
 
 // Return the elastic angles for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticAngles(
+ENDLDataContainer::getCutoffElasticAngles(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -226,7 +104,7 @@ EvaluatedElectronDataContainer::getCutoffElasticAngles(
 
 // Return the elastic pdf for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getCutoffElasticPDF(
+ENDLDataContainer::getCutoffElasticPDF(
     const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -240,7 +118,7 @@ EvaluatedElectronDataContainer::getCutoffElasticPDF(
 
 // Return the total elastic electron cross section
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getTotalElasticCrossSection() const
+ENDLDataContainer::getTotalElasticCrossSection() const
 {
   return d_total_elastic_cross_section;
 }
@@ -248,21 +126,21 @@ EvaluatedElectronDataContainer::getTotalElasticCrossSection() const
 /*
 // Return the screened Rutherford elastic electron cross section
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getScreenedRutherfordElasticCrossSection() const
+ENDLDataContainer::getScreenedRutherfordElasticCrossSection() const
 {
   return d_screened_rutherford_elastic_cross_section;
 }
 
 // Return the screened Rutherford elastic normalization constant 
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getScreenedRutherfordNormalizationConstant() const
+ENDLDataContainer::getScreenedRutherfordNormalizationConstant() const
 {
   return d_screened_rutherford_normalization_constant;
 }
 
 // Return Moliere's screening constant 
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getMoliereScreeningConstant() const
+ENDLDataContainer::getMoliereScreeningConstant() const
 {
   return d_moliere_screening_constant;
 }
@@ -274,7 +152,7 @@ EvaluatedElectronDataContainer::getMoliereScreeningConstant() const
 
 // Return the electroionization cross section energy grid for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationCrossSectionEnergyGrid( 
+ENDLDataContainer::getElectroionizationCrossSectionEnergyGrid( 
                             const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -285,7 +163,7 @@ EvaluatedElectronDataContainer::getElectroionizationCrossSectionEnergyGrid(
 
 // Return the electroionization electron cross section for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationCrossSection( 
+ENDLDataContainer::getElectroionizationCrossSection( 
     const unsigned subshell ) const
 {
   return d_electroionization_subshell_cross_section.find( subshell )->second;
@@ -294,7 +172,7 @@ EvaluatedElectronDataContainer::getElectroionizationCrossSection(
 
 // Return the electroionization incoming energy grid for the average scattered electron energy for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationAverageScatteredElectronIncomingEnergy( 
+ENDLDataContainer::getElectroionizationAverageScatteredElectronIncomingEnergy( 
                            const unsigned subshell ) const
 {
   return d_electroionization_average_scattered_electron_incoming_energy.find( subshell )->second;
@@ -302,7 +180,7 @@ EvaluatedElectronDataContainer::getElectroionizationAverageScatteredElectronInco
 
 // Return the electroionization average scattered electron energy for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationAverageScatteredElectronEnergy( 
+ENDLDataContainer::getElectroionizationAverageScatteredElectronEnergy( 
                            const unsigned subshell ) const
 {
   return d_electroionization_average_scattered_electron_energy.find( subshell )->second;
@@ -310,7 +188,7 @@ EvaluatedElectronDataContainer::getElectroionizationAverageScatteredElectronEner
 
 // Return the electroionization incoming energy grid for the average recoil electron energy for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationAverageRecoilElectronIncomingEnergy( 
+ENDLDataContainer::getElectroionizationAverageRecoilElectronIncomingEnergy( 
                            const unsigned subshell ) const
 {
   return d_electroionization_average_recoil_electron_incoming_energy.find( subshell )->second;
@@ -318,7 +196,7 @@ EvaluatedElectronDataContainer::getElectroionizationAverageRecoilElectronIncomin
 
 // Return the electroionization average recoil electron energy for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationAverageRecoilElectronEnergy( 
+ENDLDataContainer::getElectroionizationAverageRecoilElectronEnergy( 
                            const unsigned subshell ) const
 {
   return d_electroionization_average_recoil_electron_energy.find( subshell )->second;
@@ -326,7 +204,7 @@ EvaluatedElectronDataContainer::getElectroionizationAverageRecoilElectronEnergy(
 
 // Return the electroionization recoil energy grid for a subshell
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationRecoilEnergyGrid( 
+ENDLDataContainer::getElectroionizationRecoilEnergyGrid( 
                             const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -337,7 +215,7 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilEnergyGrid(
 
 // Return the electroionization recoil energy for a subshell and energy bin
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getElectroionizationRecoilEnergy( 
+ENDLDataContainer::getElectroionizationRecoilEnergy( 
                            const unsigned subshell,
 					       const double incoming_energy ) const
 {
@@ -356,7 +234,7 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilEnergy(
 
 // Return the electroionization recoil energy pdf for a subshell and energy bin
 const std::vector<double>&  
-EvaluatedElectronDataContainer::getElectroionizationRecoilPDF( 
+ENDLDataContainer::getElectroionizationRecoilPDF( 
                            const unsigned subshell,
 					       const double incoming_energy ) const
 {
@@ -379,42 +257,42 @@ EvaluatedElectronDataContainer::getElectroionizationRecoilPDF(
 
 // Return the bremsstrahlung electron cross section energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungCrossSectionEnergyGrid() const
+ENDLDataContainer::getBremsstrahlungCrossSectionEnergyGrid() const
 {
   return d_bremsstrahlung_cross_section_energy_grid;
 }
 
 // Return the bremsstrahlung electron cross section
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungCrossSection() const
+ENDLDataContainer::getBremsstrahlungCrossSection() const
 {
   return d_bremsstrahlung_cross_section;
 }
 
 // Return the bremsstrahlung incoming electron energy grid for the average energy of the secondary photon
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungAveragePhotonIncomingEnergy() const
+ENDLDataContainer::getBremsstrahlungAveragePhotonIncomingEnergy() const
 {
   return d_bremsstrahlung_average_photon_incoming_energy;
 }
 
 // Return the bremsstrahlung average energy of the secondary photon
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungAveragePhotonEnergy() const
+ENDLDataContainer::getBremsstrahlungAveragePhotonEnergy() const
 {
   return d_bremsstrahlung_average_photon_energy;
 }
 
 // Return the bremsstrahlung photon energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungPhotonEnergyGrid() const
+ENDLDataContainer::getBremsstrahlungPhotonEnergyGrid() const
 {
   return d_bremsstrahlung_photon_energy_grid;
 }
 
 // Return the bremsstrahlung for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungPhotonEnergy(
+ENDLDataContainer::getBremsstrahlungPhotonEnergy(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -428,7 +306,7 @@ EvaluatedElectronDataContainer::getBremsstrahlungPhotonEnergy(
 
 // Return the bremsstrahlung photon pdf for an incoming energy
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungPhotonPDF(
+ENDLDataContainer::getBremsstrahlungPhotonPDF(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
@@ -442,14 +320,14 @@ EvaluatedElectronDataContainer::getBremsstrahlungPhotonPDF(
 
 // Return the bremsstrahlung incoming electron energy grid for the average energy of the secondary electron
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungAverageElectronIncomingEnergy() const
+ENDLDataContainer::getBremsstrahlungAverageElectronIncomingEnergy() const
 {
   return d_bremsstrahlung_average_electron_incoming_energy;
 }
 
 // Return the bremsstrahlung average energy of the secondary electron
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getBremsstrahlungAverageElectronEnergy() const
+ENDLDataContainer::getBremsstrahlungAverageElectronEnergy() const
 {
   return d_bremsstrahlung_average_electron_energy;
 }
@@ -460,157 +338,31 @@ EvaluatedElectronDataContainer::getBremsstrahlungAverageElectronEnergy() const
 
 // Return the atomic excitation electron energy grid
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getAtomicExcitationEnergyGrid() const
+ENDLDataContainer::getAtomicExcitationEnergyGrid() const
 {
   return d_atomic_excitation_energy_grid;
 }
 
 // Return the atomic excitation electron cross section
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getAtomicExcitationCrossSection() const
+ENDLDataContainer::getAtomicExcitationCrossSection() const
 {
   return d_atomic_excitation_cross_section;
 }
 
 // Return the atomic excitation energy loss
 const std::vector<double>& 
-EvaluatedElectronDataContainer::getAtomicExcitationEnergyLoss() const
+ENDLDataContainer::getAtomicExcitationEnergyLoss() const
 {
   return d_atomic_excitation_energy_loss;
 }
 
-// Set the atomic number
-void EvaluatedElectronDataContainer::setAtomicNumber( 
-						 const unsigned atomic_number )
-{
-  // Make sure the atomic number is valid
-  testPrecondition( atomic_number > 0 );
-  testPrecondition( atomic_number <= 100 );
-
-  d_atomic_number = atomic_number;
-}
-
-// Set the atomic subshells
-void EvaluatedElectronDataContainer::setSubshells( 
-				       const std::set<unsigned>& subshells )
-{
-  // Make sure the subshells are valid
-  testPrecondition( subshells.size() > 0 );
-  testPreconditionValuesGreaterThanZero( subshells );
-
-  d_subshells = subshells;
-}
-
-/*
-//---------------------------------------------------------------------------//
-// SET RELAXATION DATA
-//---------------------------------------------------------------------------//
-
-// Set the atomic subshells
-void EvaluatedElectronDataContainer::setSubshells( 
-				       const std::set<unsigned>& subshells )
-{
-  // Make sure the subshells are valid
-  testPrecondition( subshells.size() > 0 );
-  testPrecondition( std::find_if( subshells.begin(),
-				  subshells.end(),
-				  isValueLessThanOrEqualToZero ) ==
-		    subshells.end() );
-
-  d_subshells = subshells;
-}
-
-// Set the subshell occupancy
-void EvaluatedElectronDataContainer::setSubshellOccupancy( 
-						       const unsigned subshell,
-						       const double occupancy )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the subshell occupancy is valid
-  testPrecondition( occupancy > 0.0 );
-
-  d_subshell_occupancies[subshell] = occupancy;
-}
-
-// Set the subshell binding energy
-void EvaluatedElectronDataContainer::setSubshellBindingEnergy(
-						  const unsigned subshell,
-						  const double binding_energy )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the subshell binding energy is valid
-  testPrecondition( binding_energy > 0.0 );
-
-  d_subshell_binding_energies[subshell] = binding_energy;
-}
-
-// Set the number of transitions that can fill a subshell vacancy
-void EvaluatedElectronDataContainer::setSubshellRelaxationTransitions( 
-						   const unsigned subshell,
-						   const unsigned transitions )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the number of transitions is valid
-  testPrecondition( transitions > 0 );
-  
-  d_relaxation_transitions[subshell] = transitions;
-}
-
-// Set the relaxation vacancies for a subshell
-void EvaluatedElectronDataContainer::setSubshellRelaxationVacancies( 
-       const unsigned subshell,
-       const std::vector<std::pair<unsigned,unsigned> >& relaxation_vacancies )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the relaxation vacancies are valid
-  testPrecondition( relaxation_vacancies.size() ==
-		    d_relaxation_transitions.find( subshell )->second );
-
-  d_relaxation_vacancies[subshell] = relaxation_vacancies;
-}
-
-// Set the relaxation particle energies for a subshell
-void EvaluatedElectronDataContainer::setSubshellRelaxationParticleEnergies(
-		      const unsigned subshell,
-		      const std::vector<double>& relaxation_particle_energies )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the relaxation particle energies are valid
-  testPrecondition( relaxation_particle_energies.size() ==
-		    d_relaxation_transitions.find( subshell )->second );
-
-  d_relaxation_particle_energies[subshell] = relaxation_particle_energies;
-}
-
-// Set the relaxation probabilities for a subshell
-void EvaluatedElectronDataContainer::setSubshellRelaxationProbabilities( 
-			  const unsigned subshell,
-			  const std::vector<double>& relaxation_probabilities )
-{
-  // Make sure the subshell is valid
-  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the relaxation cdf is valid
-  testPrecondition( relaxation_probabilities.size() ==
-		    d_relaxation_transitions.find( subshell )->second );
-  testPrecondition( std::find_if( relaxation_probabilities.begin(),
-				  relaxation_probabilities.end(),
-				  isValueLessThanOrEqualToZero ) ==
-		    relaxation_probabilities.end() );
-  
-  d_relaxation_probabilities[subshell] = relaxation_probabilities;
-}
-*/
 //---------------------------------------------------------------------------//
 // SET ELASTIC DATA 
 //---------------------------------------------------------------------------//
 
 // Set the elastic energy grid
-void EvaluatedElectronDataContainer::setElasticEnergyGrid( 
+void ENDLDataContainer::setElasticEnergyGrid( 
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -620,7 +372,7 @@ void EvaluatedElectronDataContainer::setElasticEnergyGrid(
 }
 
 // Set the elastic transport cross section 
-void EvaluatedElectronDataContainer::setElasticTransportCrossSection(
+void ENDLDataContainer::setElasticTransportCrossSection(
 			 const std::vector<double>& elastic_transport_cross_section )
 {
   // Make sure the elastic transport cross section is valid
@@ -632,7 +384,7 @@ void EvaluatedElectronDataContainer::setElasticTransportCrossSection(
 }
 
 // Set the cutoff elastic electron cross section 
-void EvaluatedElectronDataContainer::setCutoffElasticCrossSection(
+void ENDLDataContainer::setCutoffElasticCrossSection(
 			 const std::vector<double>& cutoff_elastic_cross_section )
 {
   // Make sure the cutoff elastic cross section is valid
@@ -644,7 +396,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticCrossSection(
 }
 
 // Set the cutoff elastic average energy to the residual atom incoming energy grid
-void EvaluatedElectronDataContainer::setCutoffElasticResidualIncomingEnergy( 
+void ENDLDataContainer::setCutoffElasticResidualIncomingEnergy( 
     const std::vector<double>& residual_incoming_energy )
 {
   // Make sure residual incoming energy grid is valid
@@ -654,7 +406,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticResidualIncomingEnergy(
 }
 
 // Set the cutoff elastic average energy to the residual atom
-void EvaluatedElectronDataContainer::setCutoffElasticResidualEnergy( 
+void ENDLDataContainer::setCutoffElasticResidualEnergy( 
     const std::vector<double>& residual_energy )
 {
   // Make sure the cutoff elastic average energy to the residual atom is valid
@@ -666,7 +418,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticResidualEnergy(
 }
 
 // Set the cutoff elastic average energy of the scattered electron incoming energy grid
-void EvaluatedElectronDataContainer::setCutoffElasticScatteredElectronIncomingEnergy( 
+void ENDLDataContainer::setCutoffElasticScatteredElectronIncomingEnergy( 
     const std::vector<double>& scattered_electron_incoming_energy )
 {
   // Make sure scattered electron energy grid is valid
@@ -677,7 +429,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticScatteredElectronIncomingEn
 }
 
 // Set the cutoff elastic average energy of the scattered electron
-void EvaluatedElectronDataContainer::setCutoffElasticScatteredElectronEnergy(
+void ENDLDataContainer::setCutoffElasticScatteredElectronEnergy(
     const std::vector<double>& scattered_electron_average_energy )
 {
   // Make sure the cutoff elastic average energy of the residual atom is valid
@@ -691,7 +443,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticScatteredElectronEnergy(
 }
 
 // Set the elastic angular energy grid
-void EvaluatedElectronDataContainer::setCutoffElasticAngularEnergyGrid( 
+void ENDLDataContainer::setCutoffElasticAngularEnergyGrid( 
 				       const std::vector<double>& angular_energy_grid )
 {
   // Make sure the angular energy grid is valid
@@ -706,7 +458,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticAngularEnergyGrid(
 }
 
 // Set the total elastic angles for an incoming energy
-void EvaluatedElectronDataContainer::setCutoffElasticAnglesAtEnergy(
+void ENDLDataContainer::setCutoffElasticAnglesAtEnergy(
     const double incoming_energy,
     const std::vector<double>& cutoff_elastic_angles )
 {
@@ -729,7 +481,7 @@ void EvaluatedElectronDataContainer::setCutoffElasticAnglesAtEnergy(
 }
 
 // Set the total elastic pdf for an incoming energy
-void EvaluatedElectronDataContainer::setCutoffElasticPDFAtEnergy( 
+void ENDLDataContainer::setCutoffElasticPDFAtEnergy( 
     const double incoming_energy,
     const std::vector<double>& cutoff_elastic_pdf )
 {
@@ -745,21 +497,21 @@ void EvaluatedElectronDataContainer::setCutoffElasticPDFAtEnergy(
   d_cutoff_elastic_pdf[incoming_energy] = cutoff_elastic_pdf;
 }
 // Set the total elastic angles
-void EvaluatedElectronDataContainer::setCutoffElasticAngles(
+void ENDLDataContainer::setCutoffElasticAngles(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles )
 {
   d_cutoff_elastic_angles = cutoff_elastic_angles;
 }
 
 // Set the total elastic pdf 
-void EvaluatedElectronDataContainer::setCutoffElasticPDF( 
+void ENDLDataContainer::setCutoffElasticPDF( 
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf )
 {
   d_cutoff_elastic_pdf = cutoff_elastic_pdf;
 }
 
 // Set the total elastic electron cross section 
-void EvaluatedElectronDataContainer::setTotalElasticCrossSection(
+void ENDLDataContainer::setTotalElasticCrossSection(
 			 const std::vector<double>& total_elastic_cross_section )
 {
   // Make sure the total elastic cross section is valid
@@ -772,7 +524,7 @@ void EvaluatedElectronDataContainer::setTotalElasticCrossSection(
 
 /*
 // Set the screened rutherford elastic electron cross section 
-void EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSection(
+void ENDLDataContainer::setScreenedRutherfordElasticCrossSection(
 			 const std::vector<double>& screened_rutherford_elastic_cross_section )
 {
   // Make sure the screened rutherford elastic cross section is valid
@@ -785,7 +537,7 @@ void EvaluatedElectronDataContainer::setScreenedRutherfordElasticCrossSection(
 }
 
 // Set the screened Rutherford elastic normalization constant 
-void EvaluatedElectronDataContainer::setScreenedRutherfordNormalizationConstant(
+void ENDLDataContainer::setScreenedRutherfordNormalizationConstant(
 		     const std::vector<double>& screened_rutherford_normalization_constant )
 {
   // Make sure the screened_rutherford_normalization_constants are valid
@@ -797,7 +549,7 @@ void EvaluatedElectronDataContainer::setScreenedRutherfordNormalizationConstant(
 }
 
 // Set Moliere's screening constant 
-void EvaluatedElectronDataContainer::setMoliereScreeningConstant( 
+void ENDLDataContainer::setMoliereScreeningConstant( 
 			 const std::vector<double>& moliere_screening_constant )
 {
   d_moliere_screening_constant = moliere_screening_constant;
@@ -809,7 +561,7 @@ void EvaluatedElectronDataContainer::setMoliereScreeningConstant(
 //---------------------------------------------------------------------------//
 
 // Set the electroionization energy grid
-void EvaluatedElectronDataContainer::setElectroionizationCrossSectionEnergyGrid(
+void ENDLDataContainer::setElectroionizationCrossSectionEnergyGrid(
     const unsigned subshell,
     const std::vector<double>& energy_grid )
 {
@@ -821,7 +573,7 @@ void EvaluatedElectronDataContainer::setElectroionizationCrossSectionEnergyGrid(
 }
 
 // Set the electroionization electron cross section 
-void EvaluatedElectronDataContainer::setElectroionizationCrossSection(
+void ENDLDataContainer::setElectroionizationCrossSection(
             const unsigned subshell,
             const std::vector<double>& electroionization_cross_section )
 {
@@ -835,7 +587,7 @@ void EvaluatedElectronDataContainer::setElectroionizationCrossSection(
 }
 
 // Set the electroionization incoming energy grid for the average scattered electron energy for a subshell
-void EvaluatedElectronDataContainer::setElectroionizationAverageScatteredElectronIncomingEnergy(
+void ENDLDataContainer::setElectroionizationAverageScatteredElectronIncomingEnergy(
     const unsigned subshell,
     const std::vector<double>& average_scattered_electron_incoming_energy )
 {
@@ -847,7 +599,7 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageScatteredElectro
 }
 
 // Set the electroionization average scattered electron energy for a subshell
-void EvaluatedElectronDataContainer::setElectroionizationAverageScatteredElectronEnergy(
+void ENDLDataContainer::setElectroionizationAverageScatteredElectronEnergy(
     const unsigned subshell,
     const std::vector<double>& average_scattered_electron_energy )
 {
@@ -862,7 +614,7 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageScatteredElectro
 }
 
 // Set the electroionization incoming energy grid for the average recoil electron energy for a subshell
-void EvaluatedElectronDataContainer::setElectroionizationAverageRecoilElectronIncomingEnergy(
+void ENDLDataContainer::setElectroionizationAverageRecoilElectronIncomingEnergy(
     const unsigned subshell,
     const std::vector<double>& average_recoil_electron_incoming_energy )
 {
@@ -874,7 +626,7 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageRecoilElectronIn
 }
 
 // Set the electroionization average recoil electron energy for a subshell
-void EvaluatedElectronDataContainer::setElectroionizationAverageRecoilElectronEnergy(
+void ENDLDataContainer::setElectroionizationAverageRecoilElectronEnergy(
     const unsigned subshell,
     const std::vector<double>& average_recoil_electron_energy )
 {
@@ -889,7 +641,7 @@ void EvaluatedElectronDataContainer::setElectroionizationAverageRecoilElectronEn
 }
 
 // Set the electroionization recoil energy grid for a subshell
-void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyGrid(
+void ENDLDataContainer::setElectroionizationRecoilEnergyGrid(
             const unsigned subshell, 
             const std::vector<double>& recoil_energy_grid )
 {
@@ -902,7 +654,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyGrid(
 }
 
 // Set the electroionization recoil energy for a subshell and energy bin
-void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy( 
+void ENDLDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy( 
             const unsigned subshell, 
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_energy )
@@ -920,7 +672,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingE
 }
 
 // Set the electroionization recoil energy pdf for a subshell and energy bin
-void EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy(
+void ENDLDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy(
             const unsigned subshell,
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_pdf )
@@ -938,7 +690,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEner
 }
 
 // Set electroionization recoil energy for all incoming energies in a subshell
-void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy( 
+void ENDLDataContainer::setElectroionizationRecoilEnergy( 
     const unsigned subshell, 
     const std::map<double,std::vector<double> >& electroionization_recoil_energy )
 {
@@ -947,7 +699,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy(
 }
 
 // Set electroionization recoil energy pdf for all incoming energies in a subshell
-void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
+void ENDLDataContainer::setElectroionizationRecoilPDF(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf )
 {
@@ -960,7 +712,7 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
 //---------------------------------------------------------------------------//
 
 // Set the bremsstrahlung electron cross section energy grid
-void EvaluatedElectronDataContainer::setBremsstrahlungCrossSectionEnergyGrid( 
+void ENDLDataContainer::setBremsstrahlungCrossSectionEnergyGrid( 
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -970,7 +722,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungCrossSectionEnergyGrid(
 }
 
 // Set the bremsstrahlung electron cross section 
-void EvaluatedElectronDataContainer::setBremsstrahlungCrossSection(
+void ENDLDataContainer::setBremsstrahlungCrossSection(
 			 const std::vector<double>& bremsstrahlung_cross_section )
 {
   // Make sure the bremsstrahlung cross section is valid
@@ -982,7 +734,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungCrossSection(
 }
 
 // Set the bremsstrahlung incoming electron energy grid for the average energy of the secondary photon
-void EvaluatedElectronDataContainer::setBremsstrahlungAveragePhotonIncomingEnergy(
+void ENDLDataContainer::setBremsstrahlungAveragePhotonIncomingEnergy(
     const std::vector<double>& bremsstrahlung_average_photon_incoming_energy )
 {
   // Make sure the incoming energy grid is valid
@@ -993,7 +745,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAveragePhotonIncomingEnerg
 }
 
 // Set the bremsstrahlung average energy of the secondary photon
-void EvaluatedElectronDataContainer::setBremsstrahlungAveragePhotonEnergy(
+void ENDLDataContainer::setBremsstrahlungAveragePhotonEnergy(
     const std::vector<double>& bremsstrahlung_average_photon_energy )
 {
   // Make sure the average photon energy is valid
@@ -1006,7 +758,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAveragePhotonEnergy(
 }
 
 // Set the bremsstrahlung energy grid
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyGrid( 
+void ENDLDataContainer::setBremsstrahlungPhotonEnergyGrid( 
 				       const std::vector<double>& photon_energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1016,7 +768,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyGrid(
 }
 
 // Set the bremsstrahlung photon energy for an incoming energy
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy(
+void ENDLDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy(
 		     const double incoming_energy,
 		     const std::vector<double>&  bremsstrahlung_photon_energy )
 {
@@ -1033,7 +785,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEner
 }
 
 // Set the bremsstrahlung photon pdf for an incoming energy
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy( 
+void ENDLDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy( 
 			 const double incoming_energy,
 			 const std::vector<double>& bremsstrahlung_photon_pdf )
 {
@@ -1049,21 +801,21 @@ void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy(
 }
 
 // Set all the bremsstrahlung photon energy
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergy(
+void ENDLDataContainer::setBremsstrahlungPhotonEnergy(
     const std::map<double,std::vector<double> >&  bremsstrahlung_photon_energy )
 {
   d_bremsstrahlung_photon_energy = bremsstrahlung_photon_energy;
 }
 
 // Set all the bremsstrahlung photon pdf
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDF( 
+void ENDLDataContainer::setBremsstrahlungPhotonPDF( 
     const std::map<double,std::vector<double> >& bremsstrahlung_photon_pdf )
 {
   d_bremsstrahlung_photon_pdf = bremsstrahlung_photon_pdf;
 }
 
 // Set the bremsstrahlung incoming electron energy grid for the average energy of the secondary electron
-void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronIncomingEnergy(
+void ENDLDataContainer::setBremsstrahlungAverageElectronIncomingEnergy(
     const std::vector<double>& bremsstrahlung_average_electron_incoming_energy )
 {
   // Make sure the incoming energy grid is valid
@@ -1074,7 +826,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronIncomingEne
 }
 
 // Set the bremsstrahlung average energy of the secondary electron
-void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronEnergy(
+void ENDLDataContainer::setBremsstrahlungAverageElectronEnergy(
     const std::vector<double>& bremsstrahlung_average_electron_energy )
 {
   // Make sure the average electron energy is valid
@@ -1092,7 +844,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungAverageElectronEnergy(
 //---------------------------------------------------------------------------//
 
 // Set the atomic excitation electron energy grid
-void EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid( 
+void ENDLDataContainer::setAtomicExcitationEnergyGrid( 
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -1103,7 +855,7 @@ void EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid(
 
 
 // Set the atomic excitation electron cross section 
-void EvaluatedElectronDataContainer::setAtomicExcitationCrossSection(
+void ENDLDataContainer::setAtomicExcitationCrossSection(
 			 const std::vector<double>& atomic_excitation_cross_section )
 {
   // Make sure the atomic excitation cross section is valid
@@ -1115,7 +867,7 @@ void EvaluatedElectronDataContainer::setAtomicExcitationCrossSection(
 }
 
 // Set the atomic excitation energy loss for an incoming energy
-void EvaluatedElectronDataContainer::setAtomicExcitationEnergyLoss(
+void ENDLDataContainer::setAtomicExcitationEnergyLoss(
 		     const std::vector<double>&  atomic_excitation_energy_loss )
 {
   // Make sure the atomic excitation energy loss are valid

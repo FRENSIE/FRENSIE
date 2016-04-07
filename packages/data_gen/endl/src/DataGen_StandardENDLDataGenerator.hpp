@@ -37,21 +37,36 @@ public:
 
   //! Populate the EEDL data container
   void populateENDLDataContainer(
-        Data::EvaluatedElectronVolatileDataContainer&
+        Data::ENDLVolatileDataContainer&
+        data_container ) const;
+
+  //! Populate the EADL data container
+  void populateEADLDataContainer( 
+        Data::ENDLVolatileDataContainer&
+        data_container ) const;
+
+  //! Populate the EPDL data container
+  void populateEPDLDataContainer( 
+        Data::ENDLVolatileDataContainer&
+        data_container ) const;
+
+  //! Populate the EEDL data container
+  void populateEEDLDataContainer( 
+        Data::ENDLVolatileDataContainer&
         data_container ) const;
 
 protected:
 
   // Set the atomic data
-  void setRelaxationData( Data::EvaluatedElectronVolatileDataContainer&
+  void setRelaxationData( Data::ENDLVolatileDataContainer&
         data_container ) const;
 
   // Set the photon data
-  void setPhotonData( Data::EvaluatedElectronVolatileDataContainer&
+  void setPhotonData( Data::ENDLVolatileDataContainer&
         data_container ) const;
 
   // Set the electron data
-  void setElectronData( Data::EvaluatedElectronVolatileDataContainer&
+  void setElectronData( Data::ENDLVolatileDataContainer&
         data_container ) const;
 
 private:
@@ -73,7 +88,7 @@ private:
         total_elastic_cross_section,
     const std::vector<double>& elastic_energy_grid,
     const std::map<double,std::vector<double> >& elastic_pdf,
-    Data::EvaluatedElectronVolatileDataContainer& data_container ) const;
+    Data::ENDLVolatileDataContainer& data_container ) const;
 */
 
   // The EADL file name

@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardENDLDataGenerator.hpp"
-#include "Data_EvaluatedElectronVolatileDataContainer.hpp"
+#include "Data_ENDLVolatileDataContainer.hpp"
 #include "Data_ENDLFileHandler.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
                 test_h_eedl_file_name ) );
 
 
-  Data::EvaluatedElectronVolatileDataContainer data_container;
+  Data::ENDLVolatileDataContainer data_container;
 
   data_generator_h->populateENDLDataContainer( data_container );
 
@@ -357,7 +357,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
                 test_c_epdl_file_name,
                 test_c_eedl_file_name ) );
 
-  Data::EvaluatedElectronVolatileDataContainer data_container;
+  Data::ENDLVolatileDataContainer data_container;
 
   data_generator_c->populateENDLDataContainer( data_container );
 

@@ -1,31 +1,31 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_EvaluatedElectronVolatileDataContainer.cpp
+//! \file   Data_ENDLVolatileDataContainer.cpp
 //! \author Luke Kersting
 //! \brief  The native eedl volatile data container
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Data_EvaluatedElectronVolatileDataContainer.hpp"
+#include "Data_ENDLVolatileDataContainer.hpp"
 
 namespace Data{
 
 // Default constructor
-EvaluatedElectronVolatileDataContainer::EvaluatedElectronVolatileDataContainer()
-  : EvaluatedElectronDataContainer()
+ENDLVolatileDataContainer::ENDLVolatileDataContainer()
+  : ENDLDataContainer()
 { /* ... */ }
 
 // Constructor (from saved archive)
-EvaluatedElectronVolatileDataContainer::EvaluatedElectronVolatileDataContainer(
+ENDLVolatileDataContainer::ENDLVolatileDataContainer(
 		    const std::string& archive_name,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
-  : EvaluatedElectronDataContainer( archive_name, archive_type )
+  : ENDLDataContainer( archive_name, archive_type )
 { /* ... */ }
 
 } // end Data namespace
 
 //---------------------------------------------------------------------------//
-// end Data_EvaluatedElectronVolatileDataContainer.cpp
+// end Data_ENDLVolatileDataContainer.cpp
 //---------------------------------------------------------------------------//
 
