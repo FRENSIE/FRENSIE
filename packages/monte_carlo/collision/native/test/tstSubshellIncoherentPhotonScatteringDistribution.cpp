@@ -129,12 +129,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 //---------------------------------------------------------------------------//
 // Check that the binding energy can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
-		   getBindingEnergy )
+		   getSubshellBindingEnergy )
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(), 
+  TEST_EQUALITY_CONST( derived_dist->getSubshellBindingEnergy(), 
 		       8.82899999999999935e-02 );
 }
 
@@ -167,17 +167,17 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
 			  0.9996898054103247, 
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
 			  -0.024905681252821114, 
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );

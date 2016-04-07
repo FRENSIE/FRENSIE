@@ -1,0 +1,35 @@
+// This file is used to add material to the monte carlo core subpackage page
+
+/*! \page monte_carlo_core Monte Carle Core Subpackage
+ *
+ * \tableofcontents
+ *
+ * \section mc_core_overview_sec Overview
+ * The core subpackage provides the low-level classes and functions required
+ * by all of the other subpackages. For instance, the MonteCarlo::ParticleState
+ * base class is contained in this package. Two important classes that
+ * inherit from the particle state class, which are also contained in this
+ * subpackage, are the MonteCarlo::NeutronState and the 
+ * MonteCarlo::PhotonState. Another important base class contained in this
+ * subpackage is the MonteCarlo::ParticleBank. All of the other subpackages
+ * have classes and functions that operate on these state and bank classes.
+ *
+ * The particle state class currently contains state variables required to
+ * track a particles movement through phase-space. The following subsection 
+ * will discuss the process of adding more state variables to the particle 
+ * state class if more state variables are needed in the future.
+ *
+ * \subsection mc_core_pstate_subsec Adding State Variables to the Particle State
+ * ...
+ *
+ * \subsection mc_core_runtime_subsec Configuring Run-Time Behavior
+ * It is often desirable to be able to change the behavior of certain classes 
+ * at run-time. For example, it can be useful to turn off certain physics
+ * at run-time. To do this, static data in the MonteCarlo::SimulationProperties
+ * class should be modified at run-time. Classes that need to have run-time
+ * options should then query the state of this object to determine their
+ * run-time behavior. This approach works quite well because it provides
+ * a single point of control instead of having to keep track of all of the 
+ * individual classes that have configurable run-time behavior. 
+ *
+ */

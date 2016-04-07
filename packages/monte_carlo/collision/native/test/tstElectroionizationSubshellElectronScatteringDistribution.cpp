@@ -62,8 +62,8 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.706573789423E-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.279436961765390, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 4.105262105768E-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.279436961765390, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 4.105262105768E-02, 1e-12 );
 
 }
 

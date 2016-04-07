@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
-#define FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#ifndef MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#define MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceFactory.hpp"
@@ -15,28 +15,29 @@
 namespace MonteCarlo{
 
 //! The standard particle source factory
-template<typename GeometryHandler>
+template<typename GeometryModuleInterface>
 class StandardParticleSourceFactory : public ParticleSourceFactory
 {
   
 public:
 
   //! Get an instance of the factory
-  static Teuchos::RCP<ParticleSourceFactory> getInstance();
+  static std::shared_ptr<ParticleSourceFactory> getInstance();
 
   //! Destructor
   ~StandardParticleSourceFactory()
   { /* ... */ }
 
   //! Create the particle source represented by the parameter list
-  Teuchos::RCP<ParticleSource>
+  std::shared_ptr<ParticleSource>
   createSource( const Teuchos::ParameterList& source_rep,
-		const ParticleModeType& particle_mode );
+		const ParticleModeType& particle_mode,
+                std::ostream& os_warn = std::cerr );
 
 private:
 
   // The factory instance
-  static Teuchos::RCP<ParticleSourceFactory> factory_instance;
+  static std::shared_ptr<ParticleSourceFactory> factory_instance;
 
   //! Constructor
   StandardParticleSourceFactory()
@@ -44,32 +45,34 @@ private:
 };
 
 // Initialize static member data
-template<typename GeometryHandler>
-Teuchos::RCP<ParticleSourceFactory> 
-StandardParticleSourceFactory<GeometryHandler>::factory_instance(
-			new StandardParticleSourceFactory<GeometryHandler>() );
+template<typename GeometryModuleInterface>
+std::shared_ptr<ParticleSourceFactory> 
+StandardParticleSourceFactory<GeometryModuleInterface>::factory_instance(
+		new StandardParticleSourceFactory<GeometryModuleInterface>() );
 
 // Get an instance of the factory
-template<typename GeometryHandler>
-inline Teuchos::RCP<ParticleSourceFactory>
-StandardParticleSourceFactory<GeometryHandler>::getInstance()
+template<typename GeometryModuleInterface>
+inline std::shared_ptr<ParticleSourceFactory>
+StandardParticleSourceFactory<GeometryModuleInterface>::getInstance()
 {
   return factory_instance;
 }
 
 // Create the particle source represented by the parameter list
-template<typename GeometryHandler>
-inline Teuchos::RCP<ParticleSource>
-StandardParticleSourceFactory<GeometryHandler>::createSource( 
+template<typename GeometryModuleInterface>
+inline std::shared_ptr<ParticleSource>
+StandardParticleSourceFactory<GeometryModuleInterface>::createSource( 
 				     const Teuchos::ParameterList& source_rep,
-				     const ParticleModeType& particle_mode )
+				     const ParticleModeType& particle_mode,
+                                     std::ostream& os_warn )
 {
-  return ParticleSourceFactory::createSourceImpl<GeometryHandler>(source_rep, particle_mode );
+  return ParticleSourceFactory::createSourceImpl<GeometryModuleInterface>( 
+                                          source_rep, particle_mode, os_warn );
 } 
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
+#endif // end MONTE_CARLO_STANDARD_PARTICLE_SOURCE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardParticleSourceFactory.hpp

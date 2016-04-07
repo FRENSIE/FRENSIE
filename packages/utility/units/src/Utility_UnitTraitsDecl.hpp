@@ -12,14 +12,21 @@
 // Boost Includes
 #include <boost/units/operators.hpp>
 
-// FRENSIE Includes
-#include "Utility_UndefinedTraits.hpp"
-
 /*! \defgroup unit_traits Unit Traits
  * \ingroup traits
  */
 
 namespace Utility{
+
+/*! A struct designed to give a compile time error for unit traits
+ * \ingroup unit_traits
+ */
+template<typename T>
+struct UndefinedUnitTraits
+{
+  //! This function should not compile if there is any attempt to instantiate!
+  static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
+};
 
 /*! The default unit traits implementation
  *
@@ -63,11 +70,11 @@ struct UnitTraits
 
   //! The name string
   static inline std::string name()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedUnitTraits<T>::notDefined(); }
 
   //! The symbol string
   static inline std::string symbol()
-  { return UndefinedTraits<T>::notDefined(); }
+  { return UndefinedUnitTraits<T>::notDefined(); }
 };
 
 } // end Utility namespace

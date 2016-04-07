@@ -18,7 +18,6 @@
 *.gif
 *.ico
 *.js
-*.eps
 *.cub*
 *.jou*
 *.bin
@@ -31,3 +30,7 @@ lib
 bin
 CMakeFiles
 CMakeCache.txt
+GTAGS
+GRTAGS
+GPATH
+.vscode/

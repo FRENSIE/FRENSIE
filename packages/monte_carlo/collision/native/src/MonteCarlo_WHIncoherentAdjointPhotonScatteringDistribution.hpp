@@ -20,7 +20,6 @@
 namespace MonteCarlo{
 
 //! The Waller-Hartree incoherent adjoint photon scattering distribution class
-template<typename ScatteringFunctionArgUnitConversionPolicy>
 class WHIncoherentAdjointPhotonScatteringDistribution : public IncoherentAdjointPhotonScatteringDistribution
 {
 
@@ -84,14 +83,6 @@ private:
 };
 
 } // end MonteCarlo namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_WH_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 

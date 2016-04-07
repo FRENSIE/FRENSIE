@@ -16,7 +16,7 @@
 #include "PhotonDataFluorescence.hpp"
 #include "Tuple.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -43,13 +43,13 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestingPhotonDataFluorescence : public FACEMC::PhotonDataFluorescence
+class TestingPhotonDataFluorescence : public FRENSIE::PhotonDataFluorescence
 {
 public:
   TestingPhotonDataFluorescence( unsigned int atomic_number,
 				 double energy_min,
 				 double energy_max )
-    : FACEMC::PhotonDataFluorescence( atomic_number,
+    : FRENSIE::PhotonDataFluorescence( atomic_number,
 				      energy_min,
 				      energy_max )
   { /* ... */ }
@@ -57,10 +57,10 @@ public:
   virtual ~TestingPhotonDataFluorescence()
   { /* ... */ }
 
-  using FACEMC::PhotonDataFluorescence::getPhotoelectricVacancyShell;
-  using FACEMC::PhotonDataFluorescence::getShellRadiativeTransitionProbability;
-  using FACEMC::PhotonDataFluorescence::getShellRadiativeTransitionData;
-  using FACEMC::PhotonDataFluorescence::getShellNonradiativeTransitionData;
+  using FRENSIE::PhotonDataFluorescence::getPhotoelectricVacancyShell;
+  using FRENSIE::PhotonDataFluorescence::getShellRadiativeTransitionProbability;
+  using FRENSIE::PhotonDataFluorescence::getShellRadiativeTransitionData;
+  using FRENSIE::PhotonDataFluorescence::getShellNonradiativeTransitionData;
 };
 
 //---------------------------------------------------------------------------//
@@ -132,27 +132,27 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionData )
 							 ENERGY_MIN,
 							 ENERGY_MAX );
   
-  FACEMC::Pair<unsigned int, double> transition_data, transition_data_ref;
+  FRENSIE::Pair<unsigned int, double> transition_data, transition_data_ref;
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_1,
 							     CDF_VALUE_1 );
   transition_data_ref.first = 5;
   transition_data_ref.second = 0.00102758;
-  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FRENSIE_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_2,
 							     CDF_VALUE_1 );
   transition_data_ref.first = 6;
   transition_data_ref.second = 2.826e-5;
-  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FRENSIE_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_3,
 							     CDF_VALUE_1 );
   transition_data_ref.first = 0;
   transition_data_ref.second = 3.642e-5;
-  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FRENSIE_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellNonradiativeTransitionData )
 							 ENERGY_MIN,
 							 ENERGY_MAX );
   
-  FACEMC::Trip<unsigned int, unsigned int, double> 
+  FRENSIE::Trip<unsigned int, unsigned int, double> 
     transition_data, transition_data_ref;
   transition_data =
     test_photon_data_fluoro.getShellNonradiativeTransitionData( SHELL_1,
@@ -172,7 +172,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellNonradiativeTransitionData )
   transition_data_ref.first = 3;
   transition_data_ref.second = 6;
   transition_data_ref.third = 0.0009633;
-  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FRENSIE_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellNonradiativeTransitionData( SHELL_2,
@@ -180,7 +180,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellNonradiativeTransitionData )
   transition_data_ref.first = 5;
   transition_data_ref.second = 8;
   transition_data_ref.third = 2.291e-5;
-  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FRENSIE_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 }
 
 //---------------------------------------------------------------------------//

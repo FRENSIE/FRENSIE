@@ -11,6 +11,8 @@
 
 // Trilinos Includes
 #include <Teuchos_GlobalMPISession.hpp>
+#include <Teuchos_DefaultMpiComm.hpp>
+#include <Teuchos_DefaultSerialComm.hpp>
 
 // FRENSIE Includes
 #include "facemcCore.hpp"
@@ -18,7 +20,7 @@
 // The signal handler
 void signalHandlerWrapper(int signal)
 {
-  if( !facemc_manager.is_null() )
+  if( facemc_manager.get() )
     facemc_manager->signalHandler(signal);
 }
 
@@ -32,9 +34,15 @@ int main( int argc, char** argv )
   // Initialize the global MPI session
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
-  int return_val = facemcCore( argc, argv );
+  // Create the communicator
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
+  
+  if( Teuchos::GlobalMPISession::mpiIsInitialized() )
+    comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
+  else
+    comm.reset( new Teuchos::SerialComm<unsigned long long>() );
 
-  return return_val;
+  return facemcCore( argc, argv, comm );
 }
 
 //---------------------------------------------------------------------------//

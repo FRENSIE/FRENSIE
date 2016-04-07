@@ -11,9 +11,9 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
@@ -32,11 +32,11 @@ class DirectionalDistributionFactory
 public:
 
   //! Create the directional distribution represented by the parameter list
-  static Teuchos::RCP<DirectionalDistribution>
+  static std::shared_ptr<DirectionalDistribution>
   createDistribution( const Teuchos::ParameterList& distribution_rep );
 
   //! Create an isotropic distribution
-  static Teuchos::RCP<DirectionalDistribution>
+  static std::shared_ptr<DirectionalDistribution>
   createIsotropicDistribution();
 
 private:
@@ -49,13 +49,13 @@ private:
   static void validateAxisName( const std::string& axis_name );
 
   //! The default mu distribution
-  static const Teuchos::RCP<Utility::OneDDistribution> s_default_mu_dist;
+  static const std::shared_ptr<Utility::OneDDistribution> s_default_mu_dist;
 
   //! The default theta distribution
-  static const Teuchos::RCP<Utility::OneDDistribution> s_default_theta_dist;
+  static const std::shared_ptr<Utility::OneDDistribution> s_default_theta_dist;
 
   //! The default spherical directional distribution
-  static const Teuchos::RCP<Utility::SphericalDirectionalDistribution>
+  static const std::shared_ptr<Utility::SphericalDirectionalDistribution>
   s_isotropic_directional_dist;
 
   // Constructor

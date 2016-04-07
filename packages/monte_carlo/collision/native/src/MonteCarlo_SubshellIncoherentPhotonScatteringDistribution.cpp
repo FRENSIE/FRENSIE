@@ -19,7 +19,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -60,13 +60,13 @@ SubshellIncoherentPhotonScatteringDistribution::getSubshell() const
 }
 
 // Return the number of electrons in the subshell
-double SubshellIncoherentPhotonScatteringDistribution::getNumberOfElectronsInSubshell() const
+double SubshellIncoherentPhotonScatteringDistribution::getSubshellOccupancy() const
 {
   return d_num_electrons_in_subshell;
 }
 
 // Return the binding energy
-double SubshellIncoherentPhotonScatteringDistribution::getBindingEnergy() const
+double SubshellIncoherentPhotonScatteringDistribution::getSubshellBindingEnergy() const
 {
   return d_binding_energy;
 }
@@ -109,7 +109,7 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodQuadratureSet quadrature_gkq_set( precision );
+  Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
 
   quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,

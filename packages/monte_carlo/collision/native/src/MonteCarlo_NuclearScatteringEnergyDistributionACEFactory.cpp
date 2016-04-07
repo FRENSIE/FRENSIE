@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.cpp
-//! \author Alex Robinson, Alex Bennett
+//! \author Alex Robinson, Alex Bennett, Eli Moll
 //! \brief  Nuclear scattering energy distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
@@ -17,6 +17,7 @@
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw2NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw5NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw7NuclearScatteringEnergyDistribution.hpp"
@@ -24,6 +25,8 @@
 #include "MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_DeltaDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -33,7 +36,8 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
 	     const unsigned reaction,
-	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution,
+	     const double atomic_weight_ratio )
 {
   // Make sure the dlw block array is valid
   testPrecondition( dlw_block_array.size() > 0 );
@@ -57,6 +61,15 @@ void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 				     table_name,
 				     reaction,
 				     distribution );
+    break;
+    
+  case 2u:
+    createAceLaw2EnergyDistribution ( dlw_block_array,
+                     dlw_block_array_start_index,
+                     table_name,
+                     reaction,
+                     distribution,
+                     atomic_weight_ratio );
     break;
 
   case 3u:
@@ -146,6 +159,34 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
 	       new AceLaw1NuclearScatteringEnergyDistribution( energy_grid ) );
 }
 
+// Create an AceLaw 2 energy distribution
+void NuclearScatteringEnergyDistributionACEFactory::createAceLaw2EnergyDistribution(
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const unsigned reaction,
+	     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution,
+	     const double atomic_weight_ratio )
+{
+  // Verify that the law is Ace Law 2
+  TEST_FOR_EXCEPTION( dlw_block_array[1] != 2,
+           	          std::runtime_error,
+           	          "Error: MT# " << reaction << " in ACE table "
+           	          << table_name << " should be law 2!\n" );
+
+  // Start index for ldat data
+  int LP = 
+    (int)dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index - 1];
+  double EG = 
+    dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index];
+
+  // Create the discrete photon distribution
+  distribution.reset(
+    new AceLaw2NuclearScatteringEnergyDistribution( LP,
+                                                    EG,
+                                                    atomic_weight_ratio ) );  
+}
+
 // Create a AceLaw 3 energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
@@ -221,7 +262,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
        int interpolation_flag = dlw_block_array[distribution_index];
 
        // Check if discrete lines are present 
-       TEST_FOR_EXCEPTION( interpolation_flag > 10,
+       TEST_FOR_EXCEPTION( interpolation_flag < 10 && interpolation_flag > 2,
            	        std::runtime_error,
            	        "Error: MT# " << reaction << "in ACE table "
            	        << table_name << " has discrete lines in continuous"
@@ -233,30 +274,75 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
          dlw_block_array( distribution_index + 2, number_points_distribution );
 
        Teuchos::ArrayView<const double> pdf;
+       Teuchos::ArrayView<const double> cdf;
 
-       switch( interpolation_flag )
+       if( interpolation_flag == 1) // histogram interpolation
        {
-       case 1: // histogram interpolation
          pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
            		     number_points_distribution - 1 );
 
          energy_distribution[i].second.reset( 
            	      new Utility::HistogramDistribution( outgoing_energy_grid,
            						  pdf ) );
-
-         break;
- 
-       case 2: // Linear-Linear interpolation
-         pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
-           		     number_points_distribution );
+      }
+      else if ( interpolation_flag == 2 ) // lin-lin interpolation
+      {
+         pdf = dlw_block_array( distribution_index + 2 + 
+                   number_points_distribution, number_points_distribution );
 
          energy_distribution[i].second.reset( 
            		     new Utility::TabularDistribution<Utility::LinLin>(
            					 outgoing_energy_grid, pdf ) );
-
-         break;
- 
-       default:
+       }
+      else if ( interpolation_flag >= 10 )
+      {
+        if ( number_points_distribution == 1 )
+        {
+          energy_distribution[i].second.reset(
+                   new Utility::DeltaDistribution( outgoing_energy_grid[0] ) );
+        }
+        else
+        {
+          cdf = dlw_block_array( distribution_index + 2 + 
+                    2*number_points_distribution, number_points_distribution );
+          
+          // Version 8 of ENDF has the energy distributions in reverse order
+          if( outgoing_energy_grid.begin() < outgoing_energy_grid.end() )
+          {
+            std::vector<double> outgoing_energy_grid_reverse_vector;
+            std::vector<double> cdf_reverse_vector;                                            
+             
+            for( int j = 0; j < cdf.size(); ++j )
+            {
+              outgoing_energy_grid_reverse_vector.push_back(
+                outgoing_energy_grid[outgoing_energy_grid.size()-1-j] );
+                
+              cdf_reverse_vector.push_back( 1.0 - cdf[cdf.size()-1-j] );
+            }
+            
+            Teuchos::ArrayView<const double> outgoing_energy_grid_reverse( 
+                                         outgoing_energy_grid_reverse_vector );
+            
+            Teuchos::ArrayView<const double> cdf_reverse( cdf_reverse_vector );
+            
+            energy_distribution[i].second.reset(
+                   new Utility::DiscreteDistribution( 
+                                                  outgoing_energy_grid_reverse,
+                                                  cdf_reverse,
+                                                  true ) ); 
+          }
+          else
+          {                    
+            energy_distribution[i].second.reset(
+                   new Utility::DiscreteDistribution( outgoing_energy_grid,
+                                                      cdf,
+                                                      true ) );
+          }
+          
+        }
+      }
+      else
+      {
          THROW_EXCEPTION( std::runtime_error,
 			  "Unknown interpolation flag in table "
 			  << table_name << 

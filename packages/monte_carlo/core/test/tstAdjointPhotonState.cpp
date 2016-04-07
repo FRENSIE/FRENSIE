@@ -9,6 +9,11 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/shared_ptr.hpp>
+#include <boost/archive/xml_oarchive.hpp>
+#include <boost/archive/xml_iarchive.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
@@ -68,6 +73,112 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, isProbe )
   MonteCarlo::AdjointPhotonState particle( 1ull );
 
   TEST_ASSERT( !particle.isProbe() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the state can be cloned
+TEUCHOS_UNIT_TEST( AdjointPhotonState, clone )
+{
+  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+				  new MonteCarlo::AdjointPhotonState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+							   particle->clone() );
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::ADJOINT_PHOTON );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the state can be cloned with a new history number
+TEUCHOS_UNIT_TEST( AdjointPhotonState, clone_new_hist )
+{
+  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+				  new MonteCarlo::AdjointPhotonState( 0ull ) );
+  particle->setPosition( 1.0, 1.0, 1.0 );
+  particle->setDirection( 0.0, 0.0, 1.0 );
+  particle->setEnergy( 1.0 );
+  particle->setTime( 0.5 );
+  particle->setWeight( 0.25 );
+  
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+						    particle->clone( 10ull ) );
+  
+  TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle_clone->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle_clone->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle_clone->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
+  TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+		       MonteCarlo::ADJOINT_PHOTON );
+}
+
+//---------------------------------------------------------------------------//
+// Archive an adjoint photon state
+TEUCHOS_UNIT_TEST( AdjointPhotonState, archive )
+{
+  // Create and archive an adjoint photon
+  {
+    MonteCarlo::AdjointPhotonState particle( 1ull );
+    particle.setPosition( 1.0, 1.0, 1.0 );
+    particle.setDirection( 0.0, 0.0, 1.0 );
+    particle.setEnergy( 1.0 );
+    particle.setTime( 0.5 );
+    particle.incrementCollisionNumber();
+    particle.setWeight( 0.25 );
+
+    std::ofstream ofs( "test_adjoint_photon_state_archive.xml" );
+
+    boost::archive::xml_oarchive ar(ofs);
+    ar << BOOST_SERIALIZATION_NVP( particle );
+  }
+  
+  // Load the archived particle
+  MonteCarlo::AdjointPhotonState loaded_particle;
+
+  std::ifstream ifs( "test_adjoint_photon_state_archive.xml" );
+
+  boost::archive::xml_iarchive ar(ifs);
+  ar >> boost::serialization::make_nvp( "particle", loaded_particle );
+
+  TEST_EQUALITY_CONST( loaded_particle.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( loaded_particle.getCollisionNumber(), 1.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getGenerationNumber(), 0.0 );
+  TEST_EQUALITY_CONST( loaded_particle.getWeight(), 0.25 );
+  TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( loaded_particle.getParticleType(), 
+		       MonteCarlo::ADJOINT_PHOTON );
 }
 
 //---------------------------------------------------------------------------//

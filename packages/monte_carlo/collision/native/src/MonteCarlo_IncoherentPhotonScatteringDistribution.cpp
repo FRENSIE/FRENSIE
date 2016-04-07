@@ -14,10 +14,10 @@
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,10 +32,7 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >= 
-		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-
-  // Force the quadrature gkq_set to throw exceptions
-  Utility::GaussKronrodQuadratureSet::throwExceptions( true );
+		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 }
 
 // Evaluate the PDF
@@ -253,10 +250,9 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
 
     bank.push( electron );
   }
-  
+
   // Make sure the electron energy is valid
-  testPostcondition( electron_energy + compton_line_energy ==
-		     photon.getEnergy() );
+  testPostcondition( fabs(electron_energy + compton_line_energy - photon.getEnergy()) < 1e-12 );
   // Make sure the electron scattering angle cosine is valid
   testPostcondition( electron_scattering_angle_cosine >= -1.0 );
   testPostcondition( electron_scattering_angle_cosine <= 1.0 );

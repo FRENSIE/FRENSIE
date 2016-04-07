@@ -10,6 +10,20 @@ ADD_EXECUTABLE(tstContractException
 TARGET_LINK_LIBRARIES(tstContractException utility_core)
 ADD_TEST(ContractException_test tstContractException)
 
+ADD_EXECUTABLE(tstSerialCommHelpers
+  tstSerialCommHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSerialCommHelpers utility_core)
+ADD_TEST(SerialCommHelpers_test tstSerialCommHelpers)
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_EXECUTABLE(tstMpiCommHelpers
+    tstMpiCommHelpers.cpp)
+  TARGET_LINK_LIBRARIES(tstMpiCommHelpers utility_core)
+  ADD_TEST(MpiCommHelpers_2_test ${MPIEXEC} -n 2 tstMpiCommHelpers)
+  ADD_TEST(MpiCommHelpers_4_test ${MPIEXEC} -n 4 tstMpiCommHelpers)
+ENDIF()
+
 ADD_EXECUTABLE(tstSortAlgorithms 
   tstSortAlgorithms.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -125,32 +139,11 @@ TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
 ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers
 --test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")
 
-ADD_EXECUTABLE(tstODEPACKHelper 
-  tstODEPACKHelper.cpp )
-TARGET_LINK_LIBRARIES(tstODEPACKHelper utility_core)
-ADD_TEST(ODEPACKHelper_test tstODEPACKHelper)
-
-ADD_EXECUTABLE(tstODESolver 
-  tstODESolver.cpp )
-TARGET_LINK_LIBRARIES(tstODESolver utility_core)
-ADD_TEST(ODESolver_test tstODESolver)
-
-ADD_EXECUTABLE(tstBoostSolver 
-  tstBoostSolver.cpp )
-TARGET_LINK_LIBRARIES(tstBoostSolver utility_core)
-ADD_TEST(BoostSolver_test tstBoostSolver)
-
 ADD_EXECUTABLE(tstKinematicHelpers 
   tstKinematicHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
-
-ADD_EXECUTABLE(tstGaussKronrodQuadratureSet 
-  tstGaussKronrodQuadratureSet.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureSet utility_core)
-ADD_TEST(GaussKronrodQuadratureSet_test tstGaussKronrodQuadratureSet)
 
 ADD_EXECUTABLE(tstGridGenerator 
   tstGridGenerator.cpp
@@ -178,3 +171,21 @@ ADD_EXECUTABLE(tstMeasurement
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
+
+ADD_EXECUTABLE(tstActiveCounter
+  tstActiveCounter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstActiveCounter utility_core)
+ADD_TEST(ActiveCounter_test tstActiveCounter)
+
+ADD_EXECUTABLE(tstInactiveCounter
+  tstInactiveCounter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInactiveCounter utility_core)
+ADD_TEST(InactiveCounter_test tstInactiveCounter)
+
+ADD_EXECUTABLE(tstIncrementPolicy
+  tstIncrementPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
+ADD_TEST(IncrementPolicy_test tstIncrementPolicy)

@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -20,11 +21,13 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -270,17 +273,17 @@ TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, scatterPhoton )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
 			  0.9996898054103247, 
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
 			  -0.024905681252821114, 
 			  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
@@ -336,13 +339,13 @@ int main( int argc, char** argv )
   Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
 							scatt_func_size ) );
 
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
-
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
 			                                  scat_func_values ) );
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_designators = 

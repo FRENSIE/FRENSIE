@@ -7,7 +7,7 @@ MAKEFLAGS += -j$(PROCS)
 
 
 help:
-	@echo "It is advised to run bash lazy.sh\nIf you wish to build dependencies one at a time use the following:\nmake cmake\nmake trilinos\nmake moab (note: moab builds hdf5)\nmake gsl\nmake doxygen\nmake boost\nmake lapack\nmake odepack"
+	@echo "It is advised to run bash lazy.sh\nIf you wish to build dependencies one at a time use the following:\nmake cmake\nmake trilinos\nmake moab (note: moab builds hdf5) \nmake doxygen\nmake boost\nmake lapack\nmake odepack"
 
 clean:
 	rm -rf builds
@@ -62,20 +62,6 @@ endif
 
 
 
-
-gsl: builds
-	mkdir -p builds/gsl
-	mkdir -p builds/gsl/src
-	mkdir -p builds/gsl/build
-	cd builds/gsl/src && \
-    tar -xf $(TARS)/gsl.tar --strip-components=1 && \
-    cd ../build && \
-	../src/configure --prefix=$(INSTALL)/gsl
-	$(MAKE) -C builds/gsl/build 
-ifneq ($(TEST), "no")
-	$(MAKE) -C builds/gsl/build test
-endif
-	$(MAKE) -C builds/gsl/build install
 
 odepack: builds
 	mkdir -p builds/odepack

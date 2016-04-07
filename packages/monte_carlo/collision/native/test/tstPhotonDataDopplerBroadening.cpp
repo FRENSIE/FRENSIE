@@ -14,7 +14,7 @@
 #include "PhotonDataDopplerBroadening.hpp"
 #include "Tuple.hpp"
 #include "DefaultParameterValues.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info
@@ -39,13 +39,13 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestingPhotonDataDopplerBroadening : public FACEMC::PhotonDataDopplerBroadening
+class TestingPhotonDataDopplerBroadening : public FRENSIE::PhotonDataDopplerBroadening
 {
 public:
   TestingPhotonDataDopplerBroadening( unsigned int atomic_number,
 				       double energy_min,
 				       double energy_max )
-    : FACEMC::PhotonDataDopplerBroadening( atomic_number,
+    : FRENSIE::PhotonDataDopplerBroadening( atomic_number,
 					   energy_min,
 					   energy_max )
   { /* ... */ }
@@ -53,10 +53,10 @@ public:
   virtual ~TestingPhotonDataDopplerBroadening()
   { /* ... */ }
 
-  using FACEMC::PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData;
-  using FACEMC::PhotonDataDopplerBroadening::getComptonProfileCDF;
-  using FACEMC::PhotonDataDopplerBroadening::getComptonProfileMomentum;
-  using FACEMC::PhotonDataDopplerBroadening::getShellKineticEnergy;
+  using FRENSIE::PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData;
+  using FRENSIE::PhotonDataDopplerBroadening::getComptonProfileCDF;
+  using FRENSIE::PhotonDataDopplerBroadening::getComptonProfileMomentum;
+  using FRENSIE::PhotonDataDopplerBroadening::getShellKineticEnergy;
 };
 
 //---------------------------------------------------------------------------//
@@ -81,15 +81,15 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getIncoherentScatteringVacancySh
 							  ENERGY_MIN,
 							  ENERGY_MAX );
 
-  FACEMC::Trip<unsigned int, unsigned int, double> shell_data =
+  FRENSIE::Trip<unsigned int, unsigned int, double> shell_data =
     test_photon_data_db.getIncoherentScatteringVacancyShellData( CDF_VALUE );
 
-  FACEMC::Trip<unsigned int, unsigned int, double> shell_data_ref;
+  FRENSIE::Trip<unsigned int, unsigned int, double> shell_data_ref;
   shell_data_ref.first = 3;
   shell_data_ref.second = 1;
   shell_data_ref.third = BINDING_ENERGY_REF;
   
-  FACEMC_TEST_EQUALITY( shell_data, shell_data_ref );
+  FRENSIE_TEST_EQUALITY( shell_data, shell_data_ref );
 }
 
 //---------------------------------------------------------------------------//

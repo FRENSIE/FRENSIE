@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <string>
-
-// Boost Includes
-#include <boost/unordered_set.hpp>
-#include <boost/unordered_map.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -34,7 +32,7 @@ public:
   //! Constructor
   NuclideFactory( const std::string& cross_sections_xml_directory,
 		  const Teuchos::ParameterList& cross_section_table_info,
-		  const boost::unordered_set<std::string>& nuclide_aliases,
+		  const std::unordered_set<std::string>& nuclide_aliases,
 		  const bool use_unresolved_resonance_data,
 		  const bool use_photon_production_data,
 		  std::ostream* os_message = &std::cout );
@@ -45,7 +43,7 @@ public:
 
   //! Create the map of nuclides
   void createNuclideMap( 
-                      boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+                      std::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
 		      nuclide_map ) const;
 
 private:
@@ -66,7 +64,7 @@ private:
 			      const bool use_photon_production_data );
 
   // The nuclide id map
-  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;
+  std::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;
 
   // The message output stream
   std::ostream* d_os_message;

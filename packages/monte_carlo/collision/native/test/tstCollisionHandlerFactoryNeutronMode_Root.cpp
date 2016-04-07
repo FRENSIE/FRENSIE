@@ -25,7 +25,7 @@
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
 #include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Geometry_RootInstanceFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -56,8 +56,8 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
                                         Teuchos::inoutArg(material_reps) );
 
-  // Set the particle mode to ELECTRON_MODE
-  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_MODE );
+  // Set the particle mode to NEUTRON_MODE
+  MonteCarlo::SimulationGeneralProperties::setParticleMode( MonteCarlo::NEUTRON_MODE );
 
   MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler( 
 					   material_reps,

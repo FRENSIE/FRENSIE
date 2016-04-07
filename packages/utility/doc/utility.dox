@@ -10,11 +10,16 @@
  * package is further divided into a series of subpackages, which are
  * listed below.
  * <ul>
+ *  <li>units</li>
  *  <li>core</li>
  *  <li>hdf5</li>
  *  <li>prng</li>
  *  <li>distribution</li>
+ *  <li>integrator</li>
  * </ul>
+ *
+ * \section utility_units_sec The Unit Subpackage
+ *
  *
  * \section utility_core_sec The Core Subpackage
  * The core subpackage provides all of the very low-level classes and
@@ -29,7 +34,6 @@
  *  <li>interpolation (Utility::InterpolationPolicy)</li>
  *  <li>linearized grid generation (Utility::LinearGridGenerator)</li>
  *  <li>ODE solving (Utility::ODESolver)</li>
- *  <li>numerical quadrature (Utility::GaussKronrodQuadratureSet)</li>
  *  <li>efficient integer exponentiation (Utility::ExponentiationAlgorithms)</li>
  *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
  *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>
@@ -79,6 +83,9 @@
  * 1D distributions, this is accomplished with the 
  * Utility::XMLCompatibleObject. For details regarding all of the distribution
  * classes, refer to the \ref distribution "distribution" page. 
+ *
+ * \section utility_integrator_sec The Integrator Subpackage
+ *
  */
 
 

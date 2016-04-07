@@ -14,23 +14,20 @@
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_GaussKronrodQuadratureSet.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-/*! \details The recoil electron momentum (scattering function independent 
- * variable) should have units of 1/cm. 
- */
 WHIncoherentPhotonScatteringDistribution::WHIncoherentPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const double kahn_sampling_cutoff_energy )
+	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
+	  const double kahn_sampling_cutoff_energy )
   : IncoherentPhotonScatteringDistribution( kahn_sampling_cutoff_energy ),
     d_scattering_function( scattering_function )
 {
   // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  testPrecondition( scattering_function.get() );
 }
 
 // Evaluate the distribution
@@ -72,7 +69,7 @@ double WHIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 
   double abs_error, integrated_cs;
 
-  Utility::GaussKronrodQuadratureSet quadrature_gkq_set( precision );
+  Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
 
   quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,

@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <limits>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,25 +25,25 @@
 #include "Utility_CartesianSpatialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::SpatialDistribution> spatial_distribution;
+std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
 // Initialize the distribution
 void initializeDistribution(
-		      Teuchos::RCP<Utility::SpatialDistribution>& distribution )
+		      std::shared_ptr<Utility::SpatialDistribution>& distribution )
 {
   // Delta distribution in x dimension
-  Teuchos::RCP<Utility::OneDDistribution> 
+  std::shared_ptr<Utility::OneDDistribution> 
     x_distribution( new Utility::DeltaDistribution( 1.0 ) );
 
   // Uniform distribution in y dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     y_distribution( new Utility::UniformDistribution( 0.0, 2.0, 0.5 ) );
 
   // Uniform distribution in z dimension
-  Teuchos::RCP<Utility::OneDDistribution>
+  std::shared_ptr<Utility::OneDDistribution>
     z_distribution( new Utility::UniformDistribution( 0.0, 2.0, 0.5 ) );
 
   distribution.reset( new Utility::CartesianSpatialDistribution( 
