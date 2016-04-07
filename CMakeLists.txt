@@ -61,6 +61,15 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/mpi_config.hpp.in
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in)
 CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp)
+
+# Enable Python support
+IF(${${PROJECT_NAME}_ENABLE_PYTHON})
+  IF(SWIG_PREFIX)
+    ENABLE_SWIG_SUPPORT()
+  ELSE()
+    MESSAGE(FATAL_ERROR "The SWIG_PREFIX must be set!")
+  ENDIF()
+ENDIF()
     
 # Enable Trilinos Support
 IF(TRILINOS_PREFIX)
