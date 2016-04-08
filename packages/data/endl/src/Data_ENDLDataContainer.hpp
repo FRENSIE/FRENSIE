@@ -104,7 +104,183 @@ public:
     const unsigned tertiary_subshell ) const;
 
 //---------------------------------------------------------------------------//
-// GET ELASTIC DATA 
+// GET COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Return the coherent cross section energy grid
+  const std::vector<double>& getCoherentCrossSectionEnergyGrid() const;
+
+  //! Return the coherent photon cross section
+  const std::vector<double>& getCoherentCrossSection() const;
+
+  //! Return the argument for the coherent form factor
+  const std::vector<double>& getCoherentFormFactorArgument() const;
+
+  //! Return the coherent form factor
+  const std::vector<double>& getCoherentFormFactor() const;
+
+  //! Return the incident energy grid for the coherent imaginary anomalous scattering factor
+  const std::vector<double>& 
+  getCoherentImaginaryAnomalousFactorIncidentEnergy() const;
+
+  //! Return the coherent imaginary anomalous scattering factor
+  const std::vector<double>& getCoherentImaginaryAnomalousFactor() const;
+
+  //! Return the incident energy grid for the coherent real anomalous scattering factor
+  const std::vector<double>& 
+  getCoherentRealAnomalousFactorIncidentEnergy() const;
+
+  //! Return the coherent real anomalous scattering factor
+  const std::vector<double>& getCoherentRealAnomalousFactor() const;
+
+  //! Return the incident energy grid for the coherent average energy of the scattered photon
+  const std::vector<double>& getCoherentAveragePhotonIncidentEnergy() const;
+
+  //! Return the coherent average energy of the scattered photon
+  const std::vector<double>& getCoherentAveragePhotonEnergy() const;
+
+//---------------------------------------------------------------------------//
+// GET INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Return the incoherent cross section energy grid
+  const std::vector<double>& getIncoherentCrossSectionEnergyGrid() const;
+
+  //! Return the incoherent photon cross section
+  const std::vector<double>& getIncoherentCrossSection() const;
+
+  //! Return the argument for the incoherent scattering function
+  const std::vector<double>& getIncoherentScatteringFunctionArgument() const;
+
+  //! Return the incoherent scattering function
+  const std::vector<double>& getIncoherentScatteringFunction() const;
+
+  //! Return the incident energy grid for the incoherent average energy of the scattered photon
+  const std::vector<double>& getIncoherentAveragePhotonIncidentEnergy() const;
+
+  //! Return the incoherent average energy of the scattered photon
+  const std::vector<double>& getIncoherentAveragePhotonEnergy() const;
+
+  //! Return the incident energy grid for the incoherent average energy of the recoil electron
+  const std::vector<double>& getIncoherentAverageElectronIncidentEnergy() const;
+
+  //! Return the incoherent average energy of the recoil electron
+  const std::vector<double>& getIncoherentAverageElectronEnergy() const;
+
+//---------------------------------------------------------------------------//
+// GET PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Return the photoelectric cross section energy grid
+  const std::vector<double>& getPhotoelectricCrossSectionEnergyGrid() const;
+
+  //! Return the photoelectric photon cross section
+  const std::vector<double>& getPhotoelectricCrossSection() const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the residual atom
+  const std::vector<double>& getPhotoelectricAverageResidualIncidentEnergy() const;
+
+  //! Return the photoelectric average energy of the residual atom
+  const std::vector<double>& getPhotoelectricAverageResidualEnergy() const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the secondary photons
+  const std::vector<double>& getPhotoelectricAveragePhotonsIncidentEnergy() const;
+
+  //! Return the photoelectric average energy of the secondary photons
+  const std::vector<double>& getPhotoelectricAveragePhotonsEnergy() const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the secondary electrons
+  const std::vector<double>& getPhotoelectricAverageElectronsIncidentEnergy() const;
+
+  //! Return the photoelectric average energy of the secondary electrons
+  const std::vector<double>& getPhotoelectricAverageElectronsEnergy() const;
+
+//---------------------------------------------------------------------------//
+// GET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  //! Return the photoelectric cross section energy grid for a subshell
+  const std::vector<double>& 
+  getPhotoelectricCrossSectionEnergyGrid( const unsigned subshell ) const;
+
+  //! Return the photoelectric photon cross section a subshell
+  const std::vector<double>& 
+  getPhotoelectricCrossSection( const unsigned subshell ) const;
+
+  //! Return the photoelectric photon cross section a subshell
+  const std::vector<double>& 
+  getPhotoelectricCrossSection( const unsigned subshell ) const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the residual atom a subshell
+  const std::vector<double>& 
+  getPhotoelectricAverageResidualIncidentEnergy( const unsigned subshell ) const;
+
+  //! Return the photoelectric average energy of the residual atom a subshell
+  const std::vector<double>& 
+  getPhotoelectricAverageResidualEnergy( const unsigned subshell ) const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the secondary photons a subshell
+  const std::vector<double>& 
+  getPhotoelectricAveragePhotonsIncidentEnergy( const unsigned subshell ) const;
+
+  //! Return the photoelectric average energy of the secondary photons a subshell
+  const std::vector<double>& 
+  getPhotoelectricAveragePhotonsEnergy( const unsigned subshell ) const;
+
+  //! Return the incident energy grid for the photoelectric average energy of the secondary electrons a subshell
+  const std::vector<double>& 
+  getPhotoelectricAverageElectronsIncidentEnergy( const unsigned subshell ) const;
+
+  //! Return the photoelectric average energy of the secondary electrons a subshell
+  const std::vector<double>& 
+  getPhotoelectricAverageElectronsEnergy( const unsigned subshell ) const;
+
+//---------------------------------------------------------------------------//
+// GET PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Return the pair production cross section energy grid
+  const std::vector<double>& getPairProductionCrossSectionEnergyGrid() const;
+
+  //! Return the pair production photon cross section
+  const std::vector<double>& getPairProductionCrossSection() const;
+
+  //! Return the incident energy grid for the pair production average energy of the secondary positron
+  const std::vector<double>& getPairProductionAveragePositronIncidentEnergy() const;
+
+  //! Return the pair production average energy of the secondary positron
+  const std::vector<double>& getPairProductionAveragePositronEnergy() const;
+
+  //! Return the incident energy grid for the pair production average energy of the secondary electron
+  const std::vector<double>& getPairProductionAverageElectronIncidentEnergy() const;
+
+  //! Return the pair production average energy of the secondary electron
+  const std::vector<double>& getPairProductionAverageElectronEnergy() const;
+
+//---------------------------------------------------------------------------//
+// GET TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Return the triplet production cross section energy grid
+  const std::vector<double>& getTripletProductionCrossSectionEnergyGrid() const;
+
+  //! Return the triplet production photon cross section
+  const std::vector<double>& getTripletProductionCrossSection() const;
+
+  //! Return the incident energy grid for the triplet production average energy of the secondary positron
+  const std::vector<double>& getTripletProductionAveragePositronIncidentEnergy() const;
+
+  //! Return the triplet production average energy of the secondary positron
+  const std::vector<double>& getTripletProductionAveragePositronEnergy() const;
+
+  //! Return the incident energy grid for the triplet production average energy of the secondary electron
+  const std::vector<double>& getTripletProductionAverageElectronIncidentEnergy() const;
+
+  //! Return the triplet production average energy of the secondary electron
+  const std::vector<double>& getTripletProductionAverageElectronEnergy() const;
+
+//---------------------------------------------------------------------------//
+// GET ELASTIC ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
   //! Return the elastic energy grid
@@ -116,14 +292,14 @@ public:
   //! Return the elastic transport cross section
   const std::vector<double>& getCutoffElasticCrossSection() const;
 
-  //! Return the cutoff elastic average energy to the residual atom incoming energy grid
-  const std::vector<double>& getCutoffElasticResidualIncomingEnergy() const;
+  //! Return the incident energy grid for the cutoff elastic average energy to the residual atom
+  const std::vector<double>& getCutoffElasticResidualIncidentEnergy() const;
 
   //! Return the cutoff elastic average energy to the residual atom
   const std::vector<double>& getCutoffElasticResidualEnergy() const;
 
-  //! Return the cutoff elastic average energy to the scattered electron incoming energy grid
-  const std::vector<double>& getCutoffElasticScatteredElectronIncomingEnergy() const;
+  //! Return the incident energy grid for the cutoff elastic average energy to the scattered electron
+  const std::vector<double>& getCutoffElasticScatteredElectronIncidentEnergy() const;
 
   //! Return the cutoff elastic average energy to the scattered electron
   const std::vector<double>& getCutoffElasticScatteredElectronEnergy() const;
@@ -131,13 +307,13 @@ public:
   //! Return the cutoff elastic angular energy grid
   const std::vector<double>& getCutoffElasticAngularEnergyGrid() const;
 
-  //! Return the cutoff elastic scattering angles for an incoming energy
+  //! Return the cutoff elastic scattering angles for an incident energy
   const std::vector<double>& getCutoffElasticAngles(
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
-  //! Return the cutoff elastic scatering pdf for an incoming energy
+  //! Return the cutoff elastic scatering pdf for an incident energy
   const std::vector<double>& getCutoffElasticPDF(
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
   //! Return the total elastic electron cross section
   const std::vector<double>& getTotalElasticCrossSection() const;
@@ -166,35 +342,35 @@ public:
   const std::vector<double>& 
     getElectroionizationCrossSection( const unsigned subshell ) const;
 
-  //! Return the electroionization incoming energy grid for the average scattered electron energy for a subshell
-  const std::vector<double>& getElectroionizationAverageScatteredElectronIncomingEnergy( 
+  //! Return the electroionization incident energy grid for the average scattered electron energy for a subshell
+  const std::vector<double>& getElectroionizationAverageScatteredElectronIncidentEnergy( 
                            const unsigned subshell ) const;
 
   //! Return the electroionization average scattered electron energy for a subshell
   const std::vector<double>& getElectroionizationAverageScatteredElectronEnergy( 
                            const unsigned subshell ) const;
 
-  //! Return the electroionization incoming energy grid for the average recoil electron energy for a subshell
-  const std::vector<double>& getElectroionizationAverageRecoilElectronIncomingEnergy( 
+  //! Return the electroionization incident energy grid for the average recoil electron energy for a subshell
+  const std::vector<double>& getElectroionizationAverageRecoilElectronIncidentEnergy( 
                            const unsigned subshell ) const;
 
   //! Return the electroionization average recoil electron energy for a subshell
   const std::vector<double>& getElectroionizationAverageRecoilElectronEnergy( 
                            const unsigned subshell ) const;
 
-  //! Return the electroionization incoming energy grid for the recoil electron spectrum for a subshell
+  //! Return the electroionization incident energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationRecoilEnergyGrid( 
                            const unsigned subshell ) const;
 
-  //! Return the electroionization recoil energy for a subshell and incoming energy
+  //! Return the electroionization recoil energy for a subshell and incident energy
   const std::vector<double>& getElectroionizationRecoilEnergy( 
                            const unsigned subshell,
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
-  //! Return the electroionization recoil energy pdf for a subshell and incoming energy
+  //! Return the electroionization recoil energy pdf for a subshell and incident energy
   const std::vector<double>& getElectroionizationRecoilPDF( 
                            const unsigned subshell,
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
 //---------------------------------------------------------------------------//
 // GET BREMSSTRAHLUNG DATA 
@@ -206,25 +382,25 @@ public:
   //! Return the bremsstrahlung electron cross section
   const std::vector<double>& getBremsstrahlungCrossSection() const;
 
-  //! Return the bremsstrahlung incoming electron energy grid for the average energy of the secondary photon
-  const std::vector<double>& getBremsstrahlungAveragePhotonIncomingEnergy() const;
+  //! Return the bremsstrahlung incident electron energy grid for the average energy of the secondary photon
+  const std::vector<double>& getBremsstrahlungAveragePhotonIncidentEnergy() const;
 
   //! Return the bremsstrahlung average energy of the secondary photon
   const std::vector<double>& getBremsstrahlungAveragePhotonEnergy() const;
 
-  //! Return the bremsstrahlung incoming electron energy grid for the secondary photon spectrum
+  //! Return the bremsstrahlung incident electron energy grid for the secondary photon spectrum
   const std::vector<double>& getBremsstrahlungPhotonEnergyGrid() const;
 
-  //! Return the bremsstrahlung photon energy for an incoming energy
+  //! Return the bremsstrahlung photon energy for an incident energy
   const std::vector<double>& getBremsstrahlungPhotonEnergy(
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
-  //! Return the bremsstrahlung photon energy pdf for an incoming energy
+  //! Return the bremsstrahlung photon energy pdf for an incident energy
   const std::vector<double>& getBremsstrahlungPhotonPDF(
-					       const double incoming_energy ) const;
+					       const double incident_energy ) const;
 
-  //! Return the bremsstrahlung incoming electron energy grid for the average energy of the secondary electron
-  const std::vector<double>& getBremsstrahlungAverageElectronIncomingEnergy() const;
+  //! Return the bremsstrahlung incident electron energy grid for the average energy of the secondary electron
+  const std::vector<double>& getBremsstrahlungAverageElectronIncidentEnergy() const;
 
   //! Return the bremsstrahlung average energy of the secondary electron
   const std::vector<double>& getBremsstrahlungAverageElectronEnergy() const;
@@ -319,6 +495,217 @@ protected:
         non_radiative_transition_energy );
 
 //---------------------------------------------------------------------------//
+// GET COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Set the coherent cross section energy grid
+  void setCoherentCrossSectionEnergyGrid(
+    const std::vector<double>& energy_grid );
+
+  //! Set the coherent photon cross section
+  void setCoherentCrossSection( const std::vector<double>& cross_section );
+
+  //! Set the argument for the coherent form factor
+  void setCoherentFormFactorArgument(
+    const std::vector<double>& form_factor_argument );
+
+  //! Set the coherent form factor
+  void setCoherentFormFactor( const std::vector<double>& form_factor );
+
+  //! Set the incident energy grid for the coherent imaginary anomalous scattering factor
+  void setCoherentImaginaryAnomalousFactorIncidentEnergy(
+    const std::vector<double>& anomalous_incident_energy );
+
+  //! Set the coherent imaginary anomalous scattering factor
+  void setCoherentImaginaryAnomalousFactor(
+    const std::vector<double>& anomalous_factor );
+
+  //! Set the incident energy grid for the coherent real anomalous scattering factor
+  void setCoherentRealAnomalousFactorIncidentEnergy(
+    const std::vector<double>& anomalous_incident_energy );
+
+  //! Set the coherent real anomalous scattering factor
+  void setCoherentRealAnomalousFactor(
+    const std::vector<double>& anomalous_factor );
+
+  //! Set the incident energy grid for the coherent average energy of the scattered photon
+  void setCoherentAveragePhotonIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the coherent average energy of the scattered photon
+  void setCoherentAveragePhotonEnergy(
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
+// SET INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Set the incoherent cross section energy grid
+  void setIncoherentCrossSectionEnergyGrid(
+    const std::vector<double>& energy_grid );
+
+  //! Set the incoherent photon cross section
+  void setIncoherentCrossSection( const std::vector<double>& cross_section );
+
+  //! Set the argument for the incoherent scattering function
+  void setIncoherentScatteringFunctionArgument(
+    const std::vector<double>& scattering_function_argument );
+
+  //! Set the incoherent scattering function
+  void setIncoherentScatteringFunction(
+    const std::vector<double>& scattering_function );
+
+  //! Set the incident energy grid for the incoherent average energy of the scattered photon
+  void setIncoherentAveragePhotonIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the incoherent average energy of the scattered photon
+  void setIncoherentAveragePhotonEnergy(
+    const std::vector<double>& average_energy );
+
+  //! Set the incident energy grid for the incoherent average energy of the recoil electron
+  void setIncoherentAverageElectronIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the incoherent average energy of the recoil electron
+  void setIncoherentAverageElectronEnergy(
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Set the photoelectric cross section energy grid
+  void setPhotoelectricCrossSectionEnergyGrid(
+    const std::vector<double>& energy_grid );
+
+  //! Set the photoelectric photon cross section
+  void setPhotoelectricCrossSection( const std::vector<double>& cross_section );
+
+  //! Set the incident energy grid for the photoelectric average energy of the residual atom
+  void setPhotoelectricAverageResidualIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the residual atom
+  void setPhotoelectricAverageResidualEnergy(
+    const std::vector<double>& average_energy );
+
+  //! Set the incident energy grid for the photoelectric average energy of the secondary photons
+  void setPhotoelectricAveragePhotonsIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the secondary photons
+  void setPhotoelectricAveragePhotonsEnergy(
+    const std::vector<double>& average_energy );
+
+  //! Set the incident energy grid for the photoelectric average energy of the secondary electrons
+  void setPhotoelectricAverageElectronsIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the secondary electrons
+  void setPhotoelectricAverageElectronsEnergy(
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  //! Set the photoelectric cross section energy grid for a subshell
+  void setPhotoelectricCrossSectionEnergyGrid(
+    const unsigned subshell,
+    const std::vector<double>& energy_grid );
+
+  //! Set the photoelectric photon cross section a subshell
+  void setPhotoelectricCrossSection(
+    const unsigned subshell,
+    const std::vector<double>& cross_section );
+
+  //! Set the incident energy grid for the photoelectric average energy of the residual atom a subshell
+  void setPhotoelectricAverageResidualIncidentEnergy(
+    const unsigned subshell,
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the residual atom a subshell
+  void setPhotoelectricAverageResidualEnergy(
+    const unsigned subshell,
+    const std::vector<double>& average_energy  );
+
+  //! Set the incident energy grid for the photoelectric average energy of the secondary photons a subshell
+  void setPhotoelectricAveragePhotonsIncidentEnergy(
+    const unsigned subshell,
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the secondary photons a subshell
+  void setPhotoelectricAveragePhotonsEnergy(
+    const unsigned subshell,
+    const std::vector<double>& average_energy  );
+
+  //! Set the incident energy grid for the photoelectric average energy of the secondary electrons a subshell
+  void setPhotoelectricAverageElectronsIncidentEnergy(
+    const unsigned subshell,
+    const std::vector<double>& incident_energy );
+
+  //! Set the photoelectric average energy of the secondary electrons a subshell
+  void setPhotoelectricAverageElectronsEnergy(
+    const unsigned subshell,
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
+// SET PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Set the pair production cross section energy grid
+  void setPairProductionCrossSectionEnergyGrid(
+    const std::vector<double>& energy_grid );
+
+  //! Set the pair production photon cross section
+  void setPairProductionCrossSection( const std::vector<double>& cross_section );
+
+  //! Set the incident energy grid for the pair production average energy of the secondary positron
+  void setPairProductionAveragePositronIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the pair production average energy of the secondary positron
+  void setPairProductionAveragePositronEnergy(
+    const std::vector<double>& average_energy );
+
+  //! Set the incident energy grid for the pair production average energy of the secondary electron
+  void setPairProductionAverageElectronIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the pair production average energy of the secondary electron
+  void setPairProductionAverageElectronEnergy(
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
+// SET TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  //! Set the triplet production cross section energy grid
+  void setTripletProductionCrossSectionEnergyGrid(
+    const std::vector<double>& energy_grid );
+
+  //! Set the triplet production photon cross section
+  void setTripletProductionCrossSection(
+    const std::vector<double>& cross_section );
+
+  //! Set the incident energy grid for the triplet production average energy of the secondary positron
+  void setTripletProductionAveragePositronIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the triplet production average energy of the secondary positron
+  void setTripletProductionAveragePositronEnergy(
+    const std::vector<double>& average_energy );
+
+  //! Set the incident energy grid for the triplet production average energy of the secondary electron
+  void setTripletProductionAverageElectronIncidentEnergy(
+    const std::vector<double>& incident_energy );
+
+  //! Set the triplet production average energy of the secondary electron
+  void setTripletProductionAverageElectronEnergy(
+    const std::vector<double>& average_energy );
+
+//---------------------------------------------------------------------------//
 // SET ELASTIC DATA 
 //---------------------------------------------------------------------------//
 
@@ -333,17 +720,17 @@ protected:
   void setCutoffElasticCrossSection( 
     const std::vector<double>& cutoff_elastic_cross_section );
 
-  //! Set the cutoff elastic average energy to the residual atom incoming energy grid
-  void setCutoffElasticResidualIncomingEnergy( 
-    const std::vector<double>& residual_incoming_energy );
+  //! Set the incident energy grid for the cutoff elastic average energy to the residual atom
+  void setCutoffElasticResidualIncidentEnergy( 
+    const std::vector<double>& residual_incident_energy );
 
   //! Set the cutoff elastic average energy to the residual atom
   void setCutoffElasticResidualEnergy( 
     const std::vector<double>& residual_energy );
 
-  //! Set the cutoff elastic average energy of the scattered electron incoming energy grid
-  void setCutoffElasticScatteredElectronIncomingEnergy( 
-    const std::vector<double>& scattered_electron_incoming_energy );
+  //! Set the incident energy grid for the cutoff elastic average energy of the scattered electron
+  void setCutoffElasticScatteredElectronIncidentEnergy( 
+    const std::vector<double>& scattered_electron_incident_energy );
 
   //! Set the cutoff elastic average energy of the scattered electron
   void setCutoffElasticScatteredElectronEnergy(
@@ -353,14 +740,14 @@ protected:
   void setCutoffElasticAngularEnergyGrid(
     const std::vector<double>& cutoff_elastic_angular_energy_grid );
 
-  //! Set the cutoff elastic scattering angles for an incoming energy
+  //! Set the cutoff elastic scattering angles for an incident energy
   void setCutoffElasticAnglesAtEnergy( 
-    const double incoming_energy,
+    const double incident_energy,
     const std::vector<double>& elastic_angles );
 
-  //! Set the cutoff elastic scattering pdf for an incoming energy
+  //! Set the cutoff elastic scattering pdf for an incident energy
   void setCutoffElasticPDFAtEnergy( 
-    const double incoming_energy,
+    const double incident_energy,
     const std::vector<double>& elastic_pdf );
 
   //! Set the elastic scattering angles
@@ -406,20 +793,20 @@ protected:
     const unsigned subshell,
     const std::vector<double>& electroionization_cross_section );
 
-  //! Set the electroionization incoming energy grid for the average scattered electron energy for a subshell
-  void setElectroionizationAverageScatteredElectronIncomingEnergy(
+  //! Set the electroionization incident energy grid for the average scattered electron energy for a subshell
+  void setElectroionizationAverageScatteredElectronIncidentEnergy(
     const unsigned subshell,
-    const std::vector<double>& average_scattered_electron_incoming_energy );
+    const std::vector<double>& average_scattered_electron_incident_energy );
 
   //! Set the electroionization average scattered electron energy for a subshell
   void setElectroionizationAverageScatteredElectronEnergy(
     const unsigned subshell,
     const std::vector<double>& average_scattered_electron_energy );
 
-  //! Set the electroionization incoming energy grid for the average recoil electron energy for a subshell
-  void setElectroionizationAverageRecoilElectronIncomingEnergy(
+  //! Set the electroionization incident energy grid for the average recoil electron energy for a subshell
+  void setElectroionizationAverageRecoilElectronIncidentEnergy(
     const unsigned subshell,
-    const std::vector<double>& average_recoil_electron_incoming_energy );
+    const std::vector<double>& average_recoil_electron_incident_energy );
 
   //! Set the electroionization average recoil electron energy for a subshell
   void setElectroionizationAverageRecoilElectronEnergy(
@@ -431,24 +818,24 @@ protected:
     const unsigned subshell, 
     const std::vector<double>& electroionization_recoil_energy_grid );
 
-  //! Set the electroionization recoil energy for an incoming energy and subshell
-  void setElectroionizationRecoilEnergyAtIncomingEnergy( 
+  //! Set the electroionization recoil energy for an incident energy and subshell
+  void setElectroionizationRecoilEnergyAtIncidentEnergy( 
     const unsigned subshell, 
-    const double incoming_energy,
+    const double incident_energy,
     const std::vector<double>& electroionization_recoil_energy );
 
-  //! Set the electroionization recoil energy pdf for an incoming energy and subshell
-  void setElectroionizationRecoilPDFAtIncomingEnergy(
+  //! Set the electroionization recoil energy pdf for an incident energy and subshell
+  void setElectroionizationRecoilPDFAtIncidentEnergy(
     const unsigned subshell,
-    const double incoming_energy,
+    const double incident_energy,
     const std::vector<double>& electroionization_recoil_pdf );
 
-  //! Set electroionization recoil energy for all incoming energies in a subshell
+  //! Set electroionization recoil energy for all incident energies in a subshell
   void setElectroionizationRecoilEnergy(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_energy );
 
-  //! Set electroionization recoil energy pdf for all incoming energies in a subshell
+  //! Set electroionization recoil energy pdf for all incident energies in a subshell
   void setElectroionizationRecoilPDF(
     const unsigned subshell,
     const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
@@ -465,9 +852,9 @@ protected:
   void setBremsstrahlungCrossSection(
     const std::vector<double>& bremsstrahlung_cross_section );
 
-  //! Set the bremsstrahlung incoming electron energy grid for the average energy of the secondary photon
-  void setBremsstrahlungAveragePhotonIncomingEnergy(
-    const std::vector<double>& bremsstrahlung_average_photon_incoming_energy );
+  //! Set the bremsstrahlung incident electron energy grid for the average energy of the secondary photon
+  void setBremsstrahlungAveragePhotonIncidentEnergy(
+    const std::vector<double>& bremsstrahlung_average_photon_incident_energy );
 
   //! Set the bremsstrahlung average energy of the secondary photon
   void setBremsstrahlungAveragePhotonEnergy(
@@ -477,14 +864,14 @@ protected:
   void setBremsstrahlungPhotonEnergyGrid( 
     const std::vector<double>& bremsstrahlung_energy_grid );
 
-  //! Set the bremsstrahlung photon energy for an incoming energy
-  void setBremsstrahlungPhotonEnergyAtIncomingEnergy(
-    const double incoming_energy,
+  //! Set the bremsstrahlung photon energy for an incident energy
+  void setBremsstrahlungPhotonEnergyAtIncidentEnergy(
+    const double incident_energy,
     const std::vector<double>& bremsstrahlung_photon_energy );
 
-  //! Set the bremsstrahlung photon energy pdf for an incoming energy
-  void setBremsstrahlungPhotonPDFAtIncomingEnergy(
-    const double incoming_energy,
+  //! Set the bremsstrahlung photon energy pdf for an incident energy
+  void setBremsstrahlungPhotonPDFAtIncidentEnergy(
+    const double incident_energy,
     const std::vector<double>& bremsstrahlung_photon_pdf );
 
   //! Set all the bremsstrahlung photon energy data
@@ -495,9 +882,9 @@ protected:
   void setBremsstrahlungPhotonPDF(
     const std::map<double,std::vector<double> >& bremsstrahlung_photon_pdf );
 
-  //! Set the bremsstrahlung incoming electron energy grid for the average energy of the secondary electron
-  void setBremsstrahlungAverageElectronIncomingEnergy(
-    const std::vector<double>& bremsstrahlung_average_electron_incoming_energy );
+  //! Set the bremsstrahlung incident electron energy grid for the average energy of the secondary electron
+  void setBremsstrahlungAverageElectronIncidentEnergy(
+    const std::vector<double>& bremsstrahlung_average_electron_incident_energy );
 
   //! Set the bremsstrahlung average energy of the secondary electron
   void setBremsstrahlungAverageElectronEnergy(
@@ -600,14 +987,14 @@ private:
   // The cutoff elastic electron cross section (b)
   std::vector<double> d_cutoff_elastic_cross_section;
 
-  // The cutoff elastic average energy to the residual atom incoming energy grid
-  std::vector<double> d_cutoff_elastic_residual_incoming_energy;
+  // The incident energy grid for the cutoff elastic average energy to the residual atom
+  std::vector<double> d_cutoff_elastic_residual_incident_energy;
 
   // The cutoff elastic average energy to the residual atom
   std::vector<double> d_cutoff_elastic_residual_energy;
 
-  // The cutoff elastic average energy to the scattered electron incoming energy grid
-  std::vector<double> d_cutoff_elastic_scattered_electron_incoming_energy;
+  // The incident energy grid for the cutoff elastic average energy to the scattered electron
+  std::vector<double> d_cutoff_elastic_scattered_electron_incident_energy;
 
   // The cutoff elastic average energy to the scattered electron
   std::vector<double> d_cutoff_elastic_scattered_electron_energy;
@@ -647,17 +1034,17 @@ private:
   std::map<unsigned,std::vector<double> > 
     d_electroionization_subshell_cross_section;
 
-  // The electroionization incoming energy grid for the average scattered electron energy for a subshell
+  // The electroionization incident energy grid for the average scattered electron energy for a subshell
   std::map<unsigned,std::vector<double> >
-    d_electroionization_average_scattered_electron_incoming_energy;
+    d_electroionization_average_scattered_electron_incident_energy;
 
   // The electroionization average scattered electron energy for a subshell
   std::map<unsigned,std::vector<double> >
     d_electroionization_average_scattered_electron_energy;
 
-  // The electroionization incoming energy grid for the average recoil electron energy for a subshell
+  // The electroionization incident energy grid for the average recoil electron energy for a subshell
   std::map<unsigned,std::vector<double> >
-    d_electroionization_average_recoil_electron_incoming_energy;
+    d_electroionization_average_recoil_electron_incident_energy;
 
   // The electroionization average recoil electron energy for a subshell
   std::map<unsigned,std::vector<double> >
@@ -666,11 +1053,11 @@ private:
   // The electroionization recoil energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_recoil_energy_grid;
 
-  // The electroionization recoil energy for subshell and incoming energy
+  // The electroionization recoil energy for subshell and incident energy
   std::map<unsigned,std::map<double,std::vector<double> > > 
     d_electroionization_recoil_energy;
 
-  // The electroionization recoil pdf for subshell and incoming energy
+  // The electroionization recoil pdf for subshell and incident energy
   std::map<unsigned,std::map<double,std::vector<double> > > 
     d_electroionization_recoil_pdf;
 
@@ -684,13 +1071,13 @@ private:
   // The bremsstrahlung electron cross section (b)
   std::vector<double> d_bremsstrahlung_cross_section;
 
-  // The bremsstrahlung incoming electron energy grid for the average energy of the secondary photon
-  std::vector<double> d_bremsstrahlung_average_photon_incoming_energy;
+  // The bremsstrahlung incident electron energy grid for the average energy of the secondary photon
+  std::vector<double> d_bremsstrahlung_average_photon_incident_energy;
 
   // The bremsstrahlung average energy of the secondary photon
   std::vector<double> d_bremsstrahlung_average_photon_energy;
 
-  // The bremsstrahlung photon spectrum incoming energy grid (MeV)
+  // The bremsstrahlung photon spectrum incident energy grid (MeV)
   std::vector<double> d_bremsstrahlung_photon_energy_grid;
 
   // The bremsstrahlung photon spectrum energy
@@ -699,8 +1086,8 @@ private:
   // The bremsstrahlung photon spectrum pdf
   std::map<double,std::vector<double> > d_bremsstrahlung_photon_pdf;
 
-  // The bremsstrahlung incoming electron energy grid for the average energy of the secondary electron
-  std::vector<double> d_bremsstrahlung_average_electron_incoming_energy;
+  // The bremsstrahlung incident electron energy grid for the average energy of the secondary electron
+  std::vector<double> d_bremsstrahlung_average_electron_incident_energy;
 
   // The bremsstrahlung average energy of the secondary electron
   std::vector<double> d_bremsstrahlung_average_electron_energy;

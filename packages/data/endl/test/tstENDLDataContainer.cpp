@@ -424,20 +424,20 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the residual atom incoming energy grid can be set
+// Check that the residual atom incident energy grid can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setCutoffElasticResidualIncomingEnergy )
+                   setCutoffElasticResidualIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
   energy[1] = 2.0;
   energy[2] = 3.0;
 
-  endl_data_container.setCutoffElasticResidualIncomingEnergy(
+  endl_data_container.setCutoffElasticResidualIncidentEnergy(
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getCutoffElasticResidualIncomingEnergy(),
+    endl_data_container.getCutoffElasticResidualIncidentEnergy(),
     energy );
 }
 
@@ -460,20 +460,20 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the scattered electron incoming energy grid can be set
+// Check that the scattered electron incident energy grid can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setCutoffElasticScatteredElectronIncomingEnergy )
+                   setCutoffElasticScatteredElectronIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
   energy[1] = 2.0;
   energy[2] = 3.0;
 
-  endl_data_container.setCutoffElasticScatteredElectronIncomingEnergy(
+  endl_data_container.setCutoffElasticScatteredElectronIncidentEnergy(
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getCutoffElasticScatteredElectronIncomingEnergy(),
+    endl_data_container.getCutoffElasticScatteredElectronIncidentEnergy(),
     energy );
 }
 
@@ -701,9 +701,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the incoming energy grid for the electroionization scattered electron can be set
+// Check that the incident energy grid for the electroionization scattered electron can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setElectroionizationAverageScatteredElectronIncomingEnergy )
+                   setElectroionizationAverageScatteredElectronIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
@@ -712,12 +712,12 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   unsigned subshell = 1;
 
-  endl_data_container.setElectroionizationAverageScatteredElectronIncomingEnergy(
+  endl_data_container.setElectroionizationAverageScatteredElectronIncidentEnergy(
     subshell,
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getElectroionizationAverageScatteredElectronIncomingEnergy( subshell ),
+    endl_data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( subshell ),
     energy );
 }
 
@@ -743,9 +743,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the incoming energy grid for the electroionization recoil can be set
+// Check that the incident energy grid for the electroionization recoil can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setElectroionizationAverageRecoilElectronIncomingEnergy )
+                   setElectroionizationAverageRecoilElectronIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
@@ -754,12 +754,12 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   unsigned subshell = 1;
 
-  endl_data_container.setElectroionizationAverageRecoilElectronIncomingEnergy(
+  endl_data_container.setElectroionizationAverageRecoilElectronIncidentEnergy(
     subshell,
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getElectroionizationAverageRecoilElectronIncomingEnergy( subshell ),
+    endl_data_container.getElectroionizationAverageRecoilElectronIncidentEnergy( subshell ),
     energy );
 }
 
@@ -806,7 +806,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the electroionization recoil energy can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setElectroionizationRecoilEnergyAtIncomingEnergy )
+                   setElectroionizationRecoilEnergyAtIncidentEnergy )
 {
   std::vector<double> recoil_energy( 3 );
   recoil_energy[0] = 0.01;
@@ -816,7 +816,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   unsigned subshell = 1;
   double energy = 1.0;
 
-  endl_data_container.setElectroionizationRecoilEnergyAtIncomingEnergy( 
+  endl_data_container.setElectroionizationRecoilEnergyAtIncidentEnergy( 
                                 subshell,
                                 energy, 
                                 recoil_energy );
@@ -828,7 +828,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the electroionization recoil pdf can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setElectroionizationRecoilPDFAtIncomingEnergy )
+                   setElectroionizationRecoilPDFAtIncidentEnergy )
 {
   std::vector<double> recoil_pdf( 3 );
   recoil_pdf[0] = 1.0;
@@ -838,7 +838,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   unsigned subshell = 1;
   double energy = 1.0;
 
-  endl_data_container.setElectroionizationRecoilPDFAtIncomingEnergy(
+  endl_data_container.setElectroionizationRecoilPDFAtIncidentEnergy(
                                 subshell,
                                 energy, 
                                 recoil_pdf );
@@ -940,18 +940,18 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung energy grid for the secondary photon can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setBremsstrahlungAveragePhotonIncomingEnergy )
+                   setBremsstrahlungAveragePhotonIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
   energy[1] = 2.0;
   energy[2] = 3.0;
 
-  endl_data_container.setBremsstrahlungAveragePhotonIncomingEnergy(
+  endl_data_container.setBremsstrahlungAveragePhotonIncidentEnergy(
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getBremsstrahlungAveragePhotonIncomingEnergy(),
+    endl_data_container.getBremsstrahlungAveragePhotonIncidentEnergy(),
     energy );
 }
 
@@ -993,14 +993,14 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon energy can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setBremsstrahlungPhotonEnergyAtIncomingEnergy )
+                   setBremsstrahlungPhotonEnergyAtIncidentEnergy )
 {
   std::vector<double> photon_energy( 3 );
   photon_energy[0] = 0.01;
   photon_energy[1] = 0.001;
   photon_energy[2] = 0.0001;
 
-  endl_data_container.setBremsstrahlungPhotonEnergyAtIncomingEnergy( 1.0, 
+  endl_data_container.setBremsstrahlungPhotonEnergyAtIncidentEnergy( 1.0, 
                                                                    photon_energy );
 
   TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonEnergy(1.0),
@@ -1010,14 +1010,14 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon pdf can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setBremsstrahlungPhotonPDFAtIncomingEnergy )
+                   setBremsstrahlungPhotonPDFAtIncidentEnergy )
 {
   std::vector<double> photon_pdf( 3 );
   photon_pdf[0] = 1.0;
   photon_pdf[1] = 2.0;
   photon_pdf[2] = 5.0;
 
-  endl_data_container.setBremsstrahlungPhotonPDFAtIncomingEnergy( 1.0, 
+  endl_data_container.setBremsstrahlungPhotonPDFAtIncidentEnergy( 1.0, 
                                                                 photon_pdf );
 
   TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonPDF(1.0),
@@ -1071,18 +1071,18 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung energy grid for the secondary electron can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, 
-                   setBremsstrahlungAverageElectronIncomingEnergy )
+                   setBremsstrahlungAverageElectronIncidentEnergy )
 {
   std::vector<double> energy( 3 );
   energy[0] = 1.0;
   energy[1] = 2.0;
   energy[2] = 3.0;
 
-  endl_data_container.setBremsstrahlungAverageElectronIncomingEnergy(
+  endl_data_container.setBremsstrahlungAverageElectronIncidentEnergy(
     energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getBremsstrahlungAverageElectronIncomingEnergy(),
+    endl_data_container.getBremsstrahlungAverageElectronIncidentEnergy(),
     energy );
 }
 
@@ -1266,13 +1266,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
@@ -1310,13 +1310,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
@@ -1344,7 +1344,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
@@ -1362,7 +1362,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
@@ -1485,13 +1485,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
@@ -1529,13 +1529,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
@@ -1563,7 +1563,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
@@ -1581,7 +1581,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
@@ -1714,13 +1714,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
@@ -1758,13 +1758,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
@@ -1792,7 +1792,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
@@ -1810,7 +1810,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),
@@ -1939,13 +1939,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticResidualIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticResidualIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticResidualEnergy().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticScatteredElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getCutoffElasticScatteredElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getCutoffElasticScatteredElectronEnergy().size(),
@@ -1983,13 +1983,13 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationCrossSection(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageScatteredElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageScatteredElectronEnergy(1u).size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncomingEnergy(1u).size(), 
+    endl_data_container_copy.getElectroionizationAverageRecoilElectronIncidentEnergy(1u).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationAverageRecoilElectronEnergy(1u).size(),
@@ -2017,7 +2017,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungCrossSection().size(),
     3u );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAverageElectronIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAverageElectronIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAverageElectronEnergy().size(),
@@ -2035,7 +2035,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungAveragePhotonIncomingEnergy().size(), 
+    endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonEnergy().size(),

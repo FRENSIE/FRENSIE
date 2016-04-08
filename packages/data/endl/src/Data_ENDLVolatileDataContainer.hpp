@@ -55,9 +55,9 @@ public:
   using ENDLDataContainer::setElasticEnergyGrid;
   using ENDLDataContainer::setElasticTransportCrossSection;
   using ENDLDataContainer::setCutoffElasticCrossSection;
-  using ENDLDataContainer::setCutoffElasticResidualIncomingEnergy;
+  using ENDLDataContainer::setCutoffElasticResidualIncidentEnergy;
   using ENDLDataContainer::setCutoffElasticResidualEnergy;
-  using ENDLDataContainer::setCutoffElasticScatteredElectronIncomingEnergy;
+  using ENDLDataContainer::setCutoffElasticScatteredElectronIncidentEnergy;
   using ENDLDataContainer::setCutoffElasticScatteredElectronEnergy;
   using ENDLDataContainer::setCutoffElasticAngularEnergyGrid;
   using ENDLDataContainer::setCutoffElasticAnglesAtEnergy;
@@ -75,13 +75,13 @@ public:
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setElectroionizationCrossSectionEnergyGrid;
   using ENDLDataContainer::setElectroionizationCrossSection;
-  using ENDLDataContainer::setElectroionizationAverageScatteredElectronIncomingEnergy;
+  using ENDLDataContainer::setElectroionizationAverageScatteredElectronIncidentEnergy;
   using ENDLDataContainer::setElectroionizationAverageScatteredElectronEnergy;
-  using ENDLDataContainer::setElectroionizationAverageRecoilElectronIncomingEnergy;
+  using ENDLDataContainer::setElectroionizationAverageRecoilElectronIncidentEnergy;
   using ENDLDataContainer::setElectroionizationAverageRecoilElectronEnergy;
   using ENDLDataContainer::setElectroionizationRecoilEnergyGrid;
-  using ENDLDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
-  using ENDLDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
+  using ENDLDataContainer::setElectroionizationRecoilEnergyAtIncidentEnergy;
+  using ENDLDataContainer::setElectroionizationRecoilPDFAtIncidentEnergy;
   using ENDLDataContainer::setElectroionizationRecoilEnergy;
   using ENDLDataContainer::setElectroionizationRecoilPDF;
 //---------------------------------------------------------------------------//
@@ -89,14 +89,14 @@ public:
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setBremsstrahlungCrossSectionEnergyGrid;
   using ENDLDataContainer::setBremsstrahlungCrossSection;
-  using ENDLDataContainer::setBremsstrahlungAveragePhotonIncomingEnergy;
+  using ENDLDataContainer::setBremsstrahlungAveragePhotonIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungAveragePhotonEnergy;
   using ENDLDataContainer::setBremsstrahlungPhotonEnergyGrid;
-  using ENDLDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy;
-  using ENDLDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy;
+  using ENDLDataContainer::setBremsstrahlungPhotonEnergyAtIncidentEnergy;
+  using ENDLDataContainer::setBremsstrahlungPhotonPDFAtIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungPhotonEnergy;
   using ENDLDataContainer::setBremsstrahlungPhotonPDF;
-  using ENDLDataContainer::setBremsstrahlungAverageElectronIncomingEnergy;
+  using ENDLDataContainer::setBremsstrahlungAverageElectronIncidentEnergy;
   using ENDLDataContainer::setBremsstrahlungAverageElectronEnergy;
 //---------------------------------------------------------------------------//
 // SET ATOMIC EXCITAION DATA 

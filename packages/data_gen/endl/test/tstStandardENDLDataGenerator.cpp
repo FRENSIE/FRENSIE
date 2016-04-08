@@ -76,12 +76,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> residual_incoming_energy = 
-    data_container.getCutoffElasticResidualIncomingEnergy();
+  std::vector<double> residual_incident_energy = 
+    data_container.getCutoffElasticResidualIncidentEnergy();
 
-  TEST_EQUALITY_CONST( residual_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( residual_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( residual_incoming_energy.size(), 2 );
+  TEST_EQUALITY_CONST( residual_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( residual_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_incident_energy.size(), 2 );
 
   std::vector<double> residual_energy = 
     data_container.getCutoffElasticResidualEnergy();
@@ -89,14 +89,14 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( residual_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.back(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.size(), 
-                       residual_incoming_energy.size() );
+                       residual_incident_energy.size() );
 
-  std::vector<double> scattered_incoming_energy = 
-    data_container.getCutoffElasticScatteredElectronIncomingEnergy();
+  std::vector<double> scattered_incident_energy = 
+    data_container.getCutoffElasticScatteredElectronIncidentEnergy();
 
-  TEST_EQUALITY_CONST( scattered_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.size(), 2 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.size(), 2 );
 
   std::vector<double> scattered_energy = 
     data_container.getCutoffElasticScatteredElectronEnergy();
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( scattered_energy.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( scattered_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_energy.size(), 
-                       scattered_incoming_energy.size() );
+                       scattered_incident_energy.size() );
 
   std::vector<double> angular_grid = 
     data_container.getCutoffElasticAngularEnergyGrid();
@@ -174,12 +174,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  scattered_incoming_energy =  
-    data_container.getElectroionizationAverageScatteredElectronIncomingEnergy( 1u );
+  scattered_incident_energy =  
+    data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( 1u );
 
-  TEST_EQUALITY_CONST( scattered_incoming_energy.front(), 1.361e-5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.size(), 6 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.front(), 1.361e-5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.size(), 6 );
 
   scattered_energy =  
     data_container.getElectroionizationAverageScatteredElectronEnergy( 1u );
@@ -187,14 +187,14 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( scattered_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( scattered_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_energy.size(), 
-                       scattered_incoming_energy.size() );
+                       scattered_incident_energy.size() );
 
-  std::vector<double> recoil_incoming_energy =  
-    data_container.getElectroionizationAverageRecoilElectronIncomingEnergy( 1u );
+  std::vector<double> recoil_incident_energy =  
+    data_container.getElectroionizationAverageRecoilElectronIncidentEnergy( 1u );
 
-  TEST_EQUALITY_CONST( recoil_incoming_energy.front(), 1.361e-5 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.size(), 25 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.front(), 1.361e-5 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.size(), 25 );
 
   std::vector<double> recoil_energy =  
     data_container.getElectroionizationAverageRecoilElectronEnergy( 1u );
@@ -202,7 +202,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( recoil_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( recoil_energy.back(), 7.28699e-5 );
   TEST_EQUALITY_CONST( recoil_energy.size(), 
-                       recoil_incoming_energy.size() );
+                       recoil_incident_energy.size() );
 
   std::vector<double> recoil_energy_grid =  
     data_container.getElectroionizationRecoilEnergyGrid( 1u );
@@ -254,12 +254,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> photon_incoming_energy =  
-    data_container.getBremsstrahlungAveragePhotonIncomingEnergy();
+  std::vector<double> photon_incident_energy =  
+    data_container.getBremsstrahlungAveragePhotonIncidentEnergy();
 
-  TEST_EQUALITY_CONST( photon_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( photon_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( photon_incoming_energy.size(), 82 );
+  TEST_EQUALITY_CONST( photon_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( photon_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_incident_energy.size(), 82 );
 
   std::vector<double> photon_energy =  
     data_container.getBremsstrahlungAveragePhotonEnergy();
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( photon_energy.front(), 2.14426e-6 );
   TEST_EQUALITY_CONST( photon_energy.back(), 2.66815e3 );
   TEST_EQUALITY_CONST( photon_energy.size(), 
-                       photon_incoming_energy.size() );
+                       photon_incident_energy.size() );
 
   std::vector<double> bremsstrahlung_photon_energy_grid =  
     data_container.getBremsstrahlungPhotonEnergyGrid();
@@ -304,12 +304,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.16344e-10 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 111 );
 
-  std::vector<double> electron_incoming_energy =  
-    data_container.getBremsstrahlungAverageElectronIncomingEnergy();
+  std::vector<double> electron_incident_energy =  
+    data_container.getBremsstrahlungAverageElectronIncidentEnergy();
 
-  TEST_EQUALITY_CONST( electron_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( electron_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( electron_incoming_energy.size(), 85 );
+  TEST_EQUALITY_CONST( electron_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( electron_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_incident_energy.size(), 85 );
 
   std::vector<double> electron_energy =  
     data_container.getBremsstrahlungAverageElectronEnergy();
@@ -317,7 +317,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( electron_energy.front(), 7.85574e-6 );
   TEST_EQUALITY_CONST( electron_energy.back(), 9.73318e4 );
   TEST_EQUALITY_CONST( electron_energy.size(), 
-                       electron_incoming_energy.size() );
+                       electron_incident_energy.size() );
 
 //---------------------------------------------------------------------------//
 // CHECK ATOMIC EXCITAION DATA 
@@ -390,12 +390,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( cross_section.back(), 4.72309e-4 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> residual_incoming_energy = 
-    data_container.getCutoffElasticResidualIncomingEnergy();
+  std::vector<double> residual_incident_energy = 
+    data_container.getCutoffElasticResidualIncidentEnergy();
 
-  TEST_EQUALITY_CONST( residual_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( residual_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( residual_incoming_energy.size(), 2 );
+  TEST_EQUALITY_CONST( residual_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( residual_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_incident_energy.size(), 2 );
 
   std::vector<double> residual_energy = 
     data_container.getCutoffElasticResidualEnergy();
@@ -403,14 +403,14 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( residual_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.back(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.size(), 
-                       residual_incoming_energy.size() );
+                       residual_incident_energy.size() );
 
-  std::vector<double> scattered_incoming_energy = 
-    data_container.getCutoffElasticScatteredElectronIncomingEnergy();
+  std::vector<double> scattered_incident_energy = 
+    data_container.getCutoffElasticScatteredElectronIncidentEnergy();
 
-  TEST_EQUALITY_CONST( scattered_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.size(), 2 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.size(), 2 );
 
   std::vector<double> scattered_energy = 
     data_container.getCutoffElasticScatteredElectronEnergy();
@@ -418,7 +418,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( scattered_energy.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( scattered_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_energy.size(), 
-                       scattered_incoming_energy.size() );
+                       scattered_incident_energy.size() );
 
   std::vector<double> angular_grid = 
     data_container.getCutoffElasticAngularEnergyGrid();
@@ -490,12 +490,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( cross_section.back(), 1.338050e4 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  scattered_incoming_energy =  
-    data_container.getElectroionizationAverageScatteredElectronIncomingEnergy( 1u );
+  scattered_incident_energy =  
+    data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( 1u );
 
-  TEST_EQUALITY_CONST( scattered_incoming_energy.front(), 2.9101e-4 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.size(), 6 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.front(), 2.9101e-4 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.size(), 6 );
 
   scattered_energy =  
     data_container.getElectroionizationAverageScatteredElectronEnergy( 1u );
@@ -503,21 +503,21 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( scattered_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( scattered_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_energy.size(), 
-                       scattered_incoming_energy.size() );
+                       scattered_incident_energy.size() );
 
-  std::vector<double> recoil_incoming_energy =  
-    data_container.getElectroionizationAverageRecoilElectronIncomingEnergy( 1u );
+  std::vector<double> recoil_incident_energy =  
+    data_container.getElectroionizationAverageRecoilElectronIncidentEnergy( 1u );
 
-  TEST_EQUALITY_CONST( recoil_incoming_energy.front(), 2.9101e-4 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.size(), 22 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.front(), 2.9101e-4 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.size(), 22 );
 
   std::vector<double> recoil_energy =  
     data_container.getElectroionizationAverageRecoilElectronEnergy( 1u );
 
   TEST_EQUALITY_CONST( recoil_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( recoil_energy.back(), 8.76406e-4 );
-  TEST_EQUALITY_CONST( recoil_energy.size(), recoil_incoming_energy.size() );
+  TEST_EQUALITY_CONST( recoil_energy.size(), recoil_incident_energy.size() );
 
   std::vector<double> recoil_energy_grid =  
     data_container.getElectroionizationRecoilEnergyGrid( 1u );
@@ -570,12 +570,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
 
-  scattered_incoming_energy =  
-    data_container.getElectroionizationAverageScatteredElectronIncomingEnergy( 4u );
+  scattered_incident_energy =  
+    data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( 4u );
 
-  TEST_EQUALITY_CONST( scattered_incoming_energy.front(), 8.980e-6 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( scattered_incoming_energy.size(), 6 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.front(), 8.980e-6 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( scattered_incident_energy.size(), 6 );
 
   scattered_energy =  
     data_container.getElectroionizationAverageScatteredElectronEnergy( 4u );
@@ -583,21 +583,21 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( scattered_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( scattered_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_energy.size(), 
-                       scattered_incoming_energy.size() );
+                       scattered_incident_energy.size() );
 
-  recoil_incoming_energy =  
-    data_container.getElectroionizationAverageRecoilElectronIncomingEnergy( 4u );
+  recoil_incident_energy =  
+    data_container.getElectroionizationAverageRecoilElectronIncidentEnergy( 4u );
 
-  TEST_EQUALITY_CONST( recoil_incoming_energy.front(), 8.980e-6 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( recoil_incoming_energy.size(), 25 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.front(), 8.980e-6 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( recoil_incident_energy.size(), 25 );
 
   recoil_energy =  
     data_container.getElectroionizationAverageRecoilElectronEnergy( 4u );
 
   TEST_EQUALITY_CONST( recoil_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( recoil_energy.back(), 4.687980e-5 );
-  TEST_EQUALITY_CONST( recoil_energy.size(), recoil_incoming_energy.size() );
+  TEST_EQUALITY_CONST( recoil_energy.size(), recoil_incident_energy.size() );
 
   recoil_energy_grid =  
     data_container.getElectroionizationRecoilEnergyGrid( 4u );
@@ -649,19 +649,19 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( cross_section.back(), 1.69715e1 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> photon_incoming_energy =  
-    data_container.getBremsstrahlungAveragePhotonIncomingEnergy();
+  std::vector<double> photon_incident_energy =  
+    data_container.getBremsstrahlungAveragePhotonIncidentEnergy();
 
-  TEST_EQUALITY_CONST( photon_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( photon_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( photon_incoming_energy.size(), 75 );
+  TEST_EQUALITY_CONST( photon_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( photon_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_incident_energy.size(), 75 );
 
   std::vector<double> photon_energy =  
     data_container.getBremsstrahlungAveragePhotonEnergy();
 
   TEST_EQUALITY_CONST( photon_energy.front(), 2.15038e-6 );
   TEST_EQUALITY_CONST( photon_energy.back(), 2.71203e3 );
-  TEST_EQUALITY_CONST( photon_energy.size(), photon_incoming_energy.size() );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_incident_energy.size() );
 
   std::vector<double> bremsstrahlung_photon_energy_grid =  
     data_container.getBremsstrahlungPhotonEnergyGrid();
@@ -698,12 +698,12 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.638520E-09 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 105 );
 
-  std::vector<double> electron_incoming_energy =  
-    data_container.getBremsstrahlungAverageElectronIncomingEnergy();
+  std::vector<double> electron_incident_energy =  
+    data_container.getBremsstrahlungAverageElectronIncidentEnergy();
 
-  TEST_EQUALITY_CONST( electron_incoming_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( electron_incoming_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( electron_incoming_energy.size(), 76 );
+  TEST_EQUALITY_CONST( electron_incident_energy.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( electron_incident_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_incident_energy.size(), 76 );
 
   std::vector<double> electron_energy =  
     data_container.getBremsstrahlungAverageElectronEnergy();
@@ -711,7 +711,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( electron_energy.front(), 7.84962e-6 );
   TEST_EQUALITY_CONST( electron_energy.back(), 9.7288e4 );
   TEST_EQUALITY_CONST( electron_energy.size(), 
-                       electron_incoming_energy.size() );
+                       electron_incident_energy.size() );
 
 //---------------------------------------------------------------------------//
 // CHECK ATOMIC EXCITAION DATA 

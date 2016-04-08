@@ -67,13 +67,13 @@ void ENDLDataContainer::save( Archive& ar,
                                         d_cutoff_elastic_cross_section );
 
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_residual_incoming_energy", 
-    d_cutoff_elastic_residual_incoming_energy );
+    "cutoff_elastic_residual_incident_energy", 
+    d_cutoff_elastic_residual_incident_energy );
   ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy", 
                                         d_cutoff_elastic_residual_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_incoming_energy", 
-    d_cutoff_elastic_scattered_electron_incoming_energy );
+    "cutoff_elastic_scattered_electron_incident_energy", 
+    d_cutoff_elastic_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp(
     "cutoff_elastic_scattered_electron_energy", 
     d_cutoff_elastic_scattered_electron_energy );
@@ -108,14 +108,14 @@ void ENDLDataContainer::save( Archive& ar,
     d_electroionization_subshell_cross_section );
 
   ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_incoming_energy", 
-    d_electroionization_average_scattered_electron_incoming_energy );
+    "electroionization_average_scattered_electron_incident_energy", 
+    d_electroionization_average_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp( 
     "electroionization_average_scattered_electron_energy", 
     d_electroionization_average_scattered_electron_energy );
   ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_incoming_energy", 
-    d_electroionization_average_recoil_electron_incoming_energy );
+    "electroionization_average_recoil_electron_incident_energy", 
+    d_electroionization_average_recoil_electron_incident_energy );
   ar & boost::serialization::make_nvp( 
     "electroionization_average_recoil_electron_energy", 
     d_electroionization_average_recoil_electron_energy );
@@ -135,8 +135,8 @@ void ENDLDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section", 
                                         d_bremsstrahlung_cross_section );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_incoming_energy", 
-    d_bremsstrahlung_average_photon_incoming_energy );
+    "bremsstrahlung_average_photon_incident_energy", 
+    d_bremsstrahlung_average_photon_incident_energy );
   ar & boost::serialization::make_nvp(
     "bremsstrahlung_average_photon_energy", 
     d_bremsstrahlung_average_photon_energy );
@@ -147,8 +147,8 @@ void ENDLDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_pdf",
 				                        d_bremsstrahlung_photon_pdf );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_incoming_energy", 
-    d_bremsstrahlung_average_electron_incoming_energy );
+    "bremsstrahlung_average_electron_incident_energy", 
+    d_bremsstrahlung_average_electron_incident_energy );
   ar & boost::serialization::make_nvp(
     "bremsstrahlung_average_electron_energy", 
     d_bremsstrahlung_average_electron_energy );
@@ -214,13 +214,13 @@ void ENDLDataContainer::load( Archive& ar,
                                         d_cutoff_elastic_cross_section );
 
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_residual_incoming_energy", 
-    d_cutoff_elastic_residual_incoming_energy );
+    "cutoff_elastic_residual_incident_energy", 
+    d_cutoff_elastic_residual_incident_energy );
   ar & boost::serialization::make_nvp( "cutoff_elastic_residual_energy", 
                                         d_cutoff_elastic_residual_energy );
   ar & boost::serialization::make_nvp(
-    "cutoff_elastic_scattered_electron_incoming_energy", 
-    d_cutoff_elastic_scattered_electron_incoming_energy );
+    "cutoff_elastic_scattered_electron_incident_energy", 
+    d_cutoff_elastic_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp(
     "cutoff_elastic_scattered_electron_energy", 
     d_cutoff_elastic_scattered_electron_energy );
@@ -255,14 +255,14 @@ void ENDLDataContainer::load( Archive& ar,
     d_electroionization_subshell_cross_section );
 
   ar & boost::serialization::make_nvp( 
-    "electroionization_average_scattered_electron_incoming_energy", 
-    d_electroionization_average_scattered_electron_incoming_energy );
+    "electroionization_average_scattered_electron_incident_energy", 
+    d_electroionization_average_scattered_electron_incident_energy );
   ar & boost::serialization::make_nvp( 
     "electroionization_average_scattered_electron_energy", 
     d_electroionization_average_scattered_electron_energy );
   ar & boost::serialization::make_nvp( 
-    "electroionization_average_recoil_electron_incoming_energy", 
-    d_electroionization_average_recoil_electron_incoming_energy );
+    "electroionization_average_recoil_electron_incident_energy", 
+    d_electroionization_average_recoil_electron_incident_energy );
   ar & boost::serialization::make_nvp( 
     "electroionization_average_recoil_electron_energy", 
     d_electroionization_average_recoil_electron_energy );
@@ -282,8 +282,8 @@ void ENDLDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_cross_section", 
                                         d_bremsstrahlung_cross_section );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_photon_incoming_energy", 
-    d_bremsstrahlung_average_photon_incoming_energy );
+    "bremsstrahlung_average_photon_incident_energy", 
+    d_bremsstrahlung_average_photon_incident_energy );
   ar & boost::serialization::make_nvp(
     "bremsstrahlung_average_photon_energy", 
     d_bremsstrahlung_average_photon_energy );
@@ -294,8 +294,8 @@ void ENDLDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp( "bremsstrahlung_photon_pdf",
 				                        d_bremsstrahlung_photon_pdf );
   ar & boost::serialization::make_nvp(
-    "bremsstrahlung_average_electron_incoming_energy", 
-    d_bremsstrahlung_average_electron_incoming_energy );
+    "bremsstrahlung_average_electron_incident_energy", 
+    d_bremsstrahlung_average_electron_incident_energy );
   ar & boost::serialization::make_nvp(
     "bremsstrahlung_average_electron_energy", 
     d_bremsstrahlung_average_electron_energy );

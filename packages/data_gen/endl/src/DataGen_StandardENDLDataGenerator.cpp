@@ -251,12 +251,12 @@ void StandardENDLDataGenerator::setElectronData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::vector<double> residual_incoming_energy, residual_energy;
-        eedl_file_handler->processTwoColumnTable( residual_incoming_energy, 
+        std::vector<double> residual_incident_energy, residual_energy;
+        eedl_file_handler->processTwoColumnTable( residual_incident_energy, 
                                                   residual_energy );
 
-        data_container.setCutoffElasticResidualIncomingEnergy( 
-          residual_incoming_energy );
+        data_container.setCutoffElasticResidualIncidentEnergy( 
+          residual_incident_energy );
         data_container.setCutoffElasticResidualEnergy( residual_energy );
 
         std::cout << ".";
@@ -270,12 +270,12 @@ void StandardENDLDataGenerator::setElectronData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::vector<double> scattered_incoming_energy, scattered_energy;
-        eedl_file_handler->processTwoColumnTable( scattered_incoming_energy, 
+        std::vector<double> scattered_incident_energy, scattered_energy;
+        eedl_file_handler->processTwoColumnTable( scattered_incident_energy, 
                                                   scattered_energy );
 
-        data_container.setCutoffElasticScatteredElectronIncomingEnergy( 
-          scattered_incoming_energy );
+        data_container.setCutoffElasticScatteredElectronIncidentEnergy( 
+          scattered_incident_energy );
         data_container.setCutoffElasticScatteredElectronEnergy( 
           scattered_energy );
 
@@ -356,16 +356,16 @@ void StandardENDLDataGenerator::setElectronData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::vector<double> incoming_energy, average_outgoing_energy;
-        eedl_file_handler->processTwoColumnTable( incoming_energy, 
+        std::vector<double> incident_energy, average_outgoing_energy;
+        eedl_file_handler->processTwoColumnTable( incident_energy, 
                                                   average_outgoing_energy );
 
         // Average energy of electron from ionization
         if ( outgoing_particle_designator == 9 ) // 9 = electron
         {
-          data_container.setElectroionizationAverageScatteredElectronIncomingEnergy(
+          data_container.setElectroionizationAverageScatteredElectronIncidentEnergy(
               endf_subshell,
-              incoming_energy );
+              incident_energy );
           data_container.setElectroionizationAverageScatteredElectronEnergy(
               endf_subshell,
               average_outgoing_energy );
@@ -376,9 +376,9 @@ void StandardENDLDataGenerator::setElectronData(
           // The outgoing particle designator should be electron as recoil (19)
           testPrecondition( outgoing_particle_designator == 19 );
 
-          data_container.setElectroionizationAverageRecoilElectronIncomingEnergy(
+          data_container.setElectroionizationAverageRecoilElectronIncidentEnergy(
               endf_subshell,
-              incoming_energy );
+              incident_energy );
           data_container.setElectroionizationAverageRecoilElectronEnergy(
               endf_subshell,
               average_outgoing_energy );
@@ -448,15 +448,15 @@ void StandardENDLDataGenerator::setElectronData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::vector<double> incoming_energy, average_outgoing_energy;
-        eedl_file_handler->processTwoColumnTable( incoming_energy, 
+        std::vector<double> incident_energy, average_outgoing_energy;
+        eedl_file_handler->processTwoColumnTable( incident_energy, 
                                                   average_outgoing_energy );
 
         // Average energy of secondary photon from bremsstrahlung
         if ( outgoing_particle_designator == 7 ) // 7 = photon
         {
-          data_container.setBremsstrahlungAveragePhotonIncomingEnergy(
-              incoming_energy );
+          data_container.setBremsstrahlungAveragePhotonIncidentEnergy(
+              incident_energy );
           data_container.setBremsstrahlungAveragePhotonEnergy(
               average_outgoing_energy );
         }
@@ -466,8 +466,8 @@ void StandardENDLDataGenerator::setElectronData(
           // The outgoing particle designator should be electron (9)
           testPrecondition( outgoing_particle_designator == 9 );
 
-          data_container.setBremsstrahlungAverageElectronIncomingEnergy(
-              incoming_energy );
+          data_container.setBremsstrahlungAverageElectronIncidentEnergy(
+              incident_energy );
           data_container.setBremsstrahlungAverageElectronEnergy(
               average_outgoing_energy );
         }
