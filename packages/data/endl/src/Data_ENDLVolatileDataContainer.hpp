@@ -50,6 +50,82 @@ public:
   using ENDLDataContainer::setNonRadiativeTransitionEnergy;
 
 //---------------------------------------------------------------------------//
+// SET COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setCoherentCrossSectionEnergyGrid;
+  using ENDLDataContainer::setCoherentCrossSection;
+  using ENDLDataContainer::setCoherentFormFactorArgument;
+  using ENDLDataContainer::setCoherentFormFactor;
+  using ENDLDataContainer::setCoherentImaginaryAnomalousFactorIncidentEnergy;
+  using ENDLDataContainer::setCoherentImaginaryAnomalousFactor;
+  using ENDLDataContainer::setCoherentRealAnomalousFactorIncidentEnergy;
+  using ENDLDataContainer::setCoherentRealAnomalousFactor;
+  using ENDLDataContainer::setCoherentAveragePhotonIncidentEnergy;
+  using ENDLDataContainer::setCoherentAveragePhotonEnergy;
+
+//---------------------------------------------------------------------------//
+// SET INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setIncoherentCrossSectionEnergyGrid;
+  using ENDLDataContainer::setIncoherentCrossSection;
+  using ENDLDataContainer::setIncoherentScatteringFunctionArgument;
+  using ENDLDataContainer::setIncoherentScatteringFunction;
+  using ENDLDataContainer::setIncoherentAveragePhotonIncidentEnergy;
+  using ENDLDataContainer::setIncoherentAveragePhotonEnergy;
+  using ENDLDataContainer::setIncoherentAverageElectronIncidentEnergy;
+  using ENDLDataContainer::setIncoherentAverageElectronEnergy;
+
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setPhotoelectricCrossSectionEnergyGrid;
+  using ENDLDataContainer::setPhotoelectricCrossSection;
+  using ENDLDataContainer::setPhotoelectricAverageResidualIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageResidualEnergy;
+  using ENDLDataContainer::setPhotoelectricAveragePhotonsIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAveragePhotonsEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageElectronsIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageElectronsEnergy;
+
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setPhotoelectricCrossSectionEnergyGrid;
+  using ENDLDataContainer::setPhotoelectricCrossSection;
+  using ENDLDataContainer::setPhotoelectricAverageResidualIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageResidualEnergy;
+  using ENDLDataContainer::setPhotoelectricAveragePhotonsIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAveragePhotonsEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageElectronsIncidentEnergy;
+  using ENDLDataContainer::setPhotoelectricAverageElectronsEnergy;
+
+//---------------------------------------------------------------------------//
+// SET PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setPairProductionCrossSectionEnergyGrid;
+  using ENDLDataContainer::setPairProductionCrossSection;
+  using ENDLDataContainer::setPairProductionAveragePositronIncidentEnergy;
+  using ENDLDataContainer::setPairProductionAveragePositronEnergy;
+  using ENDLDataContainer::setPairProductionAverageElectronIncidentEnergy;
+  using ENDLDataContainer::setPairProductionAverageElectronEnergy;
+
+//---------------------------------------------------------------------------//
+// SET TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  using ENDLDataContainer::setTripletProductionCrossSectionEnergyGrid;
+  using ENDLDataContainer::setTripletProductionCrossSection;
+  using ENDLDataContainer::setTripletProductionAveragePositronIncidentEnergy;
+  using ENDLDataContainer::setTripletProductionAveragePositronEnergy;
+  using ENDLDataContainer::setTripletProductionAverageElectronIncidentEnergy;
+  using ENDLDataContainer::setTripletProductionAverageElectronEnergy;
+
+//---------------------------------------------------------------------------//
 // SET ELASTIC DATA 
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setElasticEnergyGrid;

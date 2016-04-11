@@ -388,7 +388,7 @@ void ENDLDataContainer::setCutoffElasticCrossSection(
 			 const std::vector<double>& cutoff_elastic_cross_section )
 {
   // Make sure the cutoff elastic cross section is valid
-  testPrecondition( cutoff_elastic_cross_section.size() <= 
+  testPrecondition( cutoff_elastic_cross_section.size() == 
     d_elastic_energy_grid.size() );
   testPreconditionValuesGreaterThanZero( cutoff_elastic_cross_section );
   

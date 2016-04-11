@@ -113,7 +113,7 @@ public:
   //! Return the coherent photon cross section
   const std::vector<double>& getCoherentCrossSection() const;
 
-  //! Return the argument for the coherent form factor
+  //! Return the argument for the coherent form factor (1/cm)
   const std::vector<double>& getCoherentFormFactorArgument() const;
 
   //! Return the coherent form factor
@@ -149,7 +149,7 @@ public:
   //! Return the incoherent photon cross section
   const std::vector<double>& getIncoherentCrossSection() const;
 
-  //! Return the argument for the incoherent scattering function
+  //! Return the argument for the incoherent scattering function (1/cm)
   const std::vector<double>& getIncoherentScatteringFunctionArgument() const;
 
   //! Return the incoherent scattering function
@@ -202,10 +202,6 @@ public:
   //! Return the photoelectric cross section energy grid for a subshell
   const std::vector<double>& 
   getPhotoelectricCrossSectionEnergyGrid( const unsigned subshell ) const;
-
-  //! Return the photoelectric photon cross section a subshell
-  const std::vector<double>& 
-  getPhotoelectricCrossSection( const unsigned subshell ) const;
 
   //! Return the photoelectric photon cross section a subshell
   const std::vector<double>& 
@@ -495,7 +491,7 @@ protected:
         non_radiative_transition_energy );
 
 //---------------------------------------------------------------------------//
-// GET COHERENT PHOTON DATA
+// SET COHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
 
   //! Set the coherent cross section energy grid
@@ -973,6 +969,177 @@ private:
   // The non radiative transition energy
   std::map<unsigned,std::map<unsigned,std::map<unsigned,std::vector<double> > > >
     d_non_radiative_transition_energies;
+
+//---------------------------------------------------------------------------//
+// THE COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  // The coherent cross section energy grid
+  std::vector<double> d_coherent_cross_section_energy_grid;
+
+  // The coherent photon cross section
+  std::vector<double> d_coherent_cross_section;
+
+  // The argument for the coherent form factor (1/cm)
+  std::vector<double> d_coherent_form_factor_argument;
+
+  // The coherent form factor
+  std::vector<double> d_coherent_form_factor;
+
+  // The incident energy grid for the coherent imaginary anomalous scattering factor
+  std::vector<double> 
+    d_coherent_imaginary_anomalous_scattering_factor_incident_energy;
+
+  // The coherent imaginary anomalous scattering factor
+  std::vector<double> d_coherent_imaginary_anomalous_scattering_factor;
+
+  // The incident energy grid for the coherent real anomalous scattering factor
+  std::vector<double> d_coherent_real_anomalous_scattering_factor_incident_energy;
+
+  // The coherent real anomalous scattering factor
+  std::vector<double> d_coherent_real_anomalous_scattering_factor;
+
+  // The incident energy grid for the coherent average energy of the scattered photon
+  std::vector<double> d_coherent_average_photon_incident_energy;
+
+  // The coherent average energy of the scattered photon
+  std::vector<double> d_coherent_average_photon_energy;
+
+//---------------------------------------------------------------------------//
+// THE INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  // The incoherent cross section energy grid
+  std::vector<double> d_incoherent_cross_section_energy_grid;
+
+  // The incoherent photon cross section
+  std::vector<double> d_incoherent_cross_section;
+
+  // The argument for the incoherent scattering function (1/cm)
+  std::vector<double> d_incoherent_scattering_function_argument;
+
+  // The incoherent scattering function
+  std::vector<double> d_incoherent_scattering_function;
+
+  // The incident energy grid for the incoherent average energy of the scattered photon
+  std::vector<double> d_incoherent_average_photon_incident_energy;
+
+  // The incoherent average energy of the scattered photon
+  std::vector<double> d_incoherent_average_photon_energy;
+
+  // The incident energy grid for the incoherent average energy of the recoil electron
+  std::vector<double> d_incoherent_average_electron_incident_energy;
+
+  // The incoherent average energy of the recoil electron
+  std::vector<double> d_incoherent_average_electron_energy;
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  // The photoelectric cross section energy grid
+  std::vector<double> d_photoelectric_cross_section_energy_grid;
+
+  // The photoelectric photon cross section
+  std::vector<double> d_photoelectric_cross_section;
+
+  // The incident energy grid for the photoelectric average energy of the residual atom
+  std::vector<double> d_photoelectric_average_residual_incident_energy;
+
+  // The photoelectric average energy of the residual atom
+  std::vector<double> d_photoelectric_average_residual_energy;
+
+  // The incident energy grid for the photoelectric average energy of the secondary photons
+  std::vector<double> d_photoelectric_secondary_photons_incident_energy;
+
+  // The photoelectric average energy of the secondary photons
+  std::vector<double> d_photoelectric_secondary_photons_energy;
+
+  // The incident energy grid for the photoelectric average energy of the secondary electrons
+  std::vector<double> d_photoelectric_secondary_electrons_incident_energy;
+
+  // The photoelectric average energy of the secondary electrons
+  std::vector<double> d_photoelectric_secondary_electrons_energy;
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  // The photoelectric cross section energy grid for a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_cross_section_energy_grid;
+
+  // The photoelectric photon cross section a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_cross_section;
+
+  // The incident energy grid for the photoelectric average energy of the residual atom a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_average_residual_incident_energy;
+
+  // The photoelectric average energy of the residual atom a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_average_residual_energy;
+
+  // The incident energy grid for the photoelectric average energy of the secondary photons a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_secondary_photons_incident_energy;
+
+  // The photoelectric average energy of the secondary photons a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_secondary_photons_energy;
+
+  // The incident energy grid for the photoelectric average energy of the secondary electrons a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_secondary_electrons_incident_energy;
+
+  // The photoelectric average energy of the secondary electrons a subshell
+  std::map<unsigned,std::vector<double> > 
+    d_photoelectric_subshell_secondary_electrons_energy;
+
+//---------------------------------------------------------------------------//
+// THE PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  // The pair production cross section energy grid
+  std::vector<double> d_pair_production_cross_section_energy_grid;
+
+  // The pair production photon cross section
+  std::vector<double> d_pair_production_cross_section;
+
+  // The incident energy grid for the pair production average energy of the secondary positron
+  std::vector<double> d_pair_production_average_positron_incident_energy;
+
+  // The pair production average energy of the secondary positron
+  std::vector<double> d_pair_production_average_positron_energy;
+
+  // The incident energy grid for the pair production average energy of the secondary electron
+  std::vector<double> d_pair_production_average_electron_incident_energy;
+
+  // The pair production average energy of the secondary electron
+  std::vector<double> d_pair_production_average_electron_energy;
+
+//---------------------------------------------------------------------------//
+// THE TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  // The triplet production cross section energy grid
+  std::vector<double> d_triplet_production_cross_section_energy_grid;
+
+  // The triplet production photon cross section
+  std::vector<double> d_triplet_production_cross_section;
+
+  // The incident energy grid for the triplet production average energy of the secondary positron
+  std::vector<double> d_triplet_production_average_positron_incident_energy;
+
+  // The triplet production average energy of the secondary positron
+  std::vector<double> d_triplet_production_average_positron_energy;
+
+  // The incident energy grid for the triplet production average energy of the secondary electron
+  std::vector<double> d_triplet_production_average_electron_incident_energy;
+
+  // The triplet production average energy of the secondary electron
+  std::vector<double> d_triplet_production_average_electron_energy;
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 

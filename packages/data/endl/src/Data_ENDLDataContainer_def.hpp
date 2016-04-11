@@ -57,6 +57,160 @@ void ENDLDataContainer::save( Archive& ar,
         d_non_radiative_transition_energies );
 
 //---------------------------------------------------------------------------//
+// THE COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp( "coherent_cross_section_energy_grid",
+        d_coherent_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "coherent_cross_section",
+        d_coherent_cross_section );
+  ar & boost::serialization::make_nvp( "coherent_form_factor_argument",
+        d_coherent_form_factor_argument );
+  ar & boost::serialization::make_nvp( "coherent_form_factor",
+        d_coherent_form_factor );
+  ar & boost::serialization::make_nvp( 
+        "coherent_imaginary_anomalous_scattering_factor_incident_energy",
+        d_coherent_imaginary_anomalous_scattering_factor_incident_energy );
+  ar & boost::serialization::make_nvp( 
+        "coherent_imaginary_anomalous_scattering_factor",
+        d_coherent_imaginary_anomalous_scattering_factor );
+  ar & boost::serialization::make_nvp(
+        "coherent_real_anomalous_scattering_factor_incident_energy",
+        d_coherent_real_anomalous_scattering_factor_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "coherent_real_anomalous_scattering_factor",
+        d_coherent_real_anomalous_scattering_factor );
+  ar & boost::serialization::make_nvp( 
+        "coherent_average_photon_incident_energy",
+        d_coherent_average_photon_incident_energy );
+  ar & boost::serialization::make_nvp( "coherent_average_photon_energy",
+        d_coherent_average_photon_energy );
+
+//---------------------------------------------------------------------------//
+// THE INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp( "incoherent_cross_section_energy_grid",
+        d_incoherent_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "incoherent_cross_section",
+        d_incoherent_cross_section );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_scattering_function_argument",
+        d_incoherent_scattering_function_argument );
+  ar & boost::serialization::make_nvp( "incoherent_scattering_function",
+        d_incoherent_scattering_function );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_average_photon_incident_energy",
+        d_incoherent_average_photon_incident_energy );
+  ar & boost::serialization::make_nvp( "incoherent_average_photon_energy",
+        d_incoherent_average_photon_energy );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_average_electron_incident_energy",
+        d_incoherent_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp( "incoherent_average_electron_energy",
+        d_incoherent_average_electron_energy );
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "photoelectric_cross_section_energy_grid",
+        d_photoelectric_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "photoelectric_cross_section",
+        d_photoelectric_cross_section );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_average_residual_incident_energy",
+        d_photoelectric_average_residual_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_average_residual_energy",
+        d_photoelectric_average_residual_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_photons_incident_energy",
+        d_photoelectric_secondary_photons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_photons_energy",
+        d_photoelectric_secondary_photons_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_electrons_incident_energy",
+        d_photoelectric_secondary_electrons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_electrons_energy",
+        d_photoelectric_secondary_electrons_energy );
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_cross_section_energy_grid",
+        d_photoelectric_subshell_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "photoelectric_subshell_cross_section",
+        d_photoelectric_subshell_cross_section );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_average_residual_incident_energy",
+        d_photoelectric_subshell_average_residual_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_average_residual_energy",
+        d_photoelectric_subshell_average_residual_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_photons_incident_energy",
+        d_photoelectric_subshell_secondary_photons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_photons_energy",
+        d_photoelectric_subshell_secondary_photons_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_electrons_incident_energy",
+        d_photoelectric_subshell_secondary_electrons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_electrons_energy",
+        d_photoelectric_subshell_secondary_electrons_energy );
+
+//---------------------------------------------------------------------------//
+// THE PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "pair_production_cross_section_energy_grid",
+        d_pair_production_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "pair_production_cross_section",
+        d_pair_production_cross_section );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_positron_incident_energy",
+        d_pair_production_average_positron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_positron_energy",
+        d_pair_production_average_positron_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_electron_incident_energy",
+        d_pair_production_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_electron_energy",
+        d_pair_production_average_electron_energy );
+
+//---------------------------------------------------------------------------//
+// THE TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "triplet_production_cross_section_energy_grid",
+        d_triplet_production_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "triplet_production_cross_section",
+        d_triplet_production_cross_section );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_positron_incident_energy",
+        d_triplet_production_average_positron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_positron_energy",
+        d_triplet_production_average_positron_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_electron_incident_energy",
+        d_triplet_production_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_electron_energy",
+        d_triplet_production_average_electron_energy );
+
+//---------------------------------------------------------------------------//
 // ELASTIC DATA 
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "elastic_energy_grid",
@@ -202,6 +356,160 @@ void ENDLDataContainer::load( Archive& ar,
         d_non_radiative_transition_probabilities );
   ar & boost::serialization::make_nvp( "non_radiative_transition_energies",
         d_non_radiative_transition_energies );
+
+//---------------------------------------------------------------------------//
+// THE COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp( "coherent_cross_section_energy_grid",
+        d_coherent_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "coherent_cross_section",
+        d_coherent_cross_section );
+  ar & boost::serialization::make_nvp( "coherent_form_factor_argument",
+        d_coherent_form_factor_argument );
+  ar & boost::serialization::make_nvp( "coherent_form_factor",
+        d_coherent_form_factor );
+  ar & boost::serialization::make_nvp( 
+        "coherent_imaginary_anomalous_scattering_factor_incident_energy",
+        d_coherent_imaginary_anomalous_scattering_factor_incident_energy );
+  ar & boost::serialization::make_nvp( 
+        "coherent_imaginary_anomalous_scattering_factor",
+        d_coherent_imaginary_anomalous_scattering_factor );
+  ar & boost::serialization::make_nvp(
+        "coherent_real_anomalous_scattering_factor_incident_energy",
+        d_coherent_real_anomalous_scattering_factor_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "coherent_real_anomalous_scattering_factor",
+        d_coherent_real_anomalous_scattering_factor );
+  ar & boost::serialization::make_nvp( 
+        "coherent_average_photon_incident_energy",
+        d_coherent_average_photon_incident_energy );
+  ar & boost::serialization::make_nvp( "coherent_average_photon_energy",
+        d_coherent_average_photon_energy );
+
+//---------------------------------------------------------------------------//
+// THE INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp( "incoherent_cross_section_energy_grid",
+        d_incoherent_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "incoherent_cross_section",
+        d_incoherent_cross_section );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_scattering_function_argument",
+        d_incoherent_scattering_function_argument );
+  ar & boost::serialization::make_nvp( "incoherent_scattering_function",
+        d_incoherent_scattering_function );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_average_photon_incident_energy",
+        d_incoherent_average_photon_incident_energy );
+  ar & boost::serialization::make_nvp( "incoherent_average_photon_energy",
+        d_incoherent_average_photon_energy );
+  ar & boost::serialization::make_nvp( 
+        "incoherent_average_electron_incident_energy",
+        d_incoherent_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp( "incoherent_average_electron_energy",
+        d_incoherent_average_electron_energy );
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "photoelectric_cross_section_energy_grid",
+        d_photoelectric_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "photoelectric_cross_section",
+        d_photoelectric_cross_section );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_average_residual_incident_energy",
+        d_photoelectric_average_residual_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_average_residual_energy",
+        d_photoelectric_average_residual_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_photons_incident_energy",
+        d_photoelectric_secondary_photons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_photons_energy",
+        d_photoelectric_secondary_photons_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_electrons_incident_energy",
+        d_photoelectric_secondary_electrons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_secondary_electrons_energy",
+        d_photoelectric_secondary_electrons_energy );
+
+//---------------------------------------------------------------------------//
+// THE PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_cross_section_energy_grid",
+        d_photoelectric_subshell_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "photoelectric_subshell_cross_section",
+        d_photoelectric_subshell_cross_section );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_average_residual_incident_energy",
+        d_photoelectric_subshell_average_residual_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_average_residual_energy",
+        d_photoelectric_subshell_average_residual_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_photons_incident_energy",
+        d_photoelectric_subshell_secondary_photons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_photons_energy",
+        d_photoelectric_subshell_secondary_photons_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_electrons_incident_energy",
+        d_photoelectric_subshell_secondary_electrons_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "photoelectric_subshell_secondary_electrons_energy",
+        d_photoelectric_subshell_secondary_electrons_energy );
+
+//---------------------------------------------------------------------------//
+// THE PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "pair_production_cross_section_energy_grid",
+        d_pair_production_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "pair_production_cross_section",
+        d_pair_production_cross_section );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_positron_incident_energy",
+        d_pair_production_average_positron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_positron_energy",
+        d_pair_production_average_positron_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_electron_incident_energy",
+        d_pair_production_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "pair_production_average_electron_energy",
+        d_pair_production_average_electron_energy );
+
+//---------------------------------------------------------------------------//
+// THE TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  ar & boost::serialization::make_nvp(
+        "triplet_production_cross_section_energy_grid",
+        d_triplet_production_cross_section_energy_grid );
+  ar & boost::serialization::make_nvp( "triplet_production_cross_section",
+        d_triplet_production_cross_section );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_positron_incident_energy",
+        d_triplet_production_average_positron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_positron_energy",
+        d_triplet_production_average_positron_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_electron_incident_energy",
+        d_triplet_production_average_electron_incident_energy );
+  ar & boost::serialization::make_nvp(
+        "triplet_production_average_electron_energy",
+        d_triplet_production_average_electron_energy );
 
 //---------------------------------------------------------------------------//
 // ELASTIC DATA 

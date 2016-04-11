@@ -367,9 +367,847 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setNonRadiativeTransitionEnergy )
     energy );
 }
 
+//---------------------------------------------------------------------------//
+// TEST COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+// Check that the coherent cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setCoherentCrossSectionEnergyGrid )
+{
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setCoherentCrossSectionEnergyGrid( energy_grid );
+
+  TEST_COMPARE_ARRAYS( endl_data_container.getCoherentCrossSectionEnergyGrid(),
+                       energy_grid );
+}
 
 //---------------------------------------------------------------------------//
-// TEST ELASTIC DATA 
+// Check that the coherent photon cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setCoherentCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setCoherentCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            endl_data_container.getCoherentCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the argument for the coherent form factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentFormFactorArgument)
+{
+  std::vector<double> argument( 3 );
+  argument[0] = 0.0;
+  argument[1] = 10.0;
+  argument[2] = 1.0e12;
+
+  endl_data_container.setCoherentFormFactorArgument( argument );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentFormFactorArgument(),
+    argument );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent form factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentFormFactor )
+{
+  std::vector<double> factor( 3 );
+  factor[0] = 1.0;
+  factor[1] = 0.5;
+  factor[2] = 0.1;
+
+  endl_data_container.setCoherentFormFactor( factor );
+
+  TEST_COMPARE_ARRAYS( endl_data_container.getCoherentFormFactor(), factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid for the coherent imaginary factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentImaginaryAnomalousFactorIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setCoherentImaginaryAnomalousFactorIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentImaginaryAnomalousFactorIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent imaginary factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentImaginaryAnomalousFactor )
+{
+  std::vector<double> factor( 3 );
+  factor[0] = 0.0;
+  factor[1] = 1.0;
+  factor[2] = 0.1;
+
+  endl_data_container.setCoherentImaginaryAnomalousFactor( factor );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentImaginaryAnomalousFactor(),
+    factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the energy grid for the coherent real factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentRealAnomalousFactorIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setCoherentRealAnomalousFactorIncidentEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentRealAnomalousFactorIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent real factor can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentRealAnomalousFactor )
+{
+  std::vector<double> factor( 3 );
+  factor[0] = 0.1;
+  factor[1] = 1.0;
+  factor[2] = -1.0;
+
+  endl_data_container.setCoherentRealAnomalousFactor( factor );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentRealAnomalousFactor(),
+    factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent average photon incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentAveragePhotonIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setCoherentAveragePhotonIncidentEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentAveragePhotonIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the coherent average photon energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setCoherentAveragePhotonEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setCoherentAveragePhotonEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getCoherentAveragePhotonEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+// Check that the incoherent cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setIncoherentCrossSectionEnergyGrid )
+{
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setIncoherentCrossSectionEnergyGrid( energy_grid );
+
+  TEST_COMPARE_ARRAYS( endl_data_container.getIncoherentCrossSectionEnergyGrid(),
+                       energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setIncoherentCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setIncoherentCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            endl_data_container.getIncoherentCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the argument for the incoherent scattering function can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentScatteringFunctionArgument)
+{
+  std::vector<double> argument( 3 );
+  argument[0] = 0.0;
+  argument[1] = 10.0;
+  argument[2] = 1.0e12;
+
+  endl_data_container.setIncoherentScatteringFunctionArgument( argument );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentScatteringFunctionArgument(),
+    argument );
+}
+
+//---------------------------------------------------------------------------//
+// Check the incoherent scattering function can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentScatteringFunction )
+{
+  std::vector<double> factor( 3 );
+  factor[0] = 0.0;
+  factor[1] = 0.1;
+  factor[2] = 1.0;
+
+  endl_data_container.setIncoherentScatteringFunction( factor );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentScatteringFunction(),
+    factor );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent average photon incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentAveragePhotonIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setIncoherentAveragePhotonIncidentEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentAveragePhotonIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent average photon energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentAveragePhotonEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setIncoherentAveragePhotonEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentAveragePhotonEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent average electron incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentAverageElectronIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setIncoherentAverageElectronIncidentEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentAverageElectronIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the incoherent average electron energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setIncoherentAverageElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.1;
+  energy[1] = 0.2;
+  energy[2] = 0.3;
+
+  endl_data_container.setIncoherentAverageElectronEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getIncoherentAverageElectronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+// Check that the photoelectric cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSectionEnergyGrid )
+{
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setPhotoelectricCrossSectionEnergyGrid( energy_grid );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricCrossSectionEnergyGrid(),
+    energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setPhotoelectricCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricCrossSection(),
+    cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageResidualIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAverageResidualIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageResidualIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageResidualEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setPhotoelectricAverageResidualEnergy( energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageResidualEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photons incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAveragePhotonsIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAveragePhotonsIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAveragePhotonsIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photons energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAveragePhotonsEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAveragePhotonsEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageElectronsIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAverageElectronsIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageElectronsIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageElectronsEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.1;
+  energy[1] = 0.2;
+  energy[2] = 0.3;
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageElectronsEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+// Check that the photoelectric cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSectionEnergyGrid_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setPhotoelectricCrossSectionEnergyGrid(
+    shell,
+    energy_grid );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricCrossSectionEnergyGrid( shell ),
+    energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPhotoelectricCrossSection_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setPhotoelectricCrossSection( shell, cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricCrossSection( shell ),
+    cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageResidualIncidentEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAverageResidualIncidentEnergy(
+    shell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageResidualIncidentEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photon energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageResidualEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setPhotoelectricAverageResidualEnergy( shell, energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageResidualEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photons incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAveragePhotonsIncidentEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAveragePhotonsIncidentEnergy(
+    shell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAveragePhotonsIncidentEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average photons energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAveragePhotonsEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setPhotoelectricAveragePhotonsEnergy(
+    shell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAveragePhotonsEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageElectronsIncidentEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPhotoelectricAverageElectronsIncidentEnergy(
+    shell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageElectronsIncidentEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoelectric average electrons energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPhotoelectricAverageElectronsEnergy_Subshell )
+{
+  unsigned shell = 1;
+
+  std::vector<double> energy( 3 );
+  energy[0] = 0.1;
+  energy[1] = 0.2;
+  energy[2] = 0.3;
+
+  endl_data_container.setPhotoelectricAverageElectronsEnergy(
+    shell,
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPhotoelectricAverageElectronsEnergy( shell ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+// Check that the pair production cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPairProductionCrossSectionEnergyGrid )
+{
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setPairProductionCrossSectionEnergyGrid( energy_grid );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionCrossSectionEnergyGrid(),
+    energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setPairProductionCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setPairProductionCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionCrossSection(),
+    cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production average positron incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPairProductionAveragePositronIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPairProductionAveragePositronIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionAveragePositronIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production average positron energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPairProductionAveragePositronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setPairProductionAveragePositronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionAveragePositronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production average electron incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPairProductionAverageElectronIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setPairProductionAverageElectronIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionAverageElectronIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the pair production average electron energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setPairProductionAverageElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.1;
+  energy[1] = 0.2;
+  energy[2] = 0.3;
+
+  endl_data_container.setPairProductionAverageElectronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getPairProductionAverageElectronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+// Check that the triplet production cross section energy grid can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setTripletProductionCrossSectionEnergyGrid )
+{
+  std::vector<double> energy_grid( 3 );
+  energy_grid[0] = 1e-3;
+  energy_grid[1] = 1.0;
+  energy_grid[2] = 20.0;
+
+  endl_data_container.setTripletProductionCrossSectionEnergyGrid( energy_grid );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionCrossSectionEnergyGrid(),
+    energy_grid );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production cross section can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer,
+                   setTripletProductionCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 0.5e-6;
+  cross_section[1] = 0.5e-1;
+  cross_section[2] = 0.5;
+
+  endl_data_container.setTripletProductionCrossSection( cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionCrossSection(),
+    cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production average positron incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setTripletProductionAveragePositronIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setTripletProductionAveragePositronIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionAveragePositronIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production average positron energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setTripletProductionAveragePositronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.9;
+  energy[1] = 1.8;
+  energy[2] = 2.7;
+
+  endl_data_container.setTripletProductionAveragePositronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionAveragePositronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production average electron incident energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setTripletProductionAverageElectronIncidentEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 1.0;
+  energy[1] = 2.0;
+  energy[2] = 3.0;
+
+  endl_data_container.setTripletProductionAverageElectronIncidentEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionAverageElectronIncidentEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the triplet production average electron energy can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, 
+                   setTripletProductionAverageElectronEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.1;
+  energy[1] = 0.2;
+  energy[2] = 0.3;
+
+  endl_data_container.setTripletProductionAverageElectronEnergy(
+    energy );
+
+  TEST_COMPARE_ARRAYS( 
+    endl_data_container.getTripletProductionAverageElectronEnergy(),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
 // Check that the elastic energy grid can be set
@@ -656,7 +1494,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
 
 //---------------------------------------------------------------------------//
-// TEST ELECTROIONIZATION DATA 
+// TEST ELECTROIONIZATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
 // Check that the electroionization cross section energy grid can be set
@@ -900,7 +1738,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// TEST BREMSSTRAHLUNG DATA 
+// TEST BREMSSTRAHLUNG ELECTRON DATA 
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung cross section energy grid can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer,
@@ -1105,7 +1943,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 }
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITAION DATA 
+// TEST ATOMIC EXCITAION ELECTRON DATA 
 //---------------------------------------------------------------------------//
 // Check that the atomic excitation cross section energy grid can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer,
@@ -1256,9 +2094,164 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
     3 );
 
+//---------------------------------------------------------------------------//
+// TEST COHERENT PHOTON DATA 
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
 
 //---------------------------------------------------------------------------//
-// TEST ELASTIC DATA 
+// TEST INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC ELECTRON DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
@@ -1301,7 +2294,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 		       3u );
 
 //---------------------------------------------------------------------------//
-// TEST ELECTROIONIZATION DATA 
+// TEST ELECTROIONIZATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
@@ -1335,7 +2328,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3 );
 
 //---------------------------------------------------------------------------//
-// TEST BREMSSTRAHLUNG DATA 
+// TEST BREMSSTRAHLUNG ELECTRON DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
@@ -1369,7 +2362,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3u );
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITATION DATA 
+// TEST ATOMIC EXCITATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
@@ -1477,8 +2470,165 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3 );
 
 //---------------------------------------------------------------------------//
-// TEST ELASTIC DATA 
+// TEST COHERENT PHOTON DATA 
 //---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
+
+//---------------------------------------------------------------------------//
+// TEST INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC ELECTRON DATA 
+//---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1520,8 +2670,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 		       3u );
 
 //---------------------------------------------------------------------------//
-// TEST ELECTROIONIZATION DATA 
+// TEST ELECTROIONIZATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
     3 );
@@ -1554,8 +2705,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3 );
 
 //---------------------------------------------------------------------------//
-// TEST BREMSSTRAHLUNG DATA 
+// TEST BREMSSTRAHLUNG ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
     3 );
@@ -1588,8 +2740,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3u );
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITATION DATA 
+// TEST ATOMIC EXCITATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
@@ -1600,6 +2753,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
     3 );
 }
+
 
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
@@ -1623,6 +2777,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 //---------------------------------------------------------------------------//
 // TEST RELAXATION DATA
 //---------------------------------------------------------------------------//
+
   TEST_ASSERT( endl_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( endl_data_container_copy.getSubshells().count( 3 ) );
   TEST_ASSERT( endl_data_container_copy.getSubshells().count( 5 ) );
@@ -1701,13 +2856,165 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
 
 //---------------------------------------------------------------------------//
-// TEST PHOTON DATA
+// TEST COHERENT PHOTON DATA 
 //---------------------------------------------------------------------------//
 
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
 
 //---------------------------------------------------------------------------//
-// TEST ELASTIC DATA 
+// TEST INCOHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC ELECTRON DATA 
+//---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1749,8 +3056,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 		       3u );
 
 //---------------------------------------------------------------------------//
-// TEST ELECTROIONIZATION DATA 
+// TEST ELECTROIONIZATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
     3 );
@@ -1783,8 +3091,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3 );
 
 //---------------------------------------------------------------------------//
-// TEST BREMSSTRAHLUNG DATA 
+// TEST BREMSSTRAHLUNG ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
     3 );
@@ -1817,8 +3126,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3u );
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITATION DATA 
+// TEST ATOMIC EXCITATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
@@ -1924,15 +3234,166 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
     3 );
 
+//---------------------------------------------------------------------------//
+// TEST COHERENT PHOTON DATA 
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactorArgument().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentFormFactor().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentImaginaryAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactorIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentRealAnomalousFactor().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getCoherentAveragePhotonEnergy().size(), 3 );
 
 //---------------------------------------------------------------------------//
-// TEST PHOTON DATA
+// TEST INCOHERENT PHOTON DATA
 //---------------------------------------------------------------------------//
 
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSectionEnergyGrid().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunctionArgument().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentScatteringFunction().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAveragePhotonEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getIncoherentAverageElectronEnergy().size(), 3 );
 
 //---------------------------------------------------------------------------//
-// TEST ELASTIC DATA 
+// TEST PHOTOELECTRIC PHOTON DATA
 //---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSectionEnergyGrid(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricCrossSection(1u).size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageResidualEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAveragePhotonsEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsIncidentEnergy(1u).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPhotoelectricAverageElectronsEnergy(1u).size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAveragePositronEnergy().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getPairProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSectionEnergyGrid().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionCrossSection().size(), 3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAveragePositronEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronIncidentEnergy().size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getTripletProductionAverageElectronEnergy().size(),
+    3 );
+
+//---------------------------------------------------------------------------//
+// TEST ELASTIC ELECTRON DATA 
+//---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1974,8 +3435,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 		       3u );
 
 //---------------------------------------------------------------------------//
-// TEST ELECTROIONIZATION DATA 
+// TEST ELECTROIONIZATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getElectroionizationCrossSectionEnergyGrid(1u).size(), 
     3 );
@@ -2008,8 +3470,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3 );
 
 //---------------------------------------------------------------------------//
-// TEST BREMSSTRAHLUNG DATA 
+// TEST BREMSSTRAHLUNG ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungCrossSectionEnergyGrid().size(), 
     3 );
@@ -2042,8 +3505,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     3u );
 
 //---------------------------------------------------------------------------//
-// TEST ATOMIC EXCITATION DATA 
+// TEST ATOMIC EXCITATION ELECTRON DATA 
 //---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
     3 );
