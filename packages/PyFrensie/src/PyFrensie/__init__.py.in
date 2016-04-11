@@ -1,0 +1,24 @@
+##---------------------------------------------------------------------------##
+##!
+##! \file   __init__.py
+##! \author Alex Robinson
+##! \brief  The PyFrensie init file
+##!
+##---------------------------------------------------------------------------##
+
+"""
+
+PyFrensie: A python interface to selected FRENSIE packages.
+"""
+
+# Set the __all__ special variable
+${PyFrensie_ALL}
+
+# Set the __version__ special variable and define a version() function
+__version__ = '${PyFrensie_VERSION}'
+def version():
+    return 'Frensie version: ${FRENSIE_VERSION}\nPyFrensie version: ' + __version__
+
+##---------------------------------------------------------------------------##
+## end __init__.py
+##---------------------------------------------------------------------------##

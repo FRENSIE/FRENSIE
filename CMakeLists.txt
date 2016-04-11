@@ -180,6 +180,9 @@ ELSE()
   ENABLE_TESTING()
 ENDIF()
 
+# Force shared libraries to be built
+SET(BUILD_SHARED_LIBS ON)
+
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(scripts)
 

@@ -8,12 +8,10 @@ MACRO(ENABLE_SWIG_SUPPORT)
 
   # Find the SWIG package available on this system
   FIND_PACKAGE(SWIG 3.0.8 REQUIRED)
-  INCLUDE(${SWIG_USE_FILE})
 
-  # Fine the python package available on this system
-  FIND_PACKAGE(PythonLibs)
-  INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
+  # Use the local UseSWIG.cmake file
+  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/UseSWIG.cmake)
+  
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found SWIG! Here are the details: ")
     MESSAGE("  SWIG_DIR = ${SWIG_DIR}")
