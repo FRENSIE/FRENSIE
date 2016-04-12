@@ -106,7 +106,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     ElectronState& electron, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_bremsstrahlung_distribution->scatterElectron( electron, 
                                                   bank, 
@@ -115,7 +115,7 @@ void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::
   electron.incrementCollisionNumber();
 
   // The shell of interaction is currently ignored
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

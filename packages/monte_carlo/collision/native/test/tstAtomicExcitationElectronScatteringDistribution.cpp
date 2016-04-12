@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
   electron.setEnergy( 1.000000000000e-03 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   double final_energy = (electron.getEnergy() - 9.32298000000E-06);
 
   // Scatter the electron

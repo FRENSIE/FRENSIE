@@ -68,7 +68,7 @@ public:
   // Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( MonteCarlo::AdjointPhotonState& adjoint_photon,
 			     MonteCarlo::ParticleBank& bank,
-			     MonteCarlo::SubshellType& shell_of_interaction ) const
+			     Data::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::LineEnergyIterator;

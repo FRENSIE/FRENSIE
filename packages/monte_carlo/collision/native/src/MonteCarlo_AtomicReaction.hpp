@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 

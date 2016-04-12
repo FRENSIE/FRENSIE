@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_AtomicReaction.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 
@@ -38,21 +38,22 @@ public:
   //! Simulate the reaction
   virtual void react( PhotonState& photon, 
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const = 0;
+		      Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Simulate the reaction and track the number of sampling trials
   virtual void react( PhotonState& photon, 
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction,
+		      Data::SubshellType& shell_of_interaction,
 		      unsigned& trials ) const;
 
 };
 
 // Simulate the reaction and track the number of sampling trials
-inline void PhotoatomicReaction::react( PhotonState& photon, 
-					ParticleBank& bank,
-					SubshellType& shell_of_interaction,
-					unsigned& trials ) const
+inline void PhotoatomicReaction::react( 
+        PhotonState& photon, 
+        ParticleBank& bank,
+        Data::SubshellType& shell_of_interaction,
+        unsigned& trials ) const
 {
   ++trials;
 

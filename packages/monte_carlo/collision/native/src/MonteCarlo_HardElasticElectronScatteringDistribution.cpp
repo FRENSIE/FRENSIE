@@ -61,7 +61,7 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
 void HardElasticElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
 			                    ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // Sample the scattering angle cosine
   double scattering_angle_cosine = 

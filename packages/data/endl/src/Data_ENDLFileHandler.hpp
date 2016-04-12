@@ -84,9 +84,22 @@ public:
 
   //! Process three column table in ENDL file
   void processThreeColumnTable(
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three );
+/*
+  //! Process three column table in ENDL file
+  void processThreeColumnTable(
     std::vector<double>& energy_bins,
     std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable  );
+    std::map<double,std::vector<double> >& dep_variable );
+*/
+  //! Process three column table in ENDL file
+  template< typename T >
+  void processThreeColumnTable(
+    std::vector<T>& bins,
+    std::map<T,std::vector<double> >& indep_variable,
+    std::map<T,std::vector<double> >& dep_variable );
 
 private:
 
@@ -112,6 +125,14 @@ private:
 } // end Data namespace
 
 #endif // DATA_ENDL_FILE_HANDLER_HPP
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Data_ENDLFileHandler_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 // end Data_ENDLFileHandler.hpp

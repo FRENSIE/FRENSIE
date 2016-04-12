@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardENDLDataGenerator.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "Data_ENDLHelperWrappers.hpp"
@@ -96,8 +96,291 @@ void StandardENDLDataGenerator::setRelaxationData(
     Teuchos::RCP<Data::ENDLFileHandler> eadl_file_handler( 
       new Data::ENDLFileHandler( d_eadl_file_name ) );
 
+    // Information in first header of the EADL file
+    int atomic_number_in_table, 
+        outgoing_particle_designator, 
+        interpolation_flag;
+    double atomic_weight;
+
+    // Information in the second header of the EADL file
+    int reaction_type, electron_shell;
+
+    // subshells and subshell data
+    std::vector<double> eadl_subshells, raw_subshell_data;
+    std::vector<unsigned> endf_subshells;
+    std::set<unsigned> endf_subshells_set;
+
+    std::vector<double> indep_var, dep_var;
+
+
+    std::cout << " Reading EADL Data file";
+    std::cout.flush();
+
+    // Process every table in the EADL file
+    while( eadl_file_handler->validFile() && !eadl_file_handler->endOfFile() )
+    {
+      // Read first table header and determine which element is being processed
+      eadl_file_handler->readFirstTableHeader( atomic_number_in_table,
+                                               outgoing_particle_designator,
+                                               atomic_weight,
+                                               interpolation_flag );
+      
+      // Check that the EADL file is still valid (eof has not been reached)
+      if( eadl_file_handler->endOfFile() )
+      {
+	    continue;
+      }
+        
+      testPostcondition( atomic_number_in_table == 
+                         data_container.getAtomicNumber() );
+
+      // Read second table header and determine the reaction type
+      eadl_file_handler->readSecondTableHeader( reaction_type,
+                                                electron_shell );
+
+      // Read and process the data in the current table, then store in the HDF5
+      // file
+      switch( reaction_type )
+      {
+    
+      case 91912:
+      {
+        // Number of electrons in subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+  
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        // convert eadl subshell typ to endf subshell type
+        endf_subshells.resize( eadl_subshells.size() );
+        for ( int i = 0; i < eadl_subshells.size(); i++ )
+        {
+          unsigned shell = 
+          Data::convertEADLDesignatorToENDFDesignator( eadl_subshells[i] );
+
+          endf_subshells[i] = shell;
+          endf_subshells_set.insert( shell );
+        }
+
+        // set subshell data
+        data_container.setSubshells( endf_subshells_set );
+/*
+        // map subshell data
+        std::map<unsigned,unsigned> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellNumberOfElectrons( subshell_data );*/
+        break;
+      }
+      case 91913:
+      {
+        // Binding energy of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellKineticEnergy( subshell_data );*/
+
+        break;
+      }
+      case 91914:
+      {
+        // Kinetic energy of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellBindingEnergy( subshell_data );*/
+
+        break;
+      }
+      case 91915:
+      {
+        // Average radius of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellAverageRadius( subshell_data );*/
+
+        break;
+      }
+      case 91921:
+      {
+        // Radiative level width of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellRadiativeLevel( subshell_data );*/
+
+        break;
+      }
+      case 91922:
+      {
+        // Non radiative level of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setSubshellNonRadiativeLevel( subshell_data );*/
+
+        break;
+      }
+      case 92931:
+      {
+std::cout << "91931" << std::endl;
+        break;
+      }
+      case 92932:
+      {
+std::cout << "91932" << std::endl;
+        break;
+      }
+     case 92933:
+      {
+        // The average number of particles per initial vacancy of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,unsigned> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setAverageParticlesPerInitialVacancy( subshell_data );*/
+
+        break;
+      }
+     case 92934:
+      {
+        // The average energy of particles per initial vacancy
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setAverageParitcleEnergyPerInitialVacancy(
+            subshell_data );*/
+
+        break;
+      }
+     case 92935:
+      {
+        // The local deposition per initial vacancy of a subshell
+
+        // Interpolation should always be LinLin = 0 
+        testPrecondition( interpolation_flag == 0 )
+
+        eadl_file_handler->processTwoColumnTable( 
+            eadl_subshells,
+            raw_subshell_data );
+
+        testPrecondition( eadl_subshells.size() == endf_subshells.size() );
+/*
+        // map subshell data
+        std::map<unsigned,double> subshell_data;
+        mapEADLSubshellData( endf_subshells, raw_subshell_data, subshell_data );
+
+        // set the subshell data
+        data_container.setLocalDepositionPerInitialVacancy( subshell_data );*/
+
+        break;
+      }
+      default:
+        // Unknown reaction type found
+      {
+	  bool known_reaction_type = false;
+	  std::cout << known_reaction_type <<
+      " Fatal Error: An unknown reaction type was encountered while processing the EADL file.";
+      std::cout.flush();
+      }
+        break;
+      }
+    }
+
     // Close the EADL file
     eadl_file_handler->closeENDLFile();
+
+    // Set the subshells
+    data_container.setSubshells( endf_subshells_set );
   }
   else
   {
@@ -193,7 +476,7 @@ void StandardENDLDataGenerator::setElectronData(
       {
         // Convert subshell number to endf number
         endf_subshell = 
-          MonteCarlo::convertEADLDesignatorToENDFDesignator( electron_shell );
+          Data::convertEADLDesignatorToENDFDesignator( electron_shell );
 
         // insert subshell to set
         endf_subshells.insert( endf_subshell );

@@ -14,7 +14,7 @@
 #include <iostream>
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
   
@@ -74,9 +74,9 @@ enum ElectroatomicReactionType{
 std::string convertElectroatomicReactionEnumToString( 
 				      const ElectroatomicReactionType reaction );
 
-//! Convert a SubshellType enum to a ElectroatomicReactionType enum
+//! Convert a Data::SubshellType enum to a ElectroatomicReactionType enum
 ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
-						 const SubshellType subshell );
+						 const Data::SubshellType subshell );
 
 //! Stream operator for printing ElectroatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,

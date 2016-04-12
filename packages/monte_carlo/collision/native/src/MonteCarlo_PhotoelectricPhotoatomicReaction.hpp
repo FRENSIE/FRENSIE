@@ -53,7 +53,7 @@ public:
   //! Simulate the reaction
   virtual void react( PhotonState& photon, 
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

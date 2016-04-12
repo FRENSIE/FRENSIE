@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -46,12 +46,12 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction, getSubshell_ace )
   Teuchos::RCP<MonteCarlo::SubshellPhotoelectricPhotoatomicReaction<Utility::LogLog> > true_reaction = 
     Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellPhotoelectricPhotoatomicReaction<Utility::LogLog> >( ace_k_photoelectric_reaction );
 
-  TEST_EQUALITY_CONST( true_reaction->getSubshell(), MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( true_reaction->getSubshell(), Data::K_SUBSHELL );
 
   true_reaction =  
     Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellPhotoelectricPhotoatomicReaction<Utility::LogLog> >( ace_l1_photoelectric_reaction );
 
-  TEST_EQUALITY_CONST( true_reaction->getSubshell(), MonteCarlo::L1_SUBSHELL );
+  TEST_EQUALITY_CONST( true_reaction->getSubshell(), Data::L1_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -179,7 +179,7 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
   
-  MonteCarlo::SubshellType subshell;
+  Data::SubshellType subshell;
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
@@ -314,7 +314,7 @@ int main( int argc, char** argv )
 	  energy_grid,
 	  k_cross_section,
 	  k_threshold_index,
-	  MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell_order[0] ),
+	  Data::convertENDFDesignatorToSubshellEnum( subshell_order[0] ),
 	  binding_energies[0] ) );
 
   ace_l1_photoelectric_reaction.reset(
@@ -322,7 +322,7 @@ int main( int argc, char** argv )
 	  energy_grid,
 	  l1_cross_section,
 	  l1_threshold_index,
-	  MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell_order[1] ),
+	  Data::convertENDFDesignatorToSubshellEnum( subshell_order[1] ),
 	  binding_energies[1] ) );
 
   // Clear setup data

@@ -58,10 +58,10 @@ public:
   //! Simulate the reaction
   void react( PhotonState& photon, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Get the interaction subshell (non-standard interface)
-  SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const;
 
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;

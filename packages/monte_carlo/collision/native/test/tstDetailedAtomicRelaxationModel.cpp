@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
@@ -138,12 +138,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> raw_subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
   
-  Teuchos::Array<MonteCarlo::SubshellType> 
+  Teuchos::Array<Data::SubshellType> 
     subshells( raw_subshell_endf_designators.size() );
 
   for( unsigned i = 0; i < subshells.size(); ++i )
   {
-    subshells[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+    subshells[i] = Data::convertENDFDesignatorToSubshellEnum(
 					    raw_subshell_endf_designators[i] );
   }
 
@@ -165,9 +165,9 @@ int main( int argc, char** argv )
 
     unsigned shell_start = (unsigned)relo_block[i];
     
-    Teuchos::Array<MonteCarlo::SubshellType> 
+    Teuchos::Array<Data::SubshellType> 
       primary_transition_shells( shell_transitions );
-    Teuchos::Array<MonteCarlo::SubshellType> 
+    Teuchos::Array<Data::SubshellType> 
       secondary_transition_shells( shell_transitions );
     Teuchos::Array<double> 
       outgoing_particle_energies( shell_transitions );
@@ -178,11 +178,11 @@ int main( int argc, char** argv )
       for( unsigned j = 0; j < shell_transitions; ++j )
       {
 	primary_transition_shells[j] = 
-	  MonteCarlo::convertENDFDesignatorToSubshellEnum(
+	  Data::convertENDFDesignatorToSubshellEnum(
 					        xprob_block[shell_start+j*4] );
     
 	secondary_transition_shells[j] = 
-	  MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+	  Data::convertENDFDesignatorToSubshellEnum( 
 					      xprob_block[shell_start+j*4+1] );
     
 	outgoing_particle_energies[j] = xprob_block[shell_start+j*4+2];

@@ -38,7 +38,7 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
 			                    ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // energy of the incoming electron
   double incoming_energy = electron.getEnergy();

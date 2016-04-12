@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
 
   // Test that Doppler broadening is done
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::L3_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::L3_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   
   std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
@@ -257,7 +257,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 						     
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(reactions.back()->getReactionType(),
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::P3_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::P3_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

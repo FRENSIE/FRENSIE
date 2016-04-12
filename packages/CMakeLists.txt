@@ -7,7 +7,7 @@ ADD_SUBDIRECTORY(geometry)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/geometry geometry/core/src geometry/dagmc/src geometry/root/src geometry/interface)
 
 ADD_SUBDIRECTORY(data)
-INCLUDE_DIRECTORIES(data/ace/src data/epdl/src data/endf/src data/endl/src data/native/src)
+INCLUDE_DIRECTORIES(data/core/src data/ace/src data/epdl/src data/endf/src data/endl/src data/native/src)
 
 ADD_SUBDIRECTORY(monte_carlo)
 INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/core/src monte_carlo/collision/native/src)

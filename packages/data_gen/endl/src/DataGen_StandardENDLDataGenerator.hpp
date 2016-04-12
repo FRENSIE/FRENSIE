@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
-#define DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#ifndef DATA_GEN_STANDARD_ENDL_DATA_GENERATOR_HPP
+#define DATA_GEN_STANDARD_ENDL_DATA_GENERATOR_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -127,9 +127,7 @@ inline bool StandardENDLDataGenerator::notEqualZero(
 
 } // end DataGen namespace
 
-//---------------------------------------------------------------------------//
-
-#endif // end DATA_GEN_ENDL_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
+#endif // end DATA_GEN_STANDARD_ENDL_DATA_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
 // end DataGen_StandardENDLDataGenerator.hpp

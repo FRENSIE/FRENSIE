@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
   TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.75;

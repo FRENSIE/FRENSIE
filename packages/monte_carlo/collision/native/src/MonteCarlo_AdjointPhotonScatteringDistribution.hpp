@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonState.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
 
@@ -59,7 +59,7 @@ public:
   virtual void scatterAdjointPhoton( 
 				AdjointPhotonState& adjoint_photon,
 				ParticleBank& bank,
-				SubshellType& shell_of_interaction ) const = 0;
+				Data::SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace

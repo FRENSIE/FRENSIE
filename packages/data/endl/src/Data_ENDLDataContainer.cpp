@@ -22,7 +22,7 @@
 
 // FRENSIE Includes
 #include "Data_ENDLDataContainer.hpp"
-#include "Data_ENDLDataContainerHelpers.hpp"
+#include "Data_DataContainerHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 

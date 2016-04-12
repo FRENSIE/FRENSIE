@@ -51,7 +51,7 @@ public:
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
-                        SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const;
 
   // Evaluate the screening angle at the given electron energy
   double evaluateScreeningFactor( const double energy ) const;

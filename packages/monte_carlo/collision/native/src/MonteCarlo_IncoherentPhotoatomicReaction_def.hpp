@@ -110,7 +110,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     PhotonState& photon, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
 

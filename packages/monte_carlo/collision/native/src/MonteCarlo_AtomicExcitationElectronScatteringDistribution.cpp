@@ -33,7 +33,7 @@ AtomicExcitationElectronScatteringDistribution::AtomicExcitationElectronScatteri
 // Randomly scatter the electron
 void AtomicExcitationElectronScatteringDistribution::scatterElectron( ElectronState& electron,
 	                  ParticleBank& bank,
-                      SubshellType& shell_of_interaction ) const
+                      Data::SubshellType& shell_of_interaction ) const
 {
   double energy_loss = d_energy_loss_distribution->evaluate( electron.getEnergy() );
   //std::cout << " atomic excitation called" << std::endl;

@@ -33,7 +33,7 @@ public:
   //! Constructor
   DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
      const Teuchos::Array<double>& endf_subshell_occupancies,
-     const Teuchos::Array<SubshellType>& endf_subshell_order,
+     const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
      const Teuchos::Array<double>& old_subshell_binding_energies,
      const Teuchos::Array<double>& old_subshell_occupancies,
      const std::shared_ptr<const ComptonProfileSubshellConverter>&
@@ -46,10 +46,10 @@ public:
   { /* ... */ }
 
   //! Return the binding energy of a subshell
-  double getSubshellBindingEnergy( const SubshellType subshell ) const;
+  double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
   
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
-  double getSubshellOccupancy( const SubshellType subshell ) const;
+  double getSubshellOccupancy( const Data::SubshellType subshell ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
@@ -66,7 +66,7 @@ protected:
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  SubshellType& subshell ) const;
+                                  Data::SubshellType& subshell ) const;
 
 private:
 

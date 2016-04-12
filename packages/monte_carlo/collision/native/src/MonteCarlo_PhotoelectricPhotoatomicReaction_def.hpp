@@ -97,13 +97,13 @@ void
 PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // End the photon history
   photon.setAsGone();
 
   // The interaction subshell is not taken into account in this reaction
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

@@ -15,7 +15,7 @@
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -800,7 +800,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
     {
       // Convert subshell number to endf number
       subshell_endf = 
-        MonteCarlo::convertEADLDesignatorToENDFDesignator( electron_shell );
+        Data::convertEADLDesignatorToENDFDesignator( electron_shell );
 
       // Check that subshell is valid
       testPrecondition( endf_subshells.count( subshell_endf ) );
@@ -1384,7 +1384,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 						     this->getAtomicNumber() );
   
   unsigned compton_subshell_index = converter->convertSubshellToIndex(
-			      MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+			      Data::convertENDFDesignatorToSubshellEnum( 
 								  subshell ) );
     
   unsigned profile_index = lswd_block[compton_subshell_index];
@@ -1474,7 +1474,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
 							  occupation_number ) );
 
     evaluators[i].second.reset( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
-		   MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell ),
+		   Data::convertENDFDesignatorToSubshellEnum( subshell ),
 		   data_container.getSubshellOccupancy( subshell ),
 		   data_container.getSubshellBindingEnergy( subshell ),
 		   occupation_number_dist ) );

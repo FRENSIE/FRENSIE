@@ -20,7 +20,7 @@
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
@@ -134,7 +134,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 
   Teuchos::Array<double> occupancy_numbers;
 
-  Teuchos::Array<SubshellType> subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order;
   
   while( subshell_it != subshells.end() )
   {
@@ -142,7 +142,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDis
 		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
 
     subshell_order.push_back( 
-			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
+			Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
     
     ++subshell_it;
   }
@@ -198,9 +198,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribu
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
   
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
 		      "Error: the requested endf subshell " << 
 		      endf_subshell << " is invalid! " );
@@ -237,9 +237,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
   
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
 		      "Error: the requested endf subshell " << 
 		      endf_subshell << " is invalid! " );

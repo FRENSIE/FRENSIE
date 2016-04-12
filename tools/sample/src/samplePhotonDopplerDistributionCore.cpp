@@ -11,7 +11,7 @@
 #include "samplePhotonDopplerDistributionCore.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
@@ -68,8 +68,8 @@ void initializeACEDistribution(
     // Full Subshell
     case 4:
     {
-      MonteCarlo::SubshellType subshell = 
-        MonteCarlo::convertENDFDesignatorToSubshellEnum( raw_subshell );
+      Data::SubshellType subshell = 
+        Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
       
       MonteCarlo::DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribution( 
                                                             data_extractor,
@@ -131,8 +131,8 @@ void initializeNativeDistribution(
     // Full Subshell
     case 4:
     {
-      MonteCarlo::SubshellType subshell = 
-        MonteCarlo::convertENDFDesignatorToSubshellEnum( raw_subshell );
+      Data::SubshellType subshell = 
+        Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
       
       MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution( 
                                                             data_container,
@@ -187,8 +187,8 @@ int samplePhotonDopplerDistributionCore(
     std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
       complete_doppler_dist = std::dynamic_pointer_cast<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>( doppler_dist );
 
-    MonteCarlo::SubshellType subshell = 
-        MonteCarlo::convertENDFDesignatorToSubshellEnum( raw_subshell );
+    Data::SubshellType subshell = 
+        Data::convertENDFDesignatorToSubshellEnum( raw_subshell );
     
     // Evaluate the pdf
     for( unsigned i = 0; i < pdf_values.size(); ++i )
@@ -236,7 +236,7 @@ int samplePhotonDopplerDistributionCore(
     // Generate the samples
     for( unsigned i = 0; i < num_samples; ++i )
     {
-      MonteCarlo::SubshellType sampled_subshell;
+      Data::SubshellType sampled_subshell;
       
       doppler_dist->sampleMomentumAndRecordTrials( incoming_energy,
                                                    scattering_angle_cosine,

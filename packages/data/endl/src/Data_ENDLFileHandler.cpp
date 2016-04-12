@@ -271,13 +271,11 @@ void ENDLFileHandler::processTwoColumnTable(
 
 // Process three column table in ENDL file
 void ENDLFileHandler::processThreeColumnTable(
-    std::vector<double>& energy_bins,
-    std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable  )
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three  )
 {
   int io_flag, table_size;
-
-  std::vector<double> column_one, column_two, column_three;
 
   // Read table size
   readENDLTableSize( 
@@ -313,6 +311,36 @@ void ENDLFileHandler::processThreeColumnTable(
         &column_three[0],
         &io_flag );
   }
+
+  // Update file flags and line number
+  d_current_line += table_size+1;
+
+  if( io_flag > 0 )
+  {
+    d_valid_file = false;   
+  }  
+  else if ( io_flag < 0 )
+  {
+    d_end_of_file = true;
+  }
+
+  testPostcondition( validFile() );
+  testPostcondition( !column_one.empty() );
+  testPostcondition( !column_two.empty() );
+  testPostcondition( !column_three.empty() );
+}
+/*
+// Process three column table in ENDL file
+void ENDLFileHandler::processThreeColumnTable(
+    std::vector<double>& energy_bins,
+    std::map<double,std::vector<double> >& indep_variable,
+    std::map<double,std::vector<double> >& dep_variable  )
+{
+  int io_flag, table_size;
+
+  std::vector<double> column_one, column_two, column_three;
+
+  processThreeColumnTable( column_one, column_two, column_three );
 
   // Process the table data
   std::pair<double,std::vector<double> > indep, dep;
@@ -359,24 +387,11 @@ void ENDLFileHandler::processThreeColumnTable(
   indep_variable.insert( indep );
   dep_variable.insert( dep );
 
-  // Update file flags and line number
-  d_current_line += table_size+1;
-
-  if( io_flag > 0 )
-  {
-    d_valid_file = false;   
-  }  
-  else if ( io_flag < 0 )
-  {
-    d_end_of_file = true;
-  }
-
-  testPostcondition( validFile() );
   testPostcondition( !indep_variable.empty() );
   testPostcondition( !dep_variable.empty() );
   testPostcondition( !energy_bins.empty() );
 }
-
+*/
 
 } // end Data namespace
 

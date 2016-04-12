@@ -26,7 +26,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const SubshellType interaction_subshell,
+    const Data::SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
@@ -39,8 +39,8 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
                                                         interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
-  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
   testPrecondition( !electroionization_subshell_distribution.is_null() );
@@ -54,7 +54,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const SubshellType interaction_subshell,
+    const Data::SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
@@ -69,8 +69,8 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
             interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
-  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
   testPrecondition( !electroionization_subshell_distribution.is_null() );
@@ -81,7 +81,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     ElectronState& electron, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_electroionization_subshell_distribution->scatterElectron( 
                                                electron, 

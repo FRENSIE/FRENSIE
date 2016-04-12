@@ -20,7 +20,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, scatterPhoton )
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -288,7 +288,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, scatterPhoton )
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::M3_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::M3_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -351,12 +351,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> subshell_endf_designators = 
     xss_data_extractor->extractSubshellENDFDesignators();
   
-  Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order( 
 					    subshell_endf_designators.size() );
   
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
   }
   

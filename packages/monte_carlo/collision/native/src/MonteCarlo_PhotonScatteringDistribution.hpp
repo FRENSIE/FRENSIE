@@ -12,7 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
 
 namespace MonteCarlo{
@@ -58,7 +58,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterPhoton( PhotonState& photon,
 			      ParticleBank& bank,
-			      SubshellType& shell_of_interaction ) const = 0;
+			      Data::SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace
