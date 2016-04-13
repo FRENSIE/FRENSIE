@@ -39,7 +39,7 @@ void StandardENDLDataGenerator::populateENDLDataContainer(
   this->setAtomicNumber( data_container );
 
   // Populate the relaxation data
-  this->populateEADLDataContainer( data_container );
+  //this->populateEADLDataContainer( data_container );
 
   // Populate the photon data
   this->populateEPDLDataContainer( data_container );
@@ -575,7 +575,7 @@ void StandardENDLDataGenerator::setElectronData(
 
         std::map<double,std::vector<double> > elastic_angle;
 
-        eedl_file_handler->processThreeColumnTable( 
+        eedl_file_handler->mapThreeColumnTable( 
               elastic_angular_energy_grid, 
               elastic_angle,
               elastic_pdf );
@@ -685,7 +685,7 @@ void StandardENDLDataGenerator::setElectronData(
         // Read the recoil electron spectrum from ionization for a subshell
         // If electron_shell == 0 then no subshell data only total
 
-        eedl_file_handler->processThreeColumnTable( 
+        eedl_file_handler->mapThreeColumnTable( 
               electron_energy_grid, 
               electroionization_recoil_energy,
               electroionization_recoil_pdf );  
@@ -772,7 +772,7 @@ void StandardENDLDataGenerator::setElectronData(
         std::map<double,std::vector<double> > bremsstrahlung_photon_energy,
                                               bremsstrahlung_photon_pdf;
 
-        eedl_file_handler->processThreeColumnTable( 
+        eedl_file_handler->mapThreeColumnTable( 
               electron_energy_grid, 
               bremsstrahlung_photon_energy,
               bremsstrahlung_photon_pdf );  

@@ -82,26 +82,20 @@ public:
     const unsigned subshell ) const;
 
   //! Return the radiative transition probability
-  const std::vector<double>& getRadiativeTransitionProbability( 
-    const unsigned subshell,
-    const unsigned secondary_subsell ) const;
+  const std::map<unsigned,double>& getRadiativeTransitionProbability( 
+    const unsigned subshell ) const;
 
   //! Return the radiative transition energy
-  const std::vector<double>& getRadiativeTransitionEnergy( 
-    const unsigned subshell,
-    const unsigned secondary_subshell ) const;
+  const std::map<unsigned,double>& getRadiativeTransitionEnergy( 
+    const unsigned subshell ) const;
 
   //! Return the non radiative transition probability
-  const std::vector<double>& getNonRadiativeTransitionProbability( 
-    const unsigned subshell,
-    const unsigned secondary_subshell,
-    const unsigned tertiary_subshell ) const;
+  const std::map<unsigned,std::map<unsigned,double> >&
+  getNonRadiativeTransitionProbability( const unsigned subshell ) const;
 
   //! Return the non radiative transition energy
-  const std::vector<double>& getNonRadiativeTransitionEnergy( 
-    const unsigned subshell,
-    const unsigned secondary_subshell,
-    const unsigned tertiary_subshell ) const;
+  const std::map<unsigned,std::map<unsigned,double> >&
+  getNonRadiativeTransitionEnergy( const unsigned subshell ) const;
 
 //---------------------------------------------------------------------------//
 // GET COHERENT PHOTON DATA
@@ -469,25 +463,25 @@ protected:
   //! Set the radiative transition probability
   void setRadiativeTransitionProbability( 
     const unsigned subshell,
-    const std::map<unsigned,std::vector<double> >& 
+    const std::map<unsigned,double>& 
         radiative_transition_probability );
 
   //! Set the radiative transition energy
   void setRadiativeTransitionEnergy( 
     const unsigned subshell,
-    const std::map<unsigned,std::vector<double> >& 
+    const std::map<unsigned,double>& 
         radiative_transition_energy );
 
   //! Set the non radiative transition probability
   void setNonRadiativeTransitionProbability( 
     const unsigned subshell,
-    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+    std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_probability );
 
   //! Set the non radiative transition energy
   void setNonRadiativeTransitionEnergy( 
     const unsigned subshell,
-    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+    std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_energy );
 
 //---------------------------------------------------------------------------//
@@ -955,19 +949,19 @@ private:
   std::map<unsigned,double> d_subshell_average_particle_energies;
 
   // The radiative transition probability
-  std::map<unsigned,std::map<unsigned,std::vector<double> > > 
+  std::map<unsigned,std::map<unsigned,double> > 
     d_radiative_transition_probabilities;
 
   // The radiative transition energy
-  std::map<unsigned,std::map<unsigned,std::vector<double> > >
+  std::map<unsigned,std::map<unsigned,double> >
     d_radiative_transition_energies;
 
   // The non radiative transition probability
-  std::map<unsigned,std::map<unsigned,std::map<unsigned,std::vector<double> > > >
+  std::map<unsigned,std::map<unsigned,std::map<unsigned,double> > >
     d_non_radiative_transition_probabilities;
 
   // The non radiative transition energy
-  std::map<unsigned,std::map<unsigned,std::map<unsigned,std::vector<double> > > >
+  std::map<unsigned,std::map<unsigned,std::map<unsigned,double> > >
     d_non_radiative_transition_energies;
 
 //---------------------------------------------------------------------------//

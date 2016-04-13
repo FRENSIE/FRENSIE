@@ -140,69 +140,51 @@ ENDLDataContainer::getAverageParitcleEnergyPerInitialVacancy(
 }
 
 // Return the radiative transition probability
-const std::vector<double>&
+const std::map<unsigned,double>&
 ENDLDataContainer::getRadiativeTransitionProbability( 
-    const unsigned subshell,
-    const unsigned secondary_subshell ) const
+    const unsigned subshell ) const
 {
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( secondary_subshell ) !=
-		    d_subshells.end() ); 
 
-  return d_radiative_transition_probabilities.find( subshell )->second.find( secondary_subshell )->second;
+  return d_radiative_transition_probabilities.find( subshell )->second;
 }
 
 // Return the radiative transition energy
-const std::vector<double>&
+const std::map<unsigned,double>&
 ENDLDataContainer::getRadiativeTransitionEnergy( 
-    const unsigned subshell,
-    const unsigned secondary_subshell ) const
+    const unsigned subshell ) const
 {
   // Make sure the subshells are valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( secondary_subshell ) !=
-		    d_subshells.end() ); 
 
-  return d_radiative_transition_energies.find( subshell )->second.find( secondary_subshell )->second;
+  return d_radiative_transition_energies.find( subshell )->second;
 }
 
 // Return the non radiative transition probability
-const std::vector<double>&
+const std::map<unsigned,std::map<unsigned,double> >&
 ENDLDataContainer::getNonRadiativeTransitionProbability( 
-    const unsigned subshell,
-    const unsigned secondary_subshell,
-    const unsigned tertiary_subshell ) const
+    const unsigned subshell ) const
 {
-  // Make sure the subshells are valid
+  // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( secondary_subshell ) !=
-		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( tertiary_subshell ) !=
-		    d_subshells.end() ); 
 
-  return d_non_radiative_transition_probabilities.find( subshell )->second.find( secondary_subshell )->second.find( tertiary_subshell )->second;
+  return d_non_radiative_transition_probabilities.find( subshell )->second;
 }
 
 // Return the non radiative transition energy
-const std::vector<double>&
+const std::map<unsigned,std::map<unsigned,double> >&
 ENDLDataContainer::getNonRadiativeTransitionEnergy( 
-    const unsigned subshell,
-    const unsigned secondary_subshell,
-    const unsigned tertiary_subshell ) const
+    const unsigned subshell ) const
 {
-  // Make sure the subshells are valid
+  // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( secondary_subshell ) !=
-		    d_subshells.end() ); 
-  testPrecondition( d_subshells.find( tertiary_subshell ) !=
-		    d_subshells.end() ); 
 
-  return d_non_radiative_transition_energies.find( subshell )->second.find( secondary_subshell )->second.find( tertiary_subshell )->second;
+  return d_non_radiative_transition_energies.find( subshell )->second;
 }
 
 //---------------------------------------------------------------------------//
@@ -289,7 +271,7 @@ void ENDLDataContainer::setAverageParitcleEnergyPerInitialVacancy(
 // Set the radiative transition probability
 void ENDLDataContainer::setRadiativeTransitionProbability( 
     const unsigned subshell,
-    const std::map<unsigned,std::vector<double> >& 
+    const std::map<unsigned,double>& 
         radiative_transition_probability )
 {
   // Make sure the subshell is valid
@@ -302,7 +284,7 @@ void ENDLDataContainer::setRadiativeTransitionProbability(
 // Set the radiative transition energy
 void ENDLDataContainer::setRadiativeTransitionEnergy( 
     const unsigned subshell,
-    const std::map<unsigned,std::vector<double> >& 
+    const std::map<unsigned,double>& 
         radiative_transition_energy )
 {
   // Make sure the subshell is valid
@@ -315,7 +297,7 @@ void ENDLDataContainer::setRadiativeTransitionEnergy(
 // Set the non radiative transition probability
 void ENDLDataContainer::setNonRadiativeTransitionProbability( 
     const unsigned subshell,
-    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+    std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_probability )
 {
   // Make sure the subshell is valid
@@ -328,7 +310,7 @@ void ENDLDataContainer::setNonRadiativeTransitionProbability(
 // Set the non radiative transition energy
 void ENDLDataContainer::setNonRadiativeTransitionEnergy( 
     const unsigned subshell,
-    std::map<unsigned,std::map<unsigned,std::vector<double> > >&
+    std::map<unsigned,std::map<unsigned,double> >&
         non_radiative_transition_energy )
 {
   // Make sure the subshell is valid

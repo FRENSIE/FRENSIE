@@ -267,23 +267,19 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageParitcleEnergyPerInitialVacancy 
 // Check that the radiative transition probability can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setRadiativeTransitionProbability )
 {
-  std::map<unsigned,std::vector<double> > probability_map;
+  std::map<unsigned,double> probability_map;
 
-  std::vector<double> probability(3);
-  probability[0] = 0.1;
-  probability[0] = 0.2;
-  probability[0] = 0.3;
+  double probability = 0.3;
 
-  unsigned shell = 3;
-  unsigned secondary_shell = 1;
+  unsigned shell = 1;
+  unsigned secondary_shell = 3;
   probability_map[secondary_shell] = probability;
 
   endl_data_container.setRadiativeTransitionProbability( shell, probability_map );
 
-  TEST_COMPARE_ARRAYS( 
-    endl_data_container.getRadiativeTransitionProbability( 
-        shell,
-        secondary_shell),
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getRadiativeTransitionProbability(
+        shell ).find( secondary_shell )->second,
     probability );
 }
 
@@ -291,23 +287,19 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setRadiativeTransitionProbability )
 // Check that the radiative transition energy can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setRadiativeTransitionEnergy )
 {
-  std::map<unsigned,std::vector<double> > energy_map;
+  std::map<unsigned,double> energy_map;
 
-  std::vector<double> energy(3);
-  energy[0] = 0.1;
-  energy[0] = 0.2;
-  energy[0] = 0.3;
+  double energy = 0.3;
 
-  unsigned shell = 3;
-  unsigned secondary_shell = 1;
+  unsigned shell = 1;
+  unsigned secondary_shell = 3;
   energy_map[secondary_shell] = energy;
 
   endl_data_container.setRadiativeTransitionEnergy( shell, energy_map );
 
-  TEST_COMPARE_ARRAYS( 
-    endl_data_container.getRadiativeTransitionEnergy( 
-        shell,
-        secondary_shell),
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getRadiativeTransitionEnergy(
+        shell ).find( secondary_shell )->second,
     energy );
 }
 
@@ -315,27 +307,23 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setRadiativeTransitionEnergy )
 // Check that the non radiative transition probability can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setNonRadiativeTransitionProbability )
 {
-  std::map<unsigned,std::vector<double> > probability_map;
-  std::map<unsigned,std::map<unsigned,std::vector<double> > > probability_map_map;
+  std::map<unsigned,double> probability_map;
+  std::map<unsigned,std::map<unsigned,double> > probability_map_map;
 
-  std::vector<double> probability(3);
-  probability[0] = 0.1;
-  probability[0] = 0.2;
-  probability[0] = 0.3;
+  double probability = 0.3;
 
-  unsigned shell = 5;
+  unsigned shell = 1;
   unsigned secondary_shell = 3;
-  unsigned tertiary_shell = 1;
+  unsigned tertiary_shell = 5;
+
   probability_map[tertiary_shell] = probability;
   probability_map_map[secondary_shell] = probability_map;
 
   endl_data_container.setNonRadiativeTransitionProbability( shell, probability_map_map );
 
-  TEST_COMPARE_ARRAYS( 
+  TEST_EQUALITY_CONST( 
     endl_data_container.getNonRadiativeTransitionProbability( 
-        shell,
-        secondary_shell,
-        tertiary_shell),
+        shell ).find( secondary_shell )->second.find( tertiary_shell )->second,
     probability );
 }
 
@@ -343,27 +331,23 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setNonRadiativeTransitionProbability )
 // Check that the non radiative transition energy can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setNonRadiativeTransitionEnergy )
 {
-  std::map<unsigned,std::vector<double> > energy_map;
-  std::map<unsigned,std::map<unsigned,std::vector<double> > > energy_map_map;
+  std::map<unsigned,double> energy_map;
+  std::map<unsigned,std::map<unsigned,double> > energy_map_map;
 
-  std::vector<double> energy(3);
-  energy[0] = 0.1;
-  energy[0] = 0.2;
-  energy[0] = 0.3;
+  double energy = 0.3;
 
-  unsigned shell = 5;
+  unsigned shell = 1;
   unsigned secondary_shell = 3;
-  unsigned tertiary_shell = 1;
+  unsigned tertiary_shell = 5;
+
   energy_map[tertiary_shell] = energy;
   energy_map_map[secondary_shell] = energy_map;
 
   endl_data_container.setNonRadiativeTransitionEnergy( shell, energy_map_map );
 
-  TEST_COMPARE_ARRAYS( 
+  TEST_EQUALITY_CONST(
     endl_data_container.getNonRadiativeTransitionEnergy( 
-        shell,
-        secondary_shell,
-        tertiary_shell),
+        shell ).find( secondary_shell )->second.find( tertiary_shell )->second,
     energy );
 }
 
@@ -2080,19 +2064,17 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
+    endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionProbability( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getRadiativeTransitionEnergy( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionEnergy( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionProbability( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionProbability( 5, 3, 1 ).size(),
-    3 );
-  TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionEnergy( 1 ).size(),
+    1 );
 
 //---------------------------------------------------------------------------//
 // TEST COHERENT PHOTON DATA 
@@ -2455,19 +2437,17 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
+    endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionProbability( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getRadiativeTransitionEnergy( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionEnergy( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionProbability( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionProbability( 5, 3, 1 ).size(),
-    3 );
-  TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionEnergy( 1 ).size(),
+    1 );
 
 //---------------------------------------------------------------------------//
 // TEST COHERENT PHOTON DATA 
@@ -2840,19 +2820,17 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
+    endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionProbability( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getRadiativeTransitionEnergy( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionEnergy( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionProbability( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionProbability( 5, 3, 1 ).size(),
-    3 );
-  TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionEnergy( 1 ).size(),
+    1 );
 
 
 //---------------------------------------------------------------------------//
@@ -3220,19 +3198,17 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElasticEnergyGrid().size(), 3 );
+    endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionProbability( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getRadiativeTransitionEnergy( 1 ).size(), 
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getRadiativeTransitionEnergy( 3, 1 ).size(), 
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionProbability( 1 ).size(),
+    1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionProbability( 5, 3, 1 ).size(),
-    3 );
-  TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getNonRadiativeTransitionEnergy( 5, 3, 1 ).size(),
-    3 );
+    endl_data_container_copy.getNonRadiativeTransitionEnergy( 1 ).size(),
+    1 );
 
 //---------------------------------------------------------------------------//
 // TEST COHERENT PHOTON DATA 

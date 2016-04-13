@@ -87,20 +87,77 @@ public:
     std::vector<double>& column_one,
     std::vector<double>& column_two,
     std::vector<double>& column_three );
-/*
-  //! Process three column table in ENDL file
-  void processThreeColumnTable(
-    std::vector<double>& energy_bins,
-    std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable );
-*/
-  //! Process three column table in ENDL file
-  template< typename T >
-  void processThreeColumnTable(
-    std::vector<T>& bins,
-    std::map<T,std::vector<double> >& indep_variable,
-    std::map<T,std::vector<double> >& dep_variable );
 
+  //! Process four column table in ENDL file
+  void processFourColumnTable(
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three,
+    std::vector<double>& column_four );
+
+
+  //! Map two column subshell data table in EADL file 
+  template< typename T>
+  void mapTwoColumnSubshellData(
+    std::vector<unsigned>& subshells,
+    std::map<unsigned,T>& subshell_data );
+
+  //! Map three column subshell data table in EADL file 
+  template< typename T >
+  void mapThreeColumnSubshellData(
+    std::vector<unsigned>& subshells,
+    std::map<unsigned,T>& subshell_indep_data,
+    std::map<unsigned,T>& subshell_dep_data );
+
+  //! Map four column subshell data table in EADL file 
+  template< typename T >
+  void mapFourColumnSubshellData(
+    std::vector<unsigned>& subshells,
+    std::vector<unsigned>& secondary_subshells,
+    std::map<T,std::vector<double> >& subshell_indep_data,
+    std::map<T,std::vector<double> >& subshell_dep_data );
+
+  //! Map two column table in ENDL file
+  template< typename T, typename P >
+  void mapTwoColumnTable(
+    std::vector<T>& bin,
+    std::map<T,P>& bin_data,
+    bool convert_subshell = false );
+
+  //! Map three column table in ENDL file
+  template< typename T, typename P >
+  void mapThreeColumnTable(
+    std::vector<T>& bin,
+    std::map<T,P>& indep_variable,
+    std::map<T,P>& dep_variable,
+    bool convert_subshell = false );
+
+  //! Map three column table in ENDL file
+  template< typename T, typename P >
+  void mapThreeColumnTable(
+    std::vector<T>& bin,
+    std::map<T,std::vector<P> >& indep_variable,
+    std::map<T,std::vector<P> >& dep_variable,
+    bool convert_subshell = false );
+
+  //! Map four column table in ENDL file
+  template< typename T, typename P, typename Q >
+  void mapFourColumnTable(
+    std::vector<T>& bin,
+    std::map<T,std::vector<P> >& secondary_bin,
+    std::map<T,std::map<P,Q> >& indep_variable,
+    std::map<T,std::map<P,Q> >& dep_variable,
+    bool convert_subshell = false );
+/*
+  //! Map four column table in ENDL file
+  template< typename T, typename P, typename Q >
+  void mapFourColumnTable(
+    std::vector<T>& bin,
+    std::map<T,std::vector<P> >& secondary_bin,
+    std::map<T,std::map<P,std::vector<Q> > >& indep_variable,
+    std::map<T,std::map<P,std::vector<Q> > >& dep_variable,
+    bool convert_subshell = false );
+*/
 private:
 
   // The endl file id used by the endl_helpers fortran module (always set to 1)

@@ -610,18 +610,6 @@ protected:
 */
 private:
 
-  // Test if a value is less than or equal to zero
-  static bool isValueLessThanOrEqualToZero( const double value );
-
-  // Test if a value is less than zero
-  static bool isValueLessThanZero( const double value );
-
-  // Test if a value is greater than one
-  static bool isValueGreaterThanOne( const double value );
-
-  // Test if a value is less than minus one
-  static bool isValueLessThanMinusOne( const double value );
-
   // Save the data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;

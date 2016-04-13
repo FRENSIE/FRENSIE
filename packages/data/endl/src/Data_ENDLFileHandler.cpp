@@ -329,69 +329,72 @@ void ENDLFileHandler::processThreeColumnTable(
   testPostcondition( !column_two.empty() );
   testPostcondition( !column_three.empty() );
 }
-/*
-// Process three column table in ENDL file
-void ENDLFileHandler::processThreeColumnTable(
-    std::vector<double>& energy_bins,
-    std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable  )
+
+// Process four column table in ENDL file
+void ENDLFileHandler::processFourColumnTable(
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three,
+    std::vector<double>& column_four )
 {
   int io_flag, table_size;
 
-  std::vector<double> column_one, column_two, column_three;
+  // Read table size
+  readENDLTableSize( 
+        d_endl_file_id, 
+        d_current_line,
+        &table_size,
+        &io_flag );
 
-  processThreeColumnTable( column_one, column_two, column_three );
+  // Resize arrays to table size
+  column_one.resize( table_size );
+  column_two.resize( table_size );
+  column_three.resize( table_size );
+  column_four.resize( table_size );
 
-  // Process the table data
-  std::pair<double,std::vector<double> > indep, dep;
- 
-  // Assign energy of first data point
-  energy_bins.push_back( column_one.front() );
-  indep.first = column_one.front();
-  dep.first = column_one.front();
-
-  // insert first indep and dep data points at that energy
-  indep.second.push_back( column_two.front() );
-  dep.second.push_back( column_three.front() );
-
-  // Loop through the rest of the data points
-  for ( int i = 1; i < column_one.size(); ++i )
+  if ( d_epics_file_type )
   {
-    // start a new distribution at next energy bin
-    if ( column_one[i] != energy_bins.back() )
-    {
-      // insert old distribution
-      indep_variable.insert( indep );
-      dep_variable.insert( dep );
-
-      // clear indep and dep distributions
-      indep.second.clear();
-      dep.second.clear();
-
-      // start the new distribution
-      energy_bins.push_back( column_one[i] );
-      indep.first = column_one[i];
-      dep.first = column_one[i];
-      indep.second.push_back( column_two[i] );
-      dep.second.push_back( column_three[i] );
-    }
-    // Continue inserting idep and dep variables for this energy bin
-    else
-    {
-      indep.second.push_back( column_two[i] );
-      dep.second.push_back( column_three[i] );
-    }
+	// Read EPICS2014 table data
+    readEPICSTableFourColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &column_four[0],
+        &io_flag );
+  }
+  else
+  {
+	// Read regular table data
+    readENDLTableFourColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &column_four[0],
+        &io_flag );
   }
 
-  // insert last distribution
-  indep_variable.insert( indep );
-  dep_variable.insert( dep );
+  // Update file flags and line number
+  d_current_line += table_size+1;
 
-  testPostcondition( !indep_variable.empty() );
-  testPostcondition( !dep_variable.empty() );
-  testPostcondition( !energy_bins.empty() );
+  if( io_flag > 0 )
+  {
+    d_valid_file = false;   
+  }  
+  else if ( io_flag < 0 )
+  {
+    d_end_of_file = true;
+  }
+
+  testPostcondition( validFile() );
+  testPostcondition( !column_one.empty() );
+  testPostcondition( !column_two.empty() );
+  testPostcondition( !column_three.empty() );
+  testPostcondition( !column_four.empty() );
 }
-*/
 
 } // end Data namespace
 
