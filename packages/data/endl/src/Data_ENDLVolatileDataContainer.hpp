@@ -35,15 +35,17 @@ public:
 // SET RELAXATION DATA 
 //---------------------------------------------------------------------------//
   using ENDLDataContainer::setSubshells;
-  using ENDLDataContainer::setSubshellNumberOfElectrons;
+  using ENDLDataContainer::setSubshellOccupancy;
   using ENDLDataContainer::setSubshellBindingEnergy;
   using ENDLDataContainer::setSubshellKineticEnergy;
   using ENDLDataContainer::setSubshellAverageRadius;
   using ENDLDataContainer::setSubshellRadiativeLevel;
   using ENDLDataContainer::setSubshellNonRadiativeLevel;
   using ENDLDataContainer::setLocalDepositionPerInitialVacancy;
-  using ENDLDataContainer::setAverageParticlesPerInitialVacancy;
-  using ENDLDataContainer::setAverageParitcleEnergyPerInitialVacancy;
+  using ENDLDataContainer::setAveragePhotonsPerInitialVacancy;
+  using ENDLDataContainer::setAveragePhotonEnergyPerInitialVacancy;
+  using ENDLDataContainer::setAverageElectronsPerInitialVacancy;
+  using ENDLDataContainer::setAverageElectronEnergyPerInitialVacancy;
   using ENDLDataContainer::setRadiativeTransitionProbability;
   using ENDLDataContainer::setRadiativeTransitionEnergy;
   using ENDLDataContainer::setNonRadiativeTransitionProbability;

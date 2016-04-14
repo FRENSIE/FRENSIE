@@ -52,7 +52,7 @@ public:
   const std::set<unsigned>& getSubshells() const;
 
   //! Return the number of electrons for a subshell
-  const unsigned getSubshellNumberOfElectrons( const unsigned subshell ) const;
+  const unsigned getSubshellOccupancy( const unsigned subshell ) const;
 
   //! Return the binding energy for a subshell
   const double getSubshellBindingEnergy( const unsigned subshell ) const;
@@ -73,12 +73,20 @@ public:
   const double getLocalDepositionPerInitialVacancy( 
     const unsigned subshell ) const;
 
-  //! Return the average number of particles per initial vacancy
-  const unsigned getAverageParticlesPerInitialVacancy( 
+  //! Return the average number of photons per initial vacancy
+  const unsigned getAveragePhotonsPerInitialVacancy( 
     const unsigned subshell ) const;
 
-  //! Return the average energy of particles per initial vacancy
-  const double getAverageParitcleEnergyPerInitialVacancy( 
+  //! Return the average energy of photons per initial vacancy
+  const double getAveragePhotonEnergyPerInitialVacancy( 
+    const unsigned subshell ) const;
+
+  //! Return the average number of electrons per initial vacancy
+  const unsigned getAverageElectronsPerInitialVacancy( 
+    const unsigned subshell ) const;
+
+  //! Return the average energy of electrons per initial vacancy
+  const double getAverageElectronEnergyPerInitialVacancy( 
     const unsigned subshell ) const;
 
   //! Return the radiative transition probability
@@ -425,7 +433,7 @@ protected:
   void setSubshells( const std::set<unsigned>& subshells );
 
   //! Set the number of electrons in subshells
-  void setSubshellNumberOfElectrons( 
+  void setSubshellOccupancy( 
     const std::map<unsigned,unsigned>& number_of_electrons );
 
   //! Set the binding energy in subshells
@@ -452,12 +460,20 @@ protected:
   void setLocalDepositionPerInitialVacancy(
     const std::map<unsigned,double>& local_depositions );
 
-  //! Set the average number of particles per initial vacancy
-  void setAverageParticlesPerInitialVacancy(
+  //! Set the average number of photons per initial vacancy
+  void setAveragePhotonsPerInitialVacancy(
     const std::map<unsigned,unsigned>& average_particle_numbers );
 
-  //! Set the average energy of particles per initial vacancy
-  void setAverageParitcleEnergyPerInitialVacancy(
+  //! Set the average energy of photons per initial vacancy
+  void setAveragePhotonEnergyPerInitialVacancy(
+    const std::map<unsigned,double>& average_particle_energies );
+
+  //! Set the average number of electrons per initial vacancy
+  void setAverageElectronsPerInitialVacancy(
+    const std::map<unsigned,unsigned>& average_particle_numbers );
+
+  //! Set the average energy of electrons per initial vacancy
+  void setAverageElectronEnergyPerInitialVacancy(
     const std::map<unsigned,double>& average_particle_energies );
 
   //! Set the radiative transition probability
@@ -922,7 +938,7 @@ private:
   std::set<unsigned> d_subshells;
 
   // The number of electrons in subshells
-  std::map<unsigned,unsigned> d_subshell_number_of_electrons;
+  std::map<unsigned,unsigned> d_subshell_occupancies;
 
   // The binding energy in subshells
   std::map<unsigned,double> d_subshell_binding_energies;
@@ -942,11 +958,17 @@ private:
   // The average energy to the residual atom per initial vacancy
   std::map<unsigned,double> d_subshell_local_depositions;
 
-  // The average number of particles per initial vacancy
-  std::map<unsigned,unsigned> d_subshell_average_particle_numbers;
+  // The average number of photons per initial vacancy
+  std::map<unsigned,unsigned> d_subshell_average_photon_numbers;
+
+  // The average energy of photons per initial vacancy
+  std::map<unsigned,double> d_subshell_average_photon_energies;
+
+  // The average number of electrons per initial vacancy
+  std::map<unsigned,unsigned> d_subshell_average_electron_numbers;
 
   // The average energy of particles per initial vacancy
-  std::map<unsigned,double> d_subshell_average_particle_energies;
+  std::map<unsigned,double> d_subshell_average_electron_energies;
 
   // The radiative transition probability
   std::map<unsigned,std::map<unsigned,double> > 

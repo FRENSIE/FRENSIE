@@ -40,14 +40,14 @@ ENDLDataContainer::getSubshells() const
 }
 
 // Return the number of electrons for a subshell
-const unsigned ENDLDataContainer::getSubshellNumberOfElectrons(
+const unsigned ENDLDataContainer::getSubshellOccupancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
 
-  return d_subshell_number_of_electrons.find( subshell )->second;
+  return d_subshell_occupancies.find( subshell )->second;
 }
 
 // Return the binding energy for a subshell
@@ -116,27 +116,50 @@ const double ENDLDataContainer::getLocalDepositionPerInitialVacancy(
   return d_subshell_local_depositions.find( subshell )->second;
 }
 
-// Return the average number of particles per initial vacancy
-const unsigned ENDLDataContainer::getAverageParticlesPerInitialVacancy( 
+// Return the average number of photons per initial vacancy
+const unsigned ENDLDataContainer::getAveragePhotonsPerInitialVacancy( 
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
 
-  return d_subshell_average_particle_numbers.find( subshell )->second;
+  return d_subshell_average_photon_numbers.find( subshell )->second;
 }
 
-// Return the average energy of particles per initial vacancy
+// Return the average energy of photons per initial vacancy
 const double 
-ENDLDataContainer::getAverageParitcleEnergyPerInitialVacancy( 
+ENDLDataContainer::getAveragePhotonEnergyPerInitialVacancy( 
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() ); 
 
-  return d_subshell_average_particle_energies.find( subshell )->second;
+  return d_subshell_average_photon_energies.find( subshell )->second;
+}
+
+// Return the average number of electrons per initial vacancy
+const unsigned ENDLDataContainer::getAverageElectronsPerInitialVacancy( 
+    const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() ); 
+
+  return d_subshell_average_electron_numbers.find( subshell )->second;
+}
+
+// Return the average energy of electrons per initial vacancy
+const double 
+ENDLDataContainer::getAverageElectronEnergyPerInitialVacancy( 
+    const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() ); 
+
+  return d_subshell_average_electron_energies.find( subshell )->second;
 }
 
 // Return the radiative transition probability
@@ -206,10 +229,10 @@ void ENDLDataContainer::setSubshells(
 }
 
 // Set the number of electrons in subshells
-void ENDLDataContainer::setSubshellNumberOfElectrons( 
+void ENDLDataContainer::setSubshellOccupancy( 
     const std::map<unsigned,unsigned>& number_of_electrons )
 {
-  d_subshell_number_of_electrons = number_of_electrons;
+  d_subshell_occupancies = number_of_electrons;
 }
 
 // Set the binding energy in subshells
@@ -254,18 +277,32 @@ void ENDLDataContainer::setLocalDepositionPerInitialVacancy(
   d_subshell_local_depositions = local_depositions;
 }
 
-// Set the average number of particles per initial vacancy
-void ENDLDataContainer::setAverageParticlesPerInitialVacancy(
+// Set the average number of photons per initial vacancy
+void ENDLDataContainer::setAveragePhotonsPerInitialVacancy(
     const std::map<unsigned,unsigned>& average_particle_numbers )
 {
-  d_subshell_average_particle_numbers = average_particle_numbers;
+  d_subshell_average_photon_numbers = average_particle_numbers;
 }
 
-// Set the average energy of particles per initial vacancy
-void ENDLDataContainer::setAverageParitcleEnergyPerInitialVacancy(
+// Set the average energy of photons per initial vacancy
+void ENDLDataContainer::setAveragePhotonEnergyPerInitialVacancy(
     const std::map<unsigned,double>& average_particle_energies )
 {
-  d_subshell_average_particle_energies = average_particle_energies;
+  d_subshell_average_photon_energies = average_particle_energies;
+}
+
+// Set the average number of electrons per initial vacancy
+void ENDLDataContainer::setAverageElectronsPerInitialVacancy(
+    const std::map<unsigned,unsigned>& average_particle_numbers )
+{
+  d_subshell_average_electron_numbers = average_particle_numbers;
+}
+
+// Set the average energy of electrons per initial vacancy
+void ENDLDataContainer::setAverageElectronEnergyPerInitialVacancy(
+    const std::map<unsigned,double>& average_particle_energies )
+{
+  d_subshell_average_electron_energies = average_particle_energies;
 }
 
 // Set the radiative transition probability

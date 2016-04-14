@@ -29,8 +29,8 @@ void ENDLDataContainer::save( Archive& ar,
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "subshell_number_of_electrons", 
-        d_subshell_number_of_electrons );
+  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+        d_subshell_occupancies );
   ar & boost::serialization::make_nvp( "subshell_binding_energies", 
         d_subshell_binding_energies );
   ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
@@ -43,10 +43,14 @@ void ENDLDataContainer::save( Archive& ar,
         d_subshell_non_radiative_levels );
   ar & boost::serialization::make_nvp( "subshell_local_depositions", 
         d_subshell_local_depositions );
-  ar & boost::serialization::make_nvp( "subshell_average_particle_numbers", 
-        d_subshell_average_particle_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_particle_energies", 
-        d_subshell_average_particle_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers", 
+        d_subshell_average_photon_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_photon_energies", 
+        d_subshell_average_photon_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers", 
+        d_subshell_average_electron_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_electron_energies", 
+        d_subshell_average_electron_energies );
   ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
         d_radiative_transition_probabilities );
   ar & boost::serialization::make_nvp( "radiative_transition_energies",
@@ -330,8 +334,8 @@ void ENDLDataContainer::load( Archive& ar,
 // RELAXATION DATA
 //---------------------------------------------------------------------------//
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
-  ar & boost::serialization::make_nvp( "subshell_number_of_electrons", 
-        d_subshell_number_of_electrons );
+  ar & boost::serialization::make_nvp( "subshell_occupancies", 
+        d_subshell_occupancies );
   ar & boost::serialization::make_nvp( "subshell_binding_energies", 
         d_subshell_binding_energies );
   ar & boost::serialization::make_nvp( "subshell_kinetic_energies", 
@@ -344,10 +348,14 @@ void ENDLDataContainer::load( Archive& ar,
         d_subshell_non_radiative_levels );
   ar & boost::serialization::make_nvp( "subshell_local_depositions", 
         d_subshell_local_depositions );
-  ar & boost::serialization::make_nvp( "subshell_average_particle_numbers", 
-        d_subshell_average_particle_numbers );
-  ar & boost::serialization::make_nvp( "subshell_average_particle_energies", 
-        d_subshell_average_particle_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_photon_numbers", 
+        d_subshell_average_photon_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_photon_energies", 
+        d_subshell_average_photon_energies );
+  ar & boost::serialization::make_nvp( "subshell_average_electron_numbers", 
+        d_subshell_average_electron_numbers );
+  ar & boost::serialization::make_nvp( "subshell_average_electron_energies", 
+        d_subshell_average_electron_energies );
   ar & boost::serialization::make_nvp( "radiative_transition_probabilities",
         d_radiative_transition_probabilities );
   ar & boost::serialization::make_nvp( "radiative_transition_energies",

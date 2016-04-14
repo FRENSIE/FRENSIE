@@ -148,16 +148,7 @@ public:
     std::map<T,std::map<P,Q> >& indep_variable,
     std::map<T,std::map<P,Q> >& dep_variable,
     bool convert_subshell = false );
-/*
-  //! Map four column table in ENDL file
-  template< typename T, typename P, typename Q >
-  void mapFourColumnTable(
-    std::vector<T>& bin,
-    std::map<T,std::vector<P> >& secondary_bin,
-    std::map<T,std::map<P,std::vector<Q> > >& indep_variable,
-    std::map<T,std::map<P,std::vector<Q> > >& dep_variable,
-    bool convert_subshell = false );
-*/
+
 private:
 
   // The endl file id used by the endl_helpers fortran module (always set to 1)

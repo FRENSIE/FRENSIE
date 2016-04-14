@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshells )
 
 //---------------------------------------------------------------------------//
 // Check that the number of electrons in subshells can be set
-TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshellNumberOfElectrons )
+TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshellOccupancy )
 {
   std::map<unsigned,unsigned> number_of_electrons_map;
 
@@ -74,11 +74,11 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshellNumberOfElectrons )
   shell = 3;
   number_of_electrons_map[shell] = number_of_electrons;
 
-  endl_data_container.setSubshellNumberOfElectrons( number_of_electrons_map );
+  endl_data_container.setSubshellOccupancy( number_of_electrons_map );
 
-  TEST_EQUALITY_CONST( endl_data_container.getSubshellNumberOfElectrons( 1 ),
+  TEST_EQUALITY_CONST( endl_data_container.getSubshellOccupancy( 1 ),
                        2 );
-  TEST_EQUALITY_CONST( endl_data_container.getSubshellNumberOfElectrons( 3 ),
+  TEST_EQUALITY_CONST( endl_data_container.getSubshellOccupancy( 3 ),
                        number_of_electrons );
 }
 
@@ -215,8 +215,8 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setLocalDepositionPerInitialVacancy )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the average number of particles can be set
-TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageParticlesPerInitialVacancy )
+// Check that the average number of photons can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, setAveragePhotonsPerInitialVacancy )
 {
   std::map<unsigned,unsigned> number_of_particles_map;
 
@@ -228,20 +228,20 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageParticlesPerInitialVacancy )
   shell = 3;
   number_of_particles_map[shell] = number_of_particles;
 
-  endl_data_container.setAverageParticlesPerInitialVacancy( 
+  endl_data_container.setAveragePhotonsPerInitialVacancy( 
     number_of_particles_map );
 
   TEST_EQUALITY_CONST( 
-    endl_data_container.getAverageParticlesPerInitialVacancy( 1 ),
+    endl_data_container.getAveragePhotonsPerInitialVacancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container.getAverageParticlesPerInitialVacancy( 3 ),
+    endl_data_container.getAveragePhotonsPerInitialVacancy( 3 ),
     number_of_particles );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the average energy of particles can be set
-TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageParitcleEnergyPerInitialVacancy )
+// Check that the average energy of photons can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, setAveragePhotonEnergyPerInitialVacancy )
 {
   std::map<unsigned,double> energy_map;
 
@@ -253,13 +253,63 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageParitcleEnergyPerInitialVacancy 
   shell = 3;
   energy_map[shell] = energy;
 
-  endl_data_container.setAverageParitcleEnergyPerInitialVacancy( energy_map );
+  endl_data_container.setAveragePhotonEnergyPerInitialVacancy( energy_map );
 
   TEST_EQUALITY_CONST( 
-    endl_data_container.getAverageParitcleEnergyPerInitialVacancy( 1 ),
+    endl_data_container.getAveragePhotonEnergyPerInitialVacancy( 1 ),
     0.1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container.getAverageParitcleEnergyPerInitialVacancy( 3 ),
+    endl_data_container.getAveragePhotonEnergyPerInitialVacancy( 3 ),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the average number of electrons can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageElectronsPerInitialVacancy )
+{
+  std::map<unsigned,unsigned> number_of_particles_map;
+
+  unsigned number_of_particles = 2;
+  unsigned shell = 1;
+  number_of_particles_map[shell] = number_of_particles;
+
+  number_of_particles = 4;
+  shell = 3;
+  number_of_particles_map[shell] = number_of_particles;
+
+  endl_data_container.setAverageElectronsPerInitialVacancy( 
+    number_of_particles_map );
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getAverageElectronsPerInitialVacancy( 1 ),
+    2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getAverageElectronsPerInitialVacancy( 3 ),
+    number_of_particles );
+}
+
+
+//---------------------------------------------------------------------------//
+// Check that the average energy of particles can be set
+TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageElectronEnergyPerInitialVacancy )
+{
+  std::map<unsigned,double> energy_map;
+
+  double energy = 0.1;
+  unsigned shell = 1;
+  energy_map[shell] = energy;
+
+  energy = 0.2;
+  shell = 3;
+  energy_map[shell] = energy;
+
+  endl_data_container.setAverageElectronEnergyPerInitialVacancy( energy_map );
+
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getAverageElectronEnergyPerInitialVacancy( 1 ),
+    0.1 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container.getAverageElectronEnergyPerInitialVacancy( 3 ),
     energy );
 }
 
@@ -2010,10 +2060,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 4 ) );
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 6 ) );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 1 ),
+    endl_data_container_copy.getSubshellOccupancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 3 ),
+    endl_data_container_copy.getSubshellOccupancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getSubshellBindingEnergy( 1 ),
@@ -2052,16 +2102,28 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getLocalDepositionPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 1 ),
     0.1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 3 ),
+    0.2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 1 ),
+    2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 3 ),
+    4 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 1 ),
+    0.1 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
@@ -2383,10 +2445,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 4 ) );
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 6 ) );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 1 ),
+    endl_data_container_copy.getSubshellOccupancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 3 ),
+    endl_data_container_copy.getSubshellOccupancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getSubshellBindingEnergy( 1 ),
@@ -2425,16 +2487,28 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getLocalDepositionPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 1 ),
     0.1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 3 ),
+    0.2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 1 ),
+    2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 3 ),
+    4 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 1 ),
+    0.1 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
@@ -2766,10 +2840,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 4 ) );
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 6 ) );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 1 ),
+    endl_data_container_copy.getSubshellOccupancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 3 ),
+    endl_data_container_copy.getSubshellOccupancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getSubshellBindingEnergy( 1 ),
@@ -2808,16 +2882,28 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getLocalDepositionPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 1 ),
     0.1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 3 ),
+    0.2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 1 ),
+    2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 3 ),
+    4 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 1 ),
+    0.1 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
@@ -3144,10 +3230,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 4 ) );
   TEST_ASSERT( !endl_data_container_copy.getSubshells().count( 6 ) );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 1 ),
+    endl_data_container_copy.getSubshellOccupancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getSubshellNumberOfElectrons( 3 ),
+    endl_data_container_copy.getSubshellOccupancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getSubshellBindingEnergy( 1 ),
@@ -3186,16 +3272,28 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getLocalDepositionPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 1 ),
     2 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParticlesPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonsPerInitialVacancy( 3 ),
     4 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 1 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 1 ),
     0.1 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getAverageParitcleEnergyPerInitialVacancy( 3 ),
+    endl_data_container_copy.getAveragePhotonEnergyPerInitialVacancy( 3 ),
+    0.2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 1 ),
+    2 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronsPerInitialVacancy( 3 ),
+    4 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 1 ),
+    0.1 );
+  TEST_EQUALITY_CONST( 
+    endl_data_container_copy.getAverageElectronEnergyPerInitialVacancy( 3 ),
     0.2 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getRadiativeTransitionProbability( 1 ).size(), 
