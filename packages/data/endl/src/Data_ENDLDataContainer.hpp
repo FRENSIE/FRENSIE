@@ -52,7 +52,7 @@ public:
   const std::set<unsigned>& getSubshells() const;
 
   //! Return the number of electrons for a subshell
-  const unsigned getSubshellOccupancy( const unsigned subshell ) const;
+  const double getSubshellOccupancy( const unsigned subshell ) const;
 
   //! Return the binding energy for a subshell
   const double getSubshellBindingEnergy( const unsigned subshell ) const;
@@ -74,7 +74,7 @@ public:
     const unsigned subshell ) const;
 
   //! Return the average number of photons per initial vacancy
-  const unsigned getAveragePhotonsPerInitialVacancy( 
+  const double getAveragePhotonsPerInitialVacancy( 
     const unsigned subshell ) const;
 
   //! Return the average energy of photons per initial vacancy
@@ -82,7 +82,7 @@ public:
     const unsigned subshell ) const;
 
   //! Return the average number of electrons per initial vacancy
-  const unsigned getAverageElectronsPerInitialVacancy( 
+  const double getAverageElectronsPerInitialVacancy( 
     const unsigned subshell ) const;
 
   //! Return the average energy of electrons per initial vacancy
@@ -434,7 +434,7 @@ protected:
 
   //! Set the number of electrons in subshells
   void setSubshellOccupancy( 
-    const std::map<unsigned,unsigned>& number_of_electrons );
+    const std::map<unsigned,double>& number_of_electrons );
 
   //! Set the binding energy in subshells
   void setSubshellBindingEnergy(
@@ -462,7 +462,7 @@ protected:
 
   //! Set the average number of photons per initial vacancy
   void setAveragePhotonsPerInitialVacancy(
-    const std::map<unsigned,unsigned>& average_particle_numbers );
+    const std::map<unsigned,double>& average_particle_numbers );
 
   //! Set the average energy of photons per initial vacancy
   void setAveragePhotonEnergyPerInitialVacancy(
@@ -470,7 +470,7 @@ protected:
 
   //! Set the average number of electrons per initial vacancy
   void setAverageElectronsPerInitialVacancy(
-    const std::map<unsigned,unsigned>& average_particle_numbers );
+    const std::map<unsigned,double>& average_particle_numbers );
 
   //! Set the average energy of electrons per initial vacancy
   void setAverageElectronEnergyPerInitialVacancy(
@@ -938,7 +938,7 @@ private:
   std::set<unsigned> d_subshells;
 
   // The number of electrons in subshells
-  std::map<unsigned,unsigned> d_subshell_occupancies;
+  std::map<unsigned,double> d_subshell_occupancies;
 
   // The binding energy in subshells
   std::map<unsigned,double> d_subshell_binding_energies;
@@ -959,13 +959,13 @@ private:
   std::map<unsigned,double> d_subshell_local_depositions;
 
   // The average number of photons per initial vacancy
-  std::map<unsigned,unsigned> d_subshell_average_photon_numbers;
+  std::map<unsigned,double> d_subshell_average_photon_numbers;
 
   // The average energy of photons per initial vacancy
   std::map<unsigned,double> d_subshell_average_photon_energies;
 
   // The average number of electrons per initial vacancy
-  std::map<unsigned,unsigned> d_subshell_average_electron_numbers;
+  std::map<unsigned,double> d_subshell_average_electron_numbers;
 
   // The average energy of particles per initial vacancy
   std::map<unsigned,double> d_subshell_average_electron_energies;

@@ -51,8 +51,19 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   data_generator_h->populateENDLDataContainer( data_container );
 
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
+
+//---------------------------------------------------------------------------//
+// CHECK ATOMIC RELAXATION DATA 
+//---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( data_container.getSubshells().size(), 1 );
   TEST_ASSERT( data_container.getSubshells().count( 1 ) );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy(1), 1 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy(1), 1.361e-5 );
+  TEST_EQUALITY_CONST( data_container.getSubshellKineticEnergy(1), 1.361e-5 );
+  TEST_EQUALITY_CONST( data_container.getSubshellAverageRadius(1), 7.9356e-9 );
+  TEST_EQUALITY_CONST( data_container.getLocalDepositionPerInitialVacancy(1), 
+                       1.361e-5 );  
 
 //---------------------------------------------------------------------------//
 // CHECK ELASTIC DATA 
@@ -362,11 +373,143 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   data_generator_c->populateENDLDataContainer( data_container );
 
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
+
+//---------------------------------------------------------------------------//
+// CHECK ATOMIC RELAXATION DATA 
+//---------------------------------------------------------------------------//
+
   TEST_EQUALITY_CONST( data_container.getSubshells().size(), 4 );
   TEST_ASSERT( data_container.getSubshells().count( 1 ) );
   TEST_ASSERT( data_container.getSubshells().count( 2 ) );
   TEST_ASSERT( data_container.getSubshells().count( 3 ) );
   TEST_ASSERT( data_container.getSubshells().count( 4 ) );
+
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy(1), 2 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy(2), 2 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy(3), .67 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy(4), 1.33 );
+
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy(1), 2.9101E-04 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy(2), 1.7560E-05 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy(3), 8.9900E-06 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy(4), 8.9800E-06 );
+
+  TEST_EQUALITY_CONST( data_container.getSubshellKineticEnergy(1), 4.4702E-04 );
+  TEST_EQUALITY_CONST( data_container.getSubshellKineticEnergy(2), 4.8360E-05 );
+  TEST_EQUALITY_CONST( data_container.getSubshellKineticEnergy(3), 3.6960E-05 );
+  TEST_EQUALITY_CONST( data_container.getSubshellKineticEnergy(4), 3.6900E-05 );
+
+  TEST_EQUALITY_CONST( data_container.getSubshellAverageRadius(1), 1.4068E-09 );
+  TEST_EQUALITY_CONST( data_container.getSubshellAverageRadius(2), 8.0784E-09 );
+  TEST_EQUALITY_CONST( data_container.getSubshellAverageRadius(3), 9.1365E-09 );
+  TEST_EQUALITY_CONST( data_container.getSubshellAverageRadius(4), 9.1442E-09 );
+
+  TEST_EQUALITY_CONST( data_container.getSubshellRadiativeLevel(1),
+                       1.033500000E-10 );
+  TEST_EQUALITY_CONST( data_container.getSubshellNonRadiativeLevel(1),
+                       6.133600000E-08 );
+  TEST_EQUALITY_CONST( data_container.getLocalDepositionPerInitialVacancy(1), 
+                       2.853950000E-05 );
+  TEST_EQUALITY_CONST( data_container.getLocalDepositionPerInitialVacancy(2), 
+                       1.756000000E-05 );
+  TEST_EQUALITY_CONST( data_container.getLocalDepositionPerInitialVacancy(3), 
+                       8.990000000E-06 );
+  TEST_EQUALITY_CONST( data_container.getLocalDepositionPerInitialVacancy(4), 
+                       8.980000000E-06 );
+
+
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonsPerInitialVacancy(1),
+                       1.682080000E-03 );
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonEnergyPerInitialVacancy(1),
+                       4.743930000E-07 );
+  TEST_EQUALITY_CONST( data_container.getAverageElectronsPerInitialVacancy(1),
+                       9.983180000E-01 );
+  TEST_EQUALITY_CONST( data_container.getAverageElectronEnergyPerInitialVacancy(1),
+                       2.619960000E-04 );
+
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionProbability(1).size(),
+    2 );
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionProbability(1).find(3)->second,
+    5.614880000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionProbability(1).find(4)->second,
+    1.120600000E-03 );
+
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionEnergy(1).size(),
+    2 );
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionEnergy(1).find(3)->second,
+    2.820200000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getRadiativeTransitionEnergy(1).find(4)->second,
+    2.820300000E-04 );
+
+
+
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(2)->second.size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(3)->second.size(),
+    2 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(4)->second.size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(2)->second.find(2)->second,
+    4.136090000E-01 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(2)->second.find(3)->second,
+    1.361900000E-01 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(2)->second.find(4)->second,
+    2.710990000E-01 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(3)->second.find(3)->second,
+    4.207480000E-03 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(3)->second.find(4)->second,
+    1.100120000E-01 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionProbability(1).find(4)->second.find(4)->second,
+    6.320080000E-02 );
+
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(2)->second.size(),
+    3 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(3)->second.size(),
+    2 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(4)->second.size(),
+    1 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(2)->second.find(2)->second,
+    2.558900000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(2)->second.find(3)->second,
+    2.644600000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(2)->second.find(4)->second,
+    2.644700000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(3)->second.find(3)->second,
+    2.730300000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(3)->second.find(4)->second,
+    2.730400000E-04 );
+  TEST_EQUALITY_CONST( 
+    data_container.getNonRadiativeTransitionEnergy(1).find(4)->second.find(4)->second,
+    2.730500000E-04 );
 
 //---------------------------------------------------------------------------//
 // CHECK ELASTIC DATA 

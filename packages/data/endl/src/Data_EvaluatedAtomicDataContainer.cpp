@@ -40,7 +40,7 @@ ENDLDataContainer::getSubshells() const
 }
 
 // Return the number of electrons for a subshell
-const unsigned ENDLDataContainer::getSubshellOccupancy(
+const double ENDLDataContainer::getSubshellOccupancy(
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -117,7 +117,7 @@ const double ENDLDataContainer::getLocalDepositionPerInitialVacancy(
 }
 
 // Return the average number of photons per initial vacancy
-const unsigned ENDLDataContainer::getAveragePhotonsPerInitialVacancy( 
+const double ENDLDataContainer::getAveragePhotonsPerInitialVacancy( 
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -140,7 +140,7 @@ ENDLDataContainer::getAveragePhotonEnergyPerInitialVacancy(
 }
 
 // Return the average number of electrons per initial vacancy
-const unsigned ENDLDataContainer::getAverageElectronsPerInitialVacancy( 
+const double ENDLDataContainer::getAverageElectronsPerInitialVacancy( 
     const unsigned subshell ) const
 {
   // Make sure the subshell is valid
@@ -230,7 +230,7 @@ void ENDLDataContainer::setSubshells(
 
 // Set the number of electrons in subshells
 void ENDLDataContainer::setSubshellOccupancy( 
-    const std::map<unsigned,unsigned>& number_of_electrons )
+    const std::map<unsigned,double>& number_of_electrons )
 {
   d_subshell_occupancies = number_of_electrons;
 }
@@ -279,7 +279,7 @@ void ENDLDataContainer::setLocalDepositionPerInitialVacancy(
 
 // Set the average number of photons per initial vacancy
 void ENDLDataContainer::setAveragePhotonsPerInitialVacancy(
-    const std::map<unsigned,unsigned>& average_particle_numbers )
+    const std::map<unsigned,double>& average_particle_numbers )
 {
   d_subshell_average_photon_numbers = average_particle_numbers;
 }
@@ -293,7 +293,7 @@ void ENDLDataContainer::setAveragePhotonEnergyPerInitialVacancy(
 
 // Set the average number of electrons per initial vacancy
 void ENDLDataContainer::setAverageElectronsPerInitialVacancy(
-    const std::map<unsigned,unsigned>& average_particle_numbers )
+    const std::map<unsigned,double>& average_particle_numbers )
 {
   d_subshell_average_electron_numbers = average_particle_numbers;
 }

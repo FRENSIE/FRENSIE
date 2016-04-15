@@ -64,9 +64,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshells )
 // Check that the number of electrons in subshells can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setSubshellOccupancy )
 {
-  std::map<unsigned,unsigned> number_of_electrons_map;
+  std::map<unsigned,double> number_of_electrons_map;
 
-  unsigned number_of_electrons = 2;
+  double number_of_electrons = 2.0;
   unsigned shell = 1;
   number_of_electrons_map[shell] = number_of_electrons;
 
@@ -218,9 +218,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setLocalDepositionPerInitialVacancy )
 // Check that the average number of photons can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setAveragePhotonsPerInitialVacancy )
 {
-  std::map<unsigned,unsigned> number_of_particles_map;
+  std::map<unsigned,double> number_of_particles_map;
 
-  unsigned number_of_particles = 2;
+  double number_of_particles = 2.0;
   unsigned shell = 1;
   number_of_particles_map[shell] = number_of_particles;
 
@@ -267,9 +267,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer, setAveragePhotonEnergyPerInitialVacancy )
 // Check that the average number of electrons can be set
 TEUCHOS_UNIT_TEST( ENDLDataContainer, setAverageElectronsPerInitialVacancy )
 {
-  std::map<unsigned,unsigned> number_of_particles_map;
+  std::map<unsigned,double> number_of_particles_map;
 
-  unsigned number_of_particles = 2;
+  double number_of_particles = 2.0;
   unsigned shell = 1;
   number_of_particles_map[shell] = number_of_particles;
 

@@ -39,7 +39,7 @@ void StandardENDLDataGenerator::populateENDLDataContainer(
   this->setAtomicNumber( data_container );
 
   // Populate the relaxation data
-  //this->populateEADLDataContainer( data_container );
+  this->populateEADLDataContainer( data_container );
 
   // Populate the photon data
   this->populateEPDLDataContainer( data_container );
@@ -57,7 +57,7 @@ void StandardENDLDataGenerator::populateEADLDataContainer(
   std::cout << std::endl << "Setting the relaxation data..." << std::endl;
   std::cout.flush();
   this->setRelaxationData( data_container );
-  std::cout << "still needs to be implemented." << std::endl;
+  std::cout << "done." << std::endl;
 }
 
 // Populate the EPDL data container
@@ -106,6 +106,7 @@ void StandardENDLDataGenerator::setRelaxationData(
     int reaction_type, electron_shell;
 
     // subshells and subshell data
+    bool convert_subshell = true;
     std::vector<unsigned> subshells;
     std::set<unsigned> endf_subshells;
 
@@ -149,10 +150,11 @@ void StandardENDLDataGenerator::setRelaxationData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::map<unsigned,unsigned> subshell_data;
+        std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         // convert subshells to a set
         for ( int i = 0; i < subshells.size(); i++ )
@@ -166,6 +168,8 @@ void StandardENDLDataGenerator::setRelaxationData(
         // set the subshell data
         data_container.setSubshellOccupancy( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 91913:
@@ -178,13 +182,16 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         testPrecondition( subshells.size() == endf_subshells.size() );
 
         // set the subshell data
-        data_container.setSubshellKineticEnergy( subshell_data );
+        data_container.setSubshellBindingEnergy( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 91914:
@@ -197,13 +204,16 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         testPrecondition( subshells.size() == endf_subshells.size() );
 
         // set the subshell data
-        data_container.setSubshellBindingEnergy( subshell_data );
+        data_container.setSubshellKineticEnergy( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 91915:
@@ -216,13 +226,16 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         testPrecondition( subshells.size() == endf_subshells.size() );
 
         // set the subshell data
         data_container.setSubshellAverageRadius( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 91921:
@@ -235,13 +248,14 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
-
-        testPrecondition( subshells.size() == endf_subshells.size() );
+            subshell_data,
+            convert_subshell );
 
         // set the subshell data
         data_container.setSubshellRadiativeLevel( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 91922:
@@ -254,17 +268,20 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
-
-        testPrecondition( subshells.size() == endf_subshells.size() );
+            subshell_data,
+            convert_subshell );
 
         // set the subshell data
         data_container.setSubshellNonRadiativeLevel( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 92931:
       {
+        // Radiative transition probability per subshell
+
         std::map<unsigned,double> indep_subshell_data, dep_subshell_data;
         eadl_file_handler->mapThreeColumnTable( 
             subshells,
@@ -272,10 +289,20 @@ void StandardENDLDataGenerator::setRelaxationData(
             dep_subshell_data,
             true );
 
+        data_container.setRadiativeTransitionProbability(
+            electron_shell,
+            indep_subshell_data );
+        data_container.setRadiativeTransitionEnergy(
+            electron_shell,
+            dep_subshell_data );
+
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       case 92932:
       {
+        // Nonradiative transition probability per subshell
         std::map<unsigned,std::vector<unsigned> > secondary_subshells;
         std::map<unsigned,std::map<unsigned,double> >
             indep_subshell_data, dep_subshell_data;
@@ -286,6 +313,15 @@ void StandardENDLDataGenerator::setRelaxationData(
             dep_subshell_data,
             true );
 
+        data_container.setNonRadiativeTransitionProbability(
+            electron_shell,
+            indep_subshell_data );
+        data_container.setNonRadiativeTransitionEnergy(
+            electron_shell,
+            dep_subshell_data );
+
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
      case 92933:
@@ -295,10 +331,11 @@ void StandardENDLDataGenerator::setRelaxationData(
         // Interpolation should always be LinLin = 0 
         testPrecondition( interpolation_flag == 0 )
 
-        std::map<unsigned,unsigned> subshell_data;
+        std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         // Average number of photons emitted per initial vacancy ( Yo == 7 )
         if ( outgoing_particle_designator == 7 )
@@ -316,6 +353,8 @@ void StandardENDLDataGenerator::setRelaxationData(
           data_container.setAverageElectronsPerInitialVacancy( subshell_data );
         }
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
      case 92934:
@@ -328,9 +367,8 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
-
-        testPrecondition( subshells.size() == endf_subshells.size() );
+            subshell_data,
+            convert_subshell );
 
         // Average energy of photons emitted per initial vacancy ( Yo == 7 )
         if ( outgoing_particle_designator == 7 )
@@ -349,6 +387,8 @@ void StandardENDLDataGenerator::setRelaxationData(
             subshell_data );
         }
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
      case 92935:
@@ -361,13 +401,16 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,double> subshell_data;
         eadl_file_handler->mapTwoColumnTable( 
             subshells,
-            subshell_data );
+            subshell_data,
+            convert_subshell );
 
         testPrecondition( subshells.size() == endf_subshells.size() );
 
         // set the subshell data
         data_container.setLocalDepositionPerInitialVacancy( subshell_data );
 
+        std::cout << ".";
+        std::cout.flush();     
         break;
       }
       default:
@@ -384,9 +427,6 @@ void StandardENDLDataGenerator::setRelaxationData(
 
     // Close the EADL file
     eadl_file_handler->closeENDLFile();
-
-    // Set the subshells
-    data_container.setSubshells( endf_subshells );
   }
   else
   {
@@ -414,7 +454,7 @@ void StandardENDLDataGenerator::setPhotonData(
   else
   {
     std::cout << "\033[1;31mWARNING:\033[0m EPDL file " + d_epdl_file_name + 
-    " does not exists. No EADL data will be generated!" << std::endl;
+    " does not exists. No EPDL data will be generated!" << std::endl;
   }
 }
 
@@ -850,7 +890,10 @@ void StandardENDLDataGenerator::setElectronData(
     eedl_file_handler->closeENDLFile();
 
     // Set the subshells
-    data_container.setSubshells( endf_subshells );
+    if ( data_container.getSubshells().empty() )
+    { 
+      data_container.setSubshells( endf_subshells );
+    }
 
   /*
     // Set the screened Rutherford cross section data
