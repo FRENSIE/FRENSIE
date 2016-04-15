@@ -824,7 +824,7 @@ void ENDLDataContainer::setPairProductionCrossSection( const std::vector<double>
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() <= 
     d_pair_production_cross_section_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( cross_section );
 
   d_pair_production_cross_section = cross_section;
 }
@@ -896,7 +896,7 @@ void ENDLDataContainer::setTripletProductionCrossSection(
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() <= 
     d_triplet_production_cross_section_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( cross_section );
 
   d_triplet_production_cross_section = cross_section;
 }

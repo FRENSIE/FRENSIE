@@ -68,7 +68,7 @@ void StandardENDLDataGenerator::populateEPDLDataContainer(
   // Set the photon data
   std::cout << std::endl << "Setting the photon data: " << std::endl;
   this->setPhotonData( data_container );
-  std::cout << "still needs to be implemented." << std::endl;
+  std::cout << "done." << std::endl;
 }
 
 // Populate the EEDL data container
@@ -109,9 +109,7 @@ void StandardENDLDataGenerator::setRelaxationData(
     bool convert_subshell = true;
     std::vector<unsigned> subshells;
     std::set<unsigned> endf_subshells;
-
-    std::vector<double> indep_var, dep_var;
-
+    unsigned endf_subshell;
 
     std::cout << " Reading EADL Data file";
     std::cout.flush();
@@ -137,6 +135,16 @@ void StandardENDLDataGenerator::setRelaxationData(
       // Read second table header and determine the reaction type
       eadl_file_handler->readSecondTableHeader( reaction_type,
                                                 electron_shell );
+
+      if ( electron_shell > 0 )
+      {
+        // Convert subshell number to endf number
+        endf_subshell = 
+          Data::convertEADLDesignatorToENDFDesignator( electron_shell );
+
+        // insert subshell to set
+        endf_subshells.insert( endf_subshell );
+      }
 
       // Read and process the data in the current table, then store in the HDF5
       // file
@@ -290,10 +298,10 @@ void StandardENDLDataGenerator::setRelaxationData(
             true );
 
         data_container.setRadiativeTransitionProbability(
-            electron_shell,
+            endf_subshell,
             indep_subshell_data );
         data_container.setRadiativeTransitionEnergy(
-            electron_shell,
+            endf_subshell,
             dep_subshell_data );
 
         std::cout << ".";
@@ -314,10 +322,10 @@ void StandardENDLDataGenerator::setRelaxationData(
             true );
 
         data_container.setNonRadiativeTransitionProbability(
-            electron_shell,
+            endf_subshell,
             indep_subshell_data );
         data_container.setNonRadiativeTransitionEnergy(
-            electron_shell,
+            endf_subshell,
             dep_subshell_data );
 
         std::cout << ".";
@@ -448,8 +456,448 @@ void StandardENDLDataGenerator::setPhotonData(
     Teuchos::RCP<Data::ENDLFileHandler> epdl_file_handler( 
       new Data::ENDLFileHandler( d_epdl_file_name ) );
 
+    // Information in first header of the EPDL file
+    int atomic_number_in_table, 
+        outgoing_particle_designator, 
+        interpolation_flag;
+    double atomic_weight;
+
+    // Information in the second header of the EPDL file
+    int reaction_type, electron_shell;
+
+    // array of all the subshells read
+    unsigned endf_subshell;
+    std::set<unsigned> endf_subshells;
+
+    std::cout << " Reading EPDL Data file";
+    std::cout.flush();
+
+    // Process every table in the EPDL file
+    while( epdl_file_handler->validFile() && !epdl_file_handler->endOfFile() )
+    {
+      // Read first table header and determine which element is being processed
+      epdl_file_handler->readFirstTableHeader( atomic_number_in_table,
+                                               outgoing_particle_designator,
+                                               atomic_weight,
+                                               interpolation_flag );
+      
+      // Check that the EPDL file is still valid (eof has not been reached)
+      if( epdl_file_handler->endOfFile() )
+      {
+	    continue;
+      }
+        
+      testPostcondition( atomic_number_in_table == 
+                         data_container.getAtomicNumber() );
+
+      // Read second table header and determine the reaction type
+      epdl_file_handler->readSecondTableHeader( reaction_type,
+                                                electron_shell );
+
+      if ( electron_shell > 0 )
+      {
+        // Convert subshell number to endf number
+        endf_subshell = 
+          Data::convertEADLDesignatorToENDFDesignator( electron_shell );
+
+        // insert subshell to set
+        endf_subshells.insert( endf_subshell );
+      }
+
+      // Read and process the data in the current table, then store in the HDF5
+      // file
+      switch( reaction_type )
+      {
+    
+      case 71000:
+      {  
+      // Read in the integrated coherent cross section data
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setCoherentCrossSectionEnergyGrid( indep_data );
+        data_container.setCoherentCrossSection( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 71010:
+      {
+        // Average energy of scattered photon from coherent scattering ignored
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setCoherentAveragePhotonIncidentEnergy( indep_data );
+        data_container.setCoherentAveragePhotonEnergy( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 72000:
+      {
+        // Read in the integrated incoherent cross section data
+      
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setIncoherentCrossSectionEnergyGrid( indep_data );
+        data_container.setIncoherentCrossSection( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 72010:
+      {
+        // Average energy of scattered particle from incoherent scattering
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        // Average energy of scattered photon from incoherent scattering ( Yo == 7 )
+        if ( outgoing_particle_designator == 7 )
+        {
+          data_container.setIncoherentAveragePhotonIncidentEnergy( indep_data );
+          data_container.setIncoherentAveragePhotonEnergy( dep_data );
+        }
+        // Average energy of scattered electron from incoherent scattering ( Yo == 9 )
+        else
+        {
+          testPrecondition( outgoing_particle_designator == 9 )
+
+          data_container.setIncoherentAverageElectronIncidentEnergy( indep_data );
+          data_container.setIncoherentAverageElectronEnergy( dep_data );
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 73000:
+      {
+        // Read in the integrated photoelectric cross section data
+      
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        // Read the total integrated photoelectric cross section
+        if( electron_shell == 0 )
+        {
+          data_container.setPhotoelectricCrossSectionEnergyGrid( indep_data );
+          data_container.setPhotoelectricCrossSection( dep_data );
+        }
+        else
+        {
+          data_container.setPhotoelectricCrossSectionEnergyGrid(
+            endf_subshell,
+            indep_data );
+          data_container.setPhotoelectricCrossSection(
+            endf_subshell,
+            dep_data );
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 73010:
+      {
+        // Average energy of secondary particle from photoelectric effect
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        if( electron_shell == 0 )
+        {
+          // Average energy of scattered photon from photoelectric effect ( Yo == 7 )
+          if ( outgoing_particle_designator == 7 )
+          {
+            data_container.setPhotoelectricAveragePhotonsIncidentEnergy(
+                indep_data );
+            data_container.setPhotoelectricAveragePhotonsEnergy( dep_data );
+          }
+          // Average energy of scattered electron from photoelectric effect ( Yo == 9 )
+          else
+          {
+            testPrecondition( outgoing_particle_designator == 9 )
+
+            data_container.setPhotoelectricAverageElectronsIncidentEnergy(
+                indep_data );
+            data_container.setPhotoelectricAverageElectronsEnergy( dep_data );
+          }
+        }
+        else
+        {
+          // Average energy of scattered photon from photoelectric effect ( Yo == 7 )
+          if ( outgoing_particle_designator == 7 )
+          {
+            data_container.setPhotoelectricAveragePhotonsIncidentEnergy(
+                endf_subshell,
+                indep_data );
+            data_container.setPhotoelectricAveragePhotonsEnergy(
+                endf_subshell,
+                dep_data );
+          }
+          // Average energy of scattered electron from photoelectric effect ( Yo == 9 )
+          else
+          {
+            testPrecondition( outgoing_particle_designator == 9 )
+
+            data_container.setPhotoelectricAverageElectronsIncidentEnergy(
+                endf_subshell,
+                indep_data );
+            data_container.setPhotoelectricAverageElectronsEnergy(
+                endf_subshell,
+                dep_data );
+          }
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 73011:
+      {
+        // Average energy to residual atom from photoelectric effect
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        if( electron_shell == 0 )
+        {
+          data_container.setPhotoelectricAverageResidualIncidentEnergy(
+            indep_data );
+          data_container.setPhotoelectricAverageResidualEnergy( dep_data );
+        }
+        else
+        {
+          data_container.setPhotoelectricAverageResidualIncidentEnergy(
+            endf_subshell,
+            indep_data );
+          data_container.setPhotoelectricAverageResidualEnergy(
+            endf_subshell,
+            dep_data );
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 74000:
+      {
+        // Read the integrated pair production cross section
+
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setPairProductionCrossSectionEnergyGrid( indep_data );
+        data_container.setPairProductionCrossSection( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 74010:
+      {
+        // Average energy of secondary particle from pair production 
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        // Average energy of secondary positron from pair production ( Yo == 8 )
+        if ( outgoing_particle_designator == 8 )
+        {
+          data_container.setPairProductionAveragePositronIncidentEnergy(
+            indep_data );
+          data_container.setPairProductionAveragePositronEnergy( dep_data );
+        }
+        // Average energy of secondary electron from pair production ( Yo == 9 )
+        else
+        {
+          testPrecondition( outgoing_particle_designator == 9 )
+
+          data_container.setPairProductionAverageElectronIncidentEnergy(
+            indep_data );
+          data_container.setPairProductionAverageElectronEnergy( dep_data );
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 75000:
+      {
+        // Read the integrated triplet production cross section
+
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setTripletProductionCrossSectionEnergyGrid( indep_data );
+        data_container.setTripletProductionCrossSection( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 75010:
+      {
+        // Average energy of secondary particle from triplet production 
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        // Average energy of secondary positron from triplet production ( Yo == 8 )
+        if ( outgoing_particle_designator == 8 )
+        {
+          data_container.setTripletProductionAveragePositronIncidentEnergy(
+            indep_data );
+          data_container.setTripletProductionAveragePositronEnergy( dep_data );
+        }
+        // Average energy of secondary electron from triplet production ( Yo == 9 )
+        else
+        {
+          testPrecondition( outgoing_particle_designator == 9 )
+
+          data_container.setTripletProductionAverageElectronIncidentEnergy(
+            indep_data );
+          data_container.setTripletProductionAverageElectronEnergy( dep_data );
+        }
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 93941:
+      {
+        // Read the atomic form factor
+
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
+
+        data_container.setCoherentFormFactorArgument( indep_data );
+        data_container.setCoherentFormFactor( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 93942:
+      {
+        // Read the scattering function
+
+        // Interpolation should always be LogLog = 5 
+        testPrecondition( interpolation_flag == 5 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
+
+        data_container.setIncoherentScatteringFunctionArgument( indep_data );
+        data_container.setIncoherentScatteringFunction( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 93943:
+      {
+        // Imaginary anomalous scattering factor
+
+        // Interpolation should always be LinLin = 2 
+        testPrecondition( interpolation_flag == 2 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( indep_data, dep_data );
+
+        data_container.setCoherentImaginaryAnomalousFactorIncidentEnergy(
+            indep_data );
+        data_container.setCoherentImaginaryAnomalousFactor( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      case 93944:
+      {
+        // Real anomalous scattering factor
+
+        // Interpolation should always be LinLin = 2 
+        testPrecondition( interpolation_flag == 2 )
+
+        std::vector<double> indep_data, dep_data;
+        epdl_file_handler->processTwoColumnTable( 
+            indep_data,
+            dep_data );
+
+        data_container.setCoherentRealAnomalousFactorIncidentEnergy(
+            indep_data );
+        data_container.setCoherentRealAnomalousFactor( dep_data );
+
+        std::cout << ".";
+        std::cout.flush();     
+        break;
+      }
+      default:
+        // Unknown reaction type found
+      {
+	  bool known_reaction_type = false;
+	  std::cout << known_reaction_type <<
+      " Fatal Error: An unknown reaction type was encountered while processing the EPDL file.";
+      std::cout.flush();
+      }
+        break;
+      }
+    }
+
     // Close the EPDL file
     epdl_file_handler->closeENDLFile();
+
+    // Set the subshells
+    if ( data_container.getSubshells().empty() )
+    { 
+      data_container.setSubshells( endf_subshells );
+    }
+
   }
   else
   {

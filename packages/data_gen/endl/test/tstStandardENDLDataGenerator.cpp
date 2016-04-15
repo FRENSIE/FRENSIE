@@ -66,41 +66,370 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
                        1.361e-5 );  
 
 //---------------------------------------------------------------------------//
+// CHECK COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getCoherentCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 362 );
+
+  std::vector<double> cross_section = data_container.getCoherentCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 9.887553000E-06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 4.626160000E-16 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> form_factor_argument = 
+    data_container.getCoherentFormFactorArgument();
+
+  TEST_EQUALITY_CONST( form_factor_argument.front(), 0.0 );
+  TEST_EQUALITY_CONST( form_factor_argument.back(), 1.0e17 );
+  TEST_EQUALITY_CONST( form_factor_argument.size(), 90 );
+
+  std::vector<double> form_factor = data_container.getCoherentFormFactor();
+
+  TEST_EQUALITY_CONST( form_factor.front(), 1.0 );
+  TEST_EQUALITY_CONST( form_factor.back(), 8.182900000E-39 );
+  TEST_EQUALITY_CONST( form_factor.size(), form_factor_argument.size() );
+
+  std::vector<double> factor_energy = 
+    data_container.getCoherentImaginaryAnomalousFactorIncidentEnergy();
+
+  TEST_EQUALITY_CONST( factor_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( factor_energy.back(), 10.0 );
+  TEST_EQUALITY_CONST( factor_energy.size(), 194 );
+
+  std::vector<double> factor =
+    data_container.getCoherentImaginaryAnomalousFactor();
+
+  TEST_EQUALITY_CONST( factor.front(), 0.0 );
+  TEST_EQUALITY_CONST( factor.back(), 6.265660000E-12 );
+  TEST_EQUALITY_CONST( factor.size(), factor_energy.size() );
+
+  factor_energy = data_container.getCoherentRealAnomalousFactorIncidentEnergy();
+
+  TEST_EQUALITY_CONST( factor_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( factor_energy.back(), 10.0 );
+  TEST_EQUALITY_CONST( factor_energy.size(), 308 );
+
+  factor = 
+    data_container.getCoherentRealAnomalousFactor();
+
+  TEST_EQUALITY_CONST( factor.front(), -9.961483000E-01 );
+  TEST_EQUALITY_CONST( factor.back(), -2.665509000E-05 );
+  TEST_EQUALITY_CONST( factor.size(), factor_energy.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getCoherentAveragePhotonIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 2 );
+
+  std::vector<double> photon_energy = 
+    data_container.getCoherentAveragePhotonEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  {
+  std::vector<double> energy_grid =
+    data_container.getIncoherentCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 111 );
+
+  std::vector<double> cross_section =
+    data_container.getIncoherentCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 9.562300000E-08 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.704200000E-05 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> scattering_function_argument = 
+    data_container.getIncoherentScatteringFunctionArgument();
+
+  TEST_EQUALITY_CONST( scattering_function_argument.front(), 0.0 );
+  TEST_EQUALITY_CONST( scattering_function_argument.back(), 1.0e17 );
+  TEST_EQUALITY_CONST( scattering_function_argument.size(), 94 );
+
+  std::vector<double> scattering_function =
+    data_container.getIncoherentScatteringFunction();
+
+  TEST_EQUALITY_CONST( scattering_function.front(), 0.0 );
+  TEST_EQUALITY_CONST( scattering_function.back(), 1.0 );
+  TEST_EQUALITY_CONST( scattering_function.size(),
+                       scattering_function_argument.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getIncoherentAveragePhotonIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 111 );
+
+  std::vector<double> photon_energy =
+    data_container.getIncoherentAveragePhotonEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 9.999973000E-07 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 9.955317000E+03 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getIncoherentAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 111 );
+
+  std::vector<double> electron_energy = 
+    data_container.getIncoherentAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 2.740270000E-12 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 9.004468000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 73 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 6.305834000E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 7.736000000E-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy();
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy();
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getPhotoelectricAveragePhotonsIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 0 );
+
+  std::vector<double> photon_energy =
+    data_container.getPhotoelectricAveragePhotonsEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid(1);
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 73 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection(1);
+
+  TEST_EQUALITY_CONST( cross_section.front(), 6.305834000E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 7.736000000E-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy(1);
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy =
+    data_container.getPhotoelectricAverageResidualEnergy(1);
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy(1);
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.361000000E-05 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy = 
+    data_container.getPhotoelectricAverageElectronsEnergy(1);
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getPairProductionCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.022000000E+00 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 83 );
+
+  std::vector<double> cross_section =
+    data_container.getPairProductionCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 9.601000000E-03 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> positron_energy_grid = 
+    data_container.getPairProductionAveragePositronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy_grid.front(),  1.022000000E+00 );
+  TEST_EQUALITY_CONST( positron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( positron_energy_grid.size(), 2 );
+
+  std::vector<double> positron_energy = 
+    data_container.getPairProductionAveragePositronEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( positron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( positron_energy.size(), positron_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPairProductionAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(),  1.022000000E+00 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy = 
+    data_container.getPairProductionAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getTripletProductionCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 77 );
+
+  std::vector<double> cross_section =
+    data_container.getTripletProductionCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.110000000E-02 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> positron_energy_grid = 
+    data_container.getTripletProductionAveragePositronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( positron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( positron_energy_grid.size(), 2 );
+
+  std::vector<double> positron_energy =
+    data_container.getTripletProductionAveragePositronEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy.front(), 5.110000000E-01 );
+  TEST_EQUALITY_CONST( positron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( positron_energy.size(), positron_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getTripletProductionAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy = 
+    data_container.getTripletProductionAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 5.110000000E-01 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+
+//---------------------------------------------------------------------------//
 // CHECK ELASTIC DATA 
 //---------------------------------------------------------------------------//
+  {
   std::vector<double> energy_grid = data_container.getElasticEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 101 );
 
-  std::vector<double> cross_section = 
+  std::vector<double> cross_section =
     data_container.getElasticTransportCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_EQUALITY_CONST( cross_section.back(), 4.33534E-10 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  cross_section = 
+  cross_section =
     data_container.getCutoffElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> residual_incident_energy = 
+  std::vector<double> residual_energy_grid = 
     data_container.getCutoffElasticResidualIncidentEnergy();
 
-  TEST_EQUALITY_CONST( residual_incident_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( residual_incident_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( residual_incident_energy.size(), 2 );
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
 
-  std::vector<double> residual_energy = 
+  std::vector<double> residual_energy =
     data_container.getCutoffElasticResidualEnergy();
 
   TEST_EQUALITY_CONST( residual_energy.front(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.back(), 0.0 );
   TEST_EQUALITY_CONST( residual_energy.size(), 
-                       residual_incident_energy.size() );
+                       residual_energy_grid.size() );
 
   std::vector<double> scattered_incident_energy = 
     data_container.getCutoffElasticScatteredElectronIncidentEnergy();
@@ -169,30 +498,32 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
   TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
 */
-
+  }
 //---------------------------------------------------------------------------//
 // CHECK ELECTROIONIZATION DATA 
 //---------------------------------------------------------------------------//
-  energy_grid = data_container.getElectroionizationCrossSectionEnergyGrid( 1u );
+  {
+  std::vector<double> energy_grid =
+    data_container.getElectroionizationCrossSectionEnergyGrid( 1u );
   TEST_EQUALITY_CONST( energy_grid.front(), 1.361e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 35 );
 
-  cross_section = 
+  std::vector<double> cross_section = 
     data_container.getElectroionizationCrossSection( 1u );
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
   TEST_EQUALITY_CONST( cross_section.back(), 8.28924e+4 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  scattered_incident_energy =  
+  std::vector<double> scattered_incident_energy =  
     data_container.getElectroionizationAverageScatteredElectronIncidentEnergy( 1u );
 
   TEST_EQUALITY_CONST( scattered_incident_energy.front(), 1.361e-5 );
   TEST_EQUALITY_CONST( scattered_incident_energy.back(), 1.0e5 );
   TEST_EQUALITY_CONST( scattered_incident_energy.size(), 6 );
 
-  scattered_energy =  
+  std::vector<double> scattered_energy =  
     data_container.getElectroionizationAverageScatteredElectronEnergy( 1u );
 
   TEST_EQUALITY_CONST( scattered_energy.front(), 0.0 );
@@ -249,36 +580,39 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( electroionization_recoil_pdf.front(), 1.61897e+5 );
   TEST_EQUALITY_CONST( electroionization_recoil_pdf.back(), 2.77550e-15 );
   TEST_EQUALITY_CONST( electroionization_recoil_pdf.size(), 147 );
-
+  }
 //---------------------------------------------------------------------------//
 // CHECK BREMSSTRAHLUNG DATA 
 //---------------------------------------------------------------------------//
-  energy_grid = data_container.getBremsstrahlungCrossSectionEnergyGrid();
+  {
+  std::vector<double> energy_grid =
+    data_container.getBremsstrahlungCrossSectionEnergyGrid();
+
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 96 );
 
-  cross_section = 
+  std::vector<double> cross_section = 
     data_container.getBremsstrahlungCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
   TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> photon_incident_energy =  
+  std::vector<double> photon_energy_grid =  
     data_container.getBremsstrahlungAveragePhotonIncidentEnergy();
 
-  TEST_EQUALITY_CONST( photon_incident_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( photon_incident_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( photon_incident_energy.size(), 82 );
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 82 );
 
-  std::vector<double> photon_energy =  
+  std::vector<double> photon_energy =
     data_container.getBremsstrahlungAveragePhotonEnergy();
 
   TEST_EQUALITY_CONST( photon_energy.front(), 2.14426e-6 );
   TEST_EQUALITY_CONST( photon_energy.back(), 2.66815e3 );
   TEST_EQUALITY_CONST( photon_energy.size(), 
-                       photon_incident_energy.size() );
+                       photon_energy_grid.size() );
 
   std::vector<double> bremsstrahlung_photon_energy_grid =  
     data_container.getBremsstrahlungPhotonEnergyGrid();
@@ -329,16 +663,18 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
   TEST_EQUALITY_CONST( electron_energy.back(), 9.73318e4 );
   TEST_EQUALITY_CONST( electron_energy.size(), 
                        electron_incident_energy.size() );
-
+  }
 //---------------------------------------------------------------------------//
 // CHECK ATOMIC EXCITAION DATA 
 //---------------------------------------------------------------------------//
-  energy_grid = data_container.getAtomicExcitationEnergyGrid();
+  {
+  std::vector<double> energy_grid =
+    data_container.getAtomicExcitationEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.361e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 170 );
 
-  cross_section = 
+  std::vector<double> cross_section = 
     data_container.getAtomicExcitationCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
@@ -355,6 +691,7 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator,
 /*
   data_container.exportData( "test_h_endl.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );*/
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -511,6 +848,485 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
     data_container.getNonRadiativeTransitionEnergy(1).find(4)->second.find(4)->second,
     2.730500000E-04 );
 
+//---------------------------------------------------------------------------//
+// CHECK COHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getCoherentCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 634 );
+
+  std::vector<double> cross_section = data_container.getCoherentCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 5.063257000E-05 );
+  TEST_EQUALITY_CONST( cross_section.back(), 7.687960000E-14 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> form_factor_argument = 
+    data_container.getCoherentFormFactorArgument();
+
+  TEST_EQUALITY_CONST( form_factor_argument.front(), 0.0 );
+  TEST_EQUALITY_CONST( form_factor_argument.back(), 1.0e17 );
+  TEST_EQUALITY_CONST( form_factor_argument.size(), 138 );
+
+  std::vector<double> form_factor = data_container.getCoherentFormFactor();
+
+  TEST_EQUALITY_CONST( form_factor.front(), 6.0 );
+  TEST_EQUALITY_CONST( form_factor.back(), 1.681000000E-29 );
+  TEST_EQUALITY_CONST( form_factor.size(), form_factor_argument.size() );
+
+  std::vector<double> factor_energy = 
+    data_container.getCoherentImaginaryAnomalousFactorIncidentEnergy();
+
+  TEST_EQUALITY_CONST( factor_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( factor_energy.back(), 10.0 );
+  TEST_EQUALITY_CONST( factor_energy.size(), 273 );
+
+  std::vector<double> factor =
+    data_container.getCoherentImaginaryAnomalousFactor();
+
+  TEST_EQUALITY_CONST( factor.front(), 0.0 );
+  TEST_EQUALITY_CONST( factor.back(), 8.131066000E-08 );
+  TEST_EQUALITY_CONST( factor.size(), factor_energy.size() );
+
+  factor_energy = data_container.getCoherentRealAnomalousFactorIncidentEnergy();
+
+  TEST_EQUALITY_CONST( factor_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( factor_energy.back(), 10.0 );
+  TEST_EQUALITY_CONST( factor_energy.size(), 340 );
+
+  factor = 
+    data_container.getCoherentRealAnomalousFactor();
+
+  TEST_EQUALITY_CONST( factor.front(), -5.991287000E+00 );
+  TEST_EQUALITY_CONST( factor.back(), -2.077819000E-03 );
+  TEST_EQUALITY_CONST( factor.size(), factor_energy.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getCoherentAveragePhotonIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 2 );
+
+  std::vector<double> photon_energy = 
+    data_container.getCoherentAveragePhotonEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET INCOHERENT PHOTON DATA
+//---------------------------------------------------------------------------//
+
+  {
+  std::vector<double> energy_grid =
+    data_container.getIncoherentCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 111 );
+
+  std::vector<double> cross_section =
+    data_container.getIncoherentCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 2.821900000E-07 );
+  TEST_EQUALITY_CONST( cross_section.back(), 1.023000000E-04 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> scattering_function_argument = 
+    data_container.getIncoherentScatteringFunctionArgument();
+
+  TEST_EQUALITY_CONST( scattering_function_argument.front(), 0.0 );
+  TEST_EQUALITY_CONST( scattering_function_argument.back(), 1.0e17 );
+  TEST_EQUALITY_CONST( scattering_function_argument.size(), 142 );
+
+  std::vector<double> scattering_function =
+    data_container.getIncoherentScatteringFunction();
+
+  TEST_EQUALITY_CONST( scattering_function.front(), 0.0 );
+  TEST_EQUALITY_CONST( scattering_function.back(), 6.0 );
+  TEST_EQUALITY_CONST( scattering_function.size(),
+                       scattering_function_argument.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getIncoherentAveragePhotonIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 111 );
+
+  std::vector<double> photon_energy =
+    data_container.getIncoherentAveragePhotonEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 9.999973000E-07 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 9.955317000E+03 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getIncoherentAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.0e-6 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 111 );
+
+  std::vector<double> electron_energy = 
+    data_container.getIncoherentAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 2.740270000E-12 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 9.004468000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 355 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 8.801018000E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 9.055050000E-11 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy();
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 25 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy();
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 2.798494000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getPhotoelectricAveragePhotonsIncidentEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 9 );
+
+  std::vector<double> photon_energy =
+    data_container.getPhotoelectricAveragePhotonsEnergy();
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 4.504140000E-07 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 16 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PHOTOELECTRIC PHOTON DATA BY SUBSHELL
+//---------------------------------------------------------------------------//
+  //subshell 1
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid(1);
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 2.910100000E-04 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 78 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection(1);
+
+  TEST_EQUALITY_CONST( cross_section.front(), 9.589120000E+05 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.597400000E-11 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy(1);
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 2.910100000E-04 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy(1);
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 2.854000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 2.854000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> photon_energy_grid = 
+    data_container.getPhotoelectricAveragePhotonsIncidentEnergy(1);
+
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 2.910100000E-04 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 2 );
+
+  std::vector<double> photon_energy =
+    data_container.getPhotoelectricAveragePhotonsEnergy(1);
+
+  TEST_EQUALITY_CONST( photon_energy.front(), 4.743900000E-07 );
+  TEST_EQUALITY_CONST( photon_energy.back(), 4.743900000E-07 );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy(1);
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 2.910100000E-04 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy(1);
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 2.619956000E-04 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+  // subshell 2
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid(2);
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.756000000E-05 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 109 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection(2);
+
+  TEST_EQUALITY_CONST( cross_section.front(), 8.760920000E+05 );
+  TEST_EQUALITY_CONST( cross_section.back(), 4.575200000E-12 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy(2);
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 1.756000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy(2);
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 1.756000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 1.756000000E-05 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy(2);
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 1.756000000E-05 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy(2);
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+  //subshell 3
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid(3);
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 8.990000000E-06 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 115 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection(3);
+
+  TEST_EQUALITY_CONST( cross_section.front(), 4.393500000E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 3.875700000E-16 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy(3);
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 8.990000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy(3);
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 8.990000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 8.990000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy(3);
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 8.990000000E-06 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy(3);
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+  //subshell 4
+  {
+  std::vector<double> energy_grid =
+    data_container.getPhotoelectricCrossSectionEnergyGrid(4);
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 113 );
+
+  std::vector<double> cross_section =
+    data_container.getPhotoelectricCrossSection(4);
+
+  TEST_EQUALITY_CONST( cross_section.front(), 8.801018000E+06 );
+  TEST_EQUALITY_CONST( cross_section.back(), 8.933100000E-16 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> residual_energy_grid = 
+    data_container.getPhotoelectricAverageResidualIncidentEnergy(4);
+
+  TEST_EQUALITY_CONST( residual_energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( residual_energy_grid.size(), 2 );
+
+  std::vector<double> residual_energy = 
+    data_container.getPhotoelectricAverageResidualEnergy(4);
+
+  TEST_EQUALITY_CONST( residual_energy.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy.back(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( residual_energy.size(), residual_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPhotoelectricAverageElectronsIncidentEnergy(4);
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 8.980000000E-06 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy =
+    data_container.getPhotoelectricAverageElectronsEnergy(4);
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET PAIR PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getPairProductionCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 1.022000000E+00 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 94 );
+
+  std::vector<double> cross_section =
+    data_container.getPairProductionCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 3.002000000E-01 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> positron_energy_grid = 
+    data_container.getPairProductionAveragePositronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy_grid.front(),  1.022000000E+00 );
+  TEST_EQUALITY_CONST( positron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( positron_energy_grid.size(), 2 );
+
+  std::vector<double> positron_energy = 
+    data_container.getPairProductionAveragePositronEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( positron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( positron_energy.size(), positron_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getPairProductionAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(),  1.022000000E+00 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy = 
+    data_container.getPairProductionAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 0.0 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
+//---------------------------------------------------------------------------//
+// SET TRIPLET PRODUCTION PHOTON DATA
+//---------------------------------------------------------------------------//
+  {
+  std::vector<double> energy_grid =
+    data_container.getTripletProductionCrossSectionEnergyGrid();
+
+  TEST_EQUALITY_CONST( energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 83 );
+
+  std::vector<double> cross_section =
+    data_container.getTripletProductionCrossSection();
+
+  TEST_EQUALITY_CONST( cross_section.front(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.back(), 5.873000000E-02 );
+  TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
+
+  std::vector<double> positron_energy_grid = 
+    data_container.getTripletProductionAveragePositronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( positron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( positron_energy_grid.size(), 2 );
+
+  std::vector<double> positron_energy =
+    data_container.getTripletProductionAveragePositronEnergy();
+
+  TEST_EQUALITY_CONST( positron_energy.front(), 5.110000000E-01 );
+  TEST_EQUALITY_CONST( positron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( positron_energy.size(), positron_energy_grid.size() );
+
+  std::vector<double> electron_energy_grid = 
+    data_container.getTripletProductionAverageElectronIncidentEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy_grid.front(), 2.044000000E+00 );
+  TEST_EQUALITY_CONST( electron_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( electron_energy_grid.size(), 2 );
+
+  std::vector<double> electron_energy = 
+    data_container.getTripletProductionAverageElectronEnergy();
+
+  TEST_EQUALITY_CONST( electron_energy.front(), 5.110000000E-01 );
+  TEST_EQUALITY_CONST( electron_energy.back(), 4.999949000E+04 );
+  TEST_EQUALITY_CONST( electron_energy.size(), electron_energy_grid.size() );
+  }
 //---------------------------------------------------------------------------//
 // CHECK ELASTIC DATA 
 //---------------------------------------------------------------------------//
@@ -792,19 +1608,19 @@ TEUCHOS_UNIT_TEST( StandardENDLDataGenerator, populateENDLDataContainer_c )
   TEST_EQUALITY_CONST( cross_section.back(), 1.69715e1 );
   TEST_EQUALITY_CONST( cross_section.size(), energy_grid.size() );
 
-  std::vector<double> photon_incident_energy =  
+  std::vector<double> photon_energy_grid =  
     data_container.getBremsstrahlungAveragePhotonIncidentEnergy();
 
-  TEST_EQUALITY_CONST( photon_incident_energy.front(), 1.0e-5 );
-  TEST_EQUALITY_CONST( photon_incident_energy.back(), 1.0e5 );
-  TEST_EQUALITY_CONST( photon_incident_energy.size(), 75 );
+  TEST_EQUALITY_CONST( photon_energy_grid.front(), 1.0e-5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.back(), 1.0e5 );
+  TEST_EQUALITY_CONST( photon_energy_grid.size(), 75 );
 
   std::vector<double> photon_energy =  
     data_container.getBremsstrahlungAveragePhotonEnergy();
 
   TEST_EQUALITY_CONST( photon_energy.front(), 2.15038e-6 );
   TEST_EQUALITY_CONST( photon_energy.back(), 2.71203e3 );
-  TEST_EQUALITY_CONST( photon_energy.size(), photon_incident_energy.size() );
+  TEST_EQUALITY_CONST( photon_energy.size(), photon_energy_grid.size() );
 
   std::vector<double> bremsstrahlung_photon_energy_grid =  
     data_container.getBremsstrahlungPhotonEnergyGrid();
