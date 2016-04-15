@@ -21,6 +21,10 @@ void initFrensiePrng()
 }
 %}
 
+%include <typemaps.i>
+
+%apply unsigned& INOUT { unsigned& trials };
+
 %ignore Utility::UnitAwareOneDDistribution<void,void>::IndepUnit;
 %ignore Utility::UnitAwareOneDDistribution<void,void>::DepUnit;
 %ignore Utility::UnitAwareOneDDistribution<void,void>::IndepQuantity;
@@ -79,7 +83,7 @@ void initFrensiePrng()
 %ignore Utility::UnitAwareUniformDistribution<void,void>::toStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::fromStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, usigned& );
+%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, unsigned& );
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, double );
 %import "Utility_UniformDistribution.hpp"
 
@@ -102,6 +106,11 @@ void initFrensiePrng()
 %extend Utility::UnitAwareUniformDistribution<void,void> {
 %template(UniformDistribution) Utility::UnitAwareUniformDistribution::UnitAwareUniformDistribution<double,double>;
 };
+
+%typemap(default) const double& dependent_value {
+  double default_dependent_value = 1.0;
+  $1 = &default_dependent_value;
+}
 
 %template(UniformDistribution) Utility::UnitAwareUniformDistribution<void,void>;
 
