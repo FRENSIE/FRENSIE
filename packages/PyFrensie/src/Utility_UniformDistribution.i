@@ -9,6 +9,16 @@
 
 %{
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+%}
+
+%inline %{
+//! Initialize the random number generator
+void initFrensiePrng()
+{
+  // Initilize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+}
 %}
 
 %ignore Utility::UnitAwareOneDDistribution<void,void>::IndepUnit;
@@ -69,6 +79,8 @@
 %ignore Utility::UnitAwareUniformDistribution<void,void>::toStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::fromStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, usigned& );
+%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, double );
 %import "Utility_UniformDistribution.hpp"
 
 %typemap(in) Utility::UnitAwareUniformDistribution<void,void>::IndepQuantity {

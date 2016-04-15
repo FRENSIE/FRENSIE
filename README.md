@@ -64,7 +64,7 @@ are described.
 7. run `make -j n`
 8. run `make test`
 9. run `make install`
-10. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:$PATH`
+10. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
 
 ### Building HDF5
@@ -81,8 +81,9 @@ are described.
 11. run `make -j n`
 12. run `make test`
 13. run `make install`
-14. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:$PATH`
-15. run `exec bash`
+14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/hdf5/bin:$PATH`
+15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/hdf5/lib:$LD_LIBRARY_PATH`
+16. run `exec bash`
 
 ### Building Open MPI - Optional
 1. download the [Open MPI 1.8.2 source](http://www.open-mpi.org/software/ompi/v1.8/)
@@ -96,7 +97,7 @@ are described.
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
-12. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:$PATH`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:$PATH`
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
@@ -105,8 +106,8 @@ are described.
 2. The binary files will be be available for download once a license has been acquired
 3. move the Cubit-14.0-Lin64.tar.gz file to the cubit14.0 directory (e.g. software/cubit14.0)
 4. run `tar -xvf Cubit-14.0-Lin64.tar.gz`
-5. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:$PATH`
-6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:$LD_LIBRARY_PATH`
+5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cubit14.0:$PATH`
+6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/cubit14.0/bin:$LD_LIBRARY_PATH`
 7. run `exec bash`
 
 ### Building CGM - Only with Cubit
@@ -117,10 +118,11 @@ are described.
 5. run `ln -s cgma-14.1pre src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/cgm/build)
-8. run `../src/configure --enable-optimize --disable-debug --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
+8. run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
+12. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/cgm/lib:$LD_LIBRARY_PATH`
 
 ### Building MOAB 
 1. download the [MOAB 4.6.3 source](http://ftp.mcs.anl.gov/pub/fathom/moab-4.6.3.tar.gz)
@@ -131,13 +133,14 @@ are described.
 6. run `mkdir build`
 7. move to the build directory (e.g. software/moab/build)
 8. if DagMC is desired (Cubit 14.0 and CGM must be built): 
-   * run `../src/configure --enable-optimize --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-   * else run `../src/configure --enable-optimize --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+   * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+   * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
-12. update the `export PATH` line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:$PATH`
-13. run `exec bash`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/moab/bin:$PATH`
+13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
+14. run `exec bash`
 
 ### Building Trilinos 
 1. download the [Trilinos 11.12.1 source](http://trilinos.org/download/)
@@ -153,7 +156,7 @@ are described.
 11. run `make -j n`
 12. run `make test`
 13. run `make install`
-14. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:$LD_LIBRARY_PATH`
+14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/trilinos/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
 
 Note: If your system does not have LAPACK installed Trilinos will give you
@@ -173,7 +176,7 @@ or you can build if from source using the following instructions:
 11. run `make -j n`
 12. run `make test`
 13. run `make install`
-14. update the `export LD_LIBRARY_PATH` line in the .bashrc file: ``export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:$LD_LIBRARY_PATH`
+14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/lapack/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
 
 ### Building Boost
@@ -183,9 +186,9 @@ or you can build if from source using the following instructions:
 4. run `tar -xvf boost_1_56_0.tar.gz`
 5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
 6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
-7. run `./b2`
+7. run `./b2  --prefix="/home/alexr/Software/boost/" -s NO_BZIP2=1 link=shared runtime-link=shared`
 8. run `./b2 install`
-9. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
+9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
 ### Building ROOT - Optional
@@ -193,8 +196,8 @@ or you can build if from source using the following instructions:
 2. move the binary file to the root directory (e.g. software/root)
 3. move to the root directory
 4. run 'tar -xvf root_v6.04.02*'
-5. update the 'export PATH' line in the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:absolute-path-to_software/cubit14.0:absolute-path-to_software/moab/bin:absolute-path-to_software/doxygen/bin:absolute-path-to_software/root/bin:$PATH`
-6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:absolute-path-to_software/lapack/lib:absolute-path-to_software/trilinos/lib:absolute-path-to_software/boost/lib:absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
+5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
+6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
@@ -206,7 +209,8 @@ At this point all of the dependent software libraries should have been built. If
 5. change the variables in the script to reflect the desired system paths
 6. run `./frensie.sh` to configure FRENSIE
 7. run `make -j n`
-8. run `make test`
+8. run `make test-fast`
+9. run `make test-facemc` - WARNING: these tests can be slow!
 9. run `make manual`
 10. run `make install`
 
