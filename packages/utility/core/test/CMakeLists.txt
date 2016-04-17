@@ -157,12 +157,6 @@ ADD_EXECUTABLE(tstTetrahedronHelpers
 TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
 ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)
 
-ADD_EXECUTABLE(tstHexahedronHelpers
-  tstHexahedronHelpers.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstHexahedronHelpers utility_core)
-ADD_TEST(HexahedronHelpers_test tstHexahedronHelpers)
-
 ADD_EXECUTABLE(tstStandardHashBasedGridSearcher 
   tstStandardHashBasedGridSearcher.cpp)
 TARGET_LINK_LIBRARIES(tstStandardHashBasedGridSearcher utility_core)
@@ -177,8 +171,6 @@ ADD_EXECUTABLE(tstMeasurement
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstMeasurement utility_core)
 ADD_TEST(Measurement_test tstMeasurement)
-<<<<<<< HEAD
-=======
 
 ADD_EXECUTABLE(tstActiveCounter
   tstActiveCounter.cpp
@@ -197,4 +189,4 @@ ADD_EXECUTABLE(tstIncrementPolicy
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstIncrementPolicy utility_core)
 ADD_TEST(IncrementPolicy_test tstIncrementPolicy)
->>>>>>> ffb38813fcb3b32f702aabb519484f2576c3b3a3
+

@@ -37,7 +37,7 @@ double calculateHexahedronVolume( const double x_plane_set[2],
 void findPlanarSets( double x_plane_set[2],
                      double y_plane_set[2],
                      double z_plane_set[2],
-                     const Teuchos::TwoDArray<double>& vertex_set(8,3))
+                     const Teuchos::TwoDArray<double>& vertex_set)
 {
         x_plane_set[0] = vertex_set[0][0];
         x_plane_set[1] = vertex_set[2][0];
