@@ -10,7 +10,11 @@
 %{
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "PyFrensie_Utility.hpp"
 %}
+
+%import "PyFrensie_Utility.hpp"
+%include "std_string.i"
 
 %inline %{
 //! Initialize the random number generator
@@ -50,6 +54,8 @@ void initFrensiePrng()
 }
 
 %template(OneDDistribution) Utility::UnitAwareOneDDistribution<void,void>;
+
+%apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
 %ignore Utility::UnitAwareTabularOneDDistribution<void,void>::IndepQuantity;
 %ignore Utility::UnitAwareTabularOneDDistribution<void,void>::InverseIndepQuantity;
@@ -103,8 +109,22 @@ void initFrensiePrng()
   $result = PyFloat_FromDouble($1);
 }
 
-%extend Utility::UnitAwareUniformDistribution<void,void> {
-%template(UniformDistribution) Utility::UnitAwareUniformDistribution::UnitAwareUniformDistribution<double,double>;
+%extend Utility::UnitAwareUniformDistribution<void,void> 
+{
+  // Instantiate the desired version of the template constructor
+  %template(UniformDistribution) Utility::UnitAwareUniformDistribution::UnitAwareUniformDistribution<double,double>;
+
+  // Add a method for exporting to a Python parameter list
+  void toParameterList( const std::string& name,
+                        PyObject* python_parameter_list )
+  {
+    
+    // Check that the python object is a parameter list
+    if( !PyFrensie::addToParameterList( name, *$self, python_parameter_list ) )
+    {
+      PyErr_SetString(PyExc_TypeError, "The PyObject is not a Teuchos::RCP<Teuchos::ParameterList>" );
+    }
+  }
 };
 
 %typemap(default) const double& dependent_value {
