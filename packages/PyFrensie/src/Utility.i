@@ -49,8 +49,21 @@ Utility: ...
   }
 }
 
+%{
+#include "Utility_RandomNumberGenerator.hpp"
+%}
+
+%inline %{
+//! Initialize the random number generator
+void initFrensiePrng()
+{
+  // Initilize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+}
+%}
+
 // Distribution support
-%include "Utility_UniformDistribution.i"
+%include "Utility_OneDDistribution.i"
 
 // Turn off the exception handling
 %exception;
