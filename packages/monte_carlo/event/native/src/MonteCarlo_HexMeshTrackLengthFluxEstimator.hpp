@@ -54,20 +54,21 @@ public:
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
   EventTags;
 
-  //! Constructor
+  //! Constructor - implement later
   HexMeshTrackLengthFluxEstimator(
 		     const Estimator::idType id,
 		     const double multiplier,
 		     const std::string input_mesh_file_name,
-		     const std::string output_mesh_file_name = "hexmesh.h5m" );
+		     const std::string output_mesh_file_name = "hexmesh.h5m"
+                     ); 
 
-  //! Constructor
+  //! Constructor - implement now
   HexMeshTrackLengthFluxEstimator(
 		     const Estimator::idType id,
 		     const double multiplier,
-		     const Teuchos::Array<double> x_grid_points,
-                     const Teuchos::Array<double> y_grid_points,
-                     const Teuchos::Array<double> z_grid_points,
+		     const Teuchos::Array<double>& x_grid_points,
+                     const Teuchos::Array<double>& y_grid_points,
+                     const Teuchos::Array<double>& z_grid_points,
 		     const std::string output_mesh_file_name = "hexmesh.h5m" );
 
   //! Destructor
@@ -92,7 +93,7 @@ public:
 		   const bool process_data ) const;
 
   //! Print the estimator data
-  void print( std::ostream& os ) const;
+  void printSummary( std::ostream& os ) const;
 
   //! Get all hex elements
   const moab::Range getAllHexElements() const;
@@ -118,18 +119,9 @@ private:
   // The hex meshset
   moab::EntityHandle d_hex_meshset;
 
-  // The kd-tree for finding point in hex - do not need KD tree for this
-//  Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
-  
-  // The root of the kd-tree
-//  moab::EntityHandle d_kd_tree_root;
-
-  // The map of hex ids and barycentric coordinate transform matrices
-  boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
-
   // The map of hex ids and reference vertices
   boost::unordered_map<moab::EntityHandle, moab::CartVect>
-  d_hex_reference_vertices;
+  //d_hex_reference_vertices;
   
   // The output mesh file name
   std::string d_output_mesh_name;

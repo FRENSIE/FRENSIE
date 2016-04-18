@@ -14,7 +14,6 @@
 
 
 // FRENSIE Includes
-#include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_HexahedronHelpers.hpp"
@@ -41,7 +40,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
     d_hex_meshset(),
     d_output_mesh_name( output_mesh_file_name )
 {
-        int N=10; int dim = 3;
+/*        int N=10; int dim = 3;
 
         Interface *mb = new Core();
         ScdInterface *scdiface;
@@ -74,9 +73,112 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
         if (MB_SUCCESS != rval) return rval;
       }
     }
-  }
-  
-} // end MonteCarlo namespace
+  }*/
+}
+template<typename ContributionMultiplierPolicy>
+HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengthFluxEstimator(
+		     const Estimator::idType id,
+		     const double multiplier,
+		     const Teuchos::Array<double>& x_grid_points,
+                     const Teuchos::Array<double>& y_grid_points,
+                     const Teuchos::Array<double>& z_grid_points,
+		     const std::string output_mesh_file_name
+                     : d_moab_interface( new moab::Core ) )
+
+{
+//Test for 2 dimension grid points - input logical statement into precondition. Will tell coder what precondition failed when being used
+        testPrecondition(x_grid_points.size()>=2);
+        testPrecondition(y_grid_points.size()>=2);
+        testPrecondition(z_grid_points.size()>=2);
+        //check filename size > 0 (valid output name)
+        testPrecondition(output_mesh_file_name.size()>0);
+
+        Teuchos::Array<double> coordinates;
+        
+        //form coordinate array in MOAB readable format
+        for(Teuchos::Array<double>::iterator i = x_grid_points.begin(); i!= x_grid_points.end(); i++) {
+               for(Teuchos::Array<double>::iterator j = y_grid_points.begin(); j!= y_grid_points.end(); j++) {
+                      for(Teuchos::Array<double>::iterator k = z_grid_points.begin(); k!= z_grid_points.end(); k++) {
+        
+                              coordinates.push_back(*i);
+                              coordinates.push_back(*j);
+                              coordinates.push_back(*k);
+                        }
+                }
+        }
+
+        d_moab_interface->create_vertices(&coordinates[0],
+                                          coordinates.size()/3,
+                                          vertices );
+        TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[return_value]) ;
+
+                
+
+}
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setParticleTypes( 
+                const Teuchos::Array<ParticleType>& particle_types )
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunction(
+                Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions)
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGlobalParticleSubtrackEndingEvent(
+                const particleState& particle,
+                const double start_point[3],
+                const double end_point[3])
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+bool HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh( 
+						        const double point[3] )
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+moab::EntityHandle HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichHexIsPointIn(
+	                                                const double point[3] )
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+const moab::Range HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getAllHexElements() const
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
+                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
+                    const bool process_data ) const
+
+} 
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary( 
+						       std::ostream& os ) const
+{
+
+}
+
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+// end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp
