@@ -29,12 +29,16 @@ void initFrensiePrng()
 
 %apply unsigned& INOUT { unsigned& trials };
 
-%ignore Utility::UnitAwareOneDDistribution<void,void>::IndepUnit;
-%ignore Utility::UnitAwareOneDDistribution<void,void>::DepUnit;
-%ignore Utility::UnitAwareOneDDistribution<void,void>::IndepQuantity;
-%ignore Utility::UnitAwareOneDDistribution<void,void>::InverseIndepQuantity;
-%ignore Utility::UnitAwareOneDDistribution<void,void>::DepQuantity;
-%ignore Utility::UnitAwareOneDDistribution<void,void>::getDistributionType;
+// General ingore directives
+%ignore *::IndepUnit;
+%ignore *::DepUnit;
+%ignore *::ThisType;
+%ignore *::IndepQuantity;
+%ignore *::InverseIndepQuantity;
+%ignore *::DepQuantity;
+%ignore *::getDistributionType;
+%ignore *::operator=;
+
 %import "Utility_OneDDistribution.hpp"
 
 %typemap(in) Utility::UnitAwareOneDDistribution<void,void>::IndepQuantity {
@@ -57,9 +61,6 @@ void initFrensiePrng()
 
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
-%ignore Utility::UnitAwareTabularOneDDistribution<void,void>::IndepQuantity;
-%ignore Utility::UnitAwareTabularOneDDistribution<void,void>::InverseIndepQuantity;
-%ignore Utility::UnitAwareTabularOneDDistribution<void,void>::DepQuantity;
 %import "Utility_TabularOneDDistribution.hpp"
 
 %typemap(in) Utility::UnitAwareTabularOneDDistribution<void,void>::IndepQuantity {
@@ -80,17 +81,12 @@ void initFrensiePrng()
 
 %template(TabularOneDDistribution) Utility::UnitAwareTabularOneDDistribution<void,void>;
 
-%ignore Utility::UnitAwareUniformDistribution<void,void>::ThisType;
-%ignore Utility::UnitAwareUniformDistribution<void,void>::IndepQuantity;
-%ignore Utility::UnitAwareUniformDistribution<void,void>::InverseIndepQuantity;
-%ignore Utility::UnitAwareUniformDistribution<void,void>::getDistributionType;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::fromUnitlessDistribution;
-%ignore Utility::UnitAwareUniformDistribution<void,void>::DepQuantity;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::toStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::fromStream;
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity );
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, unsigned& );
-%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, double );
+%ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, const double );
 %import "Utility_UniformDistribution.hpp"
 
 %typemap(in) Utility::UnitAwareUniformDistribution<void,void>::IndepQuantity {
@@ -116,14 +112,62 @@ void initFrensiePrng()
 
   // Add a method for exporting to a Python parameter list
   void toParameterList( const std::string& name,
-                        PyObject* python_parameter_list )
+                        PyObject* python_parameter_list ) const
   {
-    
     // Check that the python object is a parameter list
-    if( !PyFrensie::addToParameterList( name, *$self, python_parameter_list ) )
+    if( !PyFrensie::addDistToParameterList( name, *$self, python_parameter_list ) )
     {
-      PyErr_SetString(PyExc_TypeError, "The PyObject is not a Teuchos::RCP<Teuchos::ParameterList>" );
+      PyErr_SetString(PyExc_TypeError, "The PyObject is not a PyTrilinos.Teuchos.ParameterList (a.k.a Teuchos::RCP<Teuchos::ParameterList>)." );
     }
+  }
+
+  // Add a method for importing from a Python parameter list
+  void fromParameterList( const std::string& name,
+                          PyObject* python_parameter_list )
+  {
+    PyFrensie::getDistFromParameterList( name, python_parameter_list, *$self );
+  }
+  
+  // String representation method
+  PyObject* __repr__() const
+  {
+    std::string repr_string( "UniformDistribution(" );
+
+    std::ostringstream oss;
+
+    $self->toStream( oss );
+
+    repr_string += oss.str() + ")";
+
+    return PyString_FromString( repr_string.c_str() );
+  }
+
+  // String conversion method
+  PyObject* __str__() const
+  {
+    std::ostringstream oss;
+
+    $self->toStream( oss );
+
+    return PyString_FromString( oss.str().c_str() );
+  }
+
+  // Equality operator
+  PyObject* __eq__( const UniformDistribution& other_dist ) const
+  {
+    if( $self->isEqual( other_dist ) )
+      Py_RETURN_TRUE;
+    else
+      Py_RETURN_FALSE;
+  }
+
+  // Inequality operator
+  PyObject* __ne__( const UniformDistribution& other_dist ) const
+  {
+    if( !$self->isEqual( other_dist ) )
+      Py_RETURN_TRUE;
+    else
+      Py_RETURN_FALSE;
   }
 };
 

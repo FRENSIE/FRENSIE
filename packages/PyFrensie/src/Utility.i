@@ -17,10 +17,43 @@ Utility: ...
         autodoc    = "1",
         docstring  = %utility_docstring) Utility
 
+// Standard exception handling
+%include "exception.i"
+
+// Global swig features
+%feature("autodoc", "1");
+
+// C++ STL support
+%include "stl.i"
+%include "std_except.i"
+
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( Utility::InvalidDistributionStringRepresentation& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
+
 // Distribution support
 %include "Utility_UniformDistribution.i"
 
-
+// Turn off the exception handling
+%exception;
 
 //---------------------------------------------------------------------------//
 // end Utility.i
