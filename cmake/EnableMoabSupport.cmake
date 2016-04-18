@@ -4,13 +4,18 @@
 MACRO(ENABLE_MOAB_SUPPORT)
 
   # Add the user supplied Moab prefix to help find Moab
-  SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+  IF(DEFINED MOAB_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+  ELSE()
+    MESSAGE(FATAL_ERROR "The MOAB_PREFIX must be set currently.")
+  ENDIF()
 
-  # Find the Moab package available on this system
+  # Find the Moab package available on this system (version checking is
+  # not currently supported)
   FIND_PACKAGE(MOAB REQUIRED)
 
   # Use the user supplied prefix to find the Moab libraries and include dirs.
-  # SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
+  SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
   SET(MOAB_LIBRARY_DIRS ${MOAB_PREFIX}/lib)
   FIND_LIBRARY(MOAB MOAB ${MOAB_LIBRARY_DIRS})
   
@@ -66,7 +71,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
     SET(MOAB ${DAGMC} ${MOAB})
 
-    SET(HAVE_${PROJECT_NAME}_DAGMC "1")
+    SET(HAVE_FRENSE_DAGMC "1")
   ENDIF()
   
   # Set the include paths for Moab

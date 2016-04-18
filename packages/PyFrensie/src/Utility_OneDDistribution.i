@@ -10,14 +10,32 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
-// Include the distribution helper
-%include "Utility_DistributionHelper.i"
+// Include std::string support
+%include <std_string.i>
 
 // Include typemaps support
 %include <typemaps.i>
+
+// Include Teuchos::Array support
+#define TEUCHOSCORE_LIB_DLL_EXPORT
+%include <Teuchos_Array.i>
+#undef TEUCHOSCORE_LIB_DLL_EXPORT
+
+// Add typemaps from Teuchos::Array to Teuchos::ArrayView
+// %define %teuchos_array_to_arrayview_maps(TYPE)
+
+// %typemap(in) Teuchos::Array<const TYPE>& (Teuchos::ArrayView<const Type> tmp_view )
+// {
+//   tmp_view = $
+// }  
+// %enddef 
+
+// Include the distribution helper
+%include "Utility_DistributionHelper.i"
 
 // Add a few general typemaps
 %apply unsigned& INOUT { unsigned& trials };
@@ -42,25 +60,8 @@
 // Import the OneDDistribution
 %import "Utility_OneDDistribution.hpp"
 
-// Add a few UnitAwareOneDDistribution typemaps
-%typemap(in) Utility::UnitAwareOneDDistribution<void,void>::IndepQuantity {
-  $1 = PyFloat_AsDouble($input);
-}
-
-%typemap(out) Utility::UnitAwareOneDDistribution<void,void>::IndepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAwareOneDDistribution<void,void>::DepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAwareOneDDistribution<void,void>::InverseIndepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-// Instantiate a UnitAwareOneDDistribution
-%template(OneDDistribution) Utility::UnitAwareOneDDistribution<void,void>;
+// Basic distribution interface setup
+%basic_distribution_interface_setup( OneDDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the TabularOneDDistribution
@@ -68,30 +69,13 @@
 // Import the TabularOneDDistribution
 %import "Utility_TabularOneDDistribution.hpp"
 
-// Add a few UnitAwareTabularOneDDistribution typemaps
-%typemap(in) Utility::UnitAwareTabularOneDDistribution<void,void>::IndepQuantity {
-  $1 = PyFloat_AsDouble($input);
-}
-
-%typemap(out) Utility::UnitAwareTabularOneDDistribution<void,void>::IndepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAwareTabularOneDDistribution<void,void>::DepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAwareTabularOneDDistribution<void,void>::InverseIndepQuantity {
-  $result = PyFloat_FromDouble($1);
-}
-
-// Instantiate a UnitAwareTabularOneDDistribution
-%template(TabularOneDDistribution) Utility::UnitAwareTabularOneDDistribution<void,void>;
+// Basic tabular distribution interface setup
+%basic_tab_distribution_interface_setup( TabularOneDDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the DiscreteDistribution
 //---------------------------------------------------------------------------//
-// Import the DiscreteDistribution
+// Import the DeltaDistribution
 %import "Utility_DeltaDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
@@ -112,6 +96,23 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 
 // Standard tabular distribution interface setup
 %tab_distribution_interface_setup( DeltaDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the DiscreteDistribution
+//---------------------------------------------------------------------------//
+// Import the DiscreteDistribution
+%import "Utility_DiscreteDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") 
+Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
+"If the dependent values can also represent the CDF. By default the 
+dependent values will not be treated as a CDF. Pass in 'True' as the
+3rd argument to force the distribution to treat the dependent values as CDF
+values."
+
+// Standard tabular distribution interface setup
+%tab_distribution_interface_setup( DiscreteDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution

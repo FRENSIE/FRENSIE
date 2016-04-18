@@ -1,4 +1,4 @@
-Installation {#installation}
+ fdwqInstallation {#installation}
 =====
 
 ## Dependencies 
@@ -14,20 +14,38 @@ depends on is listed below.
 6. [Trilinos 11.12.1](http://trilinos.org/)
 7. [Boost 1.56.0](http://www.boost.org/)
 8. [ROOT 6.04/02](https://root.cern.ch/content/release-60402) - optional
+9. [Python 2.7](https://www.python.org/) - optional
+10. [Numpy 1.8](http://www.numpy.org/) - optional
+11. [H5Py 2.4](http://www.h5py.org/) - optional
 
 Note that OpenMPI is only required if you plan on running FRENSIE on a
 distributed memory system. Cubit is only required if you plan on using CAD
 geometries for particle simulations. If Cubit is used, CGM must also be
 built. If you do not plan on doing particle simulations both ROOT and Cubit
-can be neglected. Building FRENSIE without these packages will result in faster
-build times which can be useful for certain development tasks.
+can be neglected. If the FRENSIE python interfaces will be used the Python,
+Numpy and H5Py packages will also be required. Building FRENSIE without these 
+packages will result in faster build times which can be useful for certain 
+development tasks.
 
-FRENSIE also requires a GNU compiler (4.7.3 or greater) and CMake (3.0.1 or greater) to build correctly. If you plan on building the FRENSIE documentation, Doxygen (1.8.8 or greater) is also required. All of the above software libraries will be built from source. This process will be described in the next section. 
+FRENSIE also requires a GNU compiler (4.7.3 or greater), CMake (3.0.1 or 
+greater) and git to build correctly. If you plan on building the FRENSIE 
+documentation, Doxygen (1.8.6 or greater) is also required. Several of the 
+above software libraries will be built from source. Others can be installed 
+using your systems package manager. This process will be described in the next 
+section. 
 
 ## Building Dependent Software Libraries
-Before any of the software libraries are built, verify that the system has CMake version 3.0.1 or greater installed. If CMake is not installed or an older version is present, build CMake 3.0.1 using the instructions below.
+Before any of the software libraries are built, verify that the system has 
+CMake version 3.0.1 or greater installed. If CMake is not installed or an older
+version is present, build CMake using the instructions below.
 
-When building software libraries and executables, the following directory structure should be adopted: software/package/package.xx.xx.xx, software/package/build, software/package/src. "package" will be the name of the particular software package. "package.xx.xx.xx" comes from unpacking the compressed source files (e.g. package.tar.gz). The src directory is created by making a softlink to the package.xx.xx.xx directory. This is done to make the build a bit easier.
+When building software libraries and executables from source, the following 
+directory structure should be adopted: software/package/package.xx.xx.xx, 
+software/package/build, software/package/src. "package" will be the name of the
+particular software package. "package.xx.xx.xx" comes from unpacking the 
+compressed source files (e.g. package.tar.gz). The src directory is created by 
+making a softlink to the package.xx.xx.xx directory. This is done to make the 
+build a bit easier.
 
 Please note that the software libraries should be built in the order that they
 are described.
@@ -39,6 +57,11 @@ are described.
 4. run `ln -s FRENSIE src`
 
 ### Building CMake
+**Basic:**
+1. run `sudo apt-get install cmake`
+2. run `cmake --version` and verify that the output is >= 3.0.1
+
+**Advanced:**
 1. download the [CMake 3.0.1 source](http://www.cmake.org/cmake/resources/software.html)
 2. move the cmake-3.0.1.tar.gz file to the cmake directory (e.g. software/cmake)
 3. move to the cmake directory

@@ -3,18 +3,16 @@
 # 1.)
 MACRO(ENABLE_BOOST_SUPPORT)
 
-    # Only use static libraries
-    # SET(Boost_USE_STATIC_LIBS ON)
-    # SET(Boost_USE_STATIC_RUNTIME ON)
-
     # No multithreading
     SET(Boost_USE_MULTITHREAD OFF)
 
     # Use the user supplied prefix to find the Boost libraries and include dirs.
-    SET(BOOST_ROOT ${BOOST_PREFIX})
-    SET(Boost_NO_SYSTEM_PATHS ON)
+    IF(DEFINED BOOST_PREFIX)
+      SET(BOOST_ROOT ${BOOST_PREFIX})
+      SET(Boost_NO_SYSTEM_PATHS ON)
+    ENDIF()
 
-    # Check if boost needs to be found
+    # Find the Boost package
     FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${ARGN})
 
     # Set the include paths for Boost

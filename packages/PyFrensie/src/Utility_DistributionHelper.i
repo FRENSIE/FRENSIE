@@ -11,13 +11,15 @@
 %}
 
 // Include std::string support
-%include "std_string.i"
+%include <std_string.i>
 
 // Import the PyFrensie utility
 %import "PyFrensie_Utility.hpp"
 
-// Macro for setting up a OneDDistribution class python interface
-%define %distribution_interface_setup( DISTRIBUTION )
+//---------------------------------------------------------------------------//
+// Macro for setting up a basic OneDDistribution class python interface
+//---------------------------------------------------------------------------//
+%define %basic_distribution_interface_setup( DISTRIBUTION )
 
 %feature("docstring") Utility::UnitAware ## DISTRIBUTION ## <void,void>
 "The DISTRIBUTION proxy class. This class can be evaluated, sampled from, 
@@ -67,6 +69,85 @@ Utility::UnitAware ## DISTRIBUTION ## <void,void>::getUpperBoundOfIndepVar;
 %feature("autodoc",
 "getLowerBoundOfIndepVar(DISTRIBUTION self) -> double" )
 Utility::UnitAware ## DISTRIBUTION ## <void,void>::getLowerBoundOfIndepVar;
+
+// SWIG will not parse typedefs. Create some typemaps that map the
+// typedefs to their true type (double)
+%typemap(in) Utility::UnitAware ## DISTRIBUTION ## <void,void>::IndepQuantity 
+{
+  $1 = PyFloat_AsDouble($input);
+}
+
+%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::IndepQuantity 
+{
+  $result = PyFloat_FromDouble($1);
+}
+
+%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::DepQuantity 
+{
+  $result = PyFloat_FromDouble($1);
+}
+
+%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::InverseIndepQuantity 
+{
+  $result = PyFloat_FromDouble($1);
+}
+
+%template(DISTRIBUTION) Utility::UnitAware ## DISTRIBUTION ## <void,void>;
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up a basic TabularOneDDistribution class python interface
+//---------------------------------------------------------------------------//
+%define %basic_tab_distribution_interface_setup( DISTRIBUTION )
+
+%feature("autodoc",
+"evaluate(DISTRIBUTION self, double indep_var_value ) -> double" )
+Utility::UnitAware ## DISTRIBUTION ## <void,void>::evaluateCDF;
+
+%feature("autodoc",
+"sampleAndRecordBinIndex(DISTRIBUTION self) -> double, unsigned int
+
+Sample from the DISTRIBUTION and record the bin index corresponding to the 
+sample. The first element of the returned tuple is the sample. The second 
+element of the returned tuple is the bin index. This method can be called
+as follows:
+
+  PyFrensie.Utility.initFrensiePrng()
+
+  u = PyFrensie.Utility.DISTRIBUTION( ... )
+  
+  sample,bin_index = u.sampleAndRecordBinIndex()")
+Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleAndRecordBinIndex;
+
+%feature("autodoc",
+"sampleWithRandomNumber(DISTRIBUTION self, const double random_number) -> double
+
+Sample from the DISTRIBUTION using the supplied random number instead of using
+the hidden Utility::RandomNumberGenerator.")
+Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleWithRandomNumber;
+
+%feature("autodoc",
+"sampleInSubrange(DISTRIBUTION self, const double max_indep_var ) -> double
+
+Sample from the DISTRIBUTION in the subrange [self.getLowerBoundOfIndepVar(),max_indep_var]" )
+Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleInSubrange;
+
+%feature("autodoc",
+"sampleWithRandomNumberInSubrange(DISTRIBUTION self, const double random_number, const double max_indep_var ) -> double
+
+Sample from the DISTRIBUTION using the supplied random number in the subrange
+[self.getLowerBoundOfIndepVar(),max_indep_var]" )
+Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleWithRandomNumberInSubrange;
+
+%basic_distribution_interface_setup( DISTRIBUTION )
+
+%enddef
+
+//---------------------------------------------------------------------------//
+// Extend a OneDDistribution class python interface
+//---------------------------------------------------------------------------//
+%define %extend_distribution_interface( DISTRIBUTION )
 
 %feature("autodoc",
 "toParameterList(DISTRIBUTION self, const std::string & parameter_name, PyObject * python_parameter_list)
@@ -141,26 +222,7 @@ Check if two DISTRIBUTION objects are not equal (using the != operator). This
 will return the same value as !self.isEqual( other_dist )" )
 Utility::UnitAware ## DISTRIBUTION ## <void,void>::__ne__;
 
-%typemap(in) Utility::UnitAware ## DISTRIBUTION ## <void,void>::IndepQuantity 
-{
-  $1 = PyFloat_AsDouble($input);
-}
-
-%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::IndepQuantity 
-{
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::DepQuantity 
-{
-  $result = PyFloat_FromDouble($1);
-}
-
-%typemap(out) Utility::UnitAware ## DISTRIBUTION ## <void,void>::InverseIndepQuantity 
-{
-  $result = PyFloat_FromDouble($1);
-}
-
+// Add some useful methods to the distribution class
 %extend Utility::UnitAware ## DISTRIBUTION ## <void,void>
 {
   // Add a method for exporting to a Python parameter list
@@ -225,53 +287,31 @@ Utility::UnitAware ## DISTRIBUTION ## <void,void>::__ne__;
   }
 };
 
-%template(DISTRIBUTION) Utility::UnitAware ## DISTRIBUTION ## <void,void>;
+%enddef
+
+//---------------------------------------------------------------------------//
+// Macro for setting up an OneDDistribution class python interface
+//---------------------------------------------------------------------------//
+%define %distribution_interface_setup( DISTRIBUTION )
+
+// Extend the distribution interface
+%extend_distribution_interface( DISTRIBUTION )
+
+// Do the basic setup for this distribution
+%basic_distribution_interface_setup( DISTRIBUTION )
 
 %enddef
 
+//---------------------------------------------------------------------------//
 // Macro for setting up a TabularOneDDistribution class python interface
+//---------------------------------------------------------------------------//
 %define %tab_distribution_interface_setup( DISTRIBUTION )
 
-%feature("autodoc",
-"evaluate(DISTRIBUTION self, double indep_var_value ) -> double" )
-Utility::UnitAware ## DISTRIBUTION ## <void,void>::evaluateCDF;
+// Extend the distribution inteface
+%extend_distribution_interface( DISTRIBUTION )
 
-%feature("autodoc",
-"sampleAndRecordBinIndex(DISTRIBUTION self) -> double, unsigned int
-
-Sample from the DISTRIBUTION and record the bin index corresponding to the 
-sample. The first element of the returned tuple is the sample. The second 
-element of the returned tuple is the bin index. This method can be called
-as follows:
-
-  PyFrensie.Utility.initFrensiePrng()
-
-  u = PyFrensie.Utility.DISTRIBUTION( ... )
-  
-  sample,bin_index = u.sampleAndRecordBinIndex()")
-Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleAndRecordBinIndex;
-
-%feature("autodoc",
-"sampleWithRandomNumber(DISTRIBUTION self, const double random_number) -> double
-
-Sample from the DISTRIBUTION using the supplied random number instead of using
-the hidden Utility::RandomNumberGenerator.")
-Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleWithRandomNumber;
-
-%feature("autodoc",
-"sampleInSubrange(DISTRIBUTION self, const double max_indep_var ) -> double
-
-Sample from the DISTRIBUTION in the subrange [self.getLowerBoundOfIndepVar(),max_indep_var]" )
-Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleInSubrange;
-
-%feature("autodoc",
-"sampleWithRandomNumberInSubrange(DISTRIBUTION self, const double random_number, const double max_indep_var ) -> double
-
-Sample from the DISTRIBUTION using the supplied random number in the subrange
-[self.getLowerBoundOfIndepVar(),max_indep_var]" )
-Utility::UnitAware ## DISTRIBUTION ## <void,void>::sampleWithRandomNumberInSubrange;
-
-%distribution_interface_setup( DISTRIBUTION )
+// Do the basic tabular setup for this distribution
+%basic_tab_distribution_interface_setup( DISTRIBUTION )
 
 %enddef
 

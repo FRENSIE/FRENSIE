@@ -4,7 +4,9 @@
 MACRO(ENABLE_SWIG_SUPPORT)
   
   # Add the user supplied SWIG prefix to help find SWIG
-  SET(CMAKE_PREFIX_PATH ${SWIG_PREFIX} ${CMAKE_PREFIX_PATH})
+  IF(DEFINED SWIG_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${SWIG_PREFIX} ${CMAKE_PREFIX_PATH})
+  ENDIF()
 
   # Find the SWIG package available on this system
   FIND_PACKAGE(SWIG 3.0.8 REQUIRED)

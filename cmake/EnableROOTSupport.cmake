@@ -6,6 +6,8 @@ MACRO(ENABLE_ROOT_SUPPORT)
   # Add the user supplied ROOT prefix to help find ROOT
   IF(ROOT_PREFIX)
     SET(CMAKE_PREFIX_PATH ${ROOT_PREFIX} ${CMAKE_PREFIX_PATH})
+  ELSE()
+    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must currently be set.")
   ENDIF()
 
   # Find the ROOT package available on this system
@@ -16,23 +18,23 @@ MACRO(ENABLE_ROOT_SUPPORT)
 
   # Find extra root libraries
   FIND_LIBRARY(ROOT_GEOM libGeom.so
-    PATHS ${ROOT_PREFIX}/lib)
+    PATHS ${ROOT_LIBRARY_DIR})
 
   FIND_LIBRARY(ROOT_CORE libCore.so
-    PATHS ${ROOT_PREFIX}/lib)
+    PATHS ${ROOT_LIBRARY_DIR})
 
   FIND_LIBRARY(ROOT_THREAD libThread.so
-    PATHS ${ROOT_PREFIX}/lib)
+    PATHS ${ROOT_LIBRARY_DIR})
 
   # Store ROOT libraries in the ROOT variable
   SET(ROOT ${ROOT_GEOM} ${ROOT_CORE} ${ROOT_THREAD})
 
   # Find the root executable
-  FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_PREFIX}/bin)
+  FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_BINARY_DIR})
   SET(ROOT_EXE ${ROOT_EXE} -b -l)
 
   # Indicate that Root has been enabled
-  SET(HAVE_${PROJECT_NAME}_ROOT "1")
+  SET(HAVE_FRENSIE_ROOT "1")
 
   # Echo ROOT build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)

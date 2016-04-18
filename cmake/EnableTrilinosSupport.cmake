@@ -12,8 +12,12 @@
 MACRO(ENABLE_TRILINOS_SUPPORT)
   
   # Add the user supplied Trilinos prefix to help find Trilinos
-  SET(CMAKE_PREFIX_PATH ${TRILINOS_PREFIX} ${CMAKE_PREFIX_PATH})
-
+  IF(DEFINED TRILINOS_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${TRILINOS_PREFIX} ${CMAKE_PREFIX_PATH})
+  ELSE()
+    MESSAGE(FATAL_ERROR "The TRILINOS_PREFIX must currently be set.")
+  ENDIF()
+  
   # Find the Trilinos package available on this system
   FIND_PACKAGE(Trilinos 11.4.1 REQUIRED)
 
@@ -137,6 +141,16 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   SET(TEUCHOS_STD_UNIT_TEST_MAIN
     ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp
     CACHE PATH "The standard unit test main file for building unit tests")
+
+  # Set the path to the PyTrilinos package source directory
+  FIND_PATH(PYTRILINOS_SRC_DIR_PATH
+    NAMES Teuchos_Array.i
+    PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/src/
+    ${TRILINOS_SOURCE}/packages/PyTrilinos/src/
+    ${TRILINOS_SOURCE}/src/packages/PyTrilinos/src)
+  IF(${PYTRILINOS_SRC_DIR_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The PyTrilinos/src directory could not be found!")
+  ENDIF()
     
 
   # Set the include paths for Trilinos
