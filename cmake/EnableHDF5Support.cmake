@@ -8,23 +8,19 @@ MACRO(ENABLE_HDF5_SUPPORT)
   ENDIF()
 
   # Find the HDF5 package available on this system
-  FIND_PACKAGE(HDF5 1.8.13 REQUIRED)
+  FIND_PACKAGE(HDF5 1.8.11 REQUIRED COMPONENTS C CXX)
  
   # Any execs built off of HFD5 will need both libraries so they will both
   # be stored in a single variable
-  SET(HDF5 ${HDF5_CXX_LIBRARIES} -ldl)
+  SET(HDF5 ${HDF5_LIBRARIES})
   
   # Set the include paths for HDF5
   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
-  
-  # Set the link paths for HDF5
-  LINK_DIRECTORIES(${HDF5_LIBRARY_DIRS})
 
   # Echo the HDF5 details if a verbose configure was requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found HDF5! Here are the details: ")
     MESSAGE(" HDF5_INCLUDE_DIRS = ${HDF5_INCLUDE_DIRS}")
-    MESSAGE(" HDF5_LIBRARY_DIRS = ${HDF5_LIBRARY_DIRS}")
     MESSAGE(" HDF5_LIBRARY = ${HDF5}")
     MESSAGE("End of HDF5 details\n")
   ENDIF()

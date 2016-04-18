@@ -81,6 +81,13 @@ are described.
 14. run `cmake --version` and verify that the output is 3.0.1
 
 ### Building Doxygen
+**Basic:**
+
+1. run `sudo apt-get install doxygen`
+2. run `doxygen --version` and verify that the output is >= 1.8.6
+
+**Advanced:**
+
 1. download the [Doxygen 1.8.8 source](http://sourceforge.net/projects/doxygen/files/)
 2. move the `doxygen-1.8.8.src.tar.gz` file to the doxygen directory (e.g. software/doxygen)
 3. move to the doxygen directory
@@ -94,6 +101,13 @@ are described.
 11. run `exec bash`
 
 ### Building HDF5
+**Basic:**
+
+1. run `sudo apt-get install hdf5-tools libhdf5-dev`
+2. run `h5ls --version` and verify that the output is >= 1.8.11
+
+**Advanced:**
+
 1. download the [HDF5 1.8.13 source](http://www.hdfgroup.org/HDF5/release/obtainsrc.html)
 2. move the hdf5-1.8.13.tar.gz file to the hdf5 directory (e.g. software/hdf5)
 3. move to the hdf5 directory
@@ -112,6 +126,12 @@ are described.
 16. run `exec bash`
 
 ### Building Open MPI - Optional
+**Basic:**
+
+1. 
+
+**Advanced:**
+
 1. download the [Open MPI 1.8.2 source](http://www.open-mpi.org/software/ompi/v1.8/)
 2. move the openmpi-1.8.2.tar.gz file to the mpi directory (e.g. software/mpi)
 3. move to the mpi directory
