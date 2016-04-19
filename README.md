@@ -292,8 +292,8 @@ At this point all of the dependent software libraries should have been built. If
 9. run `make manual`
 10. run `make install`
 
-Note 1: There are several other configure options that can be changed in the 
-frensie.sh script:
+**Note 1**: There are several other configure options that can be changed in 
+the frensie.sh script:
  * `-D FRENSIE_ENABLE_DBC:BOOL=OFF` turns off very thorough Design-by-Contract checks (commonly done with release builds). 
  * `-D FRENSIE_ENABLE_PROFILING:BOOL=ON` enables profiling (only in debug builds).
  * `-D FRENSIE_ENABLE_CONVERAGE:BOOL=ON` enables coverage testing (only in debug builds).
@@ -305,7 +305,8 @@ frensie.sh script:
  * `-D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON` allows the system to act as a dashboard client (by running make Experimental, make Continuous and make Nightly).
  * `-D FRENSIE_ENABLE_MANUAL:BOOL=OFF` prevents the user from building the FRENSIE manual using Doxygen (useful if Doxygen is not available).
 
-Note 2: To help the build system locate packages in non-standard locations, the following CMake variables can be set:
+**Note 2**: To help the build system locate packages in non-standard locations,
+the following CMake variables can be set:
  * `-D HDF5_PREFIX:PATH=path-to-hdf5-install-dir` indicates where the custom HDF5 install directory is located.
  * `-D MPI_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MPI install directory is located.
  * `-D MOAB_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MOAB install directory is located.
