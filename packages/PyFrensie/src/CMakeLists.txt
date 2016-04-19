@@ -16,7 +16,7 @@ LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_RUNTIME})
 # Create the utility module
 SET_SOURCE_FILES_PROPERTIES(Utility.i PROPERTIES CPLUSPLUS ON)
 SWIG_ADD_MODULE(Utility python Utility.i)
-SWIG_LINK_LIBRARIES(Utility ${PYTHON_LIBRARIES} "${CMAKE_BINARY_DIR}/packages/utility/distribution/src/libutility_dist.so" "${CMAKE_BINARY_DIR}/packages/utility/prng/src/libutility_prng.so" ${TEUCHOS_CORE})
+SWIG_LINK_LIBRARIES(Utility ${PYTHON_LIBRARIES} utility_dist utility_prng ${TEUCHOS_CORE})
 INSTALL(TARGETS ${SWIG_MODULE_Utility_REAL_NAME}
   DESTINATION ${PyFrensie_INSTALL_DIR})
 ADD_CUSTOM_COMMAND(TARGET ${SWIG_MODULE_Utility_REAL_NAME} POST_BUILD

@@ -9,29 +9,30 @@ ABSPATHEXE="__abspath.py"
 echo "import os; import sys; sys.stdout.write(os.path.abspath(sys.argv[1]))" > $ABSPATHEXE
 
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=$HOME/
-TRILINOS_SOURCE_PATH=$HOME/
-HDF5_PREFIX_PATH=$HOME/
-MOAB_PREFIX_PATH=$HOME/
-MOAB_SOURCE_PATH=$HOME/
-ODEPACK_PREFIX_PATH=$HOME/
-BOOST_PREFIX_PATH=$HOME/
-GSL_PREFIX_PATH=$HOME/
-MPI_PREFIX_PATH=$HOME/
-ROOT_PREFIX_PATH=
-DOXYGEN_PREFIX_PATH=
-MCNP_DATA_PATH=$HOME/
-FRENSIE_SRC=$HOME/
-FRENSIE_INSTALL=$HOME/
+TRILINOS_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/trilinos")
+TRILINOS_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/trilinos")
+HDF5_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/hdf5")
+MOAB_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/moab")
+MOAB_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/moab")
+BOOST_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/boost")
+MPI_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/mpi")
+ROOT_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/root")
+DOXYGEN_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/doxygen")
+FRENSIE_SRC=$(python $ABSPATHEXE "../src")
+FRENSIE_INSTALL=$(python $ABSPATHEXE "../frensie_install")
+MCNP_DATA_PATH=/home/software/mcnpdata/
 
 # Get system details for dashboard
 DISTRO="$(lsb_release -i -s)"
 VERSION="$(lsb_release -r -s)"
 DISTRO_VERSION=${DISTRO}-${VERSION}
 
-##---------------------------------------------------------------------------##
+# No longer needed after this point.
+# Move lower if $ABSPATHEXE needs to be used below this.
+rm "__abspath.py"
 
 source ~/.bashrc
+`python ../src/scripts/prefix.py ../deps/install`
 
 cmake --version
 
@@ -53,10 +54,9 @@ cmake \
     -D MOAB_PREFIX:PATH=$MOAB_PREFIX_PATH \
     -D MOAB_SOURCE:PATH=$MOAB_SOURCE_PATH \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
-    -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
-    -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
     -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
+    -D ROOT_PREFIX:PATH=$ROOT_PREFIX_PATH \
     -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
     -D MCNP_DATA_DIR:PATH=$MCNP_DATA_PATH \
     -D SETUP_DASHBOARD_CLIENT:BOOL=OFF \

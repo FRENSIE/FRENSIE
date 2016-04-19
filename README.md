@@ -81,6 +81,13 @@ are described.
 14. run `cmake --version` and verify that the output is 3.0.1
 
 ### Building Doxygen
+**Basic:**
+
+1. run `sudo apt-get install doxygen`
+2. run `doxygen --version` and verify that the output is >= 1.8.6
+
+**Advanced:**
+
 1. download the [Doxygen 1.8.8 source](http://sourceforge.net/projects/doxygen/files/)
 2. move the `doxygen-1.8.8.src.tar.gz` file to the doxygen directory (e.g. software/doxygen)
 3. move to the doxygen directory
@@ -94,6 +101,13 @@ are described.
 11. run `exec bash`
 
 ### Building HDF5
+**Basic:**
+
+1. run `sudo apt-get install hdf5-tools libhdf5-dev`
+2. run `h5ls --version` and verify that the output is >= 1.8.11
+
+**Advanced:**
+
 1. download the [HDF5 1.8.13 source](http://www.hdfgroup.org/HDF5/release/obtainsrc.html)
 2. move the hdf5-1.8.13.tar.gz file to the hdf5 directory (e.g. software/hdf5)
 3. move to the hdf5 directory
@@ -112,6 +126,12 @@ are described.
 16. run `exec bash`
 
 ### Building Open MPI - Optional
+**Basic:**
+
+1. 
+
+**Advanced:**
+
 1. download the [Open MPI 1.8.2 source](http://www.open-mpi.org/software/ompi/v1.8/)
 2. move the openmpi-1.8.2.tar.gz file to the mpi directory (e.g. software/mpi)
 3. move to the mpi directory
@@ -123,7 +143,7 @@ are described.
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
-12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:$PATH`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/mpi/bin:$PATH`
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
@@ -158,9 +178,15 @@ are described.
 5. run `ln -s moab-4.6.3 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/moab/build)
-8. if DagMC is desired (Cubit 14.0 and CGM must be built): 
-   * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-   * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+8. 
+  * **Basic HDF5 Build:**
+    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
+  * **Advanced HDF5 Build:**
+    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`

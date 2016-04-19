@@ -23,8 +23,6 @@ MACRO(ENABLE_MOAB_SUPPORT)
     MESSAGE(FATAL_ERROR "The moab library could not be found.")
   ENDIF()
 
-  SET(MOAB ${MOAB} ${MOAB_LIBRARIES})
-
   IF(FRENSIE_ENABLE_DAGMC)
     # Check if the DagMC patch has been applied
     IF((NOT DEFINED DAGMC_THREAD_SAFE_PATCHED) OR (NOT ${DAGMC_THREAD_SAFE_PATCHED}))
@@ -71,7 +69,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
     SET(MOAB ${DAGMC} ${MOAB})
 
-    SET(HAVE_FRENSE_DAGMC "1")
+    SET(HAVE_FRENSIE_DAGMC "1")
   ENDIF()
   
   # Set the include paths for Moab
