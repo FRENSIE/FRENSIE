@@ -318,7 +318,6 @@ the following CMake variables can be set:
  * `-D BOOST_PREFIX:PATH=path-to-boost-install-dir` indicates where the custom Boost install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
  * `-D SWIG_PREFIX:PATH=path-to-swig-install-dir` indicates where the custom SWIG install directory is located.
- * 
  * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
  * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
  * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
