@@ -143,7 +143,7 @@ are described.
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
-12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/cmake/bin:absolute-path-to_software/hdf5/bin:absolute-path-to_software/mpi/bin:$PATH`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/mpi/bin:$PATH`
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 

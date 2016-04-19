@@ -3,36 +3,26 @@
 ## CONFIGURE FACEMC with CMAKE
 ##---------------------------------------------------------------------------##
 
-# Export a python script to convert relative paths to absoulte paths.
-# Delete this python script before this bash script exits
-ABSPATHEXE="__abspath.py"
-echo "import os; import sys; sys.stdout.write(os.path.abspath(sys.argv[1]))" > $ABSPATHEXE
-
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/trilinos")
-TRILINOS_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/trilinos")
-HDF5_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/hdf5")
-MOAB_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/moab")
-MOAB_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/moab")
-BOOST_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/boost")
-MPI_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/mpi")
-ROOT_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/root")
-DOXYGEN_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/doxygen")
-FRENSIE_SRC=$(python $ABSPATHEXE "../src")
-FRENSIE_INSTALL=$(python $ABSPATHEXE "../frensie_install")
-MCNP_DATA_PATH=/home/software/mcnpdata/
+TRILINOS_PREFIX_PATH=
+TRILINOS_SOURCE_PATH=
+HDF5_PREFIX_PATH=
+MOAB_PREFIX_PATH=
+MOAB_SOURCE_PATH=
+BOOST_PREFIX_PATH=
+MPI_PREFIX_PATH=
+ROOT_PREFIX_PATH=
+DOXYGEN_PREFIX_PATH=
+FRENSIE_SRC=
+FRENSIE_INSTALL=
+MCNP_DATA_PATH=
 
 # Get system details for dashboard
 DISTRO="$(lsb_release -i -s)"
 VERSION="$(lsb_release -r -s)"
 DISTRO_VERSION=${DISTRO}-${VERSION}
 
-# No longer needed after this point.
-# Move lower if $ABSPATHEXE needs to be used below this.
-rm "__abspath.py"
-
 source ~/.bashrc
-`python ../src/scripts/prefix.py ../deps/install`
 
 cmake --version
 

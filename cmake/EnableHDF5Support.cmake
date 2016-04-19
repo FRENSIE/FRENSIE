@@ -12,15 +12,20 @@ MACRO(ENABLE_HDF5_SUPPORT)
  
   # Any execs built off of HFD5 will need both libraries so they will both
   # be stored in a single variable
-  SET(HDF5 ${HDF5_LIBRARIES})
+  SET(HDF5 ${HDF5_hdf5_LIBRARY_RELEASE} ${HDF5_hdf5_cpp_LIBRARY_RELEASE})
   
   # Set the include paths for HDF5
   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+
+  # Set the library paths for HDF5
+  FIND_FILE(HDF5_LIBRARY_DIRS NAMES ${HDF5})
+  LINK_DIRECTORIES(${HDF5_LIBRARY_DIRS}) 
 
   # Echo the HDF5 details if a verbose configure was requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found HDF5! Here are the details: ")
     MESSAGE(" HDF5_INCLUDE_DIRS = ${HDF5_INCLUDE_DIRS}")
+    MESSAGE(" HDF5_LIBRARY_DIRS = ${HDF5_LIBRARY_DIRS}")
     MESSAGE(" HDF5_LIBRARY = ${HDF5}")
     MESSAGE("End of HDF5 details\n")
   ENDIF()

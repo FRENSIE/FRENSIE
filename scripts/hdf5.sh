@@ -2,8 +2,8 @@
 
 EXTRA_ARGS=$@
 
-HDF5_SRC=$(pwd)/../src
-HDF5_INSTALL=$(pwd)/../../../install/hdf5
+HDF5_SRC=
+HDF5_INSTALL=
 
 source $HOME/.bashrc
 
