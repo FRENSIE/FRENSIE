@@ -15,9 +15,9 @@ depends on is listed below.
 7. [Boost 1.56.0](http://www.boost.org/)
 8. [ROOT 6.04/02](https://root.cern.ch/content/release-60402) - optional
 9. [Python 2.7](https://www.python.org/) - optional
-10. [SWIG 3.0.8](http://www.swig.org/) - optional
-11. [Numpy 1.8](http://www.numpy.org/) - optional
-12. [H5Py 2.4](http://www.h5py.org/) - optional
+10. [Numpy 1.8](http://www.numpy.org/) - optional
+11. [H5Py 2.4](http://www.h5py.org/) - optional
+12. [SWIG 3.0.8](http://www.swig.org/) - optional
 
 Note that OpenMPI is only required if you plan on running FRENSIE on a
 distributed memory system. Cubit is only required if you plan on using CAD
@@ -128,7 +128,8 @@ are described.
 ### Building Open MPI - Optional
 **Basic:**
 
-1. 
+1. run `sudo apt-get install openmpi-bin libopenmpi-dev`
+2. run `mpiexec --version` and verify that the output is >= 1.6.5
 
 **Advanced:**
 
@@ -202,7 +203,7 @@ are described.
 5. run `ln -s trilinos-11.12.1.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
-8. copy `FRENSIE/scripts/trilinos.sh` into the build directory 
+8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory 
 9. change the variables in the script to reflect the desired system paths
 10. run `./trilinos.sh` to configure trilinos
 11. run `make -j n`
@@ -213,7 +214,16 @@ are described.
 
 Note: If your system does not have LAPACK installed Trilinos will give you
 a configure error. You can use your system's package manager to install LAPACK
-or you can build if from source using the following instructions:
+or you can build if from source using the following instructions below. If
+you build LAPACK from source, use the FRENSIE/scripts/trilinos.sh script
+instead of the FRENSIE/scripts/trilinos-basic.sh script since it will allow
+you to specify the location of your custom build LAPACK package.
+
+**Basic:**
+
+1. run `sudo apt-get install liblapack-dev liblapack3`
+
+**Advanced:**
 
 1. download the [LAPACK 3.5.0 source](http://www.netlib.org/lapack/lapack-3.5.0.tgz)
 2. move the lapack-3.5.0.tgz file to the lapack directory (e.g. software/lapack)
@@ -232,6 +242,12 @@ or you can build if from source using the following instructions:
 15. run `exec bash`
 
 ### Building Boost
+**Basic:**
+
+1. run `sudo apt-get install libboost-all-dev`
+
+**Advanced:**
+
 1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
 2. move the boost_1_56_0.tar.gz file to the boost directory (e.g. software/boost)
 3. move to the boost directory
@@ -244,12 +260,22 @@ or you can build if from source using the following instructions:
 10. run `exec bash`
 
 ### Building ROOT - Optional
-1. download the appropriate [ROOT 6.04/02 Binaries](https://root.cern.ch/content/release-60402)
+1. download the appropriate [ROOT 6.04/02 binaries](https://root.cern.ch/content/release-60402)
 2. move the binary file to the root directory (e.g. software/root)
 3. move to the root directory
-4. run 'tar -xvf root_v6.04.02*'
+4. run `tar -xvf root_v6.04.02*`
 5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
 6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
+
+### Building Python, NumPy, H5Py - Optional
+1. run `sudo apt-get install python python-dev python-numpy python-h5py`
+
+## Building SWIG
+1. download the appropriate [SWIG 3.0.8 binaries](http://www.swig.org/download.html)
+2. move the binary file to the swig directory (e.g. software/swig)
+3. move to the swig directory
+4. run `tar -xvf swig-3.0.8*`
+5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
@@ -266,7 +292,35 @@ At this point all of the dependent software libraries should have been built. If
 9. run `make manual`
 10. run `make install`
 
-Note: The FRENSIE build system needs to know where the Trilinos source files
+Note 1: There are several other configure options that can be changed in the 
+frensie.sh script:
+ * `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. 
+ * `-D FRENSIE_ENABLE_PROFILING:BOOL=ON` enables profiling (only in debug builds).
+ * `-D FRENSIE_ENABLE_CONVERAGE:BOOL=ON` enables coverage testing (only in debug builds).
+ * `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. 
+ * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
+ * `-D FRENSIE_ENABLE_PYTHON:BOOL=ON` enables the FRENSIE python interfaces.
+ * `-D FRENSIE_ENABLE_ROOT:BOOL=ON` enables the ROOT geometry interfaces.
+ * `-D FRENSIE_ENABLE_DAGMC:BOOL=ON` enables the DagMC geometry interfaces.
+ * `-D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON` allows the system to act as a dashboard client (by running make Experimental, make Continuous and make Nightly).
+ * `-D FRENSIE_ENABLE_MANUAL` allows the user to build the FRENSIE manual using Doxygen (by running make manual).
+
+Note 2: To help the build system locate packages in non-standard locations, the following CMake variables can be set:
+ * `-D HDF5_PREFIX:PATH=path-to-hdf5-install-dir` indicates where the custom HDF5 install directory is located.
+ * `-D MPI_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MPI install directory is located.
+ * `-D MOAB_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MOAB install directory is located.
+ * `-D MOAB_SOURCE:PATH=path-to-moab-src-dir` indicates where the MOAB source directory is located if it is separate from the MOAB install prefix.
+ * `-D TRILIINOS_PREFIX:PATH=path-to-trilinos-install-dir` indicates where the custom Trilinos install directory is located.
+ * `-D TRILINOS_SOURCE:PATH=path-to-trilinos-src-dir` indicates where the Trilinos source directory is located if it is separate from the Trilinos install prefix.
+ * `-D BOOST_PREFIX:PATH=path-to-boost-install-dir` indicates where the custom Boost install directory is located.
+ * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
+ * `-D SWIG_PREFIX:PATH=path-to-swig-install-dir` indicates where the custom SWIG install directory is located.
+ * 
+ * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
+ * `-D BUILDNAME_PREFIX:STRING=my-build-name` sets the custom build name that will be displayed on the CDash dashboard (only used when FRENSIE_ENABLE_DASHBOARD_CLIENT is set to ON).
+ * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
+
+The FRENSIE build system needs to know where the Trilinos source files
 and Moab source files are. Therefore, there are two optional CMake variables 
 called TRILINOS_SOURCE and MOAB_SOURCE that can be set if the source files are 
 in a non-standard location (not in TRILINOS_PREFIX/src or MOAB_PREFIX/src ). 
@@ -288,14 +342,6 @@ moab must be rebuilt before it can proceed. After rebuilding moab (using the
 same steps outlined above), frensie can be reconfigured and the build system
 should report no errors. After applying the patch to fix the race condition,
 close to linear thread scaling should be observed.
-
-Note: There are several other configure options that can be changed in the frensie.sh script. 
- * `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. 
- * `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. 
- * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
- * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
- * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
- * `-D SETUP_DASHBOARD_CLIENT:BOOL=ON` allows the machine to be used as a dashboard client (see the next section).
 
 ## Dashboard
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.
