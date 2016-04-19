@@ -270,7 +270,7 @@ you to specify the location of your custom build LAPACK package.
 ### Building Python, NumPy, H5Py - Optional
 1. run `sudo apt-get install python python-dev python-numpy python-h5py`
 
-### Building SWIG
+### Building SWIG - Only with Python
 1. download the appropriate [SWIG 3.0.8 binaries](http://www.swig.org/download.html)
 2. move the binary file to the swig directory (e.g. software/swig)
 3. move to the swig directory
