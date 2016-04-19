@@ -8,7 +8,7 @@ MACRO(ENABLE_HDF5_SUPPORT)
   ENDIF()
 
   # Find the HDF5 package available on this system
-  FIND_PACKAGE(HDF5 1.8.13 REQUIRED)
+  FIND_PACKAGE(HDF5 1.8 REQUIRED)
  
   # Any execs built off of HFD5 will need both libraries so they will both
   # be stored in a single variable
