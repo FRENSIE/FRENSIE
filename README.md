@@ -270,7 +270,7 @@ you to specify the location of your custom build LAPACK package.
 ### Building Python, NumPy, H5Py - Optional
 1. run `sudo apt-get install python python-dev python-numpy python-h5py`
 
-## Building SWIG
+### Building SWIG
 1. download the appropriate [SWIG 3.0.8 binaries](http://www.swig.org/download.html)
 2. move the binary file to the swig directory (e.g. software/swig)
 3. move to the swig directory
@@ -294,16 +294,16 @@ At this point all of the dependent software libraries should have been built. If
 
 Note 1: There are several other configure options that can be changed in the 
 frensie.sh script:
- * `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. 
+ * `-D FRENSIE_ENABLE_DBC:BOOL=OFF` turns off very thorough Design-by-Contract checks (commonly done with release builds). 
  * `-D FRENSIE_ENABLE_PROFILING:BOOL=ON` enables profiling (only in debug builds).
  * `-D FRENSIE_ENABLE_CONVERAGE:BOOL=ON` enables coverage testing (only in debug builds).
- * `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. 
+ * `-D FRENSIE_ENABLE_OPENMP:BOOL=OFF` disables OpenMP thread support. 
  * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
  * `-D FRENSIE_ENABLE_PYTHON:BOOL=ON` enables the FRENSIE python interfaces.
  * `-D FRENSIE_ENABLE_ROOT:BOOL=ON` enables the ROOT geometry interfaces.
  * `-D FRENSIE_ENABLE_DAGMC:BOOL=ON` enables the DagMC geometry interfaces.
  * `-D FRENSIE_ENABLE_DASHBOARD_CLIENT:BOOL=ON` allows the system to act as a dashboard client (by running make Experimental, make Continuous and make Nightly).
- * `-D FRENSIE_ENABLE_MANUAL` allows the user to build the FRENSIE manual using Doxygen (by running make manual).
+ * `-D FRENSIE_ENABLE_MANUAL:BOOL=OFF` prevents the user from building the FRENSIE manual using Doxygen (useful if Doxygen is not available).
 
 Note 2: To help the build system locate packages in non-standard locations, the following CMake variables can be set:
  * `-D HDF5_PREFIX:PATH=path-to-hdf5-install-dir` indicates where the custom HDF5 install directory is located.
