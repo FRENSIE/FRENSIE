@@ -283,8 +283,10 @@ At this point all of the dependent software libraries should have been built. If
 1. move to the frensie working directory - not the repo itself (e.g. software/frensie)
 2. run `mkdir build`
 3. move to the build directory (e.g. software/frensie/build)
-4. copy the `FRENSIE/scripts/frensie.sh` into the build directory
-5. change the variables in the script to reflect the desired system paths
+4. copy the `FRENSIE/scripts/frensie.sh`
+5. change the variables in the script to reflect the desired system paths (if
+   the basic build instructions where use for a package the PACKAGE_PREFIX
+   variable can be left blank in the script).
 6. run `./frensie.sh` to configure FRENSIE
 7. run `make -j n`
 8. run `make test-fast`
