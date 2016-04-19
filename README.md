@@ -178,9 +178,15 @@ are described.
 5. run `ln -s moab-4.6.3 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/moab/build)
-8. if DagMC is desired (Cubit 14.0 and CGM must be built): 
-   * run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-   * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+8. 
+  * **Basic HDF5 Build:**
+    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
+  * **Advanced HDF5 Build:**
+    * if DagMC is desired (Cubit 14.0 and CGM must be built): 
+    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`

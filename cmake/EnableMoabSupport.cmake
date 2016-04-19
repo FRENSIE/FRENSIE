@@ -71,7 +71,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
     SET(MOAB ${DAGMC} ${MOAB})
 
-    SET(HAVE_FRENSE_DAGMC "1")
+    SET(HAVE_FRENSIE_DAGMC "1")
   ENDIF()
   
   # Set the include paths for Moab
