@@ -32,8 +32,8 @@ FRENSIE also requires a GNU compiler (4.7.3 or greater), CMake (3.0.1 or
 greater) and git (1.9.1 or greater) to build correctly. If you plan on building
 the FRENSIE documentation, Doxygen (1.8.6 or greater) is also required. Several
 of the above software libraries will be built from source. Others can be 
-installed using your systems package manager. This process will be described in
-the next section. 
+installed using your system's package manager. This process will be described 
+in the next section. 
 
 ## Building Dependent Software Libraries
 Before any of the software libraries are built, verify that the system has 
