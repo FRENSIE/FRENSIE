@@ -21,6 +21,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_NormalDistribution.hpp"
+#include "Utility_PolynomialDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -366,6 +367,39 @@ input parameter are the following:
 
 // Standard distribution interface setup
 %distribution_interface_setup( NormalDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the PolynomialDistribution
+//---------------------------------------------------------------------------//
+// Import the Polynomial Distribution
+%import "Utility_PolynomialDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") 
+Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribution
+"The coefficients should be stored in a NumPy array."
+
+// Allow the user to use NumPy arrays in the constructor
+%extend Utility::UnitAwarePolynomialDistribution<void,void>
+{
+  // Constructor
+  UnitAwarePolynomialDistribution( PyObject* py_array_coefficients,
+                                   const double min_indep_limit,
+                                   const double max_indep_limit )
+  {
+    Teuchos::Array<double> coefficients;
+    
+    PyTrilinos::CopyNumPyToTeuchos( py_array_coefficients, coefficients );
+    
+    return new Utility::UnitAwarePolynomialDistribution<void,void>( 
+                                                             coefficients,
+                                                             min_indep_limit,
+                                                             max_indep_limit );
+  }
+};
+
+// Standard distribution interface setup
+%distribution_interface_setup( PolynomialDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
