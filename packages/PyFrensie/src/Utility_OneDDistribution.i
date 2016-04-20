@@ -17,6 +17,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_EvaporationDistribution.hpp"
+#include "Utility_ExponentialDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -89,6 +90,7 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
   %template(DeltaDistribution) Utility::UnitAwareDeltaDistribution::UnitAwareDeltaDistribution<double,double>;
 };
 
+
 // Allow the user to ignore the multiplier in the constructor
 %typemap(default) const double multiplier {
   $1 = 1.0;
@@ -100,16 +102,19 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 //---------------------------------------------------------------------------//
 // Add support for the DiscreteDistribution
 //---------------------------------------------------------------------------//
+// Ignore the extra constructors
+%ignore Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
+%ignore Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
+
 // Import the DiscreteDistribution
 %import "Utility_DiscreteDistribution.hpp"
 
 // Add a more detailed docstring for the constructor
 %feature("docstring") 
 Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
-"If the dependent values can also represent the CDF. By default the 
-dependent values will not be treated as a CDF. Pass in 'True' as the
-3rd argument to force the distribution to treat the dependent values as CDF
-values."
+"The independent values and dependent values should be stored in a NumPy array.
+The dependent values can represent the CDF instead of the distribution (pass in
+'True' as the 3rd argument to force the distribution)."
 
 // Allow the user to use NumPy arrays in the constructor
 %extend Utility::UnitAwareDiscreteDistribution<void,void>
@@ -191,6 +196,16 @@ values."
 // Import the Evaporation Distribution
 %import "Utility_EvaporationDistribution.hpp"
 
+// Add a more detailed docstring for the constructor
+%feature("docstring") Utility::UnitAwareEvaporationDistribution<void,void>::UnitAwareEvaporationDistribution
+"All of the input parameters can be ignored. The defaults values for each 
+input parameter are the following:
+
+  incident_energy = 1.0 (MeV)
+  nuclear_temperature = 1.0 (MeV)
+  restruction_energy = 0.0 (MeV)
+  constant_multiplier = 1.0."
+
 // Instantiate the template constructor for double values
 %extend Utility::UnitAwareEvaporationDistribution<void,void>
 {
@@ -202,15 +217,37 @@ values."
 %distribution_interface_setup( EvaporationDistribution )
 
 //---------------------------------------------------------------------------//
+// Add support for the ExponentialDistribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwareExponentialDistribution<void,void>::sample( const InverseIndepQuantity );
+%ignore Utility::UnitAwareExponentialDistribution<void,void>::sample( const InverseIndepQuantity, const IndepQuantity, const IndepQuantity );
+
+// Import the Exponential Distribution
+%import "Utility_ExponentialDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") Utility::UnitAwareExponentialDistribution<void,void>::UnitAwareExponentialDistribution
+"The lower limit and/or the upper limit can be ignored (default values are 0.0
+and inf)"
+
+// Instantiate the template constructor for double values
+%extend Utility::UnitAwareExponentialDistribution<void,void>
+{
+  // Instantiate the desired version of the template constructor
+  %template(ExponentialDistribution) Utility::UnitAwareExponentialDistribution::UnitAwareExponentialDistribution<double,double,double>;
+};
+
+// Standard distribution interface setup
+%distribution_interface_setup( ExponentialDistribution )
+
+//---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity );
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, unsigned& );
 %ignore Utility::UnitAwareUniformDistribution<void,void>::sampleWithRandomNumber( const IndepQuantity, const IndepQuantity, const double );
-
-// Ignore the copy constructor
-%ignore Utility::UnitAwareUniformDistribution<void,void>::UnitAwareUniformDistribution( const Utility::UnitAwareUniformDistribution<void,void>& );
 
 // Import the Uniform Distribution
 %import "Utility_UniformDistribution.hpp"

@@ -29,35 +29,6 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution()
 { /* ... */ }
 
-// Basic constructor
-/*! \details This constructor will explicitly cast the input quantities to
- * the distribution quantity (which includes any unit-conversion). The
- * dimension type must match and there must be a unit-conversion defined using
- * the boost methodology.
- */
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputDepQuantity,
-	 typename InputInverseIndepQuantity>
-UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution( 
-			 const InputDepQuantity constant_multiplier,
-			 const InputInverseIndepQuantity exponent_multiplier )
-  : d_constant_multiplier( constant_multiplier ),
-    d_exponent_multiplier( exponent_multiplier ),
-    d_lower_limit( IQT::zero() ),
-    d_upper_limit( IQT::inf() )
-{
-  // Make sure the multipliers are valid
-  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
-  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > InputIIQT::zero() );
-
-  // Initialize the distribution
-  this->initialize();
-}
-
 // Constructor 
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -65,9 +36,9 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
  * the boost methodology.
  */
 template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepQuantity,
-	 typename InputDepQuantity,
-	 typename InputInverseIndepQuantity>
+template<typename InputDepQuantity,
+	 typename InputInverseIndepQuantity,
+         typename InputIndepQuantity>
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution( 
 			 const InputDepQuantity constant_multiplier,
 			 const InputInverseIndepQuantity exponent_multiplier,
