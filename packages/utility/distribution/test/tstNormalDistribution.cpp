@@ -45,7 +45,7 @@ Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::NormalDistribution( 0.0, 1.0 ) );
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.5*si::mole, 0.0*si::meter, 0.01*si::meter, -Utility::QuantityTraits<quantity<si::length> >::inf() ) );
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<cgs::length,si::amount> > unit_aware_distribution( new Utility::UnitAwareNormalDistribution<cgs::length,si::amount>( 0.0*si::meter, 0.01*si::meter, 0.5*si::mole, -Utility::QuantityTraits<quantity<si::length> >::inf(), Utility::QuantityTraits<quantity<si::length> >::inf() ) );
 
 //---------------------------------------------------------------------------//
 // Tests.

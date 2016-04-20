@@ -20,6 +20,7 @@
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_MaxwellFissionDistribution.hpp"
+#include "Utility_NormalDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -334,6 +335,37 @@ input parameter are the following:
 
 // Standard distribution interface setup
 %distribution_interface_setup( MaxwellFissionDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the Normal distribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwareNormalDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareNormalDistribution<void,void>::sampleAndRecordTrials(  unsigned&, const IndepQuantity, const IndepQuantity, const IndepQuantity, const IndepQuantity );
+
+// Import the Normal Distribution
+%import "Utility_NormalDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") Utility::UnitAwareNormalDistribution<void,void>::UnitAwareNormalDistribution
+"All of the input parameters can be ignored. The defaults values for each 
+input parameter are the following:
+
+  mean = 0.0,
+  standard_deviation = 1.0,
+  constant_multiplier = 1.0,
+  min_independent_value = -inf,
+  max_independent_value = inf."
+  
+// Instantiate the template constructor for double values
+%extend Utility::UnitAwareNormalDistribution<void,void>
+{
+  // Instantiate the desired version of the template constructor
+  %template(NormalDistribution) Utility::UnitAwareNormalDistribution::UnitAwareNormalDistribution<double,double,double,double>;
+};
+
+// Standard distribution interface setup
+%distribution_interface_setup( NormalDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
