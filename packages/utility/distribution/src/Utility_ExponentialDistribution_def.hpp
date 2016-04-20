@@ -211,7 +211,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample(
 }
 
 // Return a sample from the distribution
-/* \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
+/* \details x = -ln(exp(-m*lb) - rnd*[exp(-m*lb)-exp(-m*ub)])/m
  */
 template<typename IndependentUnit, typename DependentUnit> 
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
@@ -242,21 +242,23 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample(
   
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
-  return -log( random_number*(exp_upper_limit - exp_lower_limit) +
-	       exp_lower_limit )/exponent_multiplier;
+  return -log( exp_lower_limit - 
+               random_number*(exp_lower_limit - exp_upper_limit) )/
+    exponent_multiplier;
 }
 
 // Return a sample from the distribution
-/*! \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
+/*! \details x = -ln(exp(-m*lb) - rnd*[exp(-m*lb)-exp(-m*ub)])/m
  */
 template<typename IndependentUnit, typename DependentUnit> 
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
-
-  return -log( random_number*(d_exp_upper_limit-d_exp_lower_limit) + 
-	       d_exp_lower_limit )/d_exponent_multiplier;
+  
+  return -log( d_exp_lower_limit - 
+               random_number*(d_exp_lower_limit-d_exp_upper_limit) )/
+    d_exponent_multiplier;
 }
 
 // Return a random sample and record the number of trials
@@ -460,12 +462,12 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
 {
   // Calculate the exponential of the lower and upper bounds
   if( d_upper_limit < IQT::inf() )
-    d_exp_upper_limit = exp( d_exponent_multiplier*d_upper_limit );
+    d_exp_upper_limit = exp( -d_exponent_multiplier*d_upper_limit );
   else
     d_exp_upper_limit = 0.0;
 
   if( d_lower_limit > IQT::zero() )
-    d_exp_lower_limit = exp( d_exponent_multiplier*d_lower_limit );
+    d_exp_lower_limit = exp( -d_exponent_multiplier*d_lower_limit );
   else
     d_exp_lower_limit = 1.0;
 }
