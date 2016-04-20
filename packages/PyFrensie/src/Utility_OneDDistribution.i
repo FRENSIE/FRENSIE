@@ -19,6 +19,7 @@
 #include "Utility_EvaporationDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
+#include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -303,6 +304,36 @@ The bin values can represent the CDF instead of the distribution (pass in
 
 // Standard tabular distribution interface setup
 %tab_distribution_interface_setup( HistogramDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the Maxwell fission distribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwareMaxwellFissionDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareMaxwellFissionDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, unsigned& );
+
+// Import the MaxwellFission Distribution
+%import "Utility_MaxwellFissionDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") Utility::UnitAwareMaxwellFissionDistribution<void,void>::UnitAwareMaxwellFissionDistribution
+"All of the input parameters can be ignored. The defaults values for each 
+input parameter are the following:
+
+  incident_energy = 1.0 (MeV)
+  nuclear_temperature = 1.0 (MeV)
+  restruction_energy = 0.0 (MeV)
+  constant_multiplier = 1.0."
+
+// Instantiate the template constructor for double values
+%extend Utility::UnitAwareMaxwellFissionDistribution<void,void>
+{
+  // Instantiate the desired version of the template constructor
+  %template(MaxwellFissionDistribution) Utility::UnitAwareMaxwellFissionDistribution::UnitAwareMaxwellFissionDistribution<double,double,double>;
+};
+
+// Standard distribution interface setup
+%distribution_interface_setup( MaxwellFissionDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
