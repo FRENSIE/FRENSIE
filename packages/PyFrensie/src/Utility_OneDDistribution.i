@@ -15,6 +15,8 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
+#include "Utility_EquiprobableBinDistribution.hpp"
+#include "Utility_EvaporationDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -109,7 +111,7 @@ dependent values will not be treated as a CDF. Pass in 'True' as the
 3rd argument to force the distribution to treat the dependent values as CDF
 values."
 
-// Allow the user to use Python lists and NumPy arrays in the constructor
+// Allow the user to use NumPy arrays in the constructor
 %extend Utility::UnitAwareDiscreteDistribution<void,void>
 {
   // Constructor
@@ -154,6 +156,50 @@ values."
 
 // Standard tabular distribution interface setup
 %tab_distribution_interface_setup( DiscreteDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the EquiprobableBinDistribution
+//---------------------------------------------------------------------------//
+// Import the Equiprobable Bin Distribution
+%import "Utility_EquiprobableBinDistribution.hpp"
+
+// Allow the user to use NumPy arrays in the constructor
+%extend Utility::UnitAwareEquiprobableBinDistribution<void,void>
+{
+  // Constructor
+  UnitAwareEquiprobableBinDistribution( PyObject* py_array_bin_boundaries )
+  {
+    Teuchos::Array<double> bin_boundaries;
+    
+    PyTrilinos::CopyNumPyToTeuchos( py_array_bin_boundaries, bin_boundaries );
+    
+    return new Utility::UnitAwareEquiprobableBinDistribution<void,void>( 
+                                                              bin_boundaries );
+  }
+};
+
+// Standard tabular distribution interface setup
+%tab_distribution_interface_setup( EquiprobableBinDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the EvaporationDistribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwareEvaporationDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareEvaporationDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const IndepQuantity, unsigned& );
+
+// Import the Evaporation Distribution
+%import "Utility_EvaporationDistribution.hpp"
+
+// Instantiate the template constructor for double values
+%extend Utility::UnitAwareEvaporationDistribution<void,void>
+{
+  // Instantiate the desired version of the template constructor
+  %template(EvaporationDistribution) Utility::UnitAwareEvaporationDistribution::UnitAwareEvaporationDistribution<double,double,double>;
+};
+
+// Standard distribution interface setup
+%distribution_interface_setup( EvaporationDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
