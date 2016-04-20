@@ -18,6 +18,7 @@
 #include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_EvaporationDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -114,16 +115,15 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
 "The independent values and dependent values should be stored in a NumPy array.
 The dependent values can represent the CDF instead of the distribution (pass in
-'True' as the 3rd argument to force the distribution)."
+'True' as the 3rd argument)."
 
 // Allow the user to use NumPy arrays in the constructor
 %extend Utility::UnitAwareDiscreteDistribution<void,void>
 {
   // Constructor
-  UnitAwareDiscreteDistribution( 
-                         PyObject* independent_py_array,
-                         PyObject* dependent_py_array,
-                         const bool interpret_dependent_values_as_cdf )
+  UnitAwareDiscreteDistribution( PyObject* independent_py_array,
+                                 PyObject* dependent_py_array,
+                                 const bool interpret_dependent_values_as_cdf )
   {
     Teuchos::Array<double> independent_values;
     
@@ -140,9 +140,8 @@ The dependent values can represent the CDF instead of the distribution (pass in
   }
 
   // Constructor
-  UnitAwareDiscreteDistribution( 
-                         PyObject* independent_py_array,
-                         PyObject* dependent_py_array )
+  UnitAwareDiscreteDistribution( PyObject* independent_py_array,
+                                 PyObject* dependent_py_array )
   {
     Teuchos::Array<double> independent_values;
     
@@ -240,6 +239,70 @@ and inf)"
 
 // Standard distribution interface setup
 %distribution_interface_setup( ExponentialDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the HistogramDistribution
+//---------------------------------------------------------------------------//
+// Ignore the extra constructors
+%ignore Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
+%ignore Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
+
+// Import the HistogramDistribution
+%import "Utility_HistogramDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") 
+Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution
+"The bin boundaries and bin values should be stored in a NumPy array.
+The bin values can represent the CDF instead of the distribution (pass in
+'True' as the 3rd argument)."
+
+// Allow the user to use NumPy arrays in the constructor
+%extend Utility::UnitAwareHistogramDistribution<void,void>
+{
+  // Constructor
+  UnitAwareHistogramDistribution(PyObject* bin_boundaries_py_array,
+                                 PyObject* bin_values_py_array,
+                                 const bool interpret_dependent_values_as_cdf )
+  {
+    Teuchos::Array<double> bin_boundaries;
+    
+    PyTrilinos::CopyNumPyToTeuchos( bin_boundaries_py_array, 
+                                    bin_boundaries );
+
+    Teuchos::Array<double> bin_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( bin_values_py_array, bin_values );
+
+    return new Utility::UnitAwareHistogramDistribution<void,void>( 
+                                           bin_boundaries, 
+                                           bin_values,
+                                           interpret_dependent_values_as_cdf );
+  }
+
+  // Constructor
+  UnitAwareHistogramDistribution( PyObject* bin_boundaries_py_array,
+                                  PyObject* bin_values_py_array )
+  {
+    Teuchos::Array<double> bin_boundaries;
+    
+    PyTrilinos::CopyNumPyToTeuchos( bin_boundaries_py_array, 
+                                    bin_boundaries );
+
+    Teuchos::Array<double> bin_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( bin_values_py_array, 
+                                    bin_values );
+
+    return new Utility::UnitAwareHistogramDistribution<void,void>( 
+                                                                bin_boundaries,
+                                                                bin_values,
+                                                                false );
+  }
+};
+
+// Standard tabular distribution interface setup
+%tab_distribution_interface_setup( HistogramDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
