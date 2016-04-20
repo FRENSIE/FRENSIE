@@ -7,6 +7,10 @@
 //---------------------------------------------------------------------------//
 
 %{
+// Trilinos Includes
+#include <PyTrilinos_Teuchos_Util.h>
+
+// FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -25,14 +29,8 @@
 %include <Teuchos_Array.i>
 #undef TEUCHOSCORE_LIB_DLL_EXPORT
 
-// Add typemaps from Teuchos::Array to Teuchos::ArrayView
-// %define %teuchos_array_to_arrayview_maps(TYPE)
-
-// %typemap(in) Teuchos::Array<const TYPE>& (Teuchos::ArrayView<const Type> tmp_view )
-// {
-//   tmp_view = $
-// }  
-// %enddef 
+// Import the PyTrilinos utilities
+%import <PyTrilinos_Teuchos_Util.h>
 
 // Include the distribution helper
 %include "Utility_DistributionHelper.i"
@@ -73,7 +71,7 @@
 %basic_tab_distribution_interface_setup( TabularOneDDistribution )
 
 //---------------------------------------------------------------------------//
-// Add support for the DiscreteDistribution
+// Add support for the DeltaDistribution
 //---------------------------------------------------------------------------//
 // Import the DeltaDistribution
 %import "Utility_DeltaDistribution.hpp"
@@ -110,6 +108,49 @@ Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
 dependent values will not be treated as a CDF. Pass in 'True' as the
 3rd argument to force the distribution to treat the dependent values as CDF
 values."
+
+// Allow the user to use Python lists and NumPy arrays in the constructor
+%extend Utility::UnitAwareDiscreteDistribution<void,void>
+{
+  // Constructor
+  UnitAwareDiscreteDistribution( 
+                         PyObject* independent_py_array,
+                         PyObject* dependent_py_array,
+                         const bool interpret_dependent_values_as_cdf )
+  {
+    Teuchos::Array<double> independent_values;
+    
+    PyTrilinos::CopyNumPyToTeuchos( independent_py_array, independent_values );
+
+    Teuchos::Array<double> dependent_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( dependent_py_array, dependent_values );
+
+    return new Utility::UnitAwareDiscreteDistribution<void,void>( 
+                                           independent_values, 
+                                           dependent_values,
+                                           interpret_dependent_values_as_cdf );
+  }
+
+  // Constructor
+  UnitAwareDiscreteDistribution( 
+                         PyObject* independent_py_array,
+                         PyObject* dependent_py_array )
+  {
+    Teuchos::Array<double> independent_values;
+    
+    PyTrilinos::CopyNumPyToTeuchos( independent_py_array, independent_values );
+
+    Teuchos::Array<double> dependent_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( dependent_py_array, dependent_values );
+
+    return new Utility::UnitAwareDiscreteDistribution<void,void>( 
+                                                            independent_values,
+                                                            dependent_values,
+                                                            false );
+  }
+};
 
 // Standard tabular distribution interface setup
 %tab_distribution_interface_setup( DiscreteDistribution )

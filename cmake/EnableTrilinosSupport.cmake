@@ -6,6 +6,8 @@
 # 4.) TEUCHOS_NUMERICS - stores the teuchosnumercics library name
 # 5.) TEUCHOS_COMM - stores the teuchoscomm library name
 # 6.) TEUCHOS_PARAMETER_LIST - stores the teuchosparameter list library name
+# 8.) PYTRILINOS - stores the pytrilinos library name 
+#                  (only if FRENSIE_ENABLE_PYTHON=ON)
 # 7.) TEUCHOS_STD_UNIT_TEST_MAIN - the path to the main .cpp file that is 
 #                                  needed for all unit tests using the Teuchos
 #                                  unit test harness
@@ -127,6 +129,14 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The teuchosparameterlist library could not be found")
   ENDIF(${TEUCHOS_PARAMETER_LIST} MATCHES NOTFOUND)
 
+  # Find the PyTrilinos library if building PyFrensie package
+  IF(FRENSIE_ENABLE_PYTHON)
+    FIND_LIBRARY(PYTRILINOS pytrilinos ${TRILINOS_LIBRARY_DIRS})
+    IF(${PYTRILINOS} MATCHES NOTFOUND)
+      MESSAGE(FATAL_ERROR "The pytrilinos library could not be found")
+    ENDIF()
+  ENDIF()
+
   # Find the standard Teuchos Unit Test main file
   FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH
     NAMES Teuchos_StandardUnitTestMain.cpp
@@ -220,6 +230,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(" TEUCHOS_NUMERICS_LIBRARY = ${TEUCHOS_NUMERICS}")
     MESSAGE(" TEUCHOS_COMM_LIBRARY = ${TEUCHOS_COMM}")
     MESSAGE(" TEUCHOS_PARAMETER_LIST_LIBRARY = ${TEUCHOS_PARAMETER_LIST}")
+    MESSAGE(" PYTRILINOS = ${PYTRILINOS}")
     MESSAGE("End of Teuchos details\n")
   ENDIF()
 
