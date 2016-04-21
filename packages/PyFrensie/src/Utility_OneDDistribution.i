@@ -23,7 +23,9 @@
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 %}
 
 // Include std::string support
@@ -413,9 +415,6 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 // Ignore the static methods
 %ignore Utility::UnitAwarePowerDistribution<POWER,void,void>::sample( const IndepQuantity, const IndepQuantity );
 
-// Ignore the default constructor - swig bug
-%ignore Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution();
-
 // Add a more detailed docstring for the constructor
 %feature("docstring") 
 Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
@@ -465,6 +464,81 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 
 %power_distribution_interface_setup( 1 )
 %power_distribution_interface_setup( 2 )
+
+//---------------------------------------------------------------------------//
+// Add support for the TabularDistribution
+//---------------------------------------------------------------------------//
+// Import the Tabular Distribution
+%import "Utility_TabularDistribution.hpp"
+
+// There are many tabular distributions - use this macro to set up each
+%define %tabular_distribution_interface_setup( INTERP )
+
+// Ignore the extra constructors
+%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
+%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") 
+Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution
+"The independent values and dependent values should be stored in a NumPy array.
+The dependent values can represent the CDF instead of the distribution (pass in
+'True' as the 3rd argument)."
+
+// Allow the user to use NumPy arrays in the constructor
+%extend Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>
+{
+  // Constructor
+  UnitAwareTabularDistribution( PyObject* independent_values_py_array,
+                                PyObject* dependent_values_py_array,
+                                const bool interpret_dependent_values_as_cdf )
+  {
+    Teuchos::Array<double> independent_values;
+    
+    PyTrilinos::CopyNumPyToTeuchos( independent_values_py_array, 
+                                    independent_values );
+
+    Teuchos::Array<double> dependent_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( dependent_values_py_array, 
+                                    dependent_values );
+
+    return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
+                                           independent_values,
+                                           dependent_values,
+                                           interpret_dependent_values_as_cdf );
+  }
+
+  // Constructor
+  UnitAwareTabularDistribution( PyObject* independent_values_py_array,
+                                PyObject* dependent_values_py_array )
+  {
+    Teuchos::Array<double> independent_values;
+    
+    PyTrilinos::CopyNumPyToTeuchos( independent_values_py_array, 
+                                    independent_values );
+
+    Teuchos::Array<double> dependent_values;
+
+    PyTrilinos::CopyNumPyToTeuchos( dependent_values_py_array, 
+                                    dependent_values );
+
+    return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
+                                                            independent_values,
+                                                            dependent_values,
+                                                            false );
+  }
+};
+
+%advanced_tab_distribution_interface_setup( TabularDistribution_ ## INTERP, TabularDistribution, Utility::INTERP )
+
+%enddef
+
+%tabular_distribution_interface_setup( LinLin )
+%tabular_distribution_interface_setup( LinLog )
+%tabular_distribution_interface_setup( LogLin )
+%tabular_distribution_interface_setup( LogLog )
+
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
