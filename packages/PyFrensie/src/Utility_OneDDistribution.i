@@ -102,7 +102,7 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 }
 
 // Standard tabular distribution interface setup
-%tab_distribution_interface_setup( DeltaDistribution )
+%standard_tab_distribution_interface_setup( DeltaDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the DiscreteDistribution
@@ -163,7 +163,7 @@ The dependent values can represent the CDF instead of the distribution (pass in
 };
 
 // Standard tabular distribution interface setup
-%tab_distribution_interface_setup( DiscreteDistribution )
+%standard_tab_distribution_interface_setup( DiscreteDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the EquiprobableBinDistribution
@@ -187,7 +187,7 @@ The dependent values can represent the CDF instead of the distribution (pass in
 };
 
 // Standard tabular distribution interface setup
-%tab_distribution_interface_setup( EquiprobableBinDistribution )
+%standard_tab_distribution_interface_setup( EquiprobableBinDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the EvaporationDistribution
@@ -217,7 +217,7 @@ input parameter are the following:
 };
 
 // Standard distribution interface setup
-%distribution_interface_setup( EvaporationDistribution )
+%standard_distribution_interface_setup( EvaporationDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the ExponentialDistribution
@@ -242,7 +242,7 @@ and inf)"
 };
 
 // Standard distribution interface setup
-%distribution_interface_setup( ExponentialDistribution )
+%standard_distribution_interface_setup( ExponentialDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the HistogramDistribution
@@ -306,7 +306,7 @@ The bin values can represent the CDF instead of the distribution (pass in
 };
 
 // Standard tabular distribution interface setup
-%tab_distribution_interface_setup( HistogramDistribution )
+%standard_tab_distribution_interface_setup( HistogramDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the Maxwell fission distribution
@@ -336,7 +336,7 @@ input parameter are the following:
 };
 
 // Standard distribution interface setup
-%distribution_interface_setup( MaxwellFissionDistribution )
+%standard_distribution_interface_setup( MaxwellFissionDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the Normal distribution
@@ -367,7 +367,7 @@ input parameter are the following:
 };
 
 // Standard distribution interface setup
-%distribution_interface_setup( NormalDistribution )
+%standard_distribution_interface_setup( NormalDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the PolynomialDistribution
@@ -400,63 +400,71 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 };
 
 // Standard distribution interface setup
-%distribution_interface_setup( PolynomialDistribution )
+%standard_distribution_interface_setup( PolynomialDistribution )
 
 //---------------------------------------------------------------------------//
 // Add support for the PowerDistribution
 //---------------------------------------------------------------------------//
+// Import the Power Distribution
+%import "Utility_PowerDistribution.hpp"
+
+// There are many power distributions - use this macro to set up each
+%define %power_distribution_interface_setup( POWER )
 // Ignore the static methods
-%ignore Utility::UnitAwarePowerDistribution<1u,void,void>::sample( const IndepQuantity, const IndepQuantity );
-%ignore Utility::UnitAwarePowerDistribution<2u,void,void>::sample( const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwarePowerDistribution<POWER,void,void>::sample( const IndepQuantity, const IndepQuantity );
 
-// Import the Polynomial Distribution
-%import "Utility_PolynomialDistribution.hpp"
+// Ignore the default constructor - swig bug
+%ignore Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution();
 
-%inline %{
-namespace Utility{
+// Add a more detailed docstring for the constructor
+%feature("docstring") 
+Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
+"The constant multiplier can be ignored (default value = 1.0)"
 
-// Power 1 distribution class
-// Only necessary because SWIG does not yet support template aliasing
-template<typename IndependentUnit,typename DependentUnit>
-class UnitAwarePowerDistribution_1 : public UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>
+// Allow the user to ignore the constant multiplier in the constructor
+%extend Utility::UnitAwarePowerDistribution<POWER,void,void>
 {
-public:
-  //! Default constructor ( A*x^N : x in (a,b) )
-  UnitAwarePowerDistribution_1()
-    : UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>()
-  { /* ... */ }
-  //! Constructor ( A*x^N : x in (a,b) )
-  template<typename InputIndepQuantity>
-  UnitAwarePowerDistribution_1( const InputIndepQuantity min_indep_limit,
-                                const InputIndepQuantity max_indep_limit,
-                                const double constant_multiplier = 1.0 )
-    : UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>(
+  // Constructor
+  UnitAwarePowerDistribution()
+  {
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
+                                                               1.0, 0.0, 1.0 );
+  }
+  
+  // Constructor
+  UnitAwarePowerDistribution( const double min_indep_limit,
+                              const double max_indep_limit )
+  {
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
+                                                             1.0,
+                                                             min_indep_limit,
+                                                             max_indep_limit );
+  }
+
+  // Constructor (mimics the constructor in Utility_PowerDistribution.hpp - 
+  // see comment below)
+  UnitAwarePowerDistribution( const double constant_multiplier,
+                              const double min_indep_limit,
+                              const double max_indep_limit )
+  {
+    return new Utility::UnitAwarePowerDistribution<POWER,void,void>( 
                                                            constant_multiplier,
                                                            min_indep_limit,
-                                                           max_indep_limit )
-  { /* ... */ }
+                                                           max_indep_limit );
+  }
 
-  //! Destructor
-  ~UnitAwarePowerDistribution_1()
-  { /* ... */ }
+  // Unfortunately, we cannot instantiate the constructor because swig will
+  // not create the constructors correctly (currently)
+  //%template(PowerDistribution_ ## POWER) Utility::UnitAwarePowerDistribution::UnitAwarePowerDistribution<double>;
 };
 
-typedef UnitAwarePowerDistribution_1<void,void> PowerDistribution_1;
-
-} // end Utility namespace
-
-namespace Teuchos{
-
-template<typename U, typename V>
-class TypeNameTraits<Utility::UnitAwarePowerDistribution_1<U,V> > : public TypeNameTraits<Utility::PowerDistribution<1u> >
-{ /* ... */ };
-
-} // end Teuchos namespace
-%}
-
 // Standard distribution interface setup
-%distribution_interface_setup( PowerDistribution_1 )
- //%basic_distribution_interface_setup( PowerDistribution_2 )
+%advanced_distribution_interface_setup( PowerDistribution_ ## POWER , PowerDistribution, POWER )
+
+%enddef
+
+%power_distribution_interface_setup( 1 )
+%power_distribution_interface_setup( 2 )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
@@ -487,7 +495,7 @@ class TypeNameTraits<Utility::UnitAwarePowerDistribution_1<U,V> > : public TypeN
 }
 
 // Standard tabular distribution interface setup
-%tab_distribution_interface_setup( UniformDistribution )
+%standard_tab_distribution_interface_setup( UniformDistribution )
 
 //---------------------------------------------------------------------------//
 // end Utility_OneDDistribution.i
