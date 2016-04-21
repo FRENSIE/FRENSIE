@@ -25,6 +25,7 @@
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_WattDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 %}
 
@@ -35,9 +36,9 @@
 %include <typemaps.i>
 
 // Include Teuchos::Array support
-#define TEUCHOSCORE_LIB_DLL_EXPORT
-%include <Teuchos_Array.i>
-#undef TEUCHOSCORE_LIB_DLL_EXPORT
+// #define TEUCHOSCORE_LIB_DLL_EXPORT
+// %include <Teuchos_Array.i>
+// #undef TEUCHOSCORE_LIB_DLL_EXPORT
 
 // Import the PyTrilinos utilities
 %import <PyTrilinos_Teuchos_Util.h>
@@ -539,7 +540,6 @@ The dependent values can represent the CDF instead of the distribution (pass in
 %tabular_distribution_interface_setup( LogLin )
 %tabular_distribution_interface_setup( LogLog )
 
-
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
 //---------------------------------------------------------------------------//
@@ -570,6 +570,37 @@ The dependent values can represent the CDF instead of the distribution (pass in
 
 // Standard tabular distribution interface setup
 %standard_tab_distribution_interface_setup( UniformDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support forthe WattDistribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwareWattDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwareWattDistribution<void,void>::sampleAndRecordTrials( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity, unsigned& );
+
+// Import the Watt Distribution
+%import "Utility_WattDistribution.hpp"
+
+// Add a more detailed docstring for the constructor
+%feature("docstring") Utility::UnitAwareWattDistribution<void,void>::UnitAwareWattDistribution
+"All of the input parameters can be ignored. The defaults values for each 
+input parameter are the following:
+
+  incident_energy = 1.0 (MeV)
+  a_parameter = 1.0 (MeV)
+  b_parameter = 1.0 (MeV^-1)
+  restruction_energy = 0.0 (MeV)
+  constant_multiplier = 1.0."
+
+// Instantiate the template constructor for double values
+%extend Utility::UnitAwareWattDistribution<void,void>
+{
+  // Instantiate the desired version of the template constructor
+  %template(WattDistribution) Utility::UnitAwareWattDistribution::UnitAwareWattDistribution<double,double,double,double>;
+};
+
+// Standard distribution interface setup
+%standard_distribution_interface_setup( WattDistribution )
 
 //---------------------------------------------------------------------------//
 // end Utility_OneDDistribution.i
