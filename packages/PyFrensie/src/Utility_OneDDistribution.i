@@ -22,6 +22,7 @@
 #include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
+#include "Utility_PowerDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 %}
 
@@ -400,6 +401,62 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
 
 // Standard distribution interface setup
 %distribution_interface_setup( PolynomialDistribution )
+
+//---------------------------------------------------------------------------//
+// Add support for the PowerDistribution
+//---------------------------------------------------------------------------//
+// Ignore the static methods
+%ignore Utility::UnitAwarePowerDistribution<1u,void,void>::sample( const IndepQuantity, const IndepQuantity );
+%ignore Utility::UnitAwarePowerDistribution<2u,void,void>::sample( const IndepQuantity, const IndepQuantity );
+
+// Import the Polynomial Distribution
+%import "Utility_PolynomialDistribution.hpp"
+
+%inline %{
+namespace Utility{
+
+// Power 1 distribution class
+// Only necessary because SWIG does not yet support template aliasing
+template<typename IndependentUnit,typename DependentUnit>
+class UnitAwarePowerDistribution_1 : public UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>
+{
+public:
+  //! Default constructor ( A*x^N : x in (a,b) )
+  UnitAwarePowerDistribution_1()
+    : UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>()
+  { /* ... */ }
+  //! Constructor ( A*x^N : x in (a,b) )
+  template<typename InputIndepQuantity>
+  UnitAwarePowerDistribution_1( const InputIndepQuantity min_indep_limit,
+                                const InputIndepQuantity max_indep_limit,
+                                const double constant_multiplier = 1.0 )
+    : UnitAwarePowerDistribution<1u,IndependentUnit,DependentUnit>(
+                                                           constant_multiplier,
+                                                           min_indep_limit,
+                                                           max_indep_limit )
+  { /* ... */ }
+
+  //! Destructor
+  ~UnitAwarePowerDistribution_1()
+  { /* ... */ }
+};
+
+typedef UnitAwarePowerDistribution_1<void,void> PowerDistribution_1;
+
+} // end Utility namespace
+
+namespace Teuchos{
+
+template<typename U, typename V>
+class TypeNameTraits<Utility::UnitAwarePowerDistribution_1<U,V> > : public TypeNameTraits<Utility::PowerDistribution<1u> >
+{ /* ... */ };
+
+} // end Teuchos namespace
+%}
+
+// Standard distribution interface setup
+%distribution_interface_setup( PowerDistribution_1 )
+ //%basic_distribution_interface_setup( PowerDistribution_2 )
 
 //---------------------------------------------------------------------------//
 // Add support for the UniformDistribution
