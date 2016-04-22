@@ -7,9 +7,6 @@
 //---------------------------------------------------------------------------//
 
 %{
-// Trilinos Includes
-#include <PyTrilinos_Teuchos_Util.h>
-
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -27,6 +24,7 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 %}
 
 // Include std::string support
@@ -35,8 +33,8 @@
 // Include typemaps support
 %include <typemaps.i>
 
-// Import the PyTrilinos utilities
-%import <PyTrilinos_Teuchos_Util.h>
+// Import the PyFrensie Teuchos Array conversion helpers
+%import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 
 // Include the distribution helper
 %include "Utility_DistributionHelper.i"
@@ -129,11 +127,13 @@ The dependent values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> independent_values;
     
-    PyTrilinos::CopyNumPyToTeuchos( independent_py_array, independent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( independent_py_array, 
+                                            independent_values );
 
     Teuchos::Array<double> dependent_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( dependent_py_array, dependent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( dependent_py_array, 
+                                            dependent_values );
 
     return new Utility::UnitAwareDiscreteDistribution<void,void>( 
                                            independent_values, 
@@ -147,11 +147,13 @@ The dependent values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> independent_values;
     
-    PyTrilinos::CopyNumPyToTeuchos( independent_py_array, independent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( independent_py_array, 
+                                            independent_values );
 
     Teuchos::Array<double> dependent_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( dependent_py_array, dependent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( dependent_py_array, 
+                                            dependent_values );
 
     return new Utility::UnitAwareDiscreteDistribution<void,void>( 
                                                             independent_values,
@@ -177,7 +179,8 @@ The dependent values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> bin_boundaries;
     
-    PyTrilinos::CopyNumPyToTeuchos( py_array_bin_boundaries, bin_boundaries );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( py_array_bin_boundaries, 
+                                            bin_boundaries );
     
     return new Utility::UnitAwareEquiprobableBinDistribution<void,void>( 
                                                               bin_boundaries );
@@ -269,12 +272,12 @@ The bin values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> bin_boundaries;
     
-    PyTrilinos::CopyNumPyToTeuchos( bin_boundaries_py_array, 
-                                    bin_boundaries );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( bin_boundaries_py_array, 
+                                            bin_boundaries );
 
     Teuchos::Array<double> bin_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( bin_values_py_array, bin_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( bin_values_py_array, bin_values );
 
     return new Utility::UnitAwareHistogramDistribution<void,void>( 
                                            bin_boundaries, 
@@ -288,13 +291,13 @@ The bin values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> bin_boundaries;
     
-    PyTrilinos::CopyNumPyToTeuchos( bin_boundaries_py_array, 
+    PyFrensie::CopyNumPyToTeuchosWithCheck( bin_boundaries_py_array, 
                                     bin_boundaries );
 
     Teuchos::Array<double> bin_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( bin_values_py_array, 
-                                    bin_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( bin_values_py_array, 
+                                            bin_values );
 
     return new Utility::UnitAwareHistogramDistribution<void,void>( 
                                                                 bin_boundaries,
@@ -388,7 +391,8 @@ Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribu
   {
     Teuchos::Array<double> coefficients;
     
-    PyTrilinos::CopyNumPyToTeuchos( py_array_coefficients, coefficients );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( py_array_coefficients, 
+                                            coefficients );
     
     return new Utility::UnitAwarePolynomialDistribution<void,void>( 
                                                              coefficients,
@@ -491,13 +495,13 @@ The dependent values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> independent_values;
     
-    PyTrilinos::CopyNumPyToTeuchos( independent_values_py_array, 
-                                    independent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( independent_values_py_array, 
+                                            independent_values );
 
     Teuchos::Array<double> dependent_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( dependent_values_py_array, 
-                                    dependent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( dependent_values_py_array, 
+                                            dependent_values );
 
     return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
                                            independent_values,
@@ -511,13 +515,13 @@ The dependent values can represent the CDF instead of the distribution (pass in
   {
     Teuchos::Array<double> independent_values;
     
-    PyTrilinos::CopyNumPyToTeuchos( independent_values_py_array, 
+    PyFrensie::CopyNumPyToTeuchosWithCheck( independent_values_py_array, 
                                     independent_values );
 
     Teuchos::Array<double> dependent_values;
 
-    PyTrilinos::CopyNumPyToTeuchos( dependent_values_py_array, 
-                                    dependent_values );
+    PyFrensie::CopyNumPyToTeuchosWithCheck( dependent_values_py_array, 
+                                            dependent_values );
 
     return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
                                                             independent_values,

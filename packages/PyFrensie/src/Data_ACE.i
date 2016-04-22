@@ -11,13 +11,11 @@
 #define NO_IMPORT_ARRAY
 #include "numpy_include.h"
 
-// Trilinos Includes
-#include <PyTrilinos_Teuchos_Util.h>
-
 // FRENSIE Includes
-#include "PyFrensie_Conversion.hpp"
+#include "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 %}
 
 // Include std::string support
@@ -28,11 +26,8 @@
 %include <Teuchos_Array.i>
 #undef TEUCHOSCORE_LIB_DLL_EXPORT
 
-// Import the PyTrilinos utilities
-%import <PyTrilinos_Teuchos_Util.h>
-
-// Import the PyFrensie conversion header
-%import "PyFrensie_Conversion.hpp"
+// Import the PyFrensie Teuchos Array conversion helpers
+%import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 
 // Include the Teuchos::ArrayRCP support
 %include "PyFrensie_ArrayRCP.i"
@@ -96,6 +91,42 @@ shown below:
 %include "Data_ACEFileHandler.hpp"
 
 //---------------------------------------------------------------------------//
+// Macro for setting up the XSS data extractor classes
+//---------------------------------------------------------------------------//
+%define %data_extractor_setup( EXTRACTOR )
+
+// Ignore the constructor (a new one will be provided)
+%ignore Data::EXTRACTOR::EXTRACTOR( const Teuchos::ArrayView<const int>&, const Teuchos::ArrayView<const int>&, const Teuchos::ArrayRCP<const double>& );
+
+// Define the new constructor
+%extend Data::EXTRACTOR
+{
+  // Constructor
+  EXTRACTOR( PyObject* nxs_py_array, 
+             PyObject* jxs_py_array, 
+             PyObject* xss_py_array )
+  {
+    Teuchos::Array<int> nxs_array;
+
+    PyFrensie::CopyNumPyToTeuchosWithCheck( nxs_py_array, nxs_array );
+
+    Teuchos::Array<int> jxs_array;
+
+    PyFrensie::CopyNumPyToTeuchosWithCheck( jxs_py_array, jxs_array );
+
+    Teuchos::ArrayRCP<double> xss_array;
+
+    PyFrensie::CopyNumPyToTeuchosWithCheck( xss_py_array, xss_array );
+
+    return new Data::EXTRACTOR( nxs_array(),
+                                jxs_array(),
+                                xss_array.getConst() );
+  }
+};
+
+%enddef
+
+//---------------------------------------------------------------------------//
 // Add support for the XSSNeutronDataExtractor
 //---------------------------------------------------------------------------//
 // Add a more detailed docstrings for the XSSNeutronDataExtractor
@@ -123,37 +154,46 @@ shown below:
   matplotlib.pyplot.show()
 "
 
-// Ignore the constructor (a new one will be provided)
-%ignore Data::XSSNeutronDataExtractor::XSSNeutronDataExtractor( const Teuchos::ArrayView<const int>&, const Teuchos::ArrayView<const int>&, const Teuchos::ArrayRCP<const double>& );
-
-// Add some useful methods to the XSSNeutronDataExtractor class
-%extend Data::XSSNeutronDataExtractor
-{
-  // Constructor
-  XSSNeutronDataExtractor( PyObject* nxs_py_array,
-                           PyObject* jxs_py_array,
-                           PyObject* xss_py_array )
-  {
-    Teuchos::Array<int> nxs_array;
-
-    PyTrilinos::CopyNumPyToTeuchos( nxs_py_array, nxs_array );
-
-    Teuchos::Array<int> jxs_array;
-
-    PyTrilinos::CopyNumPyToTeuchos( jxs_py_array, jxs_array );
-
-    Teuchos::ArrayRCP<double> xss_array;
-
-    PyFrensie::CopyNumPyToTeuchos( xss_py_array, xss_array );
-
-    return new Data::XSSNeutronDataExtractor( nxs_array(),
-                                              jxs_array(),
-                                              xss_array.getConst() );
-  }
-};
+%data_extractor_setup( XSSNeutronDataExtractor )
 
 // Include XSSNeutronDataExtractor
 %include "Data_XSSNeutronDataExtractor.hpp"
+
+//---------------------------------------------------------------------------//
+// Add support for the XSSEPRDataExtractor
+//---------------------------------------------------------------------------//
+// Add a more detailed docstrings for the XSSEPRDataExtractor
+%feature("docstring")
+Data::XSSEPRDataExtractor
+"
+The XSSEPRDataExtractor can be used to extract the data blocks from the
+xss array found in an ACE data table.  A brief usage tutorial for this class is
+shown below:
+
+  import PyFrensie.Data, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  
+  source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
+  xml_obj = source.getObject()
+  cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
+  
+  h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
+  h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'photoatomic_file_path' )
+
+  h_1_ace_file = PyFrensie.Data.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'photoatomic_table_name' ), h_1_data_list.get( 'photoatomic_file_start_line' ) )
+  
+  neutron_data_extractor = PyFrensie.Data.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
+
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractIncoherentCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractCoherentCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPhotoelectricCrossSection() )
+  matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractPairProductionCrossSection() )
+  matplotlib.pyplot.show()
+"
+
+%data_extractor_setup( XSSEPRDataExtractor )
+
+// Include XSSEPRDataExtractor
+%include "Data_XSSEPRDataExtractor.hpp"
 
 //---------------------------------------------------------------------------//
 // end Data_ACE.i
