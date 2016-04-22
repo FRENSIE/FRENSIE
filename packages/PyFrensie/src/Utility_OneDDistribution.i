@@ -35,11 +35,6 @@
 // Include typemaps support
 %include <typemaps.i>
 
-// Include Teuchos::Array support
-// #define TEUCHOSCORE_LIB_DLL_EXPORT
-// %include <Teuchos_Array.i>
-// #undef TEUCHOSCORE_LIB_DLL_EXPORT
-
 // Import the PyTrilinos utilities
 %import <PyTrilinos_Teuchos_Util.h>
 
