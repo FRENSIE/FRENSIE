@@ -9,10 +9,7 @@ MACRO(ENABLE_SWIG_SUPPORT)
   ENDIF()
 
   # Find the SWIG package available on this system
-  FIND_PACKAGE(SWIG 3.0.8 REQUIRED)
-
-  # Use the local UseSWIG.cmake file
-  INCLUDE(${CMAKE_SOURCE_DIR}/cmake/UseSWIG.cmake)
+  FIND_PACKAGE(SWIG 3.0.8 REQUIRED)   
   
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found SWIG! Here are the details: ")

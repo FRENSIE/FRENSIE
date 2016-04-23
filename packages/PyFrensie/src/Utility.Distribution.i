@@ -1,21 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility.i
+//! \file   Utility.Distribution.i
 //! \author Alex Robinson
-//! \brief  The utility module swig interface file
+//! \brief  The Utility.Distribution sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
 
-%define %utility_docstring
+%define %utility_dist_docstring
 "
-PyFrensie.Utility is the python interface to the FRENSIE utilities package
-Utility: ...
+PyFrensie.Utility.Distribution is the python interface to the FRENSIE 
+utility/distribution subpackage.
+
+The purpose of Distribution is to provide a variety of 1-D distributions and
+a variety of higher dimension distributions that can be used for both 
+evaluation and sampling. All distributions are compatible with the 
+Teuchos::ParameterList and its Python wrapper 
+(PyTrilinos.Teuchos.ParameterList).
 "
 %enddef
 
-%module(package   = "PyFrensie",
+%module(package   = "PyFrensie.Utility",
         autodoc   = "1",
-        docstring = %utility_docstring) Utility
+        docstring = %utility_dist_docstring) Distribution
 
 // Standard exception handling
 %include "exception.i"
@@ -69,5 +75,5 @@ void initFrensiePrng()
 %exception;
 
 //---------------------------------------------------------------------------//
-// end Utility.i
+// end Utility.Distribution.i
 //---------------------------------------------------------------------------//

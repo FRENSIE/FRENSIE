@@ -1,7 +1,7 @@
 # Create the PyFrensie_ALL string
 SET(PyFrensie_ALL "__all__ = [")
-FOREACH(MODULE ${PyFrensie_MODULE})
-  SET(PyFrensie_ALL "${PyFrensie_ALL'${MODULE}',\n          ")
+FOREACH(PACKAGE ${PyFrensie_PACKAGES})
+  SET(PyFrensie_ALL "${PyFrensie_ALL}'${PACKAGE}',\n          ")
 ENDFOREACH()
 SET(PyFrensie_ALL "${PyFrensie_ALL}]")
 

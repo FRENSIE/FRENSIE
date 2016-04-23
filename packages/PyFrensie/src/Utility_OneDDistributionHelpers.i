@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_DistributionHelper.i
+//! \file   Utility_DistributionHelpers.i
 //! \author Alex Robinson
 //! \brief  The distribution helper macros
 //!
 //---------------------------------------------------------------------------//
 
 %{
-#include "PyFrensie_Utility.hpp"
+#include "PyFrensie_DistributionHelpers.hpp"
 %}
 
 // Include std::string support
 %include <std_string.i>
 
 // Import the PyFrensie utility
-%import "PyFrensie_Utility.hpp"
+%import "PyFrensie_DistributionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Helper macros for getting the distribution name
@@ -393,5 +393,5 @@ typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 
 
 //---------------------------------------------------------------------------//
-// end Utility_DistributionHelper.i
+// end Utility_DistributionHelpers.i
 //---------------------------------------------------------------------------//

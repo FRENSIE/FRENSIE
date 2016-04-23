@@ -1,10 +1,24 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ACE.i
+//! \file   Data.ACE.i
 //! \author Alex Robinson
-//! \brief  The ACE subpackage interface file
+//! \brief  The Data.ACE sub-module swig interface file
 //!
 //---------------------------------------------------------------------------//
+
+%define %data_ace_docstring
+"
+PyFrensie.Data.ACE is the python interface to the FRENSIE data/ace
+subpackage.
+
+The purpose of ACE is to provide tools for reading data from an ACE table
+and extracting data blocks from the XSS array. 
+"
+%enddef
+
+%module(package   = "PyFrensie.Data",
+        autodoc   = "1",
+        docstring = %data_ace_docstring) ACE
 
 %{
 // PyTrilinos Includes
@@ -16,10 +30,14 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_ContractException.hpp"
 %}
 
-// Include std::string support
+
+// C++ STL support
 %include <std_string.i>
+%include <stl.i>
+%include <std_except.i>
 
 // Include Teuchos::Array support
 #define TEUCHOSCORE_LIB_DLL_EXPORT
@@ -31,6 +49,34 @@
 
 // Include the Teuchos::ArrayRCP support
 %include "PyFrensie_ArrayRCP.i"
+
+// Standard exception handling
+%include "exception.i"
+
+// Global swig features
+%feature("autodoc", "1");
+
+// General exception handling
+%exception
+{
+  try{
+    $action;
+    if( PyErr_Occurred() )
+      SWIG_fail;
+  }
+  catch( Utility::ContractException& e )
+  {
+    SWIG_exception( SWIG_ValueError, e.what() );
+  }
+  catch( std::runtime_error& e )
+  {
+    SWIG_exception( SWIG_RuntimeError, e.what() );
+  }
+  catch( ... )
+  {
+    SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Add support for the ACEFileHandler
@@ -194,6 +240,9 @@ shown below:
 
 // Include XSSEPRDataExtractor
 %include "Data_XSSEPRDataExtractor.hpp"
+
+// Turn off the exception handling
+%exception;
 
 //---------------------------------------------------------------------------//
 // end Data_ACE.i

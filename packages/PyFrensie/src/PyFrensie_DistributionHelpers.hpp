@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   PyFrensie_Utility.hpp
+//! \file   PyFrensie_DistributionHelpers.hpp
 //! \author Alex Robinson
 //! \brief  PyFrensie utility package helper functions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef PYFRENSIE_UTILITY_HPP
-#define PYFRENSIE_UTILITY_HPP
+#ifndef PYFRENSIE_DISTRIBUTION_HELPERS_HPP
+#define PYFRENSIE_DISTRIBUTION_HELPERS_HPP
 
 // Python Includes
 #include <Python.h>
@@ -128,8 +128,8 @@ void getDistFromParameterList( const std::string& name,
 
 } // end PyFrensie namespace
 
-#endif // end PYFRENSIE_UTILITY_HPP
+#endif // end PYFRENSIE_DISTRIBUTION_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end PyFrensie_Utility.hpp
+// end PyFrensie_DistributionHelpers.hpp
 //---------------------------------------------------------------------------//

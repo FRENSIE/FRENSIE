@@ -36,8 +36,8 @@
 // Import the PyFrensie Teuchos Array conversion helpers
 %import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 
-// Include the distribution helper
-%include "Utility_DistributionHelper.i"
+// Include the 1D distribution helpers
+%include "Utility_OneDDistributionHelpers.i"
 
 // Add a few general typemaps
 %apply unsigned& INOUT { unsigned& trials };

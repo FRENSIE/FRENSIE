@@ -2,10 +2,13 @@
 SET(PyFrensie_VERSION ${FRENSIE_VERSION})
 
 # Set the PyFrensie Install directory
-SET(PyFrensie_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/PyFrensie")
+SET(PyFrensie_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python2.7/site-packages/PyFrensie")
 
-# Initialize the package list
-SET(PyFrensie_MODULES "")
+# Use the local UseSWIG.cmake file
+#INCLUDE(${CMAKE_SOURCE_DIR}/cmake/UseSWIG.cmake)
+
+# Use the Trilinos UseSWIG.cmake file
+INCLUDE(${PYTRILINOS_CMAKE_DIR_PATH}/UseSWIG.cmake) 
 
 # Find the python package available on this system
 FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
