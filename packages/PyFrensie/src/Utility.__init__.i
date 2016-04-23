@@ -29,6 +29,13 @@ __all__ = ['Distribution',
 %}
 
 // Add the shortcut for initializing the random number generator
+%feature("autodoc")
+initFrensiePrng
+"
+This method can be used to initialize the Utility.Prng.RandomNumberGenerator
+instead of calling 'Utility.Prng.RandomNumberGenerator.createStreams()'.
+"
+
 %inline %{
 //! Initialize the random number generator
 void initFrensiePrng()
