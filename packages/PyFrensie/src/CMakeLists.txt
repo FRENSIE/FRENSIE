@@ -12,7 +12,7 @@ SET(SOURCES "")
 LIST(APPEND HEADERS 
   PyFrensie_NumPyTypeTraitsDecl.hpp
   PyFrensie_NumPyTypeTraits.hpp
-  PyFrensie_TeuchosArrayConversionHelpers.hpp
+  PyFrensie_ArrayConversionHelpers.hpp
   PyFrensie_DistributionHelpers.hpp)
 
 INSTALL(FILES ${HEADERS}
@@ -31,6 +31,7 @@ SET(PyFrensie_MODULES "")
 # Add the utility package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Utility)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.__init__)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
 

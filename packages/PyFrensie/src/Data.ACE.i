@@ -26,13 +26,12 @@ and extracting data blocks from the XSS array.
 #include "numpy_include.h"
 
 // FRENSIE Includes
-#include "PyFrensie_TeuchosArrayConversionHelpers.hpp"
+#include "PyFrensie_ArrayConversionHelpers.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_ContractException.hpp"
 %}
-
 
 // C++ STL support
 %include <stl.i>
@@ -40,7 +39,7 @@ and extracting data blocks from the XSS array.
 %include <std_except.i>
 
 // Import the PyFrensie Teuchos Array conversion helpers
-%import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
+%import "PyFrensie_ArrayConversionHelpers.hpp"
 
 // Include the Teuchos::ArrayRCP support
 %include "PyFrensie_Array.i"
@@ -76,7 +75,7 @@ and extracting data blocks from the XSS array.
 //---------------------------------------------------------------------------//
 // Add support for the ACEFileHandler
 //---------------------------------------------------------------------------//
-// Add a more detailed docstrings for the ACEFileHandler
+// Add more detailed docstrings for the ACEFileHandler
 %feature("docstring")
 Data::ACEFileHandler
 "
@@ -170,7 +169,7 @@ shown below:
 //---------------------------------------------------------------------------//
 // Add support for the XSSNeutronDataExtractor
 //---------------------------------------------------------------------------//
-// Add a more detailed docstrings for the XSSNeutronDataExtractor
+// Add more detailed docstrings for the XSSNeutronDataExtractor
 %feature("docstring")
 Data::XSSNeutronDataExtractor
 "
@@ -203,7 +202,7 @@ shown below:
 //---------------------------------------------------------------------------//
 // Add support for the XSSEPRDataExtractor
 //---------------------------------------------------------------------------//
-// Add a more detailed docstrings for the XSSEPRDataExtractor
+// Add more detailed docstrings for the XSSEPRDataExtractor
 %feature("docstring")
 Data::XSSEPRDataExtractor
 "

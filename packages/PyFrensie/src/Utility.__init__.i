@@ -19,8 +19,23 @@ PyFrensie.Utility is the python interface to the FRENSIE utilities package.
 // Set the special python variables
 %pythoncode
 %{
-__all__ = ['Distribution'
+__all__ = ['Distribution',
+           'Prng'
            ]
+%}
+
+%{
+#include "Utility_RandomNumberGenerator.hpp"
+%}
+
+// Add the shortcut for initializing the random number generator
+%inline %{
+//! Initialize the random number generator
+void initFrensiePrng()
+{
+  // Initilize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+}
 %}
 
 //---------------------------------------------------------------------------//

@@ -24,7 +24,7 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_WattDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
-#include "PyFrensie_TeuchosArrayConversionHelpers.hpp"
+#include "PyFrensie_ArrayConversionHelpers.hpp"
 %}
 
 // Include std::string support
@@ -34,7 +34,7 @@
 %include <typemaps.i>
 
 // Import the PyFrensie Teuchos Array conversion helpers
-%import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
+%import "PyFrensie_ArrayConversionHelpers.hpp"
 
 // Include the 1D distribution helpers
 %include "Utility_OneDDistributionHelpers.i"

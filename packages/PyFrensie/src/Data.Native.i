@@ -29,7 +29,6 @@ FRENSIE formate data file.
 #include "numpy_include.h"
 
 // FRENSIE Includes
-#include "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_ArchivableObject.hpp"
 #include "Utility_ContractException.hpp"

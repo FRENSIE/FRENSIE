@@ -1,13 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   PyFrensie_TeuchosArrayConversionHelpers.hpp
+//! \file   PyFrensie_ArrayConversionHelpers.hpp
 //! \author Alex Robinson
-//! \brief  PyFrensie basic conversion helper functions
+//! \brief  PyFrensie array conversion helper functions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef PYFRENSIE_CONVERSION_HPP
-#define PYFRENSIE_CONVERSION_HPP
+#ifndef PYFRENSIE_ARRAY_CONVERSION_HELPERS_HPP
+#define PYFRENSIE_ARRAY_CONVERSION_HELPERS_HPP
+
+// Std Lib Includes
+#include <vector>
 
 // Trilinos Includes
 #include <PyTrilinos_Teuchos_Util.h>
@@ -17,6 +20,29 @@
 #include "PyFrensie_NumPyTypeTraits.hpp"
 
 namespace PyFrensie{
+
+/*! Copy the data in a std::vector into a new 1D NumPy array
+ * \details If any errors occur, a Python error will be set and the 
+ * function will return NULL.
+ */
+template<typename T>
+PyObject* CopyVectorToNumPy( std::vector<T>& vector )
+{
+  npy_intp dims[] = { vector.size() };
+  int typecode = numpyTypecode( T() );
+  
+  PyObject* py_array = PyArray_SimpleNew( 1, dims, typecode );
+
+  T* data = (T*) PyArray_DATA((PyArrayObject*) py_array);
+
+  // Deep copy the ArrayRCP
+  for( typename Teuchos::ArrayRCP<const T>::size_type i = 0u; 
+       i < vector.size();
+       ++i )
+    *(data++) = vector[i];
+  
+  return py_array;
+}
 
 /*! Copy the data in a Teuchos::ArrayRCP into a new 1D NumPy array. 
  * \details If any errors occur, a Python error will be set and the function 
@@ -92,14 +118,34 @@ PyObject* isValidNumPyArray( PyObject* py_obj )
   return py_array;
 }
 
-/*! Copy the data in a 1D NumPy array into a Teuchos::ArrayRCP.  
- * \details The Teuchos ArrayRCP will be resized to accommodate the data.  The 
- * user must verify that the NumPy data type is the same as the template
- * type a priori and that the NumPy array is 1D.
+/*! Copy the data in a 1D NumPy array int a std::vector.
+ * \details The std::vector will be resized to accommodate the data. The user
+ * must verify that the NumPy array is 1D.
  */
 template<typename T>
-void CopyNumPyToTeuchosWithCheck(PyObject * py_obj,
-                                 Teuchos::ArrayRCP<T> & t_array)
+void CopyNumPyToVectorWithCheck( PyObject * py_obj,
+                                  std::vector<T> & vector )
+{
+  PyObject* py_array = isValidNumPyArray<T>( py_obj );
+  
+  typedef typename Teuchos::ArrayRCP<T>::size_type size_type;
+  size_type length = PyArray_DIM((PyArrayObject*) py_array, 0);
+
+  vector.resize(length);
+
+  T * data = (T*) PyArray_DATA((PyArrayObject*) py_array);
+
+  for( size_type i = 0u; i < vector.size(); ++i )
+    vector[i] = *(data++);
+}
+
+/*! Copy the data in a 1D NumPy array into a Teuchos::ArrayRCP.  
+ * \details The Teuchos ArrayRCP will be resized to accommodate the data.  The 
+ * user must verify that the NumPy array is 1D.
+ */
+template<typename T>
+void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
+                                  Teuchos::ArrayRCP<T> & t_array )
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );
   
@@ -116,12 +162,11 @@ void CopyNumPyToTeuchosWithCheck(PyObject * py_obj,
 
 /*! Copy the data in a 1D NumPy array into a Teuchos::Array.  
  * \details The Teuchos ArrayRCP will be resized to accommodate the data.  The 
- * user must verify that the NumPy data type is the same as the template
- * type a priori and that the NumPy array is 1D.
+ * user must verify that the NumPy array is 1D.
  */
 template<typename T>
-void CopyNumPyToTeuchosWithCheck(PyObject * py_obj,
-                                 Teuchos::Array<T> & t_array)
+void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
+                                  Teuchos::Array<T> & t_array )
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );
   
@@ -130,8 +175,8 @@ void CopyNumPyToTeuchosWithCheck(PyObject * py_obj,
 
 } // end PyFrensie namespace
 
-#endif // end PYFRENSIE_CONVERSION_HPP
+#endif // end PYFRENSIE_ARRAY_CONVERSION_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end PyFrensie_TeuchosArrayConversionHelpers.hpp
+// end PyFrensie_ArrayConversionHelpers.hpp
 //---------------------------------------------------------------------------//

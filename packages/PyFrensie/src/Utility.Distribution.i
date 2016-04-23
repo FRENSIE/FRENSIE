@@ -55,19 +55,6 @@ Teuchos::ParameterList and its Python wrapper
   }
 }
 
-%{
-#include "Utility_RandomNumberGenerator.hpp"
-%}
-
-%inline %{
-//! Initialize the random number generator
-void initFrensiePrng()
-{
-  // Initilize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-}
-%}
-
 // Distribution support
 %include "Utility_OneDDistribution.i"
 
