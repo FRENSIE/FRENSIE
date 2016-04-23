@@ -35,20 +35,15 @@ and extracting data blocks from the XSS array.
 
 
 // C++ STL support
-%include <std_string.i>
 %include <stl.i>
+%include <std_string.i>
 %include <std_except.i>
-
-// Include Teuchos::Array support
-#define TEUCHOSCORE_LIB_DLL_EXPORT
-%include <Teuchos_Array.i>
-#undef TEUCHOSCORE_LIB_DLL_EXPORT
 
 // Import the PyFrensie Teuchos Array conversion helpers
 %import "PyFrensie_TeuchosArrayConversionHelpers.hpp"
 
 // Include the Teuchos::ArrayRCP support
-%include "PyFrensie_ArrayRCP.i"
+%include "PyFrensie_Array.i"
 
 // Standard exception handling
 %include "exception.i"
@@ -91,7 +86,7 @@ passed to one of the XSSDataExtractor classes to extract the individual
 data blocks from the XSS array. A brief usage tutorial for this class is
 shown below:
 
-  import PyFrensie.Data, PyTrilinos.Teuchos, numpy
+  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy
   
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
@@ -100,7 +95,7 @@ shown below:
   h_data_list = cs_list.get( 'H' )
   h_ace_file_name = 'datadir' + h_data_list.get( 'photoatomic_file_path' )
 
-  h_ace_file = PyFrensie.Data.ACEFileHandler( h_ace_file_name, h_data_list.get( 'photoatomic_table_name' ), h_data_list.get( 'photoatomic_file_start_line' ) )
+  h_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_ace_file_name, h_data_list.get( 'photoatomic_table_name' ), h_data_list.get( 'photoatomic_file_start_line' ) )
   
   nxs_array = h_ace_file.getTableNXSArray()
   jxs_array = h_ace_file.getTableJXSArray()
@@ -183,7 +178,7 @@ The XSSNeutronDataExtractor can be used to extract the data blocks from the
 xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
-  import PyFrensie.Data, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
   
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
@@ -192,9 +187,9 @@ shown below:
   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'nuclear_file_path' )
 
-  h_1_ace_file = PyFrensie.Data.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'nuclear_table_name' ), h_1_data_list.get( 'nuclear_file_start_line' ) )
+  h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'nuclear_table_name' ), h_1_data_list.get( 'nuclear_file_start_line' ) )
   
-  neutron_data_extractor = PyFrensie.Data.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
 
   matplotlib.pyplot.loglog( neutron_data_extractor.extractEnergyGrid(), neutron_data_extractor.extractTotalCrossSection() )
   matplotlib.pyplot.show()
@@ -216,7 +211,7 @@ The XSSEPRDataExtractor can be used to extract the data blocks from the
 xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
-  import PyFrensie.Data, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
+  import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
   
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
@@ -225,9 +220,9 @@ shown below:
   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'photoatomic_file_path' )
 
-  h_1_ace_file = PyFrensie.Data.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'photoatomic_table_name' ), h_1_data_list.get( 'photoatomic_file_start_line' ) )
+  h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'photoatomic_table_name' ), h_1_data_list.get( 'photoatomic_file_start_line' ) )
   
-  neutron_data_extractor = PyFrensie.Data.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
 
   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractIncoherentCrossSection() )
   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractCoherentCrossSection() )
