@@ -67,6 +67,30 @@ PyObject* CopyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
   return py_array;
 }
 
+/*! Copy the data in a Teuchos::ArrayView into a new 1D NumPy array. 
+ * \details If any errors occur, a Python error will be set and the function 
+ * will return NULL. 
+ */
+template<typename T>
+PyObject* CopyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
+{
+  npy_intp dims[] = { t_array.size() };
+  int typecode = numpyTypecode( T() );
+  
+  PyObject* py_array = PyArray_SimpleNew( 1, dims, typecode );
+
+  T* data = (T*) PyArray_DATA((PyArrayObject*) py_array);
+
+  // Deep copy the ArrayView
+  for( typename Teuchos::ArrayView<const T>::size_type i = 0u; 
+       i < t_array.size();
+       ++i )
+    *(data++) = t_array[i];
+  
+  return py_array;
+}
+
+
 /*! Copy the data in a Teuchos::Array into a new 1D NumPy array. 
  * \details If any errors occur, a Python error will be set and the function 
  * will return NULL. 

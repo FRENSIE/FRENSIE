@@ -35,12 +35,40 @@ SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Prng)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Utility.Distribution)
 SET(UTILITY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} utility_core utility_dist ${TEUCHOS_CORE} ${PYTRILINOS})
 
-#Add the data package
+# Add the data package
 SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Data)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.__init__)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.ACE)
 SET(PyFrensie_MODULES ${PyFrensie_MODULES} Data.Native)
 SET(DATA_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} data_ace data_native ${TEUCHOS_CORE} ${PYTRILINOS})
+
+# Add the geometry package
+SET(PyFrensie_PACKAGES ${PyFrensie_PACKAGES} Geometry)
+SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.__init__)
+
+SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${PYTHON_LIBRARIES} geometry_core ${TEUCHOS_CORE} ${PYTRILINOS})
+SET(PyFrensie_Geometry_PACKAGES "")
+
+IF(FRENSIE_ENABLE_DAGMC)
+  SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
+  #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
+  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
+ENDIF()
+
+IF(FRENSIE_ENABLE_ROOT)
+  SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
+  #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.Root)
+  SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
+ENDIF()
+
+SET(PyFrensie_Geometry_ALL "__all__ = [")
+FOREACH(PACKAGE ${PyFrensie_Geometry_PACKAGES})
+  SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}'${PACKAGE}',\n          ")
+ENDFOREACH()
+SET(PyFrensie_Geometry_ALL "${PyFrensie_Geometry_ALL}]")
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Geometry_Config.i.in
+  ${CMAKE_CURRENT_BINARY_DIR}/Geometry_Config.i)
 
 # Add the PyFrensie subdirectory
 ADD_SUBDIRECTORY(PyFrensie)
@@ -97,6 +125,23 @@ FOREACH(MODULE ${PyFrensie_MODULES})
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
+  
+  ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Geometry")
+    SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${GEOMETRY_PACKAGE_LINK_LIBRARIES})
+
+    # Byte compile the generator python files
+    ADD_CUSTOM_COMMAND(TARGET ${PyFrensie_TARGET_NAME} POST_BUILD
+      COMMAND ${PYTHON_EXECUTABLE} -c "import py_compile; py_compile.compile('PyFrensie/Geometry/${MODULE_NAME}.py')"
+      COMMENT "Byte compiling Geometry/${MODULE_NAME}.py"
+      VERBATIM)
+
+    # Install the generated files
+    INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
+      DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)
+    INSTALL(FILES 
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.py
+      ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.pyc
+      DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)
   ENDIF()
 
 ENDFOREACH(MODULE)

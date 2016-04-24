@@ -19,7 +19,8 @@ PyFrensie.Data is the python interface to the FRENSIE data package.
 // Set the special python variables
 %pythoncode
 %{
-__all__ = ['ACE'
+__all__ = ['ACE',
+           'Native'
            ]
 %}
 
