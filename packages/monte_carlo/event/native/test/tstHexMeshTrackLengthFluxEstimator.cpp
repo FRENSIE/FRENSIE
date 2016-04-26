@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -24,9 +25,17 @@
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 
-int main( int argc, char** argv )
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+std::shared_ptr<MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> hex_estimator;
+
+//---------------------------------------------------------------------------//
+// Tests.
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
 {
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  // Set up a basic mesh
   Teuchos::Array<double> x_grid_points, y_grid_points, z_grid_points;
   x_grid_points.push_back(0);
   x_grid_points.push_back(1);
@@ -34,8 +43,15 @@ int main( int argc, char** argv )
   y_grid_points.push_back(1);
   z_grid_points.push_back(0);
   z_grid_points.push_back(1);
-  new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(2, 2, x_grid_points, y_grid_points, z_grid_points);
 
+  TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator(2, 2, x_grid_points, y_grid_points, z_grid_points ) ) );
+}
+
+//---------------------------------------------------------------------------//
+// Custom Main
+//---------------------------------------------------------------------------//
+int main( int argc, char** argv )
+{
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
   
