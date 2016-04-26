@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   tstTetMeshTrackLengthFluxEstimator.cpp
-//! \author Eli Moll
+//! \author Philip Britt
 //! \brief  TetMeshTrackLengthFluxEstimator class unit tests
 //!
 //---------------------------------------------------------------------------//
