@@ -1,4 +1,4 @@
- fdwqInstallation {#installation}
+Installation {#installation}
 =====
 
 ## Dependencies 
@@ -6,18 +6,18 @@ To promote rapid scientific software development and research, FRENSIE is built
 off of a large number of software libraries. The software that FRENSIE
 depends on is listed below.
 
-1. [HDF5 1.8.13](http://www.hdfgroup.org/HDF5)
+1. [HDF5 1.8.13+](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/) - optional
 3. [Cubit 14.0](https://cubit.sandia.gov/index.html) - optional
 4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM) - only with Cubit
 5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
-6. [Trilinos 11.12.1](http://trilinos.org/)
-7. [Boost 1.56.0](http://www.boost.org/)
-8. [ROOT 6.04/02](https://root.cern.ch/content/release-60402) - optional
-9. [Python 2.7](https://www.python.org/) - optional
-10. [Numpy 1.8](http://www.numpy.org/) - optional
-11. [H5Py 2.4](http://www.h5py.org/) - optional
-12. [SWIG 3.0.8](http://www.swig.org/) - optional
+6. [Trilinos 11.14.3](http://trilinos.org/)
+7. [Boost 1.56.0+](http://www.boost.org/)
+8. [ROOT 6.04/02+](https://root.cern.ch/content/release-60402) - optional
+9. [Python 2.7+](https://www.python.org/) - optional
+10. [Numpy 1.8+](http://www.numpy.org/) - optional
+11. [H5Py 2.4+](http://www.h5py.org/) - optional
+12. [SWIG 3.0.8+](http://www.swig.org/) - optional
 
 Note that OpenMPI is only required if you plan on running FRENSIE on a
 distributed memory system. Cubit is only required if you plan on using CAD
@@ -165,7 +165,7 @@ are described.
 5. run `ln -s cgma-14.1pre src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/cgm/build)
-8. run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
+8. run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
@@ -182,12 +182,12 @@ are described.
 8. 
   * **Basic HDF5 Build:**
     * if DagMC is desired (Cubit 14.0 and CGM must be built): 
-    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
-    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5 --prefix=absolute-path-to_software/moab/`
   * **Advanced HDF5 Build:**
     * if DagMC is desired (Cubit 14.0 and CGM must be built): 
-    run `../src/configure --enable-optimize --enable-shared --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
-    * else run `../src/configure --enable-optimize --enable-shared --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+    run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+    * else run `../src/configure --enable-optimize --enable-shared --disable-debug CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0 --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
@@ -254,18 +254,41 @@ you to specify the location of your custom build LAPACK package.
 4. run `tar -xvf boost_1_56_0.tar.gz`
 5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
 6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
-7. run `./b2  --prefix="/home/alexr/Software/boost/" -s NO_BZIP2=1 link=shared runtime-link=shared`
+7. run `./b2  --prefix="/home/alexr/Software/boost/" -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0"`
 8. run `./b2 install`
 9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
 10. run `exec bash`
 
 ### Building ROOT - Optional
+**Basic:**
+
 1. download the appropriate [ROOT 6.04/02 binaries](https://root.cern.ch/content/release-60402)
-2. move the binary file to the root directory (e.g. software/root)
-3. move to the root directory
-4. run `tar -xvf root_v6.04.02*`
+2. move the binary file to the software directory (e.g. software)
+4. run `tar -xvf root_v6.04.02*` - Note: This will create a directory called root.
 5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
 6. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
+
+If you are using g++ 5.3+ these precompiled binaries will no longer work
+(using the root executable will result in an error). Use the advanced build
+instructions below instead.
+
+**Advanced:**
+
+1. download the [ROOT 6.04/16 source](https://root.cern.ch/download/root_v6.04.16.source.tar.gz)
+2. move the root_v6.04.16.source.tar.gz file to the root directory (e.g. software/root)
+3. move to the root directory
+4. run `tar -xvf root_v6.04.16.source.tar.gz`
+5. run `ln -s root_v6.04.16.source.tar.gz`
+6. run `mkdir build`
+7. move to the build directory (e.g. software/root/build)
+8. copy `FRENSIE/scripts/root.sh` into the build directory
+9. change the variables in the script to reflect the desired system paths
+10. run `sudo apt-get install libx11-dev libxpm-dev libxft-dev libxext-dev`
+11. run `./root.sh`
+12. run `make -j n`
+13. run `make install`
+14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
+15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
 
 ### Building Python, NumPy, H5Py - Optional
 1. run `sudo apt-get install python python-dev python-numpy python-h5py`
@@ -313,7 +336,7 @@ the following CMake variables can be set:
  * `-D MPI_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MPI install directory is located.
  * `-D MOAB_PREFIX:PATH=path-to-mpi-install-dir` indicates where the custom MOAB install directory is located.
  * `-D MOAB_SOURCE:PATH=path-to-moab-src-dir` indicates where the MOAB source directory is located if it is separate from the MOAB install prefix.
- * `-D TRILIINOS_PREFIX:PATH=path-to-trilinos-install-dir` indicates where the custom Trilinos install directory is located.
+ * `-D TRILINOS_PREFIX:PATH=path-to-trilinos-install-dir` indicates where the custom Trilinos install directory is located.
  * `-D TRILINOS_SOURCE:PATH=path-to-trilinos-src-dir` indicates where the Trilinos source directory is located if it is separate from the Trilinos install prefix.
  * `-D BOOST_PREFIX:PATH=path-to-boost-install-dir` indicates where the custom Boost install directory is located.
  * `-D ROOT_PREFIX:PATH=path-to-root-install-dir` indicates where the custom ROOT install directory is located.
@@ -338,12 +361,13 @@ The reason why the moab source file location is needed is because of a race
 condition that was found in the DagMC.cpp file. Without patching this file
 the only safe way to run DagMC with threads is by placing omp critical blocks
 around each DagMC call, which results in very poor thread scaling. A patch
-file has been create which will be applied by the build system. The first time
+file has been created which will be applied by the build system. The first time
 the patch is applied, the build system will report an error and indicate that
-moab must be rebuilt before it can proceed. After rebuilding moab (using the
-same steps outlined above), frensie can be reconfigured and the build system
-should report no errors. After applying the patch to fix the race condition,
-close to linear thread scaling should be observed.
+moab must be rebuilt before it can proceed. After rebuilding moab by simply
+going to the moab build directory and running `make -j n` and `make install`
+frensie can be reconfigured by running the frensie.sh script and the build
+system should report no errors. After applying the patch to fix the race
+condition close to linear thread scaling should be observed.
 
 ## Dashboard
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.

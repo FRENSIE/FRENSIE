@@ -21,7 +21,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   ENDIF()
   
   # Find the Trilinos package available on this system
-  FIND_PACKAGE(Trilinos 11.4.1 REQUIRED)
+  FIND_PACKAGE(Trilinos 11.14.3 REQUIRED)
 
   # Check if C compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL 

@@ -13,7 +13,7 @@
 #include <vector>
 
 // Trilinos Includes
-#include <PyTrilinos_Teuchos_Util.h>
+#include <PyTrilinos_Teuchos_Util.hpp>
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
@@ -98,7 +98,7 @@ PyObject* CopyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
 template<typename T>
 PyObject* CopyTeuchosToNumPy( Teuchos::Array<T>& t_array )
 {
-  return PyTrilinos::CopyTeuchosToNumPy( t_array, numpyTypecode( T() ) );
+  return PyTrilinos::copyTeuchosArrayToNumPy( t_array );
 }
 
 /*! Check that the Python object is a NumPy array with the correct data type.
@@ -194,7 +194,7 @@ void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );
   
-  PyTrilinos::CopyNumPyToTeuchos( py_array, t_array );
+  PyTrilinos::copyNumPyToTeuchosArray( py_array, t_array );
 }
 
 } // end PyFrensie namespace

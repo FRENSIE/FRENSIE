@@ -7,7 +7,7 @@ MACRO(ENABLE_ROOT_SUPPORT)
   IF(ROOT_PREFIX)
     SET(CMAKE_PREFIX_PATH ${ROOT_PREFIX} ${CMAKE_PREFIX_PATH})
   ELSE()
-    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must currently be set.")
+    MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set currently!")
   ENDIF()
 
   # Find the ROOT package available on this system

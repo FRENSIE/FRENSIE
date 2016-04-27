@@ -26,7 +26,7 @@ FRENSIE formate data file.
 
 // PyTrilinos Includes
 #define NO_IMPORT_ARRAY
-#include "numpy_include.h"
+#include "numpy_include.hpp"
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"

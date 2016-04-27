@@ -23,7 +23,7 @@ and extracting data blocks from the XSS array.
 %{
 // PyTrilinos Includes
 #define NO_IMPORT_ARRAY
-#include "numpy_include.h"
+#include "numpy_include.hpp"
 
 // FRENSIE Includes
 #include "PyFrensie_ArrayConversionHelpers.hpp"
