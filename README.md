@@ -381,4 +381,4 @@ Before setting up the crontab entries, a separate frensie build should be create
 The second line can be omitted if the client will only do nightly builds. Note that the first line tells cron to run the nightly script every day at 1:00 AM. The second line tells cron to run the ci script every 5 minutes (if no changes to the master branch have occured nothing happens).
 
 ## Feedback
-If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)
+If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson), [Eli Moll](https://github.com/ecmoll) or [Luke Kersting](https://github.com/lkersting).
