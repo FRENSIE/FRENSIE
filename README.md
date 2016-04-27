@@ -61,7 +61,7 @@ are described.
 **Basic:**
 
 1. run `sudo apt-get install cmake`
-2. run `cmake --version` and verify that the output is >= 3.0.1
+2. run `cmake --version` and verify that the output is >= 3.0.1 or greater
 
 **Advanced:**
 
@@ -278,7 +278,7 @@ instructions below instead.
 2. move the root_v6.04.16.source.tar.gz file to the root directory (e.g. software/root)
 3. move to the root directory
 4. run `tar -xvf root_v6.04.16.source.tar.gz`
-5. run `ln -s root_v6.04.16.source.tar.gz`
+5. run `ln -s root_v6.04.16.source.tar.gz src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/root/build)
 8. copy `FRENSIE/scripts/root.sh` into the build directory
