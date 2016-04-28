@@ -151,14 +151,14 @@ int main( int argc, char** argv )
 	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator( 
 					    atomic_number,
 					    ace_epr_extractor,
-                                            endl_file_handler,    
+                        endl_file_handler,    
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,
 					    max_electron_energy,
-                                            cutoff_angle,
+                        cutoff_angle,
 					    occupation_number_evaluation_tol,
-				            subshell_incoherent_evaluation_tol,
+                        subshell_incoherent_evaluation_tol,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
 					    grid_distance_tol ) );

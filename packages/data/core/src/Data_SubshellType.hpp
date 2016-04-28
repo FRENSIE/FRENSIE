@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_SubshellType.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  Electron subshell enumeration and helper function decls.
 //!
 //---------------------------------------------------------------------------//

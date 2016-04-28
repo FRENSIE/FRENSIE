@@ -7,6 +7,10 @@
 EEDL_DATA_PATH=/home/software/endldata/eedl 
 EEDL_XSDIR_FILE=xsdir 
  
+if [ ! -d "$EEDL_DATA_PATH" ]; then 
+mkdir $EEDL_DATA_PATH 
+fi 
+ 
 cd $EEDL_DATA_PATH 
  
 if [ -d "$EEDL_DATA_PATH/H" ]; then 
