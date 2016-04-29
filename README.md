@@ -196,11 +196,11 @@ are described.
 14. run `exec bash`
 
 ### Building Trilinos 
-1. download the [Trilinos 11.12.1 source](http://trilinos.org/download/)
-2. move the trilinos-11.12.1-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
+1. download the [Trilinos 11.14.3 source](http://trilinos.org/download/)
+2. move the trilinos-11.14.3-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
 3. move to the trilinos directory
-4. run `tar -xvf trilinos-11.12.1-Source.tar.gz`
-5. run `ln -s trilinos-11.12.1.Source src`
+4. run `tar -xvf trilinos-11.14.3-Source.tar.gz`
+5. run `ln -s trilinos-11.14.3.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
 8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory 
