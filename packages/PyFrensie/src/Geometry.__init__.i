@@ -22,7 +22,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 // Std Lib Includes
 #include <sstream>
 
-// Frensie Includes
+// FRENSIE Includes
 #include "PyFrensie_ArrayConversionHelpers.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
@@ -122,12 +122,6 @@ A NumPy array will be returned.
 
 // Ignore the print method
 %ignore Geometry::Ray::print;
-
-// Set the C array typemaps
-%typemap(in) const double[3]( double tmp[3] )
-{
-     
-}
 
 // Add some useful methods to the Ray class
 %extend Geometry::Ray

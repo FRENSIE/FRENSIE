@@ -278,7 +278,7 @@ instructions below instead.
 2. move the root_v6.04.16.source.tar.gz file to the root directory (e.g. software/root)
 3. move to the root directory
 4. run `tar -xvf root_v6.04.16.source.tar.gz`
-5. run `ln -s root_v6.04.16.source.tar.gz src`
+5. run `ln -s root_v6.04.16 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/root/build)
 8. copy `FRENSIE/scripts/root.sh` into the build directory
@@ -294,11 +294,22 @@ instructions below instead.
 1. run `sudo apt-get install python python-dev python-numpy python-h5py`
 
 ### Building SWIG - Only with Python
-1. download the appropriate [SWIG 3.0.8 binaries](http://www.swig.org/download.html)
-2. move the binary file to the swig directory (e.g. software/swig)
-3. move to the swig directory
-4. run `tar -xvf swig-3.0.8*`
-5. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
+**Basic:**
+
+1. run `sudo apt-get install swig`
+
+**Advanced**
+
+1. download the [SWIG 3.0.8 source](http://www.swig.org/download.html)
+2. move the swig swig-3.0.8.tar.gz file to the swig directory (e.g. software/swig)
+4. run `tar -xvf swig-3.0.8.tar.gz`
+5. run `ln -s swig-3.0.8 src`
+6. run `mkdir build`
+7. move to the build directory (e.g. software/swig/build)
+8. run `../src/configure --enable-cpp11-testing --prefix=absolute-path-to_software/swig`
+9. run `make -j n`
+11. run `make install`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
