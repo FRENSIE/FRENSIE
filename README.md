@@ -262,6 +262,10 @@ you to specify the location of your custom build LAPACK package.
 
 1. run `sudo apt-get install liblapack-dev liblapack3`
 
+Note: If on Ubuntu 16.04 this is the recommended way to install lapack. The
+advanced install below will result in an runtime error when importing numpy in
+python. 
+
 **Advanced:**
 
 1. download the [LAPACK 3.5.0 source](http://www.netlib.org/lapack/lapack-3.5.0.tgz)
