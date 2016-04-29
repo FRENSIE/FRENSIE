@@ -100,6 +100,27 @@ are described.
 10. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/doxygen/bin:$PATH`
 11. run `exec bash`
 
+### Building Python, NumPy, H5Py - Optional
+1. run `sudo apt-get install python python-dev python-numpy python-h5py`
+
+### Building SWIG - Only with Python
+**Basic:**
+
+1. run `sudo apt-get install swig`
+
+**Advanced**
+
+1. download the [SWIG 3.0.8 source](http://www.swig.org/download.html)
+2. move the swig swig-3.0.8.tar.gz file to the swig directory (e.g. software/swig)
+4. run `tar -xvf swig-3.0.8.tar.gz`
+5. run `ln -s swig-3.0.8 src`
+6. run `mkdir build`
+7. move to the build directory (e.g. software/swig/build)
+8. run `../src/configure --enable-cpp11-testing --prefix=absolute-path-to_software/swig`
+9. run `make -j n`
+11. run `make install`
+12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
+
 ### Building HDF5
 **Basic:**
 
@@ -289,27 +310,6 @@ instructions below instead.
 13. run `make install`
 14. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/root/bin:$PATH`
 15. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/root/lib:$LD_LIBRARY_PATH`
-
-### Building Python, NumPy, H5Py - Optional
-1. run `sudo apt-get install python python-dev python-numpy python-h5py`
-
-### Building SWIG - Only with Python
-**Basic:**
-
-1. run `sudo apt-get install swig`
-
-**Advanced**
-
-1. download the [SWIG 3.0.8 source](http://www.swig.org/download.html)
-2. move the swig swig-3.0.8.tar.gz file to the swig directory (e.g. software/swig)
-4. run `tar -xvf swig-3.0.8.tar.gz`
-5. run `ln -s swig-3.0.8 src`
-6. run `mkdir build`
-7. move to the build directory (e.g. software/swig/build)
-8. run `../src/configure --enable-cpp11-testing --prefix=absolute-path-to_software/swig`
-9. run `make -j n`
-11. run `make install`
-12. add the following line to the .bashrc file: `export PATH=absolute-path-to_software/swig/bin:$PATH`
 
 ## Building FRENSIE
 At this point all of the dependent software libraries should have been built. If any errors were encountered do not try to proceed to building FRENSIE. If no errors were encountered, follow the instructions below.
