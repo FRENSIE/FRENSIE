@@ -195,6 +195,24 @@ are described.
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/moab/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
+### Building Boost
+**Basic:**
+
+1. run `sudo apt-get install libboost-all-dev`
+
+**Advanced:**
+
+1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
+2. move the boost_1_56_0.tar.gz file to the boost directory (e.g. software/boost)
+3. move to the boost directory
+4. run `tar -xvf boost_1_56_0.tar.gz`
+5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
+6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
+7. run `./b2  --prefix=absolute-path-to_software/boost -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0"`
+8. run `./b2 install`
+9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
+10. run `exec bash`
+
 ### Building Trilinos 
 1. download the [Trilinos 11.14.3 source](http://trilinos.org/download/)
 2. move the trilinos-11.14.3-Source.tar.gz file to the trilinos directory (e.g. software/trilinos)
@@ -240,24 +258,6 @@ you to specify the location of your custom build LAPACK package.
 13. run `make install`
 14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/lapack/lib:$LD_LIBRARY_PATH`
 15. run `exec bash`
-
-### Building Boost
-**Basic:**
-
-1. run `sudo apt-get install libboost-all-dev`
-
-**Advanced:**
-
-1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
-2. move the boost_1_56_0.tar.gz file to the boost directory (e.g. software/boost)
-3. move to the boost directory
-4. run `tar -xvf boost_1_56_0.tar.gz`
-5. move to the boost_1_56_0 directory (e.g. software/boost/boost_1_56_0)
-6. run `./bootstrap.sh --prefix=absolute-path-to_software/boost`
-7. run `./b2  --prefix="/home/alexr/Software/boost/" -s NO_BZIP2=1 link=shared runtime-link=shared cxxflags="-D_GLIBCXX_USE_CXX11_ABI=0"`
-8. run `./b2 install`
-9. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/boost/lib:$LD_LIBRARY_PATH`
-10. run `exec bash`
 
 ### Building ROOT - Optional
 **Basic:**
