@@ -110,7 +110,7 @@
  * MonteCarlo::ParticleBank.
  *
  * Note that this source is not fully supported yet as there is currently
- * no way to generate that cached particle states needed by the 
+ * no way to generate the cached particle states needed by the 
  * source. The class that will generate the cached particle state file
  * will likely be a new type of MonteCarlo::ParticleHistoryObserver
  * (see the \ref mc_particle_history_observers "event module" documentation).
