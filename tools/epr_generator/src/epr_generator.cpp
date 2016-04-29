@@ -142,7 +142,7 @@ int main( int argc, char** argv )
     
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
-    std::string endl_file_path = "/home/software/endldata/eedl/Pb/za082000";
+    std::string endl_file_path = "/home/software/mcnpdata/endldata/eedl/za082000";
 
     Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
         new Data::ENDLFileHandler( endl_file_path ) );

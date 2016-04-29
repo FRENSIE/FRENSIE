@@ -361,7 +361,7 @@ const std::vector<double>& ElectronPhotonRelaxationDataContainer::getImpulseAppr
   return d_impulse_approx_total_cross_section;
 }
 
-/*
+
 //---------------------------------------------------------------------------//
 // GET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -416,7 +416,7 @@ ElectronPhotonRelaxationDataContainer::getMoliereScreeningConstant() const
 {
   return d_moliere_screening_constant;
 }
-
+/*
 // Return the moment preserving elastic discrete angles for an incoming energy
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles(
@@ -440,7 +440,7 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights(
 
   return d_moment_preserving_elastic_weights.find( incoming_energy )->second;
 }
-
+*/
 // Return the electroionization energy grid for a subshell
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getElectroionizationEnergyGrid( 
@@ -580,7 +580,7 @@ ElectronPhotonRelaxationDataContainer::getTotalElasticCrossSectionThresholdEnerg
 {
   return d_total_elastic_cross_section_threshold_index;
 }
-
+/*
 // Return the Moment Preserving (MP) elastic electron cross section
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSection() const
@@ -594,7 +594,7 @@ ElectronPhotonRelaxationDataContainer::getMomentPreservingCrossSectionThresholdE
 {
   return d_moment_preserving_elastic_cross_section_threshold_index;
 }
-
+*/
 // Return the electroionization electron cross section for a subshell
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getElectroionizationCrossSection( 
@@ -638,7 +638,7 @@ ElectronPhotonRelaxationDataContainer::getAtomicExcitationCrossSectionThresholdE
 {
   return d_atomic_excitation_cross_section_threshold_index;
 }
-*/
+
 //---------------------------------------------------------------------------//
 // SET RELAXATION DATA
 //---------------------------------------------------------------------------//
@@ -1097,7 +1097,7 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
   d_impulse_approx_total_cross_section = total_cross_section;
 }
 
-/*
+
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -1196,7 +1196,7 @@ void ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant(
 {
   d_moliere_screening_constant = moliere_screening_constant;
 }
-
+/*
 // Set the moment preserving elastic discrete angles for an incoming energy
 void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles(
 		     const double incoming_energy,
@@ -1240,7 +1240,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights(
   
   d_moment_preserving_elastic_weights[incoming_energy] = moment_preserving_elastic_weights;
 }
-
+*/
 // Set the electroionization energy grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid(
             const unsigned subshell, 
@@ -1471,7 +1471,7 @@ void ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThreshold
   
  d_total_elastic_cross_section_threshold_index = index;
 }
-
+/*
 // Set the elastic electron cross section using Moment Preserving (MP) theory
 void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection(
 			 const std::vector<double>& moment_preserving_elastic_cross_section )
@@ -1497,7 +1497,7 @@ void ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThres
   
  d_moment_preserving_elastic_cross_section_threshold_index= index;
 }
-
+*/
 // Set the electroionization electron cross section 
 void ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection(
             const unsigned subshell,
@@ -1576,7 +1576,7 @@ void ElectronPhotonRelaxationDataContainer::setAtomicExcitationCrossSectionThres
   
  d_atomic_excitation_cross_section_threshold_index = index;
 }
-*/
+
 
 } // end Data namespace
 

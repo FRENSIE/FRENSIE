@@ -205,7 +205,7 @@ public:
 
   //! Return Moliere's screening constant
   const std::vector<double>& getMoliereScreeningConstant() const;
-
+/*
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
 					       const double incoming_energy ) const;
@@ -213,7 +213,7 @@ public:
   //! Return the moment preserving elastic weights for an incoming energy
   const std::vector<double>& getMomentPreservingElasticWeights(
 					       const double incoming_energy ) const;
-
+*/
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid( 
                            const unsigned subshell ) const;
@@ -265,13 +265,13 @@ public:
 
   //! Return the total elastic cross section threshold energy bin index
   unsigned getTotalElasticCrossSectionThresholdEnergyIndex() const;
-
+/*
   //! Return the Moment Preserving (MP) elastic electron cross section
   const std::vector<double>& getMomentPreservingCrossSection() const;
 
   //! Return the MP elastic cross section threshold energy bin index
   unsigned getMomentPreservingCrossSectionThresholdEnergyIndex() const;
-
+*/
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>& 
     getElectroionizationCrossSection( const unsigned subshell ) const;
@@ -446,7 +446,7 @@ protected:
   //! Set the impulse approx. total cross section
   void setImpulseApproxTotalCrossSection(
 			      const std::vector<double>& total_cross_section );
-/*
+
 //---------------------------------------------------------------------------//
 // SET ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -483,7 +483,7 @@ protected:
   //! Set Moliere's screening constant
   void setMoliereScreeningConstant(
     const std::vector<double>& moliere_screening_constant );
-
+/*
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setMomentPreservingElasticDiscreteAngles(
 	const double incoming_energy,
@@ -493,7 +493,7 @@ protected:
   void setMomentPreservingElasticWeights( 
 	const double incoming_energy,
 	const std::vector<double>& moment_preserving_elastic_weights );
-
+*/
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
     const unsigned subshell, 
@@ -574,7 +574,7 @@ protected:
 
   //! Set the total elastic cross section threshold energy bin index
   void setTotalElasticCrossSectionThresholdEnergyIndex( const unsigned index );
-
+/*
   //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
   void setMomentPreservingCrossSection(
 			 const std::vector<double>& moment_preserving_elastic_cross_section );
@@ -582,7 +582,7 @@ protected:
   //! Set the MP moment preserving elastic cross section threshold energy bin index
   void setMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
-
+*/
   //! Set the electroionization electron cross section for a subshell
   void setElectroionizationCrossSection( const unsigned subshell,
 			 const std::vector<double>& electroionization_cross_section );
@@ -607,7 +607,7 @@ protected:
   //! Set the bremsstrahlung cross section threshold energy bin index
   void setAtomicExcitationCrossSectionThresholdEnergyIndex( 
                                 const unsigned index );
-*/
+
 private:
 
   // Save the data to an archive
@@ -738,7 +738,7 @@ private:
   // The impulse approx. total cross section (b)
   std::vector<double> d_impulse_approx_total_cross_section;
 
-/*
+
 //---------------------------------------------------------------------------//
 // ELECTRON DATA 
 //---------------------------------------------------------------------------//
@@ -760,13 +760,13 @@ private:
 
   // Moliere's screening constant
   std::vector<double> d_moliere_screening_constant;
-
+/*
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_moment_preserving_elastic_weights;
-
+*/
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
 
@@ -813,13 +813,13 @@ private:
 
   // The total elastic electron cross section threshold energy index
   unsigned d_total_elastic_cross_section_threshold_index;
-
+/*
   // The Moment Preserving elastic electron cross section (b)
   std::vector<double> d_moment_preserving_elastic_cross_section;
 
   // The Moment Preserving elastic electron cross section threshold energy index
   unsigned d_moment_preserving_elastic_cross_section_threshold_index;
-
+*/
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> > 
     d_electroionization_subshell_cross_section;
@@ -838,7 +838,7 @@ private:
   std::vector<double> d_atomic_excitation_cross_section;
 
   // The atomic excitation electron cross section threshold energy index
-  unsigned d_atomic_excitation_cross_section_threshold_index;*/
+  unsigned d_atomic_excitation_cross_section_threshold_index;
 };
 
 } // end Data namespace
