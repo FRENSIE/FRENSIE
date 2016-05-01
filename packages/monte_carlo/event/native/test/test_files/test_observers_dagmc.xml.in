@@ -72,6 +72,20 @@
     </ParameterList>
   </ParameterList>
 
+  <ParameterList name="Hex Mesh Track Length Flux Estimator">
+    <Parameter name="Id" type="unsigned int" value="17"/>
+    <Parameter name="Type" type="string" value="Hex Mesh Track-Length Flux"/>
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Multiplier" type="double" value="2.0"/>
+    <Parameter name="Output Mesh File Name" type="string" value="hexmesh_17.vtk"/>
+    <Parameter name="X Grid Points" type="Array" value="{0, 1, 2}"/>
+    <Parameter name="Y Grid Points" type="Array" value="{0, 1, 2}"/>
+    <Parameter name="Z Grid Points" type="Array" value="{0, 1, 2}"/>
+    <ParameterList name="Bins">
+      <ParameterList name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
+    </ParameterList>
+  </ParameterList>
+
   <ParameterList name="Cell Track Length Flux Estimator 2">
     <Parameter name="Id" type="unsigned int" value="12"/>
     <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>

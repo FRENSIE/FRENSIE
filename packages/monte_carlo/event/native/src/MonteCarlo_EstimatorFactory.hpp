@@ -203,6 +203,10 @@ private:
   static bool isTetMeshTrackLengthFluxEstimator( 
                                            const std::string& estimator_name );
 
+  //! Check if an estimator type is a hex mesh track length flux estimator
+  static bool isHexMeshTrackLengthFluxEstimator(
+                                           const std::string& estimator_name );
+
   //! Check if an object type is an estimator
   static bool isEstimator( const std::string& object_name );
 
@@ -318,6 +322,9 @@ private:
 
   // The tet mesh track-length flux estimator name
   static const std::string s_tet_mesh_track_length_flux_name;
+
+  // The hex mesh track-length flux estimator name
+  static const std::string s_hex_mesh_track_length_flux_name;
 
   // The event handler
   std::shared_ptr<EventHandler> d_event_handler;
