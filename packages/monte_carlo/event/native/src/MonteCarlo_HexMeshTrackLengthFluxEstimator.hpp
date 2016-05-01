@@ -11,17 +11,17 @@
 
 // Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // Moab Includes
-#include <moab/Core.hpp>
-#include <moab/ScdInterface.hpp>
-#include <moab/Matrix3.hpp>
-
+#include <moab/Interface.hpp>
+#include <moab/AdaptiveKDTree.hpp>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -59,7 +59,7 @@ public:
 		     const Estimator::idType id,
 		     const double multiplier,
 		     const std::string input_mesh_file_name,
-		     const std::string output_mesh_file_name = "hexmesh.h5m"
+		     const std::string output_mesh_file_name = "hexmesh.vtk"
                      ); 
 
   //! Constructor - implement now
@@ -69,7 +69,7 @@ public:
 		     const Teuchos::Array<double>& x_grid_points,
                      const Teuchos::Array<double>& y_grid_points,
                      const Teuchos::Array<double>& z_grid_points,
-		     const std::string output_mesh_file_name = "hexmesh.h5m" );
+		     const std::string output_mesh_file_name = "hexmesh.vtk" );
 
   //! Destructor
   ~HexMeshTrackLengthFluxEstimator()
@@ -89,7 +89,7 @@ public:
 						 const double end_point[3] );
 
   //! Export the estimator data
-  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+  void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
 		   const bool process_data ) const;
 
   //! Print the estimator data
@@ -116,15 +116,30 @@ private:
   // The moab instance that stores all mesh data
   Teuchos::RCP<moab::Interface> d_moab_interface;
 
+  // Tool that allows for checking intersection
+
+  //Teuchos::RCP<moab::OrientedBoxTreeTool> d_moab_box_tree_tool;
+
+  // tree root set
+  //moab::EntityHandle d_box_root_set;
+
   // The hex meshset
   moab::EntityHandle d_hex_meshset;
 
-  // The map of hex ids and reference vertices
-  boost::unordered_map<moab::EntityHandle, moab::CartVect>
+  // The kd-tree for finding point in tet
+  boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
+
+  // The root of the kd-tree
+  moab::EntityHandle d_kd_tree_root;
+
+  // The map of hex ids and reference vertices - probably for barycentric transform matrices and not used here.
+  //boost::unordered_map<moab::EntityHandle, moab::CartVect>;
   //d_hex_reference_vertices;
   
   // The output mesh file name
   std::string d_output_mesh_name;
+
+  
 };
   
 } // end MonteCarlo namespace
