@@ -166,7 +166,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
         int current_dimension = d_moab_interface->dimension_from_handle(d_hex_meshset);
         moab::Range surface_quads;
         
-        err = d_moab_interface->get_adjacencies(d_hex_meshset,
+        err = d_moab_interface->get_adjacencies(hexahedrons,
                                                 current_dimension-1,
                                                 true,
                                                 surface_quads,
@@ -180,13 +180,13 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
         moab::Range surface_tris;
 
-        for(Range::iterator quad_it=surface_quads.begin();
+        for(moab::Range::iterator quad_it=surface_quads.begin();
             quad_it != surface_quads.end();
             ++quad_it)
 
         {
 
-                const EntityHandle* connectivity;
+                const moab::EntityHandle* connectivity;
                 int conn_size;
                 
                 err = d_moab_interface->get_connectivity(*quad_it,
@@ -197,7 +197,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                                     Utility::MOABException,
                                     moab::ErrorCodeStr[err]);
                 //get vertices of quad elements
-                moab::CartVect quad_vertices[4]
+                moab::CartVect quad_vertices[4];
                 err = d_moab_interface->get_coords( connectivity,
                                                     conn_size,
                                                     (double*) &quad_vertices[0]);
@@ -206,11 +206,11 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                                     Utility::MOABException,
                                     moab::ErrorCodeStr[err]);
 
-                EntityHandle new_tri_a[3] = {connectivity[0],
+                moab::EntityHandle new_tri_a[3] = {connectivity[0],
                                              connectivity[1],
                                              connectivity[2]};
 
-                EntityHandle new_tri_b[3] = {connectivity[0],
+                moab::EntityHandle new_tri_b[3] = {connectivity[0],
                                              connectivity[2],
                                              connectivity[3]};
 
@@ -225,10 +225,22 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
                 }
 
-                EntityHandle new_tri_handle;
+                moab::EntityHandle new_tri_handle;
 
-                err = d_moab_interface->create_element(MBTRI,
+                err = d_moab_interface->create_element(moab::MBTRI,
                                                        new_tri_a,
+                                                       3,
+                                                       new_tri_handle);
+
+                TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                                    Utility::MOABException,
+                                    moab::ErrorCodeStr[err]);
+
+                surface_tris.insert(new_tri_handle);
+
+                err = d_moab_interface->create_element(moab::MBTRI,
+                                                       new_tri_b,
+                                                       3,
                                                        new_tri_handle);
 
                 TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
@@ -240,8 +252,8 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
         }
 
 
-        d_hex_meshset.merge(surface_tris);
-        d_kd_tree->build_tree(d_hex_meshset, &d_kd_tree_root);
+        hexahedrons.merge(surface_tris);
+        d_kd_tree->build_tree(hexahedrons, &d_kd_tree_root);
 
         
         

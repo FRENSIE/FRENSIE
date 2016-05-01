@@ -1224,7 +1224,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the x grid points requested for"
-                              " estimator " << estimator_id << 
+                              " estimator " << id << 
                               " are not valid!" );
 
   // Get the Y grid points
@@ -1233,7 +1233,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       "Error: mesh estimator " << id <<
                       " does not have the y grid points specified! " );
 
-  Utility::ArrayString array_string = 
+    array_string = 
     estimator_rep.get<Utility::ArrayString>( "Y Grid Points" );
 
   Teuchos::Array<double> y_grid_points;
@@ -1244,7 +1244,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the y grid points requested for"
-                              " estimator " << estimator_id << 
+                              " estimator " << id << 
                               " are not valid!" );
 
   // Get the Z grid points
@@ -1253,18 +1253,18 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       "Error: mesh estimator " << id <<
                       " does not have the Z grid points specified! " );
 
-  Utility::ArrayString array_string = 
+  array_string = 
     estimator_rep.get<Utility::ArrayString>( "Z Grid Points" );
 
-  Teuchos::Array<double> Z_grid_points;
+  Teuchos::Array<double> z_grid_points;
 
   try{
-      Z_grid_points = array_string.getConcreteArray<double>();
+      z_grid_points = array_string.getConcreteArray<double>();
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
                               "Error: the Z grid points requested for"
-                              " estimator " << estimator_id << 
+                              " estimator " << id << 
                               " are not valid!" );
 
   if( energy_multiplication )
