@@ -340,7 +340,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                         Teuchos::Array<moab::CartVect> array_of_hit_points;
 
                         {
-
+                        //check if first point is inside mesh
                                 if(start_point[0] > x_low && start_point[1] > y_low && start_point[2] > z_low)
                                 {
                                         if(start_point[0] < x_high && start_point[1] < y_high && start_point[2] < z_high)
@@ -367,7 +367,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
                                 array_of_hit_points.push_back(hit_point);
                         }
-
+                        //test if last point is inside mesh or outside
                         if(track_length > ray_hex_intersections.back() )
                         {
 
@@ -376,6 +376,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                 ray_hex_intersections.push_back(track_length);
                         }
                         
+                        //cycle through hit points and figure out which hex to bin the track length in
                         for( unsigned int i = 0; i < ray_hex_intersections.size(); ++i)
                         {
                         	moab::CartVect hex_centroid = ( (array_of_hit_points[i+1] + 
@@ -383,17 +384,25 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
 
                                 moab::EntityHandle hex;
-                                d_kd_tree->point_search((double*) &hex_centroid, hex);
+                                //no idea if this function works like I think it does. Should return the hex that the centroid is contained within (not sure why Eli didn't use it in his tetmesh)
+                                err = d_kd_tree->point_search((double*) &hex_centroid, hex);
 
+                                TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                                    Utility::MOABException,
+			            moab::ErrorCodeStr[err] );
+                                // leave loop if it isn't inside a hex. Shouldn't ever happen at this point
                                 if( hex == 0 )continue;
-
+                                //compute track length for that individual hex cell
                                 double partial_track_length;
                                 if( i != 0)
 	                        { 
 	                                partial_track_length = ray_hex_intersections[i] - 
 	                                                       ray_hex_intersections[i-1];
 	                        }
+                                //might not be right - check later. Got from tetmesh.
                                 else partial_track_length = ray_hex_intersections[i];
+
+                                //Special case - first point is on mesh surface
 	                        if( partial_track_length > 0.0 )
 	                        {                     	
                                         EstimatorParticleStateWrapper particle_state_wrapper( particle );
@@ -406,9 +415,37 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                 
                        }
                 }
-        }
-                        
 
+                else
+                {
+                        // case 1: track is entirely in one tet
+                        if(start_point[0] > x_low && start_point[1] > y_low && start_point[2] > z_low)
+                        {
+                                if(start_point[0] < x_high && start_point[1] < y_high && start_point[2] < z_high)
+                                {
+                                        moab::EntityHandle hex;
+                                        err = d_kd_tree->point_search((double*) &start_point, hex);
+
+                                        TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                                                            Utility::MOABException,
+			                                    moab::ErrorCodeStr[err] );
+      	
+	                                // Add partial history contribution if tet was found (tolerance
+	                                // issues may prevent this)
+	                                if( hex != 0 )
+                                        {
+                                                EstimatorParticleStateWrapper particle_state_wrapper( particle );
+          
+	                                        addPartialHistoryContribution( hex, 
+                                                                               particle_state_wrapper, 
+                                                                               track_length );
+                                        }
+                                }
+                        // case 2: track entirely misses mesh - do nothing
+                        }
+                }
+                        
+        }
 
 }
 
