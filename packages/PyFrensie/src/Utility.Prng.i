@@ -206,7 +206,7 @@ that the original random number stream state will be reset as well.
   {
     std::vector<double> fake_stream;
  
-    PyFrensie::CopyNumPyToVectorWithCheck( fake_stream_py_array, fake_stream );
+    PyFrensie::copyNumPyToVectorWithCheck( fake_stream_py_array, fake_stream );
 
     Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   }

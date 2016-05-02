@@ -26,7 +26,7 @@ namespace PyFrensie{
  * function will return NULL.
  */
 template<typename T>
-PyObject* CopyVectorToNumPy( std::vector<T>& vector )
+PyObject* copyVectorToNumPy( std::vector<T>& vector )
 {
   npy_intp dims[] = { vector.size() };
   int typecode = numpyTypecode( T() );
@@ -49,7 +49,7 @@ PyObject* CopyVectorToNumPy( std::vector<T>& vector )
  * will return NULL. 
  */
 template<typename T>
-PyObject* CopyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
+PyObject* copyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
 {
   npy_intp dims[] = { t_array.size() };
   int typecode = numpyTypecode( T() );
@@ -72,7 +72,7 @@ PyObject* CopyTeuchosToNumPy( Teuchos::ArrayRCP<const T>& t_array )
  * will return NULL. 
  */
 template<typename T>
-PyObject* CopyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
+PyObject* copyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
 {
   npy_intp dims[] = { t_array.size() };
   int typecode = numpyTypecode( T() );
@@ -96,7 +96,7 @@ PyObject* CopyTeuchosToNumPy( Teuchos::ArrayView<const T>& t_array )
  * will return NULL. 
  */
 template<typename T>
-PyObject* CopyTeuchosToNumPy( Teuchos::Array<T>& t_array )
+PyObject* copyTeuchosToNumPy( Teuchos::Array<T>& t_array )
 {
   return PyTrilinos::copyTeuchosArrayToNumPy( t_array );
 }
@@ -147,7 +147,7 @@ PyObject* isValidNumPyArray( PyObject* py_obj )
  * must verify that the NumPy array is 1D.
  */
 template<typename T>
-void CopyNumPyToVectorWithCheck( PyObject * py_obj,
+void copyNumPyToVectorWithCheck( PyObject * py_obj,
                                   std::vector<T> & vector )
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );
@@ -168,7 +168,7 @@ void CopyNumPyToVectorWithCheck( PyObject * py_obj,
  * user must verify that the NumPy array is 1D.
  */
 template<typename T>
-void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
+void copyNumPyToTeuchosWithCheck( PyObject * py_obj,
                                   Teuchos::ArrayRCP<T> & t_array )
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );
@@ -189,7 +189,7 @@ void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
  * user must verify that the NumPy array is 1D.
  */
 template<typename T>
-void CopyNumPyToTeuchosWithCheck( PyObject * py_obj,
+void copyNumPyToTeuchosWithCheck( PyObject * py_obj,
                                   Teuchos::Array<T> & t_array )
 {
   PyObject* py_array = isValidNumPyArray<T>( py_obj );

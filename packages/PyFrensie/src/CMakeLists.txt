@@ -51,7 +51,7 @@ SET(PyFrensie_Geometry_PACKAGES "")
 
 IF(FRENSIE_ENABLE_DAGMC)
   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} DagMC)
-  #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
+  SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.DagMC)
   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_dagmc)
 ENDIF()
 

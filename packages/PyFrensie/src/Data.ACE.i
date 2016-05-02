@@ -148,15 +148,15 @@ shown below:
   {
     Teuchos::Array<int> nxs_array;
 
-    PyFrensie::CopyNumPyToTeuchosWithCheck( nxs_py_array, nxs_array );
+    PyFrensie::copyNumPyToTeuchosWithCheck( nxs_py_array, nxs_array );
 
     Teuchos::Array<int> jxs_array;
 
-    PyFrensie::CopyNumPyToTeuchosWithCheck( jxs_py_array, jxs_array );
+    PyFrensie::copyNumPyToTeuchosWithCheck( jxs_py_array, jxs_array );
 
     Teuchos::ArrayRCP<double> xss_array;
 
-    PyFrensie::CopyNumPyToTeuchosWithCheck( xss_py_array, xss_array );
+    PyFrensie::copyNumPyToTeuchosWithCheck( xss_py_array, xss_array );
 
     return new Data::EXTRACTOR( nxs_array(),
                                 jxs_array(),

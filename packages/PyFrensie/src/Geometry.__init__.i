@@ -61,7 +61,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 //---------------------------------------------------------------------------//
 // Include the PointLocation enum
 %include "Geometry_PointLocation.hpp"
-
+ 
 //---------------------------------------------------------------------------//
 // Add support for the Ray class
 //---------------------------------------------------------------------------//
@@ -131,7 +131,7 @@ A NumPy array will be returned.
   {
     Teuchos::Array<double> position;
 
-    PyFrensie::CopyNumPyToTeuchosWithCheck( position_py_obj, position );
+    PyFrensie::copyNumPyToTeuchosWithCheck( position_py_obj, position );
 
     // Make sure the sequence has 3 elements
     if( position.size() != 3 )
@@ -142,7 +142,7 @@ A NumPy array will be returned.
     
     Teuchos::Array<double> direction;
 
-    PyFrensie::CopyNumPyToTeuchosWithCheck( direction_py_obj, direction );
+    PyFrensie::copyNumPyToTeuchosWithCheck( direction_py_obj, direction );
     
     // Make sure the sequence has 3 elements
     if( direction.size() != 3 )
@@ -159,7 +159,7 @@ A NumPy array will be returned.
   {
     Teuchos::ArrayView<const double> position( $self->getPosition(), 3 );
     
-    return PyFrensie::CopyTeuchosToNumPy( position );
+    return PyFrensie::copyTeuchosToNumPy( position );
   }
 
   // Return the direction of the ray
@@ -167,7 +167,7 @@ A NumPy array will be returned.
   {
     Teuchos::ArrayView<const double> direction( $self->getDirection(), 3 );
     
-    return PyFrensie::CopyTeuchosToNumPy( direction );
+    return PyFrensie::copyTeuchosToNumPy( direction );
   }
 
   // String conversion methd
