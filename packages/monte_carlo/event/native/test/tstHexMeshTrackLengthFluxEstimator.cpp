@@ -53,12 +53,12 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
 
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, isPointInMesh)
 {
-  double outside_point_1[3] = { 0.5, 0.5, 0.5 };
-  double outside_point_2[3] = { 0.5, 0.5, 1.5 };
-  double outside_point_3[3] = { 0.5, 0.5, 0.5 };
-  double outside_point_4[3] = { 0.5, 1.5, 0.5 };
-  double outside_point_5[3] = { 0.5, 0.5, 0.5 };
-  double outside_point_6[3] = { 1.5, 0.5, 0.5 };
+  double outside_point_1[3] = { 0.5, 0.5, -0.5 };
+  double outside_point_2[3] = { 0.5, 0.5, -1.5 };
+  double outside_point_3[3] = { 0.5, -0.5, 0.5 };
+  double outside_point_4[3] = { 3, 1.5, 0.5 };
+  double outside_point_5[3] = { 0.5, -0.5, 0.5 };
+  double outside_point_6[3] = { 4.5, 5.5, 0.5 };
 
   TEST_ASSERT( !hex_estimator->isPointInMesh( outside_point_1 ) );
   TEST_ASSERT( !hex_estimator->isPointInMesh( outside_point_2 ) );
