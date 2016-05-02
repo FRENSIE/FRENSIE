@@ -8,7 +8,7 @@
 
 // Moab Includes
 #include <moab/Core.hpp>
-#include <moab/ScdInterface.hpp>
+#include <moab/BoundBox.hpp>
 #include <moab/ProgOptions.hpp>
 
 
@@ -288,22 +288,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double end_point[3])
 {
         moab::ErrorCode err;
-        std::vector<double> coordinates;
 
-        err = d_moab_interface->get_vertex_coordinates(coordinates);
 
-        std::vector<double>::size_type coord_size=coordinates.size();
 
-        double x_low=coordinates[1];
-        double x_high=coordinates[coord_size/3];
-        double y_low=coordinates[1+(coord_size/3)];
-        double y_high=coordinates[2*coord_size/3];
-        double z_low=coordinates[(2*coord_size/3)+1];
-        double z_high=coordinates[coord_size];
-
-        std::cout<< x_low << ", " << y_low << ", " << z_low << std::endl;
-        std::cout<< x_high << ", " << y_high << ", " << z_high << std::endl;
-        
         if( this->isParticleTypeAssigned( particle.getParticleType() ) )
         {        
                 //use function in moab to determine whether or not the ray in between the two points intersects one of the faces of the mesh
@@ -341,16 +328,13 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
                         {
                         //check if first point is inside mesh
-                                if(start_point[0] > x_low && start_point[1] > y_low && start_point[2] > z_low)
+                                if(this->isPointInMesh(start_point))
                                 {
-                                        if(start_point[0] < x_high && start_point[1] < y_high && start_point[2] < z_high)
-                                        {
-                                                                              moab::CartVect start_point_cv( start_point[0],
-                                                                                                             start_point[1],
-                                                                                                             start_point[2] );
-                                                                                                             array_of_hit_points.push_back(start_point_cv);
+                                        moab::CartVect start_point_cv( start_point[0],
+                                                                       start_point[1],
+                                                                       start_point[2] );
+                                                                       array_of_hit_points.push_back(start_point_cv);
                                         
-                                        }
                                 }
   
 
@@ -383,13 +367,12 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 					 array_of_hit_points[i])/2.0 );
 
 
-                                moab::EntityHandle hex;
-                                //no idea if this function works like I think it does. Should return the hex that the centroid is contained within (not sure why Eli didn't use it in his tetmesh)
-                                err = d_kd_tree->point_search((double*) &hex_centroid, hex);
+                                
 
-                                TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
-                                    Utility::MOABException,
-			            moab::ErrorCodeStr[err] );
+                                moab::EntityHandle hex = whichHexIsPointIn( hex_centroid.array() );
+                                
+
+
                                 // leave loop if it isn't inside a hex. Shouldn't ever happen at this point
                                 if( hex == 0 )continue;
                                 //compute track length for that individual hex cell
@@ -418,28 +401,22 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
                 else
                 {
-                        // case 1: track is entirely in one tet
-                        if(start_point[0] > x_low && start_point[1] > y_low && start_point[2] > z_low)
+                        // case 1: track is entirely in one hex
+                        if(this->isPointInMesh(start_point));
                         {
-                                if(start_point[0] < x_high && start_point[1] < y_high && start_point[2] < z_high)
-                                {
-                                        moab::EntityHandle hex;
-                                        err = d_kd_tree->point_search((double*) &start_point, hex);
+                                moab::EntityHandle hex = whichHexIsPointIn( start_point );
 
-                                        TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
-                                                            Utility::MOABException,
-			                                    moab::ErrorCodeStr[err] );
+                                        
       	
-	                                // Add partial history contribution if tet was found (tolerance
+	                                // Add partial history contribution if hex was found (tolerance
 	                                // issues may prevent this)
-	                                if( hex != 0 )
-                                        {
-                                                EstimatorParticleStateWrapper particle_state_wrapper( particle );
+	                        if( hex != 0 )
+                                {
+                                        EstimatorParticleStateWrapper particle_state_wrapper( particle );
           
-	                                        addPartialHistoryContribution( hex, 
-                                                                               particle_state_wrapper, 
-                                                                               track_length );
-                                        }
+	                                addPartialHistoryContribution( hex, 
+                                                                       particle_state_wrapper, 
+                                                                      track_length );
                                 }
                         // case 2: track entirely misses mesh - do nothing
                         }
@@ -454,13 +431,88 @@ bool HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMes
 						        const double point[3] )
 {
 
+        std::vector<double> coordinates;
+
+        moab::ErrorCode err = d_moab_interface->get_vertex_coordinates(coordinates);
+
+        std::vector<double>::size_type coord_size=coordinates.size();
+
+        double x_low=coordinates[1];
+        double x_high=coordinates[coord_size/3];
+        double y_low=coordinates[1+(coord_size/3)];
+        double y_high=coordinates[2*coord_size/3];
+        double z_low=coordinates[(2*coord_size/3)+1];
+        double z_high=coordinates[coord_size];
+
+        std::cout<< x_low << ", " << y_low << ", " << z_low << std::endl;
+        std::cout<< x_high << ", " << y_high << ", " << z_high << std::endl;
+        
+
+        if(point[0] > x_low && point[1] > y_low && point[2] > z_low)
+        {
+                if(point[0] < x_high && point[1] < y_high && point[2] < z_high)
+                {
+                        return true;
+                }
+        }
+
+        return false;
+
 }
 
 template<typename ContributionMultiplierPolicy>
 moab::EntityHandle HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichHexIsPointIn(
 	                                                const double point[3] )
 {
+        moab::EntityHandle leaf;
+        moab::ErrorCode err = d_kd_tree->point_search(point, leaf);
+        TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[err] );
+        TEST_FOR_EXCEPTION(leaf == 0,
+		      Utility::MOABException,
+		      moab::ErrorCodeStr[err] );
+        moab::Range hexes_in_leaf;
 
+        err = d_moab_interface->get_entities_by_dimension( leaf,
+							      3,
+							      hexes_in_leaf,
+							      false );
+        TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+		      Utility::MOABException,
+		      moab::ErrorCodeStr[err] );
+        moab::EntityHandle hex_answer=0;
+
+       for( moab::Range::const_iterator hex = hexes_in_leaf.begin(); hex != hexes_in_leaf.end();  ++hex )
+       {
+                moab::BoundBox hex_box;
+
+                err = hex_box.update(*d_moab_interface, *hex);
+                TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+		                    Utility::MOABException,
+		                    moab::ErrorCodeStr[err] );
+                if(hex_box.contains_point(point, s_tol))
+                {
+                        hex_answer = *hex;
+                        break;
+                }
+            
+       }
+       if( hex_answer == 0 && SimulationGeneralProperties::displayWarnings() )
+       {
+               #pragma omp critical( point_in_tet_warning_message )
+               {
+                        std::cerr << "Warning: the tetrahedron containing point {"
+		        << point[0] << "," << point[1] << "," << point[2]
+		        << "} could not be found (" << hexes_in_leaf.size()
+		        << " tets in leaf)!." << std::endl;
+               }
+       }
+        //test if size of leaf is valid
+       testPostcondition( hexes_in_leaf.size() > 0 );
+       return hex_answer;    
+    
+        
 }
 
 template<typename ContributionMultiplierPolicy>
