@@ -44,11 +44,45 @@ public:
   { /* ... */ }
 
 //---------------------------------------------------------------------------//
-// GET RELAXATION DATA
+// GET TABLE DATA
 //---------------------------------------------------------------------------//
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
+
+  //! Return the minimum photon energy
+  double getMinPhotonEnergy() const;
+
+  //! Return the maximum photon energy
+  double getMaxPhotonEnergy() const;
+
+  //! Return the minimum electron energy
+  double getMinElectronEnergy() const;
+
+  //! Return the maximum electron energy
+  double getMaxElectronEnergy() const;
+
+  //! Return the upper cutoff scattering angle below which moment preserving elastic scattering is used
+  double getCutoffAngleCosine() const;
+
+  //! Return the occupation number evaluation tolerance
+  double getOccupationNumberEvaluationTolerance() const;
+
+  //! Return the subshell incoherent evaluation tolerance
+  double getSubshellIncoherentEvaluationTolerance() const;
+
+  //! Return the union energy grid convergence tolerance
+  double getGridConvergenceTolerance() const;
+
+  //! Return the union energy grid absolute difference tolerance
+  double getGridAbsoluteDifferenceTolerance() const;
+
+  //! Return the union energy grid distance tolerance
+  double getGridDistanceTolerance() const;
+
+//---------------------------------------------------------------------------//
+// GET RELAXATION DATA
+//---------------------------------------------------------------------------//
 
   //! Return the atomic subshells 
   const std::set<unsigned>& getSubshells() const;
@@ -186,9 +220,6 @@ public:
 // GET ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
-  //! Return the upper cutoff scattering angle below which moment preserving elastic scattering is used
-  double getCutoffAngle() const;
-
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
 
@@ -205,7 +236,7 @@ public:
 
   //! Return Moliere's screening constant
   const std::vector<double>& getMoliereScreeningConstant() const;
-/*
+
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
 					       const double incoming_energy ) const;
@@ -213,7 +244,7 @@ public:
   //! Return the moment preserving elastic weights for an incoming energy
   const std::vector<double>& getMomentPreservingElasticWeights(
 					       const double incoming_energy ) const;
-*/
+
   //! Return the electroionization energy grid for the recoil electron spectrum for a subshell
   const std::vector<double>& getElectroionizationEnergyGrid( 
                            const unsigned subshell ) const;
@@ -265,13 +296,13 @@ public:
 
   //! Return the total elastic cross section threshold energy bin index
   unsigned getTotalElasticCrossSectionThresholdEnergyIndex() const;
-/*
+
   //! Return the Moment Preserving (MP) elastic electron cross section
   const std::vector<double>& getMomentPreservingCrossSection() const;
 
   //! Return the MP elastic cross section threshold energy bin index
   unsigned getMomentPreservingCrossSectionThresholdEnergyIndex() const;
-*/
+
   //! Return the electroionization electron cross section for a subshell
   const std::vector<double>& 
     getElectroionizationCrossSection( const unsigned subshell ) const;
@@ -299,11 +330,47 @@ protected:
   { /* ... */ }
 
 //---------------------------------------------------------------------------//
-// SET RELAXATION DATA
+// SET TABLE DATA
 //---------------------------------------------------------------------------//
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
+
+  //! Set the minimum photon energy
+  void setMinPhotonEnergy( const double min_photon_energy );
+
+  //! Set the maximum photon energy
+  void setMaxPhotonEnergy( const double max_photon_energy );
+
+  //! Set the minimum electron energy
+  void setMinElectronEnergy( const double min_electron_energy );
+
+  //! Set the maximum electron energy
+  void setMaxElectronEnergy( const double max_electron_energy );
+
+  //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
+  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Set the occupation number evaluation tolerance
+  void setOccupationNumberEvaluationTolerance(
+    const double occupation_number_evaluation_tolerance );
+
+  //! Set the subshell incoherent evaluation tolerance
+  void setSubshellIncoherentEvaluationTolerance(
+    const double subshell_incoherent_evaluation_tolerance );
+
+  //! Set the union energy grid convergence tolerance
+  void setGridConvergenceTolerance( const double grid_convergence_tol );
+
+  //! Set the union energy grid absolute difference tolerance
+  void setGridAbsoluteDifferenceTolerance( const double grid_absolute_diff_tol );
+
+  //! Set the union energy grid distance tolerance
+  void setGridDistanceTolerance( const double grid_distance_tol );
+
+//---------------------------------------------------------------------------//
+// SET RELAXATION DATA
+//---------------------------------------------------------------------------//
   
   //! Set the atomic subshells
   void setSubshells( const std::set<unsigned>& subshells );
@@ -451,9 +518,6 @@ protected:
 // SET ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
-  //! Set the elastic cutoff angle
-  void setCutoffAngle( const double cutoff_angle );
-
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid( 
     const std::vector<double>& angular_energy_grid );
@@ -483,7 +547,7 @@ protected:
   //! Set Moliere's screening constant
   void setMoliereScreeningConstant(
     const std::vector<double>& moliere_screening_constant );
-/*
+
   //! Set the moment preserving elastic discrete angles for an incoming energy
   void setMomentPreservingElasticDiscreteAngles(
 	const double incoming_energy,
@@ -493,7 +557,7 @@ protected:
   void setMomentPreservingElasticWeights( 
 	const double incoming_energy,
 	const std::vector<double>& moment_preserving_elastic_weights );
-*/
+
   //! Set the electroionization energy grid for the recoil electron spectrum
   void setElectroionizationEnergyGrid(
     const unsigned subshell, 
@@ -574,7 +638,7 @@ protected:
 
   //! Set the total elastic cross section threshold energy bin index
   void setTotalElasticCrossSectionThresholdEnergyIndex( const unsigned index );
-/*
+
   //! Set the moment preserving elastic electron cross section using Moment Preserving (MP) theory
   void setMomentPreservingCrossSection(
 			 const std::vector<double>& moment_preserving_elastic_cross_section );
@@ -582,7 +646,7 @@ protected:
   //! Set the MP moment preserving elastic cross section threshold energy bin index
   void setMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
-*/
+
   //! Set the electroionization electron cross section for a subshell
   void setElectroionizationCrossSection( const unsigned subshell,
 			 const std::vector<double>& electroionization_cross_section );
@@ -624,11 +688,45 @@ private:
   friend class boost::serialization::access;
 
 //---------------------------------------------------------------------------//
-// RELAXATION DATA
+// SET TABLE DATA
 //---------------------------------------------------------------------------//
 
   // The atomic number
   unsigned d_atomic_number;
+
+  // The minimum photon energy
+  double d_min_photon_energy;
+
+  // The maximum photon energy
+  double d_max_photon_energy;
+
+  // The minimum electron energy
+  double d_min_electron_energy;
+
+  // The maximum electron energy
+  double d_max_electron_energy;
+
+  // The elastic cutoff angle
+  double d_cutoff_angle_cosine;
+
+  // The occupation number evaluation tolerance
+  double d_occupation_number_evaluation_tolerance;
+
+  // The subshell incoherent evaluation tolerance
+  double d_subshell_incoherent_evaluation_tolerance;
+
+  // The union energy grid convergence tolerance
+  double d_grid_convergence_tol;
+
+  // The union energy grid absolute difference tolerance
+  double d_grid_absolute_diff_tol;
+
+  // The union energy grid distance tolerance
+  double d_grid_distance_tol;
+
+//---------------------------------------------------------------------------//
+// RELAXATION DATA
+//---------------------------------------------------------------------------//
 
   // The atomic subshells (ENDF designators)
   std::set<unsigned> d_subshells;
@@ -743,9 +841,6 @@ private:
 // ELECTRON DATA 
 //---------------------------------------------------------------------------//
 
-  // The elastic cutoff angle
-  double d_cutoff_angle;
-
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
 
@@ -760,13 +855,13 @@ private:
 
   // Moliere's screening constant
   std::vector<double> d_moliere_screening_constant;
-/*
+
   // The moment preserving elastic discrete angles
   std::map<double,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
 
   // The moment preserving elastic weights
   std::map<double,std::vector<double> > d_moment_preserving_elastic_weights;
-*/
+
   // The electroionization energy grid (MeV) for a subshell
   std::map<unsigned,std::vector<double> > d_electroionization_energy_grid;
 
@@ -813,13 +908,13 @@ private:
 
   // The total elastic electron cross section threshold energy index
   unsigned d_total_elastic_cross_section_threshold_index;
-/*
+
   // The Moment Preserving elastic electron cross section (b)
   std::vector<double> d_moment_preserving_elastic_cross_section;
 
   // The Moment Preserving elastic electron cross section threshold energy index
   unsigned d_moment_preserving_elastic_cross_section_threshold_index;
-*/
+
   // The electroionization subshell electron cross section (b)
   std::map<unsigned,std::vector<double> > 
     d_electroionization_subshell_cross_section;

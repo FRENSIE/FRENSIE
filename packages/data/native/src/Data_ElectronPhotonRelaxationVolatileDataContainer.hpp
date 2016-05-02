@@ -30,6 +30,18 @@ public:
 
   // Add the setter member functions to the public interface
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
+  using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
+  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
+  using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
+
+  // Relaxation functions
   using ElectronPhotonRelaxationDataContainer::setSubshells;
   using ElectronPhotonRelaxationDataContainer::setSubshellOccupancy;
   using ElectronPhotonRelaxationDataContainer::setSubshellBindingEnergy;
@@ -65,7 +77,6 @@ public:
   using ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection;
 
   // Electron functions
-  using ElectronPhotonRelaxationDataContainer::setCutoffAngle;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setAnalogElasticAnglesAtEnergy;
   using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDFAtEnergy;
@@ -73,8 +84,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDF;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
   using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
- // using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
- // using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticWeights;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationEnergyGrid;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
@@ -94,8 +105,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSection;
   using ElectronPhotonRelaxationDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex;
-  //using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection;
-  //using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSection;
+  using ElectronPhotonRelaxationDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSection;
   using ElectronPhotonRelaxationDataContainer::setElectroionizationCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setBremsstrahlungCrossSection;

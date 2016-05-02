@@ -38,6 +38,113 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setAtomicNumber )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the min photon energy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMinPhotonEnergy )
+{
+  epr_data_container.setMinPhotonEnergy( 0.001 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getMinPhotonEnergy(), 
+                       0.001 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max photon energy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMaxPhotonEnergy )
+{
+  epr_data_container.setMaxPhotonEnergy( 20.0 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getMaxPhotonEnergy(), 
+                       20.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the min electron energy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMinElectronEnergy )
+{
+  epr_data_container.setMinElectronEnergy( 1.0e-5 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getMinElectronEnergy(), 
+                       1.0e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max electron energy can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMaxElectronEnergy )
+{
+  epr_data_container.setMaxElectronEnergy( 1.0e+5 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getMaxElectronEnergy(), 
+                       1.0e+5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Cutoff Angle can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
+{
+  epr_data_container.setCutoffAngleCosine( 0.9 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getCutoffAngleCosine(), 
+                       0.9 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the occupation number evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setOccupationNumberEvaluationTolerance )
+{
+  epr_data_container.setOccupationNumberEvaluationTolerance( 1e-4 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getOccupationNumberEvaluationTolerance(), 
+                       1e-4 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell incoherent evaluation tolerance can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setSubshellIncoherentEvaluationTolerance )
+{
+  epr_data_container.setSubshellIncoherentEvaluationTolerance( 1e-3 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getSubshellIncoherentEvaluationTolerance(), 
+                       1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the grid convergence tolerance can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setGridConvergenceTolerance )
+{
+  epr_data_container.setGridConvergenceTolerance( 0.001 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getGridConvergenceTolerance(), 
+                       0.001 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the grid absolute difference tolerance can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setGridAbsoluteDifferenceTolerance )
+{
+  epr_data_container.setGridAbsoluteDifferenceTolerance( 1e-42 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getGridAbsoluteDifferenceTolerance(), 
+                       1e-42 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the grid distance tolerance can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setGridDistanceTolerance )
+{
+  epr_data_container.setGridDistanceTolerance( 1e-15 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getGridDistanceTolerance(), 
+                       1e-15 );
+}
+
+// Relaxation Tests
+
+//---------------------------------------------------------------------------//
 // Check that the subshells can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setSubshells )
 {
@@ -520,18 +627,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_COMPARE_ARRAYS( epr_data_container.getImpulseApproxTotalCrossSection(),
 		       cross_section );
 }
-/*
-// Electron Tests
 
-//---------------------------------------------------------------------------//
-// Check that the Cutoff Angle can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngle )
-{
-  epr_data_container.setCutoffAngle( 0.10 );
-  
-  TEST_EQUALITY_CONST( epr_data_container.getCutoffAngle(), 
-                       0.10 );
-}
+// Electron Tests
 
 //---------------------------------------------------------------------------//
 // Check that the angular energy grid can be set
@@ -692,8 +789,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
                    setElectroionizationEnergyGrid )
 {
-  std::vector<double> energy_grid(1), grid(1);
+  std::vector<double> energy_grid(2), grid(2);
   energy_grid[0] = 1.0;
+  energy_grid[1] = 2.0;
 
   unsigned subshell = 1;
 
@@ -806,13 +904,14 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
                    setBremsstrahlungEnergyGrid )
 {
-  std::vector<double> energy_grid(1), grid(1);
+  std::vector<double> energy_grid(2), grid(2);
   energy_grid[0] = 1.0;
+  energy_grid[1] = 2.0;
 
   epr_data_container.setBremsstrahlungEnergyGrid( energy_grid );
-  
-  grid = epr_data_container.getBremsstrahlungEnergyGrid();
-  TEST_EQUALITY_CONST( grid[0], energy_grid[0] );
+
+  TEST_COMPARE_ARRAYS( epr_data_container.getBremsstrahlungEnergyGrid(), 
+                       energy_grid );
 }
 
 //---------------------------------------------------------------------------//
@@ -1152,7 +1251,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   TEST_EQUALITY_CONST( epr_data_container.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
                        0 );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
@@ -1236,10 +1335,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
-/*
+
   // Electron Tests
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffAngle(), 0.10 );
+    epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -1260,10 +1359,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getElectroionizationEnergyGrid(1u).back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
     3 );
@@ -1272,10 +1374,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getBremsstrahlungEnergyGrid().back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
     3 );
@@ -1331,188 +1436,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );*/
-}
-
-//---------------------------------------------------------------------------//
-// Check that the data can be exported and imported
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   export_importData_binary )
-{
-  const std::string test_binary_file_name( "test_epr_data_container.bin" );
-
-  epr_data_container.exportData( test_binary_file_name,
-				 Utility::ArchivableObject::BINARY_ARCHIVE );
-
-  const Data::ElectronPhotonRelaxationDataContainer 
-    epr_data_container_copy( test_binary_file_name, 
-			     Utility::ArchivableObject::BINARY_ARCHIVE );
-
-  TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
-  TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 0 ) );
-  TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 2 ) );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellOccupancy( 1 ), 1.0 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellBindingEnergy( 1 ),
-		       1.361e-5 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationTransitions(1),
-		       1 );
-  TEST_ASSERT( epr_data_container_copy.hasRelaxationData() );
-  TEST_ASSERT( epr_data_container_copy.hasSubshellRelaxationData( 1 ) );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationVacancies( 1 ).size(),
-		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationParticleEnergies( 1 ).size(),
-		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
-		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
-		       4 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunction().size(),
-		       4 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-		       4 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeAtomicFormFactor().size(),
-		       4 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getPhotonEnergyGrid().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getAveragePhotonHeatingNumbers().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeIncoherentCrossSection().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
 		       0 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxIncoherentCrossSection().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
-		       0u );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSection( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 1 ), 
-		       0 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeCoherentCrossSection().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSection().size(),
-		       2 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getPairProductionCrossSectionThresholdEnergyIndex(),
-		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getPhotoelectricCrossSection().size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getPhotoelectricCrossSectionThresholdEnergyIndex(),
-		       0u );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellPhotoelectricCrossSection( 1 ).size(),
-		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 1 ),
-		       0u );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeTotalCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
-		       3u );
-/*
-  // Electron Tests
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffAngle(), 0.10 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElasticAngularEnergyGrid().size(), 
-    1 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElasticAngularEnergyGrid().front(), 
-    1.0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
-    1 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
-    1.0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
-    1.0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAtomicExcitationEnergyGrid().size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAtomicExcitationEnergyLoss().size(), 
-    3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getTotalElasticCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getMomentPreservingCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getMomentPreservingCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationCrossSection(1u).size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getElectroionizationCrossSectionThresholdEnergyIndex(1u),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getBremsstrahlungCrossSectionThresholdEnergyIndex(),
-		       0 );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAtomicExcitationCrossSection().size(),
-		       3u );
-  TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -1598,10 +1522,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
-/*
+
   // Electron Tests
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffAngle(), 0.10 );
+    epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -1622,10 +1546,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getElectroionizationEnergyGrid(1u).back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
     3 );
@@ -1634,10 +1561,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getBremsstrahlungEnergyGrid().back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
     3 );
@@ -1693,7 +1623,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );*/
+		       0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -1776,10 +1706,10 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( epr_data_container_copy.getImpulseApproxTotalCrossSection().size(),
 		       3u );
-/*
+
   // Electron Tests
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getCutoffAngle(), 0.10 );
+    epr_data_container_copy.getCutoffAngleCosine(), 0.9 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElasticAngularEnergyGrid().size(), 
     1 );
@@ -1800,10 +1730,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getMomentPreservingElasticWeights(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationEnergyGrid(1u).front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getElectroionizationEnergyGrid(1u).back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
     3 );
@@ -1812,10 +1745,13 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().size(), 
-    1 );
+    2 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungEnergyGrid().front(), 
     1.0 );
+  TEST_EQUALITY_CONST( 
+    epr_data_container_copy.getBremsstrahlungEnergyGrid().back(), 
+    2.0 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
     3 );
@@ -1871,7 +1807,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3u );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getAtomicExcitationCrossSectionThresholdEnergyIndex(),
-		       0 );*/
+		       0 );
 }
 
 //---------------------------------------------------------------------------//

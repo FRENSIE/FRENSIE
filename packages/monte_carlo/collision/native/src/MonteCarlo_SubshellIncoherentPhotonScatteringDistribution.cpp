@@ -97,30 +97,32 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 						  const double incoming_energy,
 						  const double precision) const
 {
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > d_binding_energy );
-
-  // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &SubshellIncoherentPhotonScatteringDistribution::evaluate,
-			 boost::cref( *this ),
+  if ( incoming_energy > d_binding_energy )
+  {
+    // Evaluate the integrated cross section
+    boost::function<double (double x)> diff_cs_wrapper = 
+      boost::bind<double>( &SubshellIncoherentPhotonScatteringDistribution::evaluate,
+	  		 boost::cref( *this ),
 			 incoming_energy,
 			 _1 );
 
-  double abs_error, integrated_cs;
+    double abs_error, integrated_cs;
 
-  Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
+    Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
 
-  quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
+    quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,
 					     1.0,
 					     integrated_cs,
 					     abs_error );
 
-  // Make sure the integrated cross section is valid
-  testPostcondition( integrated_cs > 0.0 );
+    // Make sure the integrated cross section is valid
+    testPostcondition( integrated_cs > 0.0 );
 
-  return integrated_cs;
+    return integrated_cs;
+  }
+  else
+	return 0.0;
 }
 
 // Sample an outgoing energy and direction from the distribution

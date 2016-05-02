@@ -90,7 +90,7 @@ ENDLDataContainer::getCutoffElasticAngularEnergyGrid() const
 
 // Return the elastic angles for an incident energy
 const std::vector<double>& 
-ENDLDataContainer::getCutoffElasticAngles(
+ENDLDataContainer::getCutoffElasticAnglesAtEnergy(
     const double incident_energy ) const
 {
   // Make sure the incident energy is valid
@@ -104,7 +104,7 @@ ENDLDataContainer::getCutoffElasticAngles(
 
 // Return the elastic pdf for an incident energy
 const std::vector<double>& 
-ENDLDataContainer::getCutoffElasticPDF(
+ENDLDataContainer::getCutoffElasticPDFAtEnergy(
     const double incident_energy ) const
 {
   // Make sure the incident energy is valid
@@ -114,6 +114,20 @@ ENDLDataContainer::getCutoffElasticPDF(
                     d_cutoff_elastic_angular_energy_grid.back() );
 
   return d_cutoff_elastic_pdf.find( incident_energy )->second;
+}
+
+// Return the elastic angles for an incident energy
+const std::map<double,std::vector<double> >& 
+ENDLDataContainer::getCutoffElasticAngles() const
+{
+  return d_cutoff_elastic_angles;
+}
+
+// Return the elastic pdf for an incident energy
+const std::map<double,std::vector<double> >& 
+ENDLDataContainer::getCutoffElasticPDF() const
+{
+  return d_cutoff_elastic_pdf;
 }
 
 // Return the total elastic electron cross section
@@ -215,7 +229,7 @@ ENDLDataContainer::getElectroionizationRecoilEnergyGrid(
 
 // Return the electroionization recoil energy for a subshell and energy bin
 const std::vector<double>& 
-ENDLDataContainer::getElectroionizationRecoilEnergy( 
+ENDLDataContainer::getElectroionizationRecoilEnergyAtEnergy( 
                            const unsigned subshell,
 					       const double incident_energy ) const
 {
@@ -232,9 +246,20 @@ ENDLDataContainer::getElectroionizationRecoilEnergy(
   return d_electroionization_recoil_energy.find( subshell )->second.find( incident_energy )->second;
 }
 
+// Return the electroionization recoil energy for all subshells and energies
+const std::map<double,std::vector<double> >& 
+ENDLDataContainer::getElectroionizationRecoilEnergy( 
+                            const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_energy.find( subshell )->second;
+}
+
 // Return the electroionization recoil energy pdf for a subshell and energy bin
 const std::vector<double>&  
-ENDLDataContainer::getElectroionizationRecoilPDF( 
+ENDLDataContainer::getElectroionizationRecoilPDFAtEnergy( 
                            const unsigned subshell,
 					       const double incident_energy ) const
 {
@@ -249,6 +274,18 @@ ENDLDataContainer::getElectroionizationRecoilPDF(
             d_electroionization_recoil_energy_grid.find( subshell )->second.back() );
 
   return d_electroionization_recoil_pdf.find( subshell )->second.find( incident_energy )->second;
+}
+
+
+// Return the electroionization recoil energy pdf for all subshells and energies
+const std::map<double,std::vector<double> >& 
+ENDLDataContainer::getElectroionizationRecoilPDF(
+                            const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  return d_electroionization_recoil_pdf.find( subshell )->second;
 }
 
 //---------------------------------------------------------------------------//
@@ -292,7 +329,7 @@ ENDLDataContainer::getBremsstrahlungPhotonEnergyGrid() const
 
 // Return the bremsstrahlung for an incident energy
 const std::vector<double>& 
-ENDLDataContainer::getBremsstrahlungPhotonEnergy(
+ENDLDataContainer::getBremsstrahlungPhotonEnergyAtEnergy(
 					        const double incident_energy ) const
 {
   // Make sure the incident energy is valid
@@ -304,9 +341,16 @@ ENDLDataContainer::getBremsstrahlungPhotonEnergy(
   return d_bremsstrahlung_photon_energy.find( incident_energy )->second;
 }
 
+// Return the bremsstrahlung for all incident energies
+const std::map<double,std::vector<double> >& 
+ENDLDataContainer::getBremsstrahlungPhotonEnergy() const
+{
+  return d_bremsstrahlung_photon_energy;
+}
+
 // Return the bremsstrahlung photon pdf for an incident energy
 const std::vector<double>& 
-ENDLDataContainer::getBremsstrahlungPhotonPDF(
+ENDLDataContainer::getBremsstrahlungPhotonPDFAtEnergy(
 					        const double incident_energy ) const
 {
   // Make sure the incident energy is valid
@@ -316,6 +360,13 @@ ENDLDataContainer::getBremsstrahlungPhotonPDF(
                     d_bremsstrahlung_photon_energy_grid.back() );
 
   return d_bremsstrahlung_photon_pdf.find( incident_energy )->second;
+}
+
+// Return the bremsstrahlung photon pdf for all incident energies
+const std::map<double,std::vector<double> >&
+ENDLDataContainer::getBremsstrahlungPhotonPDF() const
+{
+  return d_bremsstrahlung_photon_pdf;
 }
 
 // Return the bremsstrahlung incident electron energy grid for the average energy of the secondary electron

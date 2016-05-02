@@ -1394,7 +1394,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   endl_data_container.setCutoffElasticAnglesAtEnergy( 1.0, angles );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticAngles(1.0),
+  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticAnglesAtEnergy(1.0),
                        angles );
 }
 
@@ -1410,7 +1410,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   endl_data_container.setCutoffElasticPDFAtEnergy( 1.0, pdf );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticPDF(1.0),
+  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticPDFAtEnergy(1.0),
                        pdf );
 }
 
@@ -1425,13 +1425,15 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   angles[2] = 0.90;
 
   double energy = 1.0;
-  std::map<double, std::vector<double> > angles_map;
+  std::map<double, std::vector<double> > angles_map, test_angles_map;
 
   angles_map[energy] = angles;
 
   endl_data_container.setCutoffElasticAngles( angles_map );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticAngles(1.0),
+  test_angles_map = endl_data_container.getCutoffElasticAngles();
+
+  TEST_COMPARE_ARRAYS( test_angles_map.find( 1.0 )->second,
                        angles );
 }
 
@@ -1446,13 +1448,15 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   pdf[2] = 0.7;
   
   double energy = 1.0;
-  std::map<double, std::vector<double> > pdf_map;
+  std::map<double, std::vector<double> > pdf_map, test_pdf_map;
 
   pdf_map[energy] = pdf;
 
   endl_data_container.setCutoffElasticPDF( pdf_map );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getCutoffElasticPDF(1.0),
+  test_pdf_map = endl_data_container.getCutoffElasticPDF();
+
+  TEST_COMPARE_ARRAYS( test_pdf_map.find( 1.0 )->second,
                        pdf );
 }
 
@@ -1693,7 +1697,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
                                 energy, 
                                 recoil_energy );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getElectroionizationRecoilEnergy(subshell, energy),
+  TEST_COMPARE_ARRAYS( endl_data_container.getElectroionizationRecoilEnergyAtEnergy(subshell, energy),
                        recoil_energy );
 }
 
@@ -1715,7 +1719,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
                                 energy, 
                                 recoil_pdf );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getElectroionizationRecoilPDF( subshell, energy ),
+  TEST_COMPARE_ARRAYS( endl_data_container.getElectroionizationRecoilPDFAtEnergy( subshell, energy ),
                        recoil_pdf );
 }
 
@@ -1741,7 +1745,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
                                 recoil_energy );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getElectroionizationRecoilEnergy(subshell, energy_bin),
+    endl_data_container.getElectroionizationRecoilEnergyAtEnergy(subshell, energy_bin),
     energy );
 }
 
@@ -1767,7 +1771,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
                                 recoil_pdf );
 
   TEST_COMPARE_ARRAYS( 
-    endl_data_container.getElectroionizationRecoilPDF( subshell, energy_bin ),
+    endl_data_container.getElectroionizationRecoilPDFAtEnergy( subshell, energy_bin ),
     pdf );
 }
 
@@ -1875,7 +1879,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   endl_data_container.setBremsstrahlungPhotonEnergyAtIncidentEnergy( 1.0, 
                                                                    photon_energy );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonEnergy(1.0),
+  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonEnergyAtEnergy(1.0),
                        photon_energy );
 }
 
@@ -1892,7 +1896,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
   endl_data_container.setBremsstrahlungPhotonPDFAtIncidentEnergy( 1.0, 
                                                                 photon_pdf );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonPDF(1.0),
+  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonPDFAtEnergy(1.0),
                        photon_pdf );
 }
 
@@ -1914,7 +1918,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   endl_data_container.setBremsstrahlungPhotonEnergy( photon_energy );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonEnergy(energy_bin),
+  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonEnergyAtEnergy(energy_bin),
                        energy );
 }
 
@@ -1936,7 +1940,7 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
 
   endl_data_container.setBremsstrahlungPhotonPDF( photon_pdf );
 
-  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonPDF(energy_bin),
+  TEST_COMPARE_ARRAYS( endl_data_container.getBremsstrahlungPhotonPDFAtEnergy(energy_bin),
                        pdf );
 }
 
@@ -2321,9 +2325,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
 /*
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -2365,10 +2369,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilEnergyAtEnergy(1u, 1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(), 
     3 );
 
 //---------------------------------------------------------------------------//
@@ -2393,10 +2397,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonEnergyAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
@@ -2707,9 +2711,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
 /*
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -2752,10 +2756,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilEnergyAtEnergy(1u, 1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(), 
     3 );
 
 //---------------------------------------------------------------------------//
@@ -2781,10 +2785,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonEnergyAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
@@ -3103,9 +3107,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
 /*
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -3148,10 +3152,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilEnergyAtEnergy(1u, 1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(), 
     3 );
 
 //---------------------------------------------------------------------------//
@@ -3177,10 +3181,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonEnergyAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 
@@ -3492,9 +3496,9 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getCutoffElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticAnglesAtEnergy(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+    endl_data_container_copy.getCutoffElasticPDFAtEnergy(1.0).size(), 3 );
 /*
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getScreenedRutherfordElasticCrossSection().size(),
@@ -3537,10 +3541,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getElectroionizationRecoilEnergyGrid(1u).front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilEnergy(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilEnergyAtEnergy(1u, 1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getElectroionizationRecoilPDF(1u, 1.0).size(), 
+    endl_data_container_copy.getElectroionizationRecoilPDFAtEnergy(1u, 1.0).size(), 
     3 );
 
 //---------------------------------------------------------------------------//
@@ -3566,10 +3570,10 @@ TEUCHOS_UNIT_TEST( ENDLDataContainer,
     endl_data_container_copy.getBremsstrahlungPhotonEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonEnergy(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonEnergyAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
-    endl_data_container_copy.getBremsstrahlungPhotonPDF(1.0).size(), 
+    endl_data_container_copy.getBremsstrahlungPhotonPDFAtEnergy(1.0).size(), 
     3 );
   TEST_EQUALITY_CONST( 
     endl_data_container_copy.getBremsstrahlungAveragePhotonIncidentEnergy().size(), 

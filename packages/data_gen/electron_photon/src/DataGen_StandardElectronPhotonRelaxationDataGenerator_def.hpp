@@ -56,8 +56,8 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
 // Extract electron cross section
 template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
-       std::vector<double>& raw_energy_grid,
-       std::vector<double>& raw_cross_section,        
+       const std::vector<double>& raw_energy_grid,
+       const std::vector<double>& raw_cross_section,        
 	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
 {
   Teuchos::Array<double> processed_cross_section( raw_cross_section );

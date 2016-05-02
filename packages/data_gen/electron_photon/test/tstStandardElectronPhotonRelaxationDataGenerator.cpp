@@ -24,7 +24,7 @@
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
-#include "Data_ENDLFileHandler.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -38,7 +38,8 @@ Teuchos::RCP<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
 Teuchos::RCP<Data::XSSEPRDataExtractor> 
   h_xss_data_extractor, c_xss_data_extractor;
 
-std::string test_h_eedl_file_name, test_c_eedl_file_name;
+Teuchos::RCP<Data::ENDLDataContainer> 
+  h_endl_data_container, c_endl_data_container;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -47,33 +48,43 @@ std::string test_h_eedl_file_name, test_c_eedl_file_name;
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_h )
 {
-  Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
-    new Data::ENDLFileHandler( test_h_eedl_file_name ) );
-
     data_generator_h.reset( 
         new DataGen::StandardElectronPhotonRelaxationDataGenerator(
                 h_xss_data_extractor->extractAtomicNumber(),
                 h_xss_data_extractor,
-                eedl_file_handler,
+                h_endl_data_container,
                 0.001,
                 20.0,
                 1.0e-5,
                 1.0e+5,
-                1.0e-6,  
+                0.999999,  
                 1e-4,
                 1e-3,
                 0.001,
                 1e-42,
                 1e-15) );
 
-  // Until Electron data added close endl file 
-  eedl_file_handler->closeENDLFile();
-
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
   data_generator_h->populateEPRDataContainer( data_container );
 
+  // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 1 );
+  TEST_EQUALITY_CONST( data_container.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( data_container.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( data_container.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
+  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.999999 );
+  TEST_EQUALITY_CONST( 
+    data_container.getOccupationNumberEvaluationTolerance(), 1e-4 );
+  TEST_EQUALITY_CONST( 
+    data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
+  TEST_EQUALITY_CONST( 
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-42 );
+  TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-15 );
+
+  // Check the relaxation data
   TEST_EQUALITY_CONST( data_container.getSubshells().size(), 1 );
   TEST_ASSERT( data_container.getSubshells().count( 1 ) );
   TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 1 );
@@ -81,6 +92,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		       1.361000000000E-05 );
   TEST_ASSERT( !data_container.hasRelaxationData() );
   TEST_ASSERT( !data_container.hasSubshellRelaxationData( 1 ) );
+
+  // Check the photon data
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).size(),
 		       63 );
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).front(),
@@ -266,13 +279,11 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.59008691830915092e-02 );
 
-/*
+
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 728 );
-
-  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   // Check the elastic data
   unsigned threshold = 
@@ -311,15 +322,15 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> elastic_angles = 
     data_container.getAnalogElasticAngles(1.0e-5);
 
-  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
-  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
   elastic_angles = 
     data_container.getAnalogElasticAngles(1.0e+5);
 
-  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
-  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
 
   std::vector<double> elastic_pdf = 
@@ -332,8 +343,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   elastic_pdf = 
     data_container.getAnalogElasticPDF(1.0e+5);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 9.86945e+5 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 6.25670e-13 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 6.25670e-13 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
   // Check the electroionization data
@@ -460,7 +471,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 1.36100e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 2.10777e-5 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 170 );
-*/
+
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -470,34 +481,43 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		   populateEPRDataContainer_c )
 {
-
-Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
-    new Data::ENDLFileHandler( test_c_eedl_file_name ) );
-
     data_generator_c.reset( 
 		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
 				     c_xss_data_extractor->extractAtomicNumber(),
 				     c_xss_data_extractor,
-                     eedl_file_handler,
+                     c_endl_data_container,
 				     0.001,
 				     20.0,
                      1.0e-5,
                      1.0e+5,
-                     1.0e-6,  
+                     0.999999,  
 				     1e-3,
 				     1e-3,
 				     0.001,
 				     1e-32,
 				     1e-16) );
 
-  // Until Electron data added close endl file 
-  eedl_file_handler->closeENDLFile();
-
   Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
   data_generator_c->populateEPRDataContainer( data_container );
 
+  // Check the table settings data
   TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
+  TEST_EQUALITY_CONST( data_container.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( data_container.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( data_container.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( data_container.getMaxElectronEnergy(), 1.0e+5 );
+  TEST_EQUALITY_CONST( data_container.getCutoffAngleCosine(), 0.999999 );
+  TEST_EQUALITY_CONST( 
+    data_container.getOccupationNumberEvaluationTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( 
+    data_container.getSubshellIncoherentEvaluationTolerance(), 1e-3 );
+  TEST_EQUALITY_CONST( data_container.getGridConvergenceTolerance(), 0.001 );
+  TEST_EQUALITY_CONST( 
+    data_container.getGridAbsoluteDifferenceTolerance(), 1e-32 );
+  TEST_EQUALITY_CONST( data_container.getGridDistanceTolerance(), 1e-16 );
+
+  // Check the relaxation data
   TEST_EQUALITY_CONST( data_container.getSubshells().size(), 4 );
   TEST_ASSERT( data_container.getSubshells().count( 1 ) );
   TEST_ASSERT( data_container.getSubshells().count( 2 ) );
@@ -559,6 +579,8 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 		   data_container.getSubshellRelaxationProbabilities(1).back(),
 		   6.32007767421e-02,
 		   1e-15 );
+
+  // Check the photon data
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).size(),
 		       63 );
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).front(),
@@ -905,13 +927,12 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.13351484549591885e-01,
 		     1e-15 );
-/*
+
+  // Check the electron energy grid data
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
   TEST_EQUALITY_CONST( energy_grid.size(), 723 );
-
-  TEST_EQUALITY_CONST( data_container.getCutoffAngle(), 1.0e-6 );
 
   // Check the elastic data
   unsigned threshold = 
@@ -948,15 +969,15 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   std::vector<double> elastic_angles = 
     data_container.getAnalogElasticAngles(1.0e-5);
 
-  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
-  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
   elastic_angles = 
     data_container.getAnalogElasticAngles(1.0e+5);
 
-  TEST_EQUALITY_CONST( elastic_angles.front(), 1.0e-6 );
-  TEST_EQUALITY_CONST( elastic_angles.back(), 2.0 );
+  TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
+  TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
 
   std::vector<double> elastic_pdf = 
@@ -969,8 +990,8 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   elastic_pdf = 
     data_container.getAnalogElasticPDF(1.0e+5);
 
-  TEST_EQUALITY_CONST( elastic_pdf.front(), 9.868670E+05 );
-  TEST_EQUALITY_CONST( elastic_pdf.back(), 1.693970E-11 );
+  TEST_EQUALITY_CONST( elastic_pdf.front(), 1.693970E-11 );
+  TEST_EQUALITY_CONST( elastic_pdf.back(), 9.868670E+05 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
   // Check the electroionization data
@@ -1143,7 +1164,7 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
-*/
+
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
@@ -1155,6 +1176,7 @@ int main( int argc, char** argv )
 {
   std::string test_h_ace_file_name, test_h_ace_table_name;
   std::string test_c_ace_file_name, test_c_ace_table_name;
+  std::string test_h_endl_file_name, test_c_endl_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
@@ -1164,9 +1186,9 @@ int main( int argc, char** argv )
   clp.setOption( "test_h_ace_table",
 		 &test_h_ace_table_name,
 		 "Test ACE table name" );
-  clp.setOption( "test_h_eedl_file",
-		 &test_h_eedl_file_name,
-		 "Test EEDL file name" );
+  clp.setOption( "test_h_endl_file",
+		 &test_h_endl_file_name,
+		 "Test ENDL file name" );
 
   clp.setOption( "test_c_ace_file",
 		 &test_c_ace_file_name,
@@ -1174,9 +1196,9 @@ int main( int argc, char** argv )
   clp.setOption( "test_c_ace_table",
 		 &test_c_ace_table_name,
 		 "Test ACE table name" );
-  clp.setOption( "test_c_eedl_file",
-		 &test_c_eedl_file_name,
-		 "Test EEDL file name" );
+  clp.setOption( "test_c_endl_file",
+		 &test_c_endl_file_name,
+		 "Test ENDL file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -1204,7 +1226,7 @@ int main( int argc, char** argv )
   }
 
   {
-    // Create the file handler and data extractor for hydrogen
+    // Create the file handler and data extractor for carbon
     Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 			       new Data::ACEFileHandler( test_c_ace_file_name,
 							 test_c_ace_table_name,
@@ -1215,6 +1237,21 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
+  }
+
+  {
+    // Create the endl data container for hydrogen
+    h_endl_data_container.reset(
+        new Data::ENDLDataContainer( 
+            test_h_endl_file_name,
+            Utility::ArchivableObject::XML_ARCHIVE ) );
+  }
+
+  {
+    c_endl_data_container.reset(
+        new Data::ENDLDataContainer( 
+            test_c_endl_file_name,
+            Utility::ArchivableObject::XML_ARCHIVE ) );
   }
 
   // Run the unit tests

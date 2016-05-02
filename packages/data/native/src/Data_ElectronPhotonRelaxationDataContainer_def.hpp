@@ -23,7 +23,30 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::save( Archive& ar, 
 						  const unsigned version) const
 {
+  // Table Data
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "min_photon_energy",
+                                        d_min_photon_energy );
+  ar & boost::serialization::make_nvp( "max_photon_energy",
+                                        d_max_photon_energy );
+  ar & boost::serialization::make_nvp( "min_electron_energy",
+                                        d_min_electron_energy );
+  ar & boost::serialization::make_nvp( "max_electron_energy",
+                                        d_max_electron_energy );
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "occupation_number_evaluation_tolerance",
+                                        d_occupation_number_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "subshell_incoherent_evaluation_tolerance",
+                                        d_subshell_incoherent_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "grid_convergence_tol",
+                                        d_grid_convergence_tol );
+  ar & boost::serialization::make_nvp( "grid_absolute_diff_tol",
+                                        d_grid_absolute_diff_tol );
+  ar & boost::serialization::make_nvp( "grid_distance_tol",
+                                        d_grid_distance_tol );
+
+  // Relaxation Data
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
   ar & boost::serialization::make_nvp( "subshell_occupancies", 
 				       d_subshell_occupancies );
@@ -37,6 +60,8 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 				       d_relaxation_particle_energies );
   ar & boost::serialization::make_nvp( "relaxation_probabilities", 
 				       d_relaxation_probabilities );
+
+  // Photon Data
   ar & boost::serialization::make_nvp( "compton_profile_momentum_grids", 
 				       d_compton_profile_momentum_grids );
   ar & boost::serialization::make_nvp( "comton_profiles", 
@@ -59,15 +84,18 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 				       d_average_photon_heating_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section",
 				       d_waller_hartree_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section_threshold_index",
+  ar & boost::serialization::make_nvp(
+                       "waller_hartree_incoherent_cross_section_threshold_index",
 				       d_waller_hartree_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section",
 				       d_impulse_approx_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section_threshold_index",
+  ar & boost::serialization::make_nvp(
+                       "impulse_approx_incoherent_cross_section_threshold_index",
 				       d_impulse_approx_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_subshell_incoherent_cross_sections",
 				       d_impulse_approx_subshell_incoherent_cross_sections );
-  ar & boost::serialization::make_nvp( "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
+  ar & boost::serialization::make_nvp(
+                       "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
 				       d_impulse_approx_subshell_incoherent_cross_section_theshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section",
 				       d_waller_hartree_coherent_cross_section );
@@ -90,8 +118,6 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
 				       d_impulse_approx_total_cross_section );
   // Electron Data
-  ar & boost::serialization::make_nvp( "cutoff_angle", 
-                                        d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
   ar & boost::serialization::make_nvp( "analog_elastic_angles", 
@@ -102,12 +128,12 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
             "screened_rutherford_normalization_constant", 
             d_screened_rutherford_normalization_constant );
   ar & boost::serialization::make_nvp( "moliere_screening_constant", 
-                                        d_moliere_screening_constant );/*
+                                        d_moliere_screening_constant );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_discrete_angles", 
             d_moment_preserving_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
-                                        d_moment_preserving_elastic_weights );*/
+                                        d_moment_preserving_elastic_weights );
   ar & boost::serialization::make_nvp( "electroionization_energy_grid",
 				                        d_electroionization_energy_grid );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy",
@@ -141,13 +167,13 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
                                         d_total_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "total_elastic_cross_section_threshold_index", 
-            d_total_elastic_cross_section_threshold_index );/*
+            d_total_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_cross_section", 
             d_moment_preserving_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_cross_section_threshold_index", 
-            d_moment_preserving_elastic_cross_section_threshold_index );*/
+            d_moment_preserving_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "electroionization_subshell_cross_section", 
             d_electroionization_subshell_cross_section );
@@ -171,7 +197,30 @@ template<typename Archive>
 void ElectronPhotonRelaxationDataContainer::load( Archive& ar, 
 						  const unsigned version )
 {
+  // Table Data
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
+  ar & boost::serialization::make_nvp( "min_photon_energy",
+                                        d_min_photon_energy );
+  ar & boost::serialization::make_nvp( "max_photon_energy",
+                                        d_max_photon_energy );
+  ar & boost::serialization::make_nvp( "min_electron_energy",
+                                        d_min_electron_energy );
+  ar & boost::serialization::make_nvp( "max_electron_energy",
+                                        d_max_electron_energy );
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "occupation_number_evaluation_tolerance",
+                                        d_occupation_number_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "subshell_incoherent_evaluation_tolerance",
+                                        d_subshell_incoherent_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "grid_convergence_tol",
+                                        d_grid_convergence_tol );
+  ar & boost::serialization::make_nvp( "grid_absolute_diff_tol",
+                                        d_grid_absolute_diff_tol );
+  ar & boost::serialization::make_nvp( "grid_distance_tol",
+                                        d_grid_distance_tol );
+
+  // Relaxation Data
   ar & boost::serialization::make_nvp( "subshells", d_subshells );
   ar & boost::serialization::make_nvp( "subshell_occupancies", 
 				       d_subshell_occupancies );
@@ -185,6 +234,8 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 				       d_relaxation_particle_energies );
   ar & boost::serialization::make_nvp( "relaxation_probabilities", 
 				       d_relaxation_probabilities );
+
+  // Photon Data
   ar & boost::serialization::make_nvp( "compton_profile_momentum_grids", 
 				       d_compton_profile_momentum_grids );
   ar & boost::serialization::make_nvp( "comton_profiles", 
@@ -207,15 +258,18 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 				       d_average_photon_heating_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section",
 				       d_waller_hartree_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section_threshold_index",
+  ar & boost::serialization::make_nvp(
+                       "waller_hartree_incoherent_cross_section_threshold_index",
 				       d_waller_hartree_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section",
 				       d_impulse_approx_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section_threshold_index",
+  ar & boost::serialization::make_nvp(
+                       "impulse_approx_incoherent_cross_section_threshold_index",
 				       d_impulse_approx_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_subshell_incoherent_cross_sections",
 				       d_impulse_approx_subshell_incoherent_cross_sections );
-  ar & boost::serialization::make_nvp( "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
+  ar & boost::serialization::make_nvp(
+                       "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
 				       d_impulse_approx_subshell_incoherent_cross_section_theshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section",
 				       d_waller_hartree_coherent_cross_section );
@@ -238,8 +292,6 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
 				       d_impulse_approx_total_cross_section );
   // Electron Data
-  ar & boost::serialization::make_nvp( "cutoff_angle", 
-                                        d_cutoff_angle );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
   ar & boost::serialization::make_nvp( "analog_elastic_angles", 
@@ -250,12 +302,12 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
             "screened_rutherford_normalization_constant", 
             d_screened_rutherford_normalization_constant );
   ar & boost::serialization::make_nvp( "moliere_screening_constant", 
-                                        d_moliere_screening_constant );/*
+                                        d_moliere_screening_constant );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_discrete_angles", 
             d_moment_preserving_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
-                                        d_moment_preserving_elastic_weights );*/
+                                        d_moment_preserving_elastic_weights );
   ar & boost::serialization::make_nvp( "electroionization_energy_grid",
 				                        d_electroionization_energy_grid );
   ar & boost::serialization::make_nvp( "electroionization_recoil_energy",
@@ -289,13 +341,13 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
                                         d_total_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "total_elastic_cross_section_threshold_index", 
-            d_total_elastic_cross_section_threshold_index );/*
+            d_total_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_cross_section", 
             d_moment_preserving_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_elastic_cross_section_threshold_index", 
-            d_moment_preserving_elastic_cross_section_threshold_index );*/
+            d_moment_preserving_elastic_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( 
             "electroionization_subshell_cross_section", 
             d_electroionization_subshell_cross_section );
