@@ -252,6 +252,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
         }
 
+
         hexahedrons.merge(surface_tris);
         d_kd_tree->build_tree(hexahedrons, &d_kd_tree_root);
         
@@ -324,6 +325,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                         std::sort(ray_hex_intersections.begin(),
                                   ray_hex_intersections.end());
 
+                        Teuchos::Array<double> ray_hex_intersections2(ray_hex_intersections);
+                        std::cout<<ray_hex_intersections2<<std::endl;
+
                         Teuchos::Array<moab::CartVect> array_of_hit_points;
 
                         {
@@ -367,10 +371,11 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 					 array_of_hit_points[i])/2.0 );
 
 
-                                
-
-                                moab::EntityHandle hex = whichHexIsPointIn( hex_centroid.array() );
-                                
+                                moab::EntityHandle hex = 0;
+                                if(isPointInMesh(hex_centroid.array()))
+                                {
+                                        hex = whichHexIsPointIn( hex_centroid.array() );
+                                }
 
 
                                 // leave loop if it isn't inside a hex. Shouldn't ever happen at this point
@@ -383,7 +388,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	                                                       ray_hex_intersections[i-1];
 	                        }
                                 //might not be right - check later. Got from tetmesh.
-                                else partial_track_length = ray_hex_intersections[i];
+                                else if (i == 0 && ray_hex_intersections.size() < array_of_hit_points.size()) 
+                                        partial_track_length = ray_hex_intersections[i];
 
                                 //Special case - first point is on mesh surface
 	                        if( partial_track_length > 0.0 )
@@ -430,33 +436,13 @@ template<typename ContributionMultiplierPolicy>
 bool HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh( 
 						        const double point[3] )
 {
-
-        std::vector<double> coordinates;
-
-        moab::ErrorCode err = d_moab_interface->get_vertex_coordinates(coordinates);
-
-        std::vector<double>::size_type coord_size=coordinates.size();
-
-        double x_low=coordinates[1];
-        double x_high=coordinates[coord_size/3];
-        double y_low=coordinates[1+(coord_size/3)];
-        double y_high=coordinates[2*coord_size/3];
-        double z_low=coordinates[(2*coord_size/3)+1];
-        double z_high=coordinates[coord_size];
-
-        std::cout<< x_low << ", " << y_low << ", " << z_low << std::endl;
-        std::cout<< x_high << ", " << y_high << ", " << z_high << std::endl;
-        
-
-        if(point[0] > x_low && point[1] > y_low && point[2] > z_low)
-        {
-                if(point[0] < x_high && point[1] < y_high && point[2] < z_high)
-                {
-                        return true;
-                }
-        }
-
-        return false;
+        const moab::Range all_hex_elements = this->getAllHexElements();
+        moab::BoundBox mesh_box;
+        moab::ErrorCode err = mesh_box.update( *d_moab_interface, all_hex_elements);
+        TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[err] );
+        return mesh_box.contains_point(point, s_tol);
 
 }
 

@@ -87,20 +87,21 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, isPointInMesh)
 
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
 {
+
   // Set the particle types
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::NEUTRON;
 
-  hex_estimator->setParticleTypes( particles_types );
+  hex_estimator->setParticleTypes( particle_types );
 
   double start_point_1[3] = { 0.5, 0.5, 0.0 };
   double end_point_1[3] = { 0.5, 0.5, 2.0 };
 
-  double start_point_2[3] = { 0.5, 1.5, 0.0 };
+  double start_point_2[3] = { 0.5, 1.5, -1.0 };
   double end_point_2[3] = { 0.5, 1.5, 2.0 };
 
   double start_point_3[3] = { 1.5, 0.5, 0.0 };
-  double end_point_3[3] = { 1.5, 0.5, 2.0 };
+  double end_point_3[3] = { 1.5, 0.5, 3.0 };
 
   double start_point_4[3] = { 1.5, 1.5, 0.0 };
   double end_point_4[3] = { 1.5, 1.5, 2.0 };
@@ -128,10 +129,11 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
                                                               end_point_4 );
 
   // Commit the contributions to the mesh estimator
-  hex_estimator->commitHistoryContributions();
+  hex_estimator->commitHistoryContribution();
 
-  TEST_ASSERT( !hex_estimator->hasUncommittedHistoryContributions() );
-
+  TEST_ASSERT( !hex_estimator->hasUncommittedHistoryContribution() );
+  MonteCarlo::Estimator::setNumberOfHistories(1.0);
+  MonteCarlo::Estimator::setEndTime(1.0);
   // Initialize the HDF5 file
   std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
@@ -149,7 +151,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   moab::Range::const_iterator hex = all_hex_elements.begin();
 
   Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) );
+    raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
   raw_bin_data_copy;
 
   hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
@@ -239,6 +241,8 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
                                         1e-12 );
 
   ++hex;
+
+  //
 }
 
 //---------------------------------------------------------------------------//
