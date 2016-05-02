@@ -49,6 +49,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
   z_grid_points.push_back(3);
 
   TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(2, 2, x_grid_points, y_grid_points, z_grid_points ) ) );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -65,6 +66,19 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, exportData )
 
 
 }
+
+/*TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
+{
+  double test_start_point[3];
+         test_start_point[0]=0.5;
+         test_start_point[1]=0.5;
+         test_start_point[2]=0.5;
+  double test_end_point[3];
+         test_end_point[0]=1;
+         test_end_point[1]=1;
+         test_end_point[2]=1;
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent(NULL, test_start_point, test_end_point);
+}*/
 
 
 

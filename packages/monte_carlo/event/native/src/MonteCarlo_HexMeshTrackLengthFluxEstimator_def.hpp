@@ -42,8 +42,6 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
     d_hex_meshset(),
     //d_moab_box_tree_tool(new moab::OrientedBoxTreeTool(d_moab_interface.get())),
     //d_box_root_set(),
-    d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.get() ) ),
-    d_kd_tree_root(),
     d_output_mesh_name( output_mesh_file_name )
 
 {
@@ -60,6 +58,8 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                      : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
                        d_moab_interface( new moab::Core ),
                        d_hex_meshset(),
+                       d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.get() ) ),
+                       d_kd_tree_root(),
                        d_output_mesh_name(output_mesh_file_name)
 
 {
@@ -130,7 +130,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                              
 
                                 hexahedrons.insert(hex);
-                                std::cout << hexahedrons.size() << std::endl;
+
                                 double dx = x_grid_points[i+1]-x_grid_points[i];
                                 double dy = y_grid_points[i+1]-y_grid_points[i];
                                 double dz = z_grid_points[i+1]-z_grid_points[i];
@@ -163,19 +163,20 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
         this->assignEntities( entity_volumes );
 
         //get hex faces
-        int current_dimension = d_moab_interface->dimension_from_handle(d_hex_meshset);
+        int current_dimension = d_moab_interface->dimension_from_handle(hexahedrons[0]);
         moab::Range surface_quads;
-        
+        std::cout<<current_dimension<<std::endl;
         err = d_moab_interface->get_adjacencies(hexahedrons,
                                                 current_dimension-1,
                                                 true,
                                                 surface_quads,
                                                 moab::Interface::UNION);
 
+
         TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[err]);
-
+        
         //split quads into triangles
 
         moab::Range surface_tris;
@@ -188,7 +189,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
                 const moab::EntityHandle* connectivity;
                 int conn_size;
-                
+
                 err = d_moab_interface->get_connectivity(*quad_it,
                                                          connectivity,
                                                          conn_size);
@@ -251,11 +252,8 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
         }
 
-
         hexahedrons.merge(surface_tris);
         d_kd_tree->build_tree(hexahedrons, &d_kd_tree_root);
-
-        
         
 }
 
@@ -289,34 +287,129 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double start_point[3],
                 const double end_point[3])
 {
+        moab::ErrorCode err;
+        std::vector<double> coordinates;
+
+        err = d_moab_interface->get_vertex_coordinates(coordinates);
+
+        std::vector<double>::size_type coord_size=coordinates.size();
+
+        double x_low=coordinates[1];
+        double x_high=coordinates[coord_size/3];
+        double y_low=coordinates[1+(coord_size/3)];
+        double y_high=coordinates[2*coord_size/3];
+        double z_low=coordinates[(2*coord_size/3)+1];
+        double z_high=coordinates[coord_size];
+
+        std::cout<< x_low << ", " << y_low << ", " << z_low << std::endl;
+        std::cout<< x_high << ", " << y_high << ", " << z_high << std::endl;
+        
         if( this->isParticleTypeAssigned( particle.getParticleType() ) )
         {        
                 //use function in moab to determine whether or not the ray in between the two points intersects one of the faces of the mesh
-                double direction[3];
 
-                for(unsigned int i = 0; i != 2; ++i) {
+        double track_length = sqrt(
+                (end_point[0]-start_point[0])*(end_point[0]-start_point[0]) +
+                (end_point[1]-start_point[1])*(end_point[1]-start_point[1]) +
+                (end_point[2]-start_point[2])*(end_point[2]-start_point[2]) );
 
-                        direction[i] = (end_point[i]-start_point[i]);
 
+
+                std::vector<double> ray_hex_intersections;
+                std::vector<moab::EntityHandle> hex_surface_triangles;
+
+                err = d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
+                                                                          s_tol,
+                                                                          particle.getDirection(),
+                                                                          start_point,
+                                                                          hex_surface_triangles,
+                                                                          ray_hex_intersections,
+                                                                          0,
+                                                                          track_length);
+
+                TEST_FOR_EXCEPTION( err != moab::MB_SUCCESS,
+                                    Utility::MOABException,
+			            moab::ErrorCodeStr[err] );
+                hex_surface_triangles.clear();
+        
+                if(ray_hex_intersections.size() > 0)
+                {
+                        std::sort(ray_hex_intersections.begin(),
+                                  ray_hex_intersections.end());
+
+                        Teuchos::Array<moab::CartVect> array_of_hit_points;
+
+                        {
+
+                                if(start_point[0] > x_low && start_point[1] > y_low && start_point[2] > z_low)
+                                {
+                                        if(start_point[0] < x_high && start_point[1] < y_high && start_point[2] < z_high)
+                                        {
+                                                                              moab::CartVect start_point_cv( start_point[0],
+                                                                                                             start_point[1],
+                                                                                                             start_point[2] );
+                                                                                                             array_of_hit_points.push_back(start_point_cv);
+                                        
+                                        }
+                                }
+  
+
+                        }
+
+                        for(unsigned i = 0; i < ray_hex_intersections.size(); ++i)
+                        {
+
+                                moab::CartVect hit_point;
+                                
+                                hit_point[0] = particle.getXDirection() * ray_hex_intersections[i] + start_point[0];
+                                hit_point[1] = particle.getYDirection() * ray_hex_intersections[i] + start_point[1];
+                                hit_point[2] = particle.getZDirection() * ray_hex_intersections[i] + start_point[2];
+
+                                array_of_hit_points.push_back(hit_point);
+                        }
+
+                        if(track_length > ray_hex_intersections.back() )
+                        {
+
+                                moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
+                                array_of_hit_points.push_back(end_point_cv);
+                                ray_hex_intersections.push_back(track_length);
+                        }
+                        
+                        for( unsigned int i = 0; i < ray_hex_intersections.size(); ++i)
+                        {
+                        	moab::CartVect hex_centroid = ( (array_of_hit_points[i+1] + 
+					 array_of_hit_points[i])/2.0 );
+
+
+                                moab::EntityHandle hex;
+                                d_kd_tree->point_search((double*) &hex_centroid, hex);
+
+                                if( hex == 0 )continue;
+
+                                double partial_track_length;
+                                if( i != 0)
+	                        { 
+	                                partial_track_length = ray_hex_intersections[i] - 
+	                                                       ray_hex_intersections[i-1];
+	                        }
+                                else partial_track_length = ray_hex_intersections[i];
+	                        if( partial_track_length > 0.0 )
+	                        {                     	
+                                        EstimatorParticleStateWrapper particle_state_wrapper( particle );
+            
+	                                // Add partial history contribution
+	                                addPartialHistoryContribution( hex,
+					                               particle_state_wrapper,
+					                               partial_track_length );
+	                        }
+                                
+                       }
                 }
-                
-                
-                const double direction_2norm = Utility::vectorMagnitude(direction[0],
-                                                                        direction[1],
-                                                                        direction[2]);
-
-                for(unsigned int i = 0; i != 2; ++i) {
-
-                        direction[i] = direction[i]/direction_2norm;
-
-                }
-
-
-                
-
- 
-                
         }
+                        
+
+
 }
 
 template<typename ContributionMultiplierPolicy>
