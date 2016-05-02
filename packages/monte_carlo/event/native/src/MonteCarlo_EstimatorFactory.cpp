@@ -1187,7 +1187,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
   testPrecondition( this->getEstimatorId( estimator_rep ) == id );
   remember( std::string test_estimator_type );
   remember( this->getEstimatorType( test_estimator_type, id, estimator_rep ) );
-  testPrecondition( test_estimator_type == s_tet_mesh_track_length_flux_name );
+  testPrecondition( test_estimator_type == s_hex_mesh_track_length_flux_name );
   // Make sure the id is valid
   testPrecondition( id !=
                     ModuleTraits::invalid_internal_event_observer_handle );

@@ -4,8 +4,8 @@
 MACRO(ENABLE_BOOST_SUPPORT)
 
     # Only use static libraries
-    SET(Boost_USE_STATIC_LIBS ON)
-    SET(Boost_USE_STATIC_RUNTIME ON)
+    SET(Boost_USE_STATIC_LIBS OFF)
+    SET(Boost_USE_STATIC_RUNTIME OFF)
 
     # No multithreading
     SET(Boost_USE_MULTITHREAD OFF)
