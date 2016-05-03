@@ -123,6 +123,30 @@ A NumPy array will be returned.
 // Ignore the print method
 %ignore Geometry::Ray::print;
 
+// Create a macro for converting the position from python to teuchos
+%define %convert_python_position_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
+  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
+
+  // Make sure the sequence has 3 elements
+  if( TEUCHOS_ARRAY.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError, 
+                     "The input position must have 3 elements." );
+  }
+%enddef
+
+// Create a macro for converting the direction from python to teuchos
+%define %convert_python_direction_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
+  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
+
+  // Make sure the sequence has 3 elements
+  if( TEUCHOS_ARRAY.size() != 3 )
+  {
+    PyErr_SetString( PyExc_TypeError, 
+                     "The input direction must have 3 elements." );
+  }
+%enddef
+
 // Add some useful methods to the Ray class
 %extend Geometry::Ray
 {
@@ -131,25 +155,11 @@ A NumPy array will be returned.
   {
     Teuchos::Array<double> position;
 
-    PyFrensie::copyNumPyToTeuchosWithCheck( position_py_obj, position );
-
-    // Make sure the sequence has 3 elements
-    if( position.size() != 3 )
-    {
-      PyErr_SetString( PyExc_TypeError, 
-                       "The input position must have 3 elements." );
-    }
+    %convert_python_position_to_teuchos( position_py_obj, position );
     
     Teuchos::Array<double> direction;
 
-    PyFrensie::copyNumPyToTeuchosWithCheck( direction_py_obj, direction );
-    
-    // Make sure the sequence has 3 elements
-    if( direction.size() != 3 )
-    {
-      PyErr_SetString( PyExc_TypeError, 
-                       "The input direction must have 3 elements." );
-    }
+    %convert_python_position_to_teuchos( direction_py_obj, direction );
 
     return new Geometry::Ray( position.getRawPtr(), direction.getRawPtr() );
   }

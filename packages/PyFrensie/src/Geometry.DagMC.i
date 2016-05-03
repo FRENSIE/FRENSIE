@@ -41,14 +41,10 @@ geometries.
 %}
 
 // C++ STL support
-%include <stl.i>
-%include <std_string.i>
-%include <std_set.i>
-%include <std_map.i>
 %include <std_vector.i>
 %include <std_except.i>
 
- // Include typemaps support
+// Include typemaps support
 %include <typemaps.i>
 
 // Import the PyFrensie Teuchos Array conversion helpers
@@ -129,6 +125,7 @@ CAD File Properties:
   *getCellTrackLengthFluxName
   *setCellCollisionFluxName
   *getCellCollisionFluxName
+  *isInitialized
 
 Others must only be called after the geometry has been loaded:
 
@@ -153,14 +150,14 @@ Estimator Properties:
   
 
 The initialize method is used to load the CAD file and parse its properties and
-geometric information. It is recommended that one 
+geometric information. It is recommended that one use
 PyFrensie.Geometry.DagMC.initializeDagMC to load the geometry instead
 of calling the initialize method directly. Once the geometry has been one may
 ray trace on the geometry. This can be useful for debugging ray trace errors
 encountered while running Monte Carlo particle simulations. A brief usage
 tutorial for this class is shown below:
 
-  import PyFrensie.Geometry.DagMC
+  import PyFrensie.Geometry.DagMC as DagMC
 
   geom = DagMC.DagMC
   
@@ -204,28 +201,6 @@ surface that will be hit by the ray.
 ")
 Geometry::DagMC::fireInternalRay;
 
-// SWIG will not parse typedefs. Create some typemaps that map the typedefs
-// to their true type
-%typemap(in) Geometry::ModuleTraits::InternalCellHandle
-{
-  $1 = PyInt_AsLong($input);
-}
-
-%typemap(in) Geometry::ModuleTraits::InternalSurfaceHandle
-{
-  $1 = PyInt_AsLong($input);
-}
-
-%typemap(out) Geometry::ModuleTraits::InternalCellHandle
-{
-  $result = PyInt_FromLong($1);
-}
-
-%typemap(out) Geometry::ModuleTraits::InternalSurfaceHandle
-{
-  $result = PyInt_AsLong($1);
-}
-
 // Add a few general typemaps
 %apply Geometry::ModuleTraits::InternalCellHandle& OUTPUT { Geometry::ModuleTraits::InternalSurfaceHandle& surface_hit }
 
@@ -235,30 +210,6 @@ Geometry::DagMC::fireInternalRay;
 %ignore Geometry::DagMC::setInternalRay( const double[3], const double[3], const bool );
 %ignore Geometry::DagMC::setInternalRay( const double[3], const double[3], const ModuleTraits::InternalCellHandle, const bool );
 %ignore Geometry::DagMC::changeInternalRayDirection( const double[3] );
-
-// Create a macro for converting the position from python to teuchos
-%define %convert_python_position_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
-  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
-
-  // Make sure the sequence has 3 elements
-  if( TEUCHOS_ARRAY.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError, 
-                     "The input position must have 3 elements." );
-  }
-%enddef
-
-// Create a macro for converting the direction from python to teuchos
-%define %convert_python_direction_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
-  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
-
-  // Make sure the sequence has 3 elements
-  if( TEUCHOS_ARRAY.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError, 
-                     "The input direction must have 3 elements." );
-  }
-%enddef
 
 // Add some useful methods to the DagMC class
 %extend Geometry::DagMC
@@ -379,14 +330,10 @@ Geometry::DagMC::fireInternalRay;
 // Include the DagMC class
 %include "Geometry_DagMC.hpp"
 
-// Instantiate an IdSet
-%template(IdSet) std::set<unsigned long long>;
+// Include the geometry helpers
+%include "Geometry_Helpers.i"
 
-// Instantiate the template getMaterialIds method
-%template(getMaterialIds) Geometry::DagMC::getMaterialIds<std::set<unsigned long long> >;
-
-// Instantiate the template getCells method
-%template(getCells) Geometry::DagMC::getCells<std::set<unsigned long long> >;
+%standard_geom_template_extends( DagMC );
 
 // Instantiate the template getSurfaces method
 %template(getSurfaces) Geometry::DagMC::getSurfaces<std::set<unsigned long long> >;
@@ -398,24 +345,6 @@ Geometry::DagMC::fireInternalRay;
 // to work in this case)
 %extend Geometry::DagMC
 {
-  // Output the material id set
-  static std::set<unsigned long long> getMaterialIds()
-  {
-    std::set<unsigned long long> mat_ids;
-    Geometry::DagMC::getMaterialIds( mat_ids );
-
-    return mat_ids;
-  }
-
-  // Output the cell id set
-  static std::set<unsigned long long> getCells()
-  {
-    std::set<unsigned long long> cell_ids;
-    Geometry::DagMC::getCells( cell_ids );
-
-    return cell_ids;
-  }
-
   // Output the surface ids set
   static std::set<unsigned long long> getSurfaces()
   {
@@ -432,46 +361,6 @@ Geometry::DagMC::fireInternalRay;
     Geometry::DagMC::getFoundCellCache( cache );
 
     return cache;
-  }
-};
-
-// Instantiate a cell id to mat id map
-%template(CellIdMatIdMap) std::map<unsigned long long, unsigned long long>;
-
-// Instantiate the template getCellMaterialIds method
-%template(getCellMaterialIds) Geometry::DagMC::getCellMaterialIds<std::map<unsigned long long, unsigned long long> >;
-
-// Add method that returns a std::map (since the OUTPUT typemaps don't seem
-// to work in this case)
-%extend Geometry::DagMC
-{
-  // Output the cell id to material id map
-  static std::map<unsigned long long, unsigned long long> getCellMaterialIds()
-  {
-    std::map<unsigned long long,unsigned long long> cell_id_mat_id_map;
-    Geometry::DagMC::getCellMaterialIds( cell_id_mat_id_map );
-
-    return cell_id_mat_id_map;
-  }
-};
-
-// Instantiate a cell id to density map
-%template(CellIdDensityMap) std::map<unsigned long long, double>;
-
-// Instantiate the template getCellDensities method
-%template(getCellDensities) Geometry::DagMC::getCellDensities<std::map<unsigned long long, double> >;
-
-// Add method that returns a std::map (since the OUTPUT typemaps don't seem
-// to work in this case)
-%extend Geometry::DagMC
-{
-  // Output the cell id to material id map
-  static std::map<unsigned long long,double> getCellDensities()
-  {
-    std::map<unsigned long long,double> cell_id_density_map;
-    Geometry::DagMC::getCellDensities( cell_id_density_map );
-
-    return cell_id_density_map;
   }
 };
 
@@ -540,7 +429,7 @@ tutorial for this class is shown below:
 // Import the Teuchos_ParameterList interface
 %import <Teuchos.i>
 
-// Include the DagMCInstanceFactory class
+// Import the DagMCInstanceFactory class
 %import "Geometry_DagMCInstanceFactory.hpp"
 
 %inline %{

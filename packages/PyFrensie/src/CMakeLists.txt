@@ -57,7 +57,7 @@ ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
   SET(PyFrensie_Geometry_PACKAGES ${PyFrensie_Geometry_PACKAGES} ROOT)
-  #SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.Root)
+  SET(PyFrensie_MODULES ${PyFrensie_MODULES} Geometry.ROOT)
   SET(GEOMETRY_PACKAGE_LINK_LIBRARIES ${GEOMETRY_PACKAGE_LINK_LIBRARIES} geometry_root)
 ENDIF()
 
