@@ -30,7 +30,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const SubshellType interaction_subshell,
+    const Data::SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
@@ -40,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const SubshellType interaction_subshell,
+    const Data::SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
@@ -52,7 +52,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
@@ -66,7 +66,7 @@ private:
     d_electroionization_subshell_distribution;
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;
+  Data::SubshellType d_interaction_subshell;
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;

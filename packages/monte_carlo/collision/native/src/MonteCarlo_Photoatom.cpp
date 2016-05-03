@@ -343,7 +343,7 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
 		     d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
+  Data::SubshellType subshell_vacancy;
   
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 
@@ -381,7 +381,7 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 		     d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
+  Data::SubshellType subshell_vacancy;
   
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 

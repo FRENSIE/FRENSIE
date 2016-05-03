@@ -28,7 +28,7 @@ namespace MonteCarlo{
 /*! \details The occupation number grid must be in me*c units.
  */
 SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteringDistribution(
-       const SubshellType interaction_subshell,
+       const Data::SubshellType interaction_subshell,
        const double num_electrons_in_subshell,
        const double binding_energy,
        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
@@ -40,8 +40,8 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
     d_occupation_number( occupation_number )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
-  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the number of electrons is valid
   testPrecondition( num_electrons_in_subshell > 0.0 );
   // Make sure the binding energy is valid
@@ -53,7 +53,7 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
 
 
 // Return the subshell
-SubshellType 
+Data::SubshellType 
 SubshellIncoherentPhotonScatteringDistribution::getSubshell() const
 {
   return d_subshell;
@@ -244,7 +244,7 @@ double SubshellIncoherentPhotonScatteringDistribution::calculateOccupationNumber
 void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the photon energy is valid
   testPrecondition( photon.getEnergy() > d_binding_energy );

@@ -263,7 +263,6 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.59008691830915092e-02 );
 
-
   std::vector<double> energy_grid = data_container.getElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
@@ -1137,7 +1136,7 @@ Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.front(), 9.232690E-06 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.back(), 1.981540E-05 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_loss.size(), 181 );
-		       
+
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }

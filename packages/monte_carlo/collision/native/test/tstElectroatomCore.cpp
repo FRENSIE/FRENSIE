@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getMiscReactions )
 // Check that the atomic relaxation model can be returned
 TEUCHOS_UNIT_TEST( ElectroatomCore, getAtomicRelaxationModel )
 {
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   MonteCarlo::ElectronState electron( 0u );
   electron.setEnergy( 1.0 );

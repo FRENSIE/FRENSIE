@@ -20,6 +20,9 @@ module data_endl_table_helpers
   public :: read_endl_table_two_column
   public :: read_endl_table_three_column
   public :: read_endl_table_four_column
+  public :: read_epics_table_two_column
+  public :: read_epics_table_three_column
+  public :: read_epics_table_four_column
   public :: skip_endl_table
   public :: read_endl_table_size
 
@@ -100,6 +103,31 @@ module data_endl_table_helpers
 
     end subroutine read_endl_table_two_column
 
+    !> Read a two column ENDL EPICS2014 table
+    !> \details A two column table of data is read into two arrays, one for each
+    !> column.
+    subroutine read_epics_table_two_column( file_id, table_size, column_one, &
+        column_two, flag ) bind(c, name='readEPICSTableTwoColumn')
+      use iso_c_binding
+
+      integer(c_int), intent(in), value :: file_id
+      integer(c_int), intent(in), value :: table_size
+      real(c_double), dimension(table_size), intent(inout) :: column_one
+      real(c_double), dimension(table_size), intent(inout) :: column_two
+      integer(c_int), intent(inout) :: flag
+
+      integer :: i
+      integer :: end_of_table
+
+      do i = 1, table_size
+        read(file_id, '(2E16.9,39X, I1)', iostat=flag ) column_one(i), &
+        column_two(i), end_of_table
+      end do 
+
+      read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
+
+    end subroutine read_epics_table_two_column
+
     !> Read a three column ENDL table
     !> \details A three column table of data is read into three arrays, one for 
     !> each column.
@@ -126,6 +154,33 @@ module data_endl_table_helpers
       read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
 
     end subroutine read_endl_table_three_column
+
+    !> Read a three column ENDL EPICS2014 table
+    !> \details A three column table of data is read into three arrays, one for 
+    !> each column.
+    subroutine read_epics_table_three_column( file_id, table_size, column_one, &
+        column_two, column_three, flag ) &
+        bind(c, name='readEPICSTableThreeColumn')
+      use iso_c_binding
+
+      integer(c_int), intent(in), value :: file_id
+      integer(c_int), intent(in), value :: table_size
+      real(c_double), dimension(table_size), intent(inout) :: column_one
+      real(c_double), dimension(table_size), intent(inout) :: column_two
+      real(c_double), dimension(table_size), intent(inout) :: column_three
+      integer(c_int), intent(inout) :: flag
+
+      integer :: i
+      integer :: end_of_table
+
+      do i = 1, table_size
+        read(file_id, fmt='(3E16.9,23X, I1)', iostat=flag ) column_one(i), &
+        column_two(i), column_three(i), end_of_table
+      end do 
+
+      read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
+
+    end subroutine read_epics_table_three_column
 
     !> Read a four column ENDL table
     !> \details A four column table of data is read into four arrays, one for 
@@ -155,6 +210,33 @@ module data_endl_table_helpers
 
     end subroutine read_endl_table_four_column
 
+    !> Read a four column ENDL EPICS2014 table
+    !> \details A four column table of data is read into four arrays, one for 
+    !> each column.
+    subroutine read_epics_table_four_column( file_id, table_size, column_one, &
+        column_two, column_three, column_four, flag ) &
+        bind(c, name='readEPICSTableFourColumn')
+      use iso_c_binding
+
+      integer(c_int), intent(in), value :: file_id
+      integer(c_int), intent(in), value :: table_size
+      real(c_double), dimension(table_size), intent(inout) :: column_one
+      real(c_double), dimension(table_size), intent(inout) :: column_two
+      real(c_double), dimension(table_size), intent(inout) :: column_three
+      real(c_double), dimension(table_size), intent(inout) :: column_four
+      integer(c_int), intent(inout) :: flag
+
+      integer :: i
+      integer :: end_of_table
+
+      do i = 1, table_size
+        read(file_id, fmt='(4E16.9, 8X)', iostat=flag) column_one(i), &
+        column_two(i), column_three(i), column_four(i) 
+      end do 
+
+      read(file_id, fmt='(71X,I1)', iostat=flag ) end_of_table
+
+    end subroutine read_epics_table_four_column
 
     !> Skip a ENDL table
     !> \details A table of data is skipped over.

@@ -25,7 +25,7 @@ namespace MonteCarlo{
 // Constructor
 template<typename ComptonProfilePolicy>
 StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
-		 const SubshellType interaction_subshell,
+		 const Data::SubshellType interaction_subshell,
 		 const double subshell_occupancy,
 		 const double subshell_binding_energy,
 		 const std::shared_ptr<const ComptonProfile>& compton_profile )
@@ -35,8 +35,8 @@ StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::
     d_compton_profile( compton_profile )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL &&
-                    interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL &&
+                    interaction_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the subshell occupancy is valid
   testPrecondition( subshell_occupancy > 0.0 );
   // Make sure the subshell binding energy is valid
@@ -155,7 +155,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   unsigned trial_dummy;
 
@@ -172,7 +172,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  double& outgoing_energy,
-					  SubshellType& shell_of_interaction,
+					  Data::SubshellType& shell_of_interaction,
 					  unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -221,7 +221,7 @@ void StandardSubshellDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                       const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
-                                      SubshellType& shell_of_interaction,
+                                      Data::SubshellType& shell_of_interaction,
                                       unsigned& trials ) const
 {
   // Make sure the incoming energy is valid

@@ -197,9 +197,15 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void HardElasticElectronScatteringDistribution::scatterElectron( 
+<<<<<<< HEAD
 				     ElectronState& electron,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
+=======
+                                ElectronState& electron,
+			                    ParticleBank& bank,
+                                Data::SubshellType& shell_of_interaction ) const
+>>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
 {
   double scattering_angle_cosine;
 

@@ -94,9 +94,9 @@ public:
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-                        ParticleBank& bank,
-                        SubshellType& shell_of_interaction ) const;
-                        
+	                    ParticleBank& bank,
+                        Data::SubshellType& shell_of_interaction ) const;
+
 private:
 
   // electroionization subshell scattering cross sections

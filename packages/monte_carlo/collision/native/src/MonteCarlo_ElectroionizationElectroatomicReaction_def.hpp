@@ -95,11 +95,11 @@ template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     ElectronState& electron, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   electron.incrementCollisionNumber();
   
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   THROW_EXCEPTION( std::logic_error, 
         "Error! The total electroionization reaction scatter function has not been implemented");

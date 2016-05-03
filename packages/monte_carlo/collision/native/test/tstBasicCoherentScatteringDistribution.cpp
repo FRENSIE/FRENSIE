@@ -204,7 +204,7 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
   photon.setEnergy( 0.1 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 11 );
@@ -229,7 +229,7 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
   
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.1, 1e-15  );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   photon.setDirection( 0.0, 0.0, 1.0 );
 
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.1, 1e-15  );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.9283177667225558, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

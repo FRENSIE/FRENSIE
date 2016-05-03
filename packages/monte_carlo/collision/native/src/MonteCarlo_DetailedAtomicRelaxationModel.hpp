@@ -45,14 +45,14 @@ public:
   { /* ... */ }
 
   //! Relax the atom
-  void relaxAtom( const SubshellType vacancy_shell,
+  void relaxAtom( const Data::SubshellType vacancy_shell,
 		  const ParticleState& particle,
 		  ParticleBank& bank ) const;
 
 private:
   
   // The map of subshells and their relaxation data
-  boost::unordered_map<SubshellType,
+  boost::unordered_map<Data::SubshellType,
 		       Teuchos::RCP<const SubshellRelaxationModel> >
   d_subshell_relaxation_models;
 };

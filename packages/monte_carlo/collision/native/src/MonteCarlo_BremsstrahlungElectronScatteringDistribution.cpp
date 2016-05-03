@@ -177,8 +177,8 @@ void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials(
 // Randomly scatter the electron
 void BremsstrahlungElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
-                                ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+			                    ParticleBank& bank,
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // Incoming electron energy
   double incoming_energy = electron.getEnergy();

@@ -62,8 +62,8 @@ void AtomicExcitationElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void AtomicExcitationElectronScatteringDistribution::scatterElectron( ElectronState& electron,
-                      ParticleBank& bank,
-                      SubshellType& shell_of_interaction ) const
+	                  ParticleBank& bank,
+                      Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy;
   double scattering_angle_cosine;

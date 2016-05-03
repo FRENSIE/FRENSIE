@@ -17,7 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -145,14 +145,14 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_first_subshell_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_ASSERT( electron.getZDirection() < 1.0 );
   TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -336,8 +336,8 @@ int main( int argc, char** argv )
     energy_grid.size() - first_subshell_cross_section.size();
 
   // Assign subshell type for the first subshell
-  MonteCarlo::SubshellType interaction_first_subshell;
-  interaction_first_subshell = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+  Data::SubshellType interaction_first_subshell;
+  interaction_first_subshell = Data::convertENDFDesignatorToSubshellEnum( 
                                     subshell_endf_designators[first_subshell] );
 
   // Subshell table info realtive to the EION Block
@@ -423,8 +423,8 @@ int main( int argc, char** argv )
     energy_grid.size() - last_subshell_cross_section.size();
 
   // Assign subshell type for the last subshell
-  MonteCarlo::SubshellType interaction_last_subshell;
-  interaction_last_subshell = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+  Data::SubshellType interaction_last_subshell;
+  interaction_last_subshell = Data::convertENDFDesignatorToSubshellEnum( 
                                      subshell_endf_designators[last_subshell] );
 
   // Subshell table info realtive to the EION Block

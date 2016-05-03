@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   double final_energy = (electron.getEnergy() - 9.32298000000E-06);
 
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
   TEST_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
   TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

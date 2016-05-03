@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_elastic_reaction->react( electron, bank, shell_of_interaction );
 
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction, react_ace )
   TEST_ASSERT( electron.getZDirection() < 2.0 );
   TEST_ASSERT( electron.getZDirection() > 0.0 );
   TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

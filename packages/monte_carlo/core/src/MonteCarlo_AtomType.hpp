@@ -124,6 +124,9 @@ enum AtomType{
 //! Convert an atomic number to an AtomType enumeration
 AtomType convertAtomicNumberToAtomTypeEnum( const unsigned atomic_number );
 
+//! Convert an atomic number to a string
+std::string convertAtomicNumberToString( const unsigned atomic_number );
+
 //! Convert an AtomType enumeration to a string
 std::string convertAtomTypeEnumToString( const AtomType atom );
 

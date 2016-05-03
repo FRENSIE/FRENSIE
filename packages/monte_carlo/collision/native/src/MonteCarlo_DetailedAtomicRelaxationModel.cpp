@@ -41,7 +41,7 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
 
 // Relax the atom
 void 
-DetailedAtomicRelaxationModel::relaxAtom( const SubshellType vacancy_shell,
+DetailedAtomicRelaxationModel::relaxAtom( const Data::SubshellType vacancy_shell,
 					  const ParticleState& particle,
 					  ParticleBank& bank ) const
 {
@@ -50,7 +50,7 @@ DetailedAtomicRelaxationModel::relaxAtom( const SubshellType vacancy_shell,
       d_subshell_relaxation_models.end() )
   {
     // Recursively relax subshells
-    SubshellType primary_vacancy_shell, secondary_vacancy_shell;
+    Data::SubshellType primary_vacancy_shell, secondary_vacancy_shell;
 
     const Teuchos::RCP<const SubshellRelaxationModel>& model = 
       d_subshell_relaxation_models.find( vacancy_shell )->second;

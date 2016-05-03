@@ -7,16 +7,6 @@ ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_eedl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_eedl_endl_file.txt" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_eedl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_eedl_endl_file.txt")
 
-ADD_EXECUTABLE(tstStandardEvaluatedElectronDataGenerator 
-    tstStandardEvaluatedElectronDataGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstStandardEvaluatedElectronDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardEvaluatedElectronDataGenerator_test tstStandardEvaluatedElectronDataGenerator --test_h_eedl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_eedl_endl_file.txt" --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_eedl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_eedl_endl_file.txt" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-
-ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator 
-    tstStandardSoftElasticElectronDataGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstStandardSoftElasticElectronDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
-
 ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
   tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstAdjointBremsstrahlungCrossSectionEvaluator data_gen_electron_photon)

@@ -26,7 +26,7 @@ namespace MonteCarlo{
 template<typename ComptonProfilePolicy>
 StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::StandardCompleteDopplerBroadenedPhotonEnergyDistribution(
 		const Teuchos::Array<double>& endf_subshell_occupancies,
-                const Teuchos::Array<SubshellType>& endf_subshell_order,
+                const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
                 const std::shared_ptr<const ComptonProfileSubshellConverter>&
                 subshell_converter,
                 const ElectronMomentumDistArray& electron_momentum_dist_array )
@@ -107,7 +107,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 				          const double incoming_energy,
 					  const double outgoing_energy,
 				          const double scattering_angle_cosine,
-					  const SubshellType subshell ) const
+					  const Data::SubshellType subshell ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -191,7 +191,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 					  const double incoming_energy,
 					  const double outgoing_energy,
 				          const double scattering_angle_cosine,
-					  const SubshellType subshell ) const
+					  const Data::SubshellType subshell ) const
 {
   const double diff_cross_section = 
     this->evaluateSubshell( incoming_energy,
@@ -252,7 +252,7 @@ template<typename ComptonProfilePolicy>
 double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateSubshellIntegratedCrossSection( 
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
-					  const SubshellType subshell,
+					  const Data::SubshellType subshell,
 					  const double precision ) const
 {
   // Make sure the incoming energy is valid
@@ -340,7 +340,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   unsigned trial_dummy;
 
@@ -360,7 +360,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     double& outgoing_energy,
-				     SubshellType& shell_of_interaction,
+				     Data::SubshellType& shell_of_interaction,
 				     unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -404,8 +404,8 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
   testPostcondition( outgoing_energy <= incoming_energy );
   testPostcondition( outgoing_energy > 0.0 );
   // Make sure that the sampled subshell is valid
-  testPostcondition( shell_of_interaction != UNKNOWN_SUBSHELL );
-  testPostcondition( shell_of_interaction != INVALID_SUBSHELL );
+  testPostcondition( shell_of_interaction !=Data::UNKNOWN_SUBSHELL );
+  testPostcondition( shell_of_interaction != Data::INVALID_SUBSHELL );
 }
 
 // Sample an electron momentum from the distribution
@@ -417,7 +417,7 @@ void StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
                                     const double incoming_energy,
                                     const double scattering_angle_cosine,
                                     double& electron_momentum,
-                                    SubshellType& shell_of_interaction,
+                                    Data::SubshellType& shell_of_interaction,
                                     unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -469,7 +469,7 @@ template<typename ComptonProfilePolicy>
 double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleSubshellMomentum( 
                                      const double incoming_energy,
                                      const double scattering_angle_cosine,
-                                     SubshellType subshell ) const
+                                     Data::SubshellType subshell ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= 
@@ -523,7 +523,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 // Check if the subshell is valid
 template<typename ComptonProfilePolicy>
 bool StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::isValidSubshell( 
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   return d_endf_subshell_order.right.find( subshell ) != 
     d_endf_subshell_order.right.end();
@@ -531,7 +531,7 @@ bool StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePoli
 
 // Return the occupancy of a subshell (default is the ENDF occupacy)
 template<typename ComptonProfilePolicy>
-inline double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( const SubshellType subshell ) const
+inline double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -544,7 +544,7 @@ inline double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPr
 // Return the old subshell index corresponding to the subshell
 template<typename ComptonProfilePolicy>
 unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getOldSubshellIndex(
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   return d_subshell_converter->convertSubshellToIndex( subshell );
 }
@@ -552,7 +552,7 @@ unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 // Return the endf subshell index corresponding to the subshell
 template<typename ComptonProfilePolicy>
 unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getENDFSubshellIndex(
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -562,7 +562,7 @@ unsigned StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 
 // Return the subshell corresponding to the endf subshell index
 template<typename ComptonProfilePolicy>
-SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell( 
+Data::SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshell( 
                                      const unsigned endf_subshell_index ) const
 {
   SubshellOrderMapType::left_map::const_iterator endf_subshell_index_it =
@@ -578,7 +578,7 @@ SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonPro
 // Return the Compton profile for a subshell
 template<typename ComptonProfilePolicy>
 const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getComptonProfile( 
-                                           const SubshellType& subshell ) const
+                                           const Data::SubshellType& subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -603,7 +603,7 @@ const ComptonProfile& StandardCompleteDopplerBroadenedPhotonEnergyDistribution<C
 
 // Sample an ENDF subshell
 template<typename ComptonProfilePolicy>
-SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleENDFInteractionSubshell() const
+Data::SubshellType StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleENDFInteractionSubshell() const
 {
   unsigned endf_subshell_index;
   

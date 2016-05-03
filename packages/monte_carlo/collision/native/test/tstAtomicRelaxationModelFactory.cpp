@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   relaxation_model->relaxAtom( vacancy, photon, bank );
 
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition

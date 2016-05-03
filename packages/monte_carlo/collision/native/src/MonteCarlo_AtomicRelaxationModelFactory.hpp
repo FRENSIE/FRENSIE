@@ -85,7 +85,7 @@ private:
 
   //! Create the subshell relaxation models
   static void createSubshellRelaxationModels(
-		  const Teuchos::Array<SubshellType>& subshell_designators,
+		  const Teuchos::Array<Data::SubshellType>& subshell_designators,
 		  const Teuchos::ArrayView<const double>& subshell_transitions,
 		  const Teuchos::ArrayView<const double>& relo_block,
 		  const Teuchos::ArrayView<const double>& xprob_block,

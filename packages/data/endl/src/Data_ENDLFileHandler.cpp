@@ -17,10 +17,20 @@
 
 namespace Data{
 
+// Default Constructor
+ENDLFileHandler::ENDLFileHandler()
+  : d_endl_file_id( 1 ),
+    d_current_line( 0 ),
+    d_valid_file( false ),
+    d_end_of_file( false )
+{ /* ... */ }
+
 // Constructor for reading all data in file
 ENDLFileHandler::ENDLFileHandler( 
-    const std::string& file_name )
-  : d_endl_file_id( 1 ),
+    const std::string& file_name,
+    const bool epics_file_type )
+  : d_epics_file_type( epics_file_type ),
+    d_endl_file_id( 1 ),
     d_current_line( 0 ),
     d_valid_file( false ),
     d_end_of_file( false )
@@ -31,13 +41,15 @@ ENDLFileHandler::ENDLFileHandler(
 // Constructor for reading data specific to a given atomic number
 ENDLFileHandler::ENDLFileHandler( 
     const std::string& file_name,
-    const unsigned atomic_number  )
+    const unsigned atomic_number,
+    const bool epics_file_type )
   : d_atomic_number( atomic_number ),
+    d_epics_file_type( epics_file_type ),
     d_endl_file_id( 1 ),
     d_current_line( 0 ),
     d_valid_file( false ),
     d_end_of_file( false )
-{ 
+{
   openENDLFile( file_name );
 }
 
@@ -45,7 +57,7 @@ ENDLFileHandler::ENDLFileHandler(
 ENDLFileHandler::~ENDLFileHandler()
 {
   if( fileIsOpenUsingFortran( d_endl_file_id ) )
-    closeFileUsingFortran( d_endl_file_id );
+       closeFileUsingFortran( d_endl_file_id );
 }
 
 // Open an ENDL library file
@@ -53,7 +65,6 @@ void ENDLFileHandler::openENDLFile( const std::string& file_name )
 {
   // Make sure no other endl library is open and assigned the desired id
   testPrecondition( !fileIsOpenUsingFortran( d_endl_file_id ) );
-  
   
   // Check that the file exists
   bool endl_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(), 
@@ -221,13 +232,26 @@ void ENDLFileHandler::processTwoColumnTable(
   indep_variable.resize( table_size );
   dep_variable.resize( table_size );
 
-  // Read table data
-  readENDLTableTwoColumn( 
-        d_endl_file_id,
-        table_size, 
-        &indep_variable[0],
-        &dep_variable[0],
-        &io_flag );
+  if ( d_epics_file_type )
+  {
+		// Read table data
+		readEPICSTableTwoColumn( 
+		      d_endl_file_id,
+		      table_size, 
+		      &indep_variable[0],
+		      &dep_variable[0],
+		      &io_flag );
+  }
+  else
+  {
+		// Read table data
+		readENDLTableTwoColumn( 
+		      d_endl_file_id,
+		      table_size, 
+		      &indep_variable[0],
+		      &dep_variable[0],
+		      &io_flag );
+  }
 
   // Update file flags and line number
   d_current_line += table_size+1;
@@ -246,13 +270,11 @@ void ENDLFileHandler::processTwoColumnTable(
 
 // Process three column table in ENDL file
 void ENDLFileHandler::processThreeColumnTable(
-    std::vector<double>& energy_bins,
-    std::map<double,std::vector<double> >& indep_variable,
-    std::map<double,std::vector<double> >& dep_variable  )
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three  )
 {
   int io_flag, table_size;
-
-  std::vector<double> column_one, column_two, column_three;
 
   // Read table size
   readENDLTableSize( 
@@ -266,59 +288,28 @@ void ENDLFileHandler::processThreeColumnTable(
   column_two.resize( table_size );
   column_three.resize( table_size );
 
-  // Read table data
-  readENDLTableThreeColumn( 
+  if ( d_epics_file_type )
+  {
+	// Read EPICS2014 table data
+    readEPICSTableThreeColumn( 
         d_endl_file_id,
         table_size, 
         &column_one[0],
         &column_two[0],
         &column_three[0],
         &io_flag );
-
-  // Process the table data
-  std::pair<double,std::vector<double> > indep, dep;
- 
-  // Assign energy of first data point
-  energy_bins.push_back( column_one.front() );
-  indep.first = column_one.front();
-  dep.first = column_one.front();
-
-  // insert first indep and dep data points at that energy
-  indep.second.push_back( column_two.front() );
-  dep.second.push_back( column_three.front() );
-
-  // Loop through the rest of the data points
-  for ( int i = 1; i < column_one.size(); ++i )
-  {
-    // start a new distribution at next energy bin
-    if ( column_one[i] != energy_bins.back() )
-    {
-      // insert old distribution
-      indep_variable.insert( indep );
-      dep_variable.insert( dep );
-
-      // clear indep and dep distributions
-      indep.second.clear();
-      dep.second.clear();
-
-      // start the new distribution
-      energy_bins.push_back( column_one[i] );
-      indep.first = column_one[i];
-      dep.first = column_one[i];
-      indep.second.push_back( column_two[i] );
-      dep.second.push_back( column_three[i] );
-    }
-    // Continue inserting idep and dep variables for this energy bin
-    else
-    {
-      indep.second.push_back( column_two[i] );
-      dep.second.push_back( column_three[i] );
-    }
   }
-
-  // insert last distribution
-  indep_variable.insert( indep );
-  dep_variable.insert( dep );
+  else
+  {
+	// Read regular table data
+    readENDLTableThreeColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &io_flag );
+  }
 
   // Update file flags and line number
   d_current_line += table_size+1;
@@ -333,11 +324,75 @@ void ENDLFileHandler::processThreeColumnTable(
   }
 
   testPostcondition( validFile() );
-  testPostcondition( !indep_variable.empty() );
-  testPostcondition( !dep_variable.empty() );
-  testPostcondition( !energy_bins.empty() );
+  testPostcondition( !column_one.empty() );
+  testPostcondition( !column_two.empty() );
+  testPostcondition( !column_three.empty() );
 }
 
+// Process four column table in ENDL file
+void ENDLFileHandler::processFourColumnTable(
+    std::vector<double>& column_one,
+    std::vector<double>& column_two,
+    std::vector<double>& column_three,
+    std::vector<double>& column_four )
+{
+  int io_flag, table_size;
+
+  // Read table size
+  readENDLTableSize( 
+        d_endl_file_id, 
+        d_current_line,
+        &table_size,
+        &io_flag );
+
+  // Resize arrays to table size
+  column_one.resize( table_size );
+  column_two.resize( table_size );
+  column_three.resize( table_size );
+  column_four.resize( table_size );
+
+  if ( d_epics_file_type )
+  {
+	// Read EPICS2014 table data
+    readEPICSTableFourColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &column_four[0],
+        &io_flag );
+  }
+  else
+  {
+	// Read regular table data
+    readENDLTableFourColumn( 
+        d_endl_file_id,
+        table_size, 
+        &column_one[0],
+        &column_two[0],
+        &column_three[0],
+        &column_four[0],
+        &io_flag );
+  }
+
+  // Update file flags and line number
+  d_current_line += table_size+1;
+
+  if( io_flag > 0 )
+  {
+    d_valid_file = false;   
+  }  
+  else if ( io_flag < 0 )
+  {
+    d_end_of_file = true;
+  }
+
+  testPostcondition( !column_one.empty() );
+  testPostcondition( !column_two.empty() );
+  testPostcondition( !column_three.empty() );
+  testPostcondition( !column_four.empty() );
+}
 
 } // end Data namespace
 

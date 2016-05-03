@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   epr_generator.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  epr_generator tool 
 //!
 //---------------------------------------------------------------------------//
@@ -40,7 +40,7 @@ int main( int argc, char** argv )
 
   std::string cross_section_directory, cross_section_alias;
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
-  double min_electron_energy = 0.00001, max_electron_energy = 100000;
+  double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
   double cutoff_angle = 0.000001;
   double occupation_number_evaluation_tol = 1e-3;
   double subshell_incoherent_evaluation_tol = 1e-3;
@@ -145,18 +145,23 @@ int main( int argc, char** argv )
     
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
+    std::string endl_file_path = "/home/software/endldata/eedl/Pb/za082000";
+
+    Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
+        new Data::ENDLFileHandler( endl_file_path ) );
+
     epr_generator.reset( 
 	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator( 
 					    atomic_number,
 					    ace_epr_extractor,
-					    endl_file_handler,
+                        endl_file_handler,    
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,
 					    max_electron_energy,
                         cutoff_angle,
 					    occupation_number_evaluation_tol,
-				            subshell_incoherent_evaluation_tol,
+                        subshell_incoherent_evaluation_tol,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
 					    grid_distance_tol ) );

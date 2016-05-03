@@ -169,9 +169,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 
 // Randomly scatter the electron
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron( 
-        ElectronState& electron,
-        ParticleBank& bank,
-        SubshellType& shell_of_interaction ) const
+                                ElectronState& electron,
+			                    ParticleBank& bank,
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // The energy of the outgoing and knock-on electron
   double outgoing_energy, knock_on_energy;

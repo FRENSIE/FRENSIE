@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   TEST_FLOATING_EQUALITY( cross_section, exp( -6.573285045032E+00 ), 1e-12 );
 
   // Test that Doppler broadening is done
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
@@ -114,8 +114,8 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
   
   reaction->react( photon, bank, shell_of_interaction );
 
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::INVALID_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::UNKNOWN_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::INVALID_SUBSHELL );
 
   // Clear the reaction
   reaction.reset();

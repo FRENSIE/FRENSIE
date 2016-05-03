@@ -21,7 +21,7 @@
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -169,12 +169,12 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
   Teuchos::ArrayView<const double> subshell_endf_designators = 
     raw_electroatom_data.extractSubshellENDFDesignators();
 
-  Teuchos::Array<SubshellType> subshell_order(
+  Teuchos::Array<Data::SubshellType> subshell_order(
 					    subshell_endf_designators.size() );
 
     for( unsigned i = 0; i < subshell_order.size(); ++i )
     {
-      subshell_order[i] = convertENDFDesignatorToSubshellEnum(
+      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
     }
 

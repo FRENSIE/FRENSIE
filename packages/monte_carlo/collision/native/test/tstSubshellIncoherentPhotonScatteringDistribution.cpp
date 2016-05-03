@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -123,7 +123,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getSubshell(), MonteCarlo::K_SUBSHELL);
+  TEST_EQUALITY_CONST( derived_dist->getSubshell(), Data::K_SUBSHELL);
 }
 
 //---------------------------------------------------------------------------//
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
@@ -182,7 +182,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -231,7 +231,7 @@ int main( int argc, char** argv )
     // Create the subshell incoherent distributions
     distribution.reset(
 		new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution(
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+			  Data::convertENDFDesignatorToSubshellEnum( 1 ),
 			  data_container.getSubshellOccupancy( 1 ),
 			  data_container.getSubshellBindingEnergy( 1 ),
 			  occupation_number_s1_dist,

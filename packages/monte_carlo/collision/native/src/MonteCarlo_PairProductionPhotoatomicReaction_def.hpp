@@ -100,7 +100,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure it is energetically possible for this reaction to occur
   testPrecondition( photon.getEnergy() >= this->getThresholdEnergy() );
@@ -109,7 +109,7 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
 
   // The shell of interaction, which will be important for triplet production
   // is currently ignored
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 // The basic pair production model

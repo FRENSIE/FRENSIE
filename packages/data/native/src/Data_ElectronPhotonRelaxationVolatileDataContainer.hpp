@@ -78,10 +78,10 @@ public:
 
   // Electron functions
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
-  using ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy;
-  using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy;
-  using ElectronPhotonRelaxationDataContainer::setCutoffElasticAngles;
-  using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAnglesAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDFAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAngles;
+  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDF;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
   using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;

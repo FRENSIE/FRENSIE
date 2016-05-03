@@ -32,39 +32,39 @@ public:
   bool isComplete() const;
 
   //! Check if the subshell is valid
-  virtual bool isValidSubshell( const SubshellType subshell ) const = 0;
+  virtual bool isValidSubshell( const Data::SubshellType subshell ) const = 0;
 
   //! Return the binding energy of a subshell
   virtual double getSubshellBindingEnergy( 
-                                       const SubshellType subshell ) const = 0;
+                                       const Data::SubshellType subshell ) const = 0;
 
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
-  virtual double getSubshellOccupancy( const SubshellType subshell ) const = 0;
+  virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the subshell distribution
   virtual double evaluateSubshell( const double incoming_energy,
                                    const double outgoing_energy,
                                    const double scattering_angle_cosine,
-                                   const SubshellType subshell ) const = 0;
+                                   const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the PDF
   virtual double evaluateSubshellPDF( const double incoming_energy,
                                       const double outgoing_energy,
                                       const double scattering_angle_cosine,
-                                      const SubshellType subshell ) const = 0;
+                                      const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the integrated cross section (b/mu)
   virtual double evaluateSubshellIntegratedCrossSection( 
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
-					  const SubshellType subshell,
+					  const Data::SubshellType subshell,
 					  const double precision ) const = 0;
 
   //! Sample an electron momentum from the subshell distribution
   virtual double sampleSubshellMomentum( 
                                        const double incoming_energy,
                                        const double scattering_angle_cosine,
-                                       const SubshellType subshell ) const = 0;
+                                       const Data::SubshellType subshell ) const = 0;
 };
 
 // Check if the distribution is complete (all subshells)

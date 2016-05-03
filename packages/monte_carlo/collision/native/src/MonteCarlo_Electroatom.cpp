@@ -254,7 +254,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
                        d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
+  Data::SubshellType subshell_vacancy;
   
   electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
 
@@ -303,8 +303,8 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
                      d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
-  SubshellType subshell_vacancy;
-std::cout << " reaction type = \t"<<electroatomic_reaction->second->getReactionType() << std::endl;
+  Data::SubshellType subshell_vacancy;
+  
   electroatomic_reaction->second->react( electron, bank, subshell_vacancy );
 
   // Relax the atom

@@ -20,7 +20,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_StandardSubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 1 );
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( SubshellDopplerBroadenedPhotonEnergyDistribution,
   Utility::RandomNumberGenerator::unsetFakeStream();
   
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -118,7 +118,7 @@ int main( int argc, char** argv )
    
     // Create the Doppler broadened energy distribution
     distribution.reset( new MonteCarlo::StandardSubshellDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
-		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+		    Data::convertENDFDesignatorToSubshellEnum( 1 ),
 		    data_container.getSubshellOccupancy( 1 ),
 		    data_container.getSubshellBindingEnergy( 1 ),
 		    compton_profile_s1_dist ) );

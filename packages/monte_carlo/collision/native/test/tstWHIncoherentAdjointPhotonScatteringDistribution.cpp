@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set the fake stream
   std::vector<double> fake_stream( 9 );
@@ -290,7 +290,7 @@ TEUCHOS_UNIT_TEST( WHIncoherentAdjointPhotonScatteringDistribution,
 			  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
