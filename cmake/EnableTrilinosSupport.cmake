@@ -162,7 +162,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The PyTrilinos/src directory could not be found!")
   ENDIF()
 
-  # Include the PyTrilinos UseSWIG.cmake file
+  # Set the path to the PyTrilinos cmake directory
   FIND_PATH(PYTRILINOS_CMAKE_DIR_PATH
     NAMES UseSWIG.cmake
     PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/cmake/
@@ -172,6 +172,15 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The PyTrilinos/cmake directory could not be found!")
   ENDIF()
 
+  # Set the path to the PyTrilinos util directory
+  FIND_PATH(PYTRILINOS_UTIL_DIR_PATH
+    NAMES copyWithCMakeSubstitutions.py.in
+    PATHS ${Trilinos_DIR}/../../../src/packages/Pytrilinos/util/
+    ${TRILINOS_SOURCE}/packages/PyTrilinos/util/
+    ${TRILINOS_SOURCE}/src/packages/PyTrilinos/util)
+  IF(${PYTRILINOS_UTIL_DIR_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The PyTrilinos/util directory could not be found!")
+  ENDIF()
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})

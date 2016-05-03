@@ -189,7 +189,7 @@ Calls to set should be done like this:
 
   u.toParameterList( 'my_dist', p )
  
-  p = p.set( 'my_double', 1.0 )
+  dummy = p.set( 'my_double', 1.0 )
 
 You can use the XMLParameterListWriter to write the ParameterList to an 
 XML file like this (continued from the previous example):

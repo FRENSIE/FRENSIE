@@ -8,7 +8,7 @@ SET(PyFrensie_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib/python2.7/site-packages/P
 #INCLUDE(${CMAKE_SOURCE_DIR}/cmake/UseSWIG.cmake)
 
 # Use the Trilinos UseSWIG.cmake file
-INCLUDE(${PYTRILINOS_CMAKE_DIR_PATH}/UseSWIG.cmake) 
+INCLUDE(${PYTRILINOS_CMAKE_DIR_PATH}/UseSWIG.cmake)
 
 # Find the python package available on this system
 FIND_PACKAGE(PythonInterp 2.7 REQUIRED)
@@ -25,3 +25,4 @@ INCLUDE_DIRECTORIES(${NUMPY_INCLUDE_DIRS})
 
 # Set up the directory hierarchy
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(test)

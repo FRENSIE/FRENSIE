@@ -249,6 +249,7 @@ are described.
 12. run `make test`
 13. run `make install`
 14. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/trilinos/lib:$LD_LIBRARY_PATH`
+15. add the following line to the .bashrc file: `export PYTHONPATH=absolute-path-to_software/trilinos/lib/python2.7/site-packages:$PYTHONPATH`
 15. run `exec bash`
 
 Note: If your system does not have LAPACK installed Trilinos will give you
