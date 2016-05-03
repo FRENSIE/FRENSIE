@@ -56,11 +56,11 @@ public:
   static BremsstrahlungAngularDistributionType 
           getBremsstrahlungAngularDistributionFunction();
 
-  //! Set the elastic cutoff angle cosine (mu = 1.0e-6 by default)
-  static void setElasticCutoffAngle( const double cutoff_angle );
+  //! Set the elastic cutoff angle cosine (mu = 0.999999 by default)
+  static void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
 
   //! Return the elastic cutoff angle cosine
-  static double getElasticCutoffAngle();
+  static double getElasticCutoffAngleCosine();
 
   //! Set the number of electron hash grid bins
   static void setNumberOfElectronHashGridBins( const unsigned bins );
@@ -92,8 +92,8 @@ private:
   static BremsstrahlungAngularDistributionType 
            bremsstrahlung_angular_distribution_function;
 
-  // The elastic cutoff angle cosine (mu = 1.0e-6 by default)
-  static double elastic_cutoff_angle;
+  // The elastic cutoff angle cosine (mu = 0.999999 by default)
+  static double elastic_cutoff_angle_cosine;
 
   // The number of electron hash grid bins
   static unsigned num_electron_hash_grid_bins;
@@ -137,9 +137,9 @@ inline BremsstrahlungAngularDistributionType
 }
 
 // Return the elastic cutoff angle cosine
-inline double SimulationElectronProperties::getElasticCutoffAngle()
+inline double SimulationElectronProperties::getElasticCutoffAngleCosine()
 {
-  return SimulationElectronProperties::elastic_cutoff_angle;
+  return SimulationElectronProperties::elastic_cutoff_angle_cosine;
 }
 
 // Get the number of electron hash grid bins

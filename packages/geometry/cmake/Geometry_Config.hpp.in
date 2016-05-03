@@ -1,0 +1,22 @@
+//---------------------------------------------------------------------------//
+//! 
+//! \file   Geometry_Config.hpp
+//! \author Alex Robinson
+//! \brief  Define which geometry packages (if any) have been enabled.
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef GEOMETRY_CONFIGURE_HPP
+#define GEOMETRY_CONFIGURE_HPP
+
+//! Set if DagMC package has been enabled
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_DAGMC
+
+//! Set if the Root package has been enabled
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_ROOT
+
+#endif // end GEOMETRY_CONFIGURE_HPP
+
+//---------------------------------------------------------------------------//
+// end Geometry_Config.hpp
+//---------------------------------------------------------------------------//

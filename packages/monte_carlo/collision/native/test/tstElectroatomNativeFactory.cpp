@@ -22,9 +22,9 @@
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -33,7 +33,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
@@ -156,10 +156,10 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     1.995260E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.103010E+08, 
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
 
   cross_section = atom->getReactionCrossSection(
                     1.995260E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           6.130900E+08, 
@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_detailed_brem )
   
   cross_section = atom->getReactionCrossSection(
                     1.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           2.489240E+09, 
@@ -368,10 +368,10 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     1.995260E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.103010E+08, 
@@ -379,7 +379,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
 
   cross_section = atom->getReactionCrossSection(
                     1.995260E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           6.130900E+08, 
@@ -387,7 +387,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_ionization_subshe
   
   cross_section = atom->getReactionCrossSection(
                     1.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           2.489240E+09, 
@@ -490,11 +490,11 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
         true,
         new_cutoff_angle );
 
-Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    analog_elastic_distribution;
+Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+    cutoff_elastic_distribution;
 
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-        analog_elastic_distribution,
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+        cutoff_elastic_distribution,
         *data_container,
         new_cutoff_angle );
 
@@ -508,7 +508,7 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   double elastic_cross_section =
     atom->getReactionCrossSection(
                     energy,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   double cross_section = 
     atom->getTotalCrossSection( energy );
 
@@ -520,7 +520,7 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   elastic_cross_section = 
     atom->getReactionCrossSection(
                     energy,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   cross_section = 
     atom->getTotalCrossSection( energy );
  
@@ -533,7 +533,7 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   elastic_cross_section =
     atom->getReactionCrossSection(
                     energy,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   cross_section = 
     atom->getTotalCrossSection( energy );
 
@@ -601,13 +601,13 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     1.00E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio = 
-    analog_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-03 );
+    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.902810E+08*cross_section_ratio, 
@@ -615,10 +615,10 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
 
   cross_section = atom->getReactionCrossSection(
                     1.995260E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio = 
-    analog_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.99526E-04 );
+    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.99526E-04 );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           6.130900E+08*cross_section_ratio, 
@@ -626,10 +626,10 @@ Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   
   cross_section = atom->getReactionCrossSection(
                     1.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   cross_section_ratio = 
-    analog_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-05 );
+    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-05 );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           2.489240E+09*cross_section_ratio, 
@@ -733,7 +733,7 @@ int main( int argc, char** argv )
   
   {
     // Create the native data file container
-    data_container.reset( new Data::EvaluatedElectronDataContainer( 
+    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
 						     test_native_file_name ) );
 
 

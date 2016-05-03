@@ -386,10 +386,10 @@ void PhotoatomCore::createProcessedTotalReaction(
 
   total_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,true>(
-				                energy_grid,
-						total_cross_section_copy,
-				                total_threshold_energy_index,
-				                TOTAL_PHOTOATOMIC_REACTION ) );
+            energy_grid,
+            total_cross_section_copy,
+            total_threshold_energy_index,
+            TOTAL_PHOTOATOMIC_REACTION ) );
 }
 
 } // end MonteCarlo namespace

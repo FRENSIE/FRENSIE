@@ -16,14 +16,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> 
    distribution;
 
@@ -35,8 +35,8 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
                    sample )
 {
   MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
-                                                 *data_container,
-                                                 distribution );
+    *data_container,
+    distribution );
 
   double incoming_energy = 1.000000000000e-03;
   double outgoing_energy,scattering_angle_cosine;
@@ -108,7 +108,7 @@ int main( int argc, char** argv )
   }
   
   // Create the native data file container
-  data_container.reset( new Data::EvaluatedElectronDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
 						     test_native_file_name ) );
  
   // Run the unit tests

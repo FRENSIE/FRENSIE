@@ -32,12 +32,12 @@
 
 std::string cross_sections_xml_directory;
 Teuchos::ParameterList cross_section_table_info;
-boost::unordered_set<std::string> electroatom_aliases;
+std::unordered_set<std::string> electroatom_aliases;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 MonteCarlo::BremsstrahlungAngularDistributionType function;
-unsigned hash_grid_bins;
+unsigned hash_grid_bins = 100;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -46,24 +46,25 @@ unsigned hash_grid_bins;
 TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
 {
   // Create the set of electroatom aliases
+  electroatom_aliases.clear();
   electroatom_aliases.insert( "Pb" );
   
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					                          cross_section_table_info,
-                                              electroatom_aliases,
-					                          atomic_relaxation_model_factory,
-                                              hash_grid_bins,  
-                                              function,
-                                              false,
-                                              cutoff_angle ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        false,
+        cutoff_angle_cosine ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -201,10 +202,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
   
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -212,7 +213,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -220,7 +221,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -253,7 +254,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
                                               false,
                                               cutoff_angle ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -398,10 +399,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -409,7 +410,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -417,8 +418,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
-  
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
+
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
                           1e-12 );
@@ -461,7 +462,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TABULAR_DISTRIBUTION;
-
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
@@ -471,11 +471,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
                                               false,
                                               1.0 ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
-
   electroatom_factory->createElectroatomMap( electroatom_map );
-
   TEST_EQUALITY_CONST( electroatom_map.size(), 1 );
   TEST_ASSERT( electroatom_map.count( "Pb" ) );
   TEST_ASSERT( !electroatom_map["Pb"].is_null() );
@@ -493,19 +491,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					                          cross_section_table_info,
-                                              electroatom_aliases,
-					                          atomic_relaxation_model_factory,
-                                              hash_grid_bins,
-                                              function,
-                                              false,
-                                              cutoff_angle ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        false,
+        cutoff_angle_cosine ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -643,10 +641,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
   
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -654,7 +652,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -662,7 +660,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -683,19 +681,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					                          cross_section_table_info,
-                                              electroatom_aliases,
-					                          atomic_relaxation_model_factory,
-                                              hash_grid_bins,  
-                                              function,
-                                              false,
-                                              cutoff_angle ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        true,
+        cutoff_angle_cosine ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -840,10 +838,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -851,7 +849,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -859,7 +857,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -917,7 +915,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
                                               true,
                                               cutoff_angle ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -1020,10 +1018,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
   
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -1031,7 +1029,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -1039,7 +1037,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -1119,7 +1117,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
                                               true,
                                               cutoff_angle ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );
@@ -1264,10 +1262,10 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -1275,7 +1273,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -1283,7 +1281,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -1330,19 +1328,19 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
-                                              cross_sections_xml_directory,
-					                          cross_section_table_info,
-                                              electroatom_aliases,
-					                          atomic_relaxation_model_factory,
-                                              hash_grid_bins,
-                                              function,
-                                              true,
-                                              cutoff_angle ) );
+        cross_sections_xml_directory,
+        cross_section_table_info,
+        electroatom_aliases,
+        atomic_relaxation_model_factory,
+        hash_grid_bins,  
+        function,
+        true,
+        cutoff_angle_cosine ) );
 
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
 
   electroatom_factory->createElectroatomMap( electroatom_map );

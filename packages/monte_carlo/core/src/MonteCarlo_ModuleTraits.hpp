@@ -32,8 +32,8 @@ struct ModuleTraits
 {
   //! The internal source handle type
   typedef unsigned int InternalSourceHandle;
-  //! The internal estimator handle type
-  typedef unsigned long long InternalEstimatorHandle;
+  //! The internal event observer handle type
+  typedef unsigned long long InternalEventObserverHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
 
@@ -41,7 +41,7 @@ struct ModuleTraits
   static const InternalSourceHandle invalid_internal_source_handle;
   
   //! The invalid estimator handle value
-  static const InternalEstimatorHandle invalid_internal_estimator_handle;
+  static const InternalEventObserverHandle invalid_internal_event_observer_handle;
   
   //! The invalid material handle value
   static const InternalMaterialHandle invalid_internal_material_handle;

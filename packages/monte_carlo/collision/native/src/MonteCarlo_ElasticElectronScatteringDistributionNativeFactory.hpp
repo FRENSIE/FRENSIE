@@ -14,8 +14,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -27,52 +27,52 @@ public:
 
   typedef ScreenedRutherfordElasticElectronScatteringDistribution::ParameterArray 
             ParameterArray;
-  typedef AnalogElasticElectronScatteringDistribution::ElasticDistribution
+  typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
             ElasticDistribution;    
 
-  //! Create a elastic distributions ( both Analog and Screened Rutherford ) 
+  //! Create a elastic distributions ( both Cutoff and Screened Rutherford ) 
   static void createHardElasticDistributions(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-    const double analog_lower_cutoff_angle = 1.0e-6 );
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const double cutoff_upper_cutoff_angle_cosine = 0.999999 );
 
-  //! Create a analog elastic distribution
-  static void createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-    const double lower_cutoff_angle = 1.0e-6 );
+  //! Create a cutoff elastic distribution
+  static void createCutoffElasticDistribution(
+	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const double upper_cutoff_angle_cosine = 0.999999 );
 
   //! Create a screened Rutherford elastic distribution
   static void createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-    const double upper_cutoff_angle = 1.0e-6 );
+	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const double lower_cutoff_angle = 0.999999 );
 
   //! Return angle cosine grid for given grid energy bin
   static Teuchos::Array<double> getAngularGrid(
-    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double energy,
-    const double cutoff_angle );
+    const double cutoff_angle_cosine );
 
 protected:
 
   //! Create the elastic scattering function
   static void createScatteringFunction(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double> angular_energy_grid, 
         ElasticDistribution& scattering_function );
 
 /*
   //! Create the screened Rutherford parameter array
   static void createScreenedRutherfordParameterArray(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double> angular_energy_grid, 
         ParameterArray& screened_rutherford_parameters );
 */

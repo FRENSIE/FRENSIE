@@ -27,13 +27,13 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
 class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
-                                    public AdjointElectronScatteringDistribution
+    public AdjointElectronScatteringDistribution
 {
 
 public:
@@ -43,19 +43,19 @@ public:
   //!  third = normalization constant
   typedef Teuchos::Array<Utility::Trip<double,double,double> > ParameterArray;
 
-  typedef Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>
+  typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;    
 
   //! Constructor from ACE table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number,
-    const double upper_cutoff_angle = 1.0e-6 );
+    const double lower_cutoff_angle_cosine = 0.999999 );
 
   //! Constructor from ENDL table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ParameterArray& screened_rutherford_parameters,
-    const double upper_cutoff_angle = 1.0e-6 );
+    const double lower_cutoff_angle_cosine = 0.999999 );
 
   //! Destructor 
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
@@ -63,28 +63,25 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const;
+                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle ) const;
-
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy) const;
+                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double scattering_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle ) const;
+               double& scattering_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
                               double& outgoing_energy,
-                              double& scattering_angle,
+                              double& scattering_angle_cosine,
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
@@ -97,9 +94,7 @@ public:
                                ParticleBank& bank,
                                SubshellType& shell_of_interaction ) const;
 
-
-
-//protected:
+protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
@@ -111,16 +106,20 @@ public:
 
 private:
 
+/*
   // Find the lower and upper bin boundary
   void findLowerAndUpperBinBoundary( 
         const double incoming_energy,
         ParameterArray::const_iterator& lower_bin_boundary,
         ParameterArray::const_iterator& upper_bin_boundary,
         double& interpolation_fraction ) const;
+*/
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy) const;
 
-  // evaluate the pdf integrated from 0 to angle
+  // evaluate the pdf integrated from -1 to angle_cosine
   double evaluateIntegratedPDF( 
-        const double& scattering_angle, 
+        const double& scattering_angle_cosine, 
         const ParameterArray::const_iterator& lower_bin_boundary, 
         const ParameterArray::const_iterator& upper_bin_boundary,
         const double& interpolation_fraction ) const;
@@ -141,7 +140,7 @@ private:
   double d_screening_param2;
 
   // The scattering angle below which the screened Rutherford distribution is used
-  double d_upper_cutoff_angle;
+  double d_upper_cutoff_delta_mu;
 
   // The scattering angle cosine above which the screened Rutherford distribution is used
   double d_lower_cutoff_angle_cosine;
@@ -149,7 +148,7 @@ private:
   // Flag to indicate that tabulated screened rutherford parameters are used
   bool d_using_endl_tables;
 
-  // Analog elastic scattering distribution
+  // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;
 
   // Screened Rutherford energy depended paramters: Moliere's screening constant and normalization constant

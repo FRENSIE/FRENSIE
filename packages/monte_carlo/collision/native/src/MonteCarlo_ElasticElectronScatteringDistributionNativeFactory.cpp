@@ -17,14 +17,14 @@
 
 namespace MonteCarlo{
 
-// Create the hard elastic distributions ( both Analog and Screened Rutherford ) 
+// Create the hard elastic distributions ( both Cutoff and Screened Rutherford ) 
 void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
+	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
-    const double analog_lower_cutoff_angle )
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const double cutoff_upper_cutoff_angle_cosine )
 {
   // Get the energy grid
   std::vector<double> angular_energy_grid = 
@@ -40,15 +40,15 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
         angular_energy_grid,
 		scattering_function );
 
-  // Create analog distribution
-  analog_elastic_distribution.reset( 
-        new AnalogElasticElectronScatteringDistribution( 
+  // Create cutoff distribution
+  cutoff_elastic_distribution.reset( 
+        new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                analog_lower_cutoff_angle,
+                cutoff_upper_cutoff_angle_cosine,
                 true ) );
 
   // Upper cutoff angle for the screened Rutherford distribution
-  double screened_rutherford_upper_cutoff_angle = 1.0e-6;
+  double screened_rutherford_lower_cutoff_angle_cosine = 0.999999;
 /*
   // Create the screened rutherford parmaters
   ParameterArray screened_rutherford_parameters( size );
@@ -69,17 +69,17 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                analog_elastic_distribution,
+                cutoff_elastic_distribution,
                 atomic_number,
-                screened_rutherford_upper_cutoff_angle ) );
+                screened_rutherford_lower_cutoff_angle_cosine ) );
 }
 
 
-// Create a analog elastic distribution
-void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+// Create a cutoff elastic distribution
+void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double lower_cutoff_angle )
 {
   // Get the energy grid for elastic scattering angular distributions
@@ -97,8 +97,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
         angular_energy_grid,
 		scattering_function );
 
-  analog_elastic_distribution.reset( 
-        new AnalogElasticElectronScatteringDistribution( 
+  cutoff_elastic_distribution.reset( 
+        new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
                 lower_cutoff_angle,
                 true ) );
@@ -109,9 +109,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
-        analog_elastic_distribution,
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double upper_cutoff_angle )
 {
 /*
@@ -141,20 +141,20 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                analog_elastic_distribution,
+                cutoff_elastic_distribution,
                 atomic_number,
                 upper_cutoff_angle ) );
 }
 
 // Return angle cosine grid for given grid energy bin
 Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-                 const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+                 const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
                  const double energy,
                  const double cutoff_angle )
 {
   // Get the angular grid
   std::vector<double> raw_grid = 
-    raw_electroatom_data.getAnalogElasticAngles( energy );
+    raw_electroatom_data.getCutoffElasticAngles( energy );
 
   // Find the first angle below the cutoff angle
   std::vector<double>::iterator end = --raw_grid.end();
@@ -176,7 +176,7 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAn
 
 // Create the scattering function
 void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double> angular_energy_grid,      
         ElasticDistribution& scattering_function )
 {
@@ -184,13 +184,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
   {
     scattering_function[n].first = angular_energy_grid[n];
 
-    // Get the analog elastic scattering angles at the energy
+    // Get the cutoff elastic scattering angles at the energy
     Teuchos::Array<double> angles( 
-        raw_electroatom_data.getAnalogElasticAngles( angular_energy_grid[n] ) );
+        raw_electroatom_data.getCutoffElasticAngles( angular_energy_grid[n] ) );
 
-    // Get the analog elastic scatering pdf at the energy
+    // Get the cutoff elastic scatering pdf at the energy
     Teuchos::Array<double> pdf( 
-        raw_electroatom_data.getAnalogElasticPDF( angular_energy_grid[n] ) );
+        raw_electroatom_data.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     scattering_function[n].second.reset( 
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
@@ -199,7 +199,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
 /*
 // Create the screened Rutherford parameter array
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordParameterArray(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double> angular_energy_grid,
         ParameterArray& screened_rutherford_parameters )
 {

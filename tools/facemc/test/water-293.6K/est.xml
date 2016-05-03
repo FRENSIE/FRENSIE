@@ -1,12 +1,47 @@
 <ParameterList name="Estimators">
   
-  <ParameterList name="H Sphere Current">
+  <ParameterList name="Water Sphere Current">
     <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Type" type="string" value="surface.current"/>
+    <Parameter name="Type" type="string" value="Surface Current"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Surfaces" type="Array" value="{1}"/>
     <ParameterList name="Bins">
       <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
     </ParameterList>
   </ParameterList>
+
+  <ParameterList name="Water Sphere Surface Flux">
+    <Parameter name="Id" type="unsigned int" value="2"/>
+    <Parameter name="Type" type="string" value="Surface Flux"/>
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Surfaces" type="Array" value="{1}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
+    </ParameterList>
+  </ParameterList>
+
+  <ParameterList name="Water Sphere Track-Length Flux">
+    <Parameter name="Id" type="unsigned int" value="3"/>
+    <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
+    </ParameterList>
+  </ParameterList>
+
+  <ParameterList name="Water Sphere Collision Flux">
+    <Parameter name="Id" type="unsigned int" value="4"/>
+    <Parameter name="Type" type="string" value="Cell Collision Flux"/>
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Multiplier" type="double" value="1.0"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
+    </ParameterList>
+  </ParameterList>
+  
 </ParameterList>

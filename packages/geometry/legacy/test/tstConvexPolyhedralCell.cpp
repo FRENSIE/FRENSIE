@@ -13,8 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 
-// FACEMC Includes
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
+// FRENSIE Includes
+#include "FRENSIE_UnitTestHarnessExtensions.hpp"
 #include "Cell.hpp"
 #include "Surface.hpp"
 
@@ -39,48 +39,48 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  FACEMC::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned> 
     intersection_point( -1.0, -1.0, 2, 4 );
 
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
@@ -114,48 +114,48 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > intersection_points;
 
   cell.calculatePolygonIntersectionPoints( 6,
 					   copy_cell_surfaces,
@@ -163,28 +163,28 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 
   TEST_EQUALITY_CONST( intersection_points.size(), 4 );
 
-  FACEMC::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned> 
     ref_intersection_point( 1.0, 1.0, 1, 3 );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = intersection_points.begin();
 
-  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_intersection_point );
 
   ref_intersection_point( 1.0, -1.0, 1, 4 );
   ++point;
 
-  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_intersection_point );
 
   ref_intersection_point( -1.0, 1.0, 2, 3 );
   ++point;
 
-  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_intersection_point );
 
   ref_intersection_point( -1.0, -1.0, 2, 4 );
   ++point;
   
-  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_intersection_point );
 }
 
 //---------------------------------------------------------------------------//
@@ -196,48 +196,48 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > 
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > 
     intersection_points, polygon;    
 
   cell.calculatePolygonIntersectionPoints( 6,
@@ -245,7 +245,7 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 					   intersection_points );
 
   unsigned current_surface_id;
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
     start_point = cell.initializePolygon( polygon,
 					  intersection_points,
 					  copy_cell_surfaces,
@@ -255,29 +255,29 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
   TEST_EQUALITY_CONST( intersection_points.size(), 1 );
   TEST_EQUALITY_CONST( current_surface_id, 2 );
   
-  FACEMC::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned> 
     ref_corner_point( 1.0, -1.0, 1, 4 );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = polygon.begin();
 
-  FACEMC_TEST_EQUALITY( *start_point, ref_corner_point );
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *start_point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( 1.0, 1.0, 1, 3 );
   ++point;
   
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, 1.0, 2, 3 );
   ++point;
   
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, -1.0, 2, 4 );
   point = intersection_points.begin();
 
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );  
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );  
 }
 
 //---------------------------------------------------------------------------//
@@ -289,48 +289,48 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > intersection_points;
 
   cell.calculatePolygonIntersectionPoints( 6,
 					   copy_cell_surfaces,
@@ -341,28 +341,28 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 
   TEST_EQUALITY_CONST( intersection_points.size(), 5 );
 
-  FACEMC::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned> 
     ref_corner_point( 1.0, -1.0, 1, 4 );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = intersection_points.begin();
 
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( 1.0, 1.0, 1, 3 );
   ++point;
   
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, 1.0, 2, 3 );
   ++point;
   
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, -1.0, 2, 4 );
   ++point;
 
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );  
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );  
 }
 
 //---------------------------------------------------------------------------//
@@ -374,48 +374,48 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > intersection_points;
 
   cell.calculatePolygonIntersectionPoints( 6,
 					   copy_cell_surfaces,
@@ -442,48 +442,48 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
   
   TestCell cell( cell_definition );
 
-  Teuchos::Array<FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> >
+  Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
     copy_cell_surfaces;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > intersection_points;
 
   cell.calculatePolygonIntersectionPoints( 6,
 					   copy_cell_surfaces,
@@ -498,7 +498,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 			     intersection_points,
 			     polygon_areas );
 
-  FACEMC::Surface reference_surface( 0,
+  FRENSIE::Surface reference_surface( 0,
 				     0, 0, 1,
 				     -2 );
 
@@ -520,34 +520,34 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
   
   TestCell cell( cell_definition );
 
-  std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
+  std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
   global_surface_map[1] = surface;
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   global_surface_map[2] = surface;
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   global_surface_map[3] = surface;
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   global_surface_map[4] = surface;
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -1 ) );
   global_surface_map[5] = surface;
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      1 ) );
   global_surface_map[6] = surface;				 
@@ -572,39 +572,39 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
   
-  std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
+  std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
 
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
+  Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,
 							      1, 0, 0,
 							      -1 ) );
   global_surface_map[1] = surface;
 
-  surface.reset( new FACEMC::Surface( 2,
+  surface.reset( new FRENSIE::Surface( 2,
 				      1, 0, 0,
 				      1 ) );
   global_surface_map[2] = surface;
 
-  surface.reset( new FACEMC::Surface( 3,
+  surface.reset( new FRENSIE::Surface( 3,
 				      0, 1, 0,
 				      -1 ) );
   global_surface_map[3] = surface;
 
-  surface.reset( new FACEMC::Surface( 4,
+  surface.reset( new FRENSIE::Surface( 4,
 				      0, 1, 0,
 				      1 ) );
   global_surface_map[4] = surface;
 
-  surface.reset( new FACEMC::Surface( 5,
+  surface.reset( new FRENSIE::Surface( 5,
 				      0, 0, 1,
 				      -1 ) );
   global_surface_map[5] = surface;
 
-  surface.reset( new FACEMC::Surface( 6,
+  surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      1 ) );
   global_surface_map[6] = surface;
 
-  Teuchos::RCP<FACEMC::Cell> cell( new FACEMC::Cell( 1,
+  Teuchos::RCP<FRENSIE::Cell> cell( new FRENSIE::Cell( 1,
 						     cell_definition,
 						     global_surface_map,
 						     true ) );

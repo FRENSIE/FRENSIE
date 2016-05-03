@@ -9,7 +9,7 @@
 #ifndef GEOMETRY_CELL_POLYGON_FACTORY_DEF_HPP
 #define GEOMETRY_CELL_POLYGON_FACTORY_DEF_HPP
 
-// FACEMC Includes
+// FRENSIE Includes
 #include "Geometry_LinearAlgebraAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 

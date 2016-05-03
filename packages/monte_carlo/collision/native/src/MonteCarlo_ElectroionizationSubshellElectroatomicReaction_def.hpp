@@ -14,6 +14,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -43,11 +44,6 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( !electroionization_subshell_distribution.is_null() );
-
-/*
-  // Make sure the electroionization subshell scattering distribution data is valid
-  testPrecondition( electroionization_subshell_scattering_distribution.size() > 0 );
-*/
 }
 
 
@@ -78,11 +74,6 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 
   // Make sure the distribution data is valid
   testPrecondition( !electroionization_subshell_distribution.is_null() );
-
-/*
-  // Make sure the electroionization subshell scattering distribution data is valid
-  testPrecondition( electroionization_subshell_scattering_distribution.size() > 0 );
-*/
 }
 
 // Simulate the reaction

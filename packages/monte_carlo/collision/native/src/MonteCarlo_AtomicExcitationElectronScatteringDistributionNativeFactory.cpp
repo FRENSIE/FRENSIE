@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
-			  const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+			  const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
 			    energy_loss_distribution )
 {
@@ -37,7 +37,7 @@ void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicEx
 
 // Create the energy loss function
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
-	   const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	   const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
            AtomicExcitationElectronScatteringDistribution::AtomicDistribution& 
                                                         energy_loss_function )
 {

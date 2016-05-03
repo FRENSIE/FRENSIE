@@ -111,7 +111,7 @@ unsigned AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return ANALOG_ELASTIC_ELECTROATOMIC_REACTION;
+  return CUTOFF_ELASTIC_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction

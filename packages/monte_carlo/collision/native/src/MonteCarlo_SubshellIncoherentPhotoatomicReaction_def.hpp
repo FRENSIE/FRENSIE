@@ -96,6 +96,14 @@ unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_sect
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( 
+						    const double energy ) const
+{
+    return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -126,7 +134,7 @@ inline SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed
 template<typename InterpPolicy, bool processed_cross_section>
 inline double SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshellBindingEnergy() const
 {
-  return d_scattering_distribution->getBindingEnergy();
+  return d_scattering_distribution->getSubshellBindingEnergy();
 }
 
 } // end MonteCarlo namespace

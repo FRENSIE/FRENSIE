@@ -1,4 +1,7 @@
 # Set up the data package directory hierarchy
+ADD_SUBDIRECTORY(core)
+INCLUDE_DIRECTORIES(core/src)
+
 ADD_SUBDIRECTORY(ace)
 INCLUDE_DIRECTORIES(ace/src)
 

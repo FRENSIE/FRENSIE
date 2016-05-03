@@ -553,7 +553,7 @@ template<typename SurfaceMap>
     else
     {
       // If the surface was not found exit the program
-      //FACEMC_ASSERT_ALWAYS_MSG( surface_exists, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
+      //FRENSIE_ASSERT_ALWAYS_MSG( surface_exists, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
       remember( all_surfaces_found = false );
     }
     

@@ -23,11 +23,37 @@
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+class TestHardElasticElectronScatteringDistribution : public MonteCarlo::HardElasticElectronScatteringDistribution
+{
+public:
+  TestHardElasticElectronScatteringDistribution(
+    const double atomic_number,
+    const Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > > elastic_scattering_distribution )
+    : MonteCarlo::HardElasticElectronScatteringDistribution( 
+        atomic_number,
+        elastic_scattering_distribution )
+  { /* ... */ }
+
+  ~TestHardElasticElectronScatteringDistribution()
+  { /* ... */ }
+
+  using MonteCarlo::HardElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant;
+  using MonteCarlo::HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngle;
+  using MonteCarlo::HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl;
+
+};
+
+//---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::HardElasticElectronScatteringDistribution> 
   ace_basic_elastic_distribution;
+
+Teuchos::RCP<TestHardElasticElectronScatteringDistribution> 
+  test_ace_basic_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -281,7 +307,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Calculate screening constant
   double screening_factor = 
-    ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
+    test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 1
   TEST_FLOATING_EQUALITY( screening_factor, 2.5131795894201700E+03, 1e-12 );
@@ -289,7 +315,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
  
   energy = 1.0;
   screening_factor = 
-    ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
+    test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 2
   TEST_FLOATING_EQUALITY( screening_factor, 1.9610611503219500E-04, 1e-12 );
@@ -297,7 +323,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   energy = 1.0e5;
   screening_factor = 
-    ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
+    test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 3
   TEST_FLOATING_EQUALITY( screening_factor, 4.1488769980623900E-14, 1e-12 );
@@ -319,7 +345,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Calculate screening angle
   double scattering_angle_cosine = 
-    ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
+    test_ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999501272, 1e-12 );
@@ -345,7 +371,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
                                                 electron.getEnergy(),
                                                 scattering_angle_cosine,
                                                 trials );
@@ -374,7 +400,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from analytical function
-  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
                                                 electron.getEnergy(),
                                                 scattering_angle_cosine,
                                                 trials );;
@@ -707,6 +733,11 @@ int main( int argc, char** argv )
   // Create the distributions
   ace_basic_elastic_distribution.reset(
 		new MonteCarlo::HardElasticElectronScatteringDistribution(
+						    atomic_number,
+						    elastic_scattering_distribution ) );
+
+  test_ace_basic_elastic_distribution.reset(
+		new TestHardElasticElectronScatteringDistribution(
 						    atomic_number,
 						    elastic_scattering_distribution ) );
 

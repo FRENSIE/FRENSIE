@@ -15,7 +15,7 @@
 // FRENSIE Includes
 //#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -27,7 +27,7 @@ public:
 
   //! Create a electroionization subshell distribution
   static void createElectroionizationSubshellDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroionization_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
 	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
@@ -38,7 +38,7 @@ public:
 
   //! Create the electroionization subshell distribution function
   static void createSubshellDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroionization_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid, 
     const unsigned subshell,
     ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&

@@ -17,7 +17,8 @@ namespace MonteCarlo{
 
 //! Initialize the simulation properties
 void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
-				    const Teuchos::ParameterList& properties )
+				      const Teuchos::ParameterList& properties,
+				      std::ostream* os_warn )
 {  
   // Get the min electron energy - optional
   if( properties.isParameter( "Min Electron Energy" ) )
@@ -31,7 +32,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
       SimulationElectronProperties::setMinElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMinElectronEnergy() );
       
-      std::cerr << "Warning: the lowest supported electron energy is "
+      *os_warn << "Warning: the lowest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 		<< ". This value will be used instead of "
 		<< min_energy << "." << std::endl;
@@ -50,7 +51,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
       SimulationElectronProperties::setMaxElectronEnergy(
 			SimulationElectronProperties::getAbsoluteMaxElectronEnergy() );
       
-      std::cerr << "Warning: the highest supported electron energy is "
+      *os_warn << "Warning: the highest supported electron energy is "
 		<< SimulationElectronProperties::getAbsoluteMaxElectronEnergy()
 		<< ". This value will be used instead of "
 		<< max_energy << "." << std::endl;
@@ -90,21 +91,22 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
   }
 
   // Get the elastic cutoff angle cosine - optional
-  if( properties.isParameter( "Elastic Cutoff Angle" ) )
+  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
   {
-    double cutoff_angle = 
-            properties.get<double>( "Elastic Cutoff Angle" );
+    double cutoff_angle_cosine = 
+            properties.get<double>( "Elastic Cutoff Angle Cosine" );
 
-    if( cutoff_angle >= 0.0 && cutoff_angle <= 2.0 )
+    if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
     {
-      SimulationElectronProperties::setElasticCutoffAngle( cutoff_angle );
+      SimulationElectronProperties::setElasticCutoffAngleCosine( 
+        cutoff_angle_cosine );
     }
     else
     {
-      std::cerr << "Warning: the elastic cutoff angle must have a "
-		<< "value between 0 and 2. The default value of "
-		<< SimulationElectronProperties::getElasticCutoffAngle()
-		<< " will be used instead of " << cutoff_angle << "." 
+      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
+		<< "value between -1 and 1. The default value of "
+		<< SimulationElectronProperties::getElasticCutoffAngleCosine()
+		<< " will be used instead of " << cutoff_angle_cosine << "." 
 		<< std::endl;
     }
   }
@@ -117,7 +119,7 @@ void SimulationElectronPropertiesFactory::initializeSimulationElectronProperties
     SimulationElectronProperties::setNumberOfElectronHashGridBins( bins );
   }
   
-  properties.unused( std::cerr );
+  properties.unused( *os_warn );
 }
 
 } // end MonteCarlo namespace

@@ -6,11 +6,13 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_SOURCE_FACTORY_HPP
-#define FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#ifndef MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
+#define MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
+#include <iostream>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -18,9 +20,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSource.hpp"
-#include "MonteCarlo_DistributedSource.hpp"
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -39,17 +40,19 @@ public:
   { /* ... */ }
 
   //! Create the particle source represented by the parameter list
-  virtual Teuchos::RCP<ParticleSource>
+  virtual std::shared_ptr<ParticleSource>
   createSource( const Teuchos::ParameterList& source_rep,
-		const ParticleModeType& particle_mode ) = 0;
+		const ParticleModeType& particle_mode,
+                std::ostream& os_warn ) = 0;
 
 protected:
 
   // Create the particle source represented by the parameter list
-  template<typename GeometryHandler>
-  static Teuchos::RCP<ParticleSource>
+  template<typename GeometryModuleInterface>
+  static std::shared_ptr<ParticleSource>
   createSourceImpl( const Teuchos::ParameterList& source_rep,
-		    const ParticleModeType& particle_mode );
+		    const ParticleModeType& particle_mode,
+                    std::ostream& os_warn );
 
 private:
 
@@ -64,40 +67,42 @@ private:
   // Validate the particle type name
   static void validateParticleTypeName( const std::string& particle_type_name);
 
-  // Create a distributed source
-  template<typename GeometryHandler>
+  // Create a standard source
+  template<typename GeometryModuleInterface, typename SourceType>
   static double 
-  createDistributedSource(const Teuchos::ParameterList& source_rep,
-			  const ParticleModeType& particle_mode,
-			  Teuchos::RCP<ParticleSource>& source,
-			  const unsigned num_sources = 1u );
+  createStandardSource( const Teuchos::ParameterList& source_rep,
+                        const ParticleModeType& particle_mode,
+                        std::shared_ptr<SourceType>& source,
+                        std::ostream& os_warn,
+                        const unsigned num_sources = 1u );
 
-  // Create a state source
-  static double
-  createStateSource( const Teuchos::ParameterList& source_rep,
-		     const ParticleModeType& particle_mode,
-		     Teuchos::RCP<ParticleSource>& source,
-		     const unsigned num_sources = 1u );
-
-  // Create a compound source
-  template<typename GeometryHandler>
+  // Create a cached state source
   static void
-  createCompoundSource( const Teuchos::ParameterList& compound_source,
-			const ParticleModeType& particle_mode,
-			Teuchos::RCP<ParticleSource>& source );
+  createCachedStateSource( const Teuchos::ParameterList& source_rep,
+                           const ParticleModeType& particle_mode,
+                           std::shared_ptr<ParticleSource>& source,
+                           std::ostream& os_warn );
+
+  // Create a compound standard source
+  template<typename GeometryModuleInterface>
+  static void
+  createCompoundStandardSource( const Teuchos::ParameterList& compound_source,
+                                const ParticleModeType& particle_mode,
+                                std::shared_ptr<ParticleSource>& source,
+                                std::ostream& os_warn );
 
   // The default time distribution
-  static const Teuchos::RCP<Utility::OneDDistribution> s_default_time_dist;
+  static const std::shared_ptr<Utility::OneDDistribution> s_default_time_dist;
 };
 
 //! The invalid particle source representation error
-class InvalidParticleSourceRepresentation : public std::logic_error
+class InvalidParticleSourceRepresentation : public std::runtime_error
 {
   
 public:
 
   InvalidParticleSourceRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
+    : std::runtime_error( what_arg )
   { /* ... */ }
 };
 
@@ -111,7 +116,7 @@ public:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTICLE_SOURCE_FACTORY_HPP
+#endif // end MONTE_CARLO_PARTICLE_SOURCE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleSourceFactory.hpp

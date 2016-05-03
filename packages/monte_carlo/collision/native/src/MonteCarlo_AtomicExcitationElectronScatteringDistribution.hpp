@@ -46,6 +46,11 @@ public:
                       const double scattering_angle_cosine ) const
   { /*...*/}
 
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const
+  { /* ... */ }
+
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
                                          const double precision) const

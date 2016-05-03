@@ -23,7 +23,7 @@ ElectroatomCore::setDefaultScatteringReactionTypes()
 {
   boost::unordered_set<ElectroatomicReactionType> tmp_scattering_reaction_types;
   tmp_scattering_reaction_types.insert( 
-				  ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+				  CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert( 
 				  SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
   tmp_scattering_reaction_types.insert( 

@@ -15,7 +15,7 @@
 // FRENSIE Includes
 //#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -27,7 +27,7 @@ public:
 
   //! Create a basic atomic excitation distribution
   static void createAtomicExcitationDistribution(
-			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
 			  energy_loss_distribution );
 
@@ -35,7 +35,7 @@ protected:
 
   //! Create the energy loss function
   static void createEnergyLossFunction(
-      const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+      const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
       AtomicExcitationElectronScatteringDistribution::AtomicDistribution& 
                                                         scattering_function );
 };

@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
@@ -29,13 +29,13 @@
 
 namespace MonteCarlo{
 
-// Create an analog elastic scattering electroatomic reaction
-void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
+// Create an cutoff elastic scattering electroatomic reaction
+void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
 		Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double lower_cutoff_angle )
+        const double upper_cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -44,12 +44,12 @@ void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
 						      energy_grid.end() ) );
 
   // Create the elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> distribution;
+  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistribution(
+  ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
                                                  distribution,
                                                  raw_electroatom_data,
-                                                 lower_cutoff_angle ); 
+                                                 upper_cutoff_angle_cosine ); 
 
   // Elastic cross section with zeros removed
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -65,7 +65,7 @@ void ElectroatomicReactionACEFactory::createAnalogElasticReaction(
                               threshold_energy_index );
 
   elastic_reaction.reset(
-	new AnalogElasticElectroatomicReaction<Utility::LinLin>(
+	new CutoffElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,

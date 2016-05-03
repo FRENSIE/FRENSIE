@@ -30,6 +30,18 @@ public:
 
   // Add the setter member functions to the public interface
   using ElectronPhotonRelaxationDataContainer::setAtomicNumber;
+  using ElectronPhotonRelaxationDataContainer::setMinPhotonEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMaxPhotonEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMinElectronEnergy;
+  using ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy;
+  using ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine;
+  using ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridConvergenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridAbsoluteDifferenceTolerance;
+  using ElectronPhotonRelaxationDataContainer::setGridDistanceTolerance;
+
+  // Relaxation functions
   using ElectronPhotonRelaxationDataContainer::setSubshells;
   using ElectronPhotonRelaxationDataContainer::setSubshellOccupancy;
   using ElectronPhotonRelaxationDataContainer::setSubshellBindingEnergy;
@@ -63,13 +75,13 @@ public:
   using ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSectionThresholdEnergyIndex;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection;
   using ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection;
+
   // Electron functions
-  using ElectronPhotonRelaxationDataContainer::setCutoffAngle;
   using ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid;
-  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAnglesAtEnergy;
-  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDFAtEnergy;
-  using ElectronPhotonRelaxationDataContainer::setAnalogElasticAngles;
-  using ElectronPhotonRelaxationDataContainer::setAnalogElasticPDF;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticAngles;
+  using ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF;
   using ElectronPhotonRelaxationDataContainer::setScreenedRutherfordNormalizationConstant;
   using ElectronPhotonRelaxationDataContainer::setMoliereScreeningConstant;
   using ElectronPhotonRelaxationDataContainer::setMomentPreservingElasticDiscreteAngles;

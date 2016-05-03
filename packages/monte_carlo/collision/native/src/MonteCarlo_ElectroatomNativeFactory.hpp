@@ -17,7 +17,7 @@
 #include "MonteCarlo_ElectroatomCore.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -29,18 +29,18 @@ public:
 
   //! Create a electroatom core (using the provided atomic relaxation model)
   static void createElectroatomCore( 
-	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
 	    const unsigned hash_grid_bins,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle = 1.0e-6 );
+        const double cutoff_angle_cosine = 0.999999 );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
-	    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	    const std::string& electroatom_name,
         const double atomic_weight,
 	    const unsigned hash_grid_bins,
@@ -49,7 +49,7 @@ public:
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle = 1.0e-6 );
+        const double cutoff_angle_cosine = 0.999999 );
 private:
 
   // Constructor

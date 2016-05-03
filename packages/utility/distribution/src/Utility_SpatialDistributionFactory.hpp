@@ -11,9 +11,9 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <memory>
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
@@ -30,7 +30,7 @@ class SpatialDistributionFactory
 public:
 
   //! Create the spatial distribution represented by the parameter list
-  static Teuchos::RCP<SpatialDistribution> 
+  static std::shared_ptr<SpatialDistribution> 
   createDistribution( const Teuchos::ParameterList& distribution_rep );
 
 private:
@@ -43,20 +43,20 @@ private:
   static void validateAxisName( const std::string& axis_name );
 
   // Create a cartesian distribution
-  static Teuchos::RCP<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution> 
   createCartesianDistribution(const Teuchos::ParameterList& distribution_rep );
 
   // Create a cylindrical distribution
-  static Teuchos::RCP<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution> 
   createCylindricalDistribution(
 			      const Teuchos::ParameterList& distribution_rep );
 
   // Create a spherical distribution
-  static Teuchos::RCP<Utility::SpatialDistribution> 
+  static std::shared_ptr<Utility::SpatialDistribution> 
   createSphericalDistribution(const Teuchos::ParameterList& distribution_rep );
 
   // Create a point distribution
-  static Teuchos::RCP<Utility::SpatialDistribution>
+  static std::shared_ptr<Utility::SpatialDistribution>
   createPointDistribution( const Teuchos::ParameterList& distribution_rep );
 
   // Constructor

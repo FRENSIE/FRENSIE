@@ -6,51 +6,36 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Moab Includes
-#include "DagMC.hpp"
-
 // Trilinos Includes
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "FRENSIE_dagmc_config.hpp"
-#include "FRENSIE_root_config.hpp"
-#include "FRENSIE_mpi_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
-#include "MonteCarlo_BatchedDistributedParticleSimulationManager.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
-#include "MonteCarlo_SimulationGeneralProperties.hpp"
-#include "MonteCarlo_StandardParticleSourceFactory.hpp"
-#include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
-#include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
-#include "MonteCarlo_EstimatorHandlerFactory_Root.hpp"
-#include "MonteCarlo_CollisionHandlerFactory.hpp"
-#include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
-#include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
-#include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
 #include "Geometry_ModuleInterface.hpp"
+#include "Geometry_Config.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
 #include "Geometry_RootInstanceFactory.hpp"
-#include "Geometry_ModuleInterface_Root.hpp"
+#endif
+
+#ifdef HAVE_FRENSIE_DAGMC
+#include "Geometry_DagMCInstanceFactory.hpp"
 #endif
 
 namespace MonteCarlo{
 
 // Create the requested manager
-/*! \details If DagMC has not been enabled, this function will be empty
- */
-Teuchos::RCP<SimulationManager> 
+std::shared_ptr<SimulationManager> 
 ParticleSimulationManagerFactory::createManager(
 	   const Teuchos::ParameterList& simulation_info,
 	   const Teuchos::ParameterList& geom_def,
 	   const Teuchos::ParameterList& source_def,
 	   const Teuchos::ParameterList& response_def,
-	   const Teuchos::ParameterList& estimator_def,
+	   const Teuchos::ParameterList& observer_def,
 	   const Teuchos::ParameterList& material_def,
 	   const Teuchos::ParameterList& cross_sections_table_info,
 	   const std::string& cross_sections_xml_directory,
@@ -63,7 +48,7 @@ ParticleSimulationManagerFactory::createManager(
   Teuchos::RCP<std::ostream> out;
   
   if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
-	Teuchos::GlobalMPISession::getNProc() > 1 )
+      Teuchos::GlobalMPISession::getNProc() > 1 )
   {
     Teuchos::RCP<Teuchos::FancyOStream> fancy_out =
       Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -75,138 +60,131 @@ ParticleSimulationManagerFactory::createManager(
   else
     out.reset( &std::cerr, false );
   
-  TEST_FOR_EXCEPTION( !simulation_info.isParameter( "General Properties" ),
-		      InvalidSimulationInfo,
-		      "Error: the general properties must be specified!" );
-  
   // Initialize the simulation properties
   SimulationPropertiesFactory::initializeSimulationProperties( simulation_info,
 							       out.get() );
 
   // Determine which geometry handler has been requested
-  std::string geom_handler_name;
+  TEST_FOR_EXCEPTION( !geom_def.isParameter( "Handler" ),
+                      std::runtime_error,
+                      "Error: The geometry handler type must be specified in "
+                      "the geometry xml file!" );
   
-  if( geom_def.isParameter( "Handler" ) )
-    geom_handler_name = geom_def.get<std::string>( "Handler" );
-  else
-  {
-    THROW_EXCEPTION( std::runtime_error,
-		     "Error: The geometry handler type must be specified in "
-		     "the geometry xml file!" );
-  }
-  
+  std::string geom_handler_name = geom_def.get<std::string>( "Handler" );
+    
   if( geom_handler_name == "DagMC" )
   {
-    #ifdef HAVE_FRENSIE_DAGMC   
-    // Initialize DagMC 
-    Geometry::DagMCInstanceFactory::initializeDagMC( geom_def, *out );
-
-    // Initialize the geometry handler
-    Geometry::ModuleInterface<moab::DagMC>::initialize();
-
-    // Initialize the source handler
-    Teuchos::RCP<ParticleSourceFactory> source_factory =
-      StandardParticleSourceFactory<moab::DagMC>::getInstance();
-  
-  Teuchos::RCP<ParticleSource> source = 
-    source_factory->createSource( source_def, SimulationGeneralProperties::getParticleMode() );
-
-    setSourceHandlerInstance( source );
-
-    // Initialize the estimator handler
-    EstimatorHandlerFactory<moab::DagMC>::initializeHandler( response_def,
-							     estimator_def,
-							     *out );
+    return ParticleSimulationManagerFactory::createManagerWithDagMC( 
+                                                  geom_def,
+                                                  source_def,
+                                                  response_def,
+                                                  observer_def,
+                                                  material_def,
+                                                  cross_sections_table_info,
+                                                  cross_sections_xml_directory,
+                                                  comm,
+                                                  out.get() );
     
-    // Initialize the collision handler
-    getCollisionHandlerFactoryInstance<moab::DagMC>( out.getRawPtr() )->initializeHandler(
-						material_def,
-						cross_sections_table_info,
-						cross_sections_xml_directory );
-   
-     
-    if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
-	Teuchos::GlobalMPISession::getNProc() > 1 )
-    {
-      return Teuchos::rcp( 
-	      new BatchedDistributedParticleSimulationManager<moab::DagMC,
-                                       ParticleSource,
-                                       EstimatorHandler,
-                                       CollisionHandler>(
-			       comm,
-			       0,
-                               SimulationGeneralProperties::getNumberOfHistories() ) );
-    }
-    else
-    {   
-      return Teuchos::rcp( 
-	      new ParticleSimulationManager<moab::DagMC,
-                                       ParticleSource,
-                                       EstimatorHandler,
-                                       CollisionHandler>(
-                             SimulationGeneralProperties::getNumberOfHistories() ) );
-    }
-    
-    #else
-      return Teuchos::RCP<SimulationManager>();
-    #endif // end HAVE_FRENSIE_DAGMC
   }
   else if( geom_handler_name == "ROOT" )
   {
-    #ifdef HAVE_FRENSIE_ROOT 
-
-    // Initialize Root 
-    Geometry::RootInstanceFactory::initializeRoot( geom_def, *out );
-
-    // Initialize the geometry handler
-    Geometry::ModuleInterface<Geometry::Root>::initialize();
-
-    // Initialize the source handler
-    Teuchos::RCP<ParticleSourceFactory> source_factory =
-      StandardParticleSourceFactory<Geometry::Root>::getInstance();
-  
-    Teuchos::RCP<ParticleSource> source = 
-      source_factory->createSource( source_def, SimulationGeneralProperties::getParticleMode()  );
-
-    setSourceHandlerInstance( source );
-
-    // Initialize the estimator handler
-    EstimatorHandlerFactory<Geometry::Root>::initializeHandler( response_def,
-								estimator_def,
-								*out );
-    
-    // Initialize the collision handler
-    getCollisionHandlerFactoryInstance<Geometry::Root>( out.getRawPtr() )->initializeHandler(
-						material_def,
-						cross_sections_table_info,
-						cross_sections_xml_directory );
-
-    if( Teuchos::GlobalMPISession::mpiIsInitialized() &&
-	Teuchos::GlobalMPISession::getNProc() > 1 )
-    {
-      return Teuchos::rcp( 
-	      new BatchedDistributedParticleSimulationManager<Geometry::Root,
-                                       ParticleSource,
-                                       EstimatorHandler,
-                                       CollisionHandler>(
-                              comm,
-			      0,
-                              SimulationGeneralProperties::getNumberOfHistories() ) );
-    }
-    else
-    {
-      return Teuchos::rcp( 
-	      new ParticleSimulationManager<Geometry::Root,
-                                       ParticleSource,
-                                       EstimatorHandler,
-                                       CollisionHandler>(
-                               SimulationGeneralProperties::getNumberOfHistories() ) );
-    }      
-
-    #else
-      return Teuchos::RCP<SimulationManager>();
-    #endif // end HAVE_FRENSIE_ROOT
+    return ParticleSimulationManagerFactory::createManagerWithRoot( 
+                                                  geom_def,
+                                                  source_def,
+                                                  response_def,
+                                                  observer_def,
+                                                  material_def,
+                                                  cross_sections_table_info,
+                                                  cross_sections_xml_directory,
+                                                  comm,
+                                                  out.get() );
   }
+  else
+  {
+    THROW_EXCEPTION( std::runtime_error,
+                     "Error: The geometry handler type "
+                     << geom_handler_name << " is not supported!" );
+  }
+}
+
+// Initialize the modules using DagMC
+std::shared_ptr<SimulationManager> 
+ParticleSimulationManagerFactory::createManagerWithDagMC( 
+            const Teuchos::ParameterList& geom_def,
+            const Teuchos::ParameterList& source_def,
+            const Teuchos::ParameterList& response_def,
+            const Teuchos::ParameterList& observer_def,
+            const Teuchos::ParameterList& material_def,
+            const Teuchos::ParameterList& cross_sections_table_info,
+            const std::string& cross_sections_xml_directory,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            std::ostream* os_warn )
+{
+#ifdef HAVE_FRENSIE_DAGMC   
+  // Initialize DagMC 
+  Geometry::DagMCInstanceFactory::initializeDagMC( geom_def, *os_warn );
+
+  // Initialize the geometry handler
+  Geometry::ModuleInterface<Geometry::DagMC>::initialize();
+
+  // Initialize the other handlers
+  ParticleSimulationManagerFactory::initializeNonGeometryModules<Geometry::DagMC>(
+                                                  source_def,
+                                                  response_def,
+                                                  observer_def,
+                                                  material_def,
+                                                  cross_sections_table_info,
+                                                  cross_sections_xml_directory,
+                                                  os_warn );
+  // Create the manager
+  return ParticleSimulationManagerFactory::createManager<Geometry::DagMC,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  
+#else
+  THROW_EXCEPTION( InvalidSimulationInfo,
+                   "Error: a DagMC geometry handler was requested without "
+                   "having DagMC enabled! The particle simulation manager "
+                   "cannot be created." );
+#endif // end HAVE_FRENSIE_DAGMC   
+}
+
+// Initialize the modules with Root
+std::shared_ptr<SimulationManager> 
+ParticleSimulationManagerFactory::createManagerWithRoot(
+            const Teuchos::ParameterList& geom_def,
+            const Teuchos::ParameterList& source_def,
+            const Teuchos::ParameterList& response_def,
+            const Teuchos::ParameterList& observer_def,
+            const Teuchos::ParameterList& material_def,
+            const Teuchos::ParameterList& cross_sections_table_info,
+            const std::string& cross_sections_xml_directory,
+            const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+            std::ostream* os_warn )
+{
+#ifdef HAVE_FRENSIE_ROOT 
+  // Initialize Root 
+  Geometry::RootInstanceFactory::initializeRoot( geom_def, *os_warn );
+
+  // Initialize the geometry handler
+  Geometry::ModuleInterface<Geometry::Root>::initialize();
+
+  // Initialize the other handlers
+  ParticleSimulationManagerFactory::initializeNonGeometryModules<Geometry::Root>(
+                                                  source_def,
+                                                  response_def,
+                                                  observer_def,
+                                                  material_def,
+                                                  cross_sections_table_info,
+                                                  cross_sections_xml_directory,
+                                                  os_warn );
+  // Create the manager
+  return ParticleSimulationManagerFactory::createManager<Geometry::Root,ParticleSource,EventHandler,CollisionHandler>( comm, 0 );
+  
+#else
+  THROW_EXCEPTION( InvalidSimulationInfo,
+                   "Error: a Root geometry handler was requested without "
+                   "having Root enabled! The particle simulation manager "
+                   "cannot be created." );
+#endif // end HAVE_FRENSIE_ROOT
 }
 
 } // end MonteCarlo namespace

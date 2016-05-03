@@ -21,7 +21,7 @@
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ElasticElectronDistribution.hpp"
+//#include "Utility_ElasticElectronDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -42,10 +42,10 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_para
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number,
-    const double upper_cutoff_angle )
+    const double lower_cutoff_angle_cosine )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
-    d_upper_cutoff_angle( upper_cutoff_angle ),
+    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
                               d_atomic_number*d_atomic_number )
@@ -56,7 +56,11 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
 
-  d_lower_cutoff_angle_cosine = 1.0L - d_upper_cutoff_angle;
+  // Make sure the cutoff angle cosine is valid
+  testPrecondition( d_lower_cutoff_angle_cosine > -1.0 );
+  testPrecondition( d_lower_cutoff_angle_cosine <= 1.0 );
+
+  d_upper_cutoff_delta_mu = 1.0L - d_lower_cutoff_angle_cosine;
 
   d_using_endl_tables = false;
 }
@@ -64,15 +68,15 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
 // Constructor with tabulated energy parameters
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
     const ParameterArray& screened_rutherford_parameters,
-    const double upper_cutoff_angle )
+    const double lower_cutoff_angle_cosine )
   : d_screened_rutherford_parameters( screened_rutherford_parameters ),
-    d_upper_cutoff_angle( upper_cutoff_angle ) 
+    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine ) 
 {
   // Make sure the parameter array is valid
   testPrecondition( d_screened_rutherford_parameters.size() > 0 );
-  // Make sure the cutoff angle is valid
-  testPrecondition( d_upper_cutoff_angle > 0.0 );
-  testPrecondition( d_upper_cutoff_angle <= 2.0 );
+  // Make sure the cutoff angle cosine is valid
+  testPrecondition( d_lower_cutoff_angle_cosine > -1.0 );
+  testPrecondition( d_lower_cutoff_angle_cosine <= 1.0 );
 
   d_using_endl_tables = true;
 }
@@ -80,30 +84,33 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
 // Evaluate the distribution at the given energy and scattering angle (units of pi)
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
         const double incoming_energy,
-        const double scattering_angle ) const
+        const double scattering_angle_cosine ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= 0.0 );
-  testPrecondition( scattering_angle <= d_upper_cutoff_angle );
+  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double delta_mu = 1.0L - scattering_angle_cosine;
 
   if ( d_using_endl_tables )
   {
     ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
     double interpolation_fraction;
 
-    this->findLowerAndUpperBinBoundary( incoming_energy, 
-                                        lower_bin_boundary, 
-                                        upper_bin_boundary,
-                                        interpolation_fraction );
+    findLowerAndUpperBinBoundary( incoming_energy, 
+                                  d_screened_rutherford_parameters,
+                                  lower_bin_boundary, 
+                                  upper_bin_boundary,
+                                  interpolation_fraction );
 
     double lower_pdf = lower_bin_boundary->third/( 
-                        ( scattering_angle + lower_bin_boundary->second )*
-                        ( scattering_angle + lower_bin_boundary->second ) );
+                        ( delta_mu + lower_bin_boundary->second )*
+                        ( delta_mu + lower_bin_boundary->second ) );
 
     double upper_pdf = upper_bin_boundary->third/( 
-                         ( scattering_angle + upper_bin_boundary->second )*
-                         ( scattering_angle + upper_bin_boundary->second ) );
+                         ( delta_mu + upper_bin_boundary->second )*
+                         ( delta_mu + upper_bin_boundary->second ) );
 
     // Linearly interpolate between the upper and lower pdf values
     return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
@@ -111,15 +118,14 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   else
   {
     double cutoff_pdf = 
-        d_elastic_cutoff_distribution->evaluate( incoming_energy, 1.0e-6 );
+
+        d_elastic_cutoff_distribution->evaluate( incoming_energy, 0.999999 );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    double pdf = cutoff_pdf*
-            ( d_upper_cutoff_angle + eta )*( d_upper_cutoff_angle + eta )/(
-            ( scattering_angle + eta )*( scattering_angle + eta ) );
-
-    return pdf;
+    return cutoff_pdf*
+            ( d_upper_cutoff_delta_mu + eta )*( d_upper_cutoff_delta_mu + eta )/(
+            ( delta_mu + eta )*( delta_mu + eta ) );
   }
 }
 
@@ -127,30 +133,40 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 // Evaluate the PDF at the given energy and scattering angle (units of pi)
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF( 
         const double incoming_energy,
-        const double scattering_angle ) const
+        const double scattering_angle_cosine ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= 0.0 );
-  testPrecondition( scattering_angle <= d_upper_cutoff_angle );
+  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  long double long_mu = static_cast<long double>(scattering_angle_cosine);
+  double delta_mu_long = 1.0L - long_mu;
+  double delta_mu = 1.0L - scattering_angle_cosine;
+  double delta_mu_short = 1.0 -scattering_angle_cosine;
+
+  std::cout << "delta_mu_long - delta_mu = " << delta_mu_long - delta_mu << std::endl;
+  std::cout << "delta_mu - delta_mu_short = " << delta_mu - delta_mu_short << std::endl;
+  std::cout << "delta_mu_long - delta_mu_short = " << delta_mu_long - delta_mu_short << std::endl;
 
   if ( d_using_endl_tables )
   {
     ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
     double interpolation_fraction;
 
-    this->findLowerAndUpperBinBoundary( incoming_energy, 
-                                        lower_bin_boundary, 
-                                        upper_bin_boundary,
-                                        interpolation_fraction );
+    findLowerAndUpperBinBoundary( incoming_energy, 
+                                  d_screened_rutherford_parameters,
+                                  lower_bin_boundary, 
+                                  upper_bin_boundary,
+                                  interpolation_fraction );
 
     double lower_pdf = lower_bin_boundary->third/( 
-                        ( scattering_angle + lower_bin_boundary->second )*
-                        ( scattering_angle + lower_bin_boundary->second ) );
+                        ( delta_mu + lower_bin_boundary->second )*
+                        ( delta_mu + lower_bin_boundary->second ) );
 
     double upper_pdf = upper_bin_boundary->third/( 
-                         ( scattering_angle + upper_bin_boundary->second )*
-                         ( scattering_angle + upper_bin_boundary->second ) );
+                         ( delta_mu + upper_bin_boundary->second )*
+                         ( delta_mu + upper_bin_boundary->second ) );
 
     // Linearly interpolate between the upper and lower pdf values
     return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
@@ -158,15 +174,13 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     double cutoff_pdf = 
-        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 1.0e-6 );
+        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 0.999999 );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    double pdf = cutoff_pdf*
-            ( d_upper_cutoff_angle + eta )*( d_upper_cutoff_angle + eta )/(
-            ( scattering_angle + eta )*( scattering_angle + eta ) );
-
-    return pdf;
+    return cutoff_pdf*
+            ( d_upper_cutoff_delta_mu + eta )*( d_upper_cutoff_delta_mu + eta )/(
+            ( delta_mu + eta )*( delta_mu + eta ) );
   }
 }
 
@@ -182,18 +196,19 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
     ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
     double interpolation_fraction;
 
-    this->findLowerAndUpperBinBoundary( incoming_energy, 
-                                        lower_bin_boundary, 
-                                        upper_bin_boundary,
-                                        interpolation_fraction );
+    findLowerAndUpperBinBoundary( incoming_energy, 
+                                  d_screened_rutherford_parameters,
+                                  lower_bin_boundary, 
+                                  upper_bin_boundary,
+                                  interpolation_fraction );
 
-    double lower_value = d_upper_cutoff_angle*lower_bin_boundary->third/( 
+    double lower_value = d_upper_cutoff_delta_mu*lower_bin_boundary->third/( 
                         ( lower_bin_boundary->second )*
-                        ( d_upper_cutoff_angle + lower_bin_boundary->second ) );
+                        ( d_upper_cutoff_delta_mu + lower_bin_boundary->second ) );
 
-    double upper_value = d_upper_cutoff_angle*upper_bin_boundary->third/( 
+    double upper_value = d_upper_cutoff_delta_mu*upper_bin_boundary->third/( 
                         ( upper_bin_boundary->second )*
-                        ( d_upper_cutoff_angle + upper_bin_boundary->second ) );
+                        ( d_upper_cutoff_delta_mu + upper_bin_boundary->second ) );
 
     // Linearly interpolate between the upper and lower values
     return interpolation_fraction*(upper_value - lower_value) + lower_value;
@@ -201,43 +216,46 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
   else
   {
     double cutoff_pdf = 
-        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 1.0e-6 );
+        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 0.999999 );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    return cutoff_pdf*d_upper_cutoff_angle*
-            ( d_upper_cutoff_angle + eta )/( eta );
+    return cutoff_pdf*d_upper_cutoff_delta_mu*
+            ( d_upper_cutoff_delta_mu + eta )/( eta );
   }
 }
 
 // Evaluate the CDF
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF( 
                             const double incoming_energy,
-                            const double scattering_angle ) const
+        const double scattering_angle_cosine ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= 0.0 );
-  testPrecondition( scattering_angle <= d_upper_cutoff_angle );
+  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double delta_mu = 1.0L - scattering_angle_cosine;
 
   if ( d_using_endl_tables )
   {
     ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
     double interpolation_fraction;
 
-    this->findLowerAndUpperBinBoundary( incoming_energy, 
-                                        lower_bin_boundary, 
-                                        upper_bin_boundary,
-                                        interpolation_fraction );
+    findLowerAndUpperBinBoundary( incoming_energy, 
+                                  d_screened_rutherford_parameters,
+                                  lower_bin_boundary, 
+                                  upper_bin_boundary,
+                                  interpolation_fraction );
 
     double max_unormalized_cdf = 
-      this->evaluateIntegratedPDF( d_upper_cutoff_angle, 
+      this->evaluateIntegratedPDF( d_upper_cutoff_delta_mu, 
                                    lower_bin_boundary, 
                                    upper_bin_boundary,
                                    interpolation_fraction );
 
     double unormalized_cdf = 
-      this->evaluateIntegratedPDF( scattering_angle, 
+      this->evaluateIntegratedPDF( delta_mu, 
                                    lower_bin_boundary, 
                                    upper_bin_boundary,
                                    interpolation_fraction );
@@ -249,8 +267,8 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
   {
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    return ( d_upper_cutoff_angle + eta )/( scattering_angle + eta )*
-            ( scattering_angle/d_upper_cutoff_angle );
+    return ( d_upper_cutoff_delta_mu + eta )/( delta_mu + eta )*
+            ( delta_mu/d_upper_cutoff_delta_mu );
   }
 }
 
@@ -374,100 +392,65 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
     ParameterArray::const_iterator lower_bin_boundary, upper_bin_boundary;
     double interpolation_fraction;
 
-    this->findLowerAndUpperBinBoundary( incoming_energy, 
-                                        lower_bin_boundary, 
-                                        upper_bin_boundary,
-                                        interpolation_fraction );
+    findLowerAndUpperBinBoundary( incoming_energy, 
+                                  d_screened_rutherford_parameters,
+                                  lower_bin_boundary, 
+                                  upper_bin_boundary,
+                                  interpolation_fraction );
 
     double max_unormalized_cdf = 
-      this->evaluateIntegratedPDF( d_upper_cutoff_angle, 
+      this->evaluateIntegratedPDF( d_lower_cutoff_angle_cosine, 
                                    lower_bin_boundary, 
                                    upper_bin_boundary,
                                    interpolation_fraction );
 
     double scaled_random_number = random_number*max_unormalized_cdf;
 
-    double lower_angle = ( lower_bin_boundary->second*lower_bin_boundary->second 
-                          *scaled_random_number )/(
-                        lower_bin_boundary->third -
-                        lower_bin_boundary->second*scaled_random_number );
+    double lower_delta_mu =
+        ( lower_bin_boundary->second*lower_bin_boundary->second 
+            *scaled_random_number )/
+        ( lower_bin_boundary->third -
+            lower_bin_boundary->second*scaled_random_number );
 
-    double upper_angle = ( upper_bin_boundary->second*upper_bin_boundary->second 
-                          *scaled_random_number )/(
-                          upper_bin_boundary->third -
-                          upper_bin_boundary->second*scaled_random_number );
+    double upper_delta_mu =
+        ( upper_bin_boundary->second*upper_bin_boundary->second 
+            *scaled_random_number )/
+        ( upper_bin_boundary->third -
+            upper_bin_boundary->second*scaled_random_number );
 
+    // Linearly interpolate between the upper and lower delta_mus
+    double delta_mu = 
+            interpolation_fraction*(upper_delta_mu - lower_delta_mu) + lower_delta_mu;
 
-    // Linearly interpolate between the upper and lower angles
-    double angle = 
-            interpolation_fraction*(upper_angle - lower_angle) + lower_angle;
-
-    scattering_angle_cosine = 1.0L - angle;
+    scattering_angle_cosine = 1.0L - delta_mu;
   }
   else
   {
     double eta = evaluateMoliereScreeningConstant( incoming_energy );
 
-    scattering_angle_cosine = 
-        ( ( 1.0 - random_number*( 1.0 + eta ) )*d_upper_cutoff_angle + eta )/
-        ( ( 1.0 - random_number )*d_upper_cutoff_angle + eta ); 
+    scattering_angle_cosine =
+        ( ( 1.0 - random_number*( 1.0 + eta ) )*d_upper_cutoff_delta_mu + eta )/
+        ( ( 1.0 - random_number )*d_upper_cutoff_delta_mu + eta ); 
   }
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= 1.0 - d_upper_cutoff_angle );
+  testPostcondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-// Find the lower and upper bin boundary
-void ScreenedRutherfordElasticElectronScatteringDistribution::findLowerAndUpperBinBoundary( 
-        const double incoming_energy,
-        ParameterArray::const_iterator& lower_bin_boundary,
-        ParameterArray::const_iterator& upper_bin_boundary,
-        double& interpolation_fraction ) const
-{
-  if( incoming_energy < d_screened_rutherford_parameters.front().first )
-  {
-    lower_bin_boundary = d_screened_rutherford_parameters.begin();
-    upper_bin_boundary = lower_bin_boundary;
-  }
-  else if( incoming_energy >= d_screened_rutherford_parameters.back().first )
-  {
-    lower_bin_boundary = d_screened_rutherford_parameters.end();
-    --lower_bin_boundary;
-    upper_bin_boundary = lower_bin_boundary;
-  }
-  else
-  {
-    lower_bin_boundary = d_screened_rutherford_parameters.begin();
-    upper_bin_boundary = d_screened_rutherford_parameters.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-							lower_bin_boundary,
-							upper_bin_boundary,
-							incoming_energy );
-    upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
-
-    // Calculate the interpolation fraction
-    interpolation_fraction = 
-      (incoming_energy - lower_bin_boundary->first)/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
-  }
-}
-
-// evaluate the pdf integrated from 0 to angle
+// evaluate the pdf integrated from 0 to delta_mu
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF( 
-        const double& scattering_angle, 
+        const double& delta_mu, 
         const ParameterArray::const_iterator& lower_bin_boundary, 
         const ParameterArray::const_iterator& upper_bin_boundary,
         const double& interpolation_fraction ) const
 {
-  double lower_value = ( scattering_angle*lower_bin_boundary->third )/(
-                       ( scattering_angle + lower_bin_boundary->second )*
+  double lower_value = ( delta_mu*lower_bin_boundary->third )/(
+                       ( delta_mu + lower_bin_boundary->second )*
                        lower_bin_boundary->second );
 
-  double upper_value = ( scattering_angle*upper_bin_boundary->third )/(
-                       ( scattering_angle + upper_bin_boundary->second )*
+  double upper_value = ( delta_mu*upper_bin_boundary->third )/(
+                       ( delta_mu + upper_bin_boundary->second )*
                        upper_bin_boundary->second );
 
   // Linearly interpolate between the upper and lower integrated pdf values

@@ -40,8 +40,8 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 	MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TWOBS_DISTRIBUTION );
   TEST_EQUALITY_CONST( 
-	MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
-	1.0e-6 );	
+	MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
+	0.999999 );	
 }
 
 //---------------------------------------------------------------------------//
@@ -131,17 +131,17 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setBremsstrahlungAngularDistrib
 
 //---------------------------------------------------------------------------//
 // Test that the elastic cutoff angle cosine can be set
-TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngle )
+TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
 {
   TEST_EQUALITY( 
-        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
-        1.0e-6 );
+        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
+        0.999999 );
   
-  MonteCarlo::SimulationElectronProperties::setElasticCutoffAngle( 0.1 );
+  MonteCarlo::SimulationElectronProperties::setElasticCutoffAngleCosine( 0.9 );
 
   TEST_EQUALITY( 
-        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngle(),
-        0.1 );
+        MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
+        0.9 );
 }
 
 //---------------------------------------------------------------------------//

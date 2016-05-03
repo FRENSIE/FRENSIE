@@ -40,7 +40,7 @@ Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
 		           createAnalogElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionACEFactory::createAnalogElasticReaction(
+  MonteCarlo::ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
                 grid_searcher,
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
   
   // Test that the stored cross section is correct
@@ -78,10 +78,10 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 		   createAtomicExcitationReaction )
 {
   MonteCarlo::ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
-					           *xss_data_extractor,
-							   energy_grid,
-                               grid_searcher,
-							   reaction);
+                *xss_data_extractor,
+                energy_grid,
+                grid_searcher,
+                reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -114,10 +114,10 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   Teuchos::Array<Teuchos::RCP<MonteCarlo::ElectroatomicReaction> > reactions;
 
   MonteCarlo::ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-							   *xss_data_extractor,
-							   energy_grid,
-                               grid_searcher,
-							   reactions );
+                *xss_data_extractor,
+                energy_grid,
+                grid_searcher,
+                reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
@@ -183,11 +183,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
   MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-							   *xss_data_extractor,
-							   energy_grid,
-                               grid_searcher,
-							   reaction,
-							   photon_distribution_function );
+                *xss_data_extractor,
+                energy_grid,
+                grid_searcher,
+                reaction,
+                photon_distribution_function );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -215,24 +215,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   // Clear the reaction
   reaction.reset();
 }
-//! \todo Write detailed bremsstrahlung reaction test
-/*
-//---------------------------------------------------------------------------//
-/* Check that a electroatom with detailed tabular photon angular distribution 
- * data can be created
- *
-TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
-                   createBremsstrahlungReaction_tabular )
-{
-  photon_distribution_function = MonteCarlo::TABULAR_DISTRIBUTION;
 
-  MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-							   *xss_data_extractor,
-							   energy_grid,
-							   reaction,
-							   photon_distribution_function );
-}
-*/
 //---------------------------------------------------------------------------//
 /* Check that a electroatom with detailed 2BS photon angular distribution 
  * data can be created
@@ -243,11 +226,11 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
 
   MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-							   *xss_data_extractor,
-							   energy_grid,
-                               grid_searcher,
-							   reaction,
-							   photon_distribution_function );
+                *xss_data_extractor,
+                energy_grid,
+                grid_searcher,
+                reaction,
+                photon_distribution_function );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -356,10 +339,10 @@ int main( int argc, char** argv )
 
     // Create the hash-based grid searcher
     grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>( 
-					     energy_grid,
-					     energy_grid[0],
-					     energy_grid[energy_grid.size()-1],
-					     100 ) );
+                energy_grid,
+                energy_grid[0],
+                energy_grid[energy_grid.size()-1],
+                100 ) );
   }
 
   // Initialize the random number generator

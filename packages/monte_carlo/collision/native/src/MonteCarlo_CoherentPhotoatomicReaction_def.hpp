@@ -23,9 +23,9 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 		   const Teuchos::RCP<const CoherentScatteringDistribution>&
 		   scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -53,10 +53,10 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
       const Teuchos::RCP<const CoherentScatteringDistribution>&
       scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -84,6 +84,15 @@ unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getN
     return 1u;
   else
     return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */ 
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
 }
 
 // Return the reaction type

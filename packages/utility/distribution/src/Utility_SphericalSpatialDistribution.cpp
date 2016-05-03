@@ -16,13 +16,13 @@ namespace Utility{
 
 // Constructor
 SphericalSpatialDistribution::SphericalSpatialDistribution(
-		      const Teuchos::RCP<OneDDistribution>& r_distribution,
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const double center_x_position,
-		      const double center_y_position,
-		      const double center_z_position,
-		      const Axis axis )
+		   const std::shared_ptr<OneDDistribution>& r_distribution,
+		   const std::shared_ptr<OneDDistribution>& theta_distribution,
+                   const std::shared_ptr<OneDDistribution>& mu_distribution,
+                   const double center_x_position,
+                   const double center_y_position,
+                   const double center_z_position,
+                   const Axis axis )
   : d_r_distribution( r_distribution ),
     d_theta_distribution( theta_distribution ),
     d_mu_distribution( mu_distribution ),
@@ -33,9 +33,9 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
     d_uniform( true )
 {
   // Make sure that the distributions have been set
-  testPrecondition( !r_distribution.is_null() );
-  testPrecondition( !theta_distribution.is_null() );
-  testPrecondition( !mu_distribution.is_null() );
+  testPrecondition( r_distribution.get() );
+  testPrecondition( theta_distribution.get() );
+  testPrecondition( mu_distribution.get() );
   // Make sure that the theta distribution is valid
   testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
 		    <= 2*PhysicalConstants::pi );

@@ -177,17 +177,16 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
   double energy = 1.00000e-05;
   cross_section = material->getMacroscopicReactionCrossSection(
 			    energy,
-			    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           7.234825686582E+06, 
                           1e-12 );
 
-
   energy = 1.00000e+05;
   cross_section = material->getMacroscopicReactionCrossSection( 
 			    energy,
-			    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+			    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.566534386946E-04, 
@@ -283,7 +282,7 @@ int main( int argc, char** argv )
 				 cross_section_xml_file,
 				 Teuchos::inoutArg(cross_section_table_info) );
 
-    boost::unordered_set<std::string> atom_aliases;
+    std::unordered_set<std::string> atom_aliases;
     atom_aliases.insert( "Pb" );
 
     // Create the factories
@@ -291,7 +290,8 @@ int main( int argc, char** argv )
       atomic_relaxation_model_factory(
 				new MonteCarlo::AtomicRelaxationModelFactory );
 
-    double lower_cutoff_angle = 1.0e-6;
+    
+    double upper_cutoff_angle_cosine = 0.999999;
     unsigned hash_grid_bins = 100;
     
     MonteCarlo::ElectroatomFactory factory( test_cross_sections_xml_directory,
@@ -301,9 +301,9 @@ int main( int argc, char** argv )
                                             hash_grid_bins,   
                                             MonteCarlo::TWOBS_DISTRIBUTION,
                                             true,
-                                            lower_cutoff_angle );
+                                            upper_cutoff_angle_cosine );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
+    std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       atom_map;
 
     factory.createElectroatomMap( atom_map );

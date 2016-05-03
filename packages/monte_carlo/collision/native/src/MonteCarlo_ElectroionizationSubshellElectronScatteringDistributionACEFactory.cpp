@@ -40,8 +40,8 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
  
   electroionization_subshell_distribution.reset( 
     new ElectroionizationSubshellElectronScatteringDistribution( 
-                                                          subshell_distribution, 
-                                                          binding_energy ) );
+        subshell_distribution, 
+        binding_energy ) );
 }
 
 // Create the scattering function
@@ -55,8 +55,8 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 {
   // Extract the energies for which knock-on sampling tables are given
   Teuchos::Array<double> table_energy_grid( raw_electroionization_data( 
-                                                           table_info_location,
-                                                           number_of_tables ) );
+                                            table_info_location,
+                                            number_of_tables ) );
  
   // Extract the length of the knock-on sampling tables
   Teuchos::Array<double> table_length( raw_electroionization_data( 

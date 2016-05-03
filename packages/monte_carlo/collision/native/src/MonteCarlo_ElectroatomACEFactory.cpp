@@ -25,14 +25,14 @@ namespace MonteCarlo{
  * Otherwize a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatomCore(
-            const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-            Teuchos::RCP<ElectroatomCore>& electroatom_core,
-	        const unsigned hash_grid_bins,
-            const BremsstrahlungAngularDistributionType 
-                    photon_distribution_function,
-            const bool use_atomic_relaxation_data,
-            const double cutoff_angle )
+    const Data::XSSEPRDataExtractor& raw_electroatom_data,
+    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+    Teuchos::RCP<ElectroatomCore>& electroatom_core,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType 
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -45,22 +45,23 @@ void ElectroatomACEFactory::createElectroatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
 
+  // Create a hash based energy grid seacher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
 						     energy_grid,
 						     hash_grid_bins ) );
 
-  // Create the hard elastic scattering reaction
+  // Create the cutoff elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createAnalogElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-                       grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle );
+    ElectroatomicReactionACEFactory::createCutoffElasticReaction(
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer,
+        cutoff_angle_cosine );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -69,11 +70,11 @@ void ElectroatomACEFactory::createElectroatomCore(
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
     
     ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
-						 raw_electroatom_data,
-						 energy_grid,
-                         grid_searcher,
-						 reaction_pointer, 
-                         photon_distribution_function );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer,
+        photon_distribution_function );
   }
   
   // Create the atomic excitation scattering reaction
@@ -82,10 +83,10 @@ void ElectroatomACEFactory::createElectroatomCore(
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
     
     ElectroatomicReactionACEFactory::createAtomicExcitationReaction( 
-                               raw_electroatom_data,
-	                           energy_grid,
-                               grid_searcher,
-                               reaction_pointer );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
   }
     
   // Create the electroionization reaction(s)
@@ -94,10 +95,10 @@ void ElectroatomACEFactory::createElectroatomCore(
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
 
     ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
-							   raw_electroatom_data,
-							   energy_grid,
-                               grid_searcher,
-							   reaction_pointers );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
@@ -108,13 +109,13 @@ void ElectroatomACEFactory::createElectroatomCore(
   else
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
+        scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
-							    raw_electroatom_data,
-							    energy_grid,
-                                grid_searcher,
-							    reaction_pointer );
+        raw_electroatom_data,
+        energy_grid,
+        grid_searcher,
+        reaction_pointer );
   }
 			
   // Create the electroatom core
@@ -143,7 +144,7 @@ void ElectroatomACEFactory::createElectroatom(
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
 	    const bool use_atomic_relaxation_data,
-        const double cutoff_angle )
+        const double cutoff_angle_cosine )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -158,7 +159,7 @@ void ElectroatomACEFactory::createElectroatom(
                                                hash_grid_bins, 
                                                photon_distribution_function,
                                                use_atomic_relaxation_data,
-                                               cutoff_angle );
+                                               cutoff_angle_cosine );
 					    
   // Create the electroatom
   electroatom.reset(

@@ -50,6 +50,11 @@ public:
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                           const double scattering_angle ) const
+  { /* ... */ }
+
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
@@ -97,7 +102,7 @@ public:
 
 
 
-//protected:
+protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,

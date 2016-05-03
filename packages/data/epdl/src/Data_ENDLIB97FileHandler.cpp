@@ -64,7 +64,7 @@ void ENDLIB97FileHandler::closeENDLIB97File()
 // Check if the file is valid
 bool ENDLIB97FileHandler::validFile() const
 {
-  return d_endlib_file;
+  return !d_endlib_file.fail();
 }
 
 // Check if the entire file has been read

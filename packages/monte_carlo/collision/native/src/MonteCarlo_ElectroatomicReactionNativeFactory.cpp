@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
@@ -29,13 +29,13 @@
 
 namespace MonteCarlo{
 
-// Create the analog elastic scattering electroatomic reactions
-void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
-			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+// Create the cutoff elastic scattering electroatomic reactions
+void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double lower_cutoff_angle )
+            const double upper_cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() == 
@@ -43,26 +43,26 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  // Create the analog elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> distribution;
+  // Create the cutoff elastic scattering distribution
+  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     distribution,
     raw_electroatom_data,
-    lower_cutoff_angle ); 
+    upper_cutoff_angle_cosine ); 
 
-  // Analog elastic cross section 
+  // Cutoff elastic cross section 
   Teuchos::ArrayRCP<double> elastic_cross_section;
   elastic_cross_section.assign( 
     raw_electroatom_data.getCutoffElasticCrossSection().begin(),
 	raw_electroatom_data.getCutoffElasticCrossSection().end() );
   
-  // Analog elastic cross section threshold energy bin index
+  // Cutoff elastic cross section threshold energy bin index
   unsigned threshold_energy_index =
     raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
 
   elastic_reaction.reset(
-	new AnalogElasticElectroatomicReaction<Utility::LinLin>(
+	new CutoffElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
@@ -72,11 +72,11 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 
 // Create the screened Rutherford elastic scattering electroatomic reaction
 void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
-			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double upper_cutoff_angle )
+            const double lower_cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() == 
@@ -84,14 +84,14 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
                                                       energy_grid.end() ) );
 
-  // Create the analog elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> 
-    analog_distribution;
+  // Create the cutoff elastic scattering distribution
+  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> 
+    cutoff_distribution;
 
-  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-    analog_distribution,
+  ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
+    cutoff_distribution,
     raw_electroatom_data,
-    upper_cutoff_angle ); 
+    lower_cutoff_angle_cosine ); 
 
 
   // Create the screened Rutherford elastic scattering distribution
@@ -100,9 +100,9 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
   ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     distribution,
-    analog_distribution,
+    cutoff_distribution,
     raw_electroatom_data,
-    upper_cutoff_angle ); 
+    lower_cutoff_angle_cosine ); 
 
   // Screened Rutherford elastic cross section 
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -122,12 +122,12 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 						  threshold_energy_index,
                           grid_searcher,
 						  distribution,
-                          upper_cutoff_angle ) );
+                          lower_cutoff_angle_cosine ) );
 }
 
 // Create an atomic excitation electroatomic reaction
 void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
-			const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction )
@@ -168,7 +168,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
 
 // Create the subshell electroionization electroatomic reactions
 void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
-		   const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+		   const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
@@ -233,7 +233,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
 // Create a bremsstrahlung electroatomic reactions
 void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
-		const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+		const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,

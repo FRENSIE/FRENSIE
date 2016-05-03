@@ -69,9 +69,19 @@ public:
   //! Return the max incoming electron energy for a given photon energy
   double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
 
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle ) const
+  { /* ... */ }
+
   //! Evaluate the PDF value for a given incoming and photon energy
   double evaluatePDF( const double incoming_energy, 
                       const double photon_energy ) const;
+
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle ) const
+  { /* ... */ }
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,

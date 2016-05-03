@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Create a electroionization subshell distribution
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createElectroionizationSubshellDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroionization_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
 	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
@@ -47,7 +47,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 
 // Create the subshell recoil distribution
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroionization_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const std::vector<double> energy_grid, 
     const unsigned subshell,
     ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&

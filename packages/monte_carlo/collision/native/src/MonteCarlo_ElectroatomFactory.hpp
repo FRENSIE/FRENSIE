@@ -11,10 +11,8 @@
 
 // Std Lib Includes
 #include <string>
-
-// Boost Includes
-#include <boost/unordered_map.hpp>
-#include <boost/unordered_set.hpp>
+#include <unordered_set>
+#include <unordered_map>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -36,17 +34,17 @@ public:
 
   //! Constructor
   ElectroatomFactory( 
-		const std::string& cross_sections_xml_directory,
-		const Teuchos::ParameterList& cross_section_table_info,
-		const boost::unordered_set<std::string>& electroatom_aliases,
-		const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-		        atomic_relaxation_model_factory,
-		const unsigned hash_grid_bins,
-		const BremsstrahlungAngularDistributionType 
-		        photon_distribution_function,
-		const bool use_atomic_relaxation_data,
-		const double cutoff_angle = 1.0e-6,
-		std::ostream* os_message = &std::cout );
+    const std::string& cross_sections_xml_directory,
+    const Teuchos::ParameterList& cross_section_table_info,
+    const std::unordered_set<std::string>& electroatom_aliases,
+    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+        atomic_relaxation_model_factory,
+    const unsigned hash_grid_bins,
+    const BremsstrahlungAngularDistributionType 
+        photon_distribution_function,
+    const bool use_atomic_relaxation_data,
+    const double cutoff_angle_cosine = 0.999999,
+    std::ostream* os_message = &std::cout );
 
   //! Destructor
   ~ElectroatomFactory()
@@ -54,7 +52,7 @@ public:
 
   //! Create the map of electroatoms
   void createElectroatomMap(
-		    boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
+		    std::unordered_map<std::string,Teuchos::RCP<Electroatom> >&
 		    electroatom_map ) const;
 
 private:
@@ -72,7 +70,7 @@ private:
               const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
-              const double cutoff_angle = 1.0e-6 );
+              const double cutoff_angle_cosine = 0.999999 );
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
@@ -85,14 +83,14 @@ private:
               const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
-              const double cutoff_angle = 1.0e-6 );
+              const double cutoff_angle_cosine = 0.999999 );
 
   // The electroatom map
-  boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > 
+  std::unordered_map<std::string,Teuchos::RCP<Electroatom> > 
   d_electroatom_name_map;
   
   // The table map
-  boost::unordered_map<std::string,Teuchos::RCP<Electroatom> >
+  std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
   d_electroatomic_table_name_map;
   
   // The message output stream

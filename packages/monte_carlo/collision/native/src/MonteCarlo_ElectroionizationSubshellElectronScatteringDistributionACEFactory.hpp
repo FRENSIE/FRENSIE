@@ -13,14 +13,13 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-//#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
 
 //! The subshell electroionization scattering distribution factory class that uses ACE data
-class ElectroionizationSubshellElectronScatteringDistributionACEFactory //: public ElectroionizationSubshellElectronScatteringDistributionFactory
+class ElectroionizationSubshellElectronScatteringDistributionACEFactory
 {
 
 public:
@@ -35,8 +34,7 @@ public:
 	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution );
 
-//protected:
-
+protected:
 
   //! Create the electroionization subshell distribution function
   static void createSubshellDistribution(

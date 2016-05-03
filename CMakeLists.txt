@@ -83,25 +83,11 @@ ELSE()
   MESSAGE(FATAL_ERROR "The HDF5_PREFIX must be set!")
 ENDIF()
 
-# Enable ODEPACK Support
-IF(ODEPACK_PREFIX)
-  ENABLE_ODEPACK_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The ODEPACK_PREFIX must be set!")
-ENDIF()
-
 # Enable BOOST Support
 IF(BOOST_PREFIX)
   ENABLE_BOOST_SUPPORT(serialization)
 ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
-ENDIF()
-
-# Enable GSL Support
-IF(GSL_PREFIX)
-  ENABLE_GSL_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
 ENDIF()
 
 # Enable ROOT Support
@@ -112,12 +98,6 @@ IF(${FRENSIE_ENABLE_ROOT})
     MESSAGE(FATAL_ERROR "The ROOT_PREFIX must be set!")
   ENDIF()
 ENDIF()
-
-SET(CMAKEDEFINE \#cmakedefine)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
-CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
-  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
 
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})
@@ -154,12 +134,6 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/$
 SET(${PROJECT_NAME}_DATA_DIRECTORY ${CMAKE_SOURCE_DIR}/data/)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY_DIR}/HDF5DataFileNames.hpp)
 
-# Parse the Fission Product Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/FissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/FissionProductDataPath.hpp)
-
-# Parse the Decay Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/DecayDataPath.hpp.in ${CMAKE_BINARY_DIR}/DecayDataPath.hpp)
-
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
@@ -191,7 +165,7 @@ IF(${SETUP_DASHBOARD_CLIENT})
   INCLUDE(CTest)
 
   # Configure the CTestCustom.cake file for extended output for dashboard
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/CTestCustom.cmake.in
     ${CMAKE_BINARY_DIR}/CTestCustom.cmake)
 ELSE()
   ENABLE_TESTING()

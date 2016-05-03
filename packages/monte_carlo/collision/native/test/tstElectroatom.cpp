@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( Electroatom, getScatteringReactionTypes )
 	       MonteCarlo::Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION ) );
 
   TEST_ASSERT( scattering_types.count(
-	       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION ) );
+	       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION ) );
   TEST_ASSERT( scattering_types.count(
 	       MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION ) );
   TEST_ASSERT( scattering_types.count(
@@ -335,19 +335,19 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection )
   // Analog Elastic
   cross_section = ace_electroatom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_electroatom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   
   cross_section = ace_electroatom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -579,10 +579,10 @@ int main( int argc, char** argv )
 
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-			    energy_grid,
-			    ae_cross_section,
-			    ae_threshold_index,
-                            ae_energy_loss_distribution ) );
+                energy_grid,
+                ae_cross_section,
+                ae_threshold_index,
+                ae_energy_loss_distribution ) );
     
     Teuchos::ArrayView<const double> raw_b_cross_section = 
       xss_data_extractor->extractBremsstrahlungCrossSection();
@@ -660,10 +660,10 @@ int main( int argc, char** argv )
     // Create the scattering distributions
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-							energy_grid,
-							b_cross_section,
-							b_threshold_index,
-                            b_scattering_distribution ) );
+                energy_grid,
+                b_cross_section,
+                b_threshold_index,
+                b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 

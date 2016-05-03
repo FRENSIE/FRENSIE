@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "Data_ENDLFileHandler.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -35,12 +35,13 @@ public:
   StandardElectronPhotonRelaxationDataGenerator( 
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
+       const Teuchos::RCP<const Data::ENDLDataContainer>&
+            endl_data_container,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
        const double min_electron_energy,
        const double max_electron_energy,
-       const double cutoff_angle,
+       const double cutoff_angle_cosine,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
 	   const double grid_convergence_tol = 0.001,
@@ -53,42 +54,37 @@ public:
 
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
 protected:
 
   // Set the atomic data
-  void setRelaxationData( Data::ElectronPhotonRelaxationVolatileDataContainer&
-			  data_container ) const;
+  void setRelaxationData(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Compton profile data
   void setComptonProfileData( 
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the occupation number data
   void setOccupationNumberData(
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Waller-Hartree scattering function data
   void setWallerHartreeScatteringFunctionData(
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Waller-Hartree atomic form factor data
   void setWallerHartreeAtomicFormFactorData(
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the photon data
-  void setPhotonData( Data::ElectronPhotonRelaxationVolatileDataContainer&
-		      data_container ) const;
+  void setPhotonData( 
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the electron data
-  void setElectronData( Data::ElectronPhotonRelaxationVolatileDataContainer&
-			data_container ) const;
+  void setElectronData( 
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
 private:
 
@@ -134,8 +130,8 @@ private:
   // Extract electron cross sections
   template<typename InterpPolicy>
   void extractElectronCrossSection(
-        std::vector<double>& raw_energy_grid,
-        std::vector<double>& raw_cross_section,
+        const std::vector<double>& raw_energy_grid,
+        const std::vector<double>& raw_cross_section,
         Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
@@ -173,23 +169,28 @@ private:
 
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection( 
-	                   Data::ElectronPhotonRelaxationVolatileDataContainer&
+    Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const;
 
   // Calculate the total impulse approx. incoherent cross section
   void calculateImpulseApproxTotalIncoherentCrossSection(
-		           Data::ElectronPhotonRelaxationVolatileDataContainer&
+    Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const;
 
   // Calculate the Waller-Hartree total cross section
   void calculateWallerHartreeTotalCrossSection(
-		          Data::ElectronPhotonRelaxationVolatileDataContainer&
-			  data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the impulse approx total cross section
   void calculateImpulseApproxTotalCrossSection(
-		          Data::ElectronPhotonRelaxationVolatileDataContainer&
-			  data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Calculate the elastic anglular distribution for the angle cosine
+  void calculateElasticAngleCosine(
+    const std::vector<double>& raw_elastic_angle,
+    const std::vector<double>& raw_elastic_pdf,
+    std::vector<double>& elastic_angle,
+    std::vector<double>& elastic_pdf ) const;
 
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
@@ -197,8 +198,9 @@ private:
   // The ACE data
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
-  // The EEDL data
-  Teuchos::RCP<Data::ENDLFileHandler> d_eedl_file_handler;
+  // The ENDL data
+  Teuchos::RCP<const Data::ENDLDataContainer>
+    d_endl_data_container;
 
   // The min photon energy
   double d_min_photon_energy;
@@ -212,8 +214,8 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle below which screened rutherford is used
-  double d_cutoff_angle;
+  // The cutoff angle cosine above which screened rutherford is used
+  double d_cutoff_angle_cosine;
 
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;

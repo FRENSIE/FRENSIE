@@ -34,8 +34,8 @@ BremsstrahlungAngularDistributionType
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = 
                              TWOBS_DISTRIBUTION;
 
-// The elastic cutoff angle cosine (default 1.0e-6)
-double SimulationElectronProperties::elastic_cutoff_angle = 1.0e-6;
+// The elastic cutoff angle cosine (default 0.999999)
+double SimulationElectronProperties::elastic_cutoff_angle_cosine = 0.999999;
 
 // The number of electron has grid bins
 unsigned SimulationElectronProperties::num_electron_hash_grid_bins = 1000;
@@ -73,11 +73,12 @@ void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
-// Set the elastic cutoff angle cosine (mu = 1.0e-6 by default)
-void SimulationElectronProperties::setElasticCutoffAngle( 
-                          const double cutoff_angle )
+// Set the elastic cutoff angle cosine (mu = 0.999999 by default)
+void SimulationElectronProperties::setElasticCutoffAngleCosine( 
+                          const double cutoff_angle_cosine )
 {
-  SimulationElectronProperties::elastic_cutoff_angle = cutoff_angle;
+  SimulationElectronProperties::elastic_cutoff_angle_cosine = 
+    cutoff_angle_cosine;
 }
 
 // Set the number of electron hash grid bins

@@ -268,6 +268,7 @@ int main( int argc, char** argv )
 			    ae_threshold_index,
                 ae_energy_loss_distribution ) );
     
+    // Bremsstrahlung  
     Teuchos::ArrayView<const double> raw_b_cross_section = 
       xss_data_extractor->extractBremsstrahlungCrossSection();
     
@@ -345,10 +346,10 @@ int main( int argc, char** argv )
     // Create the bremsstrahlung scattering reaction
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-							energy_grid,
-							b_cross_section,
-							b_threshold_index,
-                            b_scattering_distribution ) );
+            energy_grid,
+            b_cross_section,
+            b_threshold_index,
+            b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 

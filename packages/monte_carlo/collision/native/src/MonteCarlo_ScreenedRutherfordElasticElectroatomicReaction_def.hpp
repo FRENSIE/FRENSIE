@@ -23,33 +23,19 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution,
-       const double upper_cutoff_angle )
+       const double lower_cutoff_angle_cosine )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
     d_scattering_distribution( scattering_distribution ),
-    d_upper_cutoff_angle( upper_cutoff_angle )
+    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
   // Make sure the cutoff angle cosine is valid
-  testPrecondition( upper_cutoff_angle <= 2.0 );
-  testPrecondition( upper_cutoff_angle > 0.0 );
+  testPrecondition( lower_cutoff_angle_cosine <= 1.0 );
+  testPrecondition( lower_cutoff_angle_cosine > -1.0 );
 }
 
 // Constructor
@@ -61,34 +47,20 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
        const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution,
-       const double upper_cutoff_angle )
+       const double lower_cutoff_angle_cosine )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index,
                                                     grid_searcher ),
-    d_incoming_energy_grid( incoming_energy_grid ),
-    d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index ),
     d_scattering_distribution( scattering_distribution ),
-    d_upper_cutoff_angle( upper_cutoff_angle )
+    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine )
 {
-  // Make sure the incoming energy grid is valid
-  testPrecondition( incoming_energy_grid.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending(
-						incoming_energy_grid.begin(),
-						incoming_energy_grid.end() ) );
-  // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
-  // Make sure the threshold energy is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
   // Make sure the cutoff angle cosine is valid
-  testPrecondition( upper_cutoff_angle <= 2.0 );
-  testPrecondition( upper_cutoff_angle > 0.0 );
+  testPrecondition( lower_cutoff_angle_cosine <= 1.0 );
+  testPrecondition( lower_cutoff_angle_cosine > -1.0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

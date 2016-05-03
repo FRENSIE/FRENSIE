@@ -17,7 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------//
 
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
-Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
@@ -35,11 +35,11 @@ Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that an analog elastic reaction can be created
+// Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory, 
-		           createAnalogElasticReaction )
+		           createCutoffElasticReaction )
 {
-  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
                 *data_container,
                 energy_grid,
                 grid_searcher,
@@ -47,7 +47,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
   
   // Test that the stored cross section is correct
@@ -358,7 +358,7 @@ int main( int argc, char** argv )
   
   {
     // Create the native data file container
-    data_container.reset( new Data::EvaluatedElectronDataContainer( 
+    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
 						     test_native_file_name ) );
 
     // Extract the common energy grid

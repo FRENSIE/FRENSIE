@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,15 +18,20 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
+#include "Utility_AtomicMomentumUnit.hpp"
+#include "Utility_InverseAtomicMomentumUnit.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
   
 //---------------------------------------------------------------------------//
@@ -240,13 +246,13 @@ int main( int argc, char** argv )
 
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
 
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8; // convert from inverse Angstrom to inverse cm
-  
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LogLog>( 
+  std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+     new Utility::UnitAwareTabularDistribution<Utility::LogLog,Utility::Units::InverseAngstrom,void>( 
 			   recoil_momentum,
 			   jince_block( scatt_func_size, scatt_func_size ) ) );
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_des = 
@@ -262,7 +268,7 @@ int main( int argc, char** argv )
   }
 
   // Create the Compton profile subshell converter
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
   
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
@@ -275,7 +281,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
+  MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles( lswd_block.size() );
   
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
@@ -290,16 +296,14 @@ int main( int argc, char** argv )
     Teuchos::Array<double> half_profile(
 		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
 
-    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
-					       half_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
-						 half_profile.end() );
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile(
+       new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
+                                                       half_momentum_grid,
+                                                       half_profile ) );
 
     compton_profiles[shell].reset( 
-	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
-							    half_profile ) );
-		 
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+                                                       raw_compton_profile ) );
   }
 
   // Create the incoherent scattering distributions
@@ -309,12 +313,13 @@ int main( int argc, char** argv )
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order ) );
 
-  Teuchos::RCP<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
-    doppler_dist( new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+  std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
+    doppler_dist( new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
+                          converter,
 			  compton_profiles ) );
 
   Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>

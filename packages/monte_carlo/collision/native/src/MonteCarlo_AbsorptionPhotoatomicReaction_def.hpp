@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
+#include "MonteCarlo_StandardPhotoatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -24,9 +25,9 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 	   const unsigned threshold_energy_index,
 	   const PhotoatomicReactionType reaction )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid
@@ -51,10 +52,10 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        const PhotoatomicReactionType reaction )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher ),
     d_reaction( reaction )
 {
   // Make sure the incoming energy grid is valid
@@ -75,6 +76,13 @@ AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::AbsorptionP
 // Return the number of photons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+{
+  return 0u;
+}
+
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned AbsorptionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }

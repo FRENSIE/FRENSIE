@@ -26,14 +26,14 @@ namespace MonteCarlo{
  * Otherwize a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatomCore(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
           Teuchos::RCP<ElectroatomCore>& electroatom_core,
         const unsigned hash_grid_bins,
         const BremsstrahlungAngularDistributionType 
           photon_distribution_function,
         const bool use_atomic_relaxation_data,
-        const double cutoff_angle )
+        const double cutoff_angle_cosine )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -53,21 +53,21 @@ void ElectroatomNativeFactory::createElectroatomCore(
 						     energy_grid,
 						     hash_grid_bins ) );
 
-  // Create the analog elastic scattering reaction
+  // Create the cutoff elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+    ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
 					   grid_searcher,
 					   reaction_pointer,
-                       cutoff_angle );
+                       cutoff_angle_cosine );
   }
 
   // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
-  if ( cutoff_angle <= 1.0e-6 )
+  if ( cutoff_angle_cosine >= 0.999999 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
@@ -77,7 +77,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 					   energy_grid,
 					   grid_searcher,
 					   reaction_pointer,
-                       cutoff_angle );
+                       cutoff_angle_cosine );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -136,7 +136,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatom(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::string& electroatom_name,
         const double atomic_weight,
         const unsigned hash_grid_bins,
@@ -145,7 +145,7 @@ void ElectroatomNativeFactory::createElectroatom(
         const BremsstrahlungAngularDistributionType 
           photon_distribution_function,
         const bool use_atomic_relaxation_data,
-        const double cutoff_angle )
+        const double cutoff_angle_cosine )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -160,7 +160,7 @@ void ElectroatomNativeFactory::createElectroatom(
                                                   hash_grid_bins,  
                                                   photon_distribution_function,
                                                   use_atomic_relaxation_data,
-                                                  cutoff_angle );
+                                                  cutoff_angle_cosine );
 					    
   // Create the electroatom
   electroatom.reset(

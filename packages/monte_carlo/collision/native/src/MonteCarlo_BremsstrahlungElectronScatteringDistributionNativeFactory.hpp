@@ -15,7 +15,7 @@
 // FRENSIE Includes
 //#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -27,13 +27,13 @@ public:
 
   //! Create a simple dipole bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
 		        	  scattering_distribution );
 
   //! Create a detailed 2BS bremsstrahlung distribution
   static void createBremsstrahlungDistribution(
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number );
@@ -42,7 +42,7 @@ protected:
 
   //! Create the energy loss function
   static void createEnergyLossFunction(
-    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const std::vector<double> energy_grid, 
     BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
         energy_loss_function );

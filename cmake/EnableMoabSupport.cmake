@@ -68,12 +68,6 @@ MACRO(ENABLE_MOAB_SUPPORT)
 
     SET(HAVE_${PROJECT_NAME}_DAGMC "1")
   ENDIF()
-
-  SET(CMAKEDEFINE \#cmakedefine)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dagmc_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in)
-  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp)
   
   # Set the include paths for Moab
   INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})

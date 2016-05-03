@@ -1,0 +1,6 @@
+<ParameterList name="Geometry">
+
+  <Parameter name="Handler" type="string" value="ROOT"/>
+  <Parameter name="Root File" type="string" value="${CMAKE_CURRENT_BINARY_DIR}/u_sphere.root"/>
+
+</ParameterList>

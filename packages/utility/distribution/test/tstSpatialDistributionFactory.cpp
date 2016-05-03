@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -39,12 +40,12 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCartesianDistribution )
     parameter_list->get<Teuchos::ParameterList>( 
 					    "Cartesian Distribution Example" );
 
-  Teuchos::RCP<Utility::SpatialDistribution> distribution = 
+  std::shared_ptr<Utility::SpatialDistribution> distribution = 
     Utility::SpatialDistributionFactory::createDistribution( 
 						    spatial_distribution_rep );
 
   std::cout << std::endl;
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   for( unsigned i = 0; i < 5; ++i )
   {
@@ -68,11 +69,11 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCylindricalDistribution )
     parameter_list->get<Teuchos::ParameterList>( 
 					  "Cylindrical Distribution Example" );
 
-  Teuchos::RCP<Utility::SpatialDistribution> distribution = 
+  std::shared_ptr<Utility::SpatialDistribution> distribution = 
     Utility::SpatialDistributionFactory::createDistribution( 
 						    spatial_distribution_rep );
 
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
 
   std::cout << std::endl;
   for( unsigned i = 0; i < 5; ++i )
@@ -97,11 +98,11 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createSphericalDistribution )
     parameter_list->get<Teuchos::ParameterList>( 
 					  "Spherical Distribution Example" );
   
-  Teuchos::RCP<Utility::SpatialDistribution> distribution = 
+  std::shared_ptr<Utility::SpatialDistribution> distribution = 
     Utility::SpatialDistributionFactory::createDistribution( 
 						    spatial_distribution_rep );
   
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
   
   std::cout << std::endl;
   for( unsigned i = 0; i < 5; ++i )
@@ -126,11 +127,11 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createPointDistribution )
     parameter_list->get<Teuchos::ParameterList>( 
 					  "Point Distribution Example" );
   
-  Teuchos::RCP<Utility::SpatialDistribution> distribution = 
+  std::shared_ptr<Utility::SpatialDistribution> distribution = 
     Utility::SpatialDistributionFactory::createDistribution( 
 						    spatial_distribution_rep );
   
-  TEST_ASSERT( !distribution.is_null() );
+  TEST_ASSERT( distribution.get() );
   
   double position[3];
 

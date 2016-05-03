@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -25,7 +25,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::EvaluatedElectronDataContainer> data_container;
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 
 Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   native_distribution;
@@ -277,7 +277,7 @@ int main( int argc, char** argv )
   }
   
   // Create the native data file container
-  data_container.reset( new Data::EvaluatedElectronDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
 						     test_native_file_name ) );
 
   // Set binding energy

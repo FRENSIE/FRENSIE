@@ -35,7 +35,7 @@ double atomic_weight;
 Teuchos::RCP<MonteCarlo::Electroatom> atom;
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 unsigned hash_grid_bins = 100;
-double cutoff_angle = 1.0e-6;
+double cutoff_angle_cosine = 0.999999;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
                                                         atom,
                                                         photon_distribution_function,
                                                         false,
-                                                        cutoff_angle );
+                                                        cutoff_angle_cosine );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
   // Test that the analog elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -194,7 +194,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -202,7 +202,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -216,7 +216,6 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 {
   photon_distribution_function = MonteCarlo::TABULAR_DISTRIBUTION;
-
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
@@ -225,9 +224,9 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
                                                         atom,
                                                         photon_distribution_function,
                                                         false,
-                                                        cutoff_angle );
+                                                        cutoff_angle_cosine );
 }
-
+*/
 //---------------------------------------------------------------------------//
 /* Check that a electroatom with detailed 2BS photon angular distribution 
  * data can be created
@@ -244,7 +243,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
                                                         atom,
                                                         photon_distribution_function,
                                                         true,
-                                                        cutoff_angle );
+                                                        cutoff_angle_cosine );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -341,7 +340,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
   // Test that the analog elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -349,7 +348,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -357,7 +356,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 
@@ -415,7 +414,6 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
   TEST_FLOATING_EQUALITY( cross_section, 1.822340000000E+05, 1e-12 );
 }
 
-
 //---------------------------------------------------------------------------//
 // Check that a electroatom with electroionization subshell data can be created
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells )
@@ -430,7 +428,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
                                                         atom,
                                                         photon_distribution_function,
                                                         true,
-                                                        cutoff_angle );
+                                                        cutoff_angle_cosine );
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -527,7 +525,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
   // Test that the analog elastic cross section can be returned
   cross_section = atom->getReactionCrossSection(
                     2.000000000000E-03,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 
                           2.100574153670E+08, 
@@ -535,7 +533,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
 
   cross_section = atom->getReactionCrossSection(
                     4.000000000000E-04,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           4.436635458458E+08, 
@@ -543,7 +541,7 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
   
   cross_section = atom->getReactionCrossSection(
                     9.000000000000E-05,
-                    MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+                    MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section,  
                           8.887469904554E+08, 

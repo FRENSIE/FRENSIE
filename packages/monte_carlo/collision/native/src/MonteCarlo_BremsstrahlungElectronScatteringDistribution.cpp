@@ -140,7 +140,7 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution>( 
                          incoming_energy,
                          photon_energy,
                          d_bremsstrahlung_scattering_distribution );
@@ -153,7 +153,7 @@ void BremsstrahlungElectronScatteringDistribution::sample(
              double& photon_angle_cosine ) const
 {
   // Sample the photon energy
-  photon_energy = sampleTwoDDistributionCorrelated( 
+  photon_energy = sampleTwoDDistributionCorrelated<BremsstrahlungDistribution>( 
                                      incoming_energy,
                                      d_bremsstrahlung_scattering_distribution );
 

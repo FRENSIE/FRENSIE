@@ -29,7 +29,6 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index )
 {
-std::cout << "should not be here const" <<std::endl;
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
   testPrecondition( Utility::Sort::isSortedAscending(

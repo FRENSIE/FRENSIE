@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleSourceFactory.hpp"
-#include "MonteCarlo_StateSource.hpp"
+#include "MonteCarlo_CachedStateParticleSource.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -16,7 +16,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const Teuchos::RCP<Utility::OneDDistribution> 
+const std::shared_ptr<Utility::OneDDistribution> 
 ParticleSourceFactory::s_default_time_dist( 
 				       new Utility::DeltaDistribution( 0.0 ) );
 
@@ -36,7 +36,7 @@ void ParticleSourceFactory::validateSourceRep(
       source_rep.isParameter( "Energy Importance Function" ) ||
       source_rep.isParameter( "Time Distribution" ) || 
       source_rep.isParameter( "Time Importance Function" ) ||
-      source_rep.isParameter( "Rejection Cell" ) ||
+      source_rep.isParameter( "Rejection Cells" ) ||
       source_rep.isParameter( "Id" )  ||
       source_rep.isParameter( "Particle Type" ) )
   {
@@ -60,6 +60,15 @@ void ParticleSourceFactory::validateSourceRep(
 			"Error: A distributed source needs to have the "
 			"emitted particle type specified!" );
 
+    // Test if the weight parameter has been set if multiple source are present
+    if( num_sources > 1u )
+    {
+      TEST_FOR_EXCEPTION( !source_rep.isParameter( "Weight" ),
+                          InvalidParticleSourceRepresentation,
+                          "Error: When multiple sources are present, each "
+                          "must have a weight specified!" );
+    }  
+
     valid_source = true;
   }
 
@@ -68,20 +77,28 @@ void ParticleSourceFactory::validateSourceRep(
   {
     TEST_FOR_EXCEPTION( !source_rep.isParameter( "Particle State File" ),
 			InvalidParticleSourceRepresentation,
-			"Error: A state source needs to have a the particle "
+			"Error: A state source needs to have a particle "
 			"state hdf5 file specified!" );
+    
+    TEST_FOR_EXCEPTION( !source_rep.isParameter( "Internal State Bank Name" ),
+                        InvalidParticleSourceRepresentation,
+                        "Error: A state source needs to specify the name of "
+                        "the state bank name in the particle state file!" );
+    
+    TEST_FOR_EXCEPTION( !source_rep.isParameter( "File Type" ),
+                        InvalidParticleSourceRepresentation,
+                        "Error: A state source needs to specify the file type "
+                        "of the state bank file!" );
+
+    if( num_sources > 1u )
+    {
+      THROW_EXCEPTION( InvalidParticleSourceRepresentation,
+                       "Error: State sources cannot be part of a compound "
+                       "source!" );
+    }
    
     valid_source = true;
   }
-
-  // Test if the weight parameter has been set if multiple source are present
-  if( num_sources > 1u )
-  {
-    TEST_FOR_EXCEPTION( !source_rep.isParameter( "Weight" ),
-			InvalidParticleSourceRepresentation,
-			"Error: When multiple sources are present, each "
-			"must have a weight specified!" );
-  }  
 
   TEST_FOR_EXCEPTION( !valid_source,
 		      InvalidParticleSourceRepresentation,
@@ -96,14 +113,13 @@ void ParticleSourceFactory::validateParticleTypeName(
   TEST_FOR_EXCEPTION( !isValidParticleTypeName( particle_type_name ),
 		      InvalidParticleSourceRepresentation,
 		      "Error: An invalid particle type was specified ("
-		      << particle_type_name << "). Only 'Neutron', "
-		      "'Photon', 'Adjoint Neutron', and 'Adjoint Photon' are "
-		      "valid names!" );
+		      << particle_type_name << ")!" );
 }
 
 // Get the particle type enum
-ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterList& source_rep,
-			      			     const ParticleModeType& particle_mode )
+ParticleType ParticleSourceFactory::getParticleType( 
+                                      const Teuchos::ParameterList& source_rep,
+                                      const ParticleModeType& particle_mode )
 {
   // Extract the particle type
   std::string particle_type_name = 
@@ -111,25 +127,65 @@ ParticleType ParticleSourceFactory::getParticleType( const Teuchos::ParameterLis
 
   ParticleSourceFactory::validateParticleTypeName( particle_type_name );
 
-  ParticleType particle_type = convertParticleTypeNameToParticleTypeEnum( particle_type_name );
+  ParticleType particle_type = convertParticleTypeNameToParticleTypeEnum( 
+                                                          particle_type_name );
 
-  TEST_FOR_EXCEPTION( !isParticleModeTypeCompatible( particle_mode, particle_type ),
-		      InvalidParticleSourceRepresentation,
-		      "Error: particle type ("
-		      << particle_type << ") is not compatible with particle mode ("
-		      << particle_mode << ")" );
+  TEST_FOR_EXCEPTION( 
+                 !isParticleModeTypeCompatible( particle_mode, particle_type ),
+                 InvalidParticleSourceRepresentation,
+                 "Error: particle type ("
+                 << particle_type << ") is not compatible with particle mode ("
+                 << particle_mode << ")" );
 
   return particle_type;
 }
 
 // Create a state source
-double ParticleSourceFactory::createStateSource( 
+void ParticleSourceFactory::createCachedStateSource( 
 				      const Teuchos::ParameterList& source_rep,
-			  	      const ParticleModeType& particle_mode,
-				      Teuchos::RCP<ParticleSource>& source,
-				      const unsigned num_sources )
+                                      const ParticleModeType& particle_mode,
+                                      std::shared_ptr<ParticleSource>& source,
+                                      std::ostream& os_warn )
 {
-  return 0.0;
+  TEST_FOR_EXCEPTION( !source_rep.isParameter( "Particle State File" ),
+			InvalidParticleSourceRepresentation,
+			"Error: A state source needs to have a particle "
+			"state hdf5 file specified!" );
+    
+  TEST_FOR_EXCEPTION( !source_rep.isParameter( "Internal State Bank Name" ),
+                        InvalidParticleSourceRepresentation,
+                        "Error: A state source needs to specify the name of "
+                        "the state bank name in the particle state file!" );
+    
+    TEST_FOR_EXCEPTION( !source_rep.isParameter( "File Type" ),
+                        InvalidParticleSourceRepresentation,
+                        "Error: A state source needs to specify the file type "
+                        "of the state bank file!" );
+    
+  std::string particle_state_file_name = 
+    source_rep.get<std::string>( "Particle State File" );
+
+  std::string internal_bank_name = 
+    source_rep.get<std::string>( "Internal State Bank Name" );
+
+  std::string file_type = 
+    source_rep.get<std::string>( "File Type" );
+
+  Utility::ArchivableObject::ArchiveType archive_type;
+
+  if( file_type == "XML" )
+    archive_type = Utility::ArchivableObject::XML_ARCHIVE;
+  else if( file_type == "BINARY" )
+    archive_type = Utility::ArchivableObject::BINARY_ARCHIVE;
+  else if( file_type == "ASCII" )
+    archive_type = Utility::ArchivableObject::ASCII_ARCHIVE;
+  
+  source.reset( new CachedStateParticleSource( particle_state_file_name,
+                                               internal_bank_name,
+                                               archive_type ) );
+  
+  // Print out unused parameters
+  source_rep.unused( os_warn );
 }
 
 } // end MonteCarlo namespace

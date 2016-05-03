@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
@@ -26,32 +26,32 @@ class ElectroatomicReactionNativeFactory
 
 public:
 
-  //! Create an analog elastic scattering electroatomic reaction
-  static void createAnalogElasticReaction(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+  //! Create an cutoff elastic scattering electroatomic reaction
+  static void createCutoffElasticReaction(
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double lower_cutoff_angle = 1.0e-6 );
+        const double upper_cutoff_angle_cosine = 0.999999 );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   static void createScreenedRutherfordElasticReaction(
-        const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double upper_cutoff_angle = 1.0e-6 );
+        const double upper_cutoff_angle_cosine = 0.999999 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
-    const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
@@ -59,7 +59,7 @@ public:
 
   //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
-	const Data::EvaluatedElectronDataContainer& raw_electroatom_data,
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
 	const Teuchos::ArrayRCP<const double>& energy_grid,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
