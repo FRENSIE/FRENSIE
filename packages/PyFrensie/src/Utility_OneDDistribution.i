@@ -482,16 +482,14 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 %feature("docstring") 
 Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution
 "The independent values and dependent values should be stored in a NumPy array.
-The dependent values can represent the CDF instead of the distribution (pass in
-'True' as the 3rd argument)."
+"
 
 // Allow the user to use NumPy arrays in the constructor
 %extend Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>
 {
   // Constructor
   UnitAwareTabularDistribution( PyObject* independent_values_py_array,
-                                PyObject* dependent_values_py_array,
-                                const bool interpret_dependent_values_as_cdf )
+                                PyObject* dependent_values_py_array )
   {
     Teuchos::Array<double> independent_values;
     
@@ -504,29 +502,8 @@ The dependent values can represent the CDF instead of the distribution (pass in
                                             dependent_values );
 
     return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
-                                           independent_values,
-                                           dependent_values,
-                                           interpret_dependent_values_as_cdf );
-  }
-
-  // Constructor
-  UnitAwareTabularDistribution( PyObject* independent_values_py_array,
-                                PyObject* dependent_values_py_array )
-  {
-    Teuchos::Array<double> independent_values;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( independent_values_py_array, 
-                                    independent_values );
-
-    Teuchos::Array<double> dependent_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( dependent_values_py_array, 
-                                            dependent_values );
-
-    return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
                                                             independent_values,
-                                                            dependent_values,
-                                                            false );
+                                                            dependent_values );
   }
 };
 

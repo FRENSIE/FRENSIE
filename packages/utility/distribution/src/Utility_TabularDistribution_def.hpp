@@ -41,8 +41,7 @@ template<typename InterpolationPolicy,
 	 typename DependentUnit>
 UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( 
 		  const Teuchos::Array<double>& independent_values,
-		  const Teuchos::Array<double>& dependent_values,
-                  const bool interpret_dependent_values_as_cdf )
+		  const Teuchos::Array<double>& dependent_values )
   : d_distribution( independent_values.size() ),
     d_norm_constant( DNQT::zero() )
 {
@@ -53,39 +52,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
 					     independent_values.end() ) );
 
-  this->initializeDistribution( independent_values,
-				dependent_values,
-				interpret_dependent_values_as_cdf );
-}
-
-// CDF constructor
-/*! \details The independent values are assumed to be sorted (lowest to 
- * highest). Because information is lost when converting from a pdf to a cdf, 
- * only a first order approximation of the pdf will be calculated. Evaluate the
- * resulting distribution with caution (there will be no difference when 
- * sampling from the distribution)!
- */ 
-template<typename InterpolationPolicy, 
-	 typename IndependentUnit,
-	 typename DependentUnit>
-template<typename InputIndepQuantity>
-UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::UnitAwareTabularDistribution( 
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values )
-  : d_distribution( independent_values.size() ),
-    d_norm_constant( 0.0 )
-{
-  // Make sure there is at lease one bin
-  testPrecondition( independent_values.size() > 1 );
-  testPrecondition( cdf_values.size() == independent_values.size() );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
-  // Make sure that the cdf is valid
-  testPrecondition( Sort::isSortedAscending( cdf_values.begin(),
-					     cdf_values.end() ) );
-
-  this->initializeDistributionFromCDF( independent_values, cdf_values );
+  this->initializeDistributionFromRawData( independent_values,
+                                           dependent_values );
 }
 
 // Constructor
@@ -159,7 +127,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
   unitless_dist_instance.reconstructOriginalDistribution( input_indep_values,
 							  input_dep_values );
 
-  this->initializeDistribution( input_indep_values, input_dep_values, false );
+  this->initializeDistributionFromRawData( input_indep_values,
+                                           input_dep_values );
 }
 
 // Construct distribution from a unitless dist. (potentially dangerous)
@@ -433,6 +402,8 @@ UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>:
 
   // Make sure the sample is valid
   testPostcondition( !IQT::isnaninf( sample ) );
+  testPostcondition( sample >= this->getLowerBoundOfIndepVar() );
+  testPostcondition( sample <= this->getUpperBoundOfIndepVar() );
 
   return sample;
 }
@@ -579,7 +550,8 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 		      "independent values does not equal the number of "
 		      "dependent values" );
 		        
-  this->initializeDistribution( independent_values, dependent_values, false );
+  this->initializeDistributionFromRawData( independent_values,
+                                           dependent_values );
 }
 
 // Method for testing if two objects are equivalent
@@ -597,10 +569,9 @@ bool UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 template<typename InterpolationPolicy, 
 	 typename IndependentUnit,
 	 typename DependentUnit>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistribution(
+void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromRawData(
 			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf )
+			      const Teuchos::Array<double>& dependent_values )
 {
   // Make sure there is at least one bin
   testPrecondition( independent_values.size() > 1 );
@@ -611,67 +582,13 @@ void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentU
 
   this->convertUnitlessValues( independent_values, independent_quantities );
 
-  if( interpret_dependent_values_as_cdf )
-  {
-    this->initializeDistributionFromCDF( independent_quantities, 
-					 dependent_values );
-  }
-  else
-  {
-    // Convert the raw dependent values to quantities
-    Teuchos::Array<DepQuantity> dependent_quantities;
-
-    this->convertUnitlessValues( dependent_values, dependent_quantities );
-
-    this->initializeDistribution( independent_quantities, 
-				  dependent_quantities );
-  }
-}
-
-// Initialize the distribution from a cdf
-template<typename InterpolationPolicy, 
-	 typename IndependentUnit,
-	 typename DependentUnit>
-template<typename InputIndepQuantity>
-void UnitAwareTabularDistribution<InterpolationPolicy,IndependentUnit,DependentUnit>::initializeDistributionFromCDF(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values )
-{
-  // Make sure that there is at least one bin
-  testPrecondition( independent_values.size() > 1 );
-  // Make sure that for n bin boundaries there are n bin values
-  testPrecondition( independent_values.size() == cdf_values.size() );
-  // Make sure that the cdf is valid
-  testPrecondition( cdf_values[0] == 0.0 );
-  // Make sure that the bins are sorted
-  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					     independent_values.end() ) );
-  // Make sure that the bin values are sorted
-  testPrecondition( Sort::isSortedAscending( cdf_values.begin(), 
-					     cdf_values.end() ) );
-
-  // Resize the distribution
-  d_distribution.resize( independent_values.size() );
-
-  // Set the first bin boundary
-  d_distribution[0].first = IndepQuantity( independent_values[0] );
-  setQuantity( d_distribution[0].second, cdf_values[0] );
+  // Convert the raw dependent values to quantities
+  Teuchos::Array<DepQuantity> dependent_quantities;
   
-  // Assign the distribution
-  for( unsigned i = 0; i < independent_values.size(); ++i )
-  {
-    d_distribution[i].first = independent_values[i];
-    
-    setQuantity( d_distribution[i].second, cdf_values[i] );
-  }
-
-  DataProcessor::calculateContinuousPDF<FIRST,THIRD,SECOND>( d_distribution );
-
-  // Set normalization constant
-  d_norm_constant = 1.0/d_distribution.back().second;
-
-  // Calculate the slopes of the PDF
-  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
+  this->convertUnitlessValues( dependent_values, dependent_quantities );
+  
+  this->initializeDistribution( independent_quantities, 
+                                dependent_quantities );
 }
 
 // Initialize the distribution

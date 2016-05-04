@@ -338,7 +338,7 @@ DIST_NAME( DISTRIBUTION, PARAMS )::__ne__;
 
 // Add a typedef for the renamed distribution so that the extended methods
 // can be compiled
-%{
+%inline %{
 typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 %}
 
@@ -379,7 +379,7 @@ typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 
 // Add a typedef for the renamed distribution so that the extended methods
 // can be compiled
-%{
+%inline %{
 typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 %}
 
