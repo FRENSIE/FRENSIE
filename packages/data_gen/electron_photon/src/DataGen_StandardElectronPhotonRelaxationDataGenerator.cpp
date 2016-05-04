@@ -29,21 +29,13 @@ const double StandardElectronPhotonRelaxationDataGenerator::s_threshold_energy_n
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator( 
         const unsigned atomic_number,
         const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-<<<<<<< HEAD
         const Teuchos::RCP<const Data::ENDLDataContainer>&
             endl_data_container,
-=======
-        const Teuchos::RCP<Data::ENDLFileHandler>& eedl_file_handler,
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
         const double min_photon_energy,
         const double max_photon_energy,
         const double min_electron_energy,
         const double max_electron_energy,
-<<<<<<< HEAD
         const double cutoff_angle_cosine,
-=======
-        const double cutoff_angle,
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
         const double occupation_number_evaluation_tolerance,
         const double subshell_incoherent_evaluation_tolerance,
         const double grid_convergence_tol,
@@ -51,20 +43,12 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
         const double grid_distance_tol )
   : ElectronPhotonRelaxationDataGenerator( atomic_number ),
     d_ace_epr_data( ace_epr_data ),
-<<<<<<< HEAD
     d_endl_data_container( endl_data_container ),
-=======
-    d_eedl_file_handler( eedl_file_handler ),
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
     d_min_photon_energy( min_photon_energy ),
     d_max_photon_energy( max_photon_energy ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
-<<<<<<< HEAD
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
-=======
-    d_cutoff_angle( cutoff_angle ),
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
     d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
     d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
     d_grid_convergence_tol( grid_convergence_tol ),
@@ -82,15 +66,8 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   testPrecondition( min_electron_energy > 0.0 );
   testPrecondition( min_electron_energy < max_electron_energy );
   // Make sure the cutoff angle is valid
-<<<<<<< HEAD
   testPrecondition( cutoff_angle_cosine <= 1.0 );
   testPrecondition( cutoff_angle_cosine > -1.0 );
-
-  
-=======
-  testPrecondition( cutoff_angle >= 0.0 );
-  testPrecondition( cutoff_angle < 2.0 );
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
 }
 
 // Populate the electron-photon-relaxation data container
@@ -101,7 +78,6 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   // Set the table data
   // Set the atomic number
   this->setAtomicNumber( data_container );
-<<<<<<< HEAD
   data_container.setMinPhotonEnergy( d_min_photon_energy );
   data_container.setMaxPhotonEnergy( d_max_photon_energy );
   data_container.setMinElectronEnergy( d_min_electron_energy );
@@ -115,12 +91,6 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   data_container.setGridAbsoluteDifferenceTolerance( d_grid_absolute_diff_tol );
   data_container.setGridDistanceTolerance( d_grid_distance_tol );
 
-=======
-/*
-  // Set cutoff angle
-  data_container.setCutoffAngle( d_cutoff_angle );
-*/
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
   // Set the relaxation data
   std::cout << "Setting the relaxation data...";
   std::cout.flush();

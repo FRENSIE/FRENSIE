@@ -173,7 +173,7 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
 
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
 
-  // Test that the analog elastic cross section can be returned
+  // Test that the cutoff elastic cross section can be returned
   double energy = 1.00000e-05;
   cross_section = material->getMacroscopicReactionCrossSection(
 			    energy,

@@ -178,10 +178,12 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
  * ignores relaxation, will be created.
  */
 void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
-	 const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
+	 const Data::ENDLDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 const bool use_atomic_relaxation_data )
 {
+//! \todo Implement atomic relaxation using ENDL tables
+/*
   if( use_atomic_relaxation_data )
   {
     if( raw_photoatom_data.hasRelaxationData() )
@@ -202,14 +204,14 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  const std::vector<std::pair<unsigned,unsigned> >& transitions = 
 	    raw_photoatom_data.getSubshellRelaxationVacancies( *subshell_it );
 	  
-	  Teuchos::Array<SubshellType> primary_transitions(transitions.size()),
+	  Teuchos::Array<Data::SubshellType> primary_transitions(transitions.size()),
 	    secondary_transitions( transitions.size() );
 
 	  for( unsigned i = 0; i < transitions.size(); ++i )
 	  {
-	    primary_transitions[i] = convertEADLDesignatorToSubshellEnum(
+	    primary_transitions[i] = Data::convertEADLDesignatorToSubshellEnum(
 							transitions[i].first );
-	    secondary_transitions[i] = convertEADLDesignatorToSubshellEnum(
+	    secondary_transitions[i] = Data::convertEADLDesignatorToSubshellEnum(
 						       transitions[i].second );
 	  }
 
@@ -223,7 +225,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 
 	  Teuchos::RCP<const SubshellRelaxationModel> subshell_model(
 	          new DetailedSubshellRelaxationModel(
-	                   convertEADLDesignatorToSubshellEnum( *subshell_it ),
+	                   Data::convertEADLDesignatorToSubshellEnum( *subshell_it ),
 			   primary_transitions,
 			   secondary_transitions,
 			   relaxation_energies,
@@ -251,7 +253,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
   {
     atomic_relaxation_model = 
       AtomicRelaxationModelFactory::default_void_model;
-  }
+  }*/
 }
 
 // Create and cache the atomic relaxation model
@@ -339,10 +341,10 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
  * atomic relaxation model.
  */
 void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
-         const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
+         const Data::ENDLDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 const bool use_atomic_relaxation_data )
-{
+{/*
   // Check if the model for this atom has already been created
   if( d_relaxation_models.find( raw_photoatom_data.getAtomicNumber() ) !=
       d_relaxation_models.end() )
@@ -363,7 +365,7 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
       d_relaxation_models[raw_photoatom_data.getAtomicNumber()] =
 	atomic_relaxation_model;
     }
-  }
+  }*/
 }
 
 // Create the subshell relaxation models

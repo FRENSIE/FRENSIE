@@ -528,7 +528,6 @@ void ENDLDataContainer::load( Archive& ar,
 				                        d_elastic_transport_cross_section );
   ar & boost::serialization::make_nvp( "cutoff_elastic_cross_section", 
                                         d_cutoff_elastic_cross_section );
-
   ar & boost::serialization::make_nvp(
     "cutoff_elastic_residual_incident_energy", 
     d_cutoff_elastic_residual_incident_energy );
@@ -542,7 +541,6 @@ void ENDLDataContainer::load( Archive& ar,
     d_cutoff_elastic_scattered_electron_energy );
   ar & boost::serialization::make_nvp( "cutoff_elastic_angular_energy_grid",
 				                        d_cutoff_elastic_angular_energy_grid );
-
   ar & boost::serialization::make_nvp( "cutoff_elastic_angles", 
                                         d_cutoff_elastic_angles );
   ar & boost::serialization::make_nvp( "cutoff_elastic_pdf", 

@@ -90,7 +90,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
                    sampleAndRecordTrialsImpl )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistributions(
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
         ace_cutoff_elastic_distribution,
         ace_sr_elastic_distribution,
         *xss_data_extractor );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
                    sample )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistributions(
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
                                                 ace_cutoff_elastic_distribution,
                                                 ace_sr_elastic_distribution,
                                                 *xss_data_extractor );

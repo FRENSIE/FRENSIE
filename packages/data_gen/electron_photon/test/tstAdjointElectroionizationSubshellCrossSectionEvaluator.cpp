@@ -192,12 +192,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> binding_energies =
     xss_data_extractor->extractSubshellBindingEnergies();
 
-  Teuchos::Array<MonteCarlo::SubshellType> subshell_order(
+  Teuchos::Array<Data::SubshellType> subshell_order(
 					    subshell_endf_designators.size() );
 
     for( unsigned i = 0; i < subshell_order.size(); ++i )
     {
-      subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+      subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
     }
 

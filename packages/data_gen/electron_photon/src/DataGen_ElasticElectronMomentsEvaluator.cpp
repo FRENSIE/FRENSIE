@@ -36,7 +36,7 @@ double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle_cosine = 0.999
 
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
-    const Data::EvaluatedElectronDataContainer& native_eedl_data,
+    const Data::ElectronPhotonRelaxationDataContainer& native_eedl_data,
     const double& cutoff_angle )
   : d_native_eedl_data ( native_eedl_data ),
     d_cutoff_angle( cutoff_angle )
@@ -50,9 +50,9 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   energy_grid.assign( native_eedl_data.getElectronEnergyGrid().begin(),
                       native_eedl_data.getElectronEnergyGrid().end() );
 
-  // Create the hard elastic distributions ( both Analog and Screened Rutherford ) 
+  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford ) 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-    d_analog_distribution,
+    d_cutoff_distribution,
     d_rutherford_distribution,
     native_eedl_data,
     cutoff_angle );
@@ -69,11 +69,11 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                        grid_searcher,
 					   d_rutherford_reaction );
 
-  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+  MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 					   native_eedl_data,
 					   energy_grid,
                        grid_searcher,
-					   d_analog_reaction );
+					   d_cutoff_reaction );
 }
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
@@ -112,7 +112,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
-            d_analog_distribution->evaluatePDF( incoming_energy,
+            d_cutoff_distribution->evaluatePDF( incoming_energy,
                                                 scattering_angle );
 
   // Evaluate the Legendre Polynomial at the given angle and order
@@ -135,7 +135,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDFAtEnergyBin(
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
-            d_analog_distribution->evaluatePDF( incoming_energy_bin,
+            d_cutoff_distribution->evaluatePDF( incoming_energy_bin,
                                                 scattering_angle );
 
   // Evaluate the Legendre Polynomial at the given angle and order
@@ -177,9 +177,9 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   {
     double abs_error, moment_k;
 
-    // Get the analog cross section
-    double analog_cross_section = 
-        d_analog_reaction->getCrossSection( energy ); 
+    // Get the cutoff cross section
+    double cutoff_cross_section = 
+        d_cutoff_reaction->getCrossSection( energy ); 
 
     // Calucuate the component of the moment from screened Rutherford peak
     evaluateScreenedRutherfordMoment( rutherford_moment, energy, i );
@@ -213,7 +213,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
       tabular_moment += moment_k;
     }
     legendre_moments[i] =
-        rutherford_moment + tabular_moment*analog_cross_section;
+        rutherford_moment + tabular_moment*cutoff_cross_section;
   }
 }
 
@@ -229,7 +229,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   testPrecondition( n >= 0 );
 
   // Get the energy at the given angular energy bin
-  double energy = d_analog_distribution->getEnergy( energy_bin );
+  double energy = d_cutoff_distribution->getEnergy( energy_bin );
 
   // Get angular grid
   Teuchos::Array<double> angular_grid;
@@ -252,9 +252,9 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   {
     double abs_error, moment_k;
 
-    // Get the analog cross section
-    double analog_cross_section = 
-        d_analog_reaction->getCrossSection( energy ); 
+    // Get the cutoff cross section
+    double cutoff_cross_section = 
+        d_cutoff_reaction->getCrossSection( energy ); 
 
     // Calucuate the component of the moment from screened Rutherford peak
     evaluateScreenedRutherfordMoment( rutherford_moment, energy, i );
@@ -288,7 +288,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
       tabular_moment += moment_k;
     }
     legendre_moments[i] = 
-        rutherford_moment + tabular_moment*analog_cross_section;
+        rutherford_moment + tabular_moment*cutoff_cross_section;
   }
 }
 

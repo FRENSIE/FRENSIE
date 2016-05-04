@@ -306,12 +306,18 @@ public:
   const std::vector<double>& getCutoffElasticAngularEnergyGrid() const;
 
   //! Return the cutoff elastic scattering angles for an incident energy
-  const std::vector<double>& getCutoffElasticAngles(
+  const std::vector<double>& getCutoffElasticAnglesAtEnergy(
 					       const double incident_energy ) const;
 
   //! Return the cutoff elastic scatering pdf for an incident energy
-  const std::vector<double>& getCutoffElasticPDF(
+  const std::vector<double>& getCutoffElasticPDFAtEnergy(
 					       const double incident_energy ) const;
+
+  //! Return the cutoff elastic scattering angles for all incident energy
+  const std::map<double,std::vector<double> >& getCutoffElasticAngles() const;
+
+  //! Return the cutoff elastic scatering pdf for all incident energy
+  const std::map<double,std::vector<double> >& getCutoffElasticPDF() const;
 
   //! Return the total elastic electron cross section
   const std::vector<double>& getTotalElasticCrossSection() const;
@@ -361,14 +367,22 @@ public:
                            const unsigned subshell ) const;
 
   //! Return the electroionization recoil energy for a subshell and incident energy
-  const std::vector<double>& getElectroionizationRecoilEnergy( 
+  const std::vector<double>& getElectroionizationRecoilEnergyAtEnergy( 
                            const unsigned subshell,
 					       const double incident_energy ) const;
 
+  //! Return the electroionization recoil energy for a subshell and all incident energies
+  const std::map<double,std::vector<double> >&
+    getElectroionizationRecoilEnergy( const unsigned subshell ) const;
+
   //! Return the electroionization recoil energy pdf for a subshell and incident energy
-  const std::vector<double>& getElectroionizationRecoilPDF( 
+  const std::vector<double>& getElectroionizationRecoilPDFAtEnergy( 
                            const unsigned subshell,
 					       const double incident_energy ) const;
+
+  //! Return the electroionization recoil energy pdf for a subshell and all incident energies
+  const std::map<double,std::vector<double> >&
+    getElectroionizationRecoilPDF( const unsigned subshell ) const;
 
 //---------------------------------------------------------------------------//
 // GET BREMSSTRAHLUNG DATA 
@@ -390,12 +404,20 @@ public:
   const std::vector<double>& getBremsstrahlungPhotonEnergyGrid() const;
 
   //! Return the bremsstrahlung photon energy for an incident energy
-  const std::vector<double>& getBremsstrahlungPhotonEnergy(
+  const std::vector<double>& getBremsstrahlungPhotonEnergyAtEnergy(
 					       const double incident_energy ) const;
 
+  //! Return the bremsstrahlung photon energy for all incident energies
+  const std::map<double,std::vector<double> >&
+    getBremsstrahlungPhotonEnergy() const;
+
   //! Return the bremsstrahlung photon energy pdf for an incident energy
-  const std::vector<double>& getBremsstrahlungPhotonPDF(
+  const std::vector<double>& getBremsstrahlungPhotonPDFAtEnergy(
 					       const double incident_energy ) const;
+
+  //! Return the bremsstrahlung photon energy pdf for all incident energies
+  const std::map<double,std::vector<double> >&
+    getBremsstrahlungPhotonPDF() const;
 
   //! Return the bremsstrahlung incident electron energy grid for the average energy of the secondary electron
   const std::vector<double>& getBremsstrahlungAverageElectronIncidentEnergy() const;

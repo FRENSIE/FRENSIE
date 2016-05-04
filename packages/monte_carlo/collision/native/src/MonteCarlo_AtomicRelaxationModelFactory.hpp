@@ -20,7 +20,7 @@
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ENDLDataContainer.hpp"
 
 namespace MonteCarlo{
 
@@ -51,7 +51,7 @@ public:
 
   //! Create the atomic relaxation model (using Native eedl data)
   static void createAtomicRelaxationModel(
-	const Data::EvaluatedElectronDataContainer& raw_photoatomc_data,
+	const Data::ENDLDataContainer& raw_photoatomc_data,
 	Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	const bool use_atomic_relaxation_data );
 
@@ -63,23 +63,23 @@ public:
   ~AtomicRelaxationModelFactory()
   { /* ... */ }
 
-  //! Create and cache the atomic relaxation model
+  //! Create and cache the atomic relaxation model (ACE)
   void createAndCacheAtomicRelaxationModel(
-		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-		  const bool use_atomic_relaxation_data );
+        const Data::XSSEPRDataExtractor& raw_photoatom_data,
+        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const bool use_atomic_relaxation_data );
 
-  //! Create and cache the atomic relaxation model
+  //! Create and cache the atomic relaxation model (Native)
   void createAndCacheAtomicRelaxationModel(
-         const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	 const bool use_atomic_relaxation_data ); 
+        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const bool use_atomic_relaxation_data ); 
 
-  //! Create and cache the atomic relaxation model
+  //! Create and cache the atomic relaxation model (ENDL)
   void createAndCacheAtomicRelaxationModel(
-         const Data::EvaluatedElectronDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	 const bool use_atomic_relaxation_data ); 
+        const Data::ENDLDataContainer& raw_photoatom_data,
+        Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+        const bool use_atomic_relaxation_data ); 
 
 private:
 

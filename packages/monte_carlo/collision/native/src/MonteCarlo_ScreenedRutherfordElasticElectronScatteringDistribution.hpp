@@ -92,7 +92,20 @@ public:
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
-                               SubshellType& shell_of_interaction ) const;
+                               Data::SubshellType& shell_of_interaction ) const;
+
+  //! Evaluate Moliere's atomic screening constant at the given electron energy
+  double evaluateMoliereScreeningConstant( const double energy ) const;
+
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy) const;
+
+  // evaluate the pdf integrated from -1 to angle_cosine
+  double evaluateIntegratedPDF( 
+        const double& scattering_angle_cosine, 
+        const ParameterArray::const_iterator& lower_bin_boundary, 
+        const ParameterArray::const_iterator& upper_bin_boundary,
+        const double& interpolation_fraction ) const;
 
 protected:
 
@@ -100,9 +113,6 @@ protected:
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
-
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  double evaluateMoliereScreeningConstant( const double energy ) const;
 
 private:
 
@@ -114,15 +124,6 @@ private:
         ParameterArray::const_iterator& upper_bin_boundary,
         double& interpolation_fraction ) const;
 */
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy) const;
-
-  // evaluate the pdf integrated from -1 to angle_cosine
-  double evaluateIntegratedPDF( 
-        const double& scattering_angle_cosine, 
-        const ParameterArray::const_iterator& lower_bin_boundary, 
-        const ParameterArray::const_iterator& upper_bin_boundary,
-        const double& interpolation_fraction ) const;
 
   // The fine structure constant (fsc) squared
   static double s_fine_structure_const_squared;

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
-#define MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
+#ifndef MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
@@ -23,7 +23,7 @@ class ElectroatomicReactionACEFactory
 
 public:
 
-  //! Create an analog elastic scattering electroatomic reaction
+  //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -91,7 +91,7 @@ inline bool ElectroatomicReactionACEFactory::notEqualZero( double value )
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
+#endif // end MONTE_CARLO_ELECTROATOMIC_REACTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroatomicReactionACEFactory.hpp

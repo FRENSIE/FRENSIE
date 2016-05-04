@@ -197,15 +197,9 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the electron
 void HardElasticElectronScatteringDistribution::scatterElectron( 
-<<<<<<< HEAD
-				     ElectronState& electron,
-				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
-=======
-                                ElectronState& electron,
-			                    ParticleBank& bank,
-                                Data::SubshellType& shell_of_interaction ) const
->>>>>>> 5fb9119b76c416abd7e326d1ac55ec76f147ec8b
+        ElectronState& electron,
+        ParticleBank& bank,
+        Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -216,7 +210,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
 				                   scattering_angle_cosine,
 				                   trial_dummy );
 
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   electron.rotateDirection( scattering_angle_cosine, 
@@ -227,7 +221,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
 void HardElasticElectronScatteringDistribution::scatterAdjointElectron( 
 				     AdjointElectronState& adjoint_electron,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -238,7 +232,7 @@ void HardElasticElectronScatteringDistribution::scatterAdjointElectron(
 				                   scattering_angle_cosine,
 				                   trial_dummy );
   
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_electron.rotateDirection( scattering_angle_cosine, 

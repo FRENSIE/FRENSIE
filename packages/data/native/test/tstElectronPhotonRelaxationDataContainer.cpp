@@ -648,39 +648,39 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the elastic angles can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
-                   setAnalogElasticAnglesAtEnergy )
+                   setCutoffElasticAnglesAtEnergy )
 {
   std::vector<double> angles( 3 );
   angles[0] = -1.0;
   angles[1] = 0.0;
   angles[2] = 0.90;
 
-  epr_data_container.setAnalogElasticAnglesAtEnergy( 1.0, angles );
+  epr_data_container.setCutoffElasticAnglesAtEnergy( 1.0, angles );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getAnalogElasticAngles(1.0),
+  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticAngles(1.0),
                        angles );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic pdf can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
-                   setAnalogElasticPDFAtEnergy )
+                   setCutoffElasticPDFAtEnergy )
 {
   std::vector<double> pdf( 3 );
   pdf[0] = 0.1;
   pdf[1] = 0.2;
   pdf[2] = 0.7;
 
-  epr_data_container.setAnalogElasticPDFAtEnergy( 1.0, pdf );
+  epr_data_container.setCutoffElasticPDFAtEnergy( 1.0, pdf );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getAnalogElasticPDF(1.0),
+  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticPDF(1.0),
                        pdf );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic angles can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
-                   setAnalogElasticAngles )
+                   setCutoffElasticAngles )
 {
   std::vector<double> angles( 3 );
   angles[0] = -1.0;
@@ -692,16 +692,16 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   angles_map[energy] = angles;
 
-  epr_data_container.setAnalogElasticAngles( angles_map );
+  epr_data_container.setCutoffElasticAngles( angles_map );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getAnalogElasticAngles(1.0),
+  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticAngles(1.0),
                        angles );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the elastic pdf can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
-                   setAnalogElasticPDF )
+                   setCutoffElasticPDF )
 {
   std::vector<double> pdf( 3 );
   pdf[0] = 0.1;
@@ -713,9 +713,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   pdf_map[energy] = pdf;
 
-  epr_data_container.setAnalogElasticPDF( pdf_map );
+  epr_data_container.setCutoffElasticPDF( pdf_map );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getAnalogElasticPDF(1.0),
+  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticPDF(1.0),
                        pdf );
 }
 
@@ -1346,9 +1346,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1533,9 +1533,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1717,9 +1717,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getElasticAngularEnergyGrid().front(), 
     1.0 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticAngles(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
-    epr_data_container_copy.getAnalogElasticPDF(1.0).size(), 3 );
+    epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 

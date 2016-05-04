@@ -66,7 +66,7 @@ public:
 
   void react( MonteCarlo::ElectronState& electron,
 	      MonteCarlo::ParticleBank& bank,
-	      MonteCarlo::SubshellType& shell_of_interaction ) const
+	      Data::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 };
 

@@ -120,10 +120,10 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
   // Electron Data
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
-  ar & boost::serialization::make_nvp( "analog_elastic_angles", 
-                                        d_analog_elastic_angles );
-  ar & boost::serialization::make_nvp( "analog_elastic_pdf", 
-                                        d_analog_elastic_pdf );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_angles", 
+                                        d_cutoff_elastic_angles );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf", 
+                                        d_cutoff_elastic_pdf );
   ar & boost::serialization::make_nvp( 
             "screened_rutherford_normalization_constant", 
             d_screened_rutherford_normalization_constant );
@@ -294,10 +294,10 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
   // Electron Data
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
-  ar & boost::serialization::make_nvp( "analog_elastic_angles", 
-                                        d_analog_elastic_angles );
-  ar & boost::serialization::make_nvp( "analog_elastic_pdf", 
-                                        d_analog_elastic_pdf );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_angles", 
+                                        d_cutoff_elastic_angles );
+  ar & boost::serialization::make_nvp( "cutoff_elastic_pdf", 
+                                        d_cutoff_elastic_pdf );
   ar & boost::serialization::make_nvp( 
             "screened_rutherford_normalization_constant", 
             d_screened_rutherford_normalization_constant );

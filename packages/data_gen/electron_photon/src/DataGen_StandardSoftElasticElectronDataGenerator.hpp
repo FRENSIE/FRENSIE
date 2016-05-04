@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_SoftElasticElectronDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
@@ -33,7 +33,7 @@ public:
   //! Constructor
   StandardSoftElasticElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::EvaluatedElectronDataContainer>& native_eedl_data,
+	   const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
        const double cutoff_angle,
@@ -57,7 +57,7 @@ protected:
 private:
 
   // The EEDL data
-  Teuchos::RCP<const Data::EvaluatedElectronDataContainer> d_native_eedl_data;
+  Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer> d_native_eedl_data;
 
   // The min electron energy
   double d_min_electron_energy;

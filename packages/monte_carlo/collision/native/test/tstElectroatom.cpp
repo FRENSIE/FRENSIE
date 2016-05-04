@@ -332,7 +332,7 @@ TEUCHOS_UNIT_TEST( Electroatom, getReactionCrossSection )
   
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
 
-  // Analog Elastic
+  // Cutoff Elastic
   cross_section = ace_electroatom->getReactionCrossSection(
                     2.000000000000E-03,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );

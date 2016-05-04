@@ -65,7 +65,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrial
 void AtomicExcitationAdjointElectronScatteringDistribution::scatterAdjointElectron( 
                       AdjointElectronState& adjoint_electron,
                       ParticleBank& bank,
-                      SubshellType& shell_of_interaction ) const
+                      Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy;
   double scattering_angle_cosine;

@@ -22,7 +22,7 @@
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
@@ -181,14 +181,14 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
 
   Teuchos::RCP<ElectroatomicReaction> electroionization_subshell_reaction;
 
-  SubshellType subshell_type;
+  Data::SubshellType subshell_type;
 
   std::set<unsigned>::iterator shell = subshells.begin();
 
   for( shell; shell != subshells.end(); ++shell ) 
   {
     // Convert subshell number to enum
-    subshell_type = convertEADLDesignatorToSubshellEnum( *shell );
+    subshell_type = Data::convertEADLDesignatorToSubshellEnum( *shell );
 
     // Electroionization cross section 
     Teuchos::ArrayRCP<double> subshell_cross_section;

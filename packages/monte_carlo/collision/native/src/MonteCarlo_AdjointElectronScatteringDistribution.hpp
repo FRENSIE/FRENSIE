@@ -11,9 +11,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronState.hpp"
-#include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
 
@@ -46,7 +46,7 @@ public:
   virtual void scatterAdjointElectron( 
 				AdjointElectronState& adjoint_electron,
 				ParticleBank& bank,
-				SubshellType& shell_of_interaction ) const = 0;
+				Data::SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace

@@ -130,7 +130,7 @@ private:
   // Extract electron cross sections
   template<typename InterpPolicy>
   void extractElectronCrossSection(
-        const std::vecto<double>& raw_energy_grid,
+        const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
         Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
 

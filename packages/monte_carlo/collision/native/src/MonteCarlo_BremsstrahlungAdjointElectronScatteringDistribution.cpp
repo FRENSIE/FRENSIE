@@ -59,7 +59,7 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sampleAndRecordTrials(
 void BremsstrahlungAdjointElectronScatteringDistribution::scatterAdjointElectron( 
                                 AdjointElectronState& adjoint_electron,
                                 ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // outgoing electron energy
   double outgoing_energy;

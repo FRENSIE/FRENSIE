@@ -22,7 +22,7 @@ namespace DataGen{
 // Constructor
 StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::EvaluatedElectronDataContainer>& native_eedl_data,
+	   const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
 	   const double min_electron_energy,
 	   const double max_electron_energy,
        const double cutoff_angle,

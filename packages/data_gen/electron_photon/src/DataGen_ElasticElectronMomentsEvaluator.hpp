@@ -18,7 +18,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -41,7 +41,7 @@ public:
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
-    const Data::EvaluatedElectronDataContainer& native_eedl_data,
+    const Data::ElectronPhotonRelaxationDataContainer& native_eedl_data,
     const double& cutoff_angle = 1.0e-6 );
 
   //! Destructor
@@ -86,22 +86,22 @@ public:
 
 private:
 
-  // The analog reaction
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_analog_reaction;
+  // The cutoff reaction
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_cutoff_reaction;
 
   // The screened Rutherford reaction
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_rutherford_reaction;
 
-  // The analog distribution
+  // The cutoff distribution
   Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
     d_rutherford_distribution;
 
   // The screened Rutherford distribution
-  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
-    d_analog_distribution;
+  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+    d_cutoff_distribution;
 
   // The raw ace electron data extractor
-  Data::EvaluatedElectronDataContainer d_native_eedl_data;
+  Data::ElectronPhotonRelaxationDataContainer d_native_eedl_data;
 
   // The angle cutoff between hard and soft scattering
   double d_cutoff_angle;

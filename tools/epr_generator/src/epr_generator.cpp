@@ -22,6 +22,7 @@
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_ENDLFileHandler.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -145,16 +146,18 @@ int main( int argc, char** argv )
     
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
-    std::string endl_file_path = "/home/software/endldata/eedl/Pb/za082000";
+    std::string endl_file_path = "/home/software/mcnpdata/endldata/endl_82_native.xml";
 
-    Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
-        new Data::ENDLFileHandler( endl_file_path ) );
+    Teuchos::RCP<Data::ENDLDataContainer> endl_data_container( 
+        new Data::ENDLDataContainer( 
+            endl_file_path,
+            Utility::ArchivableObject::XML_ARCHIVE ) );
 
     epr_generator.reset( 
 	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator( 
 					    atomic_number,
 					    ace_epr_extractor,
-                        endl_file_handler,    
+                        endl_data_container,    
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,

@@ -425,7 +425,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
   adjoint_electron.setEnergy( 1.0e-3 );

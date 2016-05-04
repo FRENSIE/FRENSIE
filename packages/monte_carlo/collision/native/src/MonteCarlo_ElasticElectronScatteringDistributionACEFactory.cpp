@@ -18,8 +18,8 @@
 
 namespace MonteCarlo{
 
-// Create the analog elastic distributions ( both Cutoff and Screened Rutherford ) 
-void ElasticElectronScatteringDistributionACEFactory::createAnalogElasticDistributions(
+// Create the cutoff elastic distributions ( both Cutoff and Screened Rutherford ) 
+void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&

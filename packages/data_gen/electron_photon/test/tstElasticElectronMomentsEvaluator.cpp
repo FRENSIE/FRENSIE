@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
-#include "Data_EvaluatedElectronDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
@@ -27,7 +27,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::EvaluatedElectronDataContainer> native_eedl_data;
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> native_eedl_data;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>
   evaluator;
 
@@ -440,7 +440,7 @@ int main( int argc, char** argv )
   }
 
   // Create the native data file container
-  native_eedl_data.reset( new Data::EvaluatedElectronDataContainer( 
+  native_eedl_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
 						     test_native_file_name ) );
 
 

@@ -38,7 +38,7 @@ Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Check that an elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
-		           createAnalogElasticReaction )
+		           createCutoffElasticReaction )
 {
   MonteCarlo::ElectroatomicReactionACEFactory::createCutoffElasticReaction(
                 *xss_data_extractor,

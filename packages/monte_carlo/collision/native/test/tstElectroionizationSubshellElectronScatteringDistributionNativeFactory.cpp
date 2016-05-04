@@ -231,7 +231,7 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.0 );
