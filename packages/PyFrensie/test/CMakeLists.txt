@@ -24,3 +24,7 @@ ADD_CUSTOM_TARGET(testingHelpers ALL
 # Add the Utility.Distribution unit tests
 PyFrensie_MAKE_TEST(tstUtility.Distribution)
 ADD_TEST(PyFrensie.Utility.Distribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.py)
+
+# Add the Utility.Prng unit tests
+PyFrensie_MAKE_TEST(tstUtility.Prng)
+ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)

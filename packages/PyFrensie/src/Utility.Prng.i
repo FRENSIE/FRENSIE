@@ -167,9 +167,6 @@ This method initializes the random number stream for the next particle history
 number.
 "
 
-%feature("autodoc", "getRandomNumber() -> double")
-Utility::RandomNumberGenerator::getRandomNumber;
-
 %feature("docstring")
 Utility::RandomNumberGenerator::setFakeStream
 "
@@ -188,19 +185,11 @@ that the original random number stream state will be reset as well.
 
 // Ignore the set fake stream method
 %ignore Utility::RandomNumberGenerator::setFakeStream( const std::vector<double>&, const unsigned );
+%ignore Utility::RandomNumberGenerator::setFakeStream( const std::vector<double>& );
 
 // Add some useful methods to the RandomNumberGenerator
 %extend Utility::RandomNumberGenerator
 {
-  // Only allow doubles to be generated
-  static PyObject* getRandomNumber()
-  {
-    double random_number = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-    return PyFloat_FromDouble( random_number );
-  }
-
   // Create a new set fake stream method that takes a numpy array
   static void setFakeStream( PyObject* fake_stream_py_array )
   {
@@ -214,6 +203,9 @@ that the original random number stream state will be reset as well.
 
 // Include the RandomNumberGenerator
 %include "Utility_RandomNumberGenerator.hpp"
+
+// Instantiate the getRandomNumber template method
+%template(getRandomNumber) Utility::RandomNumberGenerator::getRandomNumber<double>;
 
 // Turn off the exception handling
 %exception;

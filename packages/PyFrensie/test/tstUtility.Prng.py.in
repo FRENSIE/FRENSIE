@@ -1,0 +1,137 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Utility.Prng module unit tests
+#  \file   tstUtility.Prng.py.in
+#  \author Alex Robinson
+#  \brief  Unit tests for the Utility.Prng module
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Prng = importPyFrensieModuleFromBuildDir('Utility.Prng')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the LinearCongruentialGenerator
+class LinearCongruentialGeneratorTestCase(unittest.TestCase):
+    "TestCase class for Utility.Prng.LinearCongruentialGenerator class"
+
+    def setUp(self):
+        self.lcg = Prng.LinearCongruentialGenerator()
+
+    def testConstructor(self):
+        "*Test Utility.Prng.LinearCongruentialGenerator constructor"
+        self.assertTrue(isinstance(self.lcg, Prng.LinearCongruentialGenerator))
+
+    def testGetRandomNumber(self):
+        "*Test Utility.Prng.LinearCongruentialGenerator getRandomNumber method"
+        random_number = self.lcg.getRandomNumber()
+        self.assertTrue(random_number >= 0.0 and random_number < 1.0)
+
+    def testGetGeneratorState(self):
+        "*Test Utility.Prng.LinearCongruentialGenerator getGeneratorState method"
+        state = self.lcg.getGeneratorState()
+        self.assertTrue(state >= 0)
+
+    def testChangeHistory(self):
+        "*Test Utility.Prng.LinearCongruentialGenerator changeHistory method"
+        pre_state = self.lcg.getGeneratorState()
+        self.lcg.changeHistory( 10 )
+        post_state = self.lcg.getGeneratorState()
+        self.assertTrue( pre_state != post_state )
+
+    def testNextHistory(self):
+        "*Test Utility.Prng.LinearCongruentialGenerator nextHistory method"
+        pre_state = self.lcg.getGeneratorState()
+        self.lcg.nextHistory()
+        post_state = self.lcg.getGeneratorState()
+        self.assertTrue( pre_state != post_state )
+
+#-----------------------------------------------------------------------------#
+# Test the RandomNumberGenerator
+class RandomNumberGeneratorTestCase(unittest.TestCase):
+    "TestCase class for Utility.Prng.RandomNumberGenerator class"
+
+    def setUp(self):
+        self.rng = Prng.RandomNumberGenerator
+        self.rng.createStreams()
+
+    def testHasStreams(self):
+        "*Test Utility.Prng.RandomNumberGenerator hasStreams method"
+        self.assertTrue(self.rng.hasStreams())
+
+    def testInitialize(self):
+        "*Test Utility.Prng.RandomNumberGenerator initialize method"
+        self.rng.initialize( 1 )
+        stream_1_random_number = self.rng.getRandomNumber()
+        self.rng.initialize( 2 )
+        stream_2_random_number = self.rng.getRandomNumber()
+        self.rng.initialize( 1 )
+        self.assertTrue(stream_1_random_number != stream_2_random_number)
+        self.assertTrue(stream_1_random_number == self.rng.getRandomNumber())
+
+    def testInitializeNextHistory(self):
+        "*Test Utility.Prng.RandomNumberGenerator initializeNextHistory method"
+        self.rng.initialize( 1 )
+        stream_1_random_number = self.rng.getRandomNumber()
+        self.rng.initializeNextHistory()
+        stream_2_random_number = self.rng.getRandomNumber()
+        self.rng.initialize( 1 )
+        self.assertTrue(stream_1_random_number != stream_2_random_number)
+        self.assertTrue(stream_1_random_number == self.rng.getRandomNumber())
+
+    def testFakeStream(self):
+        "*Test Utility.Prng.RandomNumberGenerator setFakeStream/unsetFakeStream methods"
+        self.rng.setFakeStream( [0.25, 0.5, 0.75] )
+        self.assertTrue(self.rng.getRandomNumber() == 0.25)
+        self.assertTrue(self.rng.getRandomNumber() == 0.5)
+        self.assertTrue(self.rng.getRandomNumber() == 0.75)
+        self.assertTrue(self.rng.getRandomNumber() == 0.25)
+
+        self.rng.unsetFakeStream()
+        self.assertTrue(self.rng.getRandomNumber() != 0.5)
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(LinearCongruentialGeneratorTestCase))
+    suite.addTest(unittest.makeSuite(RandomNumberGeneratorTestCase))
+
+    print >>sys.stderr, \
+        "\n********************\n" + \
+        "Testing Utility.Prng \n" + \
+        "********************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstUtility.Prng.py.in
+#-----------------------------------------------------------------------------#
