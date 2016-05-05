@@ -9,7 +9,7 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
 
     
   ADD_EXECUTABLE(facemc facemc.cpp)
-  TARGET_LINK_LIBRARIES(facemc facemc_core)
+  TARGET_LINK_LIBRARIES(facemc facemc_core)    
 
   # Add exec to install target
   INSTALL(TARGETS facemc

@@ -42,13 +42,16 @@ ENDIF()
 # Force shared libraries to be built
 SET(BUILD_SHARED_LIBS ON)
 
+# Set the install rpath to the lib install path - this should prevent the
+# installed targets from reporting undefined .so files (check with ldd tool)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
 ##---------------------------------------------------------------------------##
 ## Command Line Options
 ##---------------------------------------------------------------------------##
-
 OPTION(FRENSIE_ENABLE_DBC "Enable Design-by-Contract checks in FRENSIE" ON)
 OPTION(FRENSIE_ENABLE_PROFILING "Enable profiling with FRENSIE" OFF)
 OPTION(FRENSIE_ENABLE_COVERAGE "Enable coverage testing in FRENSIE" OFF)
@@ -235,9 +238,12 @@ ADD_SUBDIRECTORY(doc)
 ##---------------------------------------------------------------------------##
 ## Add additional testing targets for convenience
 ##---------------------------------------------------------------------------##
+# run `make test-fast` to run all tests except for the facemc tests
 ADD_CUSTOM_TARGET(test-fast 
   COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# run `make test-facemc` to run only the facemc tests
 ADD_CUSTOM_TARGET(test-facemc
   COMMAND ctest -R Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
