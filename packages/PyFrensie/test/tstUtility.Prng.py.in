@@ -1,7 +1,7 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
 ## Utility.Prng module unit tests
-#  \file   tstUtility.Prng.py.in
+#  \file   tstUtility.Prng.py
 #  \author Alex Robinson
 #  \brief  Unit tests for the Utility.Prng module
 #-----------------------------------------------------------------------------#
@@ -79,7 +79,12 @@ class RandomNumberGeneratorTestCase(unittest.TestCase):
         self.rng.initialize( 2 )
         stream_2_random_number = self.rng.getRandomNumber()
         self.rng.initialize( 1 )
+        self.rng.initialize( 3 )
+        stream_3_random_number = self.rng.getRandomNumber()
+        self.rng.initialize( 1 )
         self.assertTrue(stream_1_random_number != stream_2_random_number)
+        self.assertTrue(stream_1_random_number != stream_3_random_number)
+        self.assertTrue(stream_2_random_number != stream_3_random_number)
         self.assertTrue(stream_1_random_number == self.rng.getRandomNumber())
 
     def testInitializeNextHistory(self):
@@ -133,5 +138,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.Prng.py.in
+# end tstUtility.Prng.py
 #-----------------------------------------------------------------------------#

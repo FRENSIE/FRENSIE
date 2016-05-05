@@ -28,3 +28,7 @@ ADD_TEST(PyFrensie.Utility.Distribution_test ${PYTHON_EXECUTABLE} tstUtility.Dis
 # Add the Utility.Prng unit tests
 PyFrensie_MAKE_TEST(tstUtility.Prng)
 ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)
+
+# Add the Data.ACE unit tests
+PyFrensie_MAKE_TEST(tstData.ACE)
+ADD_TEST(PyFrensie.Data.ACE_test ${PYTHON_EXECUTABLE} tstData.ACE.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
