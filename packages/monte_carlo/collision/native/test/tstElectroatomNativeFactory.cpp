@@ -705,16 +705,13 @@ Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name, test_epr_file_name;
+  std::string test_native_file_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
 		 &test_native_file_name,
 		 "Test native file name" );
-  clp.setOption( "test_epr_file",
-		 &test_epr_file_name,
-		 "Test epr file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();

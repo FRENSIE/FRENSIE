@@ -36,19 +36,16 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   // Create the scattering function
   ElasticDistribution scattering_function(size);
   ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction( 
-		raw_electroatom_data, 
-        angular_energy_grid,
-		scattering_function );
+	raw_electroatom_data, 
+	angular_energy_grid,
+	scattering_function );
 
   // Create cutoff distribution
   cutoff_elastic_distribution.reset( 
         new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                cutoff_upper_cutoff_angle_cosine,
-                true ) );
+                cutoff_upper_cutoff_angle_cosine ) );
 
-  // Upper cutoff angle for the screened Rutherford distribution
-  double screened_rutherford_lower_cutoff_angle_cosine = 0.999999;
 /*
   // Create the screened rutherford parmaters
   ParameterArray screened_rutherford_parameters( size );
@@ -63,15 +60,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                screened_rutherford_parameters,
-                upper_cutoff_angle ) );
+                screened_rutherford_parameters ) );
 */
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_elastic_distribution,
-                atomic_number,
-                screened_rutherford_lower_cutoff_angle_cosine ) );
+                atomic_number ) );
 }
 
 
@@ -100,8 +95,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   cutoff_elastic_distribution.reset( 
         new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                lower_cutoff_angle,
-                true ) );
+                lower_cutoff_angle ) );
 }
 
 
@@ -111,8 +105,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
         screened_rutherford_elastic_distribution,
 	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double upper_cutoff_angle )
+	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data )
 {
 /*
   // Get the energy grid
@@ -132,8 +125,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                screened_rutherford_parameters,
-                upper_cutoff_angle ) );
+                screened_rutherford_parameters ) );
 */
   // Get the atomic number 
   const int atomic_number = raw_electroatom_data.getAtomicNumber();
@@ -142,33 +134,32 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_elastic_distribution,
-                atomic_number,
-                upper_cutoff_angle ) );
+                atomic_number ) );
 }
 
 // Return angle cosine grid for given grid energy bin
 Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                  const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
                  const double energy,
-                 const double cutoff_angle )
+                 const double cutoff_angle_cosine )
 {
   // Get the angular grid
   std::vector<double> raw_grid = 
     raw_electroatom_data.getCutoffElasticAngles( energy );
 
-  // Find the first angle below the cutoff angle
-  std::vector<double>::iterator end = --raw_grid.end();
-  for ( end; end != raw_grid.begin(); --end )
+  // Find the first angle cosine above the cutoff angle cosine
+  std::vector<double>::iterator start;
+  for ( start = raw_grid.begin(); start != raw_grid.end(); start++ )
   {
-    if ( *end < cutoff_angle )
+    if ( *start > cutoff_angle_cosine )
     {
       break;
     }
   }
 
-  Teuchos::Array<double> grid( raw_grid.begin(), ++end );
+  Teuchos::Array<double> grid( start, raw_grid.end() );
 
-   grid.push_back( cutoff_angle );
+   grid.insert( grid.begin(), cutoff_angle_cosine );
 
   return grid;
 }

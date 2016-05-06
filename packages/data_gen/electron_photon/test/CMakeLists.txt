@@ -43,5 +43,5 @@ ADD_TEST(AdjointElectronGridGenerator_test tstAdjointElectronGridGenerator)
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
   tstElasticElectronMomentsEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
-ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_native.xml")
+ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 

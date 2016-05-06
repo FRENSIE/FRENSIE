@@ -130,9 +130,6 @@ int main( int argc, char** argv )
   // Create the data generator
   if( data_file_type == "ACE" )
   {
-    Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
-        new Data::ENDLFileHandler( data_file_path ) );
-
     Data::ACEFileHandler ace_file_handler( data_file_path,
 					   data_table_name,
 					   data_file_start_line,
@@ -146,7 +143,17 @@ int main( int argc, char** argv )
     
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
-    std::string endl_file_path = "/home/software/mcnpdata/endldata/endl_82_native.xml";
+    std::ostringstream oss;
+    oss << "endl_" << atomic_number << "_native.xml";
+
+    std::string endl_file_path = cross_section_directory;
+    endl_file_path += "endldata/";
+    endl_file_path += oss.str();
+
+    endl_file_path = "/home/software/mcnpdata/endldata/";
+    endl_file_path += oss.str();
+
+std::cout << "endl_file_path = " << endl_file_path << std::endl;
 
     Teuchos::RCP<Data::ENDLDataContainer> endl_data_container( 
         new Data::ENDLDataContainer( 
@@ -215,7 +222,20 @@ int main( int argc, char** argv )
     new_table_info.set( 
 	   MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
 	   "" );
-    
+
+    new_table_info.set( 
+	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
+	    oss.str() );
+    new_table_info.set( 
+	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+	    MonteCarlo::CrossSectionsXMLProperties::native_file );
+    new_table_info.set( 
+      MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
+      -1 );
+    new_table_info.set( 
+	   MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
+	   "" );
+
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
 					  cross_sections_xml_file );
   }

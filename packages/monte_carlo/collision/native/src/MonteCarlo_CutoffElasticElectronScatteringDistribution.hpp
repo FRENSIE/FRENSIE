@@ -42,8 +42,7 @@ public:
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double upper_cutoff_angle_cosine = 0.999999,
-        const bool angle_cosine_is_used_as_independent_variable = false );
+        const double upper_cutoff_angle_cosine = 0.999999 );
 
   //! Destructor 
   virtual ~CutoffElasticElectronScatteringDistribution()
@@ -105,9 +104,6 @@ private:
 
   // The cutoff change in scattering angle cosine (delta mu) above which the cutoff distribution is used
   double d_lower_cutoff_delta_mu;
-
-  // Independent parameter flag: true = angle cosine (mu), true = delta angle cosine (delta mu)
-  bool d_angle_cosine_is_used_as_independent_variable;
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
   ElasticDistribution d_elastic_scattering_distribution;

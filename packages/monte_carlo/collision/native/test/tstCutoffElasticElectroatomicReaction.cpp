@@ -115,8 +115,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
   elastic_scattering_distribution.reset( 
 	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
                 elastic_scattering_function,
-                cutoff_angle_cosine,
-                true ) );
+                cutoff_angle_cosine ) );
 
   test_elastic_reaction.reset(
 	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
@@ -264,8 +263,7 @@ int main( int argc, char** argv )
   elastic_scattering_distribution.reset( 
 	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(  
                 elastic_scattering_function,
-                upper_cutoff_angle_cosine,
-                true ) );
+                upper_cutoff_angle_cosine ) );
  
   // Create the reaction
   ace_elastic_reaction.reset(

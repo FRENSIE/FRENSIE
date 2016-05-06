@@ -29,33 +29,33 @@ namespace DataGen{
 // Initialize static member data
 
 // cutoff angle for analytical peak
-double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle = 1.0e-6;
+double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_delta_angle_cosine = 1.0e-6;
 
 // cutoff angle cosine for analytical peak
 double ElasticElectronMomentsEvaluator::s_rutherford_cutoff_angle_cosine = 0.999999;
 
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
-    const Data::ElectronPhotonRelaxationDataContainer& native_eedl_data,
-    const double& cutoff_angle )
-  : d_native_eedl_data ( native_eedl_data ),
-    d_cutoff_angle( cutoff_angle )
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double& cutoff_angle_cosine )
+  : d_data_container ( data_container ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
-  testPrecondition( cutoff_angle >= s_rutherford_cutoff_angle );
-  testPrecondition( cutoff_angle <= 2.0 );
+  testPrecondition( cutoff_angle_cosine >= -1.0 );
+  testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine );
 
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.assign( native_eedl_data.getElectronEnergyGrid().begin(),
-                      native_eedl_data.getElectronEnergyGrid().end() );
+  energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
+                      data_container.getElectronEnergyGrid().end() );
 
   // Create the hard elastic distributions ( both Cutoff and Screened Rutherford ) 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
     d_cutoff_distribution,
     d_rutherford_distribution,
-    native_eedl_data,
-    cutoff_angle );
+    data_container,
+    cutoff_angle_cosine );
 
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
@@ -64,13 +64,13 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 						     100u ) );
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
-					   native_eedl_data,
+					   data_container,
 					   energy_grid,
                        grid_searcher,
 					   d_rutherford_reaction );
 
   MonteCarlo::ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
-					   native_eedl_data,
+					   data_container,
 					   energy_grid,
                        grid_searcher,
 					   d_cutoff_reaction );
@@ -78,69 +78,69 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
-                                    const double scattering_angle,
+                                    const double scattering_angle_cosine,
                                     const double incoming_energy, 
                                     const int polynomial_order ) const
 {
-  // Make sure the energy and angle are valid
+  // Make sure the energy and angle cosine are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= 0.0 );
-  testPrecondition( scattering_angle <= s_rutherford_cutoff_angle );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= s_rutherford_cutoff_angle_cosine );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
-            d_rutherford_distribution->evaluatePDF( incoming_energy,
-                                                    scattering_angle );
+            d_rutherford_distribution->evaluate( incoming_energy,
+                                                  scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =  
-    Utility::getLegendrePolynomial( 1.0-scattering_angle, polynomial_order );
+    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
                    
   return pdf_value*legendre_value;
 }
 
 // Evaluate the Legnendre Polynomial expansion of the elastic scttering PDF
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
-                                    const double scattering_angle,
+                                    const double scattering_angle_cosine,
                                     const double incoming_energy, 
                                     const int polynomial_order ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle >= s_rutherford_cutoff_angle );
-  testPrecondition( scattering_angle <= 2.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= s_rutherford_cutoff_angle_cosine );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
             d_cutoff_distribution->evaluatePDF( incoming_energy,
-                                                scattering_angle );
+                                             scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =  
-    Utility::getLegendrePolynomial( 1.0 - scattering_angle, polynomial_order );
-                   
+    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
+     
   return pdf_value*legendre_value;
 }
 
 // Evaluate the Legnendre Polynomial expansion of the elastic scttering PDF
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDFAtEnergyBin(
-                                    const double scattering_angle,
+                                    const double scattering_angle_cosine,
                                     const unsigned incoming_energy_bin, 
                                     const int polynomial_order ) const
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy_bin >= 0 );
-  testPrecondition( scattering_angle >= s_rutherford_cutoff_angle );
-  testPrecondition( scattering_angle <= 2.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= s_rutherford_cutoff_angle_cosine );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
             d_cutoff_distribution->evaluatePDF( incoming_energy_bin,
-                                                scattering_angle );
+                                             scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =  
-    Utility::getLegendrePolynomial( 1.0 - scattering_angle, polynomial_order );
+    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
       
   return pdf_value*legendre_value;
 }
@@ -161,9 +161,9 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
 
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-        d_native_eedl_data,
+        d_data_container,
         energy,
-        d_cutoff_angle );
+        d_cutoff_angle_cosine );
 
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
@@ -236,9 +236,9 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
 
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-        d_native_eedl_data,
+        d_data_container,
         energy,
-        d_cutoff_angle );
+        d_cutoff_angle_cosine );
 
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
@@ -303,7 +303,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
 
   double angle;
 
-  angle = s_rutherford_cutoff_angle;
+  angle = s_rutherford_cutoff_delta_angle_cosine;
 
   // Calcuate Moliere's modified screening constant (eta) 
   double eta = 
@@ -381,7 +381,7 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
       integrator.integrateAdaptively<61>(
 					wrapper,
                     0.0,
-					s_rutherford_cutoff_angle,
+					s_rutherford_cutoff_delta_angle_cosine,
 					moment_n,
 					abs_error );
     }

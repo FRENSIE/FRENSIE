@@ -50,8 +50,7 @@ public:
         screened_rutherford_elastic_distribution,
 	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data );
 
   //! Return angle cosine grid for given grid energy bin
   static Teuchos::Array<double> getAngularGrid(

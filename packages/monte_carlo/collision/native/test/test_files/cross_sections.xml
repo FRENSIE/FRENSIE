@@ -166,10 +166,10 @@
     <Parameter docString="" id="153" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" id="154" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter docString="" id="155" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
-    <Parameter docString="" id="156" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
-    <Parameter docString="" id="157" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="ACE"/>
-    <Parameter docString="" id="158" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="1"/>
-    <Parameter docString="" id="159" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value="82000.12p"/>
+    <Parameter docString="" id="156" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="test_epr_82_native.xml"/>
+    <Parameter docString="" id="157" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="158" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="159" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
     <Parameter docString="" id="160" isDefault="false" isUsed="true" name="atomic_number" type="int" value="82"/>
     <Parameter docString="" id="161" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.05419999999999987e+02"/>
   </ParameterList>

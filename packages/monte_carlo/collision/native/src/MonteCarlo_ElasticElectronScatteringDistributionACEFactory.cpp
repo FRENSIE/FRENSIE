@@ -44,18 +44,14 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   cutoff_elastic_distribution.reset( 
         new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                upper_cutoff_angle_cosine,
-                true ) );
+                upper_cutoff_angle_cosine ) );
 
-  // Lower cutoff angle cosine for the screened Rutherford distribution
-  double screened_rutherford_lower_cutoff_angle_cosine = 0.999999;
 
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_elastic_distribution,
-                atomic_number,
-                screened_rutherford_lower_cutoff_angle_cosine ) );
+                atomic_number ) );
 }
 
 
@@ -79,8 +75,7 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   cutoff_elastic_distribution.reset( 
         new CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                upper_cutoff_angle_cosine,
-                true ) );
+                upper_cutoff_angle_cosine ) );
 }
 
 
@@ -90,8 +85,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
         screened_rutherford_elastic_distribution,
 	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double lower_cutoff_angle_cosine )
+	const Data::XSSEPRDataExtractor& raw_electroatom_data )
 {
   // Get the atomic number 
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
@@ -100,8 +94,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
   screened_rutherford_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_elastic_distribution,
-                atomic_number,
-                lower_cutoff_angle_cosine ) );
+                atomic_number ) );
 }
 
 // Return angle cosine grid for given grid energy bin

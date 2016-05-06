@@ -101,8 +101,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
     distribution,
     cutoff_distribution,
-    raw_electroatom_data,
-    lower_cutoff_angle_cosine ); 
+    raw_electroatom_data ); 
 
   // Screened Rutherford elastic cross section 
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -188,7 +187,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
   for( shell; shell != subshells.end(); ++shell ) 
   {
     // Convert subshell number to enum
-    subshell_type = Data::convertEADLDesignatorToSubshellEnum( *shell );
+    subshell_type = Data::convertENDFDesignatorToSubshellEnum( *shell );
 
     // Electroionization cross section 
     Teuchos::ArrayRCP<double> subshell_cross_section;

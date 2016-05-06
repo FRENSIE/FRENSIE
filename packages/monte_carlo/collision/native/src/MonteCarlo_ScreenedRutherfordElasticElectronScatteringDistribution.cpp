@@ -41,11 +41,9 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_para
 // Constructor without tabulated energy paramters
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
-    const int atomic_number,
-    const double lower_cutoff_angle_cosine )
+    const int atomic_number )
   : d_elastic_cutoff_distribution( elastic_cutoff_distribution ),
     d_atomic_number( atomic_number ),
-    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
                               d_atomic_number*d_atomic_number )
@@ -56,32 +54,27 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
 
-  // Make sure the cutoff angle cosine is valid
-  testPrecondition( d_lower_cutoff_angle_cosine > -1.0 );
-  testPrecondition( d_lower_cutoff_angle_cosine <= 1.0 );
-
-  d_upper_cutoff_delta_mu = 1.0L - d_lower_cutoff_angle_cosine;
+  d_lower_cutoff_angle_cosine = 0.999999;
+  d_upper_cutoff_delta_mu = 1.0e-6;
 
   d_using_endl_tables = false;
 }
 
 // Constructor with tabulated energy parameters
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ParameterArray& screened_rutherford_parameters,
-    const double lower_cutoff_angle_cosine )
-  : d_screened_rutherford_parameters( screened_rutherford_parameters ),
-    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine ) 
+    const ParameterArray& screened_rutherford_parameters )
+  : d_screened_rutherford_parameters( screened_rutherford_parameters )
 {
   // Make sure the parameter array is valid
   testPrecondition( d_screened_rutherford_parameters.size() > 0 );
-  // Make sure the cutoff angle cosine is valid
-  testPrecondition( d_lower_cutoff_angle_cosine > -1.0 );
-  testPrecondition( d_lower_cutoff_angle_cosine <= 1.0 );
+
+  d_lower_cutoff_angle_cosine = 0.999999;
+  d_upper_cutoff_delta_mu = 1.0e-6;
 
   d_using_endl_tables = true;
 }
 
-// Evaluate the distribution at the given energy and scattering angle (units of pi)
+// Evaluate the distribution at the given energy and scattering angle cosine
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -91,7 +84,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double delta_mu = 1.0L - scattering_angle_cosine;
+  double delta_mu = 1.0 - scattering_angle_cosine;
 
   if ( d_using_endl_tables )
   {
@@ -118,19 +111,22 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   else
   {
     double cutoff_pdf = 
-
-        d_elastic_cutoff_distribution->evaluate( incoming_energy, 0.999999 );
+        d_elastic_cutoff_distribution->evaluate( 
+            incoming_energy,
+            d_lower_cutoff_angle_cosine );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
-   
-    return cutoff_pdf*
+
+    double pdf = cutoff_pdf*
             ( d_upper_cutoff_delta_mu + eta )*( d_upper_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
+
+    return pdf;
   }
 }
 
 
-// Evaluate the PDF at the given energy and scattering angle (units of pi)
+// Evaluate the PDF at the given energy and scattering angle cosine
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF( 
         const double incoming_energy,
         const double scattering_angle_cosine ) const
@@ -140,14 +136,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  long double long_mu = static_cast<long double>(scattering_angle_cosine);
-  double delta_mu_long = 1.0L - long_mu;
-  double delta_mu = 1.0L - scattering_angle_cosine;
-  double delta_mu_short = 1.0 -scattering_angle_cosine;
-
-  std::cout << "delta_mu_long - delta_mu = " << delta_mu_long - delta_mu << std::endl;
-  std::cout << "delta_mu - delta_mu_short = " << delta_mu - delta_mu_short << std::endl;
-  std::cout << "delta_mu_long - delta_mu_short = " << delta_mu_long - delta_mu_short << std::endl;
+  double delta_mu = 1.0 - scattering_angle_cosine;
 
   if ( d_using_endl_tables )
   {
@@ -235,7 +224,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double delta_mu = 1.0L - scattering_angle_cosine;
+  double delta_mu = 1.0 - scattering_angle_cosine;
 
   if ( d_using_endl_tables )
   {
@@ -430,7 +419,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
 
     scattering_angle_cosine =
         ( ( 1.0 - random_number*( 1.0 + eta ) )*d_upper_cutoff_delta_mu + eta )/
-        ( ( 1.0 - random_number )*d_upper_cutoff_delta_mu + eta ); 
+        ( ( 1.0 - random_number )*d_upper_cutoff_delta_mu + eta );
   }
 
   // Make sure the scattering angle cosine is valid

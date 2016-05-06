@@ -30,20 +30,16 @@ class TestScreenedRutherfordElasticElectronScatteringDistribution : public Monte
 public:
   TestScreenedRutherfordElasticElectronScatteringDistribution( 
         const ElasticDistribution& elastic_cutoff_distribution,
-        const int atomic_number,
-        const double upper_cutoff_angle )
+        const int atomic_number )
     : MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution( 
         elastic_cutoff_distribution,
-        atomic_number,
-        upper_cutoff_angle )
+        atomic_number )
   { /* ... */ }
 
   TestScreenedRutherfordElasticElectronScatteringDistribution( 
-        const ParameterArray& screened_rutherford_parameters,
-        const double upper_cutoff_angle = 1.0e-6 )
+        const ParameterArray& screened_rutherford_parameters )
     : MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution( 
-        screened_rutherford_parameters,
-        upper_cutoff_angle)
+        screened_rutherford_parameters )
   { /* ... */ }
 
   ~TestScreenedRutherfordElasticElectronScatteringDistribution()
@@ -87,7 +83,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     ace_elastic_distribution->evaluate( energy, 
                                         scattering_angle_cosine );
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( value, 4.487867817660950E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( value, 4.487867817660950E+05, 1e-10 );
 
 
   scattering_angle_cosine = 9.999995000000E-01; // delta_mu = 5e-7;
@@ -148,7 +144,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     ace_elastic_distribution->evaluatePDF( energy, 
                                            scattering_angle_cosine );
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 4.487867817660950E+05, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 4.487867817660950E+05, 1e-10 );
 
 
   scattering_angle_cosine = 9.999995000000E-01; // delta_mu = 5e-7;
@@ -156,7 +152,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     ace_elastic_distribution->evaluatePDF( energy, 
                                            scattering_angle_cosine );
   // Test 2 energy 1
-  TEST_FLOATING_EQUALITY( pdf_value, 1.795146978107500E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.795146978107500E+06, 1e-9 );
 
 
   scattering_angle_cosine = 1.0; // delta_mu = 0.0;
@@ -236,7 +232,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     ace_elastic_distribution->evaluateCDF( energy, 
                                            scattering_angle_cosine );
   // Test 1  energy 2
-  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( cdf_value, 1.0, 1e-10 );
 
 
   scattering_angle_cosine = 9.999995000000E-01; // delta_mu = 5e-7;
@@ -244,7 +240,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
     ace_elastic_distribution->evaluateCDF( energy, 
                                            scattering_angle_cosine );
   // Test 2 energy 2
-  TEST_FLOATING_EQUALITY( cdf_value, 5.00000003096084000E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 5.00000003096084000E-01, 1e-10 );
 
 
   scattering_angle_cosine = 1.0; // delta_mu = 0.0;
@@ -519,18 +515,18 @@ int main( int argc, char** argv )
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
-
+/*
     cutoff_pdf[n] = 
         elastic_scattering_distribution[n].second->evaluatePDF( 
-            angle_cosine_cutoff );    
+            angle_cosine_cutoff );  */  
   }  
-
+/*
   elastic_cutoff_pdf.reset(
         new Utility::TabularDistribution<Utility::LinLin>(
                 energy_grid,
                 cutoff_pdf,
                 false ) );
-
+*/
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 /*! \todo Double check if the entire cutoff distribution is needed or only the cutoff pdf values
@@ -538,8 +534,7 @@ int main( int argc, char** argv )
   ace_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 elastic_cutoff_pdf,
-                atomic_number,
-                angle_cosine_cutoff ) );
+                atomic_number ) );
 */
 
  Teuchos::RCP<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
@@ -549,21 +544,18 @@ int main( int argc, char** argv )
   cutoff_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_distribution,
-                angle_cosine_cutoff,
-                true ) );
+                0.999999 ) );
 
   // Create the screened Rutherford distribution
   ace_elastic_distribution.reset(
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_distribution,
-                atomic_number,
-                angle_cosine_cutoff ) );
+                atomic_number ) );
 
   test_ace_elastic_distribution.reset(
         new TestScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_distribution,
-                atomic_number,
-                angle_cosine_cutoff ) );
+                atomic_number ) );
 
   // Clear setup data
   ace_file_handler.reset();

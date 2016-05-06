@@ -30,12 +30,10 @@ class TestCutoffElasticElectronScatteringDistribution : public MonteCarlo::Cutof
 public:
   TestCutoffElasticElectronScatteringDistribution( 
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double upper_cutoff_angle_cosine,
-        const bool angle_cosine_is_used_as_independent_variable )
+        const double upper_cutoff_angle_cosine )
     : MonteCarlo::CutoffElasticElectronScatteringDistribution( 
         cutoff_elastic_scattering_distribution,
-        upper_cutoff_angle_cosine,
-        angle_cosine_is_used_as_independent_variable )
+        upper_cutoff_angle_cosine )
   { /* ... */ }
 
   ~TestCutoffElasticElectronScatteringDistribution()
@@ -250,10 +248,9 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
 
   // Create the distribution
   test_elastic_distribution.reset(
-		new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-						    elastic_scattering_distribution,
-                            scattering_angle_cosine,
-                            true ) );
+	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
+		elastic_scattering_distribution,
+		scattering_angle_cosine ) );
 
   // Calculate the cdf
   double cdf_value = 
@@ -266,10 +263,9 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   scattering_angle_cosine = 9.800000000000E-01; // delta_mu = .02;
   // Create the distribution
   test_elastic_distribution.reset(
-		new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-						    elastic_scattering_distribution,
-                            scattering_angle_cosine,
-                            true ) );
+	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
+		elastic_scattering_distribution,
+		scattering_angle_cosine ) );
 
   cdf_value = 
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
@@ -283,10 +279,9 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
   // Create the distribution
   test_elastic_distribution.reset(
-		new MonteCarlo::CutoffElasticElectronScatteringDistribution(
-						    elastic_scattering_distribution,
-                            scattering_angle_cosine,
-                            true ) );
+	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
+		elastic_scattering_distribution,
+		scattering_angle_cosine ) );
   cdf_value = 
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -511,14 +506,12 @@ int main( int argc, char** argv )
   ace_elastic_distribution.reset(
         new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 elastic_scattering_distribution,
-                angle_cosine_cutoff,
-                true ) );
+                angle_cosine_cutoff ) );
 
   test_ace_elastic_distribution.reset(
         new TestCutoffElasticElectronScatteringDistribution(
                 elastic_scattering_distribution,
-                angle_cosine_cutoff,
-                true ) );
+                angle_cosine_cutoff ) );
 
   // Clear setup data
   ace_file_handler.reset();

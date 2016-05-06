@@ -49,13 +49,11 @@ public:
   //! Constructor from ACE table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
-    const int atomic_number,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+    const int atomic_number );
 
   //! Constructor from ENDL table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ParameterArray& screened_rutherford_parameters,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+    const ParameterArray& screened_rutherford_parameters );
 
   //! Destructor 
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()

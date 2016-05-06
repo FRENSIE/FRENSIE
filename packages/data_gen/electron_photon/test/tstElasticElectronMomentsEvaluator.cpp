@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 1.0e-6,
+    evaluator->evaluateLegendreExpandedRutherford( 0.999999,
                                                    1.000000000000E-05,
                                                    n );
 
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 1.0e-6,
+    evaluator->evaluateLegendreExpandedRutherford( 0.999999,
                                                    1.000000000000E+05,
                                                    n );
 
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 1.0e-6,
+    evaluator->evaluateLegendreExpandedPDF( 0.999999,
                                             1.000000000000E-05,
                                             n );
 
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 2.0,
+    evaluator->evaluateLegendreExpandedPDF( -1.0,
                                             1.000000000000E-03,
                                             n );
 
@@ -120,7 +120,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 2.1e-6,
+    evaluator->evaluateLegendreExpandedPDF( 0.9999979,
                                             1.000000000000E+05,
                                             n );
 
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 n = 2;
   
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 2.0,
+    evaluator->evaluateLegendreExpandedPDF( -1.0,
                                             1.000000000000E-05,
                                                n );
 
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 1.0e-6,
+    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.999999,
                                                        0,
                                                        n );
 
@@ -161,7 +161,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 2.0,
+    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
                                                        1,
                                                        n );
 
@@ -171,7 +171,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 2.1e-6,
+    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.9999979,
                                                        13,
                                                        n );
 
@@ -184,7 +184,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 n = 2;
   
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 2.0,
+    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
                                                        0,
                                                        n );
 
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *native_eedl_data,
-                                    2.0 ) );
+                                    -1.0 ) );
 
   Teuchos::Array<Utility::long_float> total_moments(n+1);
 
@@ -229,7 +229,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   full_evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.51777E+05 + 1.8907655682E+06,
+                                  2.51776896157372E+05 + 1.89076556817226E+06,
                                   5e-10 );			 
 
   unsigned energy_bin = 0;
@@ -251,7 +251,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   full_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  5.7093654836950E-01+3.62337948943E+00,
+                                  2.51776896157372E+05 + 1.89076556817226E+06,
+                                //5.7093654836950E-01+3.62337948943E+00,
                                   tol );			 
 
 
@@ -260,14 +261,16 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  7.559416647842E-01+9.07762058421518E-05,
+                                  2.90281E+08,
+                                  //7.559416647842E-01+9.07762058421518E-05,
                                   tol );
 
   energy_bin = 12;
   evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  5.70927204446350E-01+3.62337948943E+00,
+                                  2.51776896157372E+05 + 1.89076556817226E+06,
+                                //5.7093654836950E-01+3.62337948943E+00,
                                   tol );
 
   evaluator->evaluateElasticMoment( total_moments, energy_bin, 6, precision ); 
@@ -447,7 +450,7 @@ int main( int argc, char** argv )
   // Create the momentum evaluator
   evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *native_eedl_data,
-                                    0.1 ) );
+                                    0.9 ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

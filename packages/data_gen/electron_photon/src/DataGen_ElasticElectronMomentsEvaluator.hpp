@@ -41,26 +41,26 @@ public:
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
-    const Data::ElectronPhotonRelaxationDataContainer& native_eedl_data,
-    const double& cutoff_angle = 1.0e-6 );
+    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double& cutoff_angle_cosine = 0.9999999 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-  double evaluateLegendreExpandedRutherford( const double scattering_angle,
+  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
                                         const double incoming_energy, 
                                         const int polynomial_order = 0) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
-  double evaluateLegendreExpandedPDF( const double scattering_angle,
+  double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
                                       const double incoming_energy, 
                                       const int polynomial_order = 0) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDFAtEnergyBin( 
-                                const double scattering_angle,
+                                const double scattering_angle_cosine,
                                 const unsigned incoming_energy_bin, 
                                 const int polynomial_order = 0) const;
 
@@ -101,16 +101,16 @@ private:
     d_cutoff_distribution;
 
   // The raw ace electron data extractor
-  Data::ElectronPhotonRelaxationDataContainer d_native_eedl_data;
+  Data::ElectronPhotonRelaxationDataContainer d_data_container;
 
-  // The angle cutoff between hard and soft scattering
-  double d_cutoff_angle;
+  // The change in angle cosine cutoff between hard and soft scattering
+  double d_cutoff_delta_angle_cosine;
 
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;
 
   // The angle cutoff between the distrubution and screened Rutherford scattering
-  static double s_rutherford_cutoff_angle;
+  static double s_rutherford_cutoff_delta_angle_cosine;
 
   // The angle cosine cutoff between the distrubution and screened Rutherford scattering
   static double s_rutherford_cutoff_angle_cosine;
