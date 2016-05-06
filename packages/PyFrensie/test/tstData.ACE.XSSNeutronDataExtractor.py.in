@@ -1,0 +1,529 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACE.XSSNeutronDataExtractor class unit tests
+#  \file   tstData.ACE.XSSNeutronDataExtractor.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.ACE.XSSNeutronDataExtractor class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--acefile", type="string", dest="acefile",
+                  help="set the ACE file to test.")
+parser.add_option("-n", "--tablename", type="string", dest="tablename",
+                  help="set the ACE table name (must be in the file).")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the XSSNeutronDataExtractor
+class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
+    "TestCase for Data.ACE.XSSNeutronDataExtractor class with H1 ACE table"
+
+    def setUp(self):
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        self.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testConstructor(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor constructor"
+        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSNeutronDataExtractor))
+        
+    def testHasFissionData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasFissionData method"
+        self.assertFalse(self.xss_extractor.hasFissionData())
+
+    def testHasDelayedNeutronData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasDelayedNeutronData method"
+        self.assertFalse(self.xss_extractor.hasDelayedNeutronData())
+
+    def testHasUnresolvedResonanceData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasUnresolvedResonanceData method"
+        self.assertFalse(self.xss_extractor.hasUnresolvedResonanceData())
+
+    def testExtractESZBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractESZBlock method"
+        esz_block = self.xss_extractor.extractESZBlock()
+        self.assertEqual(len(esz_block), 590*5)
+        self.assertEqual(esz_block[0], 1e-11)
+        self.assertEqual(esz_block[len(esz_block)-1], 1.016085e1)
+
+    def testExtractEnergyGrid(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractESZBlock method"
+        energy_grid = self.xss_extractor.extractEnergyGrid()
+        self.assertEqual(len(energy_grid), 590)
+        self.assertEqual(energy_grid[0], 1e-11)
+        self.assertEqual(energy_grid[len(energy_grid)-1], 2e1)
+
+    def testExtractTotalCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractTotalCrossSection()
+        self.assertEqual(len(cross_sec), 590)
+        self.assertEqual(cross_sec[0], 1.17724711e3)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 4.82773424e-1)
+
+    def testExtractTotalAbsorptionCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTotalAbsorptionCrossSection method"
+        cross_sec = self.xss_extractor.extractTotalAbsorptionCrossSection()
+        self.assertEqual(len(cross_sec), 590)
+        self.assertEqual(cross_sec[0], 1.670111e1)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 2.722354e-5)
+
+    def testExtractElasticCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractElasticCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticCrossSection()
+        self.assertEqual(len(cross_sec), 590)
+        self.assertEqual(cross_sec[0], 1.160546e3)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 4.827462e-1)
+
+    def testExtractAverageHeatingNumbers(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractAverageHeatingNumbers method"
+        heating_numbers = self.xss_extractor.extractAverageHeatingNumbers()
+        self.assertEqual(len(heating_numbers), 590)
+        self.assertEqual(heating_numbers[0], 5.000028e-12)
+        self.assertEqual(heating_numbers[len(heating_numbers)-1], 1.016085e1)
+
+    def testExtractNUBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractNUBlock method"
+        nu_block = self.xss_extractor.extractNUBlock()
+        self.assertEqual(len(nu_block), 0)
+
+    def testExtractMTRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractMTRBlock method"
+        mtr_block = self.xss_extractor.extractMTRBlock()
+        self.assertEqual(len(mtr_block), 3)
+        self.assertTrue(102 in mtr_block)
+        self.assertTrue(204 in mtr_block)
+        self.assertTrue(444 in mtr_block)
+
+    def testExtractMTRPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractMTRPBlock method"
+        mtrp_block = self.xss_extractor.extractMTRPBlock()
+        self.assertEqual(len(mtrp_block), 1)
+        self.assertTrue(102001 in mtrp_block)
+
+    def testExtractLQRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLQRBlock method"
+        lqr_block = self.xss_extractor.extractLQRBlock()
+        self.assertEqual(len(lqr_block), 3)
+        self.assertEqual(lqr_block[0], 2.224631)
+        self.assertEqual(lqr_block[1], 0.0)
+        self.assertEqual(lqr_block[2], 0.0)
+
+    def testExtractTYRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTYRBlock method"
+        tyr_block = self.xss_extractor.extractTYRBlock()
+        self.assertEqual(len(tyr_block), 3)
+        self.assertEqual(tyr_block[0], 0.0)
+        self.assertEqual(tyr_block[1], 0.0)
+        self.assertEqual(tyr_block[2], 0.0)
+
+    def testExtractLSIGBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGBlock method"
+        lsig_block = self.xss_extractor.extractLSIGBlock()
+        self.assertEqual(len(lsig_block), 3)
+        self.assertEqual(lsig_block[0], 1)
+        self.assertEqual(lsig_block[1], 593)
+        self.assertEqual(lsig_block[2], 1185)
+
+    def testExtractLSIGPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGPBlock method"
+        lsigp_block = self.xss_extractor.extractLSIGPBlock()
+        self.assertEqual(len(lsigp_block), 1)
+        self.assertEqual(lsigp_block[0], 1)
+
+    def testExtractSIGBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractSIGBlock method"
+        sig_block = self.xss_extractor.extractSIGBlock()
+        self.assertEqual(len(sig_block), 1389)
+        self.assertEqual(sig_block[0], 1)
+        self.assertEqual(sig_block[len(sig_block)-1], 3.067696e-4 )
+        
+    def testExtractLANDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
+        land_block = self.xss_extractor.extractLANDBlock()
+        self.assertEqual(len(land_block), 1)
+        self.assertEqual(land_block[0], 1)
+
+    def testExtractANDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractANDBlock method"
+        and_block = self.xss_extractor.extractANDBlock()
+        self.assertEqual(len(and_block), 1291)
+        self.assertEqual(and_block[0], 96)
+        self.assertEqual(and_block[len(and_block)-1], 1.0)
+
+    def testExtractLDLWBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLDLWBlock method"
+        ldlw_block = self.xss_extractor.extractLDLWBlock()
+        self.assertEqual(len(ldlw_block), 0)
+
+    def testExtractLDLWPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLDLWPBlock method"
+        ldlwp_block = self.xss_extractor.extractLDLWPBlock()
+        self.assertEqual(len(ldlwp_block), 1)
+        self.assertEqual(ldlwp_block[0], 1)
+
+    def testExtractDLWBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDLWBlock method"
+        dlw_block = self.xss_extractor.extractDLWBlock()
+        self.assertEqual(len(dlw_block), 0)
+
+    def testExtractDLWPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDLWPBlock method"
+        dlwp_block = self.xss_extractor.extractDLWPBlock()
+        self.assertEqual(len(dlwp_block), 683)
+        self.assertEqual(dlwp_block[0], 0)
+        self.assertEqual(dlwp_block[len(dlwp_block)-1], 1)
+
+    def testExtractGPDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractGPDBlock method"
+        gpd_block = self.xss_extractor.extractGPDBlock()
+        self.assertEqual(len(gpd_block), 590)
+        self.assertEqual(gpd_block[0], 1.670111e1)
+        self.assertEqual(gpd_block[len(gpd_block)-1], 2.722354e-5)
+
+    def testExtractSIGPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractSIGPBlock method"
+        sigp_block = self.xss_extractor.extractSIGPBlock()
+        self.assertEqual(len(sigp_block), 8)
+        self.assertEqual(sigp_block[0], 16)
+        self.assertEqual(sigp_block[len(sigp_block)-1], 1.0)
+
+    def testExtractLANDPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLANDPBlock method"
+        landp_block = self.xss_extractor.extractLANDPBlock()
+        self.assertEqual(len(landp_block), 1)
+        self.assertEqual(landp_block[0], 0)
+
+    def testExtractANDPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractANDPBlock method"
+        andp_block = self.xss_extractor.extractANDPBlock()
+        self.assertEqual(len(andp_block), 0)
+
+    def testExtractYPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractYPBlock method"
+        yp_block = self.xss_extractor.extractYPBlock()
+        self.assertEqual(len(yp_block), 2)
+        self.assertEqual(yp_block[0], 1)
+        self.assertEqual(yp_block[1], 102)
+
+    def testExtractFISBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractFISBlock method"
+        fis_block = self.xss_extractor.extractFISBlock()
+        self.assertEqual(len(fis_block), 0)
+
+    def testExtractUNRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractUNRBlock method"
+        unr_block = self.xss_extractor.extractUNRBlock()
+        self.assertEqual(len(unr_block), 0)
+
+    def testExtractDNUBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNUBlock method"
+        dnu_block = self.xss_extractor.extractDNUBlock()
+        self.assertEqual(len(dnu_block), 0)
+
+    def testExtractBDDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNUBlock method"
+        bdd_block = self.xss_extractor.extractBDDBlock()
+        self.assertEqual(len(bdd_block), 0)
+
+    def testExtractDNEDLBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNEDLBlock method"
+        dnedl_block = self.xss_extractor.extractDNEDLBlock()
+        self.assertEqual(len(dnedl_block), 0)
+
+    def testExtractDNEDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNEDBlock method"
+        dned_block = self.xss_extractor.extractDNEDBlock()
+        self.assertEqual(len(dned_block), 0)
+        
+#-----------------------------------------------------------------------------#
+# Test the XSSNeutronDataExtractor
+class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
+    "TestCase for Data.ACE.XSSNeutronDataExtractor class with U238 ACE table"
+
+    def setUp(self):
+        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+        self.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+
+    def testConstructor(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor constructor"
+        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSNeutronDataExtractor))
+
+    def testHasFissionData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasFissionData method"
+        self.assertTrue(self.xss_extractor.hasFissionData())
+
+    def testHasDelayedNeutronData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasDelayedNeutronData method"
+        self.assertTrue(self.xss_extractor.hasDelayedNeutronData())
+
+    def testHasUnresolvedResonanceData(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor hasUnresolvedResonanceData method"
+        self.assertTrue(self.xss_extractor.hasUnresolvedResonanceData())
+
+    def testExtractESZBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractESZBlock method"
+        esz_block = self.xss_extractor.extractESZBlock()
+        self.assertEqual(len(esz_block), 157754*5)
+        self.assertEqual(esz_block[0], 1e-11)
+        self.assertEqual(esz_block[len(esz_block)-1], 4.99417e1)
+
+    def testExtractEnergyGrid(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractESZBlock method"
+        energy_grid = self.xss_extractor.extractEnergyGrid()
+        self.assertEqual(len(energy_grid), 157754)
+        self.assertEqual(energy_grid[0], 1e-11)
+        self.assertEqual(energy_grid[len(energy_grid)-1], 30)
+
+    def testExtractTotalCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTotalCrossSection method"
+        cross_sec = self.xss_extractor.extractTotalCrossSection()
+        self.assertEqual(len(cross_sec), 157754)
+        self.assertEqual(cross_sec[0], 1.69844353e2)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 5.71955315)
+
+    def testExtractTotalAbsorptionCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTotalAbsorptionCrossSection method"
+        cross_sec = self.xss_extractor.extractTotalAbsorptionCrossSection()
+        self.assertEqual(len(cross_sec), 157754)
+        self.assertEqual(cross_sec[0], 1.344458e2)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 1.0e-4)
+
+    def testExtractElasticCrossSection(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractElasticCrossSection method"
+        cross_sec = self.xss_extractor.extractElasticCrossSection()
+        self.assertEqual(len(cross_sec), 157754)
+        self.assertEqual(cross_sec[0], 3.539771e1)
+        self.assertEqual(cross_sec[len(cross_sec)-1], 2.78998)
+
+    def testExtractAverageHeatingNumbers(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractAverageHeatingNumbers method"
+        heating_numbers = self.xss_extractor.extractAverageHeatingNumbers()
+        self.assertEqual(len(heating_numbers), 157754)
+        self.assertEqual(heating_numbers[0], 8.59985e-4)
+        self.assertEqual(heating_numbers[len(heating_numbers)-1], 4.99417e1)
+
+    def testExtractNUBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractNUBlock method"
+        nu_block = self.xss_extractor.extractNUBlock()
+        self.assertEqual(len(nu_block), 47)
+        self.assertEqual(nu_block[0], -23)
+        self.assertEqual(nu_block[len(nu_block)-1], 6.414109)
+
+    def testExtractMTRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractMTRBlock method"
+        mtr_block = self.xss_extractor.extractMTRBlock()
+        self.assertEqual(len(mtr_block), 47)
+        self.assertEqual(mtr_block[0], 16)
+        self.assertEqual(mtr_block[len(mtr_block)-1], 444)
+
+    def testExtractMTRPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractMTRPBlock method"
+        mtrp_block = self.xss_extractor.extractMTRPBlock()
+        self.assertEqual(len(mtrp_block), 6)
+        self.assertEqual(mtrp_block[0], 18001)
+        self.assertEqual(mtrp_block[len(mtrp_block)-1], 3004)
+
+    def testExtractLQRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLQRBlock method"
+        lqr_block = self.xss_extractor.extractLQRBlock()
+        self.assertEqual(len(lqr_block), 47)
+        self.assertEqual(lqr_block[0], -6.1528)
+        self.assertEqual(lqr_block[len(lqr_block)-1], 0.0)
+
+    def testExtractTYRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractTYRBlock method"
+        tyr_block = self.xss_extractor.extractTYRBlock()
+        self.assertEqual(len(tyr_block), 47)
+        self.assertEqual(tyr_block[0], -2)
+        self.assertEqual(tyr_block[len(tyr_block)-1], 0.0)
+        
+    def testExtractLSIGBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGBlock method"
+        lsig_block = self.xss_extractor.extractLSIGBlock()
+        self.assertEqual(len(lsig_block), 47)
+        self.assertEqual(lsig_block[0], 1)
+        self.assertEqual(lsig_block[len(lsig_block)-1], 324068)
+        
+    def testExtractLSIGPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLSIGPBlock method"
+        lsigp_block = self.xss_extractor.extractLSIGPBlock()
+        self.assertEqual(len(lsigp_block), 6)
+        self.assertEqual(lsigp_block[0], 1)
+        self.assertEqual(lsigp_block[len(lsigp_block)-1], 276)
+
+    def testExtractSIGBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractSIGBlock method"
+        sig_block = self.xss_extractor.extractSIGBlock()
+        self.assertEqual(len(sig_block), 481823)
+        self.assertEqual(sig_block[0], 157648)
+        self.assertEqual(sig_block[len(sig_block)-1], 3.216104e-1)
+        
+    def testExtractLANDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLANDBlock method"
+        land_block = self.xss_extractor.extractLANDBlock()
+        self.assertEqual(len(land_block), 46)
+        self.assertEqual(land_block[0], 1)
+        self.assertEqual(land_block[len(land_block)-1], -1)
+
+    def testExtractANDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractANDBlock method"
+        and_block = self.xss_extractor.extractANDBlock()
+        self.assertEqual(len(and_block), 93093)
+        self.assertEqual(and_block[0], 38)
+        self.assertEqual(and_block[len(and_block)-1], 1.0)
+
+    def testExtractLDLWBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLDLWBlock method"
+        ldlw_block = self.xss_extractor.extractLDLWBlock()
+        self.assertEqual(len(ldlw_block), 45)
+        self.assertEqual(ldlw_block[0], 1)
+        self.assertEqual(ldlw_block[len(ldlw_block)-1], 70954)
+
+    def testExtractLDLWPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLDLWPBlock method"
+        ldlwp_block = self.xss_extractor.extractLDLWPBlock()
+        self.assertEqual(len(ldlwp_block), 6)
+        self.assertEqual(ldlwp_block[0], 1)
+        self.assertEqual(ldlwp_block[len(ldlwp_block)-1], 792)
+
+    def testExtractDLWBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDLWBlock method"
+        dlw_block = self.xss_extractor.extractDLWBlock()
+        self.assertEqual(len(dlw_block), 112255)
+        self.assertEqual(dlw_block[0], 0)
+        self.assertEqual(dlw_block[len(dlw_block)-1], 9.99999999e-1)
+
+    def testExtractDLWPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDLWPBlock method"
+        dlwp_block = self.xss_extractor.extractDLWPBlock()
+        self.assertEqual(len(dlwp_block), 3170)
+        self.assertEqual(dlwp_block[0], 0)
+        self.assertEqual(dlwp_block[len(dlwp_block)-1], 1.0)
+
+    def testExtractGPDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractGPDBlock method"
+        gpd_block = self.xss_extractor.extractGPDBlock()
+        self.assertEqual(len(gpd_block), 157754)
+        self.assertEqual(gpd_block[0], 5.821567e2)
+        self.assertEqual(gpd_block[len(gpd_block)-1], 1.650796e1)
+
+    def testExtractSIGPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractSIGPBlock method"
+        sigp_block = self.xss_extractor.extractSIGPBlock()
+        self.assertEqual(len(sigp_block), 539)
+        self.assertEqual(sigp_block[0], 12)
+        self.assertEqual(sigp_block[len(sigp_block)-1], 3.952)
+
+    def testExtractLANDPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractLANDPBlock method"
+        landp_block = self.xss_extractor.extractLANDPBlock()
+        self.assertEqual(len(landp_block), 6)
+        self.assertEqual(landp_block[0], 0)
+        self.assertEqual(landp_block[len(landp_block)-1], 0)
+
+    def testExtractANDPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractANDPBlock method"
+        andp_block = self.xss_extractor.extractANDPBlock()
+        self.assertEqual(len(andp_block), 0)
+
+    def testExtractYPBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractYPBlock method"
+        yp_block = self.xss_extractor.extractYPBlock()
+        self.assertEqual(len(yp_block), 3)
+        self.assertEqual(yp_block[0], 2)
+        self.assertEqual(yp_block[len(yp_block)-1], 102)
+
+    def testExtractFISBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractFISBlock method"
+        fis_block = self.xss_extractor.extractFISBlock()
+        self.assertEqual(len(fis_block), 157756)
+        self.assertEqual(fis_block[0], 1)
+        self.assertEqual(fis_block[len(fis_block)-1], 1.666468)
+
+    def testExtractUNRBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractUNRBlock method"
+        unr_block = self.xss_extractor.extractUNRBlock()
+        self.assertEqual(len(unr_block), 2184)
+        self.assertEqual(unr_block[0], 18)
+        self.assertEqual(unr_block[len(unr_block)-1], 1.02014888699)
+
+    def testExtractDNUBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNUBlock method"
+        dnu_block = self.xss_extractor.extractDNUBlock()
+        self.assertEqual(len(dnu_block), 11)
+        self.assertEqual(dnu_block[0], 2)
+        self.assertEqual(dnu_block[len(dnu_block)-1], 2.6e-2)
+
+    def testExtractBDDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNUBlock method"
+        bdd_block = self.xss_extractor.extractBDDBlock()
+        self.assertEqual(len(bdd_block), 42)
+        self.assertEqual(bdd_block[0], 1.249423e-10)
+        self.assertEqual(bdd_block[len(bdd_block)-1], 6.168868e-2)
+
+    def testExtractDNEDLBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNEDLBlock method"
+        dnedl_block = self.xss_extractor.extractDNEDLBlock()
+        self.assertEqual(len(dnedl_block), 6)
+        self.assertEqual(dnedl_block[0], 1)
+        self.assertEqual(dnedl_block[len(dnedl_block)-1], 7944)
+
+    def testExtractDNEDBlock(self):
+        "*Test Data.ACE.XSSNeutronDataExtractor extractDNEDBlock method"
+        dned_block = self.xss_extractor.extractDNEDBlock()
+        self.assertEqual(len(dned_block), 9768)
+        self.assertEqual(dned_block[0], 0)
+        self.assertEqual(dned_block[len(dned_block)-1], 9.99999999000e-01)
+        
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    if options.tablename == "1001.70c":
+        suite.addTest(unittest.makeSuite(XSSNeutronDataExtractorH1TestCase))
+    elif options.tablename == "92238.70c":
+        suite.addTest(unittest.makeSuite(XSSNeutronDataExtractorU238TestCase))
+    else:
+        print >>sys.stderr, "Error: This test can only be used with the " + \
+            "1001.70c table or the 92238.70c table (" + options.tablename + \
+            ") provided!"
+        sys.exit(1)
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.ACE \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ACE.XSSNeutronDataExtractor.py
+#-----------------------------------------------------------------------------#

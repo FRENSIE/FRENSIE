@@ -22,13 +22,18 @@ ADD_CUSTOM_TARGET(testingHelpers ALL
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/testutil.py)
 
 # Add the Utility.Distribution unit tests
-PyFrensie_MAKE_TEST(tstUtility.Distribution)
-ADD_TEST(PyFrensie.Utility.Distribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.py)
+PyFrensie_MAKE_TEST(tstUtility.Distribution.OneDDistribution)
+ADD_TEST(PyFrensie.Utility.Distribution.OneDDistribution_test ${PYTHON_EXECUTABLE} tstUtility.Distribution.OneDDistribution.py)
 
 # Add the Utility.Prng unit tests
 PyFrensie_MAKE_TEST(tstUtility.Prng)
 ADD_TEST(PyFrensie.Utility.Prng_test ${PYTHON_EXECUTABLE} tstUtility.Prng.py)
 
-# Add the Data.ACE unit tests
-PyFrensie_MAKE_TEST(tstData.ACE)
-ADD_TEST(PyFrensie.Data.ACE_test ${PYTHON_EXECUTABLE} tstData.ACE.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
+# Add the Data.ACE.ACEFileHandler unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.ACEFileHandler)
+ADD_TEST(PyFrensie.Data.ACE.ACEFileHandler_test ${PYTHON_EXECUTABLE} tstData.ACE.ACEFileHandler.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
+
+# Add the Data.ACE.XSSNeutronDataExtractor unit tests
+PyFrensie_MAKE_TEST(tstData.ACE.XSSNeutronDataExtractor)
+ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h1_ace_file.txt --tablename=1001.70c)
+ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_U238_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSNeutronDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_u238_ace_file.txt --tablename=92238.70c)

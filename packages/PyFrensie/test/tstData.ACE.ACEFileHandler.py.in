@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Data.ACE module unit tests
-#  \file   tstData.ACE.py
+## Data.ACE.ACEFileHandler class unit tests
+#  \file   tstData.ACE.ACEFileHandler.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Data.ACE module
+#  \brief  Unit tests for the Data.ACE.ACEFileHandler class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -104,21 +104,6 @@ class ACEFileHandlerTestCase(unittest.TestCase):
         self.assertEqual(xss[len(xss)-1], 102)
 
 #-----------------------------------------------------------------------------#
-# Tests.
-#-----------------------------------------------------------------------------#
-# Test the XSSNeutronDataExtractor
-class XSSNeutronDataExtractorTestCase(unittest.TestCase):
-    "TestCase for Data.ACE.XSSNeutronDataExtractor class"
-
-    def setUp(self):
-        ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
-        self.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
-
-    def testConstructor(self):
-        "*Test Data.ACE.XSSNeutronDataExtractor constructor"
-        self.assertTrue(isinstance(self.xss_extractor, ACE.XSSNeutronDataExtractor))
-
-#-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
@@ -127,8 +112,12 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    suite.addTest(unittest.makeSuite(ACEFileHandlerTestCase))
-    suite.addTest(unittest.makeSuite(XSSNeutronDataExtractorTestCase))
+    if options.tablename == "1001.70c":
+        suite.addTest(unittest.makeSuite(ACEFileHandlerTestCase))
+    else:
+        print >>sys.stderr, "Error: This test can only be used with the " + \
+            "1001.70c table (" + options.tablename + ") provided!"
+        sys.exit(1)
 
     print >>sys.stderr, \
         "\n****************\n" +\
@@ -148,5 +137,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstData.ACE.py
+# end tstData.ACE.ACEFileHandler.py
 #-----------------------------------------------------------------------------#

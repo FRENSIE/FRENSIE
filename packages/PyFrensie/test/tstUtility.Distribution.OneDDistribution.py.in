@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Utility.Distribution module unit tests
-#  \file   tstUtility.Distribution.py
+## Utility.Distribution.OneDDistribution class unit tests
+#  \file   tstUtility.Distribution.OneDDistribution.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Utility.Distribution module
+#  \brief  Unit tests for the Utility.Distribution.OneDDistribution classes
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -1803,7 +1803,7 @@ class WattDistributionTestCase(unittest.TestCase):
 #-----------------------------------------------------------------------------#
 if __name__ == "__main__":
 
-    # Initialize the FRENSIE Prng
+    # Initialize the FRENSIE random number generator
     Utility.initFrensiePrng()
 
     # Create the test suite object
@@ -1846,5 +1846,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstUtility.Distribution.py.in
+# end tstUtility.Distribution.OneDDistribution.py
 #-----------------------------------------------------------------------------#
