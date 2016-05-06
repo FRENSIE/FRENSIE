@@ -1,0 +1,92 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Geometry.DagMC.DagMC class unit tests
+#  \file   tstGeometry.DagMC.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Geometry.DagMC.DagMC class 
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-c", "--cadfile", type="string", dest="cadfile",
+                  help="set the CAD (.sat) file that DagMC will read")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the DagMC class (pre initialization)
+class DagMCPreInitTestCase(unittest.TestCase):
+    "TestCase class for Geometry.DagMC.DagMC class (pre initialization)"
+
+    def setUp(self):
+        self.geom = DagMC.DagMC
+
+    def testSetTerminationCellPropertyName(self):
+        "*Test Geometry.DagMC.DagMC setTerminationCellPropertyName method"
+        default_property = self.geom.getTerminationCellPropertyName()
+        print default_property
+        self.geom.setTerminationCellPropertyName( 'graveyard' )
+        self.assertEqual(self.geom.getTerminationCellPropertyName(), 'graveyard')
+        self.geom.setTerminationCellPropertyName( default_property )
+    
+#-----------------------------------------------------------------------------#
+# Test the DagMC class (post initialization)
+class DagMCPostInitTestCase(unittest.TestCase):
+    "TestCase class for Geometry.DagMC.DagMC class (post initialization)"
+
+    def setUp(self):
+        self.geom = DagMC.DagMC
+        self.geom.setTerminationCellPropertyName( "graveyard" )
+        self.geom.setMaterialPropertyName( "mat" )
+        self.geom.setDensityPropertyName( "rho" )
+        self.geom.setEstimatorPropertyName( "tally" )
+        self.geom.initialize(options.cadfile, 1e-3)
+
+    def testDoesCellExist(self):
+        self.assertFalse(self.geom.doesCellExist(0))
+        self.assertTrue(self.geom.doesCellExist(1))
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    suite.addTest(unittest.makeSuite(DagMCPreInitTestCase))
+    suite.addTest(unittest.makeSuite(DagMCPostInitTestCase))
+
+    print >>sys.stderr, \
+        "\n****************************\n" + \
+        "Testing Geometry.DagMC.DagMC \n" + \
+        "****************************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstGeometry.DagMC.DagMC.py
+#-----------------------------------------------------------------------------#

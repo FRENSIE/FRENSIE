@@ -41,6 +41,10 @@ geometries.
 %}
 
 // C++ STL support
+// Note: stl.i provides typemaps for std::string which allows one to
+// use python strings seamlessly with any wrapped c++ method that would
+// normally take a std::string
+%include <stl.i>
 %include <std_vector.i>
 %include <std_except.i>
 

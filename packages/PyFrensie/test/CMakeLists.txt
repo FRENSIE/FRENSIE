@@ -1,3 +1,6 @@
+# Configure the test files
+ADD_SUBDIRECTORY(test_files)
+
 # Configure the PyTrilinos utilities (used for setting up unit files)
 CONFIGURE_FILE(${PYTRILINOS_UTIL_DIR_PATH}/CMakeCacheVariables.py.in
   ${CMAKE_CURRENT_BINARY_DIR}/CMakeCacheVariables.py)
@@ -42,3 +45,7 @@ ADD_TEST(PyFrensie.Data.ACE.XSSNeutronDataExtractor_H1_test ${PYTHON_EXECUTABLE}
 PyFrensie_MAKE_TEST(tstData.ACE.XSSEPRDataExtractor)
 ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_B_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_epr_ace_file.txt --tablename=5000.12p)
 ADD_TEST(PyFrensie.Data.ACE.XSSEPRDataExtractor_Pb_test ${PYTHON_EXECUTABLE} tstData.ACE.XSSEPRDataExtractor.py --acefile=${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt --tablename=82000.12p)
+
+# Add the Geometry.DagMC.DagMC unit tests
+PyFrensie_MAKE_TEST(tstGeometry.DagMC.DagMC)
+ADD_TEST(PyFrensie.Geometry.DagMC.DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.DagMC.py --cadfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
