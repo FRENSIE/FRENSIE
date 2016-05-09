@@ -31,10 +31,10 @@ ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
 # Test the XSSNeutronDataExtractor
 class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSNeutronDataExtractor class with H1 ACE table"
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
-        self.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+        cls.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
         "*Test Data.ACE.XSSNeutronDataExtractor constructor"
@@ -252,10 +252,10 @@ class XSSNeutronDataExtractorH1TestCase(unittest.TestCase):
 # Test the XSSNeutronDataExtractor
 class XSSNeutronDataExtractorU238TestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSNeutronDataExtractor class with U238 ACE table"
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
-        self.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+        cls.xss_extractor = ACE.XSSNeutronDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
         "*Test Data.ACE.XSSNeutronDataExtractor constructor"

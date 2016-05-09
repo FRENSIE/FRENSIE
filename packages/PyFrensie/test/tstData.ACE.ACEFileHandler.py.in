@@ -31,9 +31,9 @@ ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
 # Test the ACEFileHandler
 class ACEFileHandlerTestCase(unittest.TestCase):
     "TestCase for Data.ACE.ACEFileHandler class"
-
-    def setUp(self):
-        self.ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+    @classmethod
+    def setUpClass(cls):
+        cls.ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
 
     def testConstructor(self):
         "*Test Data.ACE.ACEFileHandler constructor"

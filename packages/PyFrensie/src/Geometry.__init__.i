@@ -108,78 +108,66 @@ Geometry::Ray::getDirection
 A NumPy array will be returned.
 "
 
+// Include the geometry helpers
+%include "Geometry_Helpers.i"
+
 // Ignore the extra contructors
 %ignore Geometry::Ray::Ray( double[3], double[3], const bool );
 %ignore Geometry::Ray::Ray( double[3], double[3] );
-%ignore Geometry::Ray::Ray( const double[3], const double[3] );
-
-// Ignore the pointer returns
-%ignore Geometry::Ray::getPosition();
-%ignore Geometry::Ray::getDirection();
-
-// Ignore the change direction overload
-%ignore Geometry::Ray::changeDirection( const double[3] );
 
 // Ignore the print method
 %ignore Geometry::Ray::print;
 
-// Create a macro for converting the position from python to teuchos
-%define %convert_python_position_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
-  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
+// Add a general typemap that will convert the input position from a Python
+// Array object to a double*.
+%typemap(in) const double position[3] (Teuchos::Array<double> temp_position){
+  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_position );
 
   // Make sure the sequence has 3 elements
-  if( TEUCHOS_ARRAY.size() != 3 )
+  if( temp_position.size() != 3 )
   {
     PyErr_SetString( PyExc_TypeError, 
                      "The input position must have 3 elements." );
   }
-%enddef
+  
+  $1 = temp_position.getRawPtr();
+}
 
-// Create a macro for converting the direction from python to teuchos
-%define %convert_python_direction_to_teuchos( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY )
-  PyFrensie::copyNumPyToTeuchosWithCheck( PYTHON_ARRAY_OBJ, TEUCHOS_ARRAY );
+// Add a general typemap that will convert the input direction from a Python
+// array object to a double*
+%typemap(in) const double direction[3] (Teuchos::Array<double> temp_direction){
+  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_direction );
 
   // Make sure the sequence has 3 elements
-  if( TEUCHOS_ARRAY.size() != 3 )
+  if( temp_direction.size() != 3 )
   {
     PyErr_SetString( PyExc_TypeError, 
                      "The input direction must have 3 elements." );
   }
-%enddef
+  
+  $1 = temp_direction.getRawPtr();
+}
+
+// The typecheck precedence, which is used by SWIG to determine which
+// overloaded method should be called, should be set to
+// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the C double arrays. You will get a
+// Python error when calling the overloaded method in Python without this
+// typecheck
+%typemap(typecheck, precedence=1050) (const double[3]) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
+// Add a general typemap that will convert the output position or direction
+// from a double* to a Python array object
+%typemap(out) const double* {
+  Teuchos::ArrayView<const double> output_view( $1, 3 );
+
+  $result = PyFrensie::copyTeuchosToNumPy( output_view );
+}
 
 // Add some useful methods to the Ray class
 %extend Geometry::Ray
 {
-  // A a new list/sequence/numpy array constructor
-  Ray( PyObject* position_py_obj, PyObject* direction_py_obj )
-  {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( position_py_obj, position );
-    
-    Teuchos::Array<double> direction;
-
-    %convert_python_position_to_teuchos( direction_py_obj, direction );
-
-    return new Geometry::Ray( position.getRawPtr(), direction.getRawPtr() );
-  }
-
-  // Return the position of the ray
-  PyObject* getPosition() const
-  {
-    Teuchos::ArrayView<const double> position( $self->getPosition(), 3 );
-    
-    return PyFrensie::copyTeuchosToNumPy( position );
-  }
-
-  // Return the direction of the ray
-  PyObject* getDirection() const
-  {
-    Teuchos::ArrayView<const double> direction( $self->getDirection(), 3 );
-    
-    return PyFrensie::copyTeuchosToNumPy( direction );
-  }
-
   // String conversion methd
   PyObject* __str__() const
   {

@@ -205,131 +205,81 @@ surface that will be hit by the ray.
 ")
 Geometry::DagMC::fireInternalRay;
 
-// Add a few general typemaps
+%feature("autodoc",
+"advanceInternalRayToCellBoundary()
+advanceInternalRayToCellBoundary() -> bool, numpy.array
+
+The first return value indicates if a reflecting surface was encountered. The
+second return value is the surface normal at the surface intersection point.
+")
+Geometry::DagMC::advanceInternalRayToCellBoundary;
+
+// Add a general typemap that will convert the inout surface_hit parameter to
+// a return from the python wrapper method
 %apply Geometry::ModuleTraits::InternalCellHandle& OUTPUT { Geometry::ModuleTraits::InternalSurfaceHandle& surface_hit }
 
-// Ignore the methods that receive or return pointers - new ones will be
-// created that receive or return Python objects
-%ignore Geometry::DagMC::getSurfaceNormal( const ModuleTraits::InternalSurfaceHandle, const double[3], double[3] );
-%ignore Geometry::DagMC::setInternalRay( const double[3], const double[3], const bool );
-%ignore Geometry::DagMC::setInternalRay( const double[3], const double[3], const ModuleTraits::InternalCellHandle, const bool );
-%ignore Geometry::DagMC::changeInternalRayDirection( const double[3] );
+// Add a general typemap that will convert the input position from a Python
+// Array object to a double*.
+%typemap(in) const double position[3] (Teuchos::Array<double> temp_position){
+  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_position );
 
-// Add some useful methods to the DagMC class
-%extend Geometry::DagMC
-{
-  // Set the internal ray
-  static void setInternalRay( PyObject* py_array_position,
-                              PyObject* py_array_direction,
-                              const bool cache_start_cell )
+  // Make sure the sequence has 3 elements
+  if( temp_position.size() != 3 )
   {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    Teuchos::Array<double> direction;
-
-    %convert_python_direction_to_teuchos( py_array_direction, direction );
-
-    Geometry::DagMC::setInternalRay( position.getRawPtr(),
-                                     direction.getRawPtr(),
-                                     cache_start_cell );
-  }
-
-  // Set the internal ray
-  static void setInternalRay(
-                           PyObject* py_array_position,
-                           PyObject* py_array_direction,
-                           const ModuleTraits::InternalCellHandle current_cell,
-                           const bool cache_start_cell )
-  {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    Teuchos::Array<double> direction;
-
-    %convert_python_direction_to_teuchos( py_array_direction, direction );
-
-    Geometry::DagMC::setInternalRay( position.getRawPtr(),
-                                     direction.getRawPtr(),
-                                     current_cell,
-                                     cache_start_cell );
+    PyErr_SetString( PyExc_TypeError, 
+                     "The input position must have 3 elements." );
   }
   
-  // Set the internal ray
-  static void setInternalRay( PyObject* py_array_position,
-                              PyObject* py_array_direction )
+  $1 = temp_position.getRawPtr();
+}
+
+// Add a general typemap that will convert the input direction from a Python
+// array object to a double*
+%typemap(in) const double direction[3] (Teuchos::Array<double> temp_direction){
+  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_direction );
+
+  // Make sure the sequence has 3 elements
+  if( temp_direction.size() != 3 )
   {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    Teuchos::Array<double> direction;
-
-    %convert_python_direction_to_teuchos( py_array_direction, direction );
-
-    Geometry::DagMC::setInternalRay( position.getRawPtr(),
-                                     direction.getRawPtr(),
-                                     false );
+    PyErr_SetString( PyExc_TypeError, 
+                     "The input direction must have 3 elements." );
   }
+  
+  $1 = temp_direction.getRawPtr();
+}
 
-  // Set the internal ray
-  static void setInternalRay(
-                          PyObject* py_array_position,
-                          PyObject* py_array_direction,
-                          const ModuleTraits::InternalCellHandle current_cell )
-  {
-    Teuchos::Array<double> position;
+// The typecheck precedence, which is used by SWIG to determine which
+// overloaded method should be called, should be set to
+// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the C double arrays. You will get a
+// Python error when calling the overloaded method in Python without this
+// typecheck
+%typemap(typecheck, precedence=1050) (const double[3]) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
 
-    %convert_python_position_to_teuchos( py_array_position, position );
+// Add a general typemap that will convert the output position or direction
+// from a double* to a Python array object
+%typemap(out) const double* {
+  Teuchos::ArrayView<const double> output_view( $1, 3 );
 
-    Teuchos::Array<double> direction;
+  $result = PyFrensie::copyTeuchosToNumPy( output_view );
+}
 
-    %convert_python_direction_to_teuchos( py_array_direction, direction );
+// Add typemaps for the advanceInternalRayToCellBoundary method
+%typemap(in,numinputs=0) double* surface_normal (double temp[3]) "$1 = &temp[0];"
 
-    Geometry::DagMC::setInternalRay( position.getRawPtr(),
-                                     direction.getRawPtr(),
-                                     current_cell,
-                                     false );
-  }
+%typemap(argout) double* surface_normal {
+  Teuchos::ArrayView<const double> normal_view( $1, 3 );
+  %append_output(PyFrensie::copyTeuchosToNumPy( normal_view ));
+}
 
-  // Get the surface normal at a point on the surface
-  static PyObject* getSurfaceNormal(
-                          const ModuleTraits::InternalSurfaceHandle surface_id,
-                          PyObject* py_array_position )
-  {
-    Teuchos::Array<double> position;
+// Add typemaps for the getSurfaceNormal method
+%typemap(in,numinputs=0) double normal[3] (double temp[3]) "$1 = &temp[0];"
 
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    Teuchos::Array<double> normal( 3 );
-
-    Geometry::DagMC::getSurfaceNormal( surface_id,
-                                       position.getRawPtr(),
-                                       normal.getRawPtr() );
-
-    return PyFrensie::copyTeuchosToNumPy( normal );
-  }
-                              
-  // Get the internal DagMC ray position
-  static PyObject* getInternalRayPosition()
-  {
-    Teuchos::ArrayView<const double> position(
-                                Geometry::DagMC::getInternalRayPosition(), 3 );
-
-    return PyFrensie::copyTeuchosToNumPy( position );
-  }
-
-  // Get the internal DagMC ray direction
-  static PyObject* getInternalRayDirection()
-  {
-    Teuchos::ArrayView<const double> direction(
-                               Geometry::DagMC::getInternalRayDirection(), 3 );
-
-    return PyFrensie::copyTeuchosToNumPy( direction );
-  }
-};
+%typemap(argout) double normal[3] {
+  Teuchos::ArrayView<const double> normal_view( $1, 3 );
+  %append_output(PyFrensie::copyTeuchosToNumPy( normal_view ));
+}
 
 // Include the DagMC class
 %include "Geometry_DagMC.hpp"

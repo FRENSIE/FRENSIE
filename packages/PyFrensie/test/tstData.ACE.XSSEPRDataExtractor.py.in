@@ -31,10 +31,10 @@ ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
 # Test the XSSEPRDataExtractor
 class XSSEPRDataExtractorBTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with H ACE table"
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
-        self.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+        cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
         "*Test Data.ACE.XSSEPRDataExtractor constructor"
@@ -322,10 +322,10 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
 # Test the XSSEPRDataExtractor
 class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
     "TestCase for Data.ACE.XSSEPRDataExtractor class with Pb ACE table"
-
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
-        self.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
+        cls.xss_extractor = ACE.XSSEPRDataExtractor( ace_file.getTableNXSArray(), ace_file.getTableJXSArray(), ace_file.getTableXSSArray() )
 
     def testConstructor(self):
         "*Test Data.ACE.XSSEPRDataExtractor constructor"

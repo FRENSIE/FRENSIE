@@ -150,67 +150,11 @@ usage tutorial for this class is shown below:
   cell = geom.findCellContainingInternalRay()
 "
 
-// Ignore the methods that receive or return pointers - new ones will be
-// created that receive or return Python objects
-%ignore Geometry::Root::getPointLocation( const double[3], const Geometry::ModuleTraits::InternalCellHandle );
-%ignore Geometry::Root::setInternalRay( const double[3], const double[3] );
-%ignore Geometry::Root::changeInternalRayDirection( const double[3] );
-
-// Add some useful methods to the Root class
-%extend Geometry::Root
-{
-  // Get the point location
-  static PointLocation getPointLocation(
-                               PyObject* py_array_position,
-                               const ModuleTraits::InternalCellHandle cell_id )
-  {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    return Geometry::Root::getPointLocation( position.getRawPtr(), cell_id );
-  }
-
-  // Set the internal ray
-  static void setInternalRay( PyObject* py_array_position,
-                              PyObject* py_array_direction )
-  {
-    Teuchos::Array<double> position;
-
-    %convert_python_position_to_teuchos( py_array_position, position );
-
-    Teuchos::Array<double> direction;
-
-    %convert_python_direction_to_teuchos( py_array_direction, direction );
-
-    Geometry::Root::setInternalRay( position.getRawPtr(),
-                                    direction.getRawPtr() );
-  }
-
-  // Get the internal Root ray position
-  static PyObject* getInternalRayPosition()
-  {
-    Teuchos::ArrayView<const double> position(
-                                Geometry::Root::getInternalRayPosition(), 3 );
-
-    return PyFrensie::copyTeuchosToNumPy( position );
-  }
-
-  // Get the internal DagMC ray direction
-  static PyObject* getInternalRayDirection()
-  {
-    Teuchos::ArrayView<const double> direction(
-                               Geometry::Root::getInternalRayDirection(), 3 );
-
-    return PyFrensie::copyTeuchosToNumPy( direction );
-  }
-};
+// Include the geometry helpers
+%include "Geometry_Helpers.i"
 
 // Include the Root class
 %include "Geometry_Root.hpp"
-
-// Include the geometry helpers
-%include "Geometry_Helpers.i"
 
 %standard_geom_template_extends( Root );
 
