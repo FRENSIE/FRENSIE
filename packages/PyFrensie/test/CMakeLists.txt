@@ -54,6 +54,10 @@ ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
 PyFrensie_MAKE_TEST(tstGeometry.DagMC.DagMC)
 ADD_TEST(PyFrensie.Geometry.DagMC.DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.DagMC.py --cadfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
 
+# Add the Geometry.DagMC.initializeDagMC unit tests
+PyFrensie_MAKE_TEST(tstGeometry.DagMC.initializeDagMC)
+ADD_TEST(PyFrensie.Geometry.DagMC.initializeDagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.initializeDagMC.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml)
+
 # Add the Geometry.ROOT.Root unit tests
 PyFrensie_MAKE_TEST(tstGeometry.ROOT.Root)
 ADD_TEST(PyFrensie.Geometry.ROOT.Root_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.Root.py --rootfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
