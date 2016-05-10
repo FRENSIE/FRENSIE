@@ -242,7 +242,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -252,7 +252,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
                                               hash_grid_bins,  
                                               function,
                                               false,
-                                              cutoff_angle ) );
+                                              cutoff_angle_cosine ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -903,7 +903,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
   
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -913,7 +913,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
                                               hash_grid_bins,
                                               function,
                                               true,
-                                              cutoff_angle ) );
+                                              cutoff_angle_cosine ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -1105,7 +1105,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle = 1.0e-6;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -1115,7 +1115,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
                                               hash_grid_bins,  
                                               function,
                                               true,
-                                              cutoff_angle ) );
+                                              cutoff_angle_cosine ) );
 
   std::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;

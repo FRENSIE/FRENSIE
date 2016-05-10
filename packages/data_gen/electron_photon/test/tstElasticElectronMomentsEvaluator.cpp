@@ -104,9 +104,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                             1.000000000000E-05,
                                             n );
 
+  double pdf = 5.00E-01/9.999995000E-01;
+  double legendre_expansion = 0.9999900000224990;
+
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.00E-01*0.9999900000224990,
+                    pdf*legendre_expansion,
                     1e-12 );
 
   expanded_pdf = 
@@ -114,9 +117,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                             1.000000000000E-03,
                                             n );
 
-  UTILITY_TEST_FLOATING_EQUALITY(  
+  pdf = 5.968430E-01/9.9999985651050E-01;
+  legendre_expansion = 1.0;
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.968430E-01*1.0,
+                    pdf*legendre_expansion,
                     1e-12 );
 
   expanded_pdf = 
@@ -124,10 +130,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                             1.000000000000E+05,
                                             n );
 
+  pdf = 2.237270E+05/9.99999722875817E-01;
+  legendre_expansion = 9.999790000992240E-01;
+
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    2.237270E+05*9.999790000992250E-01,
-                    1e-12 );		
+                    pdf*legendre_expansion,
+                    1e-10 );
 
 
 n = 2;
@@ -135,12 +144,15 @@ n = 2;
   expanded_pdf = 
     evaluator->evaluateLegendreExpandedPDF( -1.0,
                                             1.000000000000E-05,
-                                               n );
+                                            n );
+
+  pdf = 5.000E-01/9.999995000E-01;
+  legendre_expansion = 1.0;
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.000E-01*1.0,
-                    1e-12 );
+                    pdf*legendre_expansion,
+                    1e-12 );	
 }
 
 //---------------------------------------------------------------------------//
@@ -155,9 +167,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                        0,
                                                        n );
 
+  double pdf = 5.00E-01/9.999995000E-01;
+  double legendre_expansion = 0.9999900000224990;
+
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.00E-01*0.9999900000224990,
+                    pdf*legendre_expansion,
                     1e-12 );
 
   expanded_pdf = 
@@ -165,9 +180,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                        1,
                                                        n );
 
-  UTILITY_TEST_FLOATING_EQUALITY(  
+  pdf = 5.968430E-01/9.9999985651050E-01;
+  legendre_expansion = 1.0;
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.968430E-01*1.0,
+                    pdf*legendre_expansion,
                     1e-12 );
 
   expanded_pdf = 
@@ -175,22 +193,28 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                                        13,
                                                        n );
 
+  pdf = 2.237270E+05/9.99999722875817E-01;
+  legendre_expansion = 9.999790000992240E-01;
+
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    2.237270E+05*9.999790000992250E-01,
-                    1e-12 );		
+                    pdf*legendre_expansion,
+                    1e-10 );		
 
 
-n = 2;
+  n = 2;
   
   expanded_pdf = 
     evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
                                                        0,
                                                        n );
 
+  pdf = 5.000E-01/9.999995000E-01;
+  legendre_expansion = 1.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( 
                     expanded_pdf,
-                    5.000E-01*1.0,
+                    pdf*legendre_expansion,
                     1e-12 );
 }
 
@@ -214,45 +238,63 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
   full_evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
   
+  double cutoff_cross_section = 2.48924E+09;
+  double sr_cross_section = 0.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.48924E+09 + 0.0,
+                                  cutoff_cross_section + sr_cross_section,
                                   tol );	
 
   energy = 0.001;
   full_evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
   
+
+  cutoff_cross_section = 2.90281E+08;
+  sr_cross_section = 0.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.90281E+08 + 0.0,
-                                  tol );
+                                  cutoff_cross_section + sr_cross_section,
+                                  tol );	
 
   energy = 5.5e1;
   full_evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
   
+  cutoff_cross_section = 2.51776896157372E+05;
+  sr_cross_section = 1.89076556817226E+06;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.51776896157372E+05 + 1.89076556817226E+06,
-                                  5e-10 );			 
+                                  cutoff_cross_section + sr_cross_section,
+                                  tol );			 
 
   unsigned energy_bin = 0;
 
   full_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
+  cutoff_cross_section = 2.48924E+09;
+  sr_cross_section = 0.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  9.999995000E-01*2.48924E+09 + 0.0,
+                                  cutoff_cross_section + sr_cross_section,
                                   tol );	
 
   energy_bin = 1;
   full_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
+  cutoff_cross_section = 2.90281E+08;
+  sr_cross_section = 0.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  9.9999985651050E-01*2.90281E+08 + 0.0,
-                                  tol );
+                                  cutoff_cross_section + sr_cross_section,
+                                  tol );	
 
   energy_bin = 12;
   full_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
+  cutoff_cross_section = 2.51776896157372E+05;
+  sr_cross_section = 1.89076556817226E+06;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.51776896157372E+05 + 1.89076556817226E+06,
-                                //5.7093654836950E-01+3.62337948943E+00,
+                                  cutoff_cross_section + sr_cross_section,
                                   tol );			 
 
 
@@ -260,18 +302,24 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   energy_bin = 1;
   evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
+  double integrated_pdf = 7.56010292504539E-01;
+  cutoff_cross_section = 2.90281E+08*integrated_pdf;
+  sr_cross_section = 0.0;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.90281E+08,
-                                  //7.559416647842E-01+9.07762058421518E-05,
-                                  tol );
+                                  cutoff_cross_section + sr_cross_section,
+                                  tol );	
 
   energy_bin = 12;
   evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
+  integrated_pdf = 9.999834891716050E-01;
+  cutoff_cross_section = 2.51776896157372E+05*integrated_pdf;
+  sr_cross_section = 1.89076556817226E+06;
+
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  2.51776896157372E+05 + 1.89076556817226E+06,
-                                //5.7093654836950E-01+3.62337948943E+00,
-                                  tol );
+                                  cutoff_cross_section + sr_cross_section,
+                                  tol );	
 
   evaluator->evaluateElasticMoment( total_moments, energy_bin, 6, precision ); 
 /*
