@@ -27,9 +27,9 @@ DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the DagMC class (pre initialization)
+# Test the DagMC class (pre-initialization)
 class DagMCPreInitTestCase(unittest.TestCase):
-    "TestCase class for Geometry.DagMC.DagMC class (pre initialization)"
+    "TestCase class for Geometry.DagMC.DagMC class (pre-initialization)"
 
     def setUp(self):
         self.geom = DagMC.DagMC
@@ -139,9 +139,9 @@ class DagMCPreInitTestCase(unittest.TestCase):
         self.assertFalse(self.geom.isParticleTypeValid( 'z' ))
     
 #-----------------------------------------------------------------------------#
-# Test the DagMC class (post initialization)
+# Test the DagMC class (post-initialization)
 class DagMCPostInitTestCase(unittest.TestCase):
-    "TestCase class for Geometry.DagMC.DagMC class (post initialization)"
+    "TestCase class for Geometry.DagMC.DagMC class (post-initialization)"
     @classmethod
     def setUpClass(cls):
         cls.geom = DagMC.DagMC

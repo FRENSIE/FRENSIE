@@ -216,7 +216,7 @@ Geometry::DagMC::advanceInternalRayToCellBoundary;
 
 // Add a general typemap that will convert the inout surface_hit parameter to
 // a return from the python wrapper method
-%apply Geometry::ModuleTraits::InternalCellHandle& OUTPUT { Geometry::ModuleTraits::InternalSurfaceHandle& surface_hit }
+%apply Geometry::ModuleTraits::InternalSurfaceHandle& OUTPUT { Geometry::ModuleTraits::InternalSurfaceHandle& surface_hit }
 
 // Add a general typemap that will convert the input position from a Python
 // Array object to a double*.

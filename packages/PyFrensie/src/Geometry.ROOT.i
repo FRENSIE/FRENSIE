@@ -46,6 +46,9 @@ geometries.
 %include <std_map.i>
 %include <std_except.i>
 
+// Include typemaps support
+%include <typemaps.i>
+
 // Import the PyFrensie Teuchos Array conversion helpers
 %import "PyFrensie_ArrayConversionHelpers.hpp"
 
@@ -150,8 +153,29 @@ usage tutorial for this class is shown below:
   cell = geom.findCellContainingInternalRay()
 "
 
-// Include the geometry helpers
-%include "Geometry_Helpers.i"
+// Typemaps for id sets that convert the inout set to an output set
+%typemap(in,numinputs=0) std::set<unsigned long long>& cell_set (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& cell_set {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+%typemap(in,numinputs=0) std::set<unsigned long long>& material_ids (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& material_ids {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+// Instantiate an IdSet
+%template(IdSet) std::set<unsigned long long>;
+
+// Instantiate the template getMaterialIds method
+%template(getMaterialIds) Geometry::CLASS::getMaterialIds<std::set<unsigned long long> >;
+
+// Instantiate the template getCells method
+%template(getCells) Geometry::CLASS::getCells<std::set<unsigned long long> >;
+
+
 
 // Include the Root class
 %include "Geometry_Root.hpp"

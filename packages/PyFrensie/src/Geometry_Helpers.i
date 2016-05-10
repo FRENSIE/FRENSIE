@@ -55,26 +55,26 @@
 
 // Add methods that return a std::set (since the OUTPUT typemaps don't seem
 // to work in this case)
-%extend Geometry::CLASS
-{
-  // Output the material id set
-  static std::set<unsigned long long> getMaterialIds()
-  {
-    std::set<unsigned long long> mat_ids;
-    Geometry::CLASS::getMaterialIds( mat_ids );
+// %extend Geometry::CLASS
+// {
+//   // Output the material id set
+//   static std::set<unsigned long long> getMaterialIds()
+//   {
+//     std::set<unsigned long long> mat_ids;
+//     Geometry::CLASS::getMaterialIds( mat_ids );
 
-    return mat_ids;
-  }
+//     return mat_ids;
+//   }
 
-  // Output the cell id set
-  static std::set<unsigned long long> getCells()
-  {
-    std::set<unsigned long long> cell_ids;
-    Geometry::CLASS::getCells( cell_ids );
+//   // Output the cell id set
+//   static std::set<unsigned long long> getCells()
+//   {
+//     std::set<unsigned long long> cell_ids;
+//     Geometry::CLASS::getCells( cell_ids );
 
-    return cell_ids;
-  }
-};
+//     return cell_ids;
+//   }
+// };
 
 // Instantiate a cell id to mat id map
 %template(CellIdMatIdMap) std::map<unsigned long long, unsigned long long>;
