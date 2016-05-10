@@ -43,6 +43,22 @@
 %apply unsigned& INOUT { unsigned& trials };
 %apply unsigned& OUTPUT { unsigned& sampled_bin_index };
 
+%typemap(in) const Teuchos::Array<double>& (Teuchos::Array<double> temp)
+{
+  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp );
+
+  $1 = &temp;
+}
+
+// The typecheck precedence, which is used by SWIG to determine which
+// overloaded method should be called, should be set to
+// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the Teuchos::Array<double>&. You will
+// get a Python error when calling the overloaded method in Python without this
+// typecheck
+%typemap(typecheck, precedence=1050) (const Teuchos::Array<double>&) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
+
 // General ignore directives
 %ignore *::IndepUnit;
 %ignore *::DepUnit;
@@ -103,10 +119,6 @@ Utility::UnitAwareDeltaDistribution<void,void>::UnitAwareDeltaDistribution
 //---------------------------------------------------------------------------//
 // Add support for the DiscreteDistribution
 //---------------------------------------------------------------------------//
-// Ignore the extra constructors
-%ignore Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
-%ignore Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
-
 // Import the DiscreteDistribution
 %import "Utility_DiscreteDistribution.hpp"
 
@@ -117,51 +129,6 @@ Utility::UnitAwareDiscreteDistribution<void,void>::UnitAwareDiscreteDistribution
 The dependent values can represent the CDF instead of the distribution (pass in
 'True' as the 3rd argument)."
 
-// Allow the user to use NumPy arrays in the constructor
-%extend Utility::UnitAwareDiscreteDistribution<void,void>
-{
-  // Constructor
-  UnitAwareDiscreteDistribution( PyObject* independent_py_array,
-                                 PyObject* dependent_py_array,
-                                 const bool interpret_dependent_values_as_cdf )
-  {
-    Teuchos::Array<double> independent_values;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( independent_py_array, 
-                                            independent_values );
-
-    Teuchos::Array<double> dependent_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( dependent_py_array, 
-                                            dependent_values );
-
-    return new Utility::UnitAwareDiscreteDistribution<void,void>( 
-                                           independent_values, 
-                                           dependent_values,
-                                           interpret_dependent_values_as_cdf );
-  }
-
-  // Constructor
-  UnitAwareDiscreteDistribution( PyObject* independent_py_array,
-                                 PyObject* dependent_py_array )
-  {
-    Teuchos::Array<double> independent_values;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( independent_py_array, 
-                                            independent_values );
-
-    Teuchos::Array<double> dependent_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( dependent_py_array, 
-                                            dependent_values );
-
-    return new Utility::UnitAwareDiscreteDistribution<void,void>( 
-                                                            independent_values,
-                                                            dependent_values,
-                                                            false );
-  }
-};
-
 // Standard tabular distribution interface setup
 %standard_tab_distribution_interface_setup( DiscreteDistribution )
 
@@ -170,22 +137,6 @@ The dependent values can represent the CDF instead of the distribution (pass in
 //---------------------------------------------------------------------------//
 // Import the Equiprobable Bin Distribution
 %import "Utility_EquiprobableBinDistribution.hpp"
-
-// Allow the user to use NumPy arrays in the constructor
-%extend Utility::UnitAwareEquiprobableBinDistribution<void,void>
-{
-  // Constructor
-  UnitAwareEquiprobableBinDistribution( PyObject* py_array_bin_boundaries )
-  {
-    Teuchos::Array<double> bin_boundaries;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( py_array_bin_boundaries, 
-                                            bin_boundaries );
-    
-    return new Utility::UnitAwareEquiprobableBinDistribution<void,void>( 
-                                                              bin_boundaries );
-  }
-};
 
 // Standard tabular distribution interface setup
 %standard_tab_distribution_interface_setup( EquiprobableBinDistribution )
@@ -248,10 +199,6 @@ and inf)"
 //---------------------------------------------------------------------------//
 // Add support for the HistogramDistribution
 //---------------------------------------------------------------------------//
-// Ignore the extra constructors
-%ignore Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
-%ignore Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
-
 // Import the HistogramDistribution
 %import "Utility_HistogramDistribution.hpp"
 
@@ -261,50 +208,6 @@ Utility::UnitAwareHistogramDistribution<void,void>::UnitAwareHistogramDistributi
 "The bin boundaries and bin values should be stored in a NumPy array.
 The bin values can represent the CDF instead of the distribution (pass in
 'True' as the 3rd argument)."
-
-// Allow the user to use NumPy arrays in the constructor
-%extend Utility::UnitAwareHistogramDistribution<void,void>
-{
-  // Constructor
-  UnitAwareHistogramDistribution(PyObject* bin_boundaries_py_array,
-                                 PyObject* bin_values_py_array,
-                                 const bool interpret_dependent_values_as_cdf )
-  {
-    Teuchos::Array<double> bin_boundaries;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( bin_boundaries_py_array, 
-                                            bin_boundaries );
-
-    Teuchos::Array<double> bin_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( bin_values_py_array, bin_values );
-
-    return new Utility::UnitAwareHistogramDistribution<void,void>( 
-                                           bin_boundaries, 
-                                           bin_values,
-                                           interpret_dependent_values_as_cdf );
-  }
-
-  // Constructor
-  UnitAwareHistogramDistribution( PyObject* bin_boundaries_py_array,
-                                  PyObject* bin_values_py_array )
-  {
-    Teuchos::Array<double> bin_boundaries;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( bin_boundaries_py_array, 
-                                    bin_boundaries );
-
-    Teuchos::Array<double> bin_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( bin_values_py_array, 
-                                            bin_values );
-
-    return new Utility::UnitAwareHistogramDistribution<void,void>( 
-                                                                bin_boundaries,
-                                                                bin_values,
-                                                                false );
-  }
-};
 
 // Standard tabular distribution interface setup
 %standard_tab_distribution_interface_setup( HistogramDistribution )
@@ -381,24 +284,11 @@ input parameter are the following:
 Utility::UnitAwarePolynomialDistribution<void,void>::UnitAwarePolynomialDistribution
 "The coefficients should be stored in a NumPy array."
 
-// Allow the user to use NumPy arrays in the constructor
+// Instantiate the template constructor for double values
 %extend Utility::UnitAwarePolynomialDistribution<void,void>
 {
-  // Constructor
-  UnitAwarePolynomialDistribution( PyObject* py_array_coefficients,
-                                   const double min_indep_limit,
-                                   const double max_indep_limit )
-  {
-    Teuchos::Array<double> coefficients;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( py_array_coefficients, 
-                                            coefficients );
-    
-    return new Utility::UnitAwarePolynomialDistribution<void,void>( 
-                                                             coefficients,
-                                                             min_indep_limit,
-                                                             max_indep_limit );
-  }
+  // Instantiate the desired version of the template constructor
+  %template(PolynomialDistribution) Utility::UnitAwarePolynomialDistribution::UnitAwarePolynomialDistribution<double>;
 };
 
 // Standard distribution interface setup
@@ -474,38 +364,11 @@ Utility::UnitAwarePowerDistribution<POWER,void,void>::UnitAwarePowerDistribution
 // There are many tabular distributions - use this macro to set up each
 %define %tabular_distribution_interface_setup( INTERP )
 
-// Ignore the extra constructors
-%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>&, const bool );
-%ignore Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution( const Teuchos::Array<double>&, const Teuchos::Array<double>& );
-
 // Add a more detailed docstring for the constructor
 %feature("docstring") 
 Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabularDistribution
 "The independent values and dependent values should be stored in a NumPy array.
 "
-
-// Allow the user to use NumPy arrays in the constructor
-%extend Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>
-{
-  // Constructor
-  UnitAwareTabularDistribution( PyObject* independent_values_py_array,
-                                PyObject* dependent_values_py_array )
-  {
-    Teuchos::Array<double> independent_values;
-    
-    PyFrensie::copyNumPyToTeuchosWithCheck( independent_values_py_array, 
-                                            independent_values );
-
-    Teuchos::Array<double> dependent_values;
-
-    PyFrensie::copyNumPyToTeuchosWithCheck( dependent_values_py_array, 
-                                            dependent_values );
-
-    return new Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>( 
-                                                            independent_values,
-                                                            dependent_values );
-  }
-};
 
 %advanced_tab_distribution_interface_setup( TabularDistribution_ ## INTERP, TabularDistribution, Utility::INTERP )
 
@@ -548,7 +411,7 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 %standard_tab_distribution_interface_setup( UniformDistribution )
 
 //---------------------------------------------------------------------------//
-// Add support forthe WattDistribution
+// Add support for the WattDistribution
 //---------------------------------------------------------------------------//
 // Ignore the static methods
 %ignore Utility::UnitAwareWattDistribution<void,void>::sample( const IndepQuantity, const IndepQuantity, const InverseIndepQuantity, const IndepQuantity );

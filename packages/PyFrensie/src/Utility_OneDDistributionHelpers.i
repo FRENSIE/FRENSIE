@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_DistributionHelpers.i
+//! \file   Utility_OneDDistributionHelpers.i
 //! \author Alex Robinson
 //! \brief  The distribution helper macros
 //!
@@ -393,5 +393,5 @@ typedef DIST_NAME( DISTRIBUTION, PARAMETER, void, void ) RENAMED_DISTRIBUTION;
 
 
 //---------------------------------------------------------------------------//
-// end Utility_DistributionHelpers.i
+// end Utility_OneDDistributionHelpers.i
 //---------------------------------------------------------------------------//

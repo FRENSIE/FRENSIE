@@ -183,23 +183,23 @@ Deletes the fake stream and reinstates the original random number stream. Note
 that the original random number stream state will be reset as well.
 "
 
-// Ignore the set fake stream method
-%ignore Utility::RandomNumberGenerator::setFakeStream( const std::vector<double>&, const unsigned );
-%ignore Utility::RandomNumberGenerator::setFakeStream( const std::vector<double>& );
-
-// Add some useful methods to the RandomNumberGenerator
-%extend Utility::RandomNumberGenerator
+// Typemap which will allow use of NumPy arrays, lists or tuples to set
+// the fake stream
+%typemap(in) const std::vector<double>& fake_stream (std::vector<double> temp)
 {
-  // Create a new set fake stream method that takes a numpy array
-  static void setFakeStream( PyObject* fake_stream_py_array )
-  {
-    std::vector<double> fake_stream;
- 
-    PyFrensie::copyNumPyToVectorWithCheck( fake_stream_py_array, fake_stream );
+  PyFrensie::copyNumPyToVectorWithCheck( $input, temp );
 
-    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  }
-};
+  $1 = &temp;
+}
+
+// The typecheck precedence, which is used by SWIG to determine which
+// overloaded method should be called, should be set to
+// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the std::vector<double>&. You will
+// get a Python error when calling the overloaded method in Python without this
+// typecheck
+%typemap(typecheck, precedence=1050) (const std::vector<double>&) {
+  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
+}
 
 // Include the RandomNumberGenerator
 %include "Utility_RandomNumberGenerator.hpp"
