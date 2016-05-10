@@ -24,6 +24,7 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
 
 // FRENSIE Includes
 #include "PyFrensie_ArrayConversionHelpers.hpp"
+#include "Geometry_ModuleTraits.hpp"
 #include "Geometry_PointLocation.hpp"
 #include "Geometry_Ray.hpp"
 #include "Utility_ContractException.hpp"
@@ -54,6 +55,28 @@ PyFrensie.Geometry is the python interface to the FRENSIE geometry package
   {
     SWIG_exception( SWIG_UnknownError, "Unknown C++ exception" );
   }
+}
+
+// SWIG will not parse typedefs. Create some typemaps that map the typedefs
+// to their true type
+%typemap(in) Geometry::ModuleTraits::InternalCellHandle
+{
+  $1 = PyInt_AsLong($input);
+}
+
+%typemap(in) Geometry::ModuleTraits::InternalSurfaceHandle
+{
+  $1 = PyInt_AsLong($input);
+}
+
+%typemap(out) Geometry::ModuleTraits::InternalCellHandle
+{
+  $result = PyInt_FromLong($1);
+}
+
+%typemap(out) Geometry::ModuleTraits::InternalSurfaceHandle
+{
+  $result = PyInt_AsLong($1);
 }
 
 //---------------------------------------------------------------------------//
@@ -107,9 +130,6 @@ Geometry::Ray::getDirection
 "
 A NumPy array will be returned.
 "
-
-// Include the geometry helpers
-%include "Geometry_Helpers.i"
 
 // Ignore the extra contructors
 %ignore Geometry::Ray::Ray( double[3], double[3], const bool );

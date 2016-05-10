@@ -109,7 +109,247 @@ class RootPostInitTestCase(unittest.TestCase):
         self.assertTrue(2 in cells)
 
         # All cells except void cells
-        #cells = self.
+        cells = self.geom.getCells( False, True )
+        self.assertEqual(len(cells), 2)
+        self.assertTrue(2 in cells)
+        self.assertTrue(3 in cells)
+
+        # All cells
+        cells = self.geom.getCells( True, True )
+        self.assertEqual(len(cells), 3)
+        self.assertTrue(1 in cells)
+        self.assertTrue(2 in cells)
+        self.assertTrue(3 in cells)
+
+    def testGetCellMaterialNames(self):
+        "*Test Geometry.ROOT.Root getCellMaterialNames method"
+        cell_mat_names = self.geom.getCellMaterialNames()
+        self.assertEqual(len(cell_mat_names), 3)
+        self.assertTrue(1 in cell_mat_names)
+        self.assertTrue(2 in cell_mat_names)
+        self.assertTrue(3 in cell_mat_names)
+        self.assertEqual(cell_mat_names[1], "void")
+        self.assertEqual(cell_mat_names[2], "mat_1")
+        self.assertEqual(cell_mat_names[3], "graveyard")
+
+    def testGetCellMaterialIds(self):
+        "*Test Geometry.ROOT.Root getCellMaterialIds method"
+        cell_mat_ids = self.geom.getCellMaterialIds()
+        self.assertEqual(len(cell_mat_ids), 1)
+        self.assertTrue(2 in cell_mat_ids)
+        self.assertEqual(cell_mat_ids[2], 1)
+
+    def testGetCellDensities(self):
+        "*Test Geometry.ROOT.Root getCellDensities method"
+        cell_densities = self.geom.getCellDensities()
+        self.assertEqual(len(cell_densities), 1)
+        self.assertTrue(2 in cell_densities)
+        self.assertEqual(cell_densities[2], 1)
+
+    def testGetPointLocation(self):
+        "*Test Geometry.ROOT.Root getPointLocation method"
+        # Point inside cell 2
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        location = self.geom.getPointLocation( ray, 2 )
+        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 1 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 3 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+
+        # Point on boundary between cell 2 and cell 1
+        ray = Geometry.Ray( (0.0, 0.0, 2.5), (0.0, 0.0, 1.0) )
+        location = self.geom.getPointLocation( ray, 2 )
+        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 1 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 3 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+
+        # Point in cell 1
+        ray = Geometry.Ray( (0.0, 0.0, 4.0), (0.0, 0.0, 1.0) )
+        location = self.geom.getPointLocation( ray, 2 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 1 )
+        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 3 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+
+        # Point on boundary between cell 1 and cell 3
+        ray = Geometry.Ray( [0.0, 0.0, 5.0], [0.0, 0.0, 1.0] )
+        location = self.geom.getPointLocation( ray, 2 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 1 )
+        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 3 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+
+        # Point in cell 3
+        ray = Geometry.Ray( [0.0, 0.0, 6.0], [0.0, 0.0, 1.0] )
+        location = self.geom.getPointLocation( ray, 2 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 1 )
+        self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
+        location = self.geom.getPointLocation( ray, 3 )
+        self.assertEqual( location, Geometry.POINT_INSIDE_CELL )
+
+    def testFindCellContainingExternalRay(self):
+        "*Test Geometry.ROOT.Root findCellContainingExternalRay method"
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 2)
+
+        # Check that direction is used to determine cell containment
+        ray = Geometry.Ray( (0.0, 0.0, 2.5), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 1)
+
+        ray = Geometry.Ray( (0.0, 0.0, 2.5), (0.0, 0.0, -1.0) )
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 2)
+
+    def testFireExternalRay(self):
+        "*Test Geometry.ROOT.Root fireExternalRay method"
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        distance = self.geom.fireExternalRay( ray )
+        self.assertAlmostEqual(distance, 2.5, delta=1e-9)
+
+    def testExternalRayTrace(self):
+        "*Test that an external ray trace can be done with Geometry.ROOT.Root"
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 2)
+        
+        # Fire the ray
+        distance = self.geom.fireExternalRay( ray )
+        ray.advanceHead( distance )
+
+        # Find the new cell
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 1)
+
+        # Fire the ray
+        distance = self.geom.fireExternalRay( ray )
+        ray.advanceHead( distance )
+
+        # Find the new cell
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertEqual(cell, 3)
+
+    def testSetInternalRay(self):
+        "*Test Geometry.ROOT.Root setInternalRay method"
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        self.geom.setInternalRay( ray )
+        position = self.geom.getInternalRayPosition()
+        direction = self.geom.getInternalRayDirection()
+        self.assertEqual(position[0], 0.0)
+        self.assertEqual(position[1], 0.0)
+        self.assertEqual(position[2], 0.0)
+        self.assertEqual(direction[0], 0.0)
+        self.assertEqual(direction[1], 0.0)
+        self.assertEqual(direction[2], 1.0)
+
+        self.geom.setInternalRay( (1.0, 1.0, 1.0), (1.0, 0.0, 0.0) )
+        position = self.geom.getInternalRayPosition()
+        direction = self.geom.getInternalRayDirection()
+        self.assertEqual(position[0], 1.0)
+        self.assertEqual(position[1], 1.0)
+        self.assertEqual(position[2], 1.0)
+        self.assertEqual(direction[0], 1.0)
+        self.assertEqual(direction[1], 0.0)
+        self.assertEqual(direction[2], 0.0)
+
+    def testIsInternalRaySet(self):
+        "*Test Geometry.ROOT.Root isInternalRaySet method"
+        ray = Geometry.Ray( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingExternalRay( ray )
+        self.assertFalse(self.geom.isInternalRaySet())
+
+        # Set the internal ray
+        self.geom.setInternalRay( ray )
+        self.assertTrue(self.geom.isInternalRaySet())
+
+        # Fire an external ray
+        self.geom.fireExternalRay( ray )
+        self.assertFalse(self.geom.isInternalRaySet())
+
+        # Set the internal ray
+        self.geom.setInternalRay( ray )
+        self.assertTrue(self.geom.isInternalRaySet())
+
+    def testChangeInternalRayDirection(self):
+        "*Test Geometry.ROOT.Root changeInternalRayDirection method"
+        self.geom.setInternalRay( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        self.geom.changeInternalRayDirection( 1.0, 0.0, 0.0 )
+        direction = self.geom.getInternalRayDirection()
+        self.assertEqual( direction[0], 1.0 )
+        self.assertEqual( direction[1], 0.0 )
+        self.assertEqual( direction[2], 0.0 )
+
+        self.geom.changeInternalRayDirection( (0.0, 1.0, 0.0) )
+        direction = self.geom.getInternalRayDirection()
+        self.assertEqual( direction[0], 0.0 )
+        self.assertEqual( direction[1], 1.0 )
+        self.assertEqual( direction[2], 0.0 )
+
+    def testFindCellContainingInternalRay(self):
+        "*Test Geometry.ROOT.Root findCellContainingInternalRay method"
+        self.geom.setInternalRay( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 2)
+
+        self.geom.setInternalRay( (0.0, 0.0, 3.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 1)
+
+        self.geom.setInternalRay( (0.0, 0.0, 6.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 3)
+
+    def testFireInternalRay(self):
+        "*Test Geometry.ROOT.Root fireInternalRay method"
+        self.geom.setInternalRay( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        distance = self.geom.fireInternalRay()
+        self.assertAlmostEqual(distance, 2.5, delta=1e-9)
+
+    def testInternalRayTrace(self):
+        "*Test that an internal ray trace can be done with Geometry.ROOT.Root"
+        self.geom.setInternalRay( (0.0, 0.0, 0.0), (0.0, 0.0, 1.0) )
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 2)
+
+        # Fire the ray
+        distance = self.geom.fireInternalRay()
+        self.assertAlmostEqual(distance, 2.5, delta=1e-9)
+
+        # Advance the ray to the cell boundary
+        self.geom.advanceInternalRayToCellBoundary()
+
+        # Find the new cell
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 1)
+
+        # Fire the ray
+        distance = self.geom.fireInternalRay()
+        self.assertAlmostEqual(distance, 2.499999, delta=1e-6)
+
+        # Advance the ray a substep
+        self.geom.advanceInternalRayBySubstep( 0.5*distance )
+
+        # Change the ray direction
+        self.geom.changeInternalRayDirection( 0.0, 1.0, 0.0 )
+
+        # Fire the ray
+        distance = self.geom.fireInternalRay()
+        self.assertAlmostEqual(distance, 5.0, delta=1e-9)
+
+        # Advance the ray to the cell boundary
+        self.geom.advanceInternalRayToCellBoundary()
+
+        # Find the new cell
+        cell = self.geom.findCellContainingInternalRay()
+        self.assertEqual(cell, 3)
+
 
 #-----------------------------------------------------------------------------#
 # Custom main

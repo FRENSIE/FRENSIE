@@ -47,6 +47,8 @@ geometries.
 %include <stl.i>
 %include <std_vector.i>
 %include <std_except.i>
+%include <std_set.i>
+%include <std_map.i>
 
 // Include typemaps support
 %include <typemaps.i>
@@ -190,6 +192,58 @@ tutorial for this class is shown below:
 "
 
 %feature("docstring")
+Geometry::DagMC::getCellEstimatorData
+"
+This method will return an EstimatorIdDataMap that contains the estimators ids
+and their assigned data.
+"
+
+%feature("docstring")
+Geometry::DagMC::getSurfaceEstimatorData
+"
+This method will return an EstimatorIdDataMap that contains the estimators ids
+and their assigned data.
+"
+
+%feature("docstring")
+Geometry::DagMC::getMaterialIds
+"
+This method will return an IdSet that contains the material ids.
+"
+
+%feature("docstring")
+Geometry::DagMC::getCells
+"
+This method will return an IdSet that contains the cells.
+"
+
+%feature("docstring")
+Geometry::DagMC::getSurfaces
+"
+This method will return an IdSet that contains the surfaces.
+"
+
+%feature("docstring")
+Geometry::DagMC::getFoundCellCache
+"
+This method will return an IdSet that contains the cached cells.
+"
+
+%feature("docstring")
+Geometry::DagMC::getCellMaterialIds
+"
+This method will return a CellIdMatIdMap that contains the cells and their
+assigned material ids.
+"
+
+%feature("docstring")
+Geometry::DagMC::getCellDensities
+"
+This method will return a CellIdDensityMap that contains the cells and their
+assigned densities.
+"
+
+%feature("docstring")
 Geometry::DagMC::fireExternalRay
 "The first value returned is the distance to the nearest surface in the
 direction of the ray. The second value returned is the surface id of the 
@@ -214,56 +268,57 @@ second return value is the surface normal at the surface intersection point.
 ")
 Geometry::DagMC::advanceInternalRayToCellBoundary;
 
+// Typemaps for id sets that convert the inout set to an output set
+%typemap(in,numinputs=0) std::set<unsigned long long>& cell_set (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& cell_set {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+%typemap(in,numinputs=0) std::set<unsigned long long>& cached_cells (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& cached_cells {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+%typemap(in,numinputs=0) std::set<unsigned long long>& surface_set (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& surface_set {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+%typemap(in,numinputs=0) std::set<unsigned long long>& material_ids (std::set<unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::set<unsigned long long>& material_ids {
+  %append_output(SWIG_NewPointerObj(new std::set<unsigned long long>( *$1 ), SWIGTYPE_p_std__setT_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_unsigned_long_long_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+// Typemaps for cell id mat id maps that convert the inout map to an output map
+%typemap(in,numinputs=0) std::map<unsigned long long, unsigned long long>& cell_id_mat_id_map (std::map<unsigned long long, unsigned long long> temp) "$1 = &temp;"
+
+%typemap(argout) std::map<unsigned long long, unsigned long long>& cell_id_mat_id_map {
+  %append_output(SWIG_NewPointerObj((new std::map< unsigned long long,unsigned long long,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,unsigned long long > > >(static_cast< const std::map< unsigned long long,unsigned long long,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,unsigned long long > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_long_long_unsigned_long_long_std__lessT_unsigned_long_long_t_std__allocatorT_std__pairT_unsigned_long_long_const_unsigned_long_long_t_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+// Typemaps for cell id density maps that convert the inout map to an output
+// map
+%typemap(in,numinputs=0) std::map<unsigned long long, double>& cell_id_density_map (std::map<unsigned long long, double> temp) "$1 = &temp;"
+
+%typemap(argout) std::map<unsigned long long, double>& cell_id_density_map {
+  %append_output(SWIG_NewPointerObj((new std::map< unsigned long long,double,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,double > > >(static_cast< const std::map< unsigned long long,double,std::less< unsigned long long >,std::allocator< std::pair< unsigned long long const,double > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_long_long_double_std__lessT_unsigned_long_long_t_std__allocatorT_std__pairT_unsigned_long_long_const_double_t_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
+// Typemaps for a estimator data map that converst the inout map to an
+// output map
+%typemap(in,numinputs=0) std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > >& estimator_id_data_map (std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > temp) "$1 = &temp;"
+
+%typemap(argout) std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > >& estimator_id_data_map {
+  %append_output(SWIG_NewPointerObj((new std::map< unsigned int,Utility::Trip< std::string,std::string,std::vector< unsigned long long,std::allocator< unsigned long long > > >,std::less< unsigned int >,std::allocator< std::pair< unsigned int const,Utility::Trip< std::string,std::string,std::vector< unsigned long long,std::allocator< unsigned long long > > > > > >(static_cast< const std::map< unsigned int,Utility::Trip< std::string,std::string,std::vector< unsigned long long,std::allocator< unsigned long long > > >,std::less< unsigned int >,std::allocator< std::pair< unsigned int const,Utility::Trip< std::string,std::string,std::vector< unsigned long long,std::allocator< unsigned long long > > > > > >& >( *$1 ))), SWIGTYPE_p_std__mapT_unsigned_int_Utility__TripT_std__string_std__string_std__vectorT_unsigned_long_long_std__allocatorT_unsigned_long_long_t_t_t_std__lessT_unsigned_int_t_std__allocatorT_std__pairT_unsigned_int_const_Utility__TripT_std__string_std__string_std__vectorT_unsigned_long_long_std__allocatorT_unsigned_long_long_t_t_t_t_t_t, SWIG_POINTER_OWN |  0 ));
+}
+
 // Add a general typemap that will convert the inout surface_hit parameter to
 // a return from the python wrapper method
 %apply Geometry::ModuleTraits::InternalSurfaceHandle& OUTPUT { Geometry::ModuleTraits::InternalSurfaceHandle& surface_hit }
-
-// Add a general typemap that will convert the input position from a Python
-// Array object to a double*.
-%typemap(in) const double position[3] (Teuchos::Array<double> temp_position){
-  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_position );
-
-  // Make sure the sequence has 3 elements
-  if( temp_position.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError, 
-                     "The input position must have 3 elements." );
-  }
-  
-  $1 = temp_position.getRawPtr();
-}
-
-// Add a general typemap that will convert the input direction from a Python
-// array object to a double*
-%typemap(in) const double direction[3] (Teuchos::Array<double> temp_direction){
-  PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_direction );
-
-  // Make sure the sequence has 3 elements
-  if( temp_direction.size() != 3 )
-  {
-    PyErr_SetString( PyExc_TypeError, 
-                     "The input direction must have 3 elements." );
-  }
-  
-  $1 = temp_direction.getRawPtr();
-}
-
-// The typecheck precedence, which is used by SWIG to determine which
-// overloaded method should be called, should be set to
-// SWIG_TYPECHECK_DOUBLE_ARRAY (1050) for the C double arrays. You will get a
-// Python error when calling the overloaded method in Python without this
-// typecheck
-%typemap(typecheck, precedence=1050) (const double[3]) {
-  $1 = (PyArray_Check($input) || PySequence_Check($input)) ? 1 : 0;
-}
-
-// Add a general typemap that will convert the output position or direction
-// from a double* to a Python array object
-%typemap(out) const double* {
-  Teuchos::ArrayView<const double> output_view( $1, 3 );
-
-  $result = PyFrensie::copyTeuchosToNumPy( output_view );
-}
 
 // Add typemaps for the advanceInternalRayToCellBoundary method
 %typemap(in,numinputs=0) double* surface_normal (double temp[3]) "$1 = &temp[0];"
@@ -284,10 +339,14 @@ Geometry::DagMC::advanceInternalRayToCellBoundary;
 // Include the DagMC class
 %include "Geometry_DagMC.hpp"
 
-// Include the geometry helpers
-%include "Geometry_Helpers.i"
+// Instantiate an IdSet
+%template(IdSet) std::set<unsigned long long>;
 
-%standard_geom_template_extends( DagMC );
+// Instantiate the template getMaterialIds method
+%template(getMaterialIds) Geometry::DagMC::getMaterialIds<std::set<unsigned long long> >;
+
+// Instantiate the template getCells method
+%template(getCells) Geometry::DagMC::getCells<std::set<unsigned long long> >;
 
 // Instantiate the template getSurfaces method
 %template(getSurfaces) Geometry::DagMC::getSurfaces<std::set<unsigned long long> >;
@@ -295,28 +354,17 @@ Geometry::DagMC::advanceInternalRayToCellBoundary;
 // Instantiate the template getFoundCellCache method
 %template(getFoundCellCache) Geometry::DagMC::getFoundCellCache<std::set<unsigned long long> >;
 
-// Add methods that return a std::set (since the OUTPUT typemaps don't seem
-// to work in this case)
-%extend Geometry::DagMC
-{
-  // Output the surface ids set
-  static std::set<unsigned long long> getSurfaces()
-  {
-    std::set<unsigned long long> surface_ids;
-    Geometry::DagMC::getSurfaces( surface_ids );
+// Instantiate a cell id to mat id map
+%template(CellIdMatIdMap) std::map<unsigned long long, unsigned long long>;
 
-    return surface_ids;
-  }
+// Instantiate the template getCellMaterialIds method
+%template(getCellMaterialIds) Geometry::DagMC::getCellMaterialIds<std::map<unsigned long long, unsigned long long> >;
 
-  // Get the found cell cache
-  static std::set<unsigned long long> getFoundCellCache()
-  {
-    std::set<unsigned long long> cache;
-    Geometry::DagMC::getFoundCellCache( cache );
+// Instantiate a cell id to density map
+%template(CellIdDensityMap) std::map<unsigned long long, double>;
 
-    return cache;
-  }
-};
+// Instantiate the template getCellDensities method
+%template(getCellDensities) Geometry::DagMC::getCellDensities<std::map<unsigned long long, double> >;
 
 // Instantiate a vector of unsigned lon long
 %template(CellIdArray) std::vector<unsigned long long>;
@@ -332,29 +380,6 @@ Geometry::DagMC::advanceInternalRayToCellBoundary;
 
 // Instantiate the template getSurfaceEstimatorData method
 %template(getSurfaceEstimatorData) Geometry::DagMC::getSurfaceEstimatorData<std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > >;
-
-// Add method that returns a std::map (since the OUTPUT typemaps don't seem
-// to work in this case)
-%extend Geometry::DagMC
-{
-  // Output the cell estimator id to data map
-  static std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > getCellEstimatorData()
-  {
-    std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > cell_estimator_data_map;
-    Geometry::DagMC::getCellEstimatorData( cell_estimator_data_map );
-
-    return cell_estimator_data_map;
-  }
-
-  // Output the surface estimator id to data map
-  static std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > getSurfaceEstimatorData()
-  {
-    std::map<unsigned int, Utility::Trip<std::string,std::string,std::vector<unsigned long long> > > surface_estimator_data_map;
-    Geometry::DagMC::getSurfaceEstimatorData( surface_estimator_data_map );
-
-    return surface_estimator_data_map;
-  }
-};
 
 //---------------------------------------------------------------------------//
 // Add support for the DagMCInstanceFactory class
