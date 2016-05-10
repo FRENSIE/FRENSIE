@@ -1,9 +1,9 @@
 #! ${PYTHON_EXECUTABLE}
 #-----------------------------------------------------------------------------#
-## Geometry.DagMC.initializeDagMC method unit tests
-#  \file   tstGeometry.DagMC.initializeDagMC.py
+## Geometry.ROOT.initializeRoot method unit tests
+#  \file   tstGeometry.ROOT.initializeRoot.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.DagMC.initializeDagMC method 
+#  \brief  Unit tests for the Geometry.ROOT.initializeRoot method 
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -18,30 +18,30 @@ parser = OptionParser()
 parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
                   help="set the verbosity level [default 2]")
 parser.add_option("-f", "--xmlfile", type="string", dest="xmlfile",
-                  help="set the xml file that DagMC will initialized with")
+                  help="set the xml file that Root will initialized with")
 options,args = parser.parse_args()
 
 from testingHelpers import importPyFrensieModuleFromBuildDir
-DagMC = importPyFrensieModuleFromBuildDir('Geometry.DagMC')
+ROOT = importPyFrensieModuleFromBuildDir('Geometry.ROOT')
 
 #-----------------------------------------------------------------------------#
 # Tests.
 #-----------------------------------------------------------------------------#
-# Test the initializeDagMC method
-class InitializeDagMCTestCase(unittest.TestCase):
-    "TestCase class for Geometry.DagMC.initializeDagMC method"
+# Test the initializeRoot method
+class InitializeRootTestCase(unittest.TestCase):
+    "TestCase class for Geometry.ROOT.initializeRoot method"
 
     def setUp(self):
-        self.geom = DagMC.DagMC
+        self.geom = ROOT.Root
 
-    def testInitializeDagMC(self):
-        "*Test Geometry.DagMC.initailizeDagMC method"
+    def testInitializeRoot(self):
+        "*Test Geometry.ROOT.initailizeRoot method"
         self.assertFalse(self.geom.isInitialized())
         source = PyTrilinos.Teuchos.FileInputSource( options.xmlfile )
         xml_obj = source.getObject()
         geom_init_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
 
-        DagMC.initializeDagMC( geom_init_list )
+        ROOT.initializeRoot( geom_init_list )
         self.assertTrue(self.geom.isInitialized())
 
 #-----------------------------------------------------------------------------#
@@ -53,12 +53,12 @@ if __name__ == "__main__":
     suite = unittest.TestSuite()
 
     # Add the test cases to the test suite
-    suite.addTest(unittest.makeSuite(InitializeDagMCTestCase))
+    suite.addTest(unittest.makeSuite(InitializeRootTestCase))
     
     print >>sys.stderr, \
-        "\n**************************************\n" + \
-        "Testing Geometry.DagMC.initializeDagMC \n" + \
-        "**************************************\n"
+        "\n************************************\n" + \
+        "Testing Geometry.ROOT.initializeRoot \n" + \
+        "************************************\n"
     result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
 
     errs_plus_fails = len(result.errors) + len(result.failures)
@@ -73,5 +73,5 @@ if __name__ == "__main__":
     sys.exit(errs_plus_fails)
 
 #-----------------------------------------------------------------------------#
-# end tstGeometry.DagMC.initializeDagMC.py
+# end tstGeometry.ROOT.initializeRoot.py
 #-----------------------------------------------------------------------------#

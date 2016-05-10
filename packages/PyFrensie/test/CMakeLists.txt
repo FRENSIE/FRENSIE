@@ -51,13 +51,21 @@ PyFrensie_MAKE_TEST(tstGeometry.Ray)
 ADD_TEST(PyFrensie.Geometry.Ray_test ${PYTHON_EXECUTABLE} tstGeometry.Ray.py)
 
 # Add the Geometry.DagMC.DagMC unit tests
-PyFrensie_MAKE_TEST(tstGeometry.DagMC.DagMC)
-ADD_TEST(PyFrensie.Geometry.DagMC.DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.DagMC.py --cadfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
+IF(FRENSIE_ENABLE_DAGMC)
+  PyFrensie_MAKE_TEST(tstGeometry.DagMC.DagMC)
+  ADD_TEST(PyFrensie.Geometry.DagMC.DagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.DagMC.py --cadfile=${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat)
 
-# Add the Geometry.DagMC.initializeDagMC unit tests
-PyFrensie_MAKE_TEST(tstGeometry.DagMC.initializeDagMC)
-ADD_TEST(PyFrensie.Geometry.DagMC.initializeDagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.initializeDagMC.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml)
+  # Add the Geometry.DagMC.initializeDagMC unit tests
+  PyFrensie_MAKE_TEST(tstGeometry.DagMC.initializeDagMC)
+  ADD_TEST(PyFrensie.Geometry.DagMC.initializeDagMC_test ${PYTHON_EXECUTABLE} tstGeometry.DagMC.initializeDagMC.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml)
+ENDIF(FRENSIE_ENABLE_DAGMC)
 
 # Add the Geometry.ROOT.Root unit tests
-PyFrensie_MAKE_TEST(tstGeometry.ROOT.Root)
-ADD_TEST(PyFrensie.Geometry.ROOT.Root_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.Root.py --rootfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+IF(FRENSIE_ENABLE_ROOT)
+  PyFrensie_MAKE_TEST(tstGeometry.ROOT.Root)
+  ADD_TEST(PyFrensie.Geometry.ROOT.Root_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.Root.py --rootfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.root)
+
+  # Add the Geometry.ROOT.initializeRoot unit tests
+  PyFrensie_MAKE_TEST(tstGeometry.ROOT.initializeRoot)
+  ADD_TEST(PyFrensie.Geometry.ROOT.initializeRoot_test ${PYTHON_EXECUTABLE} tstGeometry.ROOT.initializeRoot.py --xmlfile=${CMAKE_CURRENT_BINARY_DIR}/test_files/test_root_geom.xml)
+ENDIF(FRENSIE_ENABLE_ROOT)
