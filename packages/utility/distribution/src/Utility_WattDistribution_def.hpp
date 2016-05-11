@@ -21,38 +21,6 @@
 
 namespace Utility{
 
-// Default Constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribution(
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity a_parameter,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity b_parameter,
-  const UnitAwareWattDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  const double constant_multiplier )
-  : d_incident_energy( incident_energy ),
-    d_a_parameter( a_parameter ),
-    d_b_parameter( b_parameter ),
-    d_restriction_energy( restriction_energy ),
-  d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
-    d_norm_constant()
-{
-  // Make sure values are valid
-  testPrecondition( !IQT::isnaninf( incident_energy ) );
-  testPrecondition( !IQT::isnaninf( a_parameter ) );
-  testPrecondition( !IIQT::isnaninf( b_parameter ) );
-  testPrecondition( !IQT::isnaninf( restriction_energy ) );
-  testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  // Make sure that incident energy, a_parameter, and b_parameter are positive
-  testPrecondition( incident_energy > IQT::zero() );
-  testPrecondition( a_parameter > IQT::zero() );
-  testPrecondition( b_parameter > IIQT::zero() );
-  // Make sure that the constant multiplier is positive
-  testPrecondition( constant_multiplier > 0.0 );
-
-  // Calculate the normalization constant
-  this->calculateNormalizationConstant();
-}
-
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The

@@ -73,25 +73,20 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
- 
-  //! Default Constructor
-  UnitAwareWattDistribution( 
-			const IndepQuantity incident_energy = IQT::one(),
-			const IndepQuantity a_parameter = IQT::one(),
-			const InverseIndepQuantity b_parameter = IIQT::one(),
-			const IndepQuantity restriction_energy = IQT::zero(),
-			const double constant_multiplier = 1.0 );
 
   //! Constructor
-  template<typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputInverseIndepQuantity,
-	   typename InputIndepQuantityC>
-  UnitAwareWattDistribution(
-			    const InputIndepQuantityA incident_energy,
-			    const InputIndepQuantityB a_parameter,
-			    const InputInverseIndepQuantity b_parameter,
-			    const InputIndepQuantityC restriction_energy,
+  template<typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputInverseIndepQuantity = InverseIndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
+  UnitAwareWattDistribution( const InputIndepQuantityA incident_energy = 
+                             QuantityTraits<InputIndepQuantityA>::one(),
+                             const InputIndepQuantityB a_parameter = 
+                             QuantityTraits<InputIndepQuantityB>::one(),
+                             const InputInverseIndepQuantity b_parameter =
+                             QuantityTraits<InputInverseIndepQuantity>::one(),
+                             const InputIndepQuantityC restriction_energy = 
+                             QuantityTraits<InputIndepQuantityC>::zero(),
 			    const double constant_multiplier = 1.0 );
 
   //! Copy constructor

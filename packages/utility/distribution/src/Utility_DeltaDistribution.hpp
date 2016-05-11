@@ -66,7 +66,7 @@ public:
 			      const InputDepQuantity multiplier );
 
   //! Copy constructor
-  template<typename InputIndepUnit, typename InputDepUnit>
+  template<typename InputIndepUnit, typename InputDepUnit, typename Dummy=void>
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)

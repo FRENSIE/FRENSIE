@@ -81,14 +81,7 @@ public:
   //! Basic constructor (potentially dangerous)
   UnitAwareTabularDistribution( 
 			const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values,
-			const bool interpret_dependent_values_as_cdf = false );
-
-  //! CDF constructor
-  template<typename InputIndepQuantity>
-  UnitAwareTabularDistribution(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values );
+			const Teuchos::Array<double>& dependent_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
@@ -169,15 +162,9 @@ protected:
 private:
 
   // Initialize the distribution
-  void initializeDistribution(const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values,
-			      const bool interpret_dependent_values_as_cdf );
-
-  // Initialize the distribution from a cdf
-  template<typename InputIndepQuantity>
-  void initializeDistributionFromCDF(
-		  const Teuchos::Array<InputIndepQuantity>& independent_values,
-		  const Teuchos::Array<double>& cdf_values );
+  void initializeDistributionFromRawData(
+                              const Teuchos::Array<double>& independent_values,
+			      const Teuchos::Array<double>& dependent_values );
 
   // Initialize the distribution
   template<typename InputIndepQuantity, typename InputDepQuantity>
