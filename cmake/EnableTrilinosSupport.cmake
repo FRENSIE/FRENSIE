@@ -141,6 +141,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH
     NAMES Teuchos_StandardUnitTestMain.cpp
     PATHS ${Trilinos_DIR}/../../../src/packages/teuchos/core/test/UnitTest/
+      ${TRILINOS_PREFIX}/src/packages/teuchos/core/test/UnitTest/
       ${TRILINOS_SOURCE}/packages/teuchos/core/test/UnitTest/
       ${TRILINOS_SOURCE}/src/packages/teuchos/core/test/UnitTest )
   IF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
@@ -156,6 +157,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   FIND_PATH(PYTRILINOS_SRC_DIR_PATH
     NAMES Teuchos_Array.i
     PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/src/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/src/
     ${TRILINOS_SOURCE}/packages/PyTrilinos/src/
     ${TRILINOS_SOURCE}/src/packages/PyTrilinos/src)
   IF(${PYTRILINOS_SRC_DIR_PATH} MATCHES NOTFOUND)
@@ -166,6 +168,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   FIND_PATH(PYTRILINOS_CMAKE_DIR_PATH
     NAMES UseSWIG.cmake
     PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/cmake/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/cmake/
     ${TRILINOS_SOURCE}/packages/PyTrilinos/cmake/
     ${TRILINOS_SOURCE}/src/packages/PyTrilinos/cmake)
   IF(${PYTRILINOS_CMAKE_DIR_PATH} MATCHES NOTFOUND)
@@ -176,6 +179,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   FIND_PATH(PYTRILINOS_UTIL_DIR_PATH
     NAMES copyWithCMakeSubstitutions.py.in
     PATHS ${Trilinos_DIR}/../../../src/packages/Pytrilinos/util/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/util/
     ${TRILINOS_SOURCE}/packages/PyTrilinos/util/
     ${TRILINOS_SOURCE}/src/packages/PyTrilinos/util)
   IF(${PYTRILINOS_UTIL_DIR_PATH} MATCHES NOTFOUND)
