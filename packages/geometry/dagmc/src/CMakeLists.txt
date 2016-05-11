@@ -9,7 +9,7 @@ ENDIF()
 
 SET(SUBPACKAGE_LIB_NAME geometry_dagmc)
 
-# Create the utilitycore library
+# Create the geometry_dagmc library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${GEOMETRY_DAGMC_SOURCES})
 TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} ${TEUCHOS_PARAMETER_LIST} ${MOAB} utility_core geometry_core)
 

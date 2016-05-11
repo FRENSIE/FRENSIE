@@ -23,28 +23,6 @@ namespace Utility{
 template<typename IndependentUnit, typename DependentUnit>
 const double UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::constant_norm_factor = 1.0/sqrt( 2*PhysicalConstants::pi );
 
-// Default constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistribution( 
-  const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity mean,
-  const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity standard_deviation,
-  const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity min_independent_value,
-  const UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_independent_value )
-  : d_constant_multiplier( DQT::one() ),
-    d_mean( mean ),
-    d_standard_deviation( standard_deviation ),
-    d_min_independent_value( min_independent_value ),
-    d_max_independent_value( max_independent_value )
-{
-  // Make sure that the values are valid
-  testPrecondition( !IQT::isnaninf( mean ) );
-  testPrecondition( !IQT::isnaninf( standard_deviation ) );
-  // Make sure that the standard deviation is positive
-  testPrecondition( standard_deviation > IQT::zero() );
-  // Make sure that the min indep value is < the max indep value
-  testPrecondition( min_independent_value < max_independent_value );
-}
-
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -57,9 +35,9 @@ template<typename InputDepQuantity,
 	 typename InputIndepQuantityB,
 	 typename InputIndepQuantityC>
 UnitAwareNormalDistribution<IndependentUnit,DependentUnit>::UnitAwareNormalDistribution( 
-			      const InputDepQuantity constant_multiplier,
 			      const InputIndepQuantityA mean,
 			      const InputIndepQuantityB standard_deviation,
+                              const InputDepQuantity constant_multiplier,
 			      const InputIndepQuantityC min_independent_value,
 			      const InputIndepQuantityC max_independent_value )
   : d_constant_multiplier( constant_multiplier ),

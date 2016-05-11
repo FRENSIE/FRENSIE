@@ -303,6 +303,10 @@ private:
   static void getPropertyValues( const std::string& property,
                                  StringArray& values );
 
+  // Get the property values associated with a property name
+  static void getPropertyValues( const std::string& property, 
+                                 std::vector<std::string>& values );
+
   // Get the cells associated with a property name
   static void getCellsWithProperty( std::vector<moab::EntityHandle>& cells,
                                     const std::string& property,

@@ -21,6 +21,23 @@ RandomNumberGenerator::generator( 1 );
 RandomNumberGenerator::RandomNumberGenerator()
 { /* ... */ }
 
+//! Check if the streams have been created
+bool RandomNumberGenerator::hasStreams()
+{
+  // Check that there are enough streams
+  if( generator.size() < GlobalOpenMPSession::getRequestedNumberOfThreads() )
+    return false;
+  
+  // Check that each stream has been initialized
+  for( unsigned i = 0u; i < generator.size(); ++i )
+  {
+    if( generator.is_null(i) )
+      return false;
+  }
+  
+  return true;
+}
+
 // Create the number of random number streams required
 /*! \details The number of streams that are created will be determined by
  * the number of threads requested at run time
@@ -70,8 +87,9 @@ void RandomNumberGenerator::initializeNextHistory()
 // Set a fake stream for the generator
 /*! \details The default thread is the master (id = 0)
  */
-void RandomNumberGenerator::setFakeStream( std::vector<double>& fake_stream,
-					   const unsigned thread_id )
+void RandomNumberGenerator::setFakeStream( 
+                                        const std::vector<double>& fake_stream,
+                                        const unsigned thread_id )
 {
   // Make sure the thread id requested is valid
   testPrecondition( thread_id < GlobalOpenMPSession::getNumberOfThreads() );

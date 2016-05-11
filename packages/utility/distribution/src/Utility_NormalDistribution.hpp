@@ -55,26 +55,21 @@ public:
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
-  //! Default Constructor ( exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
-  UnitAwareNormalDistribution( 
-			   const IndepQuantity mean = IQT::zero(),
-			   const IndepQuantity standard_deviation = IQT::one(),
-			   const IndepQuantity min_independent_value = 
-			   -QuantityTraits<IndepQuantity>::inf(),
-			   const IndepQuantity max_independent_value = 
-			   QuantityTraits<IndepQuantity>::inf() );
-
   //! Constructor ( a*exp(-[x-meam]^2/[2*sigma]^2), x E (b,c) )
-  template<typename InputDepQuantity,
-	   typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputIndepQuantityC>
-  UnitAwareNormalDistribution(const InputDepQuantity constant_multiplier,
-			      const InputIndepQuantityA mean,
-			      const InputIndepQuantityB standard_deviation,
-			      const InputIndepQuantityC min_independent_value,
+  template<typename InputDepQuantity = DepQuantity,
+	   typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
+  UnitAwareNormalDistribution(const InputIndepQuantityA mean = 
+                              QuantityTraits<InputIndepQuantityA>::zero(),
+                              const InputIndepQuantityB standard_deviation = 
+                              QuantityTraits<InputIndepQuantityB>::one(),
+                              const InputDepQuantity constant_multiplier = 
+                              QuantityTraits<InputDepQuantity>::one(),
+                              const InputIndepQuantityC min_independent_value =
+                              -QuantityTraits<InputIndepQuantityC>::inf(),
 			      const InputIndepQuantityC max_independent_value =
-			      QuantityTraits<InputIndepQuantityC>::inf() );
+                              QuantityTraits<InputIndepQuantityC>::inf() );
 			      
 
   //! Copy constructor
