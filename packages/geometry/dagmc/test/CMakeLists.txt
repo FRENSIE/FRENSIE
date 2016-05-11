@@ -1,3 +1,4 @@
+# Configure the test files
 ADD_SUBDIRECTORY(test_files)
 
 ADD_EXECUTABLE(tstDagMCRay 

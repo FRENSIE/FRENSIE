@@ -320,28 +320,28 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( angular_grid.size(), 16 );
 
   std::vector<double> elastic_angles = 
-    data_container.getAnalogElasticAngles(1.0e-5);
+    data_container.getCutoffElasticAngles(1.0e-5);
 
   TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
   elastic_angles = 
-    data_container.getAnalogElasticAngles(1.0e+5);
+    data_container.getCutoffElasticAngles(1.0e+5);
 
   TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
 
   std::vector<double> elastic_pdf = 
-    data_container.getAnalogElasticPDF(1.0e-5);
+    data_container.getCutoffElasticPDF(1.0e-5);
 
   TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
 
   elastic_pdf = 
-    data_container.getAnalogElasticPDF(1.0e+5);
+    data_container.getCutoffElasticPDF(1.0e+5);
 
   TEST_EQUALITY_CONST( elastic_pdf.front(), 6.25670e-13 );
   TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
@@ -967,28 +967,28 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( angular_grid.size(), 16 );
 
   std::vector<double> elastic_angles = 
-    data_container.getAnalogElasticAngles(1.0e-5);
+    data_container.getCutoffElasticAngles(1.0e-5);
 
   TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 2 );
 
   elastic_angles = 
-    data_container.getAnalogElasticAngles(1.0e+5);
+    data_container.getCutoffElasticAngles(1.0e+5);
 
   TEST_EQUALITY_CONST( elastic_angles.front(), -1.0 );
   TEST_EQUALITY_CONST( elastic_angles.back(), 0.999999 );
   TEST_EQUALITY_CONST( elastic_angles.size(), 96 );
 
   std::vector<double> elastic_pdf = 
-    data_container.getAnalogElasticPDF(1.0e-5);
+    data_container.getCutoffElasticPDF(1.0e-5);
 
   TEST_EQUALITY_CONST( elastic_pdf.front(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.back(), 0.5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 2 );
 
   elastic_pdf = 
-    data_container.getAnalogElasticPDF(1.0e+5);
+    data_container.getCutoffElasticPDF(1.0e+5);
 
   TEST_EQUALITY_CONST( elastic_pdf.front(), 1.693970E-11 );
   TEST_EQUALITY_CONST( elastic_pdf.back(), 9.868670E+05 );

@@ -496,8 +496,7 @@ int main( int argc, char** argv )
   elastic_cutoff_pdf.reset(
         new Utility::TabularDistribution<Utility::LinLin>(
                 energy_grid,
-                cutoff_pdf,
-                false ) );
+                cutoff_pdf ) );
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();

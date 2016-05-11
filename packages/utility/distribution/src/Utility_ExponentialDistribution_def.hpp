@@ -29,35 +29,6 @@ template<typename IndependentUnit, typename DependentUnit>
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution()
 { /* ... */ }
 
-// Basic constructor
-/*! \details This constructor will explicitly cast the input quantities to
- * the distribution quantity (which includes any unit-conversion). The
- * dimension type must match and there must be a unit-conversion defined using
- * the boost methodology.
- */
-template<typename IndependentUnit, typename DependentUnit>
-template<typename InputDepQuantity,
-	 typename InputInverseIndepQuantity>
-UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution( 
-			 const InputDepQuantity constant_multiplier,
-			 const InputInverseIndepQuantity exponent_multiplier )
-  : d_constant_multiplier( constant_multiplier ),
-    d_exponent_multiplier( exponent_multiplier ),
-    d_lower_limit( IQT::zero() ),
-    d_upper_limit( IQT::inf() )
-{
-  // Make sure the multipliers are valid
-  remember( typedef QuantityTraits<InputInverseIndepQuantity> InputIIQT );
-  remember( typedef QuantityTraits<InputDepQuantity> InputDQT );
-  testPrecondition( !InputDQT::isnaninf( constant_multiplier ) );
-  testPrecondition( !InputIIQT::isnaninf( exponent_multiplier ) );
-  // Make sure that the exponent multiplier is positive
-  testPrecondition( exponent_multiplier > InputIIQT::zero() );
-
-  // Initialize the distribution
-  this->initialize();
-}
-
 // Constructor 
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
@@ -65,9 +36,9 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExpone
  * the boost methodology.
  */
 template<typename IndependentUnit, typename DependentUnit>
-template<typename InputIndepQuantity,
-	 typename InputDepQuantity,
-	 typename InputInverseIndepQuantity>
+template<typename InputDepQuantity,
+	 typename InputInverseIndepQuantity,
+         typename InputIndepQuantity>
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::UnitAwareExponentialDistribution( 
 			 const InputDepQuantity constant_multiplier,
 			 const InputInverseIndepQuantity exponent_multiplier,
@@ -240,7 +211,7 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample(
 }
 
 // Return a sample from the distribution
-/* \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
+/* \details x = -ln(exp(-m*lb) - rnd*[exp(-m*lb)-exp(-m*ub)])/m
  */
 template<typename IndependentUnit, typename DependentUnit> 
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
@@ -271,21 +242,23 @@ UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample(
   
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
-  return -log( random_number*(exp_upper_limit - exp_lower_limit) +
-	       exp_lower_limit )/exponent_multiplier;
+  return -log( exp_lower_limit - 
+               random_number*(exp_lower_limit - exp_upper_limit) )/
+    exponent_multiplier;
 }
 
 // Return a sample from the distribution
-/*! \details x = -ln(rnd*[exp(-m*ub)-exp(-m*lb)] + exp(-m*lb))/m
+/*! \details x = -ln(exp(-m*lb) - rnd*[exp(-m*lb)-exp(-m*ub)])/m
  */
 template<typename IndependentUnit, typename DependentUnit> 
 typename UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
 UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
-
-  return -log( random_number*(d_exp_upper_limit-d_exp_lower_limit) + 
-	       d_exp_lower_limit )/d_exponent_multiplier;
+  
+  return -log( d_exp_lower_limit - 
+               random_number*(d_exp_lower_limit-d_exp_upper_limit) )/
+    d_exponent_multiplier;
 }
 
 // Return a random sample and record the number of trials
@@ -489,12 +462,12 @@ void UnitAwareExponentialDistribution<IndependentUnit,DependentUnit>::initialize
 {
   // Calculate the exponential of the lower and upper bounds
   if( d_upper_limit < IQT::inf() )
-    d_exp_upper_limit = exp( d_exponent_multiplier*d_upper_limit );
+    d_exp_upper_limit = exp( -d_exponent_multiplier*d_upper_limit );
   else
     d_exp_upper_limit = 0.0;
 
   if( d_lower_limit > IQT::zero() )
-    d_exp_lower_limit = exp( d_exponent_multiplier*d_lower_limit );
+    d_exp_lower_limit = exp( -d_exponent_multiplier*d_lower_limit );
   else
     d_exp_lower_limit = 1.0;
 }

@@ -23,7 +23,7 @@ class ElectroatomicReactionACEFactory
 
 public:
 
-  //! Create an analog elastic scattering electroatomic reaction
+  //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,

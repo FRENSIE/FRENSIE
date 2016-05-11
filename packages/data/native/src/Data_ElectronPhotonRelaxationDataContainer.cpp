@@ -443,26 +443,26 @@ ElectronPhotonRelaxationDataContainer::getElasticAngularEnergyGrid() const
 
 // Return the elastic angles for an incoming energy
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getAnalogElasticAngles(
+ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_analog_elastic_angles.find( incoming_energy )->second;
+  return d_cutoff_elastic_angles.find( incoming_energy )->second;
 }
 
 // Return the elastic pdf for an incoming energy
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getAnalogElasticPDF(
+ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF(
 					        const double incoming_energy ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_analog_elastic_pdf.find( incoming_energy )->second;
+  return d_cutoff_elastic_pdf.find( incoming_energy )->second;
 }
 
 // Return the screened Rutherford elastic normalization constant 
@@ -1288,51 +1288,51 @@ void ElectronPhotonRelaxationDataContainer::setElasticAngularEnergyGrid(
 }
 
 // Set the total elastic angles for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setAnalogElasticAnglesAtEnergy(
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticAnglesAtEnergy(
     const double incoming_energy,
-    const std::vector<double>& analog_elastic_angles )
+    const std::vector<double>& cutoff_elastic_angles )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the elastic angles are valid
-  testPrecondition( std::find_if( analog_elastic_angles.begin(),
-                                  analog_elastic_angles.end(),
+  testPrecondition( std::find_if( cutoff_elastic_angles.begin(),
+                                  cutoff_elastic_angles.end(),
                                   isValueLessThanMinusOne ) ==
-                    analog_elastic_angles.end() );
-  testPrecondition( std::find_if( analog_elastic_angles.begin(),
-                                  analog_elastic_angles.end(),
+                    cutoff_elastic_angles.end() );
+  testPrecondition( std::find_if( cutoff_elastic_angles.begin(),
+                                  cutoff_elastic_angles.end(),
                                   isValueGreaterThanOne ) ==
-                    analog_elastic_angles.end() );
+                    cutoff_elastic_angles.end() );
 
-  d_analog_elastic_angles[incoming_energy] = analog_elastic_angles;
+  d_cutoff_elastic_angles[incoming_energy] = cutoff_elastic_angles;
 }
 
 // Set the total elastic pdf for an incoming energy
-void ElectronPhotonRelaxationDataContainer::setAnalogElasticPDFAtEnergy( 
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDFAtEnergy( 
     const double incoming_energy,
-    const std::vector<double>& analog_elastic_pdf )
+    const std::vector<double>& cutoff_elastic_pdf )
 {
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
   // Make sure the weight is valid
-  testPreconditionValuesGreaterThanZero( analog_elastic_pdf );
+  testPreconditionValuesGreaterThanZero( cutoff_elastic_pdf );
   
-  d_analog_elastic_pdf[incoming_energy] = analog_elastic_pdf;
+  d_cutoff_elastic_pdf[incoming_energy] = cutoff_elastic_pdf;
 }
 // Set the total elastic angles
-void ElectronPhotonRelaxationDataContainer::setAnalogElasticAngles(
-    const std::map<double,std::vector<double> >& analog_elastic_angles )
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticAngles(
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles )
 {
-  d_analog_elastic_angles = analog_elastic_angles;
+  d_cutoff_elastic_angles = cutoff_elastic_angles;
 }
 
 // Set the total elastic pdf 
-void ElectronPhotonRelaxationDataContainer::setAnalogElasticPDF( 
-    const std::map<double,std::vector<double> >& analog_elastic_pdf )
+void ElectronPhotonRelaxationDataContainer::setCutoffElasticPDF( 
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf )
 {
-  d_analog_elastic_pdf = analog_elastic_pdf;
+  d_cutoff_elastic_pdf = cutoff_elastic_pdf;
 }
 
 // Set the screened Rutherford elastic normalization constant 

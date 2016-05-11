@@ -72,6 +72,22 @@ inline void DagMC::getSurfaceNormal(
 }
 
 // Get the property values associated with a property name
+inline void DagMC::getPropertyValues( const std::string& property, 
+                                      std::vector<std::string>& values )
+{
+  // Make sure DagMC has been initialized
+  testPrecondition( DagMC::isInitialized() );
+
+  // Get all of the property values
+  moab::ErrorCode return_value = 
+    s_dagmc->get_all_prop_values( property, values );
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+		      InvalidDagMCGeometry,
+		      moab::ErrorCodeStr[return_value] );
+}
+
+// Get the property values associated with a property name
 /*! \details The StringArray must be an array (e.g. std::vector, 
  * Teuchos::Array, etc.) of std::string types. This method is thread safe as 
  * long as enableThreadSupport has been called.

@@ -812,8 +812,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
         elastic_pdf[*energy] );
   }
 
-  data_container.setAnalogElasticPDF( elastic_pdf );
-  data_container.setAnalogElasticAngles( elastic_angle );
+  data_container.setCutoffElasticPDF( elastic_pdf );
+  data_container.setCutoffElasticAngles( elastic_angle );
 
   // Set the screened Rutherford cross section data
   setScreenedRutherfordData( cutoff_elastic_cross_section, 

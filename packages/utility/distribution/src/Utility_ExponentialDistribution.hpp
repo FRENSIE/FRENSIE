@@ -60,23 +60,17 @@ public:
   //! Default constructor
   UnitAwareExponentialDistribution();
 
-  //! Basic constructor ( a*exp(-b*x), x E (0,inf) )
-  template<typename InputDepQuantity,
-	   typename InputInverseIndepQuantity>
-  UnitAwareExponentialDistribution( 
-			 const InputDepQuantity constant_multiplier,
-			 const InputInverseIndepQuantity exponent_multiplier );
-
   //! Constructor ( a*exp(-b*x), x E (c,d) )
-  template<typename InputIndepQuantity,
-	   typename InputDepQuantity,
-	   typename InputInverseIndepQuantity>
+  template<typename InputDepQuantity,
+           typename InputInverseIndepQuantity,
+	   typename InputIndepQuantity = IndepQuantity>
   UnitAwareExponentialDistribution(
 			   const InputDepQuantity constant_multiplier,
 			   const InputInverseIndepQuantity exponent_multiplier,
-			   const InputIndepQuantity lower_limit,
-			   const InputIndepQuantity upper_limit = 
-			   QuantityTraits<InputIndepQuantity>::inf() );
+			   const InputIndepQuantity lower_limit = 
+                           QuantityTraits<InputIndepQuantity>::zero(),
+                           const InputIndepQuantity upper_limit =
+                           QuantityTraits<InputIndepQuantity>::inf());
 
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>

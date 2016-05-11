@@ -223,12 +223,12 @@ public:
   //! Return the elastic angular energy grid
   const std::vector<double>& getElasticAngularEnergyGrid() const;
 
-  //! Return the analog elastic scattering angles for an incoming energy
-  const std::vector<double>& getAnalogElasticAngles(
+  //! Return the cutoff elastic scattering angles for an incoming energy
+  const std::vector<double>& getCutoffElasticAngles(
 					       const double incoming_energy ) const;
 
-  //! Return the analog elastic scatering pdf for an incoming energy
-  const std::vector<double>& getAnalogElasticPDF(
+  //! Return the cutoff elastic scatering pdf for an incoming energy
+  const std::vector<double>& getCutoffElasticPDF(
 					       const double incoming_energy ) const;
 
   //! Return the screened Rutherford elastic normalization constants
@@ -523,21 +523,21 @@ protected:
     const std::vector<double>& angular_energy_grid );
 
   //! Set the elastic scattering angles for an incoming energy
-  void setAnalogElasticAnglesAtEnergy( 
+  void setCutoffElasticAnglesAtEnergy( 
     const double incoming_energy,
     const std::vector<double>& elastic_angles );
 
   //! Set the elastic scattering pdf for an incoming energy
-  void setAnalogElasticPDFAtEnergy( 
+  void setCutoffElasticPDFAtEnergy( 
     const double incoming_energy,
     const std::vector<double>& elastic_pdf );
 
   //! Set the elastic scattering angles
-  void setAnalogElasticAngles(
+  void setCutoffElasticAngles(
     const std::map<double,std::vector<double> >& elastic_angles );
 
   //! Set the elastic scattering pdf
-  void setAnalogElasticPDF(
+  void setCutoffElasticPDF(
     const std::map<double,std::vector<double> >& elastic_pdf );
 
   //! Set the screened Rutherford elastic normalization constant
@@ -844,11 +844,11 @@ private:
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
 
-  // The analog elastic scattering angles
-  std::map<double,std::vector<double> > d_analog_elastic_angles;
+  // The cutoff elastic scattering angles
+  std::map<double,std::vector<double> > d_cutoff_elastic_angles;
 
-  // The analog elastic scattering pdf
-  std::map<double,std::vector<double> > d_analog_elastic_pdf;
+  // The cutoff elastic scattering pdf
+  std::map<double,std::vector<double> > d_cutoff_elastic_pdf;
 
   // The screened rutherford normalization constant for elastic scattering
   std::vector<double> d_screened_rutherford_normalization_constant;

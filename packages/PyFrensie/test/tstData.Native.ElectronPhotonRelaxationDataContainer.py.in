@@ -1,0 +1,30 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.Native.ElectronPhotonRelaxationDataContainer class unit tests
+#  \file   tstData.Native.ElectronPhotonRelaxationDataContainer.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.ElectronPhotonRelaxationDataContainer class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--nativefile", type="string", dest="nativefile",
+                  help="set the Native file to test.")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+Native = importPyFrensieModuleFromBuildDir('Data.Native')
+
+
+
+#-----------------------------------------------------------------------------#
+# end tstData.Native.ElectronPhotonRelaxationDataContainer.py
+#-----------------------------------------------------------------------------#

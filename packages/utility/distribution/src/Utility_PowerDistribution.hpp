@@ -91,8 +91,8 @@ public:
   //! Assignment operator
   UnitAwarePowerDistribution& operator=( const UnitAwarePowerDistribution& dist_instance );
 
-  //! Destructor
-  ~UnitAwarePowerDistribution()
+  //! Destructor (virtual for python interface extenstions)
+  virtual ~UnitAwarePowerDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution

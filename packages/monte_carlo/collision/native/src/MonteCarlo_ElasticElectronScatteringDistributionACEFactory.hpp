@@ -29,7 +29,7 @@ public:
             ElasticDistribution; 
 
   //! Create a elastic distributions ( both Cutoff and Screened Rutherford ) 
-  static void createAnalogElasticDistributions(
+  static void createCutoffElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
