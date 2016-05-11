@@ -402,8 +402,8 @@ Utility::UnitAwareTabularDistribution<Utility::INTERP,void,void>::UnitAwareTabul
 };
 
 // Allow the user to ignore the dependent value in the constructor
-%typemap(default) const double& dependent_value {
-  double default_dependent_value = 1.0;
+%typemap(default) const double& dependent_value (double default_dependent_value){
+  default_dependent_value = 1.0;
   $1 = &default_dependent_value;
 }
 
