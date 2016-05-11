@@ -2,10 +2,12 @@
 MACRO(ENABLE_MPI_SUPPORT)
   
   # Add the user supplied MPI prefix to help find MPI
-  SET(CMAKE_PREFIX_PATH ${MPI_PREFIX} ${CMAKE_PREFIX_PATH})
+  IF(DEFINED MPI_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${MPI_PREFIX} ${CMAKE_PREFIX_PATH})
+  ENDIF()
 
   # Find the default MPI package available on this system
-  FIND_PACKAGE("MPI" 1.8.2 REQUIRED)
+  FIND_PACKAGE(MPI 1.6.5 REQUIRED)
 
   # Add the MPI-specific compile and linker flags and include paths
   SET(CMAKE_CXX_COMPILE_FLAGS "${CMAKE_CXX_COMPILE_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")

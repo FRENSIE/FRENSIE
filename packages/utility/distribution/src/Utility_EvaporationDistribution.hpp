@@ -72,22 +72,18 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
- 
-  //! Default constructor
-  UnitAwareEvaporationDistribution( 
-			const IndepQuantity incident_energy = IQT::one(),
-			const IndepQuantity nuclear_temperature = IQT::one(),
-			const IndepQuantity restriction_energy = IQT::zero(),
-			double constant_multiplier = 1.0 );
 
   //! Constructor
-  template<typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputIndepQuantityC>
+  template<typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
   UnitAwareEvaporationDistribution( 
-				const InputIndepQuantityA incident_energy,
-				const InputIndepQuantityB nuclear_temperature,
-				const InputIndepQuantityC restriction_energy,
+                                const InputIndepQuantityA incident_energy = 
+                                QuantityTraits<InputIndepQuantityA>::one(),
+                                const InputIndepQuantityB nuclear_temperature =
+                                QuantityTraits<InputIndepQuantityB>::one(),
+				const InputIndepQuantityC restriction_energy = 
+                                QuantityTraits<InputIndepQuantityC>::one(),
 				const double constant_multiplier = 1.0 );
 
   //! Copy constructor

@@ -152,10 +152,12 @@ TEUCHOS_UNIT_TEST( UnitAwareExponentialDistribution, sample_basic_static )
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_static )
 {
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0 - 1e-15;
   fake_stream[2] = 0.5;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.5;
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -169,6 +171,12 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample_static )
   
   sample = Utility::ExponentialDistribution::sample( 3.0, 0.0, inf );
   TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
+
+  sample = Utility::ExponentialDistribution::sample( 3.0, 1.0, inf );
+  TEST_FLOATING_EQUALITY( sample, 1.2310490601866484, 1e-12 );
+
+  sample = Utility::ExponentialDistribution::sample( 3.0, 1.0, 2.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.2148532763287345, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

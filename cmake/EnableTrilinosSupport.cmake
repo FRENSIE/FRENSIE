@@ -6,16 +6,22 @@
 # 4.) TEUCHOS_NUMERICS - stores the teuchosnumercics library name
 # 5.) TEUCHOS_COMM - stores the teuchoscomm library name
 # 6.) TEUCHOS_PARAMETER_LIST - stores the teuchosparameter list library name
+# 8.) PYTRILINOS - stores the pytrilinos library name 
+#                  (only if FRENSIE_ENABLE_PYTHON=ON)
 # 7.) TEUCHOS_STD_UNIT_TEST_MAIN - the path to the main .cpp file that is 
 #                                  needed for all unit tests using the Teuchos
 #                                  unit test harness
 MACRO(ENABLE_TRILINOS_SUPPORT)
   
   # Add the user supplied Trilinos prefix to help find Trilinos
-  SET(CMAKE_PREFIX_PATH ${TRILINOS_PREFIX} ${CMAKE_PREFIX_PATH})
-
+  IF(DEFINED TRILINOS_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${TRILINOS_PREFIX} ${CMAKE_PREFIX_PATH})
+  ELSE()
+    MESSAGE(FATAL_ERROR "The TRILINOS_PREFIX must currently be set.")
+  ENDIF()
+  
   # Find the Trilinos package available on this system
-  FIND_PACKAGE(Trilinos 11.4.1 REQUIRED)
+  FIND_PACKAGE(Trilinos 11.14.3 REQUIRED)
 
   # Check if C compiler compatibility needs to be checked
   STRING(COMPARE NOTEQUAL 
@@ -123,10 +129,19 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The teuchosparameterlist library could not be found")
   ENDIF(${TEUCHOS_PARAMETER_LIST} MATCHES NOTFOUND)
 
+  # Find the PyTrilinos library if building PyFrensie package
+  IF(FRENSIE_ENABLE_PYTHON)
+    FIND_LIBRARY(PYTRILINOS pytrilinos ${TRILINOS_LIBRARY_DIRS})
+    IF(${PYTRILINOS} MATCHES NOTFOUND)
+      MESSAGE(FATAL_ERROR "The pytrilinos library could not be found")
+    ENDIF()
+  ENDIF()
+
   # Find the standard Teuchos Unit Test main file
   FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH
     NAMES Teuchos_StandardUnitTestMain.cpp
     PATHS ${Trilinos_DIR}/../../../src/packages/teuchos/core/test/UnitTest/
+      ${TRILINOS_PREFIX}/src/packages/teuchos/core/test/UnitTest/
       ${TRILINOS_SOURCE}/packages/teuchos/core/test/UnitTest/
       ${TRILINOS_SOURCE}/src/packages/teuchos/core/test/UnitTest )
   IF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
@@ -137,7 +152,39 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   SET(TEUCHOS_STD_UNIT_TEST_MAIN
     ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp
     CACHE PATH "The standard unit test main file for building unit tests")
-    
+
+  # Set the path to the PyTrilinos package source directory
+  FIND_PATH(PYTRILINOS_SRC_DIR_PATH
+    NAMES Teuchos_Array.i
+    PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/src/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/src/
+    ${TRILINOS_SOURCE}/packages/PyTrilinos/src/
+    ${TRILINOS_SOURCE}/src/packages/PyTrilinos/src)
+  IF(${PYTRILINOS_SRC_DIR_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The PyTrilinos/src directory could not be found!")
+  ENDIF()
+
+  # Set the path to the PyTrilinos cmake directory
+  FIND_PATH(PYTRILINOS_CMAKE_DIR_PATH
+    NAMES UseSWIG.cmake
+    PATHS ${Trilinos_DIR}/../../../src/packages/PyTrilinos/cmake/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/cmake/
+    ${TRILINOS_SOURCE}/packages/PyTrilinos/cmake/
+    ${TRILINOS_SOURCE}/src/packages/PyTrilinos/cmake)
+  IF(${PYTRILINOS_CMAKE_DIR_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The PyTrilinos/cmake directory could not be found!")
+  ENDIF()
+
+  # Set the path to the PyTrilinos util directory
+  FIND_PATH(PYTRILINOS_UTIL_DIR_PATH
+    NAMES copyWithCMakeSubstitutions.py.in
+    PATHS ${Trilinos_DIR}/../../../src/packages/Pytrilinos/util/
+    ${TRILINOS_PREFIX}/src/packages/PyTrilinos/util/
+    ${TRILINOS_SOURCE}/packages/PyTrilinos/util/
+    ${TRILINOS_SOURCE}/src/packages/PyTrilinos/util)
+  IF(${PYTRILINOS_UTIL_DIR_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The PyTrilinos/util directory could not be found!")
+  ENDIF()
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})
@@ -206,6 +253,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(" TEUCHOS_NUMERICS_LIBRARY = ${TEUCHOS_NUMERICS}")
     MESSAGE(" TEUCHOS_COMM_LIBRARY = ${TEUCHOS_COMM}")
     MESSAGE(" TEUCHOS_PARAMETER_LIST_LIBRARY = ${TEUCHOS_PARAMETER_LIST}")
+    MESSAGE(" PYTRILINOS = ${PYTRILINOS}")
     MESSAGE("End of Teuchos details\n")
   ENDIF()
 

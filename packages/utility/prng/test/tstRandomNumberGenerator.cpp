@@ -30,6 +30,18 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the random number generator streams can be initialized
+TEUCHOS_UNIT_TEST( RandomNumberGenerator, createStreams )
+{
+  TEST_ASSERT( !Utility::RandomNumberGenerator::hasStreams() );
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
+  TEST_ASSERT( Utility::RandomNumberGenerator::hasStreams() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the random number generator can be initialized
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 				   initialize,
@@ -161,9 +173,6 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
