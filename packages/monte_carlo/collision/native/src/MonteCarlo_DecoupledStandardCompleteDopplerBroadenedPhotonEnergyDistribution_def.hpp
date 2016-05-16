@@ -168,7 +168,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   double abs_error, diff_cs;
 
-  Utility::GaussKronrodIntegrator quadrature_set( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_set( precision );
 
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
                                           0.0,

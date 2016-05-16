@@ -17,109 +17,119 @@
 
 namespace Utility{
 
+template<typename T>
 struct BinTraits
 {
-  double lower_limit;
-  double upper_limit;
-  long double result;
-  double error;
+  T lower_limit;
+  T upper_limit;
+  T result;
+  T error;
 
-  bool operator <( const BinTraits& bins ) const
+  bool operator <( const BinTraits<T>& bins ) const
   {
     return error < bins.error;
   }
 };
 
-struct ExtrpolatedBinTraits : BinTraits
+template<typename T>
+struct ExtrpolatedBinTraits
 {
+  T lower_limit;
+  T upper_limit;
+  T result;
+  T error;
   int level;
 
-  bool operator <( const ExtrpolatedBinTraits& bins ) const
+  bool operator <( const ExtrpolatedBinTraits<T>& bins ) const
   {
     return error < bins.error;
   }
 };
 
-typedef std::priority_queue<BinTraits> BinQueue;
-typedef Teuchos::Array<ExtrpolatedBinTraits> BinArray;
-
 //! The Gauss-Kronrod integrator
+template<typename T>
 class GaussKronrodIntegrator
 {
 
 public:
 
+typedef std::priority_queue<BinTraits<T>> BinQueue;
+typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
+
   //! Constructor
-  GaussKronrodIntegrator( const double relative_error_tol,
-                          const double absolute_error_tol = 0.0,
-                          const size_t subinterval_limit = 1000 );
+  GaussKronrodIntegrator( const T relative_error_tol,
+                          const T absolute_error_tol = 0.0,
+                          const size_t subinterval_limit = 1000,
+                          const bool std_units = true );
 
   //! Destructor
-  ~GaussKronrodIntegrator();
+  ~GaussKronrodIntegrator()
+  { /* ... */ }
+
 /*
   //! Integrate the function
   template<typename Functor>
   void integrate( Functor& integrand, 
-		  double lower_limit, 
-		  double upper_limit,
-		  double& result,
-		  double& absolute_error,
+		  T lower_limit, 
+		  T upper_limit,
+		  T& result,
+		  T& absolute_error,
 		  size_t& number_of_function_evals ) const;
 */
   //! Integrate the function adaptively with BinQueue
   template<int Points, typename Functor>
   void integrateAdaptively( Functor& integrand,
-			    double lower_limit,
-			    double upper_limit,
-			    double& result,
-			    double& absolute_error ) const;
+			    T lower_limit,
+			    T upper_limit,
+			    T& result,
+			    T& absolute_error ) const;
 
   //! Integrate the function with point rule
   template<int Points, typename Functor>
   void integrateWithPointRule( 
                 Functor& integrand,
-			    double lower_limit,
-			    double upper_limit,
-			    long double& result,
-			    double& absolute_error,
-                double& result_abs, 
-                double& result_asc ) const;
+			    T lower_limit,
+			    T upper_limit,
+			    T& result,
+			    T& absolute_error,
+                T& result_abs, 
+                T& result_asc ) const;
 /*
   //! Integrate the function over a semi-infinite interval (+infinity)
   template<typename Functor>
   void integrateSemiInfiniteIntervalUpper( Functor& integrand,
-					   double lower_limit,
-					   double& result,
-					   double& absolute_error ) const;
+					   T lower_limit,
+					   T& result,
+					   T& absolute_error ) const;
 
   //! Integrate the function over a semi-infinite interval (-infinity)
   template<typename Functor>
   void integrateSemiInfiniteIntervalLower( Functor& integrand,
-					   double upper_limit,
-					   double& result,
-					   double& absolute_error ) const;
+					   T upper_limit,
+					   T& result,
+					   T& absolute_error ) const;
 
   //! Integrate the function over an infinite interval (-infinity,+infinity)
   template<typename Functor>
   void integrateInfiniteInterval( Functor& integrand,
-				  double& result,
-				  double& absolute_error ) const;
+				  T& result,
+				  T& absolute_error ) const;
 
   //! Integrate a function with integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( Functor& integrand,
-				       double lower_limit,
-				       double upper_limit,
-				       double& result,
-				       double& absolute_error ) const;
+				       T lower_limit,
+				       T upper_limit,
+				       T& result,
+				       T& absolute_error ) const;
 */
   //! Integrate a function with known integrable singularities adaptively
   template<typename Functor>
   void integrateAdaptivelyWynnEpsilon( 
 			  Functor& integrand,
-			  const Teuchos::ArrayView<double>& points_of_interest,
-			  double& result,
-			  double& absolute_error ) const;
+			  const Teuchos::ArrayView<T>& points_of_interest,
+			  T& result,
+			  T& absolute_error ) const;
 
 protected:
   
@@ -127,11 +137,11 @@ protected:
   template<typename Functor>
   void calculateQuadratureIntegrandValuesAtAbscissa( 
     Functor& integrand, 
-    double abscissa,
-    double half_length,
-    double midpoint,
-    double& integrand_value_lower,
-    double& integrand_value_upper ) const;
+    T abscissa,
+    T half_length,
+    T midpoint,
+    T& integrand_value_lower,
+    T& integrand_value_upper ) const;
 
   // Bisect and integrate the given bin interval
   template<int Points, typename Functor, typename Bin>
@@ -140,39 +150,39 @@ protected:
     const Bin& bin,
     Bin& bin_1,
     Bin& bin_2,
-    double& bin_1_asc,
-    double& bin_2_asc ) const;
+    T& bin_1_asc,
+    T& bin_2_asc ) const;
 
   // Rescale absolute error from integration
   void rescaleAbsoluteError( 
-    double& absolute_error, 
-    double result_abs, 
-    double result_asc ) const;
+    T& absolute_error, 
+    T result_abs, 
+    T result_asc ) const;
 
   // Test if subinterval is too small
   template<int Points>
-  bool subintervalTooSmall( double& lower_limit_1, 
-                                   double& lower_limit_2, 
-                                   double& upper_limit_2 ) const;
+  bool subintervalTooSmall( T& lower_limit_1, 
+                                   T& lower_limit_2, 
+                                   T& upper_limit_2 ) const;
 
   // check the roundoff error 
   void checkRoundoffError( 
-                       const BinTraits& bin, 
-                       const BinTraits& bin_1, 
-                       const BinTraits& bin_2,    
-                       const double& bin_1_asc,
-                       const double& bin_2_asc,
+                       const BinTraits<T>& bin, 
+                       const BinTraits<T>& bin_1, 
+                       const BinTraits<T>& bin_2,    
+                       const T& bin_1_asc,
+                       const T& bin_2_asc,
                        int& round_off_1,
                        int& round_off_2,
                        const int number_of_iterations ) const;
 
   // check the roundoff error 
   void checkRoundoffError( 
-                       const ExtrpolatedBinTraits& bin, 
-                       const ExtrpolatedBinTraits& bin_1, 
-                       const ExtrpolatedBinTraits& bin_2,    
-                       const double& bin_1_asc,
-                       const double& bin_2_asc,
+                       const ExtrpolatedBinTraits<T>& bin, 
+                       const ExtrpolatedBinTraits<T>& bin_1, 
+                       const ExtrpolatedBinTraits<T>& bin_2,    
+                       const T& bin_1_asc,
+                       const T& bin_2_asc,
                        int& round_off_1,
                        int& round_off_2,
                        int& round_off_3,
@@ -183,29 +193,44 @@ protected:
   void sortBins( 
         Teuchos::Array<int>& bin_order,
         BinArray& bin_array, 
-        const ExtrpolatedBinTraits& bin_1,
-        const ExtrpolatedBinTraits& bin_2,
+        const ExtrpolatedBinTraits<T>& bin_1,
+        const ExtrpolatedBinTraits<T>& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const;
 
   // get the Wynn Epsilon-Algoirithm extrapolated value
   void getWynnEpsilonAlgorithmExtrapolation( 
-        Teuchos::Array<double>& bin_extrapolated_result, 
-        Teuchos::Array<double>& last_three_results, 
-        double& extrapolated_result, 
-        double& extrapolated_error,  
+        Teuchos::Array<T>& bin_extrapolated_result, 
+        Teuchos::Array<T>& last_three_results, 
+        T& extrapolated_result, 
+        T& extrapolated_error,  
         int& number_of_extrapolated_intervals,
         int& number_of_extrapolated_calls  ) const;
 
 private:
   // The relative error tolerance
-  double d_relative_error_tol;
+  T d_relative_error_tol;
 
   // The absolute error tolerance
-  double d_absolute_error_tol;
+  T d_absolute_error_tol;
 
   // The subinterval limit
   size_t d_subinterval_limit;
+
+  // Bool for using std units (ie: double, long double)
+  bool d_std_units;
+
+  // return epsilon numerical limit for type T
+  T getLimitEpsilon() const;
+
+  // return min numerical limit for type T
+  T getLimitMin() const;
+
+  // return max numerical limit for type T
+  T getLimitMax() const;
+
+  // return max of two variables of type T
+  T getMax( T variable_1, T variable_2 ) const;
 };
 
 } // end Utility namespace

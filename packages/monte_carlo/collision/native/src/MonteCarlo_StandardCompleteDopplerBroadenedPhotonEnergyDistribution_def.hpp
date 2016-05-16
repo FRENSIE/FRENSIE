@@ -271,7 +271,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 
   double abs_error, diff_cs;
 
-  Utility::GaussKronrodIntegrator quadrature_set( precision );
+  Utility::GaussKronrodIntegrator<double> quadrature_set( precision );
 
   // Evaluate the minimum and maximum energy for integration (not the
   // true minimum and maximum energy)

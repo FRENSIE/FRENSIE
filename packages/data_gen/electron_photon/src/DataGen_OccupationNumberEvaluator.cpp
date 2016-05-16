@@ -90,6 +90,7 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
 					      electron_momentum_projection ) );
 
   double occupation_number;
+  long double long_occupation_number;
 
   if( electron_momentum_projection <= 
       d_compton_profile->getLowerBoundOfIndepVar() )
@@ -104,9 +105,75 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
 			   boost::cref( *this ),
 			   _1 );
 
-    double abs_error;
+    long double long_abs_error;
     
-    Utility::GaussKronrodIntegrator quadrature_gkq( precision );
+    Utility::GaussKronrodIntegrator<long double> quadrature_gkq( precision );
+
+    if( electron_momentum_projection < 
+	d_compton_profile->getUpperBoundOfIndepVar() )
+    {
+      quadrature_gkq.integrateAdaptively<15>(
+				  compton_profile_wrapper,
+				  (long double)d_compton_profile->getLowerBoundOfIndepVar(),
+				  (long double)electron_momentum_projection,
+				  long_occupation_number,
+				  long_abs_error );
+    }
+    else
+    {
+      quadrature_gkq.integrateAdaptively<15>(
+				  compton_profile_wrapper,
+				  (long double)d_compton_profile->getLowerBoundOfIndepVar(),
+				  (long double)d_compton_profile->getUpperBoundOfIndepVar(),
+				  long_occupation_number,
+				  long_abs_error );
+    }
+    occupation_number = (double)long_occupation_number;
+  }
+
+  // Make sure the occupation number is valid
+  testPostcondition( occupation_number >= 0.0 );
+
+  return occupation_number;
+}
+/*
+// Evaluate the compton profile
+double OccupationNumberEvaluator::evaluateComptonProfile(
+			      const double electron_momentum_projection ) const
+{
+  // Make sure the electron momentum projection is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+					      electron_momentum_projection ) );
+
+  return d_compton_profile->evaluate( electron_momentum_projection )/
+    d_compton_profile_norm_constant;
+}
+
+// Evaluate the occupation number at a given electron momentum projection
+double OccupationNumberEvaluator::evaluateOccupationNumber(
+				     const double electron_momentum_projection,
+				     const double precision ) const
+{
+  // Make sure the electron momentum projection is valid
+  testPrecondition( std::isfinite( electron_momentum_projection ) );
+
+  double occupation_number;
+
+  if( electron_momentum_projection <= 
+      d_compton_profile->getLowerBoundOfIndepVar() )
+  {
+    occupation_number = 0.0;
+  }
+  else if( electron_momentum_projection > 
+	   d_compton_profile->getLowerBoundOfIndepVar() )
+  {
+    boost::function<double (double pz)> compton_profile_wrapper = 
+      boost::bind<double>( &OccupationNumberEvaluator::evaluateComptonProfile,
+			   boost::cref( *this ),
+			   _1 );
+    
+    double abs_error;
+    Utility::GaussKronrodIntegrator<double> quadrature_gkq( precision );
 
     if( electron_momentum_projection < 
 	d_compton_profile->getUpperBoundOfIndepVar() )
@@ -126,16 +193,15 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
 				  d_compton_profile->getUpperBoundOfIndepVar(),
 				  occupation_number,
 				  abs_error );
-    }	
+    }
   }
-  
+
   // Make sure the occupation number is valid
   testPostcondition( occupation_number >= 0.0 );
 
   return occupation_number;
 }
-
-
+*/
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

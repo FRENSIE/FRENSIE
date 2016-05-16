@@ -11,7 +11,7 @@
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
-
+/*
 // Initialize static member data
 
 // Constructor
@@ -40,7 +40,7 @@ GaussKronrodIntegrator::GaussKronrodIntegrator(
 
 // Destructor
 GaussKronrodIntegrator::~GaussKronrodIntegrator()
-{ /* ... */ }
+{ /* ... *//* }
 
 // Rescale absolute error from integration
 void GaussKronrodIntegrator::rescaleAbsoluteError( 
@@ -79,8 +79,8 @@ void GaussKronrodIntegrator::rescaleAbsoluteError(
 void GaussKronrodIntegrator::sortBins( 
         Teuchos::Array<int>& bin_order,
         BinArray& bin_array, 
-        const ExtrpolatedBinTraits& bin_1,
-        const ExtrpolatedBinTraits& bin_2,
+        const ExtrpolatedBinTraits<double>& bin_1,
+        const ExtrpolatedBinTraits<double>& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const
 {
@@ -117,7 +117,7 @@ void GaussKronrodIntegrator::sortBins(
    *  difficult integrand, subdivision increased the error
    *  estimate. in the normal case the insert procedure should
    *  start after the nr_max-th largest error estimate.
-   */
+   *//*
   int original_nr_max = nr_max;
   while ( nr_max > 0 && larger_error > bin_array[bin_order[nr_max-1]].error )
   {
@@ -141,7 +141,7 @@ void GaussKronrodIntegrator::sortBins(
    *  Compute the number of elements in the list to be maintained
    *  in descending order. This number depends on the number of
    *  subdivisions still allowed.
-   */
+   *//*
   Teuchos::Array<int>::iterator max_bin;
   if ( (d_subinterval_limit/2+2) < bin_order.size()-1 )
     max_bin = bin_order.begin() + ( d_subinterval_limit - bin_order.size() );
@@ -251,7 +251,7 @@ void GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation(
     
     /* If two elements are very close to each other, omit a part of the table 
      * by adjusting the value of number_of_extrapolated_intervals.
-     */
+     *//*
     if ( error1 <= tolerance1 || error2 <= tolerance2 || error3 <= tolerance3 )
     {
       number_of_extrapolated_intervals = 2*i;
@@ -262,7 +262,7 @@ void GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation(
 
     /* Test to detect irregular behavior in the table, and eventually omit a
      * part of the table adjusting the value of number_of_extrapolated_intervals.
-     */
+     *//*
     if ( fabs ( ss*e1 ) <= 1.0E-04 ) 
     {
       number_of_extrapolated_intervals = 2*i;
@@ -271,7 +271,7 @@ void GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation(
 
     /* Compute a new element and eventually adjust the value of
      * result. 
-     */
+     *//*
     result = e1 + 1.0/ss;
     bin_extrapolated_result[k1] = result;
     k1 -= 2;
@@ -345,9 +345,9 @@ void GaussKronrodIntegrator::getWynnEpsilonAlgorithmExtrapolation(
 
 // check the roundoff error 
 void GaussKronrodIntegrator::checkRoundoffError( 
-                       const BinTraits& bin, 
-                       const BinTraits& bin_1, 
-                       const BinTraits& bin_2,    
+                       const BinTraits<double>& bin, 
+                       const BinTraits<double>& bin_1, 
+                       const BinTraits<double>& bin_2,    
                        const double& bin_1_asc,
                        const double& bin_2_asc,
                        int& round_off_1,
@@ -379,9 +379,9 @@ void GaussKronrodIntegrator::checkRoundoffError(
 
 // check the roundoff error 
 void GaussKronrodIntegrator::checkRoundoffError( 
-                       const ExtrpolatedBinTraits& bin, 
-                       const ExtrpolatedBinTraits& bin_1, 
-                       const ExtrpolatedBinTraits& bin_2,    
+                       const ExtrpolatedBinTraits<double>& bin, 
+                       const ExtrpolatedBinTraits<double>& bin_1, 
+                       const ExtrpolatedBinTraits<double>& bin_2,    
                        const double& bin_1_asc,
                        const double& bin_2_asc,
                        int& round_off_1,
@@ -419,7 +419,7 @@ void GaussKronrodIntegrator::checkRoundoffError(
                         "Extremely bad integrand behavior occurs at some points "
                         "of the integration interval" );
 };
-
+*/
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

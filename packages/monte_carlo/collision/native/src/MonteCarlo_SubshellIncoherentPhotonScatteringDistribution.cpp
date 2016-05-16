@@ -108,7 +108,7 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 
     double abs_error, integrated_cs;
 
-    Utility::GaussKronrodIntegrator quadrature_gkq_set( precision );
+    Utility::GaussKronrodIntegrator<double> quadrature_gkq_set( precision );
 
     quadrature_gkq_set.integrateAdaptively<15>( diff_cs_wrapper,
 					     -1.0,

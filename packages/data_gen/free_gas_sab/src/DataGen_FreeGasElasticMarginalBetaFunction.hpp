@@ -70,10 +70,10 @@ private:
   double integratedSAlphaBetaFunction( const double beta );
 
   // The integration gkq_set for integrating over alpha values
-  Utility::GaussKronrodIntegrator d_alpha_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_alpha_gkq_set;
 
   // The integration gkq_set for integrating over beta values
-  Utility::GaussKronrodIntegrator d_beta_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_beta_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

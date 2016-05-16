@@ -12,10 +12,6 @@
 // Std Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
-#include <Teuchos_ConstTypeTraits.hpp>
-
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -24,6 +20,416 @@
 #include "Utility_GaussKronrodQuadratureSetTraits.hpp"
 
 namespace Utility{
+
+// Constructor
+template<typename T>
+GaussKronrodIntegrator<T>::GaussKronrodIntegrator( 
+    const T relative_error_tol,
+    const T absolute_error_tol,
+    const size_t subinterval_limit,
+    const bool std_units )
+  : d_relative_error_tol( relative_error_tol ),
+    d_absolute_error_tol( absolute_error_tol ),
+    d_subinterval_limit( subinterval_limit ),
+    d_std_units( std_units )
+{
+  // Make sure the error tolerances are valid
+  testPrecondition( relative_error_tol >= (T)0 );
+  testPrecondition( absolute_error_tol >= (T)0 );
+  // Make sure the subinterval limit is valid
+  testPrecondition( subinterval_limit > 0 );
+
+  TEST_FOR_EXCEPTION( 
+    d_absolute_error_tol <= 0 && 
+    (d_relative_error_tol < 50 * std::numeric_limits<T>::epsilon() ||
+    d_relative_error_tol < 0.5e-28L),
+    Utility::IntegratorException,
+    "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
+
+}
+
+// Rescale absolute error from integration
+template<typename T>
+void GaussKronrodIntegrator<T>::rescaleAbsoluteError( 
+    T& absolute_error, 
+    T result_abs, 
+    T result_asc ) const
+{
+  if ( result_asc != 0 && absolute_error != 0 )
+    {
+      T scale = (T)200 * absolute_error/result_asc;
+
+      if ( scale < (T)1 )
+      {
+        absolute_error = result_asc * pow( scale, 3/(T)2 );
+      }  
+      else
+      {    
+      absolute_error = result_asc;
+      }  
+    };
+
+  if ( result_abs > std::numeric_limits<T>::min() / 
+        ( (T)50 * std::numeric_limits<T>::epsilon() ) )
+    {
+      T min_error = (T)50*std::numeric_limits<T>::epsilon() * result_abs;
+
+      if ( min_error > absolute_error ) 
+        {
+          absolute_error = min_error;
+        }
+    };
+};
+
+// Sort the bin order from highest to lowest error 
+//! \details The error list will be correctly sorted except bin_1 and bin_2
+template<typename T>
+void GaussKronrodIntegrator<T>::sortBins( 
+        Teuchos::Array<int>& bin_order,
+        BinArray& bin_array, 
+        const ExtrpolatedBinTraits<T>& bin_1,
+        const ExtrpolatedBinTraits<T>& bin_2,
+        const int& number_of_intervals,
+        int& nr_max ) const
+{
+  testPrecondition( bin_order.size() == number_of_intervals );
+
+  T larger_error;
+  T smaller_error;
+  
+  int bin_with_larger_error = bin_order[nr_max];
+
+  // append new intervals to bin_array
+  if ( bin_1.error <= bin_2.error )
+  {
+    bin_array[bin_with_larger_error] = bin_2;
+    bin_array[number_of_intervals] = bin_1;
+
+    larger_error = bin_2.error;
+    smaller_error = bin_1.error;
+  }
+  else
+  {
+    bin_array[bin_with_larger_error] = bin_1;
+    bin_array[number_of_intervals] = bin_2;
+
+    larger_error = bin_1.error;
+    smaller_error = bin_2.error;
+  }
+
+  // remove old interval from list
+  bin_order.remove( nr_max ); 
+
+  /*
+   *  This part of the routine is only executed if, due to a
+   *  difficult integrand, subdivision increased the error
+   *  estimate. in the normal case the insert procedure should
+   *  start after the nr_max-th largest error estimate.
+   */
+  int original_nr_max = nr_max;
+  while ( nr_max > 0 && larger_error > bin_array[bin_order[nr_max-1]].error )
+  {
+    nr_max--; //reduce nr_max if the bin above it has larger error
+  }
+
+  
+  int start_bin;
+  if ( original_nr_max > nr_max )
+  {
+    // start insert of the bin_with_larger_error at the reduced nr_max
+    start_bin = nr_max;
+  }
+  else
+  {
+    // start insert of the bin_with_larger_error right after the bin_with_larger_error
+    start_bin = original_nr_max;
+  }
+
+  /*
+   *  Compute the number of elements in the list to be maintained
+   *  in descending order. This number depends on the number of
+   *  subdivisions still allowed.
+   */
+  Teuchos::Array<int>::iterator max_bin;
+  if ( (d_subinterval_limit/2+2) < bin_order.size()-1 )
+    max_bin = bin_order.begin() + ( d_subinterval_limit - bin_order.size() );
+  else
+    max_bin = bin_order.end();
+
+  Teuchos::Array<int>::iterator large_bin = bin_order.begin()+start_bin;
+  while ( large_bin != max_bin && larger_error < bin_array[*large_bin].error )
+  {
+    large_bin++;
+  }
+
+  bin_order.insert( large_bin, bin_with_larger_error );
+  max_bin;
+
+  //  Insert smaller_bin_error by traversing the list bottom-up.
+  Teuchos::Array<int>::iterator small_bin = max_bin;
+  while ( small_bin != large_bin && 
+          bin_array[bin_order[*small_bin]].error < smaller_error )
+  {
+    small_bin--;
+  }
+  bin_order.insert( small_bin+1, number_of_intervals );
+};
+
+
+// get the Wynn Epsilon-Algoirithm extrapolated value
+template<typename T>
+void GaussKronrodIntegrator<T>::getWynnEpsilonAlgorithmExtrapolation( 
+        Teuchos::Array<T>& bin_extrapolated_result, 
+        Teuchos::Array<T>& last_three_results, 
+        T& extrapolated_result, 
+        T& extrapolated_error,  
+        int& number_of_extrapolated_intervals,
+        int& number_of_extrapolated_calls  ) const
+{
+  testPrecondition( number_of_extrapolated_calls >= 0 );
+  testPrecondition( number_of_extrapolated_intervals > 1 );
+  testPrecondition( last_three_results.size() == 3 );
+  testPrecondition( bin_extrapolated_result.size() == 52 );
+ 
+  // update the number of extrapolated calls
+  number_of_extrapolated_calls++;
+
+  extrapolated_error = std::numeric_limits<T>::max();
+  extrapolated_result = bin_extrapolated_result[number_of_extrapolated_intervals];
+
+  if ( number_of_extrapolated_intervals < 2 )
+  {
+    extrapolated_error = getMax( extrapolated_error, 
+        std::numeric_limits<T>::epsilon()*fabs(extrapolated_result)/(T)2 );
+    return;
+  }
+
+  int extrapolated_interval_limit = 50;
+
+  bin_extrapolated_result[number_of_extrapolated_intervals+2] = 
+    bin_extrapolated_result[number_of_extrapolated_intervals];
+
+  int new_element = number_of_extrapolated_intervals/2;
+
+  bin_extrapolated_result[number_of_extrapolated_intervals] = 
+     std::numeric_limits<T>::max();
+
+  int original_number = number_of_extrapolated_intervals;
+  int k1 = number_of_extrapolated_intervals;
+
+  for ( int i = 0; i < new_element; i++ )
+  {
+    int k2 = k1-1;
+    int k3 = k1-2;
+
+    T result = bin_extrapolated_result[k1+2];
+    T e0 = bin_extrapolated_result[k3];
+    T e1 = bin_extrapolated_result[k2];
+    T e2 = result;
+
+    // Get error and tolerance estimate between e2 and e1
+    T delta2 = e2 - e1;
+    T error2 = fabs(delta2);
+    T tolerance2 = getMax( fabs(e2), fabs(e1) )*
+        std::numeric_limits<T>::epsilon();
+
+    // Get error and tolerance estimate between e1 and e0
+    T delta3 = e1 - e0;
+    T error3 = fabs(delta3);
+    T tolerance3 = getMax( fabs(e1), fabs(e0) )*
+        std::numeric_limits<T>::epsilon();
+
+    // If e0, e1 and e2 are equal to within machine accuracy, convergence is assumed.
+    if ( error2 <= tolerance2 && error3 <= tolerance3 )
+    {
+      extrapolated_result = result;
+      extrapolated_error = error2+error3;
+      extrapolated_error = getMax( extrapolated_error, 
+          (std::numeric_limits<T>::epsilon()*fabs(extrapolated_error))/(T)2 );
+     return;
+    }
+
+    T e3 = bin_extrapolated_result[k1];
+    bin_extrapolated_result[k1] = e1;
+
+    // Get error and tolerance estimate between e1 and e3
+    T delta1 = e1 - e3;
+    T error1 = fabs(delta1);
+    T tolerance1 = getMax( fabs(e1), fabs(e3) )*
+            std::numeric_limits<T>::epsilon();
+    
+    /* If two elements are very close to each other, omit a part of the table 
+     * by adjusting the value of number_of_extrapolated_intervals.
+     */
+    if ( error1 <= tolerance1 || error2 <= tolerance2 || error3 <= tolerance3 )
+    {
+      number_of_extrapolated_intervals = 2*i;
+      break;
+    }
+
+    T ss = (1/delta1 + 1/delta2) - 1/delta3;
+
+    /* Test to detect irregular behavior in the table, and eventually omit a
+     * part of the table adjusting the value of number_of_extrapolated_intervals.
+     */
+    if ( fabs ( ss*e1 ) <= 1/(T)10000 ) 
+    {
+      number_of_extrapolated_intervals = 2*i;
+      break;
+    }
+
+    /* Compute a new element and eventually adjust the value of
+     * result. 
+     */
+    result = e1 + 1/ss;
+    bin_extrapolated_result[k1] = result;
+    k1 -= 2;
+
+    T error = error2 + fabs(result - e2) + error3;
+
+    if ( error <= extrapolated_error )
+    {
+      extrapolated_error = error;
+      extrapolated_result = result;
+    }
+  }
+
+  // Shift the table
+
+  if ( number_of_extrapolated_intervals == extrapolated_interval_limit )
+    number_of_extrapolated_intervals = 2*(extrapolated_interval_limit/2);
+
+  int ib;
+
+  if ( original_number % 2 == 1 )
+  {
+    ib = 1;
+  }
+  else
+  {
+    ib = 0;
+  }
+
+  int ie = new_element + 1;
+
+  for ( int i = 0; i < ie; i++ )
+  {
+    bin_extrapolated_result[ib] = bin_extrapolated_result[ib+2];
+    ib += 2;
+  }
+
+  if ( original_number != number_of_extrapolated_intervals ) 
+  {
+    for ( int i = 0; i < number_of_extrapolated_intervals; i++ )
+    {
+      bin_extrapolated_result[i]= 
+        bin_extrapolated_result[original_number - number_of_extrapolated_intervals + i];
+    }
+  }
+  
+  if ( number_of_extrapolated_calls < 4 )
+  {
+    last_three_results[number_of_extrapolated_calls-1] = extrapolated_result;
+    extrapolated_error = std::numeric_limits<T>::max();
+  }
+  else
+  {
+    extrapolated_error = 
+      fabs( extrapolated_result - last_three_results[2] ) +
+      fabs( extrapolated_result - last_three_results[1] ) +
+      fabs( extrapolated_result - last_three_results[0] );
+
+    last_three_results[0] = last_three_results[1];
+    last_three_results[1] = last_three_results[2];
+    last_three_results[2] = extrapolated_result;
+  }
+
+  extrapolated_error = std::max ( 
+    extrapolated_error,
+    (std::numeric_limits<T>::epsilon()*fabs( extrapolated_result ))/(T)2 );
+
+  return;
+};  
+
+
+// check the roundoff error
+template<typename T>
+void GaussKronrodIntegrator<T>::checkRoundoffError( 
+                       const BinTraits<T>& bin, 
+                       const BinTraits<T>& bin_1, 
+                       const BinTraits<T>& bin_2,    
+                       const T& bin_1_asc,
+                       const T& bin_2_asc,
+                       int& round_off_1,
+                       int& round_off_2,
+                       const int number_of_iterations ) const
+{
+    if (bin_1_asc != bin_1.error && bin_2_asc != bin_2.error)
+    {
+       T area_12 = bin_1.result + bin_2.result;
+       T error_12 = bin_1.error + bin_2.error;
+       T delta = bin.result - area_12;
+
+       if ( fabs (delta) <= (1/(T)100000) * fabs (area_12) && 
+            error_12 >= (99/(T)100) * bin.error )
+       {
+         round_off_1++;
+       }
+       if ( number_of_iterations >= 10 && error_12 > bin.error )
+       {
+          round_off_2++;
+       }
+     }
+
+    TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
+                        Utility::IntegratorException,
+                        "Roundoff error prevented tolerance from being achieved" );
+};
+
+
+// check the roundoff error
+template<typename T>
+void GaussKronrodIntegrator<T>::checkRoundoffError( 
+                       const ExtrpolatedBinTraits<T>& bin, 
+                       const ExtrpolatedBinTraits<T>& bin_1, 
+                       const ExtrpolatedBinTraits<T>& bin_2,    
+                       const T& bin_1_asc,
+                       const T& bin_2_asc,
+                       int& round_off_1,
+                       int& round_off_2,
+                       int& round_off_3,
+                       const bool extrapolate, 
+                       const int number_of_iterations ) const
+{
+    if (bin_1_asc != bin_1.error && bin_2_asc != bin_2.error)
+    {
+       T area_12 = bin_1.result + bin_2.result;
+       T error_12 = bin_1.error + bin_2.error;
+       T delta = bin.result - area_12;
+
+       if ( fabs (delta) <= (1/(T)100000) * fabs (area_12) && 
+            error_12 >= (99/(T)100) * bin.error )
+       {
+         if ( extrapolate ) 
+           round_off_2++;
+        else
+           round_off_1++; 
+       }
+       if ( number_of_iterations >= 10 && error_12 > bin.error )
+       {
+          round_off_3++;
+       }
+     }
+
+    TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3, 
+                        Utility::IntegratorException,
+                        "Roundoff error prevented tolerance from being achieved" );
+
+    TEST_FOR_EXCEPTION( 5 <= round_off_2, 
+                        Utility::IntegratorException,
+                        "Extremely bad integrand behavior occurs at some points "
+                        "of the integration interval" );
+};
 
 // Integrate the function adaptively with BinQueue
 /*! \details Functor must have operator()( double ) defined. This function
@@ -36,25 +442,26 @@ namespace Utility{
  * the adaptive integration strategy bisects the interval with the largest
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
+template<typename T>
 template<int Points, typename Functor>
-void GaussKronrodIntegrator::integrateAdaptively(
+void GaussKronrodIntegrator<T>::integrateAdaptively(
 						 Functor& integrand, 
-						 double lower_limit, 
-						 double upper_limit,
-						 double& result,
-						 double& absolute_error ) const
+						 T lower_limit, 
+						 T upper_limit,
+						 T& result,
+						 T& absolute_error ) const
 {
-  BinTraits bin;
+  BinTraits<T> bin;
   BinQueue bin_queue;
 
-  result = 0.0;
+  result = (T)0;
   bin.lower_limit = lower_limit;
   bin.upper_limit = upper_limit;  
 
   /* perform the first integration */
 
-  double result_abs = 0.0;
-  double result_asc = 0.0;
+  T result_abs = (T)0;
+  T result_asc = (T)0;
 
   integrateWithPointRule<Points>(
     integrand, 
@@ -69,13 +476,15 @@ void GaussKronrodIntegrator::integrateAdaptively(
 
   /* Test on accuracy */
 
-  double tolerance =
-    std::max(d_absolute_error_tol, d_relative_error_tol * fabs (bin.result));
+  T tolerance =
+    getMax(d_absolute_error_tol, d_relative_error_tol * fabs (bin.result));
 
   /* need IEEE rounding here to match original quadpack behavior */
-  volatile double volatile_round_off; 
-  volatile_round_off = 50.0*std::numeric_limits<double>::epsilon()*result_abs;
-  double round_off = volatile_round_off;
+  
+  //volatile T volatile_round_off; 
+  T volatile_round_off;
+  volatile_round_off = (T)50*std::numeric_limits<T>::epsilon()*result_abs;
+  T round_off = volatile_round_off;
 
   TEST_FOR_EXCEPTION( bin.error <= round_off && bin.error > tolerance, 
                       Utility::IntegratorException,
@@ -83,7 +492,7 @@ void GaussKronrodIntegrator::integrateAdaptively(
                       "on first attempt" );
 
   if ( ( bin.error <= tolerance && bin.error != result_asc ) || 
-            bin.error == 0.0)
+            bin.error == (T)0)
     {
       result = bin.result;
       absolute_error = bin.error;    
@@ -96,18 +505,18 @@ void GaussKronrodIntegrator::integrateAdaptively(
                       Utility::IntegratorException,
                       "a maximum of one iteration was insufficient" );
 
-  long double area = bin.result;
+  T area = bin.result;
   absolute_error = bin.error;
-  int round_off_1 = 0.0;
-  int round_off_2 = 0.0;
+  int round_off_1 = (T)0;
+  int round_off_2 = (T)0;
 
   int last;
   for ( last = 1; last < d_subinterval_limit; last++ )
   {
-    long double area_12 = 0.0;
-    double error_12 = 0.0;
-    double result_asc_1 = 0.0, result_asc_2 = 0.0;
-    BinTraits bin_1, bin_2;
+    T area_12 = (T)0;
+    T error_12 = (T)0;
+    T result_asc_1 = (T)0, result_asc_2 = (T)0;
+    BinTraits<T> bin_1, bin_2;
 
     // Pop bin with highest error from queue
     bin = bin_queue.top();
@@ -139,7 +548,7 @@ void GaussKronrodIntegrator::integrateAdaptively(
                         last+1 );
 
     tolerance = 
-      std::max( d_absolute_error_tol, d_relative_error_tol * fabs (area));
+      getMax( d_absolute_error_tol, d_relative_error_tol * fabs (area));
 
     if ( absolute_error <= tolerance )
       break;
@@ -167,13 +576,14 @@ void GaussKronrodIntegrator::integrateAdaptively(
  * using the Wynn epsilon-algorithm, which accelerates the convergence of the 
  * integral in the presence of discontinuities and integrable singularities. 
  * See QAGS algorithm details in the GNU Scientific Library documentation.
- */ 
+ */
+template<typename T>
 template<typename Functor>
-void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon( 
+void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon( 
     Functor& integrand,
-    const Teuchos::ArrayView<double>& points_of_interest,
-    double& result,
-    double& absolute_error ) const
+    const Teuchos::ArrayView<T>& points_of_interest,
+    T& result,
+    T& absolute_error ) const
 {
   // Check that the points of interest are in ascending order
   testPrecondition( Sort::isSortedAscending( points_of_interest.begin(),
@@ -184,26 +594,26 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
   // check that there are at least two points
   testPrecondition( points_of_interest.size() > 1 );
 
-  ExtrpolatedBinTraits bin;
+  ExtrpolatedBinTraits<T> bin;
   BinArray bin_array( d_subinterval_limit );
   
-  Teuchos::Array<double> bin_extrapolated_result( 52 ); 
-  Teuchos::Array<double> last_three_results( 3 ); 
-  long double total_area = 0.0L;
-  double total_error = 0.0, total_area_abs = 0.0;  
+  Teuchos::Array<T> bin_extrapolated_result( 52 ); 
+  Teuchos::Array<T> last_three_results( 3 ); 
+  T total_area = (T)0;
+  T total_error = (T)0, total_area_abs = (T)0;  
 
   int number_of_intervals = points_of_interest.size() - 1;
   Teuchos::Array<bool> rescale_bin_error( number_of_intervals );
 
-  absolute_error = 0.0;
+  absolute_error = (T)0;
   // Compute the integration between the points of interest
   for ( int i = 0; i < number_of_intervals; i++ )
   {
     bin.lower_limit = points_of_interest[i];
     bin.upper_limit = points_of_interest[i+1];  
 
-    double result_abs = 0.0;
-    double result_asc = 0.0;
+    T result_abs = (T)0;
+    T result_asc = (T)0;
 
     integrateWithPointRule<21>(
         integrand, 
@@ -220,7 +630,7 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
     absolute_error += bin.error;
     total_area_abs += result_abs;
 
-    if ( bin.error == result_asc && bin.error != 0.0 )
+    if ( bin.error == result_asc && bin.error != (T)0 )
     {
       rescale_bin_error[i] = true;
     }
@@ -245,14 +655,14 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
 
   // Test on accuracy
 
-  double fabs_total_area = fabs (total_area);
-  double tolerance =
-    std::max(d_absolute_error_tol, d_relative_error_tol * fabs_total_area);
+  T fabs_total_area = fabs (total_area);
+  T tolerance =
+    getMax(d_absolute_error_tol, d_relative_error_tol * fabs_total_area);
 
 
-  double round_off = std::numeric_limits<double>::epsilon()*total_area_abs;
+  T round_off = std::numeric_limits<T>::epsilon()*total_area_abs;
 
-  TEST_FOR_EXCEPTION( absolute_error <= 100.0*round_off && absolute_error > tolerance, 
+  TEST_FOR_EXCEPTION( absolute_error <= (T)100*round_off && absolute_error > tolerance, 
                       Utility::IntegratorException,
                       "cannot reach tolerance because of roundoff error "
                       "on first attempt" );
@@ -273,7 +683,7 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
 
   // initialize
   bin_extrapolated_result[0] = total_area;
-  absolute_error = std::numeric_limits<double>::max();
+  absolute_error = std::numeric_limits<T>::max();
   int nr_max = 0;
   int number_of_extrapolated_calls = 0;
   int number_of_extrapolated_intervals = 0;
@@ -281,8 +691,8 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
   bool extrapolate = false;
   bool no_extrapolation_allowed = false;
   bool bad_integration_behavior = false;
-  double error_over_large_bins = total_error;
-  double extrapolated_tolerance = tolerance;
+  T error_over_large_bins = total_error;
+  T extrapolated_tolerance = tolerance;
   int max_level = 1;
   int round_off_1 = 0;
   int round_off_2 = 0;
@@ -290,10 +700,10 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
   int ierro = 0;
  
 
-  double error_correction = 0.0;
+  T error_correction = (T)0;
 
   int ksgn;
-  if ( fabs_total_area >= 1.0 - 50.0*round_off )
+  if ( fabs_total_area >= (T)1 - ((T)50*round_off) )
   {
     ksgn = 1;
   }
@@ -305,11 +715,11 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
   //number_of_intervals++;
   for ( number_of_intervals; number_of_intervals < d_subinterval_limit; number_of_intervals++ )
   {
-    double area_12 = 0.0, error_12 = 0.0;
-    double result_asc_1 = 0.0, result_asc_2 = 0.0;
-    double smallest_bin_size = 0.0; // 1.5*smallest bin size 
+    T area_12 = (T)0, error_12 = (T)0;
+    T result_asc_1 = (T)0, result_asc_2 = (T)0;
+    T smallest_bin_size = (T)0; // 1.5*smallest bin size 
 
-    ExtrpolatedBinTraits bin_1, bin_2;
+    ExtrpolatedBinTraits<T> bin_1, bin_2;
 
     // Set bin to interval with largest error
     bin = bin_array[bin_order[nr_max]];
@@ -350,7 +760,7 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
               nr_max );
 
     tolerance = 
-      std::max( d_absolute_error_tol, d_relative_error_tol * fabs (total_area));
+      getMax( d_absolute_error_tol, d_relative_error_tol * fabs (total_area));
 
     if ( total_error <= tolerance )
       break;
@@ -417,8 +827,8 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
     }
 
     // Perform extrapolation
-    double extrapolated_result = 0.0;
-    double extrapolated_error = 0.0;
+    T extrapolated_result = (T)0;
+    T extrapolated_error = (T)0;
     
 
     number_of_extrapolated_intervals++;
@@ -443,7 +853,7 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
 
     ktmin++;
 
-    TEST_FOR_EXCEPTION( ktmin > 5 && absolute_error < 1.0E-03 * total_error, 
+    TEST_FOR_EXCEPTION( ktmin > 5 && absolute_error < (1/(T)1000) * total_error, 
                         Utility::IntegratorException,
                         "The integral is probably divergent, or slowly convergent." );
 
@@ -454,7 +864,7 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
       result = extrapolated_result;
       error_correction = error_over_large_bins;
       extrapolated_tolerance = 
-        std::max( d_absolute_error_tol, 
+        getMax( d_absolute_error_tol, 
                   d_relative_error_tol*fabs( extrapolated_result ) ); 
 
       if ( absolute_error <= extrapolated_tolerance )
@@ -473,11 +883,11 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
 
   //  Set final result and error estimate.
 
-  if ( absolute_error == std::numeric_limits<double>::max() )
+  if ( absolute_error == std::numeric_limits<T>::max() )
   {
     //  Compute global integral sum.
    
-    long double long_result = 0.0L;
+    T long_result = (T)0;
     Teuchos::Array<int>::reverse_iterator j =  bin_order.rbegin();
     // Sum result over all bins
     for ( j; j != bin_order.rend(); j++ )
@@ -507,13 +917,13 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
 
   // Test on divergence.
   if ( ksgn == (-1) && 
-       std::max( fabs(result), fabs(total_area) ) <= total_area_abs*1.0E-02 )
+       getMax( fabs(result), fabs(total_area) ) <= (total_area_abs/(T)100) )
   {
     return;
   }
 
-  TEST_FOR_EXCEPTION( 1.0E-02 > result/total_area ||
-                      result/total_area > 1.0E+02 ||
+  TEST_FOR_EXCEPTION( (1/(T)100) > result/total_area ||
+                      result/total_area > (T)100 ||
                       total_error > fabs( total_area ), 
                       Utility::IntegratorException,
                       "the input is invalid, because d_absolute_error_tol < 0 "
@@ -535,45 +945,47 @@ void GaussKronrodIntegrator::integrateAdaptivelyWynnEpsilon(
  * difficulties, such as discontinuities. On each iteration
  * the adaptive integration strategy bisects the interval with the largest
  * error estimate. See the qag function details in the quadpack documentation.
- */ 
+ */
+template<typename T>
 template<int Points, typename Functor>
-void GaussKronrodIntegrator::integrateWithPointRule(
+void GaussKronrodIntegrator<T>::integrateWithPointRule(
             Functor& integrand, 
-            double lower_limit, 
-            double upper_limit,
-            long double& result,
-            double& absolute_error,
-            double& result_abs, 
-            double& result_asc ) const
+            T lower_limit, 
+            T upper_limit,
+            T& result,
+            T& absolute_error,
+            T& result_abs, 
+            T& result_asc ) const
 {
   // Make sure the point rule is valid_rule
   testStaticPrecondition( GaussKronrodQuadratureSetTraits<Points>::valid_rule );
   // Make sure the integration limits are valid
   testPrecondition( lower_limit <= upper_limit );
   // Make sure the integration limits are bounded
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( lower_limit ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
-
+/*
+  testPrecondition( std::isfinite( lower_limit ) );
+  testPrecondition( std::isfinite( upper_limit ) );
+*/
   if( lower_limit < upper_limit )
   {
     // midpoint between upper and lower integration limits
-    double midpoint = 0.5*( upper_limit + lower_limit );
+    T midpoint = ( upper_limit + lower_limit )/(T)2;
 
     // half the length between the upper and lower integration limits
-    long double half_length = 0.5*(upper_limit - lower_limit );
-    double abs_half_length = fabs( half_length );
+    T half_length = (upper_limit - lower_limit )/(T)2;
+    T abs_half_length = fabs( half_length );
 
     // Get number of Kronrod weights
     int number_of_weights =
         GaussKronrodQuadratureSetTraits<Points>::kronrod_weights.size();
 
-    Teuchos::Array<double> integrand_values_lower( number_of_weights );
-    Teuchos::Array<double> integrand_values_upper( number_of_weights );
-    Teuchos::Array<double> integrand_values_sum( number_of_weights );
-    Teuchos::Array<double> kronrod_values( number_of_weights );
+    Teuchos::Array<T> integrand_values_lower( number_of_weights );
+    Teuchos::Array<T> integrand_values_upper( number_of_weights );
+    Teuchos::Array<T> integrand_values_sum( number_of_weights );
+    Teuchos::Array<T> kronrod_values( number_of_weights );
 
     // Estimate Kronrod and absolute value integral for all but last weight
-    long double kronrod_result = 0.0L;
+    T kronrod_result = (T)0;
     result_abs = kronrod_result;
     for ( int j = 0; j < number_of_weights-1; j++ )
       {  
@@ -596,10 +1008,10 @@ void GaussKronrodIntegrator::integrateWithPointRule(
       };
 
     // Integrand at the midpoint
-    double integrand_midpoint = integrand( midpoint );
+    T integrand_midpoint = (T)integrand( midpoint );
 
     // Estimate Kronrod integral for the last weight
-    long double kronrod_result_last_weight = integrand_midpoint*
+    T kronrod_result_last_weight = integrand_midpoint*
         GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1];
 
     // Update Kronrod estimate and absolute value with last weight
@@ -611,10 +1023,10 @@ void GaussKronrodIntegrator::integrateWithPointRule(
     result_abs *= abs_half_length;
 
     // Calculate the mean kronrod result
-    double mean_kronrod_result = 0.5*kronrod_result;
+    T mean_kronrod_result = kronrod_result/(T)2;
 
     // Estimate the result asc for all but the last weight
-    result_asc = 0.0;
+    result_asc = (T)0;
     for ( int j = 0; j < number_of_weights - 1; j++ )
       {  
         result_asc += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*
@@ -630,7 +1042,7 @@ void GaussKronrodIntegrator::integrateWithPointRule(
     result_asc *= abs_half_length;
 
     // Estimate Gauss integral
-    long double gauss_result = 0.0L;
+    T gauss_result = (T)0;
 
     for ( int j = 0; j < (number_of_weights-1)/2; j++ )
       {
@@ -653,8 +1065,8 @@ void GaussKronrodIntegrator::integrateWithPointRule(
   }
   else if( lower_limit == upper_limit )
   {
-    result = 0.0;
-    absolute_error = 0.0;
+    result = (T)0;
+    absolute_error = (T)0;
   }
   else // invalid limits
   {
@@ -665,61 +1077,64 @@ void GaussKronrodIntegrator::integrateWithPointRule(
 }
 
 // Test if subinterval is too small
+template<typename T>
 template<int Points>
-inline bool GaussKronrodIntegrator::subintervalTooSmall( 
-        double& lower_limit_1, 
-        double& lower_limit_2, 
-        double& upper_limit_2 ) const
+inline bool GaussKronrodIntegrator<T>::subintervalTooSmall( 
+        T& lower_limit_1, 
+        T& lower_limit_2, 
+        T& upper_limit_2 ) const
 {
   int c = Points/10;
-  double max = std::max( fabs ( lower_limit_1 ), fabs ( upper_limit_2 ) );
-  double epsilon = 1000.0*c*std::numeric_limits<double>::epsilon();
-  double min = 10000.0*std::numeric_limits<double>::min();
+  T max = getMax( fabs ( lower_limit_1 ), fabs ( upper_limit_2 ) );
+  T epsilon = (T)1000*c*std::numeric_limits<T>::epsilon();
+  T min = (T)10000*std::numeric_limits<T>::min();
 
-  if ( max <= ( 1.0 + epsilon ) * ( fabs( lower_limit_2 ) + min ) )
+  if ( max <= ( (T)1 + epsilon ) * ( fabs( lower_limit_2 ) + min ) )
     return true;
   else
     return false;
 };
 
 // Calculate the quadrature upper and lower integrand values at an abscissa
+template<typename T>
 template<typename Functor>
-void GaussKronrodIntegrator::calculateQuadratureIntegrandValuesAtAbscissa( 
+void GaussKronrodIntegrator<T>::calculateQuadratureIntegrandValuesAtAbscissa( 
     Functor& integrand, 
-    double abscissa,
-    double half_length,
-    double midpoint,
-    double& integrand_value_lower,
-    double& integrand_value_upper ) const
+    T abscissa,
+    T half_length,
+    T midpoint,
+    T& integrand_value_lower,
+    T& integrand_value_upper ) const
 {
-  double weighted_abscissa = half_length*abscissa;
+  T weighted_abscissa = half_length*abscissa;
 
-  integrand_value_lower = integrand( midpoint - weighted_abscissa );
-  integrand_value_upper = integrand( midpoint + weighted_abscissa );
+  integrand_value_lower = (T)integrand( midpoint - weighted_abscissa );
+  integrand_value_upper = (T)integrand( midpoint + weighted_abscissa );
 }; 
 
 
 // Bisect and integrate the given bin interval
+template<typename T>
 template<int Points, typename Functor, typename Bin>
-void GaussKronrodIntegrator::bisectAndIntegrateBinInterval( 
+void GaussKronrodIntegrator<T>::bisectAndIntegrateBinInterval( 
     Functor& integrand, 
     const Bin& bin,
     Bin& bin_1,
     Bin& bin_2,
-    double& bin_1_asc,
-    double& bin_2_asc ) const
+    T& bin_1_asc,
+    T& bin_2_asc ) const
 {
     // Bisect the bin with the largest error estimate into bin 1 and bin 2 
 
     // Set bin_1
     bin_1.lower_limit = bin.lower_limit;
-    bin_1.upper_limit = 0.5 * ( bin.lower_limit + bin.upper_limit );
+    bin_1.upper_limit = (1/(T)2)  * ( bin.lower_limit + bin.upper_limit );
 
     // Set bin 2
     bin_2.lower_limit = bin_1.upper_limit;
     bin_2.upper_limit = bin.upper_limit;
 
-    double bin_1_abs, bin_2_abs;
+    T bin_1_abs, bin_2_abs;
     // Integrate over bin 1
     integrateWithPointRule<Points>(
       integrand, 
@@ -740,6 +1155,20 @@ void GaussKronrodIntegrator::bisectAndIntegrateBinInterval(
       bin_2_abs, 
       bin_2_asc );
 };
+
+// return max of two variables of type T
+template<typename T>
+T GaussKronrodIntegrator<T>::getMax( T variable_1, T variable_2 ) const
+{
+  if ( variable_1 < variable_2 )
+  {
+    return variable_2;
+  }
+  else
+  {
+    return variable_1;
+  }
+}
 
 } // end Utility namespace
 
