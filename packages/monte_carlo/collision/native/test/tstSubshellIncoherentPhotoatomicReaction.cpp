@@ -127,12 +127,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getCrossSection )
   cross_section = 
     basic_subshell_incoherent_reaction->getCrossSection( 8.82900086220703151e-02 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
 
   cross_section = 
     basic_subshell_incoherent_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 
   cross_section = 
     detailed_subshell_incoherent_reaction->getCrossSection( 1e-3 );
@@ -152,12 +152,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotoatomicReaction, getCrossSection )
   cross_section = 
     detailed_subshell_incoherent_reaction->getCrossSection( 8.82900086220703151e-02 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
 
   cross_section = 
     detailed_subshell_incoherent_reaction->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 }
 
 //---------------------------------------------------------------------------//

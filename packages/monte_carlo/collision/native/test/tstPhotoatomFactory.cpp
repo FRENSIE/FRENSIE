@@ -278,11 +278,11 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_native_basic )
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.79084232526918314e+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.13373119562157392e+01, 1e-12 );
   
   // Test that the absorption cross section can be reaturned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
@@ -799,11 +799,11 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084209030231880e+06, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.79084209030231880e+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.13391613162646543e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.13391613162646543e+01, 1e-12 );
   
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
@@ -826,25 +826,25 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		      8.82900086220703151e-02,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
   
   cross_section = atom->getReactionCrossSection( 
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
 						
   cross_section = atom->getReactionCrossSection( 
 		     1e-3,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-6 );
 
   cross_section = atom->getReactionCrossSection( 
 		     20.0,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection( 
@@ -974,11 +974,11 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
   // Test that the total cross section can be returned
   double cross_section = atom->getTotalCrossSection( 0.001 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.79084209030231880e+06, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.79084209030231880e+06, 1e-12 );
 
   cross_section = atom->getTotalCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.13391613162646543e+01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.13391613162646543e+01, 1e-12 );
   
   // Test that the absorption cross section can be returned
   cross_section = atom->getAbsorptionCrossSection( 0.001 );
@@ -1001,25 +1001,25 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory,
 		      8.82900086220703151e-02,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
   
   cross_section = atom->getReactionCrossSection( 
 		      20.0,
 		      MonteCarlo::K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
   
-  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-9 );
 						
   cross_section = atom->getReactionCrossSection( 
 		     1e-3,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.98041761897415292e-01, 1e-6 );
 
   cross_section = atom->getReactionCrossSection( 
 		     20.0,
 		     MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-12 );
 
   // Test that the coherent cross section can be returned
   cross_section = atom->getReactionCrossSection( 
