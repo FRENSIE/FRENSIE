@@ -165,7 +165,6 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
         //get hex faces
         int current_dimension = d_moab_interface->dimension_from_handle(hexahedrons[0]);
         moab::Range surface_quads;
-        std::cout<<current_dimension<<std::endl;
         err = d_moab_interface->get_adjacencies(hexahedrons,
                                                 current_dimension-1,
                                                 true,
@@ -326,7 +325,6 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                   ray_hex_intersections.end());
 
                         Teuchos::Array<double> ray_hex_intersections2(ray_hex_intersections);
-                        std::cout<<ray_hex_intersections2<<std::endl;
 
                         Teuchos::Array<moab::CartVect> array_of_hit_points;
 
@@ -375,32 +373,33 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                 if(isPointInMesh(hex_centroid.array()))
                                 {
                                         hex = whichHexIsPointIn( hex_centroid.array() );
-                                }
 
 
-                                // leave loop if it isn't inside a hex. Shouldn't ever happen at this point
-                                if( hex == 0 )continue;
-                                //compute track length for that individual hex cell
-                                double partial_track_length;
-                                if( i != 0)
-	                        { 
-	                                partial_track_length = ray_hex_intersections[i] - 
+
+                                        // leave loop if it isn't inside a hex. Shouldn't ever happen at this point
+                                        if( hex == 0 )continue;
+                                        //compute track length for that individual hex cell
+                                        double partial_track_length;
+                                        if( i != 0)
+	                                { 
+	                                        partial_track_length = ray_hex_intersections[i] - 
 	                                                       ray_hex_intersections[i-1];
-	                        }
-                                //might not be right - check later. Got from tetmesh.
-                                else if (i == 0 && ray_hex_intersections.size() < array_of_hit_points.size()) 
-                                        partial_track_length = ray_hex_intersections[i];
+	                                }
+                                        //might not be right - check later. Got from tetmesh.
+                                        else if (i == 0 && ray_hex_intersections.size() < array_of_hit_points.size()) 
+                                                partial_track_length = ray_hex_intersections[i];
 
-                                //Special case - first point is on mesh surface
-	                        if( partial_track_length > 0.0 )
-	                        {                     	
-                                        EstimatorParticleStateWrapper particle_state_wrapper( particle );
+                                        //Special case - first point is on mesh surface
+	                                if( partial_track_length > 0.0 )
+	                                {                     	
+                                                EstimatorParticleStateWrapper particle_state_wrapper( particle );
             
 	                                // Add partial history contribution
-	                                addPartialHistoryContribution( hex,
+	                                        addPartialHistoryContribution( hex,
 					                               particle_state_wrapper,
 					                               partial_track_length );
-	                        }
+	                                } 
+                                }      
                                 
                        }
                 }
