@@ -65,7 +65,7 @@ public:
 			       const InputDepQuantity& dependent_value );
 
   //! Copy constructor
-  template<typename InputIndepUnit, typename InputDepUnit>
+  template<typename InputIndepUnit, typename InputDepUnit, typename Dummy=void>
   UnitAwareUniformDistribution( const UnitAwareUniformDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)

@@ -14,7 +14,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
@@ -33,7 +33,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
 {
   // Extract the binding energies, occupancies and order
   Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;
-  Teuchos::Array<SubshellType> subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order;
 
   std::set<unsigned>::const_iterator subshell_it = 
     raw_photoatom_data.getSubshells().begin();
@@ -41,7 +41,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
   {
     subshell_order.push_back( 
-			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
+			Data::convertENDFDesignatorToSubshellEnum( *subshell_it ) );
 
     subshell_binding_energies.push_back( 
 		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
@@ -60,7 +60,7 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledComplet
   DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     compton_profiles( subshell_order.size() );
 
-  Teuchos::Array<SubshellType> subshell_order_copy = subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order_copy = subshell_order;
   std::sort( subshell_order_copy.begin(), subshell_order_copy.end() );
 
   for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
@@ -109,9 +109,9 @@ void DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistri
 	 doppler_broadened_dist )
 {
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
   
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
 		      "Error: the requested endf subshell " << 
 		      endf_subshell << " is invalid! " );

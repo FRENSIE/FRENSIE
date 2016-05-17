@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
   
   MonteCarlo::ParticleBank bank;
   
-  MonteCarlo::SubshellType primary_vacancy, secondary_vacancy;
+  Data::SubshellType primary_vacancy, secondary_vacancy;
 
   std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.96121; // select radiative transition to P3 subshell
@@ -55,9 +55,9 @@ TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
 						     secondary_vacancy );
 
   TEST_EQUALITY_CONST(detailed_subshell_relaxation_model->getVacancySubshell(),
-		      MonteCarlo::K_SUBSHELL );
-  TEST_EQUALITY_CONST( primary_vacancy, MonteCarlo::P3_SUBSHELL );
-  TEST_EQUALITY_CONST( secondary_vacancy, MonteCarlo::INVALID_SUBSHELL );
+		      Data::K_SUBSHELL );
+  TEST_EQUALITY_CONST( primary_vacancy, Data::P3_SUBSHELL );
+  TEST_EQUALITY_CONST( secondary_vacancy, Data::INVALID_SUBSHELL );
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 8.828470000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getXPosition(), 1.0 );
@@ -121,9 +121,9 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> xprob_block = 
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<MonteCarlo::SubshellType> 
+  Teuchos::Array<Data::SubshellType> 
     primary_transition_shells( k_shell_transitions );
-  Teuchos::Array<MonteCarlo::SubshellType> 
+  Teuchos::Array<Data::SubshellType> 
     secondary_transition_shells( k_shell_transitions );
   Teuchos::Array<double> 
     outgoing_particle_energies( k_shell_transitions );
@@ -132,11 +132,11 @@ int main( int argc, char** argv )
   for( unsigned i = 0; i < k_shell_transitions; ++i )
   {
     primary_transition_shells[i] = 
-      MonteCarlo::convertENDFDesignatorToSubshellEnum(
+      Data::convertENDFDesignatorToSubshellEnum(
 					      xprob_block[k_shell_start+i*4] );
     
     secondary_transition_shells[i] = 
-      MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+      Data::convertENDFDesignatorToSubshellEnum( 
 					    xprob_block[k_shell_start+i*4+1] );
     
     outgoing_particle_energies[i] = xprob_block[k_shell_start+i*4+2];
@@ -145,7 +145,7 @@ int main( int argc, char** argv )
   
   detailed_subshell_relaxation_model.reset( 
 			       new MonteCarlo::DetailedSubshellRelaxationModel(
-						   MonteCarlo::K_SUBSHELL,
+						   Data::K_SUBSHELL,
 						   primary_transition_shells,
 						   secondary_transition_shells,
 						   outgoing_particle_energies,

@@ -23,7 +23,7 @@
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_basic_incoherent_reaction->react( photon, 
 					bank, 
@@ -155,8 +155,8 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
   TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::INVALID_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::UNKNOWN_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::INVALID_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_detailed_incoherent_reaction->react( photon, 
 					   bank, 
@@ -178,8 +178,8 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
   TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
-  TEST_ASSERT( shell_of_interaction != MonteCarlo::INVALID_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::UNKNOWN_SUBSHELL );
+  TEST_ASSERT( shell_of_interaction != Data::INVALID_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -258,12 +258,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> subshell_endf_des = 
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order( 
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
 					      (unsigned)subshell_endf_des[i] );
   }
 

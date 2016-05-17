@@ -4,10 +4,12 @@ IF(FRENSIE_ENABLE_DAGMC OR FRENSIE_ENABLE_ROOT)
   # Create the facemc core library
   ADD_LIBRARY(facemc_core facemcCore.cpp)
   TARGET_LINK_LIBRARIES(facemc_core monte_carlo_manager)
+  INSTALL(TARGETS facemc_core
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
     
   ADD_EXECUTABLE(facemc facemc.cpp)
-  TARGET_LINK_LIBRARIES(facemc facemc_core)
+  TARGET_LINK_LIBRARIES(facemc facemc_core)    
 
   # Add exec to install target
   INSTALL(TARGETS facemc

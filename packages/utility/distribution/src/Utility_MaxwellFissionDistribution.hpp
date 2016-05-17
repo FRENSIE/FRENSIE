@@ -73,22 +73,18 @@ public:
 
   //! The dependent quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
- 
-  //! Default Constructor
-  UnitAwareMaxwellFissionDistribution( 
-			const IndepQuantity incident_energy = IQT::one(),
-			const IndepQuantity nuclear_temperature = IQT::one(),
-			const IndepQuantity restriction_energy = IQT::zero(),
-			const double constant_multiplier = 1.0 );
 
   //! Constructor
-  template<typename InputIndepQuantityA,
-	   typename InputIndepQuantityB,
-	   typename InputIndepQuantityC>
+  template<typename InputIndepQuantityA = IndepQuantity,
+	   typename InputIndepQuantityB = IndepQuantity,
+	   typename InputIndepQuantityC = IndepQuantity>
   UnitAwareMaxwellFissionDistribution(
-				const InputIndepQuantityA incident_energy,
-				const InputIndepQuantityB nuclear_temperature,
-				const InputIndepQuantityC restriction_energy,
+				const InputIndepQuantityA incident_energy =
+                                QuantityTraits<InputIndepQuantityA>::one(),
+				const InputIndepQuantityB nuclear_temperature =
+                                QuantityTraits<InputIndepQuantityB>::one(),
+				const InputIndepQuantityC restriction_energy = 
+                                QuantityTraits<InputIndepQuantityC>::zero(),
 				const double constant_multiplier = 1.0 );
 
   //! Copy constructor

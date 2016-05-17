@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getMiscReactions )
 // Check that the atomic relaxation model can be returned
 TEUCHOS_UNIT_TEST( PhotoatomCore, getAtomicRelaxationModel )
 {
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   MonteCarlo::PhotonState photon( 0u );
   photon.setEnergy( 1.0 );

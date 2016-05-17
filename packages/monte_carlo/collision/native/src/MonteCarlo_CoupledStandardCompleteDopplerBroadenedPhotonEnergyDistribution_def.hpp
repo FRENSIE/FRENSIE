@@ -22,7 +22,7 @@ template<typename ComptonProfilePolicy>
 CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
      const Teuchos::Array<double>& subshell_binding_energies,
      const Teuchos::Array<double>& subshell_occupancies,
-     const Teuchos::Array<SubshellType>& subshell_order,
+     const Teuchos::Array<Data::SubshellType>& subshell_order,
      const std::shared_ptr<const ComptonProfileSubshellConverter>&
      subshell_converter,
      const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
@@ -45,7 +45,7 @@ CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
 double CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -63,7 +63,7 @@ template<typename ComptonProfilePolicy>
 void CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
-                                               SubshellType& subshell ) const
+                                               Data::SubshellType& subshell ) const
 {
   subshell = this->sampleENDFInteractionSubshell();
 

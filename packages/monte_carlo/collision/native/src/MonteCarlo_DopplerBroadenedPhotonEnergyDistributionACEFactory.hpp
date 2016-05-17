@@ -35,7 +35,7 @@ public:
   //! Create the subshell order array
   static void createSubshellOrderArray(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::Array<SubshellType>& subshell_order );
+			   Teuchos::Array<Data::SubshellType>& subshell_order );
 
   //! Create a coupled complete Doppler broadened photon energy dist
   static void createCoupledCompleteDistribution(

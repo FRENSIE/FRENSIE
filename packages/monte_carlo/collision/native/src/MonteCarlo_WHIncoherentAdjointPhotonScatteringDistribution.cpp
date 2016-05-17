@@ -168,7 +168,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
 void WHIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton( 
 				     AdjointPhotonState& adjoint_photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the adjoint photon energy is valid
   testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() );
@@ -183,7 +183,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 		outgoing_energy,
 		scattering_angle_cosine );
 
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   adjoint_photon.setEnergy( outgoing_energy );
 

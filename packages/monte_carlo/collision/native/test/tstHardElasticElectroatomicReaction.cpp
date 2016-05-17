@@ -43,7 +43,7 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_elastic_reaction->getReactionType(),
-		       MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -106,14 +106,14 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_elastic_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 20.0 );
   TEST_ASSERT( electron.getZDirection() < 1.0 );
   TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

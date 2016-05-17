@@ -30,20 +30,20 @@ void LinearCongruentialGenerator::changeHistory(
 {
   long long history_diff = (long long)history_number - d_history;
 
-  d_history = history_number;
-
   // Set the state to the initial history seed
   if( history_number == 0ULL )
   {
     d_initial_history_seed = LinearCongruentialGenerator::initial_seed;
     
     d_state = d_initial_history_seed;
+
+    d_history = history_number;
   }
   else
   {
     // Calculate the next history seed from the current history seed
     if( history_diff == 1LL )
-      nextHistory();
+      this->nextHistory();
   
     // Calculate the new history seed from the current history seed
     else if( history_diff > 1LL )
@@ -55,6 +55,8 @@ void LinearCongruentialGenerator::changeHistory(
 		            history_diff*LinearCongruentialGenerator::stride );
 
       d_state = d_initial_history_seed;
+
+      d_history = history_number;
     }
     // Calculate the history seed from the first history seed
     else if( history_diff < 0LL )
@@ -66,6 +68,8 @@ void LinearCongruentialGenerator::changeHistory(
 			  history_number*LinearCongruentialGenerator::stride );
     
       d_state = d_initial_history_seed;
+
+      d_history = history_number;
     }
 
     // Set the state to the history initial seed for the current history
@@ -83,6 +87,8 @@ void LinearCongruentialGenerator::nextHistory()
 			       LinearCongruentialGenerator::stride );
   
   d_state = d_initial_history_seed;
+
+  ++d_history;
 }
 
 // Return a random number for the current history

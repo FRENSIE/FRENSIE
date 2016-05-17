@@ -14,7 +14,7 @@ namespace MonteCarlo{
 
 // Constructor
 SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhotonEnergyDistribution(
-		                       const SubshellType interaction_subshell,
+		                       const Data::SubshellType interaction_subshell,
                                        const double subshell_occupancy,
                                        const double subshell_binding_energy )
   : d_interaction_subshell( interaction_subshell ),
@@ -22,8 +22,8 @@ SubshellDopplerBroadenedPhotonEnergyDistribution::SubshellDopplerBroadenedPhoton
     d_subshell_binding_energy( subshell_binding_energy )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL &&
-                    interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL &&
+                    interaction_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the subshell occupancy is valid
   testPrecondition( subshell_occupancy > 0.0 );
   // Make sure the subshell binding energy is valid

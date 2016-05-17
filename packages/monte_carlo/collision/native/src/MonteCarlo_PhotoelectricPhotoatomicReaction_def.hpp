@@ -75,6 +75,15 @@ unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>:
   return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */ 
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -88,13 +97,13 @@ void
 PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // End the photon history
   photon.setAsGone();
 
   // The interaction subshell is not taken into account in this reaction
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

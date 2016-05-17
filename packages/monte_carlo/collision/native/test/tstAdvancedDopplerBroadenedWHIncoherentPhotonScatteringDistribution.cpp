@@ -21,7 +21,7 @@
 #include "MonteCarlo_AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 		   sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 7 );
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   // Koblinger's method
   fake_stream.resize( 5 );
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   unsigned trials = 0;
   
   // Left branch of Kahn's method
@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
   // Koblinger's method
@@ -250,7 +250,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 }
 
@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 6 );
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribut
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -363,12 +363,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> subshell_endf_des = 
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order( 
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
 					      (unsigned)subshell_endf_des[i] );
   }
 

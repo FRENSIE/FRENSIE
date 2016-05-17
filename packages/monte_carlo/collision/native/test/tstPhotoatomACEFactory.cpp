@@ -199,7 +199,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setWeight( 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
@@ -384,7 +384,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setWeight( 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 9 );

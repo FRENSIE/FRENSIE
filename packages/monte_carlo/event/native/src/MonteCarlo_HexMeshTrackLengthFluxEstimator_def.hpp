@@ -55,6 +55,8 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
                      const Teuchos::Array<double>& y_grid_points,
                      const Teuchos::Array<double>& z_grid_points,
 		     const std::string output_mesh_file_name)
+                     const double origin_point[3],
+                     
                      : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
                        d_moab_interface( new moab::Core ),
                        d_hex_meshset(),

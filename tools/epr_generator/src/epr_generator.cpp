@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   epr_generator.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  epr_generator tool 
 //!
 //---------------------------------------------------------------------------//
@@ -21,6 +21,8 @@
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
+#include "Data_ENDLFileHandler.hpp"
+#include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -39,6 +41,8 @@ int main( int argc, char** argv )
 
   std::string cross_section_directory, cross_section_alias;
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
+  double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
+  double cutoff_angle = 0.000001;
   double occupation_number_evaluation_tol = 1e-3;
   double subshell_incoherent_evaluation_tol = 1e-3;
   double grid_convergence_tol = 0.001;
@@ -63,6 +67,12 @@ int main( int argc, char** argv )
   epr_generator_clp.setOption( "max_photon_energy",
 			       &max_photon_energy,
 			       "Max photon energy for table" );
+  epr_generator_clp.setOption( "min_electron_energy",
+			       &min_electron_energy,
+			       "Min electron energy for table" );
+  epr_generator_clp.setOption( "max_electron_energy",
+			       &max_electron_energy,
+			       "Max electron energy for table" );
   epr_generator_clp.setOption( "occupation_num_tol",
 			       &occupation_number_evaluation_tol,
 			       "Occupation number evaluation tolerance" );
@@ -133,14 +143,25 @@ int main( int argc, char** argv )
     
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
+    std::string endl_file_path = "/home/software/mcnpdata/endldata/endl_82_native.xml";
+
+    Teuchos::RCP<Data::ENDLDataContainer> endl_data_container( 
+        new Data::ENDLDataContainer( 
+            endl_file_path,
+            Utility::ArchivableObject::XML_ARCHIVE ) );
+
     epr_generator.reset( 
 	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator( 
 					    atomic_number,
 					    ace_epr_extractor,
+                        endl_data_container,    
 					    min_photon_energy,
 					    max_photon_energy,
+					    min_electron_energy,
+					    max_electron_energy,
+                        cutoff_angle,
 					    occupation_number_evaluation_tol,
-				            subshell_incoherent_evaluation_tol,
+                        subshell_incoherent_evaluation_tol,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
 					    grid_distance_tol ) );

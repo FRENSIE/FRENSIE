@@ -64,12 +64,12 @@ public:
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+		      Data::SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the adjoint photon
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank,
-			     SubshellType& shell_of_interaction ) const;
+			     Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 

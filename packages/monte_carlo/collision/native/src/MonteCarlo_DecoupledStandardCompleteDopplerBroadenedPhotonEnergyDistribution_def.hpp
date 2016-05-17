@@ -30,7 +30,7 @@ namespace MonteCarlo{
 template<typename ComptonProfilePolicy>
 DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
      const Teuchos::Array<double>& endf_subshell_occupancies,
-     const Teuchos::Array<SubshellType>& endf_subshell_order,
+     const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
      const Teuchos::Array<double>& old_subshell_binding_energies,
      const Teuchos::Array<double>& old_subshell_occupancies,
      const std::shared_ptr<const ComptonProfileSubshellConverter>&
@@ -65,7 +65,7 @@ DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
 double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -78,7 +78,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 // Return the occupancy of a subshell (default is the ENDF occupacy)
 template<typename ComptonProfilePolicy>
 double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( 
-                                            const SubshellType subshell ) const
+                                            const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( this->isValidSubshell( subshell ) );
@@ -191,7 +191,7 @@ template<typename ComptonProfilePolicy>
 void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
-                                               SubshellType& subshell ) const
+                                               Data::SubshellType& subshell ) const
 {
   old_subshell_index = this->sampleOldInteractionSubshell();
 

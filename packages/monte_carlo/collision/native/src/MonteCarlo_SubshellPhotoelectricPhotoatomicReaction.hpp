@@ -26,7 +26,7 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
                 const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index,
-		const SubshellType interaction_subshell,
+		const Data::SubshellType interaction_subshell,
 		const double binding_energy );
 
   //! Constructor
@@ -35,7 +35,7 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const SubshellType interaction_subshell,
+       const Data::SubshellType interaction_subshell,
        const double binding_energy );
 
   //! Destructor
@@ -45,13 +45,13 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   //! Simulate the reaction
   void react( PhotonState& photon,
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
 
   //! Get the interaction subshell (non-standard interface)
-  SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const;
 
   //! Get the subshell binding energy (non-standard interface)
   double getSubshellBindingEnergy() const;
@@ -59,7 +59,7 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
 private:
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;	
+  Data::SubshellType d_interaction_subshell;	
 
   // The subshell binding energy
   double d_binding_energy;

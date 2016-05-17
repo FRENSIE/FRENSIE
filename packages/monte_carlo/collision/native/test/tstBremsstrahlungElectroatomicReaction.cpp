@@ -189,14 +189,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_2BS_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_twobs_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
   TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -210,14 +210,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction,
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_tabular_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
   TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -230,14 +230,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_basic_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_dipole_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
   TEST_ASSERT( !bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -335,47 +335,65 @@ int main( int argc, char** argv )
 
   // Create the bremsstrahlung scattering distributions
   MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-    scattering_distribution( N );
+    scattering_function( N );
   
   for( unsigned n = 0; n < N; ++n )
   {
-    scattering_distribution[n].first = bremsstrahlung_energy_grid[n];
+    scattering_function[n].first = bremsstrahlung_energy_grid[n];
 
-    scattering_distribution[n].second.reset( 
+    scattering_function[n].second.reset( 
 	  new Utility::HistogramDistribution(
 		 breme_block( offset[n], table_length[n] ),
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
 
-  double upper_cutoff_energy = 1000;
   double lower_cutoff_energy = 0.001;
-  
+  double upper_cutoff_energy = 1000;
+
+  Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+        dipole_scattering_distribution, tabular_scattering_distribution,
+        twobs_scattering_distribution;
+
+  // Create the distributions
+  dipole_scattering_distribution.reset( 
+   new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+        scattering_function ) );
+
+  tabular_scattering_distribution.reset( 
+   new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+        scattering_function,
+        angular_distribution,
+        lower_cutoff_energy,
+        upper_cutoff_energy ) );
+
+  twobs_scattering_distribution.reset( 
+   new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+        scattering_function,
+        xss_data_extractor->extractAtomicNumber() ) );
+    
+
   // Create the reactions
   ace_dipole_bremsstrahlung_reaction.reset( 
-		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>( 
+    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>( 
 						      energy_grid,
 						      bremsstrahlung_cross_section,
 						      bremsstrahlung_threshold_index,
-						      scattering_distribution ) );
+						      dipole_scattering_distribution ) );
 
   ace_tabular_bremsstrahlung_reaction.reset(
-		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
 						      energy_grid,
 						      bremsstrahlung_cross_section,
 						      bremsstrahlung_threshold_index,
-						      scattering_distribution,
-							  angular_distribution,
-                              lower_cutoff_energy, 
-                              upper_cutoff_energy ) );
+						      tabular_scattering_distribution ) );
  
   ace_twobs_bremsstrahlung_reaction.reset(
 		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
 						      energy_grid,
 						      bremsstrahlung_cross_section,
 						      bremsstrahlung_threshold_index,
-						      scattering_distribution,
-                              xss_data_extractor->extractAtomicNumber() ) );
+						      twobs_scattering_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();

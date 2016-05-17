@@ -9,9 +9,9 @@ ENDIF()
 
 SET(SUBPACKAGE_LIB_NAME monte_carlo_core)
 
-# Create the utilitycore library
+# Create the monte_carlo_core library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${MONTE_CARLO_CORE_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} ${TEUCHOS_PARAMETER_LIST} ${Boost_LIBRARIES} utility_core utility_hdf5 geometry_core)
+TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} ${TEUCHOS_PARAMETER_LIST} ${Boost_LIBRARIES} utility_core utility_hdf5 geometry_core data_core)
 
 IF(${FRENSIE_ENABLE_DAGMC})
   TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_dagmc)

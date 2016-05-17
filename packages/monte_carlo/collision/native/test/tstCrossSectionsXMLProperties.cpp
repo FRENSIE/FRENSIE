@@ -47,7 +47,7 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  atomic_weight );
 
   TEST_EQUALITY( data_file_path, 
-		 cross_sections_xml_directory + "/test_h_epr_ace_file.txt" );
+		 cross_sections_xml_directory + "/ace/test_h_epr_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );
@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  atomic_weight );
 
   TEST_EQUALITY( data_file_path, 
-		 cross_sections_xml_directory + "/test_h_epr_ace_file.txt" );
+		 cross_sections_xml_directory + "/ace/test_h_epr_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );
@@ -108,7 +108,7 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  temperature );
 
   TEST_EQUALITY( data_file_path, 
-		 cross_sections_xml_directory + "/test_h1_ace_file.txt" );
+		 cross_sections_xml_directory + "/ace/test_h1_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1001.70c" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );

@@ -22,7 +22,7 @@
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -196,12 +196,12 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
   Teuchos::ArrayView<const double> subshell_endf_designators = 
     raw_photoatom_data.extractSubshellENDFDesignators();
 
-  Teuchos::Array<SubshellType> subshell_order(
+  Teuchos::Array<Data::SubshellType> subshell_order(
 					    subshell_endf_designators.size() );
 
     for( unsigned i = 0; i < subshell_order.size(); ++i )
     {
-      subshell_order[i] = convertENDFDesignatorToSubshellEnum(
+      subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
     }
 

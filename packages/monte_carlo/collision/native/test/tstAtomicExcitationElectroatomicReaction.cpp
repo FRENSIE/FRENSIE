@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   double final_energy = (electron.getEnergy() - 9.32298000000E-06);
 
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectroatomicReaction, react_ace )
   TEST_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
   TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -188,19 +188,28 @@ int main( int argc, char** argv )
   Teuchos::Array<double> excitation_energy_loss(excit_block(size,size));
 
   // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> excitation_energy_loss_distribution;
+  Teuchos::RCP<Utility::OneDDistribution> energy_loss_function;
   
-  excitation_energy_loss_distribution.reset( 
+  energy_loss_function.reset( 
   new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                             excitation_energy_loss ) );
+		                                     excitation_energy_loss ) );
+
+  Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+                      excitation_energy_loss_distribution;
+
+  excitation_energy_loss_distribution.reset( 
+    new MonteCarlo::AtomicExcitationElectronScatteringDistribution( 
+                      energy_loss_function ) );
+
+  
   
   // Create the reaction
   ace_excitation_reaction.reset(
-		new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      excitation_cross_section,
-						      excitation_threshold_index,
-						      excitation_energy_loss_distribution ) );
+    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+				      energy_grid,
+				      excitation_cross_section,
+				      excitation_threshold_index,
+				      excitation_energy_loss_distribution ) );
 
   // Clear setup data
   ace_file_handler.reset();
