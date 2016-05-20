@@ -142,7 +142,7 @@ A NumPy array will be returned.
 // Array object to a double*.
 %typemap(in) const double position[3] (Teuchos::Array<double> temp_position){
   PyFrensie::copyNumPyToTeuchosWithCheck( $input, temp_position );
-
+  //std::cout << "pos: " << temp_position << std::endl;
   // Make sure the sequence has 3 elements
   if( temp_position.size() != 3 )
   {

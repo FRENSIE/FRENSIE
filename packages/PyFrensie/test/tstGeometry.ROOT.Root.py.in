@@ -176,6 +176,7 @@ class RootPostInitTestCase(unittest.TestCase):
         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
         # Point on boundary between cell 1 and cell 3
+        del ray
         ray = Geometry.Ray( [0.0, 0.0, 5.0], [0.0, 0.0, 1.0] )
         location = self.geom.getPointLocation( ray, 2 )
         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
@@ -185,6 +186,7 @@ class RootPostInitTestCase(unittest.TestCase):
         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
 
         # Point in cell 3
+        del ray
         ray = Geometry.Ray( [0.0, 0.0, 6.0], [0.0, 0.0, 1.0] )
         location = self.geom.getPointLocation( ray, 2 )
         self.assertEqual( location, Geometry.POINT_OUTSIDE_CELL )
