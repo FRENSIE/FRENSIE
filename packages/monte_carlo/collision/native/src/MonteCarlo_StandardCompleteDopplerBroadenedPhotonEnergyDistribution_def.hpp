@@ -151,7 +151,7 @@ double StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePo
                                                      incoming_energy,
                                                      scattering_angle_cosine );
 
-    cross_section = // multiplier*subshell_occupancy*
+    cross_section = multiplier*subshell_occupancy*
       compton_profile_quantity.value();
   }
   else

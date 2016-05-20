@@ -21,6 +21,7 @@
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_MeCMomentumUnit.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -46,21 +47,51 @@ public:
   //! Check if the distribution is complete (all subshells)
   virtual bool isComplete() const = 0;
 
+  //! Evaluate the distribution with electron momentum projection
+  virtual double evaluateWithElectronMomentumProjection(
+                              const double incoming_energy,
+                              const double electron_momentum_projection,
+                              const double scattering_angle_cosine ) const = 0;
+
   //! Evaluate the distribution
   virtual double evaluate( const double incoming_energy,
-			   const double outgoing_energy,
-			   const double scattering_angle_cosine ) const = 0;
+                           const double outgoing_energy,
+                           const double scattering_angle_cosine ) const;
+
+  //! Evaluate the exact distribution
+  virtual double evaluateExact(
+                              const double incoming_energy,
+                              const double outgoing_energy,
+                              const double scattering_angle_cosine ) const = 0;
+
+  //! Evaluate the PDF with electron momentum projection
+  virtual double evaluatePDFWithElectronMomentumProjection(
+                              const double incoming_energy,
+                              const double electron_momentum_projection,
+                              const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the PDF
   virtual double evaluatePDF( const double incoming_energy,
-			      const double outgoing_energy,
-			      const double scattering_angle_cosine ) const = 0;
+                              const double outgoing_energy,
+                              const double scattering_angle_cosine ) const;
+
+  //! Evaluate the exact PDF
+  virtual double evaluateExactPDF(
+                              const double incoming_energy,
+                              const double outgoing_energy,
+                              const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateIntegratedCrossSection( 
-			                  const double incoming_energy,
-			                  const double scattering_angle_cosine,
-					  const double precision ) const = 0;
+  virtual double evaluateIntegratedCrossSection(
+                                          const double incoming_energy,
+                                          const double scattering_angle_cosine,
+                                          const double precision ) const = 0;
+  
+  //! Evaluate the integrated cross section (b/mu)
+  virtual double evaluateExactIntegratedCrossSection( 
+			             const double incoming_energy,
+                                     const double scattering_angle_cosine,
+                                     const double precision ) const = 0;
 
   //! Sample an outgoing energy from the distribution
   virtual void sample( const double incoming_energy,
@@ -90,6 +121,43 @@ protected:
   double evaluateMultiplier( const double incoming_energy,
 			     const double scattering_angle_cosine ) const;
 };
+
+// Evaluate the distribution
+/*! \details The approximate double differential cross section
+ * (d^2 sigma)/(dmu dE) will be evaluated by evaluating the 
+ * approximate double differential cross section dependent on the
+ * electron momentum projection (pz) and doing a change of variable to
+ * energy.
+ */  
+double evaluate( const double incoming_energy,
+                 const double outgoing_energy,
+                 const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Calculate the electron momentum projection
+  const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+    calculateElectronMomentumProjection( incoming_energy,
+                                         outgoing_energy,
+                                         scattering_angle_cosine );
+
+  // Evaluate the double differential cross section dependent on the
+  // electron momentum projection
+  const double cross_section = this->evaluateWithElectronMomentumProjection(
+                                                  incoming_energy,
+                                                  electron_momentum_projection,
+                                                  scattering_angle_cosine );
+
+  // Calculate the Jacobian for the change of variables
+  const double jacobian = 
+}
 
 // Evaluate the cross section multiplier
 /*! \details It is assumed that the Compton profiles have been divided by
