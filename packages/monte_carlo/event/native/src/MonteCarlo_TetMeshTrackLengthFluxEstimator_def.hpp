@@ -23,9 +23,7 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-template<typename ContributionMultiplierPolicy>
-const double 
-TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::s_tol = 1e-6;
+const double StructuredHexMesh::s_tol = 1e-6;
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
