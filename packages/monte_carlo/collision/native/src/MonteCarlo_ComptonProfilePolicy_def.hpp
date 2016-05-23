@@ -48,6 +48,31 @@ FullComptonProfilePolicy::getUpperBoundOfMomentum(
 {
   return profile.getUpperBoundOfMomentum();
 }
+
+// Get lower limit of integration
+/*! \details For a full profile the lower limit of integration will always
+ * be -1.0
+ */
+inline ComptonProfile::MomentumQuantity
+FullComptonProfilePolicy::getLowerLimitOfIntegration(
+                           const ComptonProfile::MomentumQuantity upper_limit )
+{
+  return -1.0*Utility::Units::mec_momentum;
+}
+
+// Get upper limit of integration
+/*! \details This method simply checks if the upper limit passed is less than
+ * the table max. If it is greater, the table max is returned.
+ */
+inline ComptonProfile::MomentumQuantity
+FullComptonProfilePolicy::getUpperLimitOfIntegration(
+                           const ComptonProfile::MomentumQuantity upper_limit )
+{
+  if( upper_limit > profile.getUpperBoundOfMomentum() )
+    return profile.getUpperBoundOfMomentum();
+  else
+    return upper_limit;
+}  
   
 // Evaluate a full Compton profile
 inline ComptonProfile::ProfileQuantity FullComptonProfilePolicy::evaluate( 
@@ -56,6 +81,22 @@ inline ComptonProfile::ProfileQuantity FullComptonProfilePolicy::evaluate(
 {
   return profile.evaluate( momentum );
 }
+
+// Evaluate a full Compton profile using the max momentum as a limit
+/*! \details With a full Compton profile there is no check to see if the
+ * momentum is greater than -max_momentum (as with the half profiles).
+ */
+inline ComptonProfile::ProfileQuantity
+FullComptonProfilePolicy::evaluateWithPossibleLimit(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity momentum,
+                          const ComptonProfile::MomentumQuantity max_momentum )
+{
+  if( momentum <= max_momentum )
+    return profile.evaluate( momentum );
+  else
+    return 0.0*Utility::Units::mec_momentum;
+} 
   
 // Sample from a full Compton profile
 inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
@@ -98,6 +139,35 @@ HalfComptonProfilePolicyHelper::getUpperBoundOfMomentum(
 {
   return profile.getUpperBoundOfMomentum();
 }
+
+// Get lower limit of integration
+/*! \details For a half profile the lower limit of integration will be
+ * -upper_limit unless the upper limit is <= 0.0, in which case it is equal
+ * to the upper_limit (which ensures that the integral is zero).
+ */
+inline ComptonProfile::MomentumQuantity
+HalfComptonProfilePolicyHelper::getLowerLimitOfIntegration(
+                           const ComptonProfile::MomentumQuantity upper_limit )
+{
+  if( upper_limit > 0.0 )
+    return -upper_limit;
+  else
+    return upper_limit;
+}
+
+// Get upper limit of integration
+/*! \details This method simply checks if the upper limit passed is less than
+ * the table max. If it is greater, the table max is returned.
+ */
+inline ComptonProfile::MomentumQuantity
+FullComptonProfilePolicy::getUpperLimitOfIntegration(
+                           const ComptonProfile::MomentumQuantity upper_limit )
+{
+  if( upper_limit > profile.getUpperBoundOfMomentum() )
+    return profile.getUpperBoundOfMomentum();
+  else
+    return upper_limit;
+} 
 
 // Sample from a half Compton profile
 /*! \details Using only half of the profile is a way to approximate the
@@ -145,6 +215,28 @@ inline ComptonProfile::ProfileQuantity HalfComptonProfilePolicy::evaluate(
   return profile.evaluate( boost::units::fabs( momentum ) );
 }
 
+// Evaluate a half Compton profile using the max momentum as a limit
+/*! \details The half Compton profile will only be evaluated between
+ * [-max_momentum,max_momentum]. If max_momentum is < 0.0, a value of 
+ * 0.0 will be returned.
+ */
+inline ComptonProfile::ProfileQuantity
+HalfComptonProfilePolicy::evaluateWithPossibleLimit(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity momentum,
+                          const ComptonProfile::MomentumQuantity max_momentum )
+{
+  if( max_momentum >= 0.0 )
+  {
+    if( momentum <= max_momentum && momentum >= -max_momentum )
+      return profile.evaluate( boost::units::fabs( momentum ) );
+    else
+      return 0.0*Utility::Units::mec_momentum;
+  }
+  else
+    return 0.0;
+}
+
 // Evaluate a double half Compton profile
 /*! \details The doubled half Compton profile has been doubled so that it
  * remains normalized. The evaluated profile value will be divided by two to
@@ -156,6 +248,28 @@ inline ComptonProfile::ProfileQuantity DoubledHalfComptonProfilePolicy::evaluate
                               const ComptonProfile::MomentumQuantity momentum )
 {
   return profile.evaluate( boost::units::fabs( momentum ) )/2.0;
+}
+
+// Evaluate a doubled half Compton profile using the max momentum as a limit
+/*! \details The half Compton profile will only be evaluated between
+ * [-max_momentum,max_momentum]. If max_momentum is < 0.0, a value of 
+ * 0.0 will be returned.
+ */
+inline ComptonProfile::ProfileQuantity
+HalfComptonProfilePolicy::evaluateWithPossibleLimit(
+                          const ComptonProfile& profile,
+                          const ComptonProfile::MomentumQuantity momentum,
+                          const ComptonProfile::MomentumQuantity max_momentum )
+{
+  if( max_momentum >= 0.0 )
+  {
+    if( momentum <= max_momentum && momentum >= -max_momentum )
+      return profile.evaluate( boost::units::fabs( momentum ) )/2.0;
+    else
+      return 0.0*Utility::Units::mec_momentum;
+  }
+  else
+    return 0.0;
 }
 
 } // end MonteCarlo namespace

@@ -32,9 +32,9 @@ class DopplerBroadenedPhotonEnergyDistribution
 
 public:
   
-  //! The electron momentum distribution array (Compton Profiles)
+  //! The Compton profile array 
   typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
-  ElectronMomentumDistArray;
+  ComptonProfileArray;
   
   //! Constructor
   DopplerBroadenedPhotonEnergyDistribution()
@@ -54,9 +54,9 @@ public:
                               const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the distribution
-  virtual double evaluate( const double incoming_energy,
-                           const double outgoing_energy,
-                           const double scattering_angle_cosine ) const;
+  double evaluate( const double incoming_energy,
+                   const double outgoing_energy,
+                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the exact distribution
   virtual double evaluateExact(
@@ -71,12 +71,12 @@ public:
                               const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the PDF
-  virtual double evaluatePDF( const double incoming_energy,
-                              const double outgoing_energy,
-                              const double scattering_angle_cosine ) const;
+  double evaluatePDF( const double incoming_energy,
+                      const double outgoing_energy,
+                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the exact PDF
-  virtual double evaluateExactPDF(
+  virtual double evaluatePDFExact(
                               const double incoming_energy,
                               const double outgoing_energy,
                               const double scattering_angle_cosine ) const = 0;
@@ -87,8 +87,8 @@ public:
                                           const double scattering_angle_cosine,
                                           const double precision ) const = 0;
   
-  //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateExactIntegratedCrossSection( 
+  //! Evaluate the exact integrated cross section (b/mu)
+  virtual double evaluateIntegratedCrossSectionExact( 
 			             const double incoming_energy,
                                      const double scattering_angle_cosine,
                                      const double precision ) const = 0;
@@ -120,7 +120,63 @@ protected:
   //! Evaluate the cross section multiplier
   double evaluateMultiplier( const double incoming_energy,
 			     const double scattering_angle_cosine ) const;
+
+  //! Evaluate the exact cross section multiplier
+  double evaluateMultiplierExact( const double incoming_energy,
+                                  const double outgoing_energy,
+                                  const double scattering_angle_cosine ) const;
+
+  //! Evaluate the relativistic term
+  double evaluateRelativisticTerm(const double incoming_energy,
+                                  const double scattering_angle_cosine ) const;
+
+  //! Evaluate the exact relativistic term
+  double evaluateRelativisticTermExact(
+                                  const double incoming_energy,
+                                  const double outgoing_energy,
+                                  const double scattering_angle_cosine ) const;
+
+  //! Evaluate the approximate jacobian for a change of variables from pz to E
+  double evaluateJacobian( const double incoming_energy,
+                           const double outgoing_energy,
+                           const double scattering_angle_cosine ) const;
 };
+
+// Evaluate the approximate jacobian for a change of variables from pz to E
+/*! \details The approximate jacobian can be used to convert from the 
+ * approximate double differential cross section as a function of electron
+ * momentum projection (in me*c units) to outgoing energy.
+ */
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluateJacobian(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  // Calculate the unitless incoming energy
+  const double incoming_alpha = incoming_energy/
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+
+  // Calculate the unitless outgoing energy
+  const double outgoing_alpha = outgoing_energy/
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+  
+  // Calculate the Jacobian
+  const double jacobian = (1.0+incoming_alpha*(1-scattering_angle_cosine))/
+    (Utility::PhysicalConstants::electron_rest_mass_energy*
+     std::sqrt(incoming_alpha*incoming_alpha + outgoing_alpha*outgoing_alpha -
+               2.0*incoming_alpha*outgoing_alpha*scattering_angle_cosine));
+
+  return jacobian;
+}
 
 // Evaluate the distribution
 /*! \details The approximate double differential cross section
@@ -129,9 +185,10 @@ protected:
  * electron momentum projection (pz) and doing a change of variable to
  * energy.
  */  
-double evaluate( const double incoming_energy,
-                 const double outgoing_energy,
-                 const double scattering_angle_cosine ) const
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluate(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -142,27 +199,161 @@ double evaluate( const double incoming_energy,
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // Calculate the electron momentum projection
-  const ComptonProfile::MomentumQuantity electron_momentum_projection = 
-    calculateElectronMomentumProjection( incoming_energy,
-                                         outgoing_energy,
-                                         scattering_angle_cosine );
-
-  // Evaluate the double differential cross section dependent on the
-  // electron momentum projection
-  const double cross_section = this->evaluateWithElectronMomentumProjection(
-                                                  incoming_energy,
-                                                  electron_momentum_projection,
+  // Calculate the electron momentum projection corresponding to the
+  // outgoing energy
+  const double pz = calculateElectronMomentumProjection(
+                                                     incoming_energy,
+                                                     outgoing_energy,
+                                                     scattering_angle_cosine );
+  
+  // Calculate the cross section
+  const double cross_section =
+    this->evaluateJacobian( incoming_energy,
+                            outgoing_energy,
+                            scattering_angle_cosine )*
+    this->evaluateWithElectronMomentumProjection( incoming_energy,
+                                                  pz,
                                                   scattering_angle_cosine );
 
-  // Calculate the Jacobian for the change of variables
-  const double jacobian = 
+  return cross_section;    
+}
+
+// Evaluate the PDF
+/*! \details The approximate PDF dependent on the outgoing energy will be 
+ * evaluated by evaluating the approximate PDF dependent on the
+ * electron momentum projection (pz) and doing a change of variable to
+ * energy.
+ */
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Calculate the electron momentum projection corresponding to the
+  // outgoing energy
+  const double pz = calculateElectronMomentumProjection(
+                                                     incoming_energy,
+                                                     outgoing_energy,
+                                                     scattering_angle_cosine );
+  
+  // Calculate the cross section
+  const double pdf =
+    this->evaluateJacobian( incoming_energy,
+                            outgoing_energy,
+                            scattering_angle_cosine )*
+    this->evaluatePDFWithElectronMomentumProjection( incoming_energy,
+                                                     pz,
+                                                     scattering_angle_cosine );
+
+  return pdf;
+}
+
+// Evaluate the exact relativistic term
+/*! \details The relativistic term is unitless
+ */
+inline double
+DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTermExact(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  const double term = incoming_energy/outgoing_energy +
+    outgoing_energy/incomging_energy - 1.0 +
+    scattering_angle_cosing*scattering_angle_cosine;
+
+  // Make sure the relativistic term is valid
+  testPostcondition( term >= 0.0 );
+
+  return term;
+}
+
+// Evaluate the approximate relativistic term
+/*! \details the relativistic term is unitless
+ */
+inline double
+DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTerm(
+                                   const double incoming_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  const double compton_line_energy = 
+    calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
+
+  const double term = incoming_energy/compton_line_energy +
+    compton_line_energy/incomging_energy - 1.0 +
+    scattering_angle_cosine*scattering_angle_cosine;
+
+  // Make sure the relativistic term is valid
+  testPostcondition( term >= 0.0 );
+
+  return term;
+}
+
+// Evaluate the exact cross section multiplier
+/*! \details This multiplier term is for the double differential cross section
+ * that is a function of scattering angle cosine and outgoing energy 
+ * (not the electron momentum projection). It has units of barns/MeV 
+ * (this assumes that the Compton profile in inverse me*c units will be used to
+ * evaluate the cross section).
+ */
+inline double
+DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplierExact(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  const double term_1 =
+    Utility::PhysicalConstants::pi*1e24*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius;
+
+  const double term_2 =
+    1.0/std::sqrt( incoming_energy*incoming_energy +
+                   outgoing_energy*outgoing_energy -
+                   2.0*incoming_energy*outgoing_energy*
+                   scattering_angle_cosine );
+
+  const double term_3 = outgoing_energy/incoming_energy;
+
+  return term_1*term_2*term_3;
 }
 
 // Evaluate the cross section multiplier
-/*! \details It is assumed that the Compton profiles have been divided by
- * the average electron momentum in the ground state of hydrogen (atomic 
- * units). This multiplier term therefore has units of b/(m_e*c).
+/*! \details This multiplier term is for the double differential cross section
+ * that is a function of scattering angle cosine and electron momentum 
+ * projection in me*c units (unitless). It has units of barns
+ * (this assumes that the Compton profile in inverse me*c units will be used to
+ * evaluate the cross section).
  */
 inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
                                    const double incoming_energy,
@@ -182,12 +373,8 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
   const double compton_line_energy = 
     calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
-  const double term_2 = (compton_line_energy/incoming_energy)*
-    (compton_line_energy/incoming_energy)*
-    (incoming_energy/compton_line_energy +
-     compton_line_energy/incoming_energy +
-     scattering_angle_cosine*
-     scattering_angle_cosine - 1.0);
+  double term_2 = (compton_line_energy/incoming_energy);
+  term_2 = term_2*term_2;
   
   return term_1*term_2;
 }
