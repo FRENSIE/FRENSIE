@@ -544,309 +544,213 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshell_half )
 {
-  // Above max energy
+  // Incoming energy below min energy (pz_max <= 0.0)
   double cross_section = half_complete_distribution->evaluateSubshell(
-                                                      0.5,
-                                                      0.412,
-                                                      0.0,
-                                                      Data::K_SUBSHELL );
+                                    0.26055, 0.172545, 0.0, Data::K_SUBSHELL );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                        0.26055, 1e-6, 0.0, Data::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Mu = -1.0
+  // Above max energy (table max, not the true max)
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                          0.5, 0.389, -1.0, Data::K_SUBSHELL );
+  
+  // Max energy (table max, not the true max)
+  cross_section = half_complete_distribution->evaluateSubshell(
+                            0.5, 0.38831779122923316, -1.0, Data::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.09284777712806079, 1e-9 );
+
+  // Compton-line energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                            0.5, 0.16909307700494494, -1.0, Data::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.0872312326605855, 1e-9 );
+
+  // Min energy (corresponding to -pz_max) - not the true min energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                            0.5, 0.036654152201969, -1.0, Data::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.15368991735277307, 1e-9 );
+  
+  // Below the min energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                          0.5, 0.036, -1.0, Data::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Mu = 0.0
+  // Above max energy
+  cross_section = half_complete_distribution->evaluateSubshell(
+                                           0.5, 0.412, 0.0, Data::K_SUBSHELL );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Max energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                      0.5,
-                                                      0.411995,
-                                                      0.0,
-                                                      Data::K_SUBSHELL );
+                                        0.5, 0.411995, 0.0, Data::K_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
-                          0.077179060436207,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.23568941788995593, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                      0.5,
-                                                      0.25271981255859755,
-                                                      0.0,
-                                                      Data::K_SUBSHELL );
+                             0.5, 0.25271981255859755, 0.0, Data::K_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          0.24747240367306983,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.8739457040455174, 1e-9 );
 
-  // Min energy (for Compton profile grid)
+  // Min energy (corresponding to -pz_max) - not the true min energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                      0.5,
-                                                      0.0666690829629601,
-                                                      0.0,
-                                                      Data::K_SUBSHELL );
+                              0.5, 0.1259578643763628, 0.0, Data::K_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          0.02805809565454027,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.2961415215740492, 1e-9 );
 
-  // Below min energy (for Compton profile grid)
+  // Below the min energy  
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                      0.5,
-                                                      0.066,
-                                                      0.0,
-                                                      Data::K_SUBSHELL );
+                                           0.5, 0.125, 0.0, Data::K_SUBSHELL );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::L1_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::L1_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          0.815395566418701,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.8795592631443463, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::L2_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::L2_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          0.38629223432666243,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.3641862029267904, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::L3_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::L3_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          0.8794650180059378,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.1058197315608105, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::M1_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::M1_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.7621319119578402,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.22294684805154, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::M2_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::M2_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.0192161806966558,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 3.5993492179041424, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::M3_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::M3_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.2227112051752336,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.849476872027157, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::M4_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::M4_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          1.4364930672258214,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.072957333261603, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::M5_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::M5_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.2113525633910784,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 7.80936397037139, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N1_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N1_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          3.6032956960778817,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 12.724993765984314, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N2_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N2_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          2.2703919059658135,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.017860671607723, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N3_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N3_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          4.928318122205952,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 17.404293921844925, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N4_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N4_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          3.662541834095016,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 12.934220762743779, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N5_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N5_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          5.625556432361759,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 19.866582309610457, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N6_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N6_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          4.626950854598549,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 16.340019178656313, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::N7_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::N7_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          6.233749824572172,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 22.014409681317527, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::O1_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::O1_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          8.385783818059283,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 29.614290862625364, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::O2_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::O2_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          5.509760603731998,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 19.45765078643722, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::O3_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::O3_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          12.163527895643893,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 42.95534691003039, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::O4_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::O4_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          11.315733485067268,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 39.96137153322004, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::O5_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::O5_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          17.448311930633853,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 61.61849575263572, 1e-9 );
 
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::P1_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::P1_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          26.794039864962183,
-                          1e-14 );
+  TEST_FLOATING_EQUALITY( cross_section, 94.62281727761084, 1e-9 );
   
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::P2_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::P2_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          20.841524452812,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 73.60158341273974, 1e-15 );
  
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
-                                                     0.5,
-                                                     0.25271981255859755,
-                                                     0.0,
-                                                     Data::P3_SUBSHELL );
+                            0.5, 0.25271981255859755, 0.0, Data::P3_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section,
-                          20.841524452812,
-                          1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 73.60158341273974, 1e-15 );
 }
 
 // //---------------------------------------------------------------------------//

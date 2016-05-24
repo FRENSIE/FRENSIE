@@ -17,6 +17,9 @@
 namespace MonteCarlo{
 
 // Calculate the Compton line energy
+/*! \details The initial energy must have units of MeV. The output 
+ * Compton-line energy will also have units of MeV.
+ */
 double calculateComptonLineEnergy( const double initial_energy,
 				   const double scattering_angle_cosine )
 {
@@ -32,7 +35,8 @@ double calculateComptonLineEnergy( const double initial_energy,
 }
 
 // Calculate the electron momentum projection
-/*! \details The calculated electron momentum projection will be in me*c units.
+/*! \details The initial and final energies must have units of MeV. The 
+ * calculated electron momentum projection will be in me*c units.
  */
 double calculateElectronMomentumProjection(
 					const double initial_energy,
@@ -62,7 +66,8 @@ double calculateElectronMomentumProjection(
 }
 
 // Calculate the maximum electron momentum projection
-/*! \details The calculated electron momentum projection will be in me*c units.
+/*! \details The initial and binding energies must have units of MeV. The 
+ * calculated electron momentum projection will be in me*c units.
  */
 double calculateMaxElectronMomentumProjection(
 				   const double initial_energy,
