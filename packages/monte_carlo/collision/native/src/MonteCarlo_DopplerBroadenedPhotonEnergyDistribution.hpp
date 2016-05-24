@@ -32,10 +32,6 @@ class DopplerBroadenedPhotonEnergyDistribution
 
 public:
   
-  //! The Compton profile array 
-  typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
-  ComptonProfileArray;
-  
   //! Constructor
   DopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
@@ -66,20 +62,33 @@ public:
 
   //! Evaluate the PDF with electron momentum projection
   virtual double evaluatePDFWithElectronMomentumProjection(
-                              const double incoming_energy,
-                              const double electron_momentum_projection,
-                              const double scattering_angle_cosine ) const = 0;
+                                     const double incoming_energy,
+                                     const double electron_momentum_projection,
+                                     const double scattering_angle_cosine,
+                                     const double precision ) const = 0;
+
+  //! Evaluate the PDF with electron momentum projection
+  double evaluatePDFWithElectronMomentumProjection(
+                                  const double incoming_energy,
+                                  const double electron_momentum_projection,
+                                  const double scattering_angle_cosine ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
                       const double outgoing_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine,
+                      const double precision = 1e-3 ) const;
 
   //! Evaluate the exact PDF
-  virtual double evaluatePDFExact(
-                              const double incoming_energy,
-                              const double outgoing_energy,
-                              const double scattering_angle_cosine ) const = 0;
+  virtual double evaluatePDFExact( const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine,
+                                   const double precision ) const = 0;
+
+  //! Evaluate the exact PDF with a precision
+  double evaluatePDFExact( const double incoming_energy,
+                           const double outgoing_energy,
+                           const double scattering_angle_cosine ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   virtual double evaluateIntegratedCrossSection(
@@ -218,13 +227,33 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluate(
   return cross_section;    
 }
 
-// Evaluate the PDF
-/*! \details The approximate PDF dependent on the outgoing energy will be 
- * evaluated by evaluating the approximate PDF dependent on the
- * electron momentum projection (pz) and doing a change of variable to
- * energy.
+// Evaluate the PDF with electron momentum projection
+/*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFWithElectronMomentumProjection(
+                                  const double incoming_energy,
+                                  const double electron_momentum_projection,
+                                  const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the electron momentum projection is valid
+  testPrecondition( electron_momentum_projection >= -1.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return this->evaluatePDFWithElectronMomentumProjection(
+                                                  incoming_energy,
+                                                  electron_momentum_projection,
+                                                  scattering_angle_cosine,
+                                                  1e-3 );
+}
+
+// Evaluate the exact PDF with a precision
+/*! \details A default precision of 1e-3 will be used to evaluate the PDF
+ */  
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFExact(
                                    const double incoming_energy,
                                    const double outgoing_energy,
                                    const double scattering_angle_cosine ) const
@@ -237,6 +266,36 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return this->evaluatePDFExact( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine,
+                                 1e-3 );
+}
+
+// Evaluate the PDF
+/*! \details The approximate PDF dependent on the outgoing energy will be 
+ * evaluated by evaluating the approximate PDF dependent on the
+ * electron momentum projection (pz) and doing a change of variable to
+ * energy.
+ */
+inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
+                                   const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine,
+                                   const double precision ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the precision is valid
+  testPrecondition( precision > 0.0 );
+  testPrecondition( precision < 1.0 );
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
@@ -252,7 +311,8 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
                             scattering_angle_cosine )*
     this->evaluatePDFWithElectronMomentumProjection( incoming_energy,
                                                      pz,
-                                                     scattering_angle_cosine );
+                                                     scattering_angle_cosine,
+                                                     precision );
 
   return pdf;
 }
@@ -275,8 +335,8 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTermExact(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double term = incoming_energy/outgoing_energy +
-    outgoing_energy/incomging_energy - 1.0 +
-    scattering_angle_cosing*scattering_angle_cosine;
+    outgoing_energy/incoming_energy - 1.0 +
+    scattering_angle_cosine*scattering_angle_cosine;
 
   // Make sure the relativistic term is valid
   testPostcondition( term >= 0.0 );
@@ -302,7 +362,7 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTerm(
     calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
   const double term = incoming_energy/compton_line_energy +
-    compton_line_energy/incomging_energy - 1.0 +
+    compton_line_energy/incoming_energy - 1.0 +
     scattering_angle_cosine*scattering_angle_cosine;
 
   // Make sure the relativistic term is valid

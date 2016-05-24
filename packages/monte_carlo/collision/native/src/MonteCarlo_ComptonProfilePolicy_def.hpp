@@ -18,7 +18,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_MeCMomentumUnit.hpp"
 
 namespace MonteCarlo{
 
@@ -29,8 +28,8 @@ namespace MonteCarlo{
 inline bool FullComptonProfilePolicy::isValidProfile( 
                                                 const ComptonProfile& profile )
 {
-  return profile.getLowerBoundOfMomentum() == -1.0*Utility::Units::mec_momentum
-    && profile.getUpperBoundOfMomentum() >= 1.0*Utility::Units::mec_momentum;
+  return profile.getLowerBoundOfMomentum() == -1.0*ComptonProfile::MomentumUnit()
+    && profile.getUpperBoundOfMomentum() >= 1.0*ComptonProfile::MomentumUnit();
 }
 
 // Get the lower bound of the momentum
@@ -57,7 +56,7 @@ inline ComptonProfile::MomentumQuantity
 FullComptonProfilePolicy::getLowerLimitOfIntegration(
                            const ComptonProfile::MomentumQuantity upper_limit )
 {
-  return -1.0*Utility::Units::mec_momentum;
+  return -1.0*ComptonProfile::MomentumUnit();
 }
 
 // Get upper limit of integration
@@ -66,6 +65,7 @@ FullComptonProfilePolicy::getLowerLimitOfIntegration(
  */
 inline ComptonProfile::MomentumQuantity
 FullComptonProfilePolicy::getUpperLimitOfIntegration(
+                           const ComptonProfile& profile,
                            const ComptonProfile::MomentumQuantity upper_limit )
 {
   if( upper_limit > profile.getUpperBoundOfMomentum() )
@@ -95,7 +95,7 @@ FullComptonProfilePolicy::evaluateWithPossibleLimit(
   if( momentum <= max_momentum )
     return profile.evaluate( momentum );
   else
-    return 0.0*Utility::Units::mec_momentum;
+    return 0.0*ComptonProfile::ProfileUnit();
 } 
   
 // Sample from a full Compton profile
@@ -104,7 +104,7 @@ inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
                           const ComptonProfile::MomentumQuantity max_momentum )
 {
   // Make sure the max momentum is valid
-  testPrecondition( max_momentum >= -1.0*Utility::Units::mec_momentum );
+  testPrecondition( max_momentum >= -1.0*ComptonProfile::MomentumUnit() );
   
   if( max_momentum >= profile.getUpperBoundOfMomentum() )
     return profile.sample();
@@ -120,8 +120,8 @@ inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
 inline bool HalfComptonProfilePolicyHelper::isValidProfile( 
                                                const ComptonProfile& profile )
 {
-  return profile.getLowerBoundOfMomentum() == 0.0*Utility::Units::mec_momentum
-    && profile.getUpperBoundOfMomentum() <= 1.0*Utility::Units::mec_momentum;
+  return profile.getLowerBoundOfMomentum() == 0.0*ComptonProfile::MomentumUnit()
+    && profile.getUpperBoundOfMomentum() <= 1.0*ComptonProfile::MomentumUnit();
 }
 
 // Get the lower bound of the momentum
@@ -149,7 +149,7 @@ inline ComptonProfile::MomentumQuantity
 HalfComptonProfilePolicyHelper::getLowerLimitOfIntegration(
                            const ComptonProfile::MomentumQuantity upper_limit )
 {
-  if( upper_limit > 0.0 )
+  if( upper_limit > 0.0*ComptonProfile::MomentumUnit() )
     return -upper_limit;
   else
     return upper_limit;
@@ -160,7 +160,8 @@ HalfComptonProfilePolicyHelper::getLowerLimitOfIntegration(
  * the table max. If it is greater, the table max is returned.
  */
 inline ComptonProfile::MomentumQuantity
-FullComptonProfilePolicy::getUpperLimitOfIntegration(
+HalfComptonProfilePolicyHelper::getUpperLimitOfIntegration(
+                           const ComptonProfile& profile,
                            const ComptonProfile::MomentumQuantity upper_limit )
 {
   if( upper_limit > profile.getUpperBoundOfMomentum() )
@@ -184,9 +185,9 @@ inline ComptonProfile::MomentumQuantity HalfComptonProfilePolicyHelper::sample(
                           const ComptonProfile::MomentumQuantity max_momentum )
 {
   // Make sure the max momentum is valid
-  testPrecondition( max_momentum >= -1.0*Utility::Units::mec_momentum );
+  testPrecondition( max_momentum >= -1.0*ComptonProfile::MomentumUnit() );
   
-  if( max_momentum > 0.0*Utility::Units::mec_momentum )
+  if( max_momentum > 0.0*ComptonProfile::MomentumUnit() )
   {
     ComptonProfile::MomentumQuantity pz;
     
@@ -201,7 +202,7 @@ inline ComptonProfile::MomentumQuantity HalfComptonProfilePolicyHelper::sample(
     return pz;
   }
   else
-    return 0.0*Utility::Units::mec_momentum;
+    return 0.0*ComptonProfile::MomentumUnit();
 }
 
 // Evaluate a half Compton profile
@@ -226,15 +227,15 @@ HalfComptonProfilePolicy::evaluateWithPossibleLimit(
                           const ComptonProfile::MomentumQuantity momentum,
                           const ComptonProfile::MomentumQuantity max_momentum )
 {
-  if( max_momentum >= 0.0 )
+  if( max_momentum >= 0.0*ComptonProfile::MomentumUnit() )
   {
     if( momentum <= max_momentum && momentum >= -max_momentum )
       return profile.evaluate( boost::units::fabs( momentum ) );
     else
-      return 0.0*Utility::Units::mec_momentum;
+      return 0.0*ComptonProfile::ProfileUnit();
   }
   else
-    return 0.0;
+    return 0.0*ComptonProfile::ProfileUnit();
 }
 
 // Evaluate a double half Compton profile
@@ -243,7 +244,8 @@ HalfComptonProfilePolicy::evaluateWithPossibleLimit(
  * account for the doubling. The absolute value of the momentum will be used
  * to evaluate the profile.
  */
-inline ComptonProfile::ProfileQuantity DoubledHalfComptonProfilePolicy::evaluate(
+inline ComptonProfile::ProfileQuantity
+DoubledHalfComptonProfilePolicy::evaluate(
                               const ComptonProfile& profile,
                               const ComptonProfile::MomentumQuantity momentum )
 {
@@ -256,20 +258,20 @@ inline ComptonProfile::ProfileQuantity DoubledHalfComptonProfilePolicy::evaluate
  * 0.0 will be returned.
  */
 inline ComptonProfile::ProfileQuantity
-HalfComptonProfilePolicy::evaluateWithPossibleLimit(
+DoubledHalfComptonProfilePolicy::evaluateWithPossibleLimit(
                           const ComptonProfile& profile,
                           const ComptonProfile::MomentumQuantity momentum,
                           const ComptonProfile::MomentumQuantity max_momentum )
 {
-  if( max_momentum >= 0.0 )
+  if( max_momentum >= 0.0*ComptonProfile::MomentumUnit() )
   {
     if( momentum <= max_momentum && momentum >= -max_momentum )
       return profile.evaluate( boost::units::fabs( momentum ) )/2.0;
     else
-      return 0.0*Utility::Units::mec_momentum;
+      return 0.0*ComptonProfile::ProfileUnit();
   }
   else
-    return 0.0;
+    return 0.0*ComptonProfile::ProfileUnit();
 }
 
 } // end MonteCarlo namespace

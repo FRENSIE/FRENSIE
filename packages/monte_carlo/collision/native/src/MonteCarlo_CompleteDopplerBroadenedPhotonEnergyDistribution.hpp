@@ -20,6 +20,10 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 
 public:
 
+  //! The Compton profile array 
+  typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
+  ComptonProfileArray;
+
   //! Constructor
   CompleteDopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
@@ -63,23 +67,38 @@ public:
 
   //! Evaluate the subshell PDF with electron momentum projection
   virtual double evaluateSubshellPDFWithElectronMomentumProjection(
-                                 const double incoming_energy,
-                                 const double electron_momentum_projection,
-                                 const double scattering_angle_cosine,
-                                 const Data::SubshellType subshell ) const = 0;
+                                     const double incoming_energy,
+                                     const double electron_momentum_projection,
+                                     const double scattering_angle_cosine,
+                                     const Data::SubshellType subshell,
+                                     const double precision ) const = 0;
+
+  //! Evaluate the subshell PDF with electron momentum projection
+  double evaluateSubshellPDFWithElectronMomentumProjection(
+                                     const double incoming_energy,
+                                     const double electron_momentum_projection,
+                                     const double scattering_angle_cosine,
+                                     const Data::SubshellType subshell ) const;
 
   //! Evaluate the subshell PDF
   double evaluateSubshellPDF( const double incoming_energy,
                               const double outgoing_energy,
                               const double scattering_angle_cosine,
-                              const Data::SubshellType subshell ) const;
+                              const Data::SubshellType subshell,
+                              const double precision = 1e-3 ) const;
 
   //! Evaluate the subshell PDF
-  virtual double evaluateSubshellPDFExact(
-                                 const double incoming_energy,
-                                 const double outgoing_energy,
-                                 const double scattering_angle_cosine,
-                                 const Data::SubshellType subshell ) const = 0;
+  virtual double evaluateSubshellPDFExact(const double incoming_energy,
+                                          const double outgoing_energy,
+                                          const double scattering_angle_cosine,
+                                          const Data::SubshellType subshell,
+                                          const double precision ) const = 0;
+
+  //! Evaluate the subshell PDF
+  double evaluateSubshellPDFExact( const double incoming_energy,
+                                   const double outgoing_energy,
+                                   const double scattering_angle_cosine,
+                                   const Data::SubshellType subshell ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   virtual double evaluateSubshellIntegratedCrossSection( 
@@ -126,7 +145,7 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshell(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   // Make sure the subshell is valid
-  testPrecondition( this->isSubshellValid( subshell ) );
+  testPrecondition( this->isValidSubshell( subshell ) );
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
@@ -143,19 +162,45 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshell(
     this->evaluateSubshellWithElectronMomentumProjection(
                                                      incoming_energy,
                                                      pz,
-                                                     scattering_angle_cosine );
+                                                     scattering_angle_cosine,
+                                                     subshell );
 
   return cross_section;
 }
 
-// Evaluate the subshell PDF
-/*! \details The approximate PDF dependent on the outgoing energy will be 
- * evaluated by evaluating the approximate PDF dependent on the
- * electron momentum projection (pz) and doing a change of variable to
- * energy.
+// Evaluate the subshell PDF with electron momentum projection
+/*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */
 inline double
-CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
+CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFWithElectronMomentumProjection(
+                                     const double incoming_energy,
+                                     const double electron_momentum_projection,
+                                     const double scattering_angle_cosine,
+                                     const Data::SubshellType subshell ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the electron momentum projection is valid
+  testPrecondition( electron_momentum_projection >= -1.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the subshell is valid
+  testPrecondition( this->isValidSubshell( subshell ) );
+
+  return this->evaluateSubshellPDFWithElectronMomentumProjection(
+                                                  incoming_energy,
+                                                  electron_momentum_projection,
+                                                  scattering_angle_cosine,
+                                                  subshell,
+                                                  1e-3 );
+}
+
+// Evaluate the subshell PDF
+/*! \details A default precision of 1e-3 will be used to evaluate the PDF
+ */
+inline double
+CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFExact(
                                       const double incoming_energy,
                                       const double outgoing_energy,
                                       const double scattering_angle_cosine,
@@ -170,7 +215,39 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   // Make sure the subshell is valid
-  testPrecondition( this->isSubshellValid( subshell ) );
+  testPrecondition( this->isValidSubshell( subshell ) );
+
+  return this->evaluateSubshellPDFExact( incoming_energy,
+                                         outgoing_energy,
+                                         scattering_angle_cosine,
+                                         subshell,
+                                         1e-3 );
+}
+
+// Evaluate the subshell PDF
+/*! \details The approximate PDF dependent on the outgoing energy will be 
+ * evaluated by evaluating the approximate PDF dependent on the
+ * electron momentum projection (pz) and doing a change of variable to
+ * energy.
+ */
+inline double
+CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
+                                      const double incoming_energy,
+                                      const double outgoing_energy,
+                                      const double scattering_angle_cosine,
+                                      const Data::SubshellType subshell,
+                                      const double precision ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the outgoing energy is valid
+  testPrecondition( outgoing_energy <= incoming_energy );
+  testPrecondition( outgoing_energy >= 0.0 );
+  // Make sure the scattering angle is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the subshell is valid
+  testPrecondition( this->isValidSubshell( subshell ) );
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
@@ -185,9 +262,11 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
                             outgoing_energy,
                             scattering_angle_cosine )*
     this->evaluateSubshellPDFWithElectronMomentumProjection(
-                                                     incoming_energy,
-                                                     pz,
-                                                     scattering_angle_cosine );
+                                                       incoming_energy,
+                                                       pz,
+                                                       scattering_angle_cosine,
+                                                       subshell,
+                                                       precision );
 
   return pdf;
 }

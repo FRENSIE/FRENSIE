@@ -55,12 +55,14 @@ public:
   double evaluatePDFWithElectronMomentumProjection(
                               const double incoming_energy,
                               const double electron_momentum_projection,
-                              const double scattering_angle_cosine ) const;
+                              const double scattering_angle_cosine,
+                              const double precision ) const;
   
   //! Evaluate the PDF
   double evaluatePDFExact( const double incoming_energy,
                            const double outgoing_energy,
-                           const double scattering_angle_cosine ) const;
+                           const double scattering_angle_cosine,
+                           const double precision ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   double evaluateIntegratedCrossSection( const double incoming_energy,

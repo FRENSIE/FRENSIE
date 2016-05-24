@@ -32,19 +32,19 @@ namespace MonteCarlo{
  */
 template<typename ComptonProfilePolicy>
 DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-     const Teuchos::Array<double>& endf_subshell_occupancies,
-     const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
-     const Teuchos::Array<double>& old_subshell_binding_energies,
-     const Teuchos::Array<double>& old_subshell_occupancies,
-     const std::shared_ptr<const ComptonProfileSubshellConverter>&
-     subshell_converter,
-     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
-     electron_momentum_dist_array )
+   const Teuchos::Array<double>& endf_subshell_occupancies,
+   const Teuchos::Array<Data::SubshellType>& endf_subshell_order,
+   const Teuchos::Array<double>& old_subshell_binding_energies,
+   const Teuchos::Array<double>& old_subshell_occupancies,
+   const std::shared_ptr<const ComptonProfileSubshellConverter>&
+   subshell_converter,
+   const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
+   compton_profile_array )
   : StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>(
-                                                endf_subshell_occupancies,
-                                                endf_subshell_order,
-                                                subshell_converter,
-                                                electron_momentum_dist_array ),
+                                                     endf_subshell_occupancies,
+                                                     endf_subshell_order,
+                                                     subshell_converter,
+                                                     compton_profile_array ),
   d_old_subshell_occupancy_distribution(),
   d_old_subshell_binding_energy( old_subshell_binding_energies ),
   d_old_subshell_occupancies( old_subshell_occupancies ),
@@ -55,7 +55,7 @@ DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
   testPrecondition( old_subshell_occupancies.size() ==
 		    old_subshell_binding_energies.size() );
   // Make sure the comptron profile array is valid
-  testPrecondition( electron_momentum_dist_array.size() ==
+  testPrecondition( compton_profile_array.size() ==
 		    old_subshell_binding_energies.size() );
 
   // Create the old subshell interaction distribution
@@ -66,7 +66,7 @@ DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 					          old_subshell_occupancies ) );
 
   // Calculate the min binding energy index
-  Teuchos::Array<double>::const_iterator min_binding_energy_it =
+  Teuchos::Array<double>::iterator min_binding_energy_it =
     std::min_element( d_old_subshell_binding_energy.begin(),
                       d_old_subshell_binding_energy.end() );
 
@@ -136,7 +136,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
       calculateMaxElectronMomentumProjection( incoming_energy,
                                               subshell_binding_energy,
                                               scattering_angle_cosine )*
-    Utility::Units::mec_momentum;
+    ComptonProfile::MomentumUnit();
 
     // Get the subshell occupancy
     const double subshell_occupancy = d_old_subshell_occupancies[i];
@@ -146,9 +146,9 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
     cross_section += subshell_occupancy*
       ComptonProfilePolicy::evaluateWithPossibleLimit(
-                                    compton_profile,
-                                    electron_momentum_projection,
-                                    max_electron_momentum_projection ).value();
+                   compton_profile,
+                   electron_momentum_projection*ComptonProfile::MomentumUnit(),
+                   max_electron_momentum_projection ).value();
   }
 
   cross_section *= this->evaluateMultiplier( incoming_energy,
@@ -184,7 +184,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   // Calculate the electron momentum projection
   const ComptonProfile::MomentumQuantity electron_momentum_projection = 
-    Utility::Units::mec_momentum*
+    ComptonProfile::MomentumUnit()*
     calculateElectronMomentumProjection( incoming_energy,
                                          outgoing_energy,
                                          scattering_angle_cosine );
@@ -246,8 +246,12 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
                          scattering_angle_cosine );
 
   // Get the min subshell binding energy
-    const double subshell_binding_energy =
+  const double subshell_binding_energy =
       d_old_subshell_binding_energy[d_min_binding_energy_index];
+
+  // Get the subshell Compton profile
+  const ComptonProfile& compton_profile =
+    this->getComptonProfile( d_min_binding_energy_index );
 
   // Calculate the max electron momentum projection
   double pz_max =
@@ -257,11 +261,12 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   // Don't go above the table max (profile will evaluate to zero beyond it)
   pz_max = ComptonProfilePolicy::getUpperLimitOfIntegration(
-                                 pz_max*Utility::Units::mec_momentum ).value();
+                               compton_profile,
+                               pz_max*ComptonProfile::MomentumUnit() ).value();
 
   // Calculate the min electron momentum projection
   double pz_min = ComptonProfilePolicy::getLowerLimitOfIntegration(
-                                 pz_max*Utility::Units::mec_momentum ).value();
+                               pz_max*ComptonProfile::MomentumUnit() ).value();
 
   // Calculate the absolute error and the integrated cross section
   double abs_error, diff_cs;
@@ -307,10 +312,14 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
                          incoming_energy,
                          _1,
                          scattering_angle_cosine );
+    
 
   // Get the min subshell binding energy
   const double subshell_binding_energy =
     d_old_subshell_binding_energy[d_min_binding_energy_index];
+
+  // Calculate the max energy
+  double energy_max = incoming_energy - subshell_binding_energy;
 
   // Calculate the max electron momentum projection
   double pz_max =
@@ -318,13 +327,13 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
                                             subshell_binding_energy,
                                             scattering_angle_cosine );
 
-  // Don't go above the table max (profile will evaluate to zero beyond it)
-  pz_max = ComptonProfilePolicy::getUpperLimitOfIntegration(
-                                 pz_max*Utility::Units::mec_momentum ).value();
+  // Get the subshell Compton profile
+  const ComptonProfile& compton_profile =
+    this->getComptonProfile( d_min_binding_energy_index );
 
-  // Calculate the min electron momentum projection
-  double pz_min = ComptonProfilePolicy::getLowerLimitOfIntegration(
-                                 pz_max*Utility::Units::mec_momentum ).value();
+  // Calculate the max table energy
+  const double pz_table_max =
+    ComptonProfilePolicy::getUpperBoundOfMomentum( compton_profile ).value();
 
   if( pz_max > pz_table_max )
   {

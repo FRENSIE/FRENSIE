@@ -20,18 +20,18 @@ namespace MonteCarlo{
 // Constructor
 template<typename ComptonProfilePolicy>
 CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-     const Teuchos::Array<double>& subshell_binding_energies,
-     const Teuchos::Array<double>& subshell_occupancies,
-     const Teuchos::Array<Data::SubshellType>& subshell_order,
-     const std::shared_ptr<const ComptonProfileSubshellConverter>&
-     subshell_converter,
-     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
-     electron_momentum_dist_array )
+   const Teuchos::Array<double>& subshell_binding_energies,
+   const Teuchos::Array<double>& subshell_occupancies,
+   const Teuchos::Array<Data::SubshellType>& subshell_order,
+   const std::shared_ptr<const ComptonProfileSubshellConverter>&
+   subshell_converter,
+   const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
+   compton_profile_array )
   : StandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>( 
                                                 subshell_occupancies,
                                                 subshell_order,
                                                 subshell_converter,
-                                                electron_momentum_dist_array ),
+                                                compton_profile_array ),
     d_subshell_binding_energies( subshell_binding_energies )
 {
   // Make sure the shell interaction data is valid

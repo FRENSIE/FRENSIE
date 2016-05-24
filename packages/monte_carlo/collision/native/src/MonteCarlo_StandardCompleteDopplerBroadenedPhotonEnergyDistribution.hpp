@@ -81,25 +81,29 @@ public:
   double evaluatePDFWithElectronMomentumProjection(
                                    const double incoming_energy,
                                    const double electron_momentum_projection,
-                                   const double scattering_angle_cosine ) const
+                                   const double scattering_angle_cosine,
+                                   const double precision ) const;
   
   //! Evaluate the exact PDF
   double evaluatePDFExact( const double incoming_energy,
                            const double outgoing_energy,
-                           const double scattering_angle_cosine ) const;
+                           const double scattering_angle_cosine,
+                           const double precision ) const;
 
   //! Evaluate the subshell PDF with electron momentum projection
   double evaluateSubshellPDFWithElectronMomentumProjection(
                                      const double incoming_energy,
                                      const double electron_momentum_projection,
                                      const double scattering_angle_cosine,
-                                     const Data::SubshellType subshell ) const
+                                     const Data::SubshellType subshell,
+                                     const double precision ) const;
   
   //! Evaluate the exact subshell PDF
   double evaluateSubshellPDFExact( const double incoming_energy,
                                    const double outgoing_energy,
                                    const double scattering_angle_cosine,
-                                   const Data::SubshellType subshell ) const;
+                                   const Data::SubshellType subshell,
+                                   const double precision ) const;
 
   //! Evaluate the integrated cross section (b/mu)
   virtual double evaluateIntegratedCrossSection( 

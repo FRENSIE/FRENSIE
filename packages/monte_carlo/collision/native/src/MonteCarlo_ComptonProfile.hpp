@@ -24,11 +24,17 @@ class ComptonProfile
    
 public:
 
+  //! The Compton profile independent unit type
+  typedef Utility::Units::MeCMomentum MomentumUnit;
+
+  //! The Compton profile dependent unit type
+  typedef Utility::Units::InverseMeCMomentum ProfileUnit;
+
   //! The Compton profile independent quantity type
-  typedef boost::units::quantity<Utility::Units::MeCMomentum> MomentumQuantity;
+  typedef boost::units::quantity<MomentumUnit> MomentumQuantity;
 
   //! The Compton profile dependent quantity type
-  typedef boost::units::quantity<Utility::Units::InverseMeCMomentum> ProfileQuantity;
+  typedef boost::units::quantity<ProfileUnit> ProfileQuantity;
 
   //! Default Constructor
   ComptonProfile()

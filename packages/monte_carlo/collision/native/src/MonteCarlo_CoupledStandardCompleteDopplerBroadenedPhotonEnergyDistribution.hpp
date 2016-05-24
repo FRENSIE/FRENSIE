@@ -27,13 +27,13 @@ public:
   
   //! Constructor
   CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
-     const Teuchos::Array<double>& subshell_binding_energies,
-     const Teuchos::Array<double>& subshell_occupancies,
-     const Teuchos::Array<Data::SubshellType>& subshell_order,
-     const std::shared_ptr<const ComptonProfileSubshellConverter>&
-     subshell_converter,
-     const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
-     electron_momentum_dist_array );
+   const Teuchos::Array<double>& subshell_binding_energies,
+   const Teuchos::Array<double>& subshell_occupancies,
+   const Teuchos::Array<Data::SubshellType>& subshell_order,
+   const std::shared_ptr<const ComptonProfileSubshellConverter>&
+   subshell_converter,
+   const CompleteDopplerBroadenedPhotonEnergyDistribution::ComptonProfileArray&
+   compton_profile_array );
 
   //! Destructor
   virtual ~CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution()
