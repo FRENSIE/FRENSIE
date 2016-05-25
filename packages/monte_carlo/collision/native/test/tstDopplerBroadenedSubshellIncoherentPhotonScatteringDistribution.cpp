@@ -94,11 +94,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.361055269849248517, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.361055269849248517, 1e-9 );
 
   pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( pdf_value, 0.291507803998082682, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.291507803998082682, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -110,15 +110,15 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.38880309491689713, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.38880309491689713, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.362735546891601146, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.362735546891601146, 1e-9 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 0.0603100615156834663, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 0.0603100615156834663, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
