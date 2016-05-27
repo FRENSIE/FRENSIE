@@ -540,6 +540,41 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell distribution can be evaluated
+TEUCHOS_UNIT_TEST(
+             DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
+             evaluateSubshellWithElectronMomentumProjection_half )
+{
+  // pz_max <= 0.0, pz = pz_max
+  double cross_section =
+    half_complete_distribution->evaluateSubshellWithElectronMomentumProjection(
+                        0.26055, -0.01189331797743439, 0.0, Data::K_SUBSHELL );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section =
+    half_complete_distribution->evaluateSubshellWithElectronMomentumProjection(
+                                        0.26055, -1.0, 0.0, Data::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Mu = -1.0
+  // Above pz_max (table pz_max, not the true pz_max)
+  cross_section =
+    half_complete_distribution->evaluateSubshellWithElectronMomentumProjection(
+                             0.5, 0.7875582275970302, -1.0, Data::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  
+  // pz = pz_max (table pz_max, not the true pz_max)
+  cross_section =
+    half_complete_distribution->evaluateSubshellWithElectronMomentumProjection(
+                             0.5, 0.7297352569816316, -1.0, Data::K_SUBSHELL );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.02789302998932924, 1e-9 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the subshell distribution can be evaluated
 TEUCHOS_UNIT_TEST( 
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshell_half )
@@ -547,6 +582,7 @@ TEUCHOS_UNIT_TEST(
   // Incoming energy below min energy (pz_max <= 0.0)
   double cross_section = half_complete_distribution->evaluateSubshell(
                                     0.26055, 0.172545, 0.0, Data::K_SUBSHELL );
+  
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = half_complete_distribution->evaluateSubshell(
@@ -558,6 +594,8 @@ TEUCHOS_UNIT_TEST(
   // Above max energy (table max, not the true max)
   cross_section = half_complete_distribution->evaluateSubshell(
                                           0.5, 0.389, -1.0, Data::K_SUBSHELL );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
   
   // Max energy (table max, not the true max)
   cross_section = half_complete_distribution->evaluateSubshell(

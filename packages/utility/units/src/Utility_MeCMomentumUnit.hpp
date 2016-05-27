@@ -33,6 +33,7 @@ struct MeCMomentumBaseUnit : public boost::units::base_unit<MeCMomentumBaseUnit,
 typedef MeCMomentumBaseUnit::unit_type MeCMomentum;
 
 BOOST_UNITS_STATIC_CONSTANT( mec_momentum, MeCMomentum );
+BOOST_UNITS_STATIC_CONSTANT( mec, MeCMomentum );
 
 } // end Units namespace
 

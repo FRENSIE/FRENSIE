@@ -20,6 +20,42 @@ class CompleteDopplerBroadenedPhotonEnergyDistribution : public DopplerBroadened
 
 public:
 
+  //! The energy unit
+  typedef DopplerBroadenedPhotonEnergyDistribution::EnergyUnit EnergyUnit;
+
+  //! The momentum unit
+  typedef DopplerBroadenedPhotonEnergyDistribution::MomentumUnit MomentumUnit;
+
+  //! The area unit
+  typedef DopplerBroadenedPhotonEnergyDistribution::BarnUnit AreaUnit;
+
+  //! The area per energy unit
+  typedef DopplerBroadenedPhotonEnergyDistribution::AreaPerEnergyUnit AreaPerEnergyUnit;
+
+  //! The area per momentum unit
+  typedef DopplerBroadenedPhotonEnergyDistribution::AreaPerMomentumUnit AreaPerMomentumUnit;
+
+  //! The energy quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::EnergyQuantity EnergyQuantity;
+
+  //! The inverse energy quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::InverseEnergyQuantity InverseEnergyQuantity;
+
+  //! The momentum quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::MomentumQuantity MomentumQuantity;
+
+  //! The inverse momentum quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::InverseMomentumQuantity InverseMomentumQuantity;
+
+  //! The area quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::AreaQuantity AreaQuantity;
+
+  //! The area per energy quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::AreaPerEnergyQuantity AreaPerEnergyQuantity;
+
+  //! The area per momentum quantity type
+  typedef DopplerBroadenedPhotonEnergyDistribution::AreaPerMomentumQuantity AreaPerMomentumQuantity;
+
   //! The Compton profile array 
   typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
   ComptonProfileArray;
@@ -39,84 +75,91 @@ public:
   virtual bool isValidSubshell( const Data::SubshellType subshell ) const = 0;
 
   //! Return the binding energy of a subshell
-  virtual double getSubshellBindingEnergy( 
-                                       const Data::SubshellType subshell ) const = 0;
+  virtual EnergyQuantity getSubshellBindingEnergy( 
+                                 const Data::SubshellType subshell ) const = 0;
 
   //! Return the occupancy of a subshell (default is the ENDF occupacy)
-  virtual double getSubshellOccupancy( const Data::SubshellType subshell ) const = 0;
+  virtual double getSubshellOccupancy(
+                                 const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the subshell distribution with electron momentum projection
-  virtual double evaluateSubshellWithElectronMomentumProjection(
-                                 const double incoming_energy,
-                                 const double electron_momentum_projection,
-                                 const double scattering_angle_cosine,
-                                 const Data::SubshellType subshell ) const = 0;
+  virtual AreaPerMomentumQuantity
+  evaluateSubshellWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine,
+                           const Data::SubshellType subshell ) const = 0;
 
   //! Evaluate the subshell distribution
-  double evaluateSubshell( const double incoming_energy,
-                           const double outgoing_energy,
-                           const double scattering_angle_cosine,
-                           const Data::SubshellType subshell ) const;
-
-  //! Evaluate the exact subshell distribution
-  virtual double evaluateSubshellExact(
-                                 const double incoming_energy,
-                                 const double outgoing_energy,
-                                 const double scattering_angle_cosine,
-                                 const Data::SubshellType subshell ) const = 0;
-
-  //! Evaluate the subshell PDF with electron momentum projection
-  virtual double evaluateSubshellPDFWithElectronMomentumProjection(
-                                     const double incoming_energy,
-                                     const double electron_momentum_projection,
-                                     const double scattering_angle_cosine,
-                                     const Data::SubshellType subshell,
-                                     const double precision ) const = 0;
-
-  //! Evaluate the subshell PDF with electron momentum projection
-  double evaluateSubshellPDFWithElectronMomentumProjection(
-                                     const double incoming_energy,
-                                     const double electron_momentum_projection,
+  AreaPerEnergyQuantity evaluateSubshell(
+                                     const EnergyQuantity incoming_energy,
+                                     const EnergyQuantity outgoing_energy,
                                      const double scattering_angle_cosine,
                                      const Data::SubshellType subshell ) const;
 
-  //! Evaluate the subshell PDF
-  double evaluateSubshellPDF( const double incoming_energy,
-                              const double outgoing_energy,
-                              const double scattering_angle_cosine,
-                              const Data::SubshellType subshell,
-                              const double precision = 1e-3 ) const;
+  //! Evaluate the exact subshell distribution
+  virtual AreaPerEnergyQuantity evaluateSubshellExact(
+                                 const EnergyQuantity incoming_energy,
+                                 const EnergyQuantity outgoing_energy,
+                                 const double scattering_angle_cosine,
+                                 const Data::SubshellType subshell ) const = 0;
+
+  //! Evaluate the subshell PDF with electron momentum projection
+  virtual InverseMomentumQuantity
+  evaluateSubshellPDFWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine,
+                           const Data::SubshellType subshell,
+                           const double precision ) const = 0;
+
+  //! Evaluate the subshell PDF with electron momentum projection
+  InverseMomentumQuantity evaluateSubshellPDFWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine,
+                           const Data::SubshellType subshell ) const;
 
   //! Evaluate the subshell PDF
-  virtual double evaluateSubshellPDFExact(const double incoming_energy,
-                                          const double outgoing_energy,
+  InverseEnergyQuantity evaluateSubshellPDF(
+                                         const EnergyQuantity incoming_energy,
+                                         const EnergyQuantity outgoing_energy,
+                                         const double scattering_angle_cosine,
+                                         const Data::SubshellType subshell,
+                                         const double precision = 1e-3 ) const;
+
+  //! Evaluate the subshell PDF
+  virtual InverseEnergyQuantity evaluateSubshellPDFExact(
+                                          const EnergyQuantity incoming_energy,
+                                          const EnergyQuantity outgoing_energy,
                                           const double scattering_angle_cosine,
                                           const Data::SubshellType subshell,
                                           const double precision ) const = 0;
 
   //! Evaluate the subshell PDF
-  double evaluateSubshellPDFExact( const double incoming_energy,
-                                   const double outgoing_energy,
-                                   const double scattering_angle_cosine,
-                                   const Data::SubshellType subshell ) const;
+  InverseEnergyQuantity evaluateSubshellPDFExact(
+                                     const EnergyQuantity incoming_energy,
+                                     const EnergyQuantity outgoing_energy,
+                                     const double scattering_angle_cosine,
+                                     const Data::SubshellType subshell ) const;
 
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateSubshellIntegratedCrossSection( 
-				          const double incoming_energy,
+  virtual AreaQuantity evaluateSubshellIntegratedCrossSection( 
+				          const EnergyQuantity incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
 					  const double precision ) const = 0;
 
   //! Evaluate the exact integrated cross section (b/mu)
-  virtual double evaluateSubshellIntegratedCrossSectionExact( 
-				          const double incoming_energy,
+  virtual AreaQuantity evaluateSubshellIntegratedCrossSectionExact( 
+				          const EnergyQuantity incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
 					  const double precision ) const = 0;
 
   //! Sample an electron momentum from the subshell distribution
-  virtual double sampleSubshellMomentum( 
-                                 const double incoming_energy,
+  virtual MomentumQuantity sampleSubshellMomentum( 
+                                 const EnergyQuantity incoming_energy,
                                  const double scattering_angle_cosine,
                                  const Data::SubshellType subshell ) const = 0;
 };
@@ -129,18 +172,18 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::isComplete() const
 }
 
 // Evaluate the subshell distribution
-inline double
+inline CompleteDopplerBroadenedPhotonEnergyDistribution::AreaPerEnergyQuantity
 CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshell(
-                                      const double incoming_energy,
-                                      const double outgoing_energy,
+                                      const EnergyQuantity incoming_energy,
+                                      const EnergyQuantity outgoing_energy,
                                       const double scattering_angle_cosine,
                                       const Data::SubshellType subshell ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -149,39 +192,36 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshell(
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
-  const double pz = calculateElectronMomentumProjection(
+  const MomentumQuantity pz = calculateElectronMomentumProjectionQuantity(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
   
   // Calculate the cross section
-  const double cross_section =
-    this->evaluateJacobian( incoming_energy,
-                            outgoing_energy,
-                            scattering_angle_cosine )*
+  return this->evaluateJacobian( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine )*
     this->evaluateSubshellWithElectronMomentumProjection(
-                                                     incoming_energy,
-                                                     pz,
-                                                     scattering_angle_cosine,
-                                                     subshell );
-
-  return cross_section;
+                                                       incoming_energy,
+                                                       pz,
+                                                       scattering_angle_cosine,
+                                                       subshell );
 }
 
 // Evaluate the subshell PDF with electron momentum projection
 /*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */
-inline double
+inline CompleteDopplerBroadenedPhotonEnergyDistribution::InverseMomentumQuantity
 CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFWithElectronMomentumProjection(
-                                     const double incoming_energy,
-                                     const double electron_momentum_projection,
-                                     const double scattering_angle_cosine,
-                                     const Data::SubshellType subshell ) const
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine,
+                           const Data::SubshellType subshell ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the electron momentum projection is valid
-  testPrecondition( electron_momentum_projection >= -1.0 );
+  testPrecondition( electron_momentum_projection >= -1.0*MomentumUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -199,10 +239,10 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFWithElectro
 // Evaluate the subshell PDF
 /*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */
-inline double
+inline CompleteDopplerBroadenedPhotonEnergyDistribution::InverseEnergyQuantity
 CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFExact(
-                                      const double incoming_energy,
-                                      const double outgoing_energy,
+                                      const EnergyQuantity incoming_energy,
+                                      const EnergyQuantity outgoing_energy,
                                       const double scattering_angle_cosine,
                                       const Data::SubshellType subshell ) const
 {
@@ -230,19 +270,19 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDFExact(
  * electron momentum projection (pz) and doing a change of variable to
  * energy.
  */
-inline double
+inline CompleteDopplerBroadenedPhotonEnergyDistribution::InverseEnergyQuantity
 CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
-                                      const double incoming_energy,
-                                      const double outgoing_energy,
-                                      const double scattering_angle_cosine,
-                                      const Data::SubshellType subshell,
-                                      const double precision ) const
+                                          const EnergyQuantity incoming_energy,
+                                          const EnergyQuantity outgoing_energy,
+                                          const double scattering_angle_cosine,
+                                          const Data::SubshellType subshell,
+                                          const double precision ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -251,24 +291,21 @@ CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF(
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
-  const double pz = calculateElectronMomentumProjection(
+  const MomentumQuantity pz = calculateElectronMomentumProjectionQuantity(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
   
   // Calculate the cross section
-  const double pdf = 
-    this->evaluateJacobian( incoming_energy,
-                            outgoing_energy,
-                            scattering_angle_cosine )*
+  return this->evaluateJacobian( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine )*
     this->evaluateSubshellPDFWithElectronMomentumProjection(
                                                        incoming_energy,
                                                        pz,
                                                        scattering_angle_cosine,
                                                        subshell,
                                                        precision );
-
-  return pdf;
 }
 
 } // end MonteCarlo namespace

@@ -18,10 +18,14 @@
 
 // FRENSIE Includes
 #include "Data_SubshellType.hpp"
+#include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_MeCMomentumUnit.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_BarnUnit.hpp"
+#include "Utility_UnitTraits.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -31,6 +35,43 @@ class DopplerBroadenedPhotonEnergyDistribution
 {
 
 public:
+
+  //! The energy unit
+  typedef ModuleTraits::EnergyUnit EnergyUnit;
+
+  //! The momentum unit
+  typedef ComptonProfile::MomentumUnit MomentumUnit;
+
+  //! The area unit
+  typedef Utility::Units::BarnUnit AreaUnit;
+
+  //! The area per energy unit
+  typedef Utility::UnitTraits<AreaUnit>::GetMultipliedUnitType<Utility::UnitTraits<EnergyUnit>::InverseUnit>::type AreaPerEnergyUnit;
+
+  //! The area per momentum unit
+  typedef Utility::UnitTraits<AreaUnit>::GetMultipliedUnitType<Utility::UnitTraits<MomentumUnit>::InverseUnit>::type AreaPerMomentumUnit;
+
+  //! The energy quantity type
+  typedef ModuleTraits::EnergyQuantity EnergyQuantity;
+
+  //! The inverse energy quantity type
+  typedef boost::units::quantity<Utility::UnitTraits<EnergyUnit>::InverseUnit> InverseEnergyQuantity;
+
+  //! The momentum quantity type
+  typedef boost::units::quantity<MomentumUnit> MomentumQuantity;
+
+  //! The inverse momentum quantity type
+  typedef boost::units::quantity<Utility::UnitTraits<MomentumUnit>::InverseUnit> InverseMomentumQuantity;
+
+  //! The area quantity type
+  typedef boost::units::quantity<AreaUnit> AreaQuantity;
+
+  //! The area per energy quantity type
+  typedef boost::units::quantity<AreaPerEnergyUnit> AreaPerEnergyQuantity;
+
+  //! The area per momentum quantity type
+  typedef boost::units::quantity<AreaPerMomentumUnit> AreaPerMomentumQuantity;
+  
   
   //! Constructor
   DopplerBroadenedPhotonEnergyDistribution()
@@ -44,111 +85,127 @@ public:
   virtual bool isComplete() const = 0;
 
   //! Evaluate the distribution with electron momentum projection
-  virtual double evaluateWithElectronMomentumProjection(
-                              const double incoming_energy,
-                              const double electron_momentum_projection,
-                              const double scattering_angle_cosine ) const = 0;
+  virtual AreaPerMomentumQuantity evaluateWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-                   const double outgoing_energy,
-                   const double scattering_angle_cosine ) const;
+  AreaPerEnergyQuantity evaluate( const EnergyQuantity incoming_energy,
+                                  const EnergyQuantity outgoing_energy,
+                                  const double scattering_angle_cosine ) const;
 
   //! Evaluate the exact distribution
-  virtual double evaluateExact(
-                              const double incoming_energy,
-                              const double outgoing_energy,
+  virtual AreaPerEnergyQuantity evaluateExact(
+                              const EnergyQuantity incoming_energy,
+                              const EnergyQuantity outgoing_energy,
                               const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the PDF with electron momentum projection
-  virtual double evaluatePDFWithElectronMomentumProjection(
-                                     const double incoming_energy,
-                                     const double electron_momentum_projection,
-                                     const double scattering_angle_cosine,
-                                     const double precision ) const = 0;
+  virtual InverseMomentumQuantity evaluatePDFWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine,
+                           const double precision ) const = 0;
 
   //! Evaluate the PDF with electron momentum projection
-  double evaluatePDFWithElectronMomentumProjection(
-                                  const double incoming_energy,
-                                  const double electron_momentum_projection,
-                                  const double scattering_angle_cosine ) const;
-
-  //! Evaluate the PDF
-  double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy,
-                      const double scattering_angle_cosine,
-                      const double precision = 1e-3 ) const;
-
-  //! Evaluate the exact PDF
-  virtual double evaluatePDFExact( const double incoming_energy,
-                                   const double outgoing_energy,
-                                   const double scattering_angle_cosine,
-                                   const double precision ) const = 0;
-
-  //! Evaluate the exact PDF with a precision
-  double evaluatePDFExact( const double incoming_energy,
-                           const double outgoing_energy,
+  InverseMomentumQuantity evaluatePDFWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
                            const double scattering_angle_cosine ) const;
 
+  //! Evaluate the PDF
+  InverseEnergyQuantity evaluatePDF( const EnergyQuantity incoming_energy,
+                                     const EnergyQuantity outgoing_energy,
+                                     const double scattering_angle_cosine,
+                                     const double precision = 1e-3 ) const;
+
+  //! Evaluate the exact PDF
+  virtual InverseEnergyQuantity evaluatePDFExact(
+                                          const EnergyQuantity incoming_energy,
+                                          const EnergyQuantity outgoing_energy,
+                                          const double scattering_angle_cosine,
+                                          const double precision ) const = 0;
+
+  //! Evaluate the exact PDF with a precision
+  InverseEnergyQuantity evaluatePDFExact(
+                                  const EnergyQuantity incoming_energy,
+                                  const EnergyQuantity outgoing_energy,
+                                  const double scattering_angle_cosine ) const;
+
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateIntegratedCrossSection(
-                                          const double incoming_energy,
+  virtual AreaQuantity evaluateIntegratedCrossSection(
+                                          const EnergyQuantity incoming_energy,
                                           const double scattering_angle_cosine,
                                           const double precision ) const = 0;
   
   //! Evaluate the exact integrated cross section (b/mu)
-  virtual double evaluateIntegratedCrossSectionExact( 
-			             const double incoming_energy,
+  virtual AreaQuantity evaluateIntegratedCrossSectionExact( 
+			             const EnergyQuantity incoming_energy,
                                      const double scattering_angle_cosine,
                                      const double precision ) const = 0;
 
   //! Sample an outgoing energy from the distribution
-  virtual void sample( const double incoming_energy,
+  virtual void sample( const EnergyQuantity incoming_energy,
 		       const double scattering_angle_cosine,
-		       double& outgoing_energy,
+		       EnergyQuantity& outgoing_energy,
 		       Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Sample an outgoing energy and record the number of trials
   virtual void sampleAndRecordTrials( 
-				const double incoming_energy,
+				const EnergyQuantity incoming_energy,
 				const double scattering_angle_cosine,
-				double& outgoing_energy,
+				EnergyQuantity& outgoing_energy,
 				Data::SubshellType& shell_of_interaction,
 				unsigned& trials ) const = 0;
 
   //! Sample an electron momentum projection and record the number of trials
   virtual void sampleMomentumAndRecordTrials(
-                                          const double incoming_energy,
-                                          const double scattering_angle_cosine,
-                                          double& electron_momentum_projection,
-                                          Data::SubshellType& shell_of_interaction,
-                                          unsigned& trials ) const = 0;
+                                const EnergyQuantity incoming_energy,
+                                const double scattering_angle_cosine,
+                                MomentumQuantity& electron_momentum_projection,
+                                Data::SubshellType& shell_of_interaction,
+                                unsigned& trials ) const = 0;
 
 protected:
 
+  //! The jacobian unit
+  typedef Utility::UnitTraits<MomentumUnit>::GetMultipliedUnitType<Utility::UnitTraits<EnergyUnit>::InverseUnit>::type JabobianUnit;
+
+  //! The area unit times the jacobian unit
+  typedef Utility::UnitTraits<AreaUnit>::GetMultipliedUnitType<Utility::UnitTraits<JacobianUnit> >::type AreaTimesJacobianUnit;
+
+  //! The jacobian quantity
+  typedef boost::units::quantity<JacobianUnit> JacobianQuantity;
+
+  //! The area times jacobian quantity
+  typedef boost::units::quantity<AreaTimeJacobianUnit> AreaTimeJacobianQuantity;
+
   //! Evaluate the cross section multiplier
-  double evaluateMultiplier( const double incoming_energy,
-			     const double scattering_angle_cosine ) const;
+  AreaQuantity evaluateMultiplier(const EnergyQuantity incoming_energy,
+                                  const double scattering_angle_cosine ) const;
 
   //! Evaluate the exact cross section multiplier
-  double evaluateMultiplierExact( const double incoming_energy,
-                                  const double outgoing_energy,
+  AreaTimeJacobianQuantity evaluateMultiplierExact(
+                                  const EnergyQuantity incoming_energy,
+                                  const EnergyQuantity outgoing_energy,
                                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the relativistic term
-  double evaluateRelativisticTerm(const double incoming_energy,
+  double evaluateRelativisticTerm(const EnergyQuantity incoming_energy,
                                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the exact relativistic term
   double evaluateRelativisticTermExact(
-                                  const double incoming_energy,
-                                  const double outgoing_energy,
+                                  const EnergyQuantity incoming_energy,
+                                  const EnergyQuantity outgoing_energy,
                                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the approximate jacobian for a change of variables from pz to E
-  double evaluateJacobian( const double incoming_energy,
-                           const double outgoing_energy,
-                           const double scattering_angle_cosine ) const;
+  JacobianQuantity evaluateJacobian(
+                                  const EnergyQuantity incoming_energy,
+                                  const EnergyQuantity outgoing_energy,
+                                  const double scattering_angle_cosine ) const;
 };
 
 // Evaluate the approximate jacobian for a change of variables from pz to E
@@ -156,30 +213,32 @@ protected:
  * approximate double differential cross section as a function of electron
  * momentum projection (in me*c units) to outgoing energy.
  */
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluateJacobian(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+inline DopplerBroadenedPhotonEnergyDistribution::JacobianQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluateJacobian(
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
   
   // Calculate the unitless incoming energy
   const double incoming_alpha = incoming_energy/
-    Utility::PhysicalConstants::electron_rest_mass_energy;
+    Utility::PhysicalConstants::electron_rest_mass_energy_q;
 
   // Calculate the unitless outgoing energy
   const double outgoing_alpha = outgoing_energy/
-    Utility::PhysicalConstants::electron_rest_mass_energy;
+    Utility::PhysicalConstants::electron_rest_mass_energy_q;
   
   // Calculate the Jacobian
-  const double jacobian = (1.0+incoming_alpha*(1-scattering_angle_cosine))/
+  const JacobianQuantity jacobian =
+    (1.0+incoming_alpha*(1-scattering_angle_cosine))*MomentumUnit()/
     (Utility::PhysicalConstants::electron_rest_mass_energy*
      std::sqrt(incoming_alpha*incoming_alpha + outgoing_alpha*outgoing_alpha -
                2.0*incoming_alpha*outgoing_alpha*scattering_angle_cosine));
@@ -194,51 +253,50 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluateJacobian(
  * electron momentum projection (pz) and doing a change of variable to
  * energy.
  */  
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluate(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+inline DopplerBroadenedPhotonEnergyDistribution::AreaPerEnergyQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluate(
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
-  const double pz = calculateElectronMomentumProjection(
+  const MomentumQuantity pz = calculateElectronMomentumProjectionQuantity(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
   
   // Calculate the cross section
-  const double cross_section =
-    this->evaluateJacobian( incoming_energy,
-                            outgoing_energy,
-                            scattering_angle_cosine )*
+  return this->evaluateJacobian( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine )*
     this->evaluateWithElectronMomentumProjection( incoming_energy,
                                                   pz,
                                                   scattering_angle_cosine );
-
-  return cross_section;    
 }
 
 // Evaluate the PDF with electron momentum projection
 /*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFWithElectronMomentumProjection(
-                                  const double incoming_energy,
-                                  const double electron_momentum_projection,
-                                  const double scattering_angle_cosine ) const
+inline DopplerBroadenedPhotonEnergyDistribution::InverseMomentumQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluatePDFWithElectronMomentumProjection(
+                           const EnergyQuantity incoming_energy,
+                           const MomentumQuantity electron_momentum_projection,
+                           const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the electron momentum projection is valid
-  testPrecondition( electron_momentum_projection >= -1.0 );
+  testPrecondition( electron_momentum_projection >= -1.0*MomentumUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -253,16 +311,17 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFWithElectronM
 // Evaluate the exact PDF with a precision
 /*! \details A default precision of 1e-3 will be used to evaluate the PDF
  */  
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFExact(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+inline DopplerBroadenedPhotonEnergyDistribution::InverseEnergyQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluatePDFExact(
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -279,17 +338,18 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDFExact(
  * electron momentum projection (pz) and doing a change of variable to
  * energy.
  */
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+inline DopplerBroadenedPhotonEnergyDistribution::InverseEnergyQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine,
                                    const double precision ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
-  testPrecondition( outgoing_energy >= 0.0 );
+  testPrecondition( outgoing_energy >= 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -299,16 +359,15 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
 
   // Calculate the electron momentum projection corresponding to the
   // outgoing energy
-  const double pz = calculateElectronMomentumProjection(
+  const MomentumQuantity pz = calculateElectronMomentumProjectionQuantity(
                                                      incoming_energy,
                                                      outgoing_energy,
                                                      scattering_angle_cosine );
   
   // Calculate the cross section
-  const double pdf =
-    this->evaluateJacobian( incoming_energy,
-                            outgoing_energy,
-                            scattering_angle_cosine )*
+  return this->evaluateJacobian( incoming_energy,
+                                 outgoing_energy,
+                                 scattering_angle_cosine )*
     this->evaluatePDFWithElectronMomentumProjection( incoming_energy,
                                                      pz,
                                                      scattering_angle_cosine,
@@ -322,12 +381,12 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluatePDF(
  */
 inline double
 DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTermExact(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
   // Make sure the scattering angle is valid
@@ -349,7 +408,7 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTermExact(
  */
 inline double
 DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTerm(
-                                   const double incoming_energy,
+                                   const EnergyQuantity incoming_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
@@ -358,8 +417,9 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTerm(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double compton_line_energy = 
-    calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
+  const EnergyQuantity compton_line_energy = 
+    calculateComptonLineEnergyQuantity( incoming_energy,
+                                        scattering_angle_cosine );
 
   const double term = incoming_energy/compton_line_energy +
     compton_line_energy/incoming_energy - 1.0 +
@@ -378,34 +438,40 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateRelativisticTerm(
  * (this assumes that the Compton profile in inverse me*c units will be used to
  * evaluate the cross section).
  */
-inline double
+inline DopplerBroadenedPhotonEnergyDistribution::AreaTimesJacobianQuantity
 DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplierExact(
-                                   const double incoming_energy,
-                                   const double outgoing_energy,
+                                   const EnergyQuantity incoming_energy,
+                                   const EnergyQuantity outgoing_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the outgoing energy is valid
   testPrecondition( outgoing_energy <= incoming_energy );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double term_1 =
-    Utility::PhysicalConstants::pi*1e24*
-    Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius;
+  const AreaQuantity term_1(
+                     Utility::PhysicalConstants::pi*
+                     Utility::PhysicalConstants::classical_electron_radius_q*
+                     Utility::PhysicalConstants::classical_electron_radius_q );
 
   const double term_2 =
-    1.0/std::sqrt( incoming_energy*incoming_energy +
-                   outgoing_energy*outgoing_energy -
-                   2.0*incoming_energy*outgoing_energy*
-                   scattering_angle_cosine );
+    Utility::PhysicalConstants::electron_rest_mass_energy_q/
+    std::sqrt( incoming_energy*incoming_energy +
+               outgoing_energy*outgoing_energy -
+               2.0*incoming_energy*outgoing_energy*
+               scattering_angle_cosine );
 
   const double term_3 = outgoing_energy/incoming_energy;
 
-  return term_1*term_2*term_3;
+  // This quantity is used to ensure that the units of the cross section will
+  // be correct units (b/MeV) when this multiplier is multiplied by the Compton
+  // profile value
+  const JacobianQuantity unit_conversion_term = 1.0*JacobianUnit();
+
+  return term_1*term_2*term_3*unit_conversion_term;
 }
 
 // Evaluate the cross section multiplier
@@ -415,23 +481,25 @@ DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplierExact(
  * (this assumes that the Compton profile in inverse me*c units will be used to
  * evaluate the cross section).
  */
-inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
-                                   const double incoming_energy,
+inline DopplerBroadenedPhotonEnergyDistribution::AreaQuantity
+DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
+                                   const EnergyQuantity incoming_energy,
                                    const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy > 0.0*EnergyUnit() );
   // Make sure the scattering angle is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double term_1 = 
-    Utility::PhysicalConstants::pi*1e24*
-    Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius;
+  const AreaQuantity term_1(
+                     Utility::PhysicalConstants::pi*
+                     Utility::PhysicalConstants::classical_electron_radius_q*
+                     Utility::PhysicalConstants::classical_electron_radius_q );
   
-  const double compton_line_energy = 
-    calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
+  const EnergyQuantity compton_line_energy = 
+    calculateComptonLineEnergyQuantity( incoming_energy,
+                                        scattering_angle_cosine );
 
   double term_2 = (compton_line_energy/incoming_energy);
   term_2 = term_2*term_2;
