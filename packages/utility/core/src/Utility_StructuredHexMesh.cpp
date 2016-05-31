@@ -63,7 +63,7 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
   if(!start_point_in_mesh)
   {
   
-    //find the possible interaction planes
+    //find the possible interaction planes - first is dimension, second is index
     Teuchos::Array<std::pair<unsigned, unsigned>> interaction_planes =
       findInteractionPlanes( start_point, 
                              direction );
@@ -76,7 +76,7 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
       return contribution_array;
   
     }
-    //find the distances to each plane
+    //find the distances to each plane - first is dimension, second is distance
     Teuchos::Array<std::pair<unsigned,double>> distance_array = 
       findDistances( start_point,
                      direction,
@@ -139,7 +139,8 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
     to find the interaction planes whether the start point is in the mesh or the
     start point was outside the mesh because the interaction planes will change under
     the circumstances of the start point being outside the mesh
-    note: size of the array must be 3 here for it to make any sense*/
+    note: size of the array must be 3 here for it to make any sense
+    first is dimension, second is plane index*/
   Teuchos::Array<std::pair<unsigned, unsigned>> interaction_planes =
     findInteractionPlanes( current_point, 
                            direction );
@@ -149,7 +150,7 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
   unsigned y_index = interaction_planes[1].second;
   unsigned z_index = interaction_planes[2].second;
   
-  //determine which direction to increment based on direction
+  //determine which direction to increment based on direction vector
   int incrementer[3];
   
   for(unsigned i = 0; i < 3; ++i)
@@ -194,10 +195,10 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
                                     z_index );
     
     //form a contribution out of the distance found earlier and the hex_index
-    std::pair<unsigned,double> contribution = std:make_pair(hex_index, distance);
+    std::pair<unsigned,double> contribution = std::make_pair(hex_index, distance);
     
     //push the contribution into the contribution array
-    contributionArray.push_back(contribution);
+    contribution_array.push_back(contribution);
     
     //determine which plane it crossed and iterate this index up
     unsigned intersection_dimension = distance.first;
@@ -233,6 +234,7 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
     }
   }
   
+  return contribution_array;
 
 }
 
