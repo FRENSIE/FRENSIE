@@ -57,25 +57,6 @@ int main( int argc, char** argv )
 
     return parse_return;
   }
-
-  // Run the Python script passing a filename argument to create bash script.
-  std::string command = 
-    "python /home/lkersting/frensie/src/scripts/endl.py -d " + cross_section_directory;
-  int error_flag = system(command.c_str());
-  if ( error_flag == -1 )
-  {
-    std::cerr << "Error: unable to execute command: "
-	      << command.c_str();
-  }
-
-  // Run the bash script to download ENDL files
-  command = "bash endl.sh && rm endl.sh";
-  error_flag = system(command.c_str());
-  if ( error_flag == -1 )
-  {
-    std::cerr << "Error: unable to execute command: "
-	      << command.c_str();
-  }
 		
   // Set array of endl element id's
   Teuchos::Array<std::string> endl_element_id(100);
@@ -126,6 +107,9 @@ int main( int argc, char** argv )
   data_container.exportData( new_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
   }
+
+  std::cout << "The ENDL Library has been processed!\n" <<
+               "To generate Native data using the ENDL Library run the endl_cs_xml_modifier tool!" << std::endl;
 							      
   return 0;
 }

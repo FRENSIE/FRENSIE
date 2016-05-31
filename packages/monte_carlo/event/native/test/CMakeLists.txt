@@ -5,59 +5,72 @@ ADD_EXECUTABLE(tstResponseFunction
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstResponseFunction monte_carlo_estimator_native)
 ADD_TEST(ResponseFunction_test tstResponseFunction)
+SET_PROPERTY(TEST ResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstEnergySpaceResponseFunction
   tstEnergySpaceResponseFunction.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction monte_carlo_estimator_native)
 ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
+SET_PROPERTY(TEST EnergySpaceResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
   tstPhaseSpaceResponseFunction.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction monte_carlo_estimator_native)
 ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
+SET_PROPERTY(TEST PhaseSpaceResponseFunction_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstEstimatorParticleStateWrapper
   tstEstimatorParticleStateWrapper.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstEstimatorParticleStateWrapper monte_carlo_estimator_native)
 ADD_TEST(EstimatorParticleStateWrapper_test tstEstimatorParticleStateWrapper)
+SET_PROPERTY(TEST EstimatorParticleStateWrapper_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleHistoryObserverHDF5FileHandler
   tstParticleHistoryObserverHDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleHistoryObserverHDF5FileHandler monte_carlo_estimator_native)
 ADD_TEST(ParticleHistoryObserverHDF5FileHandler_test tstParticleHistoryObserverHDF5FileHandler)
+SET_PROPERTY(TEST ParticleHistoryObserverHDF5FileHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstEstimatorHDF5FileHandler
   tstEstimatorHDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstEstimatorHDF5FileHandler monte_carlo_estimator_native)
 ADD_TEST(EstimatorHDF5FileHandler_test tstEstimatorHDF5FileHandler)
+SET_PROPERTY(TEST EstimatorHDF5FileHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
   tstGeneralEstimatorDimensionDiscretization.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization monte_carlo_estimator_native)
 ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
+SET_PROPERTY(TEST GeneralEstimatorDimensionDiscretization_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstEstimator tstEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstEstimator monte_carlo_estimator_native)
 ADD_TEST(Estimator_test tstEstimator)
+SET_PROPERTY(TEST Estimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEstimator_2_test tstEstimator --threads=2)
   ADD_TEST(SharedParallelEstimator_4_test tstEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstEntityEstimator tstEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(EntityEstimator_test tstEntityEstimator)
+SET_PROPERTY(TEST EntityEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEntityEstimator_2_test tstEntityEstimator --threads=2)
   ADD_TEST(SharedParallelEntityEstimator_4_test tstEntityEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -70,17 +83,23 @@ IF(${FRENSIE_ENABLE_MPI})
     ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
   ADD_TEST(DistributedParallelEntityEstimator_4_test 
     ${MPIEXEC} -n 4 tstDistributedEntityEstimator)
+  SET_PROPERTY(TEST DistributedParallelEntityEstimator_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstStandardEntityEstimator tstStandardEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+SET_PROPERTY(TEST StandardEntityEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelStandardEntityEstimator_2_test 
     tstStandardEntityEstimator --threads=2)
   ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
     tstStandardEntityEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -93,6 +112,9 @@ IF(${FRENSIE_ENABLE_MPI})
     ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
   ADD_TEST(DistributedParallelStandardEntityEstimator_4_test 
     ${MPIEXEC} -n 4 tstDistributedStandardEntityEstimator)
+  SET_PROPERTY(TEST DistributedParallelStandardEntityEstimator_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelStandardEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelStandardEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstStandardSurfaceEstimator
@@ -100,34 +122,44 @@ Add_EXECUTABLE(tstStandardSurfaceEstimator
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
+SET_PROPERTY(TEST StandardSurfaceEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 Add_EXECUTABLE(tstSurfaceFluxEstimator tstSurfaceFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceFluxEstimator_test tstSurfaceFluxEstimator)
+SET_PROPERTY(TEST SurfaceFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelSurfaceFluxEstimator_2_test tstSurfaceFluxEstimator --threads=2)
   ADD_TEST(SharedParallelSurfaceFluxEstimator_4_test tstSurfaceFluxEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelSurfaceFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelSurfaceFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstSurfaceCurrentEstimator tstSurfaceCurrentEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
+SET_PROPERTY(TEST SurfaceCurrentEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelSurfaceCurrentEstimator_2_test tstSurfaceCurrentEstimator --threads=2)
   ADD_TEST(SharedParallelSurfaceCurrentEstimator_4_test tstSurfaceCurrentEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelSurfaceCurrentEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelSurfaceCurrentEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstCellPulseHeightEstimator tstCellPulseHeightEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator monte_carlo_estimator_native)
 ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+SET_PROPERTY(TEST CellPulseHeightEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellPulseHeightEstimator_2_test 
     tstCellPulseHeightEstimator --threads=2)
   ADD_TEST(SharedParallelCellPulseHeightEstimator_4_test 
     tstCellPulseHeightEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelCellPulseHeightEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelCellPulseHeightEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstStandardCellEstimator
@@ -135,49 +167,61 @@ Add_EXECUTABLE(tstStandardCellEstimator
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStandardCellEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardCellEstimator_test tstStandardCellEstimator)
+SET_PROPERTY(TEST StandardCellEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 Add_EXECUTABLE(tstCellCollisionFluxEstimator
   tstCellCollisionFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
+SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test 
     tstCellCollisionFluxEstimator --threads=2)
   ADD_TEST(SharedParallelCellCollisionFluxEstimator_4_test 
     tstCellCollisionFluxEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelCellCollisionFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelCellCollisionFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
-Add_EXECUTABLE(tstCellTrackLengthFluxEstimator 
+Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
   tstCellTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
+SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test 
     tstCellTrackLengthFluxEstimator --threads=2)
   ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4_test 
     tstCellTrackLengthFluxEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
   tstTetMeshTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
 ADD_TEST(TetMeshTrackLengthFluxEstimator_test tstTetMeshTrackLengthFluxEstimator --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+SET_PROPERTY(TEST TetMeshTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
   tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
 ADD_TEST(ParticleTrackerHDF5FileHandler_test tstParticleTrackerHDF5FileHandler)
+SET_PROPERTY(TEST ParticleTrackerHDF5FileHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
-ADD_EXECUTABLE(tstParticleTracker 
+ADD_EXECUTABLE(tstParticleTracker
     tstParticleTracker.cpp)
 TARGET_LINK_LIBRARIES(tstParticleTracker monte_carlo_estimator_native)
 ADD_TEST(ParticleTracker_test tstParticleTracker)
+SET_PROPERTY(TEST ParticleTracker_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelParticleTracker_2_test tstParticleTracker --threads=2)
   ADD_TEST(SharedParallelParticleTracker_4_test tstParticleTracker --threads=4)
+  SET_PROPERTY(TEST SharedParallelParticleTracker_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelParticleTracker_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -187,83 +231,100 @@ IF(${FRENSIE_ENABLE_MPI})
   ADD_TEST(DistributedParallelParticleTracker_1_test ${MPIEXEC} -n 1 tstDistributedParallelParticleTracker)
   ADD_TEST(DistributedParallelParticleTracker_2_test ${MPIEXEC} -n 2 tstDistributedParallelParticleTracker)
   ADD_TEST(DistributedParallelParticleTracker_4_test ${MPIEXEC} -n 4 tstDistributedParallelParticleTracker)
+  SET_PROPERTY(TEST DistributedParallelParticleTracker_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelParticleTracker_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelParticleTracker_4_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
 ENDIF()
 
 Add_EXECUTABLE(tstParticleSubtrackEndingGlobalEventDispatcher
   tstParticleSubtrackEndingGlobalEventDispatcher.cpp)
 TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingGlobalEventDispatcher monte_carlo_estimator_native ${MOAB})
 ADD_TEST(ParticleSubtrackEndingGlobalEventDispatcher_test tstParticleSubtrackEndingGlobalEventDispatcher --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+SET_PROPERTY(TEST ParticleSubtrackEndingGlobalEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 Add_EXECUTABLE(tstParticleCollidingInCellEventLocalDispatcher
   tstParticleCollidingInCellEventLocalDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleCollidingInCellEventLocalDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleCollidingInCellEventLocalDispatcher_test tstParticleCollidingInCellEventLocalDispatcher)
+SET_PROPERTY(TEST ParticleCollidingInCellEventLocalDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleCrossingSurfaceEventLocalDispatcher
   tstParticleCrossingSurfaceEventLocalDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleCrossingSurfaceEventLocalDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleCrossingSurfaceEventLocalDispatcher_test tstParticleCrossingSurfaceEventLocalDispatcher)
+SET_PROPERTY(TEST ParticleCrossingSurfaceEventLocalDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleEnteringCellEventLocalDispatcher
   tstParticleEnteringCellEventLocalDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleEnteringCellEventLocalDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleEnteringCellEventLocalDispatcher_test tstParticleEnteringCellEventLocalDispatcher)
+SET_PROPERTY(TEST ParticleEnteringCellEventLocalDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleLeavingCellEventLocalDispatcher
   tstParticleLeavingCellEventLocalDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleLeavingCellEventLocalDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleLeavingCellEventLocalDispatcher_test tstParticleLeavingCellEventLocalDispatcher)
+SET_PROPERTY(TEST ParticleLeavingCellEventLocalDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleSubtrackEndingInCellEventLocalDispatcher
   tstParticleSubtrackEndingInCellEventLocalDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingInCellEventLocalDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleSubtrackEndingInCellEventLocalDispatcher_test tstParticleSubtrackEndingInCellEventLocalDispatcher)
+SET_PROPERTY(TEST ParticleSubtrackEndingInCellEventLocalDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleCollidingInCellEventDispatcher
   tstParticleCollidingInCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleCollidingInCellEventDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleCollidingInCellEventDispatcher_test tstParticleCollidingInCellEventDispatcher)
+SET_PROPERTY(TEST ParticleCollidingInCellEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleCrossingSurfaceEventDispatcher
   tstParticleCrossingSurfaceEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleCrossingSurfaceEventDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleCrossingSurfaceEventDispatcher_test tstParticleCrossingSurfaceEventDispatcher)
+SET_PROPERTY(TEST ParticleCrossingSurfaceEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleEnteringCellEventDispatcher
   tstParticleEnteringCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleEnteringCellEventDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleEnteringCellEventDispatcher_test tstParticleEnteringCellEventDispatcher)
+SET_PROPERTY(TEST ParticleEnteringCellEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleLeavingCellEventDispatcher
   tstParticleLeavingCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleLeavingCellEventDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleLeavingCellEventDispatcher_test tstParticleLeavingCellEventDispatcher)
+SET_PROPERTY(TEST ParticleLeavingCellEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleSubtrackEndingInCellEventDispatcher
   tstParticleSubtrackEndingInCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingInCellEventDispatcher monte_carlo_estimator_native)
 ADD_TEST(ParticleSubtrackEndingInCellEventDispatcher_test tstParticleSubtrackEndingInCellEventDispatcher)
+SET_PROPERTY(TEST ParticleSubtrackEndingInCellEventDispatcher_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstEventHandler
   tstEventHandler.cpp)
 TARGET_LINK_LIBRARIES(tstEventHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+SET_PROPERTY(TEST EventHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEventHandler_2_test 
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
   ADD_TEST(SharedParallelEventHandler_4_test 
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
+  SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -276,47 +337,57 @@ IF(${FRENSIE_ENABLE_MPI})
     ${MPIEXEC} -n 2 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   ADD_TEST(DistributedParallelEventHandler_4_test 
     ${MPIEXEC} -n 4 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+  SET_PROPERTY(TEST DistributedParallelEventHandler_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
+  SET_PROPERTY(TEST DistributedParallelEventHandler_4_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
 ENDIF()
 
 ADD_EXECUTABLE(tstEventModuleInterface_Native
   tstModuleInterface.cpp)
 TARGET_LINK_LIBRARIES(tstEventModuleInterface_Native monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EventModuleInterface_Native_test tstEventModuleInterface_Native --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+SET_PROPERTY(TEST EventModuleInterface_Native_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstResponseFunctionFactory
   tstResponseFunctionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstResponseFunctionFactory monte_carlo_estimator_native)
 ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
+SET_PROPERTY(TEST ResponseFunctionFactory_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(FRENSIE_ENABLE_DAGMC)
-ADD_EXECUTABLE(tstStandardEstimatorFactory_DagMC
-  tstStandardEstimatorFactory_DagMC.cpp)
-TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_DagMC monte_carlo_estimator_native)
-ADD_TEST(StandardEstimatorFactory_DagMC_test tstStandardEstimatorFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
+  ADD_EXECUTABLE(tstStandardEstimatorFactory_DagMC
+    tstStandardEstimatorFactory_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_DagMC monte_carlo_estimator_native)
+  ADD_TEST(StandardEstimatorFactory_DagMC_test tstStandardEstimatorFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc.xml")
+  SET_PROPERTY(TEST StandardEstimatorFactory_DagMC_test PROPERTY LABELS monte_carlo_estimator_native dagmc)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
-ADD_EXECUTABLE(tstStandardEstimatorFactory_Root
-  tstStandardEstimatorFactory_Root.cpp)
-TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_Root monte_carlo_estimator_native)
-ADD_TEST(StandardEstimatorFactory_Root_test tstStandardEstimatorFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
+  ADD_EXECUTABLE(tstStandardEstimatorFactory_Root
+    tstStandardEstimatorFactory_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstStandardEstimatorFactory_Root monte_carlo_estimator_native)
+  ADD_TEST(StandardEstimatorFactory_Root_test tstStandardEstimatorFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root.xml")
+  SET_PROPERTY(TEST StandardEstimatorFactory_Root_test PROPERTY LABELS monte_carlo_estimator_native root)
 ENDIF()
 
 ADD_EXECUTABLE(tstParticleTrackerFactory
   tstParticleTrackerFactory.cpp)
 TARGET_LINK_LIBRARIES(tstParticleTrackerFactory monte_carlo_estimator_native)
 ADD_TEST(ParticleTrackerFactory_test tstParticleTrackerFactory --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_ptrac.xml")
+SET_PROPERTY(TEST ParticleTrackerFactory_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(FRENSIE_ENABLE_DAGMC)
-ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
-  tstEventHandlerFactory_DagMC.cpp)
-TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
-ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc_factory.xml")
+  ADD_EXECUTABLE(tstEventHandlerFactory_DagMC
+    tstEventHandlerFactory_DagMC.cpp)
+  TARGET_LINK_LIBRARIES(tstEventHandlerFactory_DagMC monte_carlo_estimator_native)
+  ADD_TEST(EventHandlerFactory_DagMC_test tstEventHandlerFactory_DagMC --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_dagmc.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_dagmc_factory.xml")
+  SET_PROPERTY(TEST EventHandlerFactory_DagMC_test PROPERTY LABELS monte_carlo_estimator_native dagmc)
 ENDIF()
 
 IF(FRENSIE_ENABLE_ROOT)
-ADD_EXECUTABLE(tstEventHandlerFactory_Root
-  tstEventHandlerFactory_Root.cpp)
-TARGET_LINK_LIBRARIES(tstEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
-ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root_factory.xml")
+  ADD_EXECUTABLE(tstEventHandlerFactory_Root
+    tstEventHandlerFactory_Root.cpp)
+  TARGET_LINK_LIBRARIES(tstEventHandlerFactory_Root monte_carlo_estimator_native geometry_root)
+  ADD_TEST(EventHandlerFactoryRoot_test tstEventHandlerFactory_Root --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom_root.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_response_functions.xml" --test_observer_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_observers_root_factory.xml")
+  SET_PROPERTY(TEST EventHandlerFactory_Root_test PROPERTY LABELS monte_carlo_estimator_native root)
 ENDIF()

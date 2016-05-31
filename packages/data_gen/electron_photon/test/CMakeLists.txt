@@ -1,47 +1,62 @@
 ADD_EXECUTABLE(tstOccupationNumberEvaluator tstOccupationNumberEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
-ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+SET_PROPERTY(TEST OccupatioNumberEvaluator_test PROPERTY LABELS data_gen_electron_photon)
 
 ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
     tstStandardElectronPhotonRelaxationDataGenerator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_endl_1_native.xml" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_endl_6_native.xml")
+ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_h_endl_native.xml" --test_c_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${GLOBAL_ENDL_TEST_DATA_SOURCE_DIR}/test_c_endl_native.xml")
+SET_PROPERTY(TEST StandardElectronPhotonRelaxationDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron photon relaxation)
 
 ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
   tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstAdjointBremsstrahlungCrossSectionEvaluator data_gen_electron_photon)
-ADD_TEST(AdjointBremsstrahlungCrossSectionEvaluator_test tstAdjointBremsstrahlungCrossSectionEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+ADD_TEST(AdjointBremsstrahlungCrossSectionEvaluator_test tstAdjointBremsstrahlungCrossSectionEvaluator --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+SET_PROPERTY(TEST AdjointBremsstrahlungCrossSectionEvaluator_test PROPERTY LABELS data_gen_electron_photon)
 
 ADD_EXECUTABLE(tstAdjointElectroionizationSubshellCrossSectionEvaluator
   tstAdjointElectroionizationSubshellCrossSectionEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstAdjointElectroionizationSubshellCrossSectionEvaluator data_gen_electron_photon)
-ADD_TEST(AdjointElectroionizationSubshellCrossSectionEvaluator_test tstAdjointElectroionizationSubshellCrossSectionEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+ADD_TEST(AdjointElectroionizationSubshellCrossSectionEvaluator_test tstAdjointElectroionizationSubshellCrossSectionEvaluator --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+SET_PROPERTY(TEST AdjointElectroionizationSubshellCrossSectionEvaluator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
 ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
   tstAdjointIncoherentCrossSectionHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionHelpers data_gen_electron_photon)
 ADD_TEST(AdjointIncoherentCrossSectionHelpers_test tstAdjointIncoherentCrossSectionHelpers)
+SET_PROPERTY(TEST AdjointIncoherentCrossSectionHelpers_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
 ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
   tstAdjointIncoherentGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_electron_photon)
 ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
+SET_PROPERTY(TEST AdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
 ADD_EXECUTABLE(tstAdjointElectronGridGenerator
   tstAdjointElectronGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstAdjointElectronGridGenerator data_gen_electron_photon)
 ADD_TEST(AdjointElectronGridGenerator_test tstAdjointElectronGridGenerator)
+SET_PROPERTY(TEST AdjointElectronGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint electron)
 
 # ADD_EXECUTABLE(tstStandardAdjointIncoherentGridGenerator
 #   tstStandardAdjointIncoherentGridGenerator.cpp)
 # TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
-# ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+# ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+# SET_PROPERTY(TEST StandardAdjointIncoherentGridGenerator_test PROPERTY LABELS data_gen_electron_photon adjoint photon)
 
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
   tstElasticElectronMomentsEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
-ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST ElasticElectronMomentsEvaluator_test PROPERTY LABELS data_gen_electron_photon electron)
+
+ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator
+  tstStandardSoftElasticElectronDataGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardSoftElasticElectronDataGenerator data_gen_electron_photon)
+ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+SET_PROPERTY(TEST StandardSoftElasticElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
 

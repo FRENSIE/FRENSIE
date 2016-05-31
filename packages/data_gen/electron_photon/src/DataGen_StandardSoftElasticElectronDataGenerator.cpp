@@ -18,7 +18,7 @@
 #include "Utility_HistogramDistribution.hpp"
 
 namespace DataGen{
-/*
+
 // Constructor
 StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerator( 
 	   const unsigned atomic_number,
@@ -36,7 +36,7 @@ StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerat
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
-  testPrecondition( atomic_number == native_eedl_data->extractAtomicNumber() );
+  testPrecondition( atomic_number == native_eedl_data->getAtomicNumber() );
   // Make sure the endl data is valid
   testPrecondition( !native_eedl_data.is_null() );
   // Make sure the electron energy limits are valid
@@ -59,71 +59,19 @@ void StandardSoftElasticElectronDataGenerator::populateSoftElasticDataContainer(
 
 // Set the soft elastic electron data
 void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData( 
-			   Data::SoftElasticElectronVolatileDataContainer&
-			   data_container ) const
+    Data::SoftElasticElectronVolatileDataContainer& data_container ) const
 {
   // Set cutoff angle cosine
   data_container.setCutoffAngleCosine( d_cutoff_angle );
 
-  // Extract the energy grid and cross section
-  Teuchos::ArrayRCP<double> energy_grid;
-  energy_grid.deepCopy( d_native_eedl_data->extractElectronEnergyGrid() );
-  
-  Teuchos::Array<double> elastic_cross_section = 
-    d_native_eedl_data->extractElasticCrossSection();
-
-  // Extract the elastic scattering information data block (ELASI)
-  Teuchos::ArrayView<const double> elasi_block(
-				      d_native_eedl_data->extractELASIBlock() );
-  
-  // Extract the number of tabulated distributions
-  int size = elasi_block.size()/3;
-
-  // Extract the energy grid for elastic scattering angular distributions
-  Teuchos::Array<double> elastic_energy_grid(elasi_block(0,size));
-
-  // Extract the table lengths for elastic scattering angular distributions
-  Teuchos::Array<double> table_length(elasi_block(size,size));
-
-  // Extract the offsets for elastic scattering angular distributions
-  Teuchos::Array<double> offset(elasi_block(2*size,size));
-
-  // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
-    d_native_eedl_data->extractELASBlock();
-
-  // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    elastic_scattering_function( size );
-  
-  for( unsigned n = 0; n < size; ++n )
-  {
-    elastic_scattering_function[n].first = elastic_energy_grid[n];
-
-    elastic_scattering_function[n].second.reset( 
-	  new Utility::HistogramDistribution(
-		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
-  }  
-
   // Set the elastic angular energy grid
-  data_container.setElasticAngularEnergyGrid( elastic_energy_grid.toVector() ); 
-
-
-  Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
-    elastic_distribution;
-  elastic_distribution.reset( 
-	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
-                                        d_native_eedl_data->extractAtomicNumber(), 
-                                        elastic_scattering_function ) );
-
+  data_container.setElasticAngularEnergyGrid( 
+    d_native_eedl_data->getElasticAngularEnergyGrid() );
 
   // Get the moment of the elastic scattering distribution
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset( 
     new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data, 
-                                                  elastic_distribution, 
                                                   d_cutoff_angle ) );
 
   
@@ -133,6 +81,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
   Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature;
   double precision = 1e-13;
   int n = ( d_number_of_discrete_angles+1 )*2 + 2+10;
+  int size = d_native_eedl_data->getElasticAngularEnergyGrid().size();
 
   // iterate through all angular energy bins
   for ( unsigned i = 0; i < size; i++ )
@@ -167,7 +116,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
     data_container.setSoftElasticWeights( i, weights.toVector() );
   }
 }
-*/
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

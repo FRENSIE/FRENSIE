@@ -227,11 +227,14 @@ ADD_UNINSTALL_TARGET()
 
 ##---------------------------------------------------------------------------##
 ## Set Up the Project Directory Hierarchy
+
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
 
 ADD_SUBDIRECTORY(tools)
+
+SET(GLOBAL_TOOLS_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/tools)
 
 ADD_SUBDIRECTORY(doc)
 
@@ -240,7 +243,22 @@ ADD_SUBDIRECTORY(doc)
 ##---------------------------------------------------------------------------##
 # run `make test-fast` to run all tests except for the facemc tests
 ADD_CUSTOM_TARGET(test-fast 
-  COMMAND ctest -E Facemc
+  COMMAND ctest -E Facemc --no-labels-summary
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast4 
+  COMMAND ctest -E Facemc -LE no_threads -j4 --no-labels-summary
+  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast8
+  COMMAND ctest -E Facemc -LE no_threads -j8 --no-labels-summary
+  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+ADD_CUSTOM_TARGET(test-fast12
+  COMMAND ctest -E Facemc -LE no_threads -j12 --no-labels-summary
+  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # run `make test-facemc` to run only the facemc tests

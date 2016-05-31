@@ -1,11 +1,13 @@
-ADD_EXECUTABLE(tstGaussKronrodIntegrator 
+ADD_EXECUTABLE(tstGaussKronrodIntegrator
   tstGaussKronrodIntegrator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGaussKronrodIntegrator utility_integrator)
 ADD_TEST(GaussKronrodIntegrator_test tstGaussKronrodIntegrator)
+SET_PROPERTY(TEST GaussKronrodIntegrator_test PROPERTY LABELS utility_integrator)
 
-ADD_EXECUTABLE(tstGaussRadauQuadratureSet 
+ADD_EXECUTABLE(tstGaussRadauQuadratureSet
   tstGaussRadauQuadratureSet.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGaussRadauQuadratureSet utility_integrator)
 ADD_TEST(GaussRadauQuadratureSet_test tstGaussRadauQuadratureSet)
+SET_PROPERTY(TEST GaussRadauQuadratureSet_test PROPERTY LABELS utility_integrator)

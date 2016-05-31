@@ -111,7 +111,7 @@ void StandardENDLDataGenerator::setRelaxationData(
     std::set<unsigned> endf_subshells;
     unsigned endf_subshell;
 
-    std::cout << " Reading EADL Data file";
+    std::cout << " Reading EADL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EADL file
@@ -439,7 +439,7 @@ void StandardENDLDataGenerator::setRelaxationData(
   else
   {
     std::cout << "\033[1;31mWARNING:\033[0m EADL file " + d_eadl_file_name + 
-    " does not exists. No EADL data will be generated!" << std::endl;
+    " does not exists. No EADL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 
@@ -469,7 +469,7 @@ void StandardENDLDataGenerator::setPhotonData(
     unsigned endf_subshell;
     std::set<unsigned> endf_subshells;
 
-    std::cout << " Reading EPDL Data file";
+    std::cout << " Reading EPDL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EPDL file
@@ -902,7 +902,7 @@ void StandardENDLDataGenerator::setPhotonData(
   else
   {
     std::cout << "\033[1;31mWARNING:\033[0m EPDL file " + d_epdl_file_name + 
-    " does not exists. No EPDL data will be generated!" << std::endl;
+    " does not exists. No EPDL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 
@@ -941,7 +941,7 @@ void StandardENDLDataGenerator::setElectronData(
     std::map<double,std::vector<double> > elastic_pdf;
 
 
-    std::cout << " Reading EEDL Data file";
+    std::cout << " Reading EEDL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EEDL file
@@ -1355,7 +1355,7 @@ void StandardENDLDataGenerator::setElectronData(
   else
   {
     std::cout << "\033[1;31mWARNING:\033[0m EEDL file " + d_eedl_file_name + 
-    " does not exists. No EEDL data will be generated!" << std::endl;
+    " does not exists. No EEDL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 

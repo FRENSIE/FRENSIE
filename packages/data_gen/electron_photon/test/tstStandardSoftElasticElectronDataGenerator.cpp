@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <stdio.h>
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -31,6 +32,8 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> 
+  native_h_data, native_pb_data;
 Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator>
   data_generator_h, data_generator_pb;
 /*
@@ -114,24 +117,17 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{/*
-  std::string test_h_ace_file_name, test_h_ace_table_name;
-  std::string test_pb_ace_file_name, test_pb_ace_table_name;
+{
+  std::string test_h_native_file_name, test_pb_native_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_h_ace_file",
-		 &test_h_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_h_ace_table",
-		 &test_h_ace_table_name,
-		 "Test ACE table name" );
-  clp.setOption( "test_pb_ace_file",
-		 &test_pb_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_pb_ace_table",
-		 &test_pb_ace_table_name,
-		 "Test ACE table name" );
+  clp.setOption( "test_h_native_file",
+		 &test_h_native_file_name,
+		 "Test NATIVE file name" );
+  clp.setOption( "test_pb_native_file",
+		 &test_pb_native_file_name,
+		 "Test NATIVE file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -143,51 +139,35 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+  /*
   {
-    // Create the file handler and data extractor for hydrogen
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-			       new Data::ACEFileHandler( test_h_ace_file_name,
-							 test_h_ace_table_name,
-							 1u ) );
-
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+    // Create the native data file container
+    native_h_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+						     test_h_native_file_name ) );
 
     data_generator_h.reset( 
 		   new DataGen::StandardSoftElasticElectronDataGenerator(
-				     xss_data_extractor->extractAtomicNumber(),
-				     xss_data_extractor,
+				     native_h_data->getAtomicNumber(),
+				     native_h_data,
 				     0.00001,
 				     20.0,
 				     0.9,
-                     1 ) );
+                     3 ) );
   }
-
+*/
   {
-    // Create the file handler and data extractor for lead
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-			       new Data::ACEFileHandler( test_pb_ace_file_name,
-                                             test_pb_ace_table_name,
-                                             1u ) );
-
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+    // Create the native data file container
+    native_pb_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+						     test_pb_native_file_name ) );
 
     data_generator_pb.reset( 
 		   new DataGen::StandardSoftElasticElectronDataGenerator(
-				     xss_data_extractor->extractAtomicNumber(),
-				     xss_data_extractor,
+				     native_pb_data->getAtomicNumber(),
+				     native_pb_data,
 				     0.00001,
 				     20.0,
 				     0.9,
-                     1 ) );
+                     3 ) );
   }
 
   // Run the unit tests
@@ -202,7 +182,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  */
+  return (success ? 0 : 1);  
 }
 
 //---------------------------------------------------------------------------//
