@@ -24,9 +24,6 @@
 #include <moab/AdaptiveKDTree.hpp>
 #include <moab/Matrix3.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
@@ -69,7 +66,8 @@ public:
 
   //! Set the response functions
   void setResponseFunctions(
-  const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions );
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
@@ -100,7 +98,8 @@ private:
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+                       const std::shared_ptr<EstimatorDimensionDiscretization>&
+                       bin_boundaries );
 
   // The tolerance used for geometric tests
   static const double s_tol;

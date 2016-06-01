@@ -12,9 +12,6 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Teuchos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleEventLocalDispatcher.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventObserver.hpp"
