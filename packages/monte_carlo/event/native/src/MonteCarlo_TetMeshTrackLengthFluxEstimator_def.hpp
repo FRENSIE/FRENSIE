@@ -101,7 +101,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     // Make sure the tet is valid
     TEST_FOR_EXCEPTION( *tet == 0,
 			Utility::MOABException,
-			moab::ErrorCodeStr[return_value] );
+                        "Error: An invalid tet was found!" );
       
     // Extract the vertex data for the given tet
     std::vector<moab::EntityHandle> vertex_handles;
@@ -132,7 +132,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 						vertices[1],
 						vertices[2],
 						vertices[3],
-                        barycentric_transform_matrix );
+                                                barycentric_transform_matrix );
 
     // Assign reference vertices (always fourth vertex)
     d_tet_reference_vertices[*tet] = vertices[3];
@@ -187,7 +187,8 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
+                      const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
+                      response_functions )
 {
   for( unsigned i = 0; i < response_functions.size(); ++i )
   {
@@ -302,25 +303,25 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	  if( tet == 0 )
 	    continue;
 	  
-	  double partial_track_length;
+	  double tet_track_length;
 	  
 	  if( i != 0)
 	  { 
-	    partial_track_length = ray_tet_intersections[i] - 
+	    tet_track_length = ray_tet_intersections[i] - 
 	      ray_tet_intersections[i-1];
 	  }
 	  else
-	    partial_track_length = ray_tet_intersections[i];
+	    tet_track_length = ray_tet_intersections[i];
 	  
 	  // Handle the special case where the first point is on a mesh surface
-	  if( partial_track_length > 0.0 )
+	  if( tet_track_length > 0.0 )
 	  {	
             EstimatorParticleStateWrapper particle_state_wrapper( particle );
             
 	    // Add partial history contribution
 	    addPartialHistoryContribution( tet,
 					   particle_state_wrapper,
-					   partial_track_length );
+					   tet_track_length );
 	  }
 	}
       }
@@ -736,8 +737,8 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                                                  output_tags.size() );
        
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-			    Utility::MOABException,
-			    moab::ErrorCodeStr[return_value] );                                               
+                        Utility::MOABException,
+                        moab::ErrorCodeStr[return_value] );                                               
   }   
 }
 
@@ -842,7 +843,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+      const std::shared_ptr<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == COSINE_DIMENSION )
   {

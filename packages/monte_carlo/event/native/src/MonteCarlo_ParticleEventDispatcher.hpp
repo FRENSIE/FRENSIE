@@ -15,9 +15,6 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 namespace MonteCarlo{
 
 //! The particle event dispatcher database base class
