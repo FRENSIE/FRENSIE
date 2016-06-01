@@ -118,7 +118,7 @@ private:
   static double min_exp_arg;
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The zero temperature cross section
   Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;

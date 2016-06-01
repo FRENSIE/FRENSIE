@@ -67,7 +67,7 @@ private:
   void updateCachedValues();
 
   // The integration gkq_set
-  Utility::GaussKronrodIntegrator d_gkq_set;
+  Utility::GaussKronrodIntegrator<double> d_gkq_set;
 
   // The free gas elastic S(alpha,beta) function
   FreeGasElasticSAlphaBetaFunction d_sab_function;

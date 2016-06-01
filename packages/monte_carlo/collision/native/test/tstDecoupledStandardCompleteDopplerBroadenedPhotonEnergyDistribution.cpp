@@ -1868,7 +1868,7 @@ TEUCHOS_UNIT_TEST(
                          -1.0,
                          Data::K_SUBSHELL );
 
-  Utility::GaussKronrodIntegrator quadrature_set( 1e-3 );
+  Utility::GaussKronrodIntegrator<double> quadrature_set( 1e-3 );
 
   double abs_error, value;
 
