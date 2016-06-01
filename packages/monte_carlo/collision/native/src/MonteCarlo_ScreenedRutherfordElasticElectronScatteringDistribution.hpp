@@ -114,14 +114,11 @@ protected:
 
 private:
 
-/*
-  // Find the lower and upper bin boundary
-  void findLowerAndUpperBinBoundary( 
-        const double incoming_energy,
-        ParameterArray::const_iterator& lower_bin_boundary,
-        ParameterArray::const_iterator& upper_bin_boundary,
-        double& interpolation_fraction ) const;
-*/
+  // The change scattering angle cosine below which the screened Rutherford distribution is used
+  static double s_cutoff_delta_mu;
+
+  // The scattering angle cosine above which the screened Rutherford distribution is used
+  static double s_cutoff_mu;
 
   // The fine structure constant (fsc) squared
   static double s_fine_structure_const_squared;
@@ -137,12 +134,6 @@ private:
 
   // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
   double d_screening_param2;
-
-  // The scattering angle below which the screened Rutherford distribution is used
-  double d_upper_cutoff_delta_mu;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  double d_lower_cutoff_angle_cosine;
 
   // Flag to indicate that tabulated screened rutherford parameters are used
   bool d_using_endl_tables;

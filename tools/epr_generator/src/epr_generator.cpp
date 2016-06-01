@@ -149,10 +149,10 @@ int main( int argc, char** argv )
     std::string endl_file_path = cross_section_directory;
     endl_file_path += "endldata/";
     endl_file_path += oss.str();
-
+/*
     endl_file_path = "/home/software/mcnpdata/endldata/";
     endl_file_path += oss.str();
-
+*/
 std::cout << "endl_file_path = " << endl_file_path << std::endl;
 
     Teuchos::RCP<Data::ENDLDataContainer> endl_data_container( 

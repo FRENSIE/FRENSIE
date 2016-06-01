@@ -36,7 +36,7 @@ Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer>
   native_h_data, native_pb_data;
 Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator>
   data_generator_h, data_generator_pb;
-/*
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -112,7 +112,7 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   data_container.exportData( "test_pb_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
@@ -139,7 +139,7 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  /*
+  
   {
     // Create the native data file container
     native_h_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
@@ -154,7 +154,7 @@ int main( int argc, char** argv )
 				     0.9,
                      3 ) );
   }
-*/
+
   {
     // Create the native data file container
     native_pb_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 

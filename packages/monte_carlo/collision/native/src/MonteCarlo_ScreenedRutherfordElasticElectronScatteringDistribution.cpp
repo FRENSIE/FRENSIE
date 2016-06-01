@@ -28,6 +28,12 @@ namespace MonteCarlo{
 
 // Initialize static member data
 
+// The change scattering angle cosine below which the screened Rutherford distribution is used
+double ScreenedRutherfordElasticElectronScatteringDistribution::s_cutoff_delta_mu = 1.0e-6;
+
+// The scattering angle cosine above which the screened Rutherford distribution is used
+double ScreenedRutherfordElasticElectronScatteringDistribution::s_cutoff_mu = 0.999999;
+
 // The fine structure constant squared
 double ScreenedRutherfordElasticElectronScatteringDistribution::s_fine_structure_const_squared=
         Utility::PhysicalConstants::fine_structure_constant *
@@ -46,32 +52,24 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
     d_atomic_number( atomic_number ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
-                              d_atomic_number*d_atomic_number )
+                              d_atomic_number*d_atomic_number ),
+    d_using_endl_tables( false )
 {
   // Make sure the array is valid
   testPrecondition( !d_elastic_cutoff_distribution.is_null() );
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );
-
-  d_lower_cutoff_angle_cosine = 0.999999;
-  d_upper_cutoff_delta_mu = 1.0e-6;
-
-  d_using_endl_tables = false;
 }
 
 // Constructor with tabulated energy parameters
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
     const ParameterArray& screened_rutherford_parameters )
-  : d_screened_rutherford_parameters( screened_rutherford_parameters )
+  : d_screened_rutherford_parameters( screened_rutherford_parameters ),
+    d_using_endl_tables( true )
 {
   // Make sure the parameter array is valid
   testPrecondition( d_screened_rutherford_parameters.size() > 0 );
-
-  d_lower_cutoff_angle_cosine = 0.999999;
-  d_upper_cutoff_delta_mu = 1.0e-6;
-
-  d_using_endl_tables = true;
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
@@ -81,7 +79,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
@@ -113,12 +111,12 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
     double cutoff_pdf = 
         d_elastic_cutoff_distribution->evaluate( 
             incoming_energy,
-            d_lower_cutoff_angle_cosine );
+            s_cutoff_mu );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
 
     double pdf = cutoff_pdf*
-            ( d_upper_cutoff_delta_mu + eta )*( d_upper_cutoff_delta_mu + eta )/(
+            ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 
     return pdf;
@@ -133,7 +131,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
@@ -163,12 +161,12 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     double cutoff_pdf = 
-        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, 0.999999 );
+        d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, s_cutoff_mu );
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
     return cutoff_pdf*
-            ( d_upper_cutoff_delta_mu + eta )*( d_upper_cutoff_delta_mu + eta )/(
+            ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
   }
 }
@@ -191,13 +189,13 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
                                   upper_bin_boundary,
                                   interpolation_fraction );
 
-    double lower_value = d_upper_cutoff_delta_mu*lower_bin_boundary->third/( 
+    double lower_value = s_cutoff_delta_mu*lower_bin_boundary->third/( 
                         ( lower_bin_boundary->second )*
-                        ( d_upper_cutoff_delta_mu + lower_bin_boundary->second ) );
+                        ( s_cutoff_delta_mu + lower_bin_boundary->second ) );
 
-    double upper_value = d_upper_cutoff_delta_mu*upper_bin_boundary->third/( 
+    double upper_value = s_cutoff_delta_mu*upper_bin_boundary->third/( 
                         ( upper_bin_boundary->second )*
-                        ( d_upper_cutoff_delta_mu + upper_bin_boundary->second ) );
+                        ( s_cutoff_delta_mu + upper_bin_boundary->second ) );
 
     // Linearly interpolate between the upper and lower values
     return interpolation_fraction*(upper_value - lower_value) + lower_value;
@@ -209,8 +207,8 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
 
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    return cutoff_pdf*d_upper_cutoff_delta_mu*
-            ( d_upper_cutoff_delta_mu + eta )/( eta );
+    return cutoff_pdf*s_cutoff_delta_mu*
+            ( s_cutoff_delta_mu + eta )/( eta );
   }
 }
 
@@ -221,7 +219,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
@@ -238,7 +236,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
                                   interpolation_fraction );
 
     double max_unormalized_cdf = 
-      this->evaluateIntegratedPDF( d_upper_cutoff_delta_mu, 
+      this->evaluateIntegratedPDF( s_cutoff_delta_mu, 
                                    lower_bin_boundary, 
                                    upper_bin_boundary,
                                    interpolation_fraction );
@@ -256,8 +254,8 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
   {
     double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
    
-    return ( d_upper_cutoff_delta_mu + eta )/( delta_mu + eta )*
-            ( delta_mu/d_upper_cutoff_delta_mu );
+    return ( s_cutoff_delta_mu + eta )/( delta_mu + eta )*
+            ( delta_mu/s_cutoff_delta_mu );
   }
 }
 
@@ -342,8 +340,8 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElec
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
                                               const double energy ) const
 {
-  // get the momentum**2 of the electron in units of electron_rest_mass_energy
-  double electron_momentum_squared = 
+  // get the energy-momentum**2 of the electron in units of electron_rest_mass_energy
+  double electron_energy_momentum_squared = 
            Utility::calculateDimensionlessRelativisticMomentumSquared( 
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           energy );
@@ -357,7 +355,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereS
             ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
 
  // Calculate Moliere's atomic screening constant
- return s_screening_param1 * 1.0/electron_momentum_squared * 
+ return s_screening_param1 * 1.0/electron_energy_momentum_squared * 
         d_Z_two_thirds_power * ( 1.13 + d_screening_param2*screening_param3 );
 }
 
@@ -388,7 +386,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
                                   interpolation_fraction );
 
     double max_unormalized_cdf = 
-      this->evaluateIntegratedPDF( d_lower_cutoff_angle_cosine, 
+      this->evaluateIntegratedPDF( s_cutoff_mu, 
                                    lower_bin_boundary, 
                                    upper_bin_boundary,
                                    interpolation_fraction );
@@ -418,12 +416,12 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
     double eta = evaluateMoliereScreeningConstant( incoming_energy );
 
     scattering_angle_cosine =
-        ( ( 1.0 - random_number*( 1.0 + eta ) )*d_upper_cutoff_delta_mu + eta )/
-        ( ( 1.0 - random_number )*d_upper_cutoff_delta_mu + eta );
+        ( ( 1.0 - random_number*( 1.0 + eta ) )*s_cutoff_delta_mu + eta )/
+        ( ( 1.0 - random_number )*s_cutoff_delta_mu + eta );
   }
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= d_lower_cutoff_angle_cosine );
+  testPostcondition( scattering_angle_cosine >= s_cutoff_mu );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 

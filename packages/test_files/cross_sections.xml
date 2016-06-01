@@ -185,6 +185,30 @@
     <Parameter docString="" id="171" isDefault="false" isUsed="true" name="atomic_number" type="int" value="92"/>
     <Parameter docString="" id="172" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.35984000000000009e+02"/>
   </ParameterList>
+  <ParameterList id="184" name="H-Native">
+    <Parameter docString="" id="174" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_1_native.xml"/>
+    <Parameter docString="" id="175" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="176" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="177" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="178" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_1_native.xml"/>
+    <Parameter docString="" id="179" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="180" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="181" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="182" isDefault="false" isUsed="true" name="atomic_number" type="int" value="1"/>
+    <Parameter docString="" id="183" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="9.99241999999999964e-01"/>
+  </ParameterList>
+  <ParameterList id="195" name="H-Native">
+    <Parameter docString="" id="185" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_13_native.xml"/>
+    <Parameter docString="" id="186" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="187" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="188" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="189" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_13_native.xml"/>
+    <Parameter docString="" id="190" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="191" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="192" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="193" isDefault="false" isUsed="true" name="atomic_number" type="int" value="13"/>
+    <Parameter docString="" id="194" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.67498000000000005e+01"/>
+  </ParameterList>
   <Validators/>
 </ParameterList>
 

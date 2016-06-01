@@ -29,7 +29,7 @@
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> native_eedl_data;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>
-  evaluator;
+  pb_evaluator, al_evaluator;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -38,7 +38,7 @@ bool notEqualZero( double value )
 {
   return value != 0.0;
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 0.999999,
+    pb_evaluator->evaluateLegendreExpandedRutherford( 0.999999,
                                                    1.000000000000E-05,
                                                    n );
 
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 0.0,
+    pb_evaluator->evaluateLegendreExpandedRutherford( 1.0,
                                                    1.000000000000E-03,
                                                    n );
 
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 0.999999,
+    pb_evaluator->evaluateLegendreExpandedRutherford( 0.999999,
                                                    1.000000000000E+05,
                                                    n );
 
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 n = 2;
   
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedRutherford( 0.0,
+    pb_evaluator->evaluateLegendreExpandedRutherford( 1.0,
                                                    1.000000000000E-05,
                                                    n );
 
@@ -91,7 +91,7 @@ n = 2;
                     5.000000003979020E-01*1.0,
                     1e-12 );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that the legendre expanded differential cross section can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 0.999999,
+    pb_evaluator->evaluateLegendreExpandedPDF( 0.999999,
                                             1.000000000000E-05,
                                             n );
 
@@ -113,7 +113,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( -1.0,
+    pb_evaluator->evaluateLegendreExpandedPDF( -1.0,
                                             1.000000000000E-03,
                                             n );
 
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( 0.9999979,
+    pb_evaluator->evaluateLegendreExpandedPDF( 0.9999979,
                                             1.000000000000E+05,
                                             n );
 
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 n = 2;
   
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDF( -1.0,
+    pb_evaluator->evaluateLegendreExpandedPDF( -1.0,
                                             1.000000000000E-05,
                                             n );
 
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.999999,
+    pb_evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.999999,
                                                        0,
                                                        n );
 
@@ -176,7 +176,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
+    pb_evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
                                                        1,
                                                        n );
 
@@ -189,7 +189,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.9999979,
+    pb_evaluator->evaluateLegendreExpandedPDFAtEnergyBin( 0.9999979,
                                                        13,
                                                        n );
 
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   n = 2;
   
   expanded_pdf = 
-    evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
+    pb_evaluator->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
                                                        0,
                                                        n );
 
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 
  
   energy_bin = 1;
-  evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  pb_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
   double integrated_pdf = 7.56010292504539E-01;
   cutoff_cross_section = 2.90281E+08*integrated_pdf;
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   tol );	
 
   energy_bin = 12;
-  evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  pb_evaluator->evaluateElasticMoment( total_moments, energy_bin, n, precision );
   
   integrated_pdf = 9.999834891716050E-01;
   cutoff_cross_section = 2.51776896157372E+05*integrated_pdf;
@@ -321,13 +321,13 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   cutoff_cross_section + sr_cross_section,
                                   tol );	
 
-  evaluator->evaluateElasticMoment( total_moments, energy_bin, 6, precision ); 
+  pb_evaluator->evaluateElasticMoment( total_moments, energy_bin, 6, precision ); 
 /*
   precision = 1e-13;
   n = 8;
   energy = 1e-5;
   total_moments.resize(n+1);
-  evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
+  pb_evaluator->evaluateElasticMoment( total_moments, energy, n, precision );
 
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(), 
                                   5.000000000000020E-02,
@@ -369,7 +369,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   Teuchos::Array<Utility::long_float> moments(n+1);
   Utility::long_float rutherford_moment;
 
-  moments[0] = 1.0L*2.11160991169490E+06L;
+  moments[0] = 2.11160991169490E+06L;
   moments[1] = 9.999999999993360E-01L*2.11160991169490E+06L;
   moments[2] = 9.999999999980090E-01L*2.11160991169490E+06L;
   moments[3] = 9.999999999960180E-01L*2.11160991169490E+06L;
@@ -377,7 +377,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[5] = 9.999999999900440E-01L*2.11160991169490E+06L;
   moments[6] = 9.999999999860620E-01L*2.11160991169490E+06L;
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       0 );
@@ -386,7 +386,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[0].convert_to<double>(),
                                   tol );	
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       1 );
@@ -395,7 +395,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[1].convert_to<double>(),
                                   tol );	
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       2 );
@@ -404,7 +404,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[2].convert_to<double>(), 
                                   tol );
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       3 );
@@ -413,7 +413,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[3].convert_to<double>(),  
                                   tol );
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       4 );
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[4].convert_to<double>(),
                                   tol ); 
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       5 );
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[5].convert_to<double>(),  
                                   tol ); 
 
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       n );
@@ -446,7 +446,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   moments[0] = 0.0; 
 
   energy = 1.0e-5;
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       0 );
@@ -456,7 +456,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   tol );	
 
   energy = 6.30957E+00;
-  evaluator->
+  pb_evaluator->
     evaluateScreenedRutherfordMoment( rutherford_moment,
                                       energy, 
                                       0 );
@@ -471,13 +471,16 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name;
+  std::string test_native_pb_file_name, test_native_al_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
+  clp.setOption( "test_native_pb_file",
+		 &test_native_pb_file_name,
+		 "Test Native Pb file name" );
+  clp.setOption( "test_native_al_file",
+		 &test_native_al_file_name,
+		 "Test Native Al file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -490,15 +493,29 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  {
   // Create the native data file container
   native_eedl_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
-						     test_native_file_name ) );
+						     test_native_pb_file_name ) );
 
 
   // Create the momentum evaluator
-  evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
+  pb_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *native_eedl_data,
                                     0.9 ) );
+  }
+
+  {
+  // Create the native data file container
+  native_eedl_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+						     test_native_al_file_name ) );
+
+
+  // Create the momentum evaluator
+  al_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
+                                    *native_eedl_data,
+                                    1.0 ) );
+  }
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

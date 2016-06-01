@@ -84,8 +84,8 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
 {
   // Make sure the energy and angle cosine are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= s_rutherford_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine >= s_rutherford_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
@@ -298,16 +298,16 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
             const double energy,
             const int n ) const
 {
-  // Make sure the energy and angle are valid
+  // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
 
-  double angle;
+  Utility::long_float delta_mu;
 
-  angle = s_rutherford_cutoff_delta_angle_cosine;
+  delta_mu = Utility::long_float(1)/1000000;
 
   // Calcuate Moliere's modified screening constant (eta) 
-  double eta = 
-    d_rutherford_distribution->evaluateMoliereScreeningConstant( energy );
+  Utility::long_float eta = Utility::long_float(
+    d_rutherford_distribution->evaluateMoliereScreeningConstant( energy ) );
 
   /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to 
    *! calculate the moments of the screened Rutherford peak. For larger eta the 
@@ -322,11 +322,11 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
       Teuchos::Array<Utility::long_float> coef_one( n+1 ), coef_two( n+1 );
 
       coef_one[0] = Utility::long_float(0);
-      coef_one[1] = ( log( ( eta + angle )/( eta ) ) ) -
-                     angle/( angle + eta );
+      coef_one[1] = ( log( ( eta + delta_mu )/( eta ) ) ) -
+                     delta_mu/( delta_mu + eta );
 
-      coef_two[0] = angle;
-      coef_two[1] = ( Utility::long_float(2) - angle )*angle/
+      coef_two[0] = delta_mu;
+      coef_two[1] = ( Utility::long_float(2) - delta_mu )*delta_mu/
                       Utility::long_float(2);
 
       for ( int i = 1; i < n; i++ )
@@ -336,18 +336,18 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
           ( Utility::long_float(1) + eta )*coef_one[i] - 
           ( Utility::long_float(1) + Utility::long_float(1)/i )*coef_one[i-1] -
           ( ( Utility::long_float(2) + Utility::long_float(1)/i )/
-          ( angle + eta ) )*( angle - coef_two[i] );
+          ( delta_mu + eta ) )*( delta_mu - coef_two[i] );
 
         coef_two[i+1] = 
           ( Utility::long_float(2)*i + Utility::long_float(1) )/
-          ( i + Utility::long_float(2) )*( Utility::long_float(1) - angle )*
+          ( i + Utility::long_float(2) )*( Utility::long_float(1) - delta_mu )*
           coef_two[i] - 
           ( i - Utility::long_float(1) )/( i + Utility::long_float(2) )*
           coef_two[i-1];
       } 
       Utility::long_float frac_disc = 
-          angle*( Utility::long_float(1) + eta/Utility::long_float(2) )/
-        ( angle + eta );
+          delta_mu*( Utility::long_float(1) + eta/Utility::long_float(2) )/
+        ( delta_mu + eta );
 
       rutherford_moment *= (1.0 - eta*coef_one[n]/frac_disc );
     }
@@ -356,13 +356,15 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   {
     Utility::GaussKronrodIntegrator integrator( 1e-13 );
 
-    double abs_error, moment_n;
+    Utility::long_float abs_error, moment_n;
 
-    double rutherford_cross_section = 
-        d_rutherford_reaction->getCrossSection( energy ); 
+    Utility::long_float cutoff_mu = Utility::long_float(999999)/1000000;
 
-    double moment_zero = 
-        d_rutherford_distribution->evaluateIntegratedPDF( energy );
+    Utility::long_float rutherford_cross_section = 
+        Utility::long_float( d_rutherford_reaction->getCrossSection( energy ) ); 
+
+    Utility::long_float moment_zero = 
+        Utility::long_float( d_rutherford_distribution->evaluateIntegratedPDF( energy ) );
  
     if ( n == 0 )
     {
@@ -380,8 +382,8 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
 
       integrator.integrateAdaptively<61>(
 					wrapper,
-                    0.0,
-					s_rutherford_cutoff_delta_angle_cosine,
+                    cutoff_mu,
+					Utility::long_float(1),
 					moment_n,
 					abs_error );
     }

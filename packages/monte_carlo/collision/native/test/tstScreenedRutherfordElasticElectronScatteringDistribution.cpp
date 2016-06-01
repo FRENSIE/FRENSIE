@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -55,16 +56,16 @@ public:
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> 
-  ace_elastic_distribution, endl_elastic_distribution;
+  ace_elastic_distribution, native_elastic_distribution;
 
 Teuchos::RCP<TestScreenedRutherfordElasticElectronScatteringDistribution> 
-  test_ace_elastic_distribution, test_endl_elastic_distribution;
+  test_ace_elastic_distribution, test_native_elastic_distribution;
 
 Teuchos::RCP<const Utility::TabularDistribution<Utility::LinLin> >
   elastic_cutoff_pdf;
 
 double delta_mu_cutoff = 1.0e-6;
-double angle_cosine_cutoff = 0.999999;
+double mu_cutoff = 0.999999;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -76,7 +77,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set energy in MeV
   double energy = 1.0e+5;
-  double scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  double scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
 
   // Evaluate the distribution
   double value = 
@@ -106,7 +107,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E-04;
 
-  scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
   value = 
     ace_elastic_distribution->evaluate( energy, 
                                         scattering_angle_cosine );
@@ -137,7 +138,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set energy in MeV
   double energy = 1.0e+5;
-  double scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  double scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
 
   // Calculate the pdf
   double pdf_value = 
@@ -166,7 +167,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E-04;
 
-  scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
   pdf_value = 
     ace_elastic_distribution->evaluatePDF( energy, 
                                            scattering_angle_cosine );
@@ -197,7 +198,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 {
   // Set energy in MeV
   double energy = 1.0e+5;
-  double scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  double scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
 
   // Calculate the cdf
   double cdf_value = 
@@ -227,7 +228,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E-04;
 
-  scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  scattering_angle_cosine = mu_cutoff; // delta_mu = delta_mu_cutoff;
   cdf_value = 
     ace_elastic_distribution->evaluateCDF( energy, 
                                            scattering_angle_cosine );
@@ -297,30 +298,54 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 
   double screening_constant;
 
-  // Test 1
+  // ACE Test 1
   screening_constant = 
     test_ace_elastic_distribution->evaluateMoliereScreeningConstant( 
                                                 electron.getEnergy() );
-
   TEST_FLOATING_EQUALITY( screening_constant, 2.5131795894201700E+03, 1e-12 );
 
+  // ACE Test 2
   electron.setEnergy( 1.0e-3 );
-
-  // Test 2
   screening_constant = 
     test_ace_elastic_distribution->evaluateMoliereScreeningConstant( 
                                                 electron.getEnergy() );
-
   TEST_FLOATING_EQUALITY( screening_constant, 2.6821367199800900, 1e-12 );
 
+  // ACE Test 3
   electron.setEnergy( 1.0e+5 );
-
-  // Test 2
   screening_constant = 
     test_ace_elastic_distribution->evaluateMoliereScreeningConstant( 
                                                 electron.getEnergy() );
-
   TEST_FLOATING_EQUALITY( screening_constant, 4.1488769980623900E-14, 1e-12 );
+
+
+  // NATIVE Test 1
+  electron.setEnergy( 1.0e-5 );
+  screening_constant = 
+    test_native_elastic_distribution->evaluateMoliereScreeningConstant( 
+                                                electron.getEnergy() );
+  TEST_FLOATING_EQUALITY( screening_constant, 2.3792675295299300E+01, 1e-12 );
+
+  // NATIVE Test 2
+  electron.setEnergy( 1.0e-3 );
+  screening_constant = 
+    test_native_elastic_distribution->evaluateMoliereScreeningConstant( 
+                                                electron.getEnergy() );
+  TEST_FLOATING_EQUALITY( screening_constant, 7.2595008773036300E-02, 1e-12 );
+
+  // NATIVE Test 3
+  electron.setEnergy( 6.625e+1 );
+  screening_constant = 
+    test_native_elastic_distribution->evaluateMoliereScreeningConstant( 
+                                                electron.getEnergy() );
+  TEST_FLOATING_EQUALITY( screening_constant, 1.2814675966081900E-08, 1e-12 );
+
+  // NATIVE Test 4
+  electron.setEnergy( 1.0e+5 );
+  screening_constant = 
+    test_native_elastic_distribution->evaluateMoliereScreeningConstant( 
+                                                electron.getEnergy() );
+  TEST_FLOATING_EQUALITY( screening_constant, 5.7117744434411500E-15, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -447,6 +472,7 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
+  std::string test_native_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
@@ -456,6 +482,9 @@ int main( int argc, char** argv )
   clp.setOption( "test_ace_table",
 		 &test_ace_table_name,
 		 "Test ACE table name" );
+  clp.setOption( "test_native_file",
+		 &test_native_file_name,
+		 "Test NATIVE file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -467,7 +496,9 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
+  // create ACE distributions
+  {
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
@@ -518,7 +549,7 @@ int main( int argc, char** argv )
 /*
     cutoff_pdf[n] = 
         elastic_scattering_distribution[n].second->evaluatePDF( 
-            angle_cosine_cutoff );  */  
+            mu_cutoff );  */  
   }  
 /*
   elastic_cutoff_pdf.reset(
@@ -560,6 +591,57 @@ int main( int argc, char** argv )
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
+  }
+
+  // create NATIVE distributions
+  {
+  // Get native data container 
+  Data::ElectronPhotonRelaxationDataContainer data_container =
+    Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
+
+  // Get the energy grid
+  std::vector<double> angular_energy_grid = 
+    data_container.getElasticAngularEnergyGrid();
+
+  // Get size of paramters
+  int size = angular_energy_grid.size();
+
+  // Create the scattering function
+  MonteCarlo::CutoffElasticElectronScatteringDistribution::ElasticDistribution
+    scattering_function(size);
+
+  for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
+  {
+    scattering_function[n].first = angular_energy_grid[n];
+
+    // Get the cutoff elastic scattering angles at the energy
+    Teuchos::Array<double> angles( 
+        data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
+
+    // Get the cutoff elastic scatering pdf at the energy
+    Teuchos::Array<double> pdf( 
+        data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
+
+    scattering_function[n].second.reset( 
+	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+  }
+
+  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_elastic_distribution;
+
+  // Create cutoff distribution
+  cutoff_elastic_distribution.reset( 
+        new MonteCarlo::CutoffElasticElectronScatteringDistribution( 
+                scattering_function,
+                0.999999 ) );
+
+  double atomic_number = data_container.getAtomicNumber();
+
+  test_native_elastic_distribution.reset(
+        new TestScreenedRutherfordElasticElectronScatteringDistribution(
+                cutoff_elastic_distribution,
+                atomic_number ) );
+  }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
