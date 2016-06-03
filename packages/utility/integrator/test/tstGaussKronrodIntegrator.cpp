@@ -1251,7 +1251,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
   Functor functor_instance;
 
   // Test the 15-point rule
-  gk_integrator.integrateAdaptively<15>( functor_instance, 
+  gk_integrator.integrateAdaptively<15,long double>( functor_instance, 
 				  0.0L, 
 				  1.0L, 
 				  result, 
@@ -1279,7 +1279,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 31-point rule
-  gk_integrator.integrateAdaptively<31>( functor_instance, 
+  gk_integrator.integrateAdaptively<31,long double>( functor_instance, 
 				  0.0L, 
 				  1.0L, 
 				  result, 
@@ -1293,7 +1293,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 41-point rule
-  gk_integrator.integrateAdaptively<41>( functor_instance, 
+  gk_integrator.integrateAdaptively<41,long double>( functor_instance, 
 				  0.0L, 
 				  1.0L, 
 				  result, 
@@ -1307,7 +1307,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 51-point rule
-  gk_integrator.integrateAdaptively<51>( functor_instance, 
+  gk_integrator.integrateAdaptively<51,long double>( functor_instance, 
 				  0.0L, 
 				  1.0L, 
 				  result, 
@@ -1321,7 +1321,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 61-point rule
-  gk_integrator.integrateAdaptively<61>( functor_instance, 
+  gk_integrator.integrateAdaptively<61,long double>( functor_instance, 
 				  0.0L, 
 				  1.0L, 
 				  result, 
@@ -1350,12 +1350,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
   Functor functor_instance;
 
   // Test the 15-point rule
-  gk_integrator.integrateAdaptively<15>( functor_instance, 
+  gk_integrator.integrateAdaptively<15,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1, 
 				  result, 
 				  absolute_error );
-/*
+
   tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(), 
@@ -1364,7 +1364,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 21-point rule
-  gk_integrator.integrateAdaptively<21>( functor_instance, 
+  gk_integrator.integrateAdaptively<21,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1, 
 				  result, 
@@ -1378,7 +1378,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 31-point rule
-  gk_integrator.integrateAdaptively<31>( functor_instance, 
+  gk_integrator.integrateAdaptively<31,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1,  
 				  result, 
@@ -1392,7 +1392,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 41-point rule
-  gk_integrator.integrateAdaptively<41>( functor_instance, 
+  gk_integrator.integrateAdaptively<41,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1, 
 				  result, 
@@ -1406,7 +1406,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 51-point rule
-  gk_integrator.integrateAdaptively<51>( functor_instance, 
+  gk_integrator.integrateAdaptively<51,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1, 
 				  result, 
@@ -1420,7 +1420,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
 
   // Test the 61-point rule
-  gk_integrator.integrateAdaptively<61>( functor_instance, 
+  gk_integrator.integrateAdaptively<61,long_float>( functor_instance, 
 				  (long_float)0, 
 				  (long_float)1, 
 				  result, 
@@ -1430,7 +1430,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 
   TEST_FLOATING_EQUALITY( (double)Functor::getIntegratedValue(), 
                           (double)result, 
-                          (double)tol );*/
+                          (double)tol );
 }
 
 UNIT_TEST_INSTANTIATION_3( GaussKronrodIntegrator, integrateAdaptively_long_float );

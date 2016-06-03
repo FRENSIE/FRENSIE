@@ -77,7 +77,7 @@ typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
 		  size_t& number_of_function_evals ) const;
 */
   //! Integrate the function adaptively with BinQueue
-  template<int Points, typename Functor>
+  template<int Points, typename FunctorType = double, typename Functor>
   void integrateAdaptively( Functor& integrand,
 			    T lower_limit,
 			    T upper_limit,
@@ -85,7 +85,7 @@ typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
 			    T& absolute_error ) const;
 
   //! Integrate the function with point rule
-  template<int Points, typename Functor>
+  template<int Points, typename FunctorType = double, typename Functor>
   void integrateWithPointRule( 
                 Functor& integrand,
 			    T lower_limit,
@@ -124,7 +124,7 @@ typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
 				       T& absolute_error ) const;
 */
   //! Integrate a function with known integrable singularities adaptively
-  template<typename Functor>
+  template<typename FunctorType = double, typename Functor>
   void integrateAdaptivelyWynnEpsilon( 
 			  Functor& integrand,
 			  const Teuchos::ArrayView<T>& points_of_interest,
@@ -134,7 +134,7 @@ typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
 protected:
   
   // Calculate the quadrature upper and lower integrand values at an abscissa
-  template<typename Functor>
+  template<typename FunctorType = double, typename Functor>
   void calculateQuadratureIntegrandValuesAtAbscissa( 
     Functor& integrand, 
     T abscissa,
@@ -144,7 +144,7 @@ protected:
     T& integrand_value_upper ) const;
 
   // Bisect and integrate the given bin interval
-  template<int Points, typename Functor, typename Bin>
+  template<int Points, typename FunctorType = double, typename Functor, typename Bin>
   void bisectAndIntegrateBinInterval( 
     Functor& integrand, 
     const Bin& bin,

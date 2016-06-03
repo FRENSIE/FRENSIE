@@ -51,7 +51,7 @@ SET_PROPERTY(TEST AdjointElectronGridGenerator_test PROPERTY LABELS data_gen_ele
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
   tstElasticElectronMomentsEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
-ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_native_pb_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_native_al_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST ElasticElectronMomentsEvaluator_test PROPERTY LABELS data_gen_electron_photon electron)
 
 ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator

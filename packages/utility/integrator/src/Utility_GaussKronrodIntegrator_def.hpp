@@ -443,7 +443,7 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
  * error estimate. See the qag function details in the quadpack documentation.
  */ 
 template<typename T>
-template<int Points, typename Functor>
+template<int Points, typename FunctorType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptively(
 						 Functor& integrand, 
 						 T lower_limit, 
@@ -463,7 +463,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   T result_abs = (T)0;
   T result_asc = (T)0;
 
-  integrateWithPointRule<Points>(
+  integrateWithPointRule<Points, FunctorType>(
     integrand, 
     bin.lower_limit, 
     bin.upper_limit, 
@@ -578,7 +578,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
  * See QAGS algorithm details in the GNU Scientific Library documentation.
  */
 template<typename T>
-template<typename Functor>
+template<typename FunctorType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon( 
     Functor& integrand,
     const Teuchos::ArrayView<T>& points_of_interest,
@@ -615,7 +615,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     T result_abs = (T)0;
     T result_asc = (T)0;
 
-    integrateWithPointRule<21>(
+    integrateWithPointRule<21, FunctorType>(
         integrand, 
         bin.lower_limit, 
         bin.upper_limit, 
@@ -947,7 +947,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
  * error estimate. See the qag function details in the quadpack documentation.
  */
 template<typename T>
-template<int Points, typename Functor>
+template<int Points, typename FunctorType, typename Functor>
 void GaussKronrodIntegrator<T>::integrateWithPointRule(
             Functor& integrand, 
             T lower_limit, 
@@ -989,7 +989,7 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
     result_abs = kronrod_result;
     for ( int j = 0; j < number_of_weights-1; j++ )
       {  
-        calculateQuadratureIntegrandValuesAtAbscissa( 
+        calculateQuadratureIntegrandValuesAtAbscissa<FunctorType>( 
             integrand, 
             GaussKronrodQuadratureSetTraits<Points>::kronrod_abscissae[j],
             half_length,
@@ -1008,7 +1008,7 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
       };
 
     // Integrand at the midpoint
-    T integrand_midpoint = (T)integrand( midpoint );
+    T integrand_midpoint = (T)integrand( (FunctorType)midpoint );
 
     // Estimate Kronrod integral for the last weight
     T kronrod_result_last_weight = integrand_midpoint*
@@ -1097,7 +1097,7 @@ inline bool GaussKronrodIntegrator<T>::subintervalTooSmall(
 
 // Calculate the quadrature upper and lower integrand values at an abscissa
 template<typename T>
-template<typename Functor>
+template<typename FunctorType, typename Functor>
 void GaussKronrodIntegrator<T>::calculateQuadratureIntegrandValuesAtAbscissa( 
     Functor& integrand, 
     T abscissa,
@@ -1107,15 +1107,17 @@ void GaussKronrodIntegrator<T>::calculateQuadratureIntegrandValuesAtAbscissa(
     T& integrand_value_upper ) const
 {
   T weighted_abscissa = half_length*abscissa;
+  T lower = midpoint - weighted_abscissa;
+  T upper = midpoint + weighted_abscissa;
 
-  integrand_value_lower = (T)integrand( midpoint - weighted_abscissa );
-  integrand_value_upper = (T)integrand( midpoint + weighted_abscissa );
+  integrand_value_lower = (T)integrand( (FunctorType)lower );
+  integrand_value_upper = (T)integrand( (FunctorType)upper );
 }; 
 
 
 // Bisect and integrate the given bin interval
 template<typename T>
-template<int Points, typename Functor, typename Bin>
+template<int Points, typename FunctorType, typename Functor, typename Bin>
 void GaussKronrodIntegrator<T>::bisectAndIntegrateBinInterval( 
     Functor& integrand, 
     const Bin& bin,
@@ -1136,7 +1138,7 @@ void GaussKronrodIntegrator<T>::bisectAndIntegrateBinInterval(
 
     T bin_1_abs, bin_2_abs;
     // Integrate over bin 1
-    integrateWithPointRule<Points>(
+    integrateWithPointRule<Points, FunctorType>(
       integrand, 
       bin_1.lower_limit, 
       bin_1.upper_limit, 
@@ -1146,7 +1148,7 @@ void GaussKronrodIntegrator<T>::bisectAndIntegrateBinInterval(
       bin_1_asc );
 
     // Integrate over bin 2
-    integrateWithPointRule<Points>(
+    integrateWithPointRule<Points, FunctorType>(
       integrand, 
       bin_2.lower_limit, 
       bin_2.upper_limit, 

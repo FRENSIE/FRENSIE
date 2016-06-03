@@ -42,11 +42,11 @@ double GaussRadauQuadratureSet::functorWrapper( const double x,
 // Integrate the function
 template<typename Functor>
 void GaussRadauQuadratureSet::integrate( 
-				       Functor& integrand, 
-                                       double fixed_point,
-		                       double lower_limit, 
-		                       double upper_limit,
-		                       double& result ) const
+        Functor& integrand, 
+        double fixed_point,
+        double lower_limit, 
+        double upper_limit,
+        double& result ) const
 {
   // Make sure fixed_point is either -1 or 1
   testPrecondition( fabs(fixed_point) == 1.0 );

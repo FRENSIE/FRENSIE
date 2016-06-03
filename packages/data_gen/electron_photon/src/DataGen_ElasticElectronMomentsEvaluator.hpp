@@ -24,6 +24,7 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 
 
 namespace DataGen{
@@ -39,10 +40,14 @@ public:
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
+  //! Typedef for the elastic distribution
+  typedef Utility::GaussKronrodIntegrator<Utility::long_float>
+  Integrator;
+
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine = 0.9999999 );
+    const double& cutoff_angle_cosine = 0.999999 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
@@ -64,25 +69,56 @@ public:
                                 const unsigned incoming_energy_bin, 
                                 const int polynomial_order = 0) const;
 
-  //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
+  //! Evaluate the first n moments of the elastic scattering distribution at a given energy
   void evaluateElasticMoment( 
             Teuchos::Array<Utility::long_float>& legendre_moments,
             const double energy,
             const int n,
             const double precision ) const;
-
-  //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
+/*
+  //! Evaluate the first n moments of the elastic scattering distribution at a given energy_bin
   void evaluateElasticMoment( 
             Teuchos::Array<Utility::long_float>& legendre_moments,
             const unsigned energy_bin,
             const int n,
             const double precision ) const;
-
-  //! Evaluate the nth cross section moment of the screened Rutherford peak distribution 
-  void evaluateScreenedRutherfordMoment( 
-            Utility::long_float& rutherford_moments,
+*/
+  //! Evaluate the nth cross section moment of the elastic cutoff distribution at the energy
+  void evaluateCutoffMoment( 
+            Utility::long_float& cutoff_moment,
+            const Teuchos::Array<double>& angular_grid,
+            const Integrator& integrator,
             const double energy,
             const int n ) const;
+
+  //! Evaluate the nth cross section moment of the screened Rutherford peak distribution at the energy
+  void evaluateScreenedRutherfordMoment( 
+            Utility::long_float& rutherford_moment,
+            const double& energy,
+            const int& n ) const;
+
+protected:
+
+  // Evaluate the nth PDF moment of the cutoff distribution at the energy
+  void evaluateCutoffPDFMoment(
+            Utility::long_float& cutoff_moment,
+            const Teuchos::Array<double>& angular_grid,
+            const Integrator& integrator,
+            const double energy,
+            const int n ) const;
+
+  // Evaluate the nth PDF moment of the screened Rutherford peak distribution at the energy
+  void evaluateScreenedRutherfordPDFMoment( 
+            Utility::long_float& rutherford_moment,
+            const double& energy,
+            const int& n ) const;
+
+  // Evaluate the nth PDF moment of the screened Rutherford peak distribution at the energy
+  void evaluateScreenedRutherfordPDFMoment( 
+            Utility::long_float& rutherford_moment,
+            const Utility::long_float& eta,
+            const double& energy,
+            const int& n ) const;
 
 private:
 

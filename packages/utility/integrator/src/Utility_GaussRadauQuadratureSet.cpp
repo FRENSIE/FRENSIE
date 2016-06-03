@@ -341,7 +341,7 @@ double GaussRadauQuadratureSet::findWeightAtEndPoint( double end_point,
   double abs_error, result;
   double precision = 1e-12;
     
-  Utility::GaussKronrodIntegrator integrator( precision );
+  Utility::GaussKronrodIntegrator<double> integrator( precision );
 
   integrator.integrateAdaptively<15>(
 					weight_function,
@@ -378,7 +378,7 @@ double GaussRadauQuadratureSet::findWeightAtNode( double node,
   double abs_error, result;
   double precision = 1e-12;
     
-  Utility::GaussKronrodIntegrator integrator( precision );
+  Utility::GaussKronrodIntegrator<double> integrator( precision );
 
   integrator.integrateAdaptively<15>(
 					weight_function,

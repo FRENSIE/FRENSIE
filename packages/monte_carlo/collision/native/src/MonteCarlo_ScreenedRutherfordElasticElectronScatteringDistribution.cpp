@@ -73,6 +73,7 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
+//! \details Because the scattering angle cosine is very close to one, precision will be lost.
 double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
         const double incoming_energy,
         const double scattering_angle_cosine ) const

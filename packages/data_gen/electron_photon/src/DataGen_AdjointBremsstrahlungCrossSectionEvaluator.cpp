@@ -74,7 +74,7 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
 
     double abs_error;
     
-    Utility::GaussKronrodIntegrator integrator( precision );
+    Utility::GaussKronrodIntegrator<double> integrator( precision );
 
     integrator.integrateAdaptively<15>(
 					diff_adjoint_brem_wrapper,
