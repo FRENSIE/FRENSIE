@@ -277,8 +277,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	array_of_hit_points.push_back( hit_point );      
       }
       
-      // Add the end point if it doesn't lie on an intersection point
-      if( track_length > ray_tet_intersections.back() )
+      // Add the end point
       {
 	moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
 	
@@ -288,7 +287,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
       }
 
       // Calculate the contribution multiplier
-      double constribution_multiplier = 
+      double contribution_mult =
         ContributionMultiplierPolicy::multiplier( particle );
       
       // Compute and add the partial history contribution to appropriate tet
@@ -323,12 +322,12 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
             EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
             double tet_contribution =
-              partial_track_length*contribution_multiplier;
+              partial_track_length*contribution_mult;
             
 	    // Add partial history contribution
-	    addPartialHistoryContribution( tet,
-					   particle_state_wrapper,
-					   tet_contribution );
+	    this->addPartialHistoryContribution( tet,
+                                                 particle_state_wrapper,
+                                                 tet_contribution );
 	  }
 	}
       }
@@ -336,10 +335,14 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
     // Account for the cases where there are no intersections
     else
     {
+      double mid_point[3] = {(end_point[0]+start_point[0])/2,
+                             (end_point[1]+start_point[1])/2,
+                             (end_point[2]+start_point[2])/2};
+      
       // case 1: track is entirely in one tet
-      if( this->isPointInMesh( start_point ) )
+      if( this->isPointInMesh( mid_point ) )
       {
-	moab::EntityHandle tet = whichTetIsPointIn( start_point );
+	moab::EntityHandle tet = whichTetIsPointIn( mid_point );
       	
 	// Add partial history contribution if tet was found (tolerance
 	// issues may prevent this)
@@ -350,9 +353,9 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
           double tet_contribution = track_length*
               ContributionMultiplierPolicy::multiplier( particle );
           
-	  addPartialHistoryContribution( tet, 
-                                         particle_state_wrapper, 
-                                         tet_contribution );
+	  this->addPartialHistoryContribution( tet, 
+                                               particle_state_wrapper, 
+                                               tet_contribution );
         }
       }
       // case 2: track entirely misses mesh - do nothing
