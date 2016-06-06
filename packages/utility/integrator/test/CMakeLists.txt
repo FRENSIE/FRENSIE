@@ -3,3 +3,4 @@ ADD_EXECUTABLE(tstGaussKronrodIntegrator
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGaussKronrodIntegrator utility_integrator)
 ADD_TEST(GaussKronrodIntegrator_test tstGaussKronrodIntegrator)
+SET_PROPERTY(TEST GaussKronrodIntegrator_test PROPERTY LABELS utility_integrator)
