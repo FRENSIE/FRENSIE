@@ -458,7 +458,6 @@ SET_PROPERTY(TEST KleinNishinaAdjointPhotonScatteringDistribution_test PROPERTY 
 # ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 # SET_PROPERTY(TEST NeutronMaterial_test PROPERTY LABELS monte_carlo_collision_native photon adjoint)
 
-
 ##----------------------------------------------------------------------------##
 ##      electron class tests                                                  
 ##----------------------------------------------------------------------------##
@@ -488,7 +487,7 @@ ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(AtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 SET_PROPERTY(TEST AtomicExcitationElectronScatteringDistribution_test PROPERTY LABELS monte_carlo_collision_native electron)
-              
+            
 ADD_EXECUTABLE(tstAtomicExcitationAdjointElectronScatteringDistribution
   tstAtomicExcitationAdjointElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicExcitationAdjointElectronScatteringDistribution monte_carlo_collision_native)

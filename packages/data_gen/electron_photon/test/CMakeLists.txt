@@ -59,4 +59,3 @@ ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator
 TARGET_LINK_LIBRARIES(tstStandardSoftElasticElectronDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST StandardSoftElasticElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
-

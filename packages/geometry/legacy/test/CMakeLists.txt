@@ -121,4 +121,3 @@ ADD_EXECUTABLE(tstCellInputValidator
 TARGET_LINK_LIBRARIES(tstCellInputValidator geometry_core geometry_native)
 ADD_TEST(CellInputValidator_test tstCellInputValidator --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.xml")
 SET_PROPERTY(TEST CellInputValidator_test PROPERTY LABELS geometry_native)
-

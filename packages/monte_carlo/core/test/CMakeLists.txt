@@ -126,4 +126,3 @@ ADD_EXECUTABLE(tstParticleModeType
 TARGET_LINK_LIBRARIES(tstParticleModeType monte_carlo_core)
 ADD_TEST(ParticleModeType_test tstParticleModeType)
 SET_PROPERTY(TEST ParticleModeType_test PROPERTY LABELS monte_carlo_core)
-

@@ -43,4 +43,3 @@ ADD_EXECUTABLE(tstXSSElectronDataExtractor
 TARGET_LINK_LIBRARIES(tstXSSElectronDataExtractor data_ace)
 ADD_TEST(XSSElectronDataExtractor_test tstXSSElectronDataExtractor --pb_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_electron_ace_file.txt" --pb_ace_table="82000.03e" --b_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_b_electron_ace_file.txt" --b_ace_table="5000.03e")
 SET_PROPERTY(TEST XSSElectronDataExtractor_test PROPERTY LABELS data_ace ace electron)
-
