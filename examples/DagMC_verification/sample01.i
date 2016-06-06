@@ -41,8 +41,21 @@ c Data block------------------------------------------------------------------c
 c ----------------------------------------------------------------------------c
 c
 c
+c Material Definition
 c
-m1   1001 2.0
-     8016 1.0
+m1   1001.80c 2.0
+     8016.80c 1.0
 c
 c
+c --------------------
+c Source
+c --------------------
+c isotropic 14 MeV point source at the origin
+SDEF
+c --------------------
+c Job Control
+c --------------------
+c run in neutron only mode
+mode n
+c run for 1000 histories
+nps 1000

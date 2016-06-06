@@ -1,0 +1,9 @@
+<ParameterList name="Geometry">
+
+    <Parameter name="Handler" type="string" value="ROOT"/>
+    <Parameter name="Root File" type="string" value="geometry_file.root"/>
+    <Parameter name="Void Material Name" type="string" value="void_geom"/>
+    <Parameter name="Terminal Material Name" type="string" value="terminal_geom"/>
+    <Parameter name="Material Property Name" type="string" value="H2O_Sphere"/>
+
+</ParameterList>
