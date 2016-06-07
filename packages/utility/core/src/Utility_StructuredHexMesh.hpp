@@ -49,26 +49,28 @@ public:
   Teuchos::Array<double> d_z_planes;
   
   // indices of the planes that are used to form the index for the hex element a particle is in
-  unsigned d_hex_plane_indices[3]
+  unsigned d_hex_plane_indices[3];
   
 private:
 
   // The tolerance used for geometric tests
   static const double s_tol;
   
-  //enumeration type converting x
-  enum planeDimension { x_dim = 0,
-                        y_dim = 1,
-                        z_dim = 2 };
+  //enumeration type converting dimensions to integers
+  enum planeDimension{ x_dim = 0,
+                       y_dim = 1,
+                       z_dim = 2 };
 
   typedef unsigned plane_index;
   
-  void setMemberIndices( double point[3],
-                         double direction[3],
+  void setMemberIndices( const double point[3],
+                         const double direction[3],
                          const Teuchos::Array<std::pair<planeDimension,plane_index>>& interaction_planes );
   
-  bool boundaryRegionSpecialCase( double point[3],
-                                  double direction[3] );
+  bool boundaryRegionSpecialCase( const double point[3],
+                                  const double direction[3] );
+
+  bool didParticleExitMesh( Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_planes); 
                        
   Teuchos::Array<std::pair<planeDimension,plane_index>> findInteractionPlanes( 
                                                         const double point[3],
@@ -86,6 +88,9 @@ private:
   unsigned findIndex( const unsigned x_index,
                       const unsigned y_index,
                       const unsigned z_index );
+  
+  //overload function for ease
+  unsigned findIndex( const unsigned indices[3] );
                             
 };
 
