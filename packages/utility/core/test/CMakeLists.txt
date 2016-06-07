@@ -1,3 +1,9 @@
+ADD_EXECUTABLE(tstStructuredHexMesh
+  tstStructuredHexMesh.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
+ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
+
 ADD_EXECUTABLE(tstAssertion 
   tstAssertion.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

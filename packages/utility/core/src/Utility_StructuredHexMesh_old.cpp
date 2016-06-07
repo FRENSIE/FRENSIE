@@ -6,6 +6,7 @@
 //! 
 //---------------------------------------------------------------------------//
 
+#include <iostream>
 
 // FRENSIE Includes
 #include "Utility_StructuredHexMesh.hpp"
@@ -14,7 +15,7 @@
 #include "Utility_SearchAlgorithms.hpp"
 
 namespace Utility{
-
+// take care of when distance is very small
 //initialize static member data
 const double StructuredHexMesh::s_tol = 1e-6;
 
@@ -27,458 +28,480 @@ StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_grid_point
   d_x_planes.assign(x_grid_points.begin(),x_grid_points.end());
   d_y_planes.assign(y_grid_points.begin(),y_grid_points.end());
   d_z_planes.assign(z_grid_points.begin(),z_grid_points.end());
-  
-  //assign bounding planes of the mesh
-  d_bounding_planes[0] = *(d_x_planes.begin());
-  d_bounding_planes[1] = *(d_x_planes.end());
-  d_bounding_planes[2] = *(d_y_planes.begin());
-  d_bounding_planes[3] = *(d_y_planes.end());
-  d_bounding_planes[4] = *(d_z_planes.begin());
-  d_bounding_planes[5] = *(d_z_planes.end());
+
 }
-  
+
+//determine whether or not the point is in the mesh
 bool StructuredHexMesh::isPointInMesh( const double point[3] )
 {
-
-  bool in_mesh = false;
-  //check x planes
-  if( d_bounding_planes[0] + s_tol < point[0] &&
-     point[0] < d_bounding_planes[1] - s_tol )
+  bool inMesh = false;
+  if(d_x_planes.front() < point[0] && point[0] <= d_x_planes.back())
   {
-    //check y planes
-    if( d_bounding_planes[2] + s_tol < point[1] &&
-      point[1] < d_bounding_planes[3] - s_tol )
+    if(d_y_planes.front() < point[1] && point[1] <= d_y_planes.back() )
     {
-      //check z planes
-      if( d_bounding_planes[4] + s_tol < point[2] &&
-        point[2] < d_bounding_planes[5] - s_tol )
-      {  
-        in_mesh = true;
-      }
-    }
-  }
-
-  return in_mesh;
-}
-
-/* binary search for hex containing point, return index for relevant hex and
-   indices of relevant set of planes which bound that hex element*/
-unsigned StructuredHexMesh::whichHexIsPointIn( const double point[3], 
-                                               unsigned hex_plane_indices[6] )
-{
-
-  unsigned x_index = Search::binaryLowerBoundIndex(d_x_planes.begin(),
-                                                   d_x_planes.end(),
-                                                   point[0] );
-                                                   
-  hex_plane_indices[0] = x_index;
-  hex_plane_indices[1] = x_index+1;
-  
-  unsigned y_index = Search::binaryLowerBoundIndex(d_y_planes.begin(),
-                                                   d_y_planes.end(),
-                                                   point[1] );
-                                                   
-  hex_plane_indices[2] = y_index;
-  hex_plane_indices[3] = y_index+1;
-                                                   
-  unsigned z_index = Search::binaryLowerBoundIndex(d_z_planes.begin(),
-                                                   d_z_planes.end(),
-                                                   point[2] );
-  
-  hex_plane_indices[4] = y_index;
-  hex_plane_indices[5] = y_index+1;
-
-  unsigned index = returnIndex(x_index,y_index,z_index);
-  return index;
-
-}
-
-//return index of 1-d array of hexes
-unsigned StructuredHexMesh::returnIndex( const unsigned x_index,
-                                         const unsigned y_index,
-                                         const unsigned z_index)
-{
-  //find size of arrays containing x and y plane locations
-  Teuchos::Array<double>::size_type x_dim = d_x_planes.size();
-  Teuchos::Array<double>::size_type y_dim = d_y_planes.size();
-
-  return x_index + y_index*x_dim + z_index*x_dim*y_dim;
-
-}
-
-// compute the track lengths. 
-Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLengths(
-                                           const double start_point[3],
-                                           const double end_point[3],
-                                           const double direction[3] )
-{
-  //declare and/or initialize variables required for entire method
-  Teuchos::Array<std::pair<unsigned,double>> contributionArray;
-  double current_point[3];
-  double overall_track_length = vectorMagnitude(end_point[0] - start_point[0],
-                                                end_point[1] - start_point[1],
-                                                end_point[2] - start_point[2]);
-  double segment_length;
-  /*check if start_point is inside mesh or outside mesh. Different functions used
-    to determine distance to mesh are different from ones used inside mesh */
-  bool is_start_point_in_mesh = isPointInMesh(start_point);
-  if(!is_start_point_in_mesh)
-  {
-    //determine if special case with ray traveling away from all planes
-    bool doesParticleIntersectWithMesh = 
-      RayIntersectWithBoundingPlanes(start_point, direction);
-    if(doesParticleIntersectWithMesh)
-    {
-      //return empty array if true
-      return contributionArray;
-    }
-    else
-    {
-      //find the relevant bounding planes that the ray may interact with
-      unsigned bounding_plane_indices[3];
-      findBoundingPlanes(  start_point,
-                           direction,
-                           bounding_plane_indices);
-      //determine distances to relevant bounding planes
-      double bounding_plane_distances[3];
-      calculateDistanceToBoundingPlane( start_point,
-                                        direction,
-                                        bounding_plane_indices,
-                                        bounding_plane_distances );
-      //determine if any of these distances put particle inside mesh
-      for(unsigned i = 0; i < 3; ++i)
+      if(d_z_planes.front() < point[2] && point[2] <= d_z_planes.back() )
       {
-        //iterate current point over distances
-        current_point[0] = start_point[0] +
-          (bounding_plane_distances[i]+s_tol)*direction[0];
-        current_point[1] = start_point[1] + 
-          (bounding_plane_distances[i]+s_tol)*direction[1];      
-        current_point[2] = start_point[2] +
-          (bounding_plane_distances[i]+s_tol)*direction[2];
+      
+        inMesh = true;
         
-        //determine if new point is in mesh. If so, assign that distance as the distance required
-        bool is_current_point_in_mesh = isPointInMesh(current_point);
-        if(is_current_point_in_mesh)
-        {
-          distance_to_mesh = bounding_plane_distances[i];
-          continue;
-        }
       }
-      
-      //if none of the points are within the mesh, return an empty array
-      if(!is_current_point_in_mesh)
-      {
-        return contributionArray;
-      }
-      
-      //if distance found is greater than ray length, return an empty array
-      if(distance_to_mesh >= overall_track_length)
-      {
-        return contributionArray;
-      }
-      
-      /*otherwise, push current_point up to the mesh intersection
-        and also start the segment length iteration at that distance, used for
-        iteration over partial tracks later*/
-      
-      segment_length = distance_to_mesh;
-      current_point[0] = start_point[0] + distance_to_mesh*direction[0];
-      current_point[1] = start_point[1] + distance_to_mesh*direction[1];      
-      current_point[2] = start_point[2] + distance_to_mesh*direction[2];
-      
-      /*also initialize a point slightly past the intersection point to determine
-        which hex the particle is entering*/
-      double hex_determination_point[3];
-      hex_determination_point[0] = current_point[0] + s_tol*direction[0];
-      hex_determination_point[1] = current_point[1] + s_tol*direction[1];
-      hex_determination_point[2] = current_point[2] + s_tol*direction[2];      
     }
   }
   
-  //initialize hex_determination_point as the start_point if the start_point is inside the mesh
-  if(is_start_point_in_mesh)
-  {
-    hex_determination_point[0] = start_point[0];
-    hex_determination_point[1] = start_point[1];
-    hex_determination_point[2] = start_point[2];
-    segment_length = 0;
-  }
-
-  //iterate over segment_length to form partial track length array
-  while(segment_length < overall_track_length)
-  {
-
-    std::pair <unsigned,double> contribution;
-    //initialize relevant hex element bounding plane index array
-    unsigned hex_plane_indices[6];
-
-    /*figure out what the bounding planes are needed and what index corresponds
-      to that hex. */
-    unsigned hex_index = 
-      whichHexIsPointIn( hex_determination_point, hex_plane_indices);
-      
-    //figure out which interaction planes are relevant for intersection points
-    unsigned plane_intersection_index_set[3];
-    findInteractionPlanes( hex_determination_point,
-                           direction,
-                           hex_plane_indices,
-                           plane_intersection_index_set );
-                           
-    //find distances to each plane picked along particle path
-    double distances_to_planes[3]
-    distances_to_planes[0] = calculateDistanceToPlane( current_point[0],
-                                                       direction[0],
-                                                       plane_intersection_index_set[0]);
-    distances_to_planes[1] = calculateDistanceToPlane( current_point[1],
-                                                       direction[1],
-                                                       plane_intersection_index_set[1]);
-    distances_to_planes[2] = calculateDistanceToPlane( current_point[2],
-                                                       direction[2],
-                                                       plane_intersection_index_set[2]);
-    //determine which one is the plane that the particle will intersect first
-    double distance_to_intersection = pickPlane(distances_to_planes);
-    
-    /*find out if distance is further than the end of the overall track length.
-      Should also take care of when a particle starts and stops in single cell */
-    if(distance_to_intersection + segment_length > overall_track_length)
-    {
-      contribution = std::make_pair(hex_index, overall_track_length - segment_length);
-      contributionArray.push_back(contribution);
-      return contributionArray;
-    }
-    //form contribution pair for track length through entire hex cell
-    contribution = std::make_pair(hex_index, distance_to_intersection);
-    contributionArray.push_back(contribution);
-    
-    //move particle to intersection point
-    segment_length = segment_length + distance_to_intersection;
-    current_point[0] = current_point[0] + distance_to_intersection*direction[0];
-    current_point[1] = current_point[1] + distance_to_intersection*direction[1];
-    current_point[2] = current_point[2] + distance_to_intersection*direction[2];
-    
-    //find hex_determination_point
-    hex_determination_point[0] =
-      hex_determination_point[0] + distance_to_intersection*direction[0];
-    hex_determination_point[1] =
-      hex_determination_point[1] + distance_to_intersection*direction[1];
-    hex_determination_point[2] =
-      hex_determination_point[2] + distance_to_intersection*direction[2];    
-        
-    /*determine if hex determination point is still inside mesh.
-    If not, then the particle has exited mesh and final contribution
-    should be made*/
-    bool exited_mesh = isPointInMesh(hex_determination_point);
-    if(exited_mesh)
-    {
-      continue;
-    }
-  }
-  
-  /*return contributionArray. This should only execute if the particle leaves
-    the mesh. If it dies in the mesh, this should never execute, but should be
-    taken care of above*/
-  return contributionArray;
-      
-      
+  return inMesh;
 
 }
 
-void StructuredHexMesh::findBoundingPlanes( const double start_point[3],
-                                            const double direction[3],
-                                            unsigned bounding_plane_indices[3])
+//find the index of the hex that a point is in
+
+unsigned StructuredHexMesh::whichHexIsPointIn( const double point[3] )
 {
 
-  //form vectors to each of the bounding planes
-  double x_lower_bound = d_bounding_planes[0] - start_point[0];
-  double x_upper_bound = d_bounding_planes[1] - start_point[0];
-  double y_lower_bound = d_bounding_planes[2] - start_point[1];
-  double y_upper_bound = d_bounding_planes[3] - start_point[1];
-  double z_lower_bound = d_bounding_planes[4] - start_point[2];
-  double z_upper_bound = d_bounding_planes[5] - start_point[2];
-  
-  //go through logic to determine which bounding plane of each dimension is relevant
-  //x dimension
-  if( !signbit(x_lower_bound*direction[0]) )
-  {
-    if(!signbit(x_upper_bound*direction[0]) )
-    {
-      if(x_lower_bound < x_upper_bound)
-      {
-        bounding_plane_indices[0] = 0;
-      }
-      else
-      {
-        bounding_plane_indices[0] = 1;
-      }
-    }
-    else
-    {
-      bounding_plane_indices[0] = 0;
-    }
-  }
-  else
-  {
-    bounding_plane_indices[0] = 1;
-  }
-  //y dimension
-  if( !signbit(y_lower_bound*direction[1]) )
-  {
-    if(!signbit(y_upper_bound*direction[1]) )
-    {
-      if(y_lower_bound < y_upper_bound)
-      {
-        bounding_plane_indices[1] = 2;
-      }
-      else
-      {
-        bounding_plane_indices[1] = 3;
-      }
-    }
-    else
-    {
-      bounding_plane_indices[1] = 2;
-    }
-  }
-  else
-  {
-    bounding_plane_indices[1] = 3;
-  }
-  
-  //z dimension
-  if( !signbit(z_lower_bound*direction[2]) )
-  {
-    if(!signbit(z_upper_bound*direction[2]) )
-    {
-      if(z_lower_bound < z_upper_bound)
-      {
-        bounding_plane_indices[2] = 4;
-      }
-      else
-      {
-        bounding_plane_indices[2] = 5;
-      }
-    }
-    else
-    {
-      bounding_plane_indices[2] = 4;
-    }
-  }
-  else
-  {
-    bounding_plane_indices[2] = 5;
-  }
-  
+  unsigned x_index = Search::binaryLowerBoundIndex( d_x_planes.begin(),
+                                                    d_x_planes.end(),
+                                                    point[0] );
+  unsigned y_index = Search::binaryLowerBoundIndex( d_y_planes.begin(),
+                                                    d_y_planes.end(),
+                                                    point[1] );
+  unsigned z_index = Search::binaryLowerBoundIndex( d_z_planes.begin(),
+                                                    d_z_planes.end(),
+                                                    point[2] );
+
+
+  return findIndex( x_index, y_index, z_index);
+
 }
 
-//returns the planes for a ray inside of a mesh that are needed to determine intersection points
-void StructuredHexMesh::findInteractionPlanes( const double direction[3],
-                                               unsigned hex_plane_indices[6],
-                                               unsigned plane_intersection_index_set[3] )
+/*!compute track lengths for a given ray and which hex they correspond to. Return
+  teuchos array of pairs*/
+Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLengths( 
+                                            const double start_point[3],
+                                            const double end_point[3],
+                                            const double direction[3] )
 {
-  //iterate through direction components to see which index they will interact with
+  //initialize a few required variables
+  double current_point[3] { start_point[0], start_point[1], start_point[2] };
+  
+  Teuchos::Array<std::pair<unsigned,double>> contribution_array;
+  
+  double track_length = vectorMagnitude( end_point[0] - start_point[0],
+                                         end_point[1] - start_point[1],
+                                         end_point[2] - start_point[2] );
+                                         
+  double length_iteration = 0;
+  
+
+  /* determine if start point is in mesh. If it isn't, then go through the process
+     of determining what the distance along the direction is to the mesh or if
+     none of the distances intersect with the mesh at all */
+  bool start_point_in_mesh = isPointInMesh( start_point );
+  if(!start_point_in_mesh)
+  {
+    //find the possible interaction planes - first is dimension, second is index
+    Teuchos::Array<std::pair<unsigned, unsigned>> interaction_planes =
+      findInteractionPlanes( start_point, 
+                             direction );
+                             
+    //take care of case where there are no possible interaction planes
+    if(interaction_planes.size()==0)
+    {
+    
+      //return empty array if this is true
+      return contribution_array;
+  
+    }
+    //find the distances to each plane - first is dimension, second is distance
+    Teuchos::Array<std::pair<unsigned,double>> distance_array = 
+      findDistances( start_point,
+                     direction,
+                     interaction_planes );
+                     
+    //loop over each distance and determine if this point is still in the plane
+    double push_distance;
+    bool is_test_point_in_mesh = false;
+    for(unsigned i = 0; i < distance_array.size(); ++i)
+    {
+
+      double distance = distance_array[i].second;
+      double test_point[3];
+      
+      test_point[0] = start_point[0] + direction[0] * (distance + s_tol);
+      test_point[1] = start_point[1] + direction[1] * (distance + s_tol);
+      test_point[2] = start_point[2] + direction[2] * (distance + s_tol);
+      
+      is_test_point_in_mesh = isPointInMesh(test_point);
+      
+      /* if one of the points is inside the mesh, set that to be the distance to push
+         the point up to and exit the loop using continue */
+      if(is_test_point_in_mesh)
+      {
+        push_distance = distance;
+        continue;
+      
+      }
+
+
+    }
+    
+    //test determine if none of them came back true. This means ray didn't intersect with mesh
+    if(!is_test_point_in_mesh)
+    {
+      //return empty array if it never entered mesh
+      return contribution_array;
+    
+    }
+    //also take care of when the distance to the mesh is greater than the track length of particle
+    else if(push_distance > track_length)
+    {
+    
+      return contribution_array;
+    
+    }
+    else
+    {
+
+      //otherwise, push the point to mesh
+      current_point[0] = current_point[0] + push_distance*direction[0];
+      current_point[1] = current_point[1] + push_distance*direction[1];
+      current_point[2] = current_point[2] + push_distance*direction[2];
+      length_iteration = push_distance;
+      
+    }
+    
+  }
+  
+  /*find the possible interaction planes for the current point. This is required
+    to find the interaction planes whether the start point is in the mesh or the
+    start point was outside the mesh because the interaction planes will change under
+    the circumstances of the start point being outside the mesh
+    note: size of the array must be 3 here for it to make any sense
+    first is dimension, second is plane index*/
+  Teuchos::Array<std::pair<unsigned, unsigned>> interaction_planes =
+    findInteractionPlanes( current_point, 
+                           direction );
+
+
+  //set the x, y, and z lower plane indices of the hex before entering loop.
+  setMemberIndices();
+   
+  //determine which direction to increment based on direction vector
+  int incrementer[3];
+  
   for(unsigned i = 0; i < 3; ++i)
   {
-    /*if the direction is negative, set the plane_intersection set to the lower
-      hex plane*/
+  
     if(direction[i] < 0)
     {
-      plane_intersection_index_set[i] = hex_plane_indices[2*i];
+      incrementer[i] = -1;
     }
     else
     {
-      plane_intersection_index_set[i] = hex_plane_indices[(2*i) + 1];
+      incrementer[i] = 1;
     }
+    
   }
+  
+  //make sure the new interaction planes are the ones you want.
+
+  //start loop to iterate over track length segments
+  while( true )
+  {
+    //find the distances to each intersection point
+    Teuchos::Array<std::pair<unsigned,double>> distances = 
+      findDistances(current_point,
+                    direction,
+                    interaction_planes);
+                    
+    /*pick the shortest distance which, while inside mesh, will always be the
+      relevant intersection point*/
+    std::pair<unsigned,double> distance = findIntersectionPoint( distances );
+
+    //form the hex_index for the contribution
+    unsigned hex_index = findIndex( d_hex_plane_indices );
+    
+    /*if the distance is past the end point, reset the distance to the distance
+      to the end point. Repeated code due to wanting to exit at precise moment*/
+    if( distance.second > track_length - length_iteration - 1e-10 )
+    {
+      distance.second = track_length - length_iteration;
+      std::pair<unsigned,double> contribution = std::make_pair(hex_index, distance.second);
+      contribution_array.push_back(contribution);
+      continue;
+    }
+    
+    //form a contribution out of the distance found earlier and the hex_index
+    std::pair<unsigned,double> contribution = std::make_pair(hex_index, distance.second);
+    
+    //push the contribution into the contribution array
+    contribution_array.push_back(contribution);
+    
+    //iterate the hex_plane indices up.
+    d_hex_plane_indices[ distance.first ] += incrementer[ distance.first ];
+    
+    /*check if the interaction_plane it just interacted with is a bounding plane
+      if so, exit loop */
+    bool interaction_plane_is_bounding_plane =
+      didParticleExitMesh( interaction_planes, distance.first );
+      
+    if(interaction_plane_is_bounding_plane) continue;
+    
+    
+    
+    //iterate interaction planes up
+    for(unsigned i = 0; i < interaction_planes.size(); ++i)
+    {
+    
+      if( interaction_planes[i].first == distance.first )
+      {
+        interaction_planes[i].second += incrementer[ distance.first ];
+      }
+    
+    }
+    
+  }
+  
+  return contribution_array;
 
 }
 
-//find distances to a relevant plane
-double StructuredHexMesh::calculateDistanceToPlane(const double current_point_component,
-                                                   const double direction_component,
-                                                   const unsigned plane_location)
+//begin private functions
+
+Teuchos::Array<std::pair<unsigned,unsigned>> StructuredHexMesh::findInteractionPlanes( 
+                                                          const double point[3],
+                                                          const double direction[3] )
 {
+  unsigned x_plane_index;
+  unsigned y_plane_index;
+  unsigned z_plane_index;
+  Teuchos::Array<std::pair<unsigned,unsigned>> interaction_planes;
+  //figure out x interaction plane
+  //take care of case where direction vector is very small (almost parallel to a dimension vector)
+  if( abs(direction[0]) > 1e-10)
+  {
+
+    if(point[0] < d_bounding_planes[0] && direction[0] > 0)
+    {
+  
+      x_plane_index = 0;
+      std::pair<unsigned,unsigned> x_interaction_plane = std::make_pair(1, x_plane_index);
+      interaction_planes.push_back(x_interaction_plane);
+    
+    }
+    else if(point[0] > d_bounding_planes[1] && direction[0] < 0)
+    {
+  
+      x_plane_index = d_x_planes.size() + 1;
+      std::pair<unsigned,unsigned> x_interaction_plane = std::make_pair(1, x_plane_index);
+      interaction_planes.push_back(x_interaction_plane);
+  
+    }
+    else if(point[0] > d_bounding_planes[0] && point[0] < d_bounding_planes[1] )
+    {
+      std::cout << "entered correct if statement" << std::endl;
+      x_plane_index = findXPlaneIndex( point[0],
+                                       direction[0] );
+      std::pair<unsigned,unsigned> x_interaction_plane = std::make_pair(1, x_plane_index);
+      interaction_planes.push_back(x_interaction_plane);
+  
+    }
+  }
+  //figure out y interaction plane
+  //take care of special case when direction is very small
+  if( abs(direction[1]) > 1e-10)
+  {
+    if(point[1] < d_bounding_planes[2] && direction[1] > 0)
+    {
+  
+      y_plane_index = 0;
+      std::pair<unsigned,unsigned> y_interaction_plane = std::make_pair(2, y_plane_index);
+      interaction_planes.push_back(y_interaction_plane);
+    
+    }
+    else if(point[1] > d_bounding_planes[3] && direction[1] < 0)
+    {
+  
+      y_plane_index = d_y_planes.size() + 1;
+      std::pair<unsigned,unsigned> y_interaction_plane = std::make_pair(2, y_plane_index);
+      interaction_planes.push_back(y_interaction_plane);  
+  
+    }
+    else if(point[1] > d_bounding_planes[2] && point[1] < d_bounding_planes[3] )
+    {
+  
+      y_plane_index = findYPlaneIndex( point[1],
+                                       direction[1]);
+      std::pair<unsigned,unsigned> y_interaction_plane = std::make_pair(2, y_plane_index);
+      interaction_planes.push_back(y_interaction_plane);
+  
+    }
+  }
+  //figure out z interaction plane
+  //take care of special case when direction is very small
+  if( abs(direction[2]) > 1e-10)
+  {
+    if(point[2] < d_bounding_planes[4] && direction[2] > 0)
+    {
+  
+      z_plane_index = 0;
+      std::pair<unsigned,unsigned> z_interaction_plane = std::make_pair(3, z_plane_index);
+      interaction_planes.push_back(z_interaction_plane);
+    
+    }
+    else if(point[2] > d_bounding_planes[5] && direction[2] < 0)
+    {
+  
+      z_plane_index = d_z_planes.size() + 1;
+      std::pair<unsigned,unsigned> z_interaction_plane = std::make_pair(3, z_plane_index);
+      interaction_planes.push_back(z_interaction_plane);
+  
+    }
+    else if(point[2] > d_bounding_planes[4] && point[2] < d_bounding_planes[5] )
+    {
+  
+      z_plane_index = findZPlaneIndex( point[1],
+                                       direction[1]);
+      std::pair<unsigned,unsigned> z_interaction_plane = std::make_pair(3, z_plane_index);
+      interaction_planes.push_back(z_interaction_plane);
+      
+    }
+  }    
+
+  return interaction_planes;
+
+}
+
+Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::findDistances( 
+                                    const double point[3],
+                                    const double direction[3],
+                                    const Teuchos::Array<std::pair<unsigned,unsigned>>& planeSet)
+{
+
+  Teuchos::Array<std::pair<unsigned,double>> distances;
   double distance;
   
-  /*take care of when the direction component is excessively small.
-    This can cause the distance to be erroneous due to */
-  if(direction_component < 1e-10)
+  for(unsigned i = 0; i < planeSet.size(); ++i)
   {
-    distance = 0;
+    if(planeSet[i].first == 1)
+    {
+      distance = (d_x_planes[planeSet[i].second] - point[i]) / direction[i];
+    }
+    else if(planeSet[i].first == 2)
+    {
+      distance = (d_y_planes[planeSet[i].second] - point[i]) / direction[i];
+    }
+    else if(planeSet[i].first == 3)
+    {
+      distance = (d_z_planes[planeSet[i].second] - point[i]) / direction[i];
+    }
+    unsigned dimension = planeSet[i].first;
+    std::pair<unsigned, double> distance_pair = std::make_pair(dimension, distance);
+    distances.push_back(distance_pair);
+    
+  }
+
+  return distances;
+
+}
+
+std::pair<unsigned,double> StructuredHexMesh::findIntersectionPoint( const Teuchos::Array<std::pair<unsigned,double>>& distances )
+{
+  //set initialize min pair as the first pair
+  std::pair<unsigned,double> min_distance_pair = distances[0];
+  
+  //iterate over all the pairs to find the smallest
+  for(unsigned i = 1; i < distances.size(); ++i)
+  {
+    
+    if(distances[i].second < min_distance_pair.second)
+    {
+      min_distance_pair = distances[i];
+    } 
+    
+  }
+  
+  return min_distance_pair;
+
+}
+
+unsigned StructuredHexMesh::findIndex( const unsigned x_index,
+                                       const unsigned y_index,
+                                       const unsigned z_index )
+{
+
+  unsigned x_dimension = d_x_planes.size()-1;
+  unsigned y_dimension = d_y_planes.size()-1;
+  unsigned hex_index = x_index +
+                       y_index * x_dimension +
+                       z_index * x_dimension * y_dimension;
+
+  return hex_index;
+
+}
+
+unsigned StructuredHexMesh::findXPlaneIndex( const double x_coordinate,
+                                             const double x_direction_component)
+{
+  
+  unsigned x_interaction_index;
+  unsigned x_lower_index = Search::binaryLowerBoundIndex( d_x_planes.begin(),
+                                                   d_x_planes.end(),
+                                                   x_coordinate );
+
+  if(x_direction_component > 0)
+  {
+    x_interaction_index = x_lower_index + 1;
   }
   else
   {
-    distance = (plane_location - current_point_component) / direction_component;
+    x_interaction_index = x_lower_index;
   }
-  return distance;
+
+  return x_interaction_index;
 
 }
 
-//used only for rays inside a mesh to pick the relevant plane that the point will interact with
-double StructuredHexMesh::pickPlane(const double distances[3])
+unsigned StructuredHexMesh::findYPlaneIndex( const double y_coordinate,
+                                             const double y_direction_component)
 {
-  double lowest_distance;
-  
-  lowest_distance = distances[0];
-  for(unsigned i = 1; i < 3; ++i)
+
+  unsigned y_interaction_index;
+  unsigned y_lower_index = Search::binaryLowerBoundIndex( d_y_planes.begin(),
+                                                          d_y_planes.end(),
+                                                          y_coordinate );
+
+  if(y_direction_component > 0)
   {
-    if(distances[i] < lowest_distance && distances[i] != 0)
-    {
-      lowest_distance = distances[i];
-    }
+    y_interaction_index = y_lower_index + 1;
+  }
+  else
+  {
+    y_interaction_index = y_lower_index;
+  }
+
+  return y_interaction_index;
+}
+
+unsigned StructuredHexMesh::findZPlaneIndex( const double z_coordinate,
+                                             const double z_direction_component)
+{
+
+  unsigned z_interaction_index;
+  unsigned z_lower_index = Search::binaryLowerBoundIndex( d_z_planes.begin(),
+                                                          d_z_planes.end(),
+                                                          z_coordinate );
+
+  if(z_direction_component > 0)
+  {
+    z_interaction_index = z_lower_index + 1;
+  }
+  else
+  {
+    z_interaction_index = z_lower_index;
   }
   
-  return lowest_distance;
+  return z_interaction_index;
 }
-
-//finds the centroid of a given line segment
-void StructuredHexMesh::findCentroid(const double current_point[3],
-                  const double distance,
-                  const double direction[3],
-                  double centroid_point[3])
-{
-  double centroid_distance = distance/2;
-  
-  centroid_point[0] = current_point[0] + centroid_distance * direction[0];
-  centroid_point[1] = current_point[1] + centroid_distance * direction[1];
-  centroid_point[2] = current_point[2] + centroid_distance * direction[2];
-  
-}
-
-
-bool StructuredHexMesh::doesRayIntersectWithBoundingPlanes(const double start_point[3],
-                                                           const double direction[3])
-{
-
-  /*only need to work with one bounding set. Math below corresponds to the following:
-    First step is finding the vector to 3 of the bounding planes. Will only have
-    an x, y, or z component since the mesh is currently not tilted or rotated.
-    Determine if this x, y, or z component has the same sign as the relevant
-    direction component (i.e. determine if all dot products are less than zero
-    which means the particle is not traveling towards any of the bounding planes).
-    If all dot products are negative, then return false.*/
-    
-    //form vectors to bounding planes
-    double x_vector = d_bounding_planes[0] - start_point[0];
-    double y_vector = d_bounding_planes[2] - start_point[1];
-    double z_vector = d_bounding_planes[4] - start_point[2];
-    
-    bool intersectsWithPlanes = true;
-    //find sign of resulting dot products
-    if (signbit(x_vector*direction[0]))
-    {
-      if(signbit(y_vector*direction[1]))
-      {
-        if(signbit(z_vector*direction[2]))
-        {
-          intersectsWithPlanes = false;
-        }
-      }
-    }
-    
-    return intersectsWithPlanes;
-
-}
-
+                          
 
 
 } // end Utility namespace

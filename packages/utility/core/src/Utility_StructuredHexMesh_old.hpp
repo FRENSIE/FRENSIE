@@ -30,72 +30,66 @@ public:
   //! Destructor
   ~StructuredHexMesh()
   { /* ... */ }
-  
-  //! Tells whether or not a point is inside the mesh
+
+  //returns a bool that says whether or not a point is in the mesh
   bool isPointInMesh( const double point[3] );
   
-  //! Returns index for which hex element the point is contained in
-  unsigned whichHexIsPointIn( const double point[3], unsigned hex_plane_indices[6] );
-  
-  //! returns 1-d array index of hex assuming x index is iterated over first
-  unsigned returnIndex( const unsigned x_index,
-                        const unsigned y_index,
-                        const unsigned z_index );
+  //returns the index of the hex that contains a given point
+  unsigned whichHexIsPointIn( const double point[3] );
   
   //! returns partial track lengths along a given line segment
   Teuchos::Array<std::pair<unsigned,double>> computeTrackLengths( 
                               const double start_point[3],
                               const double end_point[3],
                               const double direction[3] );
+
   // plane location member data
-  Teuchos::Array<double>& d_x_planes;
-  Teuchos::Array<double>& d_y_planes;
-  Teuchos::Array<double>& d_z_planes;
+  Teuchos::Array<double> d_x_planes;
+  Teuchos::Array<double> d_y_planes;
+  Teuchos::Array<double> d_z_planes;
   
-  // bounding plane member data (x1,x2,y1,y2,z1,z2)
-  double d_bounding_planes[6];
+  // indices of the planes that are used to form the index for the hex element a particle is in
+  unsigned d_hex_plane_indices[3]
   
-                               
 private:
 
   // The tolerance used for geometric tests
   static const double s_tol;
   
-  // find the bounding planes for a particle that starts outside of mesh
-  void findBoundingPlanes( const double start_point[3],
-                           const double direction[3],
-                           unsigned bounding_plane_indices[3]);
+  void setMemberIndices();
   
-  //!find the distance to the bounding planes and puts it in an array
-  void findBoundingPlanes( const double start_point[3],
-                           const double direction[3],
-                           const unsigned bounding_plane_indices[3],
-                           double bounding_plane_distances[3]);
+  Teuchos::Array<std::pair<unsigned,unsigned>> findInteractionPlanes( 
+                                                        const double point[3],
+                                                        const double direction[3] );
+                         
+  Teuchos::Array<std::pair<unsigned,double>> findDistances( 
+                                                        const double point[3],
+                                                        const double direction[3],
+                      const Teuchos::Array<std::pair<unsigned,unsigned>>& planeSet );
+                      
+  //used to find the relevant intersection point where the particle will intersect the mesh
+  std::pair<unsigned,double> findIntersectionPoint( const Teuchos::Array<std::pair<unsigned,double>>& distances);
   
-  //!find set of possible planes that track length can intersect with
-  void findInteractionPlanes( const double direction[3],
-                              unsigned hex_plane_indices[3],
-                              unsigned plane_set[3] );
-  
-  //!Find distance to chosen plane
-  double calculateDistanceToPlane( const double current_point_component,
-                                   const double direction_component,
-                                   const unsigned plane_location ); 
-  
-  //!pick the smallest distance to planes to return distance to said plane                                  
-  double pickPlane(const double distances[3]);
-  
-  //!find the centroid of a segment (probably going to throw out)
-  void findCentroid(const double current_point[3],
-                  const double distance[3],
-                  const double direction[3],
-                  double centroid_point[3]);
-                  
-  //!figure out whether the particle ever intersects with the mesh at all
-  bool doesRayIntersectWithBoundingPlanes(const double start_point[3],
-                                          const double direction[3]);
+  //form the index out of the x,y, and z lower hex plane bounding indices
+  unsigned findIndex( const unsigned x_index,
+                      const unsigned y_index,
+                      const unsigned z_index );
+                      
+                 
 
-}
+  
+  //functions for finding the index of an interaction plane
+  unsigned findXPlaneIndex( const double x_coordinate,
+                            const double x_direction_component );
+                            
+  unsigned findYPlaneIndex( const double y_coordinate,
+                            const double y_direction_component );
+                            
+  unsigned findZPlaneIndex( const double z_coordinate,
+                            const double z_direction_component );
+                            
+                            
+};
 
 
 } // end Utility namespace

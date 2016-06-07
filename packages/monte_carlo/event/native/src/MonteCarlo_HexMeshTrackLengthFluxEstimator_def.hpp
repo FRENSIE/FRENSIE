@@ -16,7 +16,6 @@
 #include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
 #include "Utility_Tuple.hpp"
-#include "Utility_HexahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
