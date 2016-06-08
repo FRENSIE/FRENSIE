@@ -46,14 +46,10 @@ public:
   typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;    
 
-  //! Constructor from ACE table data
+  //! Constructor from table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number );
-
-  //! Constructor from ENDL table data
-  ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ParameterArray& screened_rutherford_parameters );
 
   //! Destructor 
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
@@ -72,9 +68,18 @@ public:
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine,
+                      const double eta ) const;
+
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine,
+                      const double eta ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -101,14 +106,11 @@ public:
   double evaluateMoliereScreeningConstant( const double energy ) const;
 
   //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy) const;
+  double evaluateIntegratedPDF( const double incoming_energy ) const;
 
-  // evaluate the pdf integrated from -1 to angle_cosine
-  double evaluateIntegratedPDF( 
-        const double& scattering_angle_cosine, 
-        const ParameterArray::const_iterator& lower_bin_boundary, 
-        const ParameterArray::const_iterator& upper_bin_boundary,
-        const double& interpolation_fraction ) const;
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy,
+                                const double eta ) const;
 
 protected:
 
@@ -139,9 +141,6 @@ private:
 
   // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
   double d_screening_param2;
-
-  // Flag to indicate that tabulated screened rutherford parameters are used
-  bool d_using_endl_tables;
 
   // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;

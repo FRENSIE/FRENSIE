@@ -37,12 +37,6 @@ public:
         atomic_number )
   { /* ... */ }
 
-  TestScreenedRutherfordElasticElectronScatteringDistribution( 
-        const ParameterArray& screened_rutherford_parameters )
-    : MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution( 
-        screened_rutherford_parameters )
-  { /* ... */ }
-
   ~TestScreenedRutherfordElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -189,6 +183,48 @@ TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution,
                                            scattering_angle_cosine );
   // Test 3  energy 2
   TEST_FLOATING_EQUALITY( pdf_value, 8.706924942647520E+00, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated pdf can be evaluated
+TEUCHOS_UNIT_TEST( ScreenedRutherfordElasticElectronScatteringDistribution, 
+                   evaluateIntegratedPDF )
+{
+  double tol = 1.0e-14;
+  // Set energy in MeV
+  double energy = 1.0e+5;
+
+  // Calculate the pdf
+  double pdf_value = ace_elastic_distribution->evaluateIntegratedPDF( energy );
+
+  // Test energy 1
+  TEST_FLOATING_EQUALITY( pdf_value, 1.081706689774850E+07, tol );
+
+  // Test with a different energy
+  energy = 1.00E-03;
+
+  pdf_value = ace_elastic_distribution->evaluateIntegratedPDF( energy );
+
+  // Test energy 2
+  TEST_FLOATING_EQUALITY( pdf_value, 9.077620584215180E-05, tol );
+
+  // Test with a different energy
+  energy = 1.00E-04;
+
+  pdf_value = ace_elastic_distribution->evaluateIntegratedPDF( energy );
+
+  // Test energy 3
+  TEST_FLOATING_EQUALITY( pdf_value, 8.706924834818060E-06, tol );
+
+  // Test with a different energy
+  energy = 1.00E-05;
+
+  pdf_value = ace_elastic_distribution->evaluateIntegratedPDF( energy );
+
+  // Test energy 4
+  TEST_FLOATING_EQUALITY( pdf_value, 5.000000001434400E-07, tol );
+
+
 }
 
 //---------------------------------------------------------------------------//
@@ -633,7 +669,7 @@ int main( int argc, char** argv )
   cutoff_elastic_distribution.reset( 
         new MonteCarlo::CutoffElasticElectronScatteringDistribution( 
                 scattering_function,
-                0.999999 ) );
+                mu_cutoff ) );
 
   double atomic_number = data_container.getAtomicNumber();
 
