@@ -386,14 +386,6 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
                           Utility::IntegratorException,
                           "Roundoff error prevented tolerance from being achieved" );
     }
-  else
-  {
-    if ( round_off_1 >= 6 || round_off_2 >= 20 )
-    {
-       std::cout << "Warning: "
-        << "Roundoff error prevented tolerance from being achieved" << std::endl;
-    }
-  }
 };
 
 
@@ -624,6 +616,12 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
       }
     }
 
+  }
+
+  if ( d_ignore_errors && (round_off_1 >= 6 || round_off_2 >= 20) )
+  {
+     std::cout << "Warning: "
+     << "Roundoff error prevented tolerance from being achieved" << std::endl;
   }
 
   result = area;

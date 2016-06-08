@@ -9,8 +9,8 @@
 #ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 #define UTILITY_GAUSS_KRONROD_QUADRATURE_SET_TRAITS_DECL_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
+// std Includes
+#include <vector>
 
 // FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
@@ -26,27 +26,27 @@ namespace Utility{
     static const bool valid_rule = false;
 
     //! Gauss quadrature weights 
-    static const Teuchos::Array<double> gauss_weights;
+    static const std::vector<long double> gauss_weights;
     
     //! Kronrad quadrature weights 
-    static const Teuchos::Array<double> kronrod_weights;
+    static const std::vector<long double> kronrod_weights;
 
     //! Kronrad quadrature abscissae
-    static const Teuchos::Array<double> kronrod_abscissae;
+    static const std::vector<long double> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeGaussWeights()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long double> initializeGaussWeights()
+    { return std::vector<long double>(); }
 
     // Initialize the kronrod weight array
-    static inline Teuchos::Array<double> initializeKronrodWeights()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long double> initializeKronrodWeights()
+    { return std::vector<long double>(); }
 
     // Initialize the gauss weight array
-    static inline Teuchos::Array<double> initializeKronrodAbscissae()
-    { return Teuchos::Array<double>(); }
+    static inline std::vector<long double> initializeKronrodAbscissae()
+    { return std::vector<long double>(); }
   };
 
 } // end Utility namespace

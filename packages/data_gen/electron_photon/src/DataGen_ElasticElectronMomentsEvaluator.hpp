@@ -54,41 +54,24 @@ public:
   { /* ... */ }
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
-                                        const double incoming_energy, 
-                                        const int polynomial_order = 0) const;
+  double evaluateLegendreExpandedRutherford(
+            const double scattering_angle_cosine,
+            const double incoming_energy,
+            const int polynomial_order = 0 ) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
-                                        const double incoming_energy,
-                                        const int polynomial_order,
-                                        const double eta ) const;
+  double evaluateLegendreExpandedRutherford(
+            const double scattering_angle_cosine,
+            const double incoming_energy,
+            const double eta,
+            const int polynomial_order = 0 ) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
-  double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
-                                      const double incoming_energy, 
-                                      const int polynomial_order = 0) const;
+  double evaluateLegendreExpandedPDF(
+            const double scattering_angle_cosine,
+            const double incoming_energy, 
+            const int polynomial_order = 0) const;
 
-  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
-  double evaluateLegendreExpandedPDFAtEnergyBin( 
-                                const double scattering_angle_cosine,
-                                const unsigned incoming_energy_bin, 
-                                const int polynomial_order = 0) const;
-
-  //! Evaluate the first n moments of the elastic scattering distribution at a given energy
-  void evaluateElasticMoment( 
-            std::vector<Utility::long_float>& legendre_moments,
-            const double energy,
-            const int n,
-            const double precision ) const;
-/*
-  //! Evaluate the first n moments of the elastic scattering distribution at a given energy_bin
-  void evaluateElasticMoment( 
-            std::vector<Utility::long_float>& legendre_moments,
-            const unsigned energy_bin,
-            const int n,
-            const double precision ) const;
-*/
   //! Evaluate the nth cross section moment of the elastic cutoff distribution at the energy
   void evaluateCutoffMoment( 
             Utility::long_float& cutoff_moment,
@@ -102,6 +85,13 @@ public:
             Utility::long_float& rutherford_moment,
             const double& energy,
             const int& n ) const;
+
+  //! Evaluate the first n moments of the elastic scattering distribution at a given energy
+  void evaluateElasticMoment( 
+            std::vector<Utility::long_float>& legendre_moments,
+            const double energy,
+            const int n,
+            const double precision ) const;
 
 protected:
 
