@@ -22,24 +22,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 21 point rule
@@ -50,24 +50,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 31 point rule
@@ -78,24 +78,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 41 point rule
@@ -106,24 +106,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 51 point rule
@@ -134,24 +134,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
   // Gauss-Kronrod quadrature set traits 61 point rule
@@ -162,24 +162,24 @@ namespace Utility{
     static const bool valid_rule = true;
 
     // Gauss quadrature weights 
-    static const std::vector<long double> gauss_weights;
+    static const std::vector<long_float> gauss_weights;
     
     // Kronrad quadrature weights 
-    static const std::vector<long double> kronrod_weights;
+    static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
-    static const std::vector<long double> kronrod_abscissae;
+    static const std::vector<long_float> kronrod_abscissae;
 
     private:
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeGaussWeights();
+    static std::vector<long_float> initializeGaussWeights();
 
     // Initialize the kronrod weight array
-    static std::vector<long double> initializeKronrodWeights();
+    static std::vector<long_float> initializeKronrodWeights();
 
     // Initialize the gauss weight array
-    static std::vector<long double> initializeKronrodAbscissae();
+    static std::vector<long_float> initializeKronrodAbscissae();
   };
 
 } // end Utility namespace

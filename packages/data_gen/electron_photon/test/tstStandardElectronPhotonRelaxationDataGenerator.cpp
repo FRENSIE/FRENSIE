@@ -491,7 +491,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                      1.0e-5,
                      1.0e+5,
                      0.999999,  
-				     1e-3,
+				     1e-4,
 				     1e-3,
 				     0.001,
 				     1e-32,
@@ -634,7 +634,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 			  2.46239765051693239e-13,
 			  1e-15 );
   TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).size(),
-		      440 );
+		      441 );
   TEST_EQUALITY_CONST(
 		     data_container.getOccupationNumberMomentumGrid(1).front(),
 		     -1.0 );
@@ -661,7 +661,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     -1.0 );
   TEST_EQUALITY_CONST(data_container.getOccupationNumber(4).back(),
 		      1.0 );
-  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).size(), 440 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).size(), 441 );
   TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).front(),
 		       0.0 );
   TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).back(),

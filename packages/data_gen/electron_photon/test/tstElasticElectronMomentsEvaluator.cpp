@@ -407,7 +407,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[2].convert_to<double>(),
                                   tol );
 }
-/*
+
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
@@ -566,7 +566,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                   moments[2].convert_to<double>(),
                                   tol );
 }
-*/
+
 //---------------------------------------------------------------------------//
 // Check that the screened rutherford moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,

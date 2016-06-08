@@ -9,26 +9,25 @@
 // FRENSIE Includes
 #include "Utility_GaussKronrodQuadratureSetTraits.hpp"
 
-
 namespace Utility{
 
     /******************* 15 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<15>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::gauss_weights =
         GaussKronrodQuadratureSetTraits<15>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<15>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<15>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<15>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<15>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<15>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(4);
+        std::vector<long_float> gauss_weights(4);
         gauss_weights[0] = 0.129484966168869693270611432679082L;
         gauss_weights[1] = 0.279705391489276667901467771423780L;
         gauss_weights[2] = 0.381830050505118944950369775488975L;
@@ -38,9 +37,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<15>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(8);
+        std::vector<long_float> kronrod_weights(8);
         kronrod_weights[0] = 0.022935322010529224963732008058970L;
         kronrod_weights[1] = 0.063092092629978553290700663189204L;
         kronrod_weights[2] = 0.104790010322250183839876322541518L;
@@ -54,9 +53,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<15>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(8);
+        std::vector<long_float> kronrod_abscissae(8);
         kronrod_abscissae[0] = 0.991455371120812639206854697526329L;
         kronrod_abscissae[1] = 0.949107912342758524526189684047851L;
         kronrod_abscissae[2] = 0.864864423359769072789712788640926L;
@@ -72,21 +71,21 @@ namespace Utility{
 
     /******************* 21 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<21>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::gauss_weights =
         GaussKronrodQuadratureSetTraits<21>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<21>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<21>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<21>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<21>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<21>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(5);
+        std::vector<long_float> gauss_weights(5);
         gauss_weights[0] = 0.066671344308688137593568809893332L;
         gauss_weights[1] = 0.149451349150580593145776339657697L;
         gauss_weights[2] = 0.219086362515982043995534934228163L;
@@ -97,9 +96,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<21>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(11);
+        std::vector<long_float> kronrod_weights(11);
         kronrod_weights[0] = 0.011694638867371874278064396062192L;
         kronrod_weights[1] = 0.032558162307964727478818972459390L;
         kronrod_weights[2] = 0.054755896574351996031381300244580L;
@@ -116,9 +115,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<21>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(11);
+        std::vector<long_float> kronrod_abscissae(11);
         kronrod_abscissae[0] = 0.995657163025808080735527280689003L;
         kronrod_abscissae[1] = 0.973906528517171720077964012084452L;
         kronrod_abscissae[2] = 0.930157491355708226001207180059508L;
@@ -137,21 +136,21 @@ namespace Utility{
 
     /******************* 31 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<31>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::gauss_weights =
         GaussKronrodQuadratureSetTraits<31>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<31>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<31>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<31>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<31>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<31>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(8);
+        std::vector<long_float> gauss_weights(8);
         gauss_weights[0] = 0.030753241996117268354628393577204L;
         gauss_weights[1] = 0.070366047488108124709267416450667L;
         gauss_weights[2] = 0.107159220467171935011869546685869L;
@@ -165,9 +164,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<31>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(16);
+        std::vector<long_float> kronrod_weights(16);
         kronrod_weights[0] = 0.005377479872923348987792051430128L;
         kronrod_weights[1] = 0.015007947329316122538374763075807L;
         kronrod_weights[2] = 0.025460847326715320186874001019653L;
@@ -189,9 +188,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<31>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(16);
+        std::vector<long_float> kronrod_abscissae(16);
         kronrod_abscissae[0] = 0.998002298693397060285172840152271L;
         kronrod_abscissae[1] = 0.987992518020485428489565718586613L;
         kronrod_abscissae[2] = 0.967739075679139134257347978784337L;
@@ -215,21 +214,21 @@ namespace Utility{
 
     /******************* 41 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<41>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::gauss_weights =
         GaussKronrodQuadratureSetTraits<41>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<41>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<41>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<41>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<41>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<41>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(10);
+        std::vector<long_float> gauss_weights(10);
         gauss_weights[0] = 0.017614007139152118311861962351853L;
         gauss_weights[1] = 0.040601429800386941331039952274932L;
         gauss_weights[2] = 0.062672048334109063569506535187042L;
@@ -245,9 +244,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<41>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(21);
+        std::vector<long_float> kronrod_weights(21);
         kronrod_weights[0] = 0.003073583718520531501218293246031L;
         kronrod_weights[1] = 0.008600269855642942198661787950102L;
         kronrod_weights[2] = 0.014626169256971252983787960308868L;
@@ -274,9 +273,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<41>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(21);
+        std::vector<long_float> kronrod_abscissae(21);
         kronrod_abscissae[0] = 0.998859031588277663838315576545863L;
         kronrod_abscissae[1] = 0.993128599185094924786122388471320L;
         kronrod_abscissae[2] = 0.981507877450250259193342994720217L;
@@ -305,21 +304,21 @@ namespace Utility{
 
     /******************* 51 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<51>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::gauss_weights =
         GaussKronrodQuadratureSetTraits<51>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<51>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<51>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<51>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<51>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<51>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(13);
+        std::vector<long_float> gauss_weights(13);
         gauss_weights[0] = 0.011393798501026287947902964113235L;
         gauss_weights[1] = 0.026354986615032137261901815295299L;
         gauss_weights[2] = 0.040939156701306312655623487711646L;
@@ -338,9 +337,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<51>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(26);
+        std::vector<long_float> kronrod_weights(26);
         kronrod_weights[0] = 0.001987383892330315926507851882843L;
         kronrod_weights[1] = 0.005561932135356713758040236901066L;
         kronrod_weights[2] = 0.009473973386174151607207710523655L;
@@ -372,9 +371,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<51>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(26);
+        std::vector<long_float> kronrod_abscissae(26);
         kronrod_abscissae[0] = 0.999262104992609834193457486540341L;
         kronrod_abscissae[1] = 0.995556969790498097908784946893902L;
         kronrod_abscissae[2] = 0.988035794534077247637331014577406L;
@@ -408,21 +407,21 @@ namespace Utility{
 
     /******************* 61 point rule *******************/
     // Gauss quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<61>::gauss_weights =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::gauss_weights =
         GaussKronrodQuadratureSetTraits<61>::initializeGaussWeights();
     
     // Kronrad quadrature weights 
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<61>::kronrod_weights = 
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::kronrod_weights = 
         GaussKronrodQuadratureSetTraits<61>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
-    const std::vector<long double> GaussKronrodQuadratureSetTraits<61>::kronrod_abscissae =
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::kronrod_abscissae =
         GaussKronrodQuadratureSetTraits<61>::initializeKronrodAbscissae();
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<61>::initializeGaussWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::initializeGaussWeights()
     { 
-        std::vector<long double> gauss_weights(15);
+        std::vector<long_float> gauss_weights(15);
         gauss_weights[0] = 0.007968192496166605615465883474674L;
         gauss_weights[1] = 0.018466468311090959142302131912047L;
         gauss_weights[2] = 0.028784707883323369349719179611292L;
@@ -443,9 +442,9 @@ namespace Utility{
     }
 
     // Initialize the kronrod weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<61>::initializeKronrodWeights()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::initializeKronrodWeights()
     {
-        std::vector<long double> kronrod_weights(31);
+        std::vector<long_float> kronrod_weights(31);
         kronrod_weights[0] = 0.001389013698677007624551591226760L;
         kronrod_weights[1] = 0.003890461127099884051267201844516L;
         kronrod_weights[2] = 0.006630703915931292173319826369750L;
@@ -482,9 +481,9 @@ namespace Utility{
     }
 
     // Initialize the gauss weight array
-    std::vector<long double> GaussKronrodQuadratureSetTraits<61>::initializeKronrodAbscissae()
+    std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::initializeKronrodAbscissae()
     {
-        std::vector<long double> kronrod_abscissae(31);
+        std::vector<long_float> kronrod_abscissae(31);
         kronrod_abscissae[0] = 0.999484410050490637571325895705811L;
         kronrod_abscissae[1] = 0.996893484074649540271630050918695L;
         kronrod_abscissae[2] = 0.991630996870404594858628366109486L;

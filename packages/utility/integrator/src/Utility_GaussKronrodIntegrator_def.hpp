@@ -1050,7 +1050,7 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
       {  
         calculateQuadratureIntegrandValuesAtAbscissa<FunctorType>( 
             integrand, 
-            GaussKronrodQuadratureSetTraits<Points>::kronrod_abscissae[j],
+            (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_abscissae[j],
             half_length,
             midpoint,
             integrand_values_lower[j],
@@ -1060,9 +1060,9 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
           integrand_values_lower[j] + integrand_values_upper[j];
 
         kronrod_result += 
-            GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*integrand_values_sum[j];
+            (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*integrand_values_sum[j];
 
-        result_abs += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*( 
+        result_abs += (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*( 
           fabs( integrand_values_lower[j] ) + fabs( integrand_values_upper[j] ) );
       };
 
@@ -1071,7 +1071,7 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
 
     // Estimate Kronrod integral for the last weight
     T kronrod_result_last_weight = integrand_midpoint*
-        GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1];
+        (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1];
 
     // Update Kronrod estimate and absolute value with last weight
     kronrod_result += kronrod_result_last_weight;
@@ -1088,13 +1088,13 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
     result_asc = (T)0;
     for ( int j = 0; j < number_of_weights - 1; j++ )
       {  
-        result_asc += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*
+        result_asc += (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[j]*
           ( fabs( integrand_values_lower[j] - mean_kronrod_result ) +
             fabs( integrand_values_upper[j] - mean_kronrod_result ) );
       };
 
     // Estimate the result asc for the last weight
-    result_asc += GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1]*
+    result_asc += (T)GaussKronrodQuadratureSetTraits<Points>::kronrod_weights[number_of_weights-1]*
         fabs( integrand_midpoint - mean_kronrod_result );
 
     // Calculate final result acx
@@ -1107,14 +1107,14 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
       {
         int jj = j*2 + 1;
         gauss_result += integrand_values_sum[jj]*
-            GaussKronrodQuadratureSetTraits<Points>::gauss_weights[j];
+            (T)GaussKronrodQuadratureSetTraits<Points>::gauss_weights[j];
       };
 
     // Update Gauss estimate with last weight if needed
     if ( number_of_weights % 2 == 0 )
     {
       gauss_result += integrand_midpoint*
-        GaussKronrodQuadratureSetTraits<Points>::gauss_weights[number_of_weights/2 - 1];
+        (T)GaussKronrodQuadratureSetTraits<Points>::gauss_weights[number_of_weights/2 - 1];
     }
 
     // Estimate error in integral 
