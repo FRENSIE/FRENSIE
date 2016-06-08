@@ -70,7 +70,8 @@ private:
   bool boundaryRegionSpecialCase( const double point[3],
                                   const double direction[3] );
 
-  bool didParticleExitMesh( Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_planes); 
+  bool didParticleExitMesh( planeDimension intersecction_dimension,
+                            Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_planes); 
                        
   Teuchos::Array<std::pair<planeDimension,plane_index>> findInteractionPlanes( 
                                                         const double point[3],
