@@ -197,7 +197,7 @@
     <Parameter docString="" id="182" isDefault="false" isUsed="true" name="atomic_number" type="int" value="1"/>
     <Parameter docString="" id="183" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="9.99241999999999964e-01"/>
   </ParameterList>
-  <ParameterList id="195" name="H-Native">
+  <ParameterList id="195" name="Al-Native">
     <Parameter docString="" id="185" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_13_native.xml"/>
     <Parameter docString="" id="186" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
     <Parameter docString="" id="187" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>

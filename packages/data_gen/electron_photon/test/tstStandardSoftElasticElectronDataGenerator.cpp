@@ -24,8 +24,6 @@
 // FRENSIE Includes
 #include "DataGen_StandardSoftElasticElectronDataGenerator.hpp"
 #include "Data_SoftElasticElectronVolatileDataContainer.hpp"
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -33,10 +31,12 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> 
-  native_h_data, native_pb_data;
+  native_h_data, native_pb_data, native_al_data;
 Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator>
-  data_generator_h, data_generator_pb;
+  data_generator_h, data_generator_pb, data_generator_al;
 
+int number_of_discrete_angles = 3;
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
 {
   Data::SoftElasticElectronVolatileDataContainer data_container;
 
-  data_generator_h->populateSoftElasticDataContainer( data_container );
+  data_generator_h->populateSoftElasticDataContainer( data_container, 3 );
 
   std::vector<double> angular_grid = 
     data_container.getElasticAngularEnergyGrid();
@@ -63,17 +63,19 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
   TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
   TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
-  TEST_EQUALITY_CONST( angular_grid[11], 2.13e+1 );
+  TEST_EQUALITY_CONST( angular_grid[11], 2.125e+1 );
   TEST_EQUALITY_CONST( angular_grid[12], 3.25e+1 );
-  TEST_EQUALITY_CONST( angular_grid[13], 4.38e+1 );
-  TEST_EQUALITY_CONST( angular_grid[14], 6.63e+1 );
+  TEST_EQUALITY_CONST( angular_grid[13], 4.375e+1 );
+  TEST_EQUALITY_CONST( angular_grid[14], 6.625e+1 );
   TEST_EQUALITY_CONST( angular_grid[15], 1.0e+5 );
-  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ), 1 );
-  TEST_EQUALITY_CONST( 
-    data_container.getSoftElasticDiscreteAngles(1).size(), 2 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 2 );
+  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+                       number_of_discrete_angles+1 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+                       number_of_discrete_angles+1 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+                       number_of_discrete_angles+1 );
 
-  data_container.exportData( "test_h_epr.xml",
+  data_container.exportData( "test_h_soft.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
@@ -84,12 +86,12 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
 {
   Data::SoftElasticElectronVolatileDataContainer data_container;
 
-  data_generator_pb->populateSoftElasticDataContainer( data_container );
+  data_generator_pb->populateSoftElasticDataContainer( data_container, 3 );
 
   std::vector<double> angular_grid = 
     data_container.getElasticAngularEnergyGrid();
 
-  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
+  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 82 );
   TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
   TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
   TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
@@ -104,12 +106,55 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   TEST_EQUALITY_CONST( angular_grid[11], 3.25e+1 );
   TEST_EQUALITY_CONST( angular_grid[12], 5.5e+1 );
   TEST_EQUALITY_CONST( angular_grid[13], 1.0e+5 );
-  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ), 1 );
-  TEST_EQUALITY_CONST( 
-    data_container.getSoftElasticDiscreteAngles(1).size(), 2 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 2 );
+  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+                       number_of_discrete_angles+1 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+                       number_of_discrete_angles+1 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+                       number_of_discrete_angles+1 );
 		       
-  data_container.exportData( "test_pb_epr.xml",
+  data_container.exportData( "test_pb_soft.xml",
+			     Utility::ArchivableObject::XML_ARCHIVE );
+}
+*/
+//---------------------------------------------------------------------------//
+// Check that a data container can be populated
+TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
+                   populateSoftElasticDataContainer_al )
+{
+  Data::SoftElasticElectronVolatileDataContainer data_container;
+
+  data_generator_al->populateSoftElasticDataContainer( data_container, 1 );
+
+  std::vector<double> angular_grid = 
+    data_container.getElasticAngularEnergyGrid();
+
+  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 13 );
+  TEST_EQUALITY_CONST( angular_grid[0], 1.0e-5 );
+  TEST_EQUALITY_CONST( angular_grid[1], 1.0e-3 );
+  TEST_EQUALITY_CONST( angular_grid[2], 2.0e-3 );
+  TEST_EQUALITY_CONST( angular_grid[3], 4.0e-3 );
+  TEST_EQUALITY_CONST( angular_grid[4], 8.0e-3 );
+  TEST_EQUALITY_CONST( angular_grid[5], 1.6e-2 );
+  TEST_EQUALITY_CONST( angular_grid[6], 3.2e-2 );
+  TEST_EQUALITY_CONST( angular_grid[7], 6.4e-2 );
+  TEST_EQUALITY_CONST( angular_grid[8], 1.28e-1 );
+  TEST_EQUALITY_CONST( angular_grid[9], 2.56e-1 );
+  TEST_EQUALITY_CONST( angular_grid[10], 1.0e+1 );
+  TEST_EQUALITY_CONST( angular_grid[11], 2.125e+1 );
+  TEST_EQUALITY_CONST( angular_grid[12], 3.25e+1 );
+  TEST_EQUALITY_CONST( angular_grid[13], 4.375e+1 );
+  TEST_EQUALITY_CONST( angular_grid[14], 6.625e+1 );
+  TEST_EQUALITY_CONST( angular_grid[15], 1.0e+5 );
+
+  TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
+                       2 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+                       2 );
+  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+                       2 );
+		       
+  data_container.exportData( "test_al_soft.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
@@ -118,16 +163,21 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_h_native_file_name, test_pb_native_file_name;
+  std::string test_h_native_file_name,
+              test_pb_native_file_name,
+              test_al_native_file_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_h_native_file",
 		 &test_h_native_file_name,
-		 "Test NATIVE file name" );
+		 "Test NATIVE H file name" );
   clp.setOption( "test_pb_native_file",
 		 &test_pb_native_file_name,
-		 "Test NATIVE file name" );
+		 "Test NATIVE Pb file name" );
+  clp.setOption( "test_al_native_file",
+		 &test_al_native_file_name,
+		 "Test NATIVE Al file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -151,8 +201,7 @@ int main( int argc, char** argv )
 				     native_h_data,
 				     0.00001,
 				     20.0,
-				     0.9,
-                     3 ) );
+				     0.9 ) );
   }
 
   {
@@ -166,8 +215,21 @@ int main( int argc, char** argv )
 				     native_pb_data,
 				     0.00001,
 				     20.0,
-				     0.9,
-                     3 ) );
+				     0.9 ) );
+  }
+
+  {
+    // Create the native data file container
+    native_al_data.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+						     test_al_native_file_name ) );
+
+    data_generator_al.reset( 
+		   new DataGen::StandardSoftElasticElectronDataGenerator(
+				     native_al_data->getAtomicNumber(),
+				     native_al_data,
+				     0.00001,
+				     20.0,
+				     0.999999 ) );
   }
 
   // Run the unit tests

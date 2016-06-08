@@ -19,10 +19,9 @@ namespace Utility{
 
 // Constructor
 GaussRadauQuadratureSet::GaussRadauQuadratureSet( 
-                              boost::function<double (double, int)>
-                                polynomial_expansion_function,
-                              const double error_tol,
-                              const int polynomial_order )
+    boost::function<double (double, int)> polynomial_expansion_function,
+    const double error_tol,
+    const int polynomial_order )
   : d_polynomial_expansion_function( polynomial_expansion_function ),
     d_error_tol( error_tol ),
     d_polynomial_order( polynomial_order )
@@ -35,7 +34,7 @@ GaussRadauQuadratureSet::GaussRadauQuadratureSet(
 }
 
 // Caluclate the nth order Jacobi Polynomial at x
-/* \details The Jacobi Polynomials can be calculated by the following recursion 
+/*! \details The Jacobi Polynomials can be calculated by the following recursion 
  * relationship:
  * a1_n P_{n+1}^{\alpha,\beta}(x) = (a2_n + a3_n x)P_n^{\alpha,\beta}(x) - a4_n P_{n-1}^{\alpha,\beta}(x)
  * where: 
@@ -45,10 +44,10 @@ GaussRadauQuadratureSet::GaussRadauQuadratureSet(
  * a4_n = 2(n+\alpha)(n+\beta)(2n+\alpha+\beta+2)
  */
 double GaussRadauQuadratureSet::getJacobiPolynomial( 
-                              double x,
-                              int n, 
-                              int alpha,
-                              int beta ) const
+    double x,
+    int n, 
+    int alpha,
+    int beta ) const
 {
   // Calculate the first two polynomials
   double P_0 = 1.0;
@@ -137,7 +136,7 @@ double GaussRadauQuadratureSet::getJacobiPolynomialDerivative(
  * x_k = cos( (2k - 1)\pi/2n ) , k = 1, ... , n 
  */
 void GaussRadauQuadratureSet::getJacobiPolynomialRoots( 
-                                 Teuchos::Array<double>& roots,
+                                 std::vector<double>& roots,
                                  const int n, 
                                  int alpha,
                                  int beta ) const
@@ -203,8 +202,8 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
 // Find the Radau nodes and wieghts including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndWeights(
                             double end_point, 
-                            Teuchos::Array<double>& nodes,
-                            Teuchos::Array<double>& weights ) const
+                            std::vector<double>& nodes,
+                            std::vector<double>& weights ) const
 {
   // Make sure end_point is either -1 or 1
   testPrecondition( fabs(end_point) == 1.0 );
@@ -214,7 +213,7 @@ void GaussRadauQuadratureSet::findNodesAndWeights(
   int beta = 1;
   double jacobi_derivative;
 
-  Teuchos::Array<double> roots( n );
+  std::vector<double> roots( n );
 
   // Calculate the roots of the Jacobi Polynomial
   getJacobiPolynomialRoots( roots, n, alpha, beta );
@@ -251,8 +250,8 @@ void GaussRadauQuadratureSet::findNodesAndWeights(
 // Find the Radau nodes and wieghts including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
                             double end_point, 
-                            Teuchos::Array<double>& nodes,
-                            Teuchos::Array<double>& weights ) const
+                            std::vector<double>& nodes,
+                            std::vector<double>& weights ) const
 {
   // Make sure end_point is either -1 or 1
   testPrecondition( fabs(end_point) == 1.0 );
@@ -262,7 +261,7 @@ void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
   int beta = 1;
   double jacobi_derivative;
 
-  Teuchos::Array<double> roots( n );
+  std::vector<double> roots( n );
 
   // Calculate the roots of the Jacobi Polynomial
   getJacobiPolynomialRoots( roots, n, alpha, beta );

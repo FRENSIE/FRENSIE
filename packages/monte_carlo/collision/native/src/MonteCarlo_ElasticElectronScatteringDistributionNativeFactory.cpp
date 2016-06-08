@@ -138,7 +138,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
 }
 
 // Return angle cosine grid for given grid energy bin
-Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                  const Data::ElectronPhotonRelaxationDataContainer& data_container,
                  const double energy,
                  const double cutoff_angle_cosine )
@@ -157,7 +157,7 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionNativeFactory::getAn
     }
   }
 
-  Teuchos::Array<double> grid( start, raw_grid.end() );
+  std::vector<double> grid( start, raw_grid.end() );
 
    grid.insert( grid.begin(), cutoff_angle_cosine );
 
@@ -176,11 +176,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
     scattering_function[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
-    Teuchos::Array<double> angles( 
+    std::vector<double> angles( 
         data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
 
     // Get the cutoff elastic scatering pdf at the energy
-    Teuchos::Array<double> pdf( 
+    std::vector<double> pdf( 
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
     scattering_function[n].second.reset( 

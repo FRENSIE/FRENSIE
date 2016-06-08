@@ -60,7 +60,7 @@ typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
   GaussKronrodIntegrator( const T relative_error_tol,
                           const T absolute_error_tol = 0.0,
                           const size_t subinterval_limit = 1000,
-                          const bool std_units = true );
+                          const bool ignore_errors = false );
 
   //! Destructor
   ~GaussKronrodIntegrator()
@@ -217,8 +217,8 @@ private:
   // The subinterval limit
   size_t d_subinterval_limit;
 
-  // Bool for using std units (ie: double, long double)
-  bool d_std_units;
+  // Bool true = error do not stop the calculation but print warning signs
+  bool d_ignore_errors;
 
   // return epsilon numerical limit for type T
   T getLimitEpsilon() const;

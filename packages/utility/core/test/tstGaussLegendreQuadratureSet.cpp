@@ -13,7 +13,6 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
 #include <Teuchos_TwoDArray.hpp>
 
 // Boost Includes
@@ -26,7 +25,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::Array<Utility::long_float> legendre_moments_8( 9 );
+std::vector<Utility::long_float> legendre_moments_8( 9 );
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -39,8 +38,8 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureSet,
   //typedef boost::multiprecision::cpp_dec_float_100 long_float;
 
   int number_of_moments = 2;
-  Teuchos::Array<Utility::long_float> legendre_moments( number_of_moments );
-  Teuchos::Array<Utility::long_float> gauss_moments( number_of_moments );
+  std::vector<Utility::long_float> legendre_moments( number_of_moments );
+  std::vector<Utility::long_float> gauss_moments( number_of_moments );
 
   legendre_moments[0] = 1.0;
   legendre_moments[1] = 5.0;

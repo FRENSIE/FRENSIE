@@ -15,7 +15,6 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
 #include <Teuchos_TwoDArray.hpp>
 
 // FRENSIE Includes
@@ -27,7 +26,7 @@
 //---------------------------------------------------------------------------//
 
 // P_4 expansion test variables
-Teuchos::Array<Utility::long_float> legendre_moments( 5 ), 
+std::vector<Utility::long_float> legendre_moments( 5 ), 
   radau_moments( 4 ), weights_4( 3 ),
   normalization_factors_N( 3 ), normalization_ratios( 3 ), 
   variances( 3 ), mean_coefficients( 3 );
@@ -36,7 +35,7 @@ Teuchos::TwoDArray<Utility::long_float> orthogonal_coefficients( 3, 3 );
 Teuchos::TwoDArray<Utility::long_float> roots( 3, 2 );
 
 // P_8 expansion test variables
-Teuchos::Array<Utility::long_float> legendre_moments_8( 9 ), 
+std::vector<Utility::long_float> legendre_moments_8( 9 ), 
   radau_moments_8( 8 ), weights_8( 5 ),
   normalization_factors_N_8( 5 ), normalization_ratios_8( 5 ), 
   variances_8( 5 ), mean_coefficients_8( 5 );
@@ -44,8 +43,8 @@ Teuchos::Array<Utility::long_float> legendre_moments_8( 9 ),
 Teuchos::TwoDArray<Utility::long_float> roots_8( 5, 4 );
 
 // Moments from nodes and weights
-Teuchos::Array<Utility::long_float> test_roots( 8 );
-Teuchos::Array<Utility::long_float> test_legendre( 17 );
+std::vector<Utility::long_float> test_roots( 8 );
+std::vector<Utility::long_float> test_legendre( 17 );
 Utility::long_float test_weight;
 
 
@@ -62,8 +61,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           getRadauMoments )
 {
   int number_of_moments = 4;
-  Teuchos::Array<Utility::long_float> legendre_moment( number_of_moments+1 );
-  Teuchos::Array<Utility::long_float> radau_moment( number_of_moments );
+  std::vector<Utility::long_float> legendre_moment( number_of_moments+1 );
+  std::vector<Utility::long_float> radau_moment( number_of_moments );
 
   legendre_moment[0] = Utility::long_float(1);
   legendre_moment[1] = Utility::long_float(19)/20;
@@ -125,7 +124,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           getLongRadauMoments )
 {
   int number_of_radau_moments = 8;
-  Teuchos::Array<Utility::long_float> radau_moment( number_of_radau_moments );
+  std::vector<Utility::long_float> radau_moment( number_of_radau_moments );
 
   quadrature_8->getLongRadauMoments( radau_moment );
 
@@ -162,7 +161,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           evaluateOrthogonalNormalizationRatio )
 {
   int i = 1;
-  Teuchos::Array<Utility::long_float> ratios( 3 );
+  std::vector<Utility::long_float> ratios( 3 );
 
   quadrature->evaluateOrthogonalNormalizationRatio( ratios,
                                                     orthogonal_coefficients,
@@ -262,7 +261,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           evaluateOrthogonalNormalizationFactor )
 {
-  Teuchos::Array<Utility::long_float> N( 3 );
+  std::vector<Utility::long_float> N( 3 );
   int i = 0;
 
   quadrature->evaluateOrthogonalNormalizationFactor( N,
@@ -361,12 +360,12 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           getRadauNodesAndWeights )
 {
   double tol = 1e-15;
-  Teuchos::Array<Utility::long_float> nodes, weights;
+  std::vector<Utility::long_float> nodes, weights;
   int number_of_angles_wanted = 3;
 
   quadrature->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
 
-  Teuchos::Array<Utility::long_float> legendres_4( 5 );
+  std::vector<Utility::long_float> legendres_4( 5 );
 
   legendres_4[0] = Utility::long_float(259700);
   for ( int i = 0; i < number_of_angles_wanted; i++ )
@@ -418,7 +417,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   number_of_angles_wanted = 5;
   quadrature_8->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
 
-  Teuchos::Array<Utility::long_float>  legendres_8( 9 );
+  std::vector<Utility::long_float>  legendres_8( 9 );
 
   legendres_8[0] = Utility::long_float(1)*Utility::long_float(259700);
   for ( int i = 0; i < number_of_angles_wanted; i++ )
@@ -490,11 +489,11 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   TEST_EQUALITY_CONST( nodes[4].convert_to<double>(), 1.0 );
 */
 
-  Teuchos::Array<double> node, weight;
+  std::vector<double> node, weight;
   number_of_angles_wanted = 5;
   quadrature_8->getRadauNodesAndWeights( node, weight, number_of_angles_wanted );
 
-  Teuchos::Array<Utility::long_float>  legendres_double( 9 );
+  std::vector<Utility::long_float>  legendres_double( 9 );
 
   legendres_double[0] = Utility::long_float(1)*Utility::long_float(259700);
   for ( int i = 0; i < number_of_angles_wanted; i++ )
@@ -535,13 +534,13 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                           legendre_moments_8[8].convert_to<double>(),  
                           tol);
 
-  Teuchos::Array<long double> node_ld, weight_ld;
+  std::vector<long double> node_ld, weight_ld;
   number_of_angles_wanted = 5;
   quadrature_8->getRadauNodesAndWeights( node_ld,
                                          weight_ld, 
                                          number_of_angles_wanted );
 
-  Teuchos::Array<Utility::long_float>  legendres_ld( 9 );
+  std::vector<Utility::long_float>  legendres_ld( 9 );
 
   legendres_ld[0] = Utility::long_float(1)*Utility::long_float(259700);
   for ( int i = 0; i < number_of_angles_wanted; i++ )
@@ -587,7 +586,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   int nodes_preserved = nodes.size();
 
-  Teuchos::Array<Utility::long_float> legendres( test_legendre.size() );
+  std::vector<Utility::long_float> legendres( test_legendre.size() );
 
   legendres[0] = Utility::long_float(1);
   for ( int i = 0; i < nodes_preserved; i++ )
@@ -630,12 +629,12 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           AlgorithmMatch)
 {
   double tol = 1e-15;
-  Teuchos::Array<Utility::long_float> nodes, weights, node, weight;
+  std::vector<Utility::long_float> nodes, weights, node, weight;
   int number_of_angles_wanted = 2;
   node.resize(number_of_angles_wanted);
   weight.resize(number_of_angles_wanted);
 
-  Teuchos::Array<Utility::long_float> l_moments(3);
+  std::vector<Utility::long_float> l_moments(3);
   Teuchos::RCP<Utility::SloanRadauQuadrature> test;
 
   l_moments[0] =    Utility::long_float(1);

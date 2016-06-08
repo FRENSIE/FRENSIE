@@ -15,7 +15,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_GaussRadauQuadratureSet.hpp"
@@ -169,8 +168,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   double end_point = -1.0;
   set.findNodesAndWeights( end_point, nodes, weights );
@@ -215,8 +214,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 
   Utility::GaussRadauQuadratureSet set( P_n, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   double end_point = -1.0;
   set.findNodesAndWeights( end_point, nodes, weights );
@@ -260,8 +259,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   double end_point = -1.0;
   set.findNodesAndPositiveWeights( end_point, nodes, weights );
@@ -306,8 +305,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 
   Utility::GaussRadauQuadratureSet set( P_n, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   double end_point = -1.0;
   set.findNodesAndPositiveWeights( end_point, nodes, weights );
@@ -351,8 +350,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   double end_point = -1.0;
   set.findNodesAndWeights( end_point, nodes, weights );
@@ -541,8 +540,8 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
-  Teuchos::Array<double> nodes( n+1 );
-  Teuchos::Array<double> weights( n+1 );
+  std::vector<double> nodes( n+1 );
+  std::vector<double> weights( n+1 );
 
   set.findNodesAndWeights( end_point, nodes, weights );
 

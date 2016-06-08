@@ -31,9 +31,9 @@ public:
   { /* ... */ }
 
   //! Populate the soft elastic electron data container
-  virtual void populateSoftElasticDataContainer( 
-                        Data::SoftElasticElectronVolatileDataContainer&
-                        data_container ) const = 0;
+  virtual void populateSoftElasticDataContainer(
+    Data::SoftElasticElectronVolatileDataContainer& data_container,
+    const int& number_of_discrete_angles ) const = 0;
 
 protected:
 

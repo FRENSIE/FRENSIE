@@ -57,8 +57,8 @@ void GaussRadauQuadratureSet::integrate(
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
   
   // Get the Radau quadrature weights and nodes
-  Teuchos::Array<double> nodes( d_polynomial_order + 1 ),  
-                         weights( d_polynomial_order + 1 );
+  std::vector<double> nodes( d_polynomial_order + 1 ),  
+                      weights( d_polynomial_order + 1 );
 
   findNodesAndWeights( fixed_point, nodes, weights );
 

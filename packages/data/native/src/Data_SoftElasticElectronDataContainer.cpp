@@ -212,10 +212,10 @@ std::cout << std::setprecision(20) << "weight 2 =\t" << soft_elastic_weights[1] 
   // Make sure the weight is valid
   testPrecondition( soft_elastic_weights.size() ==
                d_number_of_discrete_angles.find( angular_energy_bin )->second );
-  testPrecondition( std::find_if( soft_elastic_weights.begin(),
-                                  soft_elastic_weights.end(),
-                                  isValueLessThanOrEqualToZero ) ==
-                    soft_elastic_weights.end() );
+//  testPrecondition( std::find_if( soft_elastic_weights.begin(),
+//                                  soft_elastic_weights.end(),
+//                                  isValueLessThanOrEqualToZero ) ==
+//                    soft_elastic_weights.end() );
   testPrecondition( std::find_if( soft_elastic_weights.begin(),
                                   soft_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==

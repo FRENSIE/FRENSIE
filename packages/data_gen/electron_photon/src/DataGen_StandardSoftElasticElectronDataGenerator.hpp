@@ -32,12 +32,11 @@ public:
 
   //! Constructor
   StandardSoftElasticElectronDataGenerator( 
-	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
-	   const double min_electron_energy,
-	   const double max_electron_energy,
-       const double cutoff_angle,
-       const unsigned number_of_discrete_angles );
+    const unsigned atomic_number,
+    const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
+    const double min_electron_energy,
+    const double max_electron_energy,
+    const double cutoff_angle );
 
   //! Destructor
   ~StandardSoftElasticElectronDataGenerator()
@@ -45,14 +44,23 @@ public:
 
   //! Populate the soft elastic data container
   void populateSoftElasticDataContainer(
-			   Data::SoftElasticElectronVolatileDataContainer&
-			   data_container ) const;
+    Data::SoftElasticElectronVolatileDataContainer& data_container,
+    const int& number_of_discrete_angles ) const;
 
 protected:
 
   // Set the soft elastic electron data
-  void setSoftElasticElectronData( 
-        Data::SoftElasticElectronVolatileDataContainer& data_container ) const;
+  void setSoftElasticElectronData(
+    Data::SoftElasticElectronVolatileDataContainer& data_container,
+    const int& number_of_discrete_angles ) const;
+
+  // Generate elastic discrete angle cosines and weights
+  void evaluateDisceteAnglesAndWeights(
+    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const double& energy,
+    const int& number_of_discrete_angles,
+    std::vector<double>& discrete_angles,
+    std::vector<double>& weights ) const;
 
 private:
 
@@ -67,9 +75,6 @@ private:
 
   // The cutoff angle between soft and hard elastic collisions
   double d_cutoff_angle;
-
-  // The number of discrete angles that soft collisions can scatter into
-  double d_number_of_discrete_angles;
 };
 
 

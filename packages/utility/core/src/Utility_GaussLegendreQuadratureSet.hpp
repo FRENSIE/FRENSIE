@@ -13,7 +13,6 @@
 #include <boost/multiprecision/cpp_dec_float.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_TwoDArray.hpp>
 
 namespace Utility{
@@ -21,8 +20,8 @@ namespace Utility{
 typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
 //! Return the Gauss moments of the legendre expansion of a function, f(x)
-void getGaussMoments( const Teuchos::Array<long_float>& legendre_expansion_moments,
-                      Teuchos::Array<long_float>& gauss_moments );
+void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
+                      std::vector<long_float>& gauss_moments );
 
 //! Return the coefficients of the legendre expansion of x^n
 void getLegendrePowerExpansionCoefficients( 

@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   double cutoff_angle_cosine = -1.0;
   double energy = 1.0e-5;
-  Teuchos::Array<double> angular_grid =
+  std::vector<double> angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
                                                 *data_container,
                                                 energy,

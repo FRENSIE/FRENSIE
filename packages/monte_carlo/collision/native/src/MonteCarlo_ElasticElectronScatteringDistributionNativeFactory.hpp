@@ -55,7 +55,7 @@ public:
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data );
 
   //! Return angle cosine grid for given grid energy bin
-  static Teuchos::Array<double> getAngularGrid(
+  static std::vector<double> getAngularGrid(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
     const double energy,
     const double cutoff_angle_cosine );

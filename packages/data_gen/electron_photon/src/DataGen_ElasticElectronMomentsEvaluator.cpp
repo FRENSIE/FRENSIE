@@ -94,6 +94,31 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
   return pdf_value*legendre_value;
 }
 
+// Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
+        const double scattering_angle_cosine,
+        const double incoming_energy, 
+        const int polynomial_order,
+        const double eta ) const
+{
+  // Make sure the energy and angle cosine are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= s_rutherford_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
+  double pdf_value = 
+            d_rutherford_distribution->evaluate( incoming_energy,
+                                                 scattering_angle_cosine,
+                                                 eta );
+
+  // Evaluate the Legendre Polynomial at the given angle and order
+  double legendre_value =  
+    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
+
+  return pdf_value*legendre_value;
+}
+
 // Evaluate the Legnendre Polynomial expansion of the elastic scttering PDF
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
                                     const double scattering_angle_cosine,
@@ -142,7 +167,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDFAtEnergyBin(
 
 // Evaluate the first n moments of the elastic scattering distribution at a given energy
 void ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
-            Teuchos::Array<Utility::long_float>& legendre_moments,
+            std::vector<Utility::long_float>& legendre_moments,
             const double energy, 
             const int n,
             const double precision ) const
@@ -153,13 +178,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   testPrecondition( n >= 0 );
 
   // Get common angular grid
-  Teuchos::Array<double> angular_grid;
-
-  angular_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-        d_data_container,
-        energy,
-        d_cutoff_angle_cosine );
+  std::vector<double> angular_grid;
 
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
@@ -171,14 +190,29 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
 
   // Get zeroth moments
   Utility::long_float rutherford_zero, cutoff_zero, legendre_zero;
-  evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
-  evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
+
+  // if the cutoff angle cosine is above 0.999999 only the moments of the screened Rutherford are needed
+  if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
+  {
+    angular_grid =
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            d_data_container,
+            energy,
+            d_cutoff_angle_cosine );
+
+    evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
+  }
+
+    evaluateScreenedRutherfordMoment( rutherford_zero, energy, 0 );
   legendre_zero = rutherford_zero + cutoff_zero;
 
   // Iterate to get get all n moments
   for ( int i = 0; i <= n; i++ )
   {
-    evaluateCutoffMoment( cutoff_moment, angular_grid, integrator, energy, i );
+    if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
+    {
+      evaluateCutoffMoment( cutoff_moment, angular_grid, integrator, energy, i );
+    }
     evaluateScreenedRutherfordMoment( rutherford_moment, energy, i );
 
     
@@ -189,7 +223,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
 /*
 // Evaluate the first n moments of the elastic scattering distribution at a given energy
 void ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
-            Teuchos::Array<Utility::long_float>& legendre_moments,
+            std::vector<Utility::long_float>& legendre_moments,
             const unsigned energy_bin, 
             const int n,
             const double precision ) const
@@ -202,7 +236,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   double energy = d_cutoff_distribution->getEnergy( energy_bin );
 
   // Get angular grid
-  Teuchos::Array<double> angular_grid;
+  std::vector<double> angular_grid;
 
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
@@ -237,7 +271,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
                          energy_bin,
                          i );
 /*
-    Teuchos::Array<double>::iterator grid_point, grid_point_minus_one;
+    std::vector<double>::iterator grid_point, grid_point_minus_one;
     grid_point_minus_one = angular_grid.begin();
     grid_point = ++angular_grid.begin();
 *//*
@@ -271,7 +305,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
 // Evaluate the nth cross section moment of the elastic cutoff distribution at the energy
 void ElasticElectronMomentsEvaluator::evaluateCutoffMoment( 
             Utility::long_float& cutoff_moment,
-            const Teuchos::Array<double>& angular_grid,
+            const std::vector<double>& angular_grid,
             const Integrator& integrator,
             const double energy,
             const int n ) const
@@ -293,7 +327,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffMoment(
   Utility::long_float cutoff_cross_section = 
         d_cutoff_reaction->getCrossSection( energy );
 
-std::cout << std::setprecision(20) << "cutoff_cross_section = " << cutoff_cross_section << std::endl;
+//std::cout << std::setprecision(20) << "cutoff_cross_section = " << cutoff_cross_section << std::endl;
 
   cutoff_moment *= cutoff_cross_section;
 }
@@ -301,7 +335,7 @@ std::cout << std::setprecision(20) << "cutoff_cross_section = " << cutoff_cross_
 // Evaluate the nth PDF moment of the cutoff distribution at the energy
 void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
             Utility::long_float& cutoff_moment,
-            const Teuchos::Array<double>& angular_grid,
+            const std::vector<double>& angular_grid,
             const Integrator& integrator,
             const double energy,
             const int n ) const
@@ -321,7 +355,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
                          energy,
                          n );
 
-  Teuchos::Array<double>::const_iterator grid_point, grid_point_minus_one;
+  std::vector<double>::const_iterator grid_point, grid_point_minus_one;
   grid_point_minus_one = angular_grid.begin();
   grid_point = ++angular_grid.begin();
 
@@ -343,15 +377,14 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffPDFMoment(
   }
 }
 
-// Evaluate the nth PDF moment of the screened Rutherford peak distribution 
-void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment( 
+/* Evaluate the nth PDF moment of the screened Rutherford peak distribution 
+ * at the eta using the recursion relationship */
+void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByRecursion( 
             Utility::long_float& rutherford_moment,
             const Utility::long_float& eta,
-            const double& energy,
             const int& n ) const
 {
-  // Make sure the energy, order and screening constant are valid
-  testPrecondition( energy > 0.0 );
+  // Make sure the order and screening constant are valid
   testPrecondition( eta > 0.0 );
   testPrecondition( n >= 0 );
 
@@ -361,21 +394,15 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
   delta_mu = Utility::long_float(1)/1000000;
   mu = Utility::long_float(999999)/1000000;
 
-  /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to 
-   *! calculate the moments of the screened Rutherford peak. For larger eta the 
-   *! moments will be calculated by numerical integration.
-   */
-  if ( eta <= 1.0e-2 )
+  rutherford_moment = Utility::long_float(1);
+  Utility::long_float rutherford_moment_its = Utility::long_float(1);
+  if ( n > 0 )
   {
-    rutherford_moment = Utility::long_float(1);
-    Utility::long_float rutherford_moment_its = Utility::long_float(1);
-    if ( n > 0 )
-    {
-      Teuchos::Array<Utility::long_float> coef_one( n+1 ), coef_two( n+1 );
+      std::vector<Utility::long_float> coef_one( n+1 ), coef_two( n+1 );
 
       coef_one[0] = Utility::long_float(0);
       coef_one[1] = ( log( ( eta + delta_mu )/( eta ) ) ) -
-                     delta_mu/( delta_mu + eta );
+                      delta_mu/( delta_mu + eta );
 
       coef_two[0] = delta_mu;
       coef_two[1] = ( Utility::long_float(1) - mu*mu )/
@@ -383,14 +410,14 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
 
       for ( int i = 1; i < n; i++ )
       {
-        coef_one[i+1] = 
+      coef_one[i+1] = 
           ( Utility::long_float(2) + Utility::long_float(1)/i )*
           ( Utility::long_float(1) + eta )*coef_one[i] - 
           ( Utility::long_float(1) + Utility::long_float(1)/i )*coef_one[i-1] -
           ( ( Utility::long_float(2) + Utility::long_float(1)/i )/
           ( delta_mu + eta ) )*( delta_mu - coef_two[i] );
 
-        coef_two[i+1] = 
+      coef_two[i+1] = 
           ( Utility::long_float(2)*i + Utility::long_float(1) )/
           ( i + Utility::long_float(2) )*mu*coef_two[i] - 
           ( i - Utility::long_float(1) )/( i + Utility::long_float(2) )*
@@ -399,48 +426,132 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
 
       rutherford_moment = (delta_mu - coef_one[n]*eta*( delta_mu + eta ))/delta_mu;
 /*
-      Utility::long_float frac_disc = 
+    Utility::long_float frac_disc = 
           delta_mu*( Utility::long_float(1) + eta/Utility::long_float(2) )/
-        ( delta_mu + eta );
+      ( delta_mu + eta );
 
-      rutherford_moment = (( frac_disc - (Utility::long_float(1) + eta/2)*eta*coef_one[n] )/frac_disc );
+    rutherford_moment = (( frac_disc - (Utility::long_float(1) + eta/2)*eta*coef_one[n] )/frac_disc );
 */
-    }
   }
-  else // Numerically integrate the moment
+}
+
+/* Evaluate the nth PDF moment of the screened Rutherford peak distribution
+ * at the energy using numerical integration */
+void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumericalIntegration( 
+            Utility::long_float& rutherford_moment,
+            const double& energy,
+            const int& n ) const
+{
+  // Make sure the energy and order are valid
+  testPrecondition( energy > 0.0 );
+  testPrecondition( n >= 0 );
+
+  // screened Rutherford cutoff angle cosine
+  Utility::long_float mu = Utility::long_float(999999)/1000000;
+
+  Utility::GaussKronrodIntegrator<Utility::long_float> 
+    integrator( 1e-13, 0.0, 1000, true ); // integrator( 1e-13 );
+
+  Utility::long_float abs_error, moment_n, moment_zero;
+
+  // Create boost rapper function for the screened Rutherford peak
+  boost::function<double (double x)> wrapper = 
+        boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
+                         boost::cref( *this ),
+                         _1,
+                         energy,
+                         0 );
+
+  integrator.integrateAdaptively<61>(
+					wrapper,
+                    mu,
+					Utility::long_float(1),
+					moment_zero,
+					abs_error );
+    
+  moment_n = moment_zero;
+
+  if ( n > 0 )
   {
-    Utility::GaussKronrodIntegrator<Utility::long_float> integrator( 1e-13 );
-
-    Utility::long_float abs_error, moment_n;
-
-    Utility::long_float moment_zero = 
-        Utility::long_float( d_rutherford_distribution->evaluateIntegratedPDF( energy ) );
- 
-    if ( n == 0 )
-    {
-      moment_n = moment_zero;
-    }
-    else
-    {
-      // Create boost rapper function for the screened Rutherford peak
-      boost::function<double (double x)> wrapper = 
+    // Create boost rapper function for the screened Rutherford peak
+    wrapper = 
         boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
                          boost::cref( *this ),
                          _1,
                          energy,
                          n );
 
-      integrator.integrateAdaptively<61>(
+    integrator.integrateAdaptively<61>(
 					wrapper,
                     mu,
 					Utility::long_float(1),
 					moment_n,
 					abs_error );
-    }
-    rutherford_moment = moment_n/moment_zero;
-std::cout << std::setprecision(20) << "moment_n = " << moment_n << std::endl;
   }
-std::cout << std::setprecision(20) << "rutherford_moment = " << rutherford_moment << std::endl;
+  rutherford_moment = moment_n/moment_zero;
+
+std::cout << std::setprecision(20) << "moment_n = " << moment_n << std::endl;
+}
+
+/* Evaluate the nth PDF moment of the screened Rutherford peak distribution
+ * at the energy using numerical integration */
+void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumericalIntegration( 
+            Utility::long_float& rutherford_moment,
+            const Utility::long_float& eta,
+            const double& energy,
+            const int& n ) const
+{
+  // Make sure the energy and order are valid
+  testPrecondition( energy > 0.0 );
+  testPrecondition( n >= 0 );
+
+  // screened Rutherford cutoff angle cosine
+  Utility::long_float mu = Utility::long_float(999999)/1000000;
+
+  Utility::GaussKronrodIntegrator<Utility::long_float> 
+    integrator( 1e-10, 0.0, 1000, true ); // integrator( 1e-13 );
+
+  Utility::long_float abs_error, moment_n, moment_zero;
+
+  // Create boost rapper function for the screened Rutherford peak
+  boost::function<double (double x)> wrapper = 
+        boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
+                         boost::cref( *this ),
+                         _1,
+                         energy,
+                         0,
+                         (double) eta );
+
+  integrator.integrateAdaptively<61>(
+					wrapper,
+          mu,
+					Utility::long_float(1),
+					moment_zero,
+					abs_error );
+    
+  moment_n = moment_zero;
+
+  if ( n > 0 )
+  {
+    // Create boost rapper function for the screened Rutherford peak
+    wrapper = 
+        boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
+                         boost::cref( *this ),
+                         _1,
+                         energy,
+                         n,
+                         (double) eta );
+
+    integrator.integrateAdaptively<61>(
+					wrapper,
+          mu,
+					Utility::long_float(1),
+					moment_n,
+					abs_error );
+  }
+  rutherford_moment = moment_n/moment_zero;
+
+std::cout << std::setprecision(20) << "moment_n = " << moment_n << std::endl;
 }
 
 // Evaluate the nth PDF moment of the screened Rutherford peak distribution 
@@ -457,7 +568,24 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
   Utility::long_float eta = Utility::long_float(
     d_rutherford_distribution->evaluateMoliereScreeningConstant( energy ) );
 
-  evaluateScreenedRutherfordPDFMoment( rutherford_moment, eta, energy, n);
+  /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to 
+   *! calculate the moments of the screened Rutherford peak. For larger eta the 
+   *! moments will be calculated by numerical integration.
+   */
+  if ( eta <= 2.0e-2 )
+  {
+    evaluateScreenedRutherfordPDFMomentByRecursion(
+      rutherford_moment,
+      eta,
+      n);
+  }
+  else
+  {
+    evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
+      rutherford_moment,
+      energy,
+      n);
+  }
 }
 
 // Evaluate the nth cross section moment of the screened Rutherford peak distribution 

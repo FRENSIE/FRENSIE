@@ -58,6 +58,12 @@ public:
                                         const double incoming_energy, 
                                         const int polynomial_order = 0) const;
 
+  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
+                                        const double incoming_energy,
+                                        const int polynomial_order,
+                                        const double eta ) const;
+
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
                                       const double incoming_energy, 
@@ -71,14 +77,14 @@ public:
 
   //! Evaluate the first n moments of the elastic scattering distribution at a given energy
   void evaluateElasticMoment( 
-            Teuchos::Array<Utility::long_float>& legendre_moments,
+            std::vector<Utility::long_float>& legendre_moments,
             const double energy,
             const int n,
             const double precision ) const;
 /*
   //! Evaluate the first n moments of the elastic scattering distribution at a given energy_bin
   void evaluateElasticMoment( 
-            Teuchos::Array<Utility::long_float>& legendre_moments,
+            std::vector<Utility::long_float>& legendre_moments,
             const unsigned energy_bin,
             const int n,
             const double precision ) const;
@@ -86,7 +92,7 @@ public:
   //! Evaluate the nth cross section moment of the elastic cutoff distribution at the energy
   void evaluateCutoffMoment( 
             Utility::long_float& cutoff_moment,
-            const Teuchos::Array<double>& angular_grid,
+            const std::vector<double>& angular_grid,
             const Integrator& integrator,
             const double energy,
             const int n ) const;
@@ -102,7 +108,7 @@ protected:
   // Evaluate the nth PDF moment of the cutoff distribution at the energy
   void evaluateCutoffPDFMoment(
             Utility::long_float& cutoff_moment,
-            const Teuchos::Array<double>& angular_grid,
+            const std::vector<double>& angular_grid,
             const Integrator& integrator,
             const double energy,
             const int n ) const;
@@ -113,8 +119,26 @@ protected:
             const double& energy,
             const int& n ) const;
 
-  // Evaluate the nth PDF moment of the screened Rutherford peak distribution at the energy
-  void evaluateScreenedRutherfordPDFMoment( 
+  /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
+   * at the eta using the recursion relationship
+   */
+  void evaluateScreenedRutherfordPDFMomentByRecursion(
+            Utility::long_float& rutherford_moment,
+            const Utility::long_float& eta,
+            const int& n ) const;
+
+  /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
+   * at the energy using numerical integration
+   */
+  void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
+            Utility::long_float& rutherford_moment,
+            const double& energy,
+            const int& n ) const;
+
+  /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
+   * at the energy using numerical integration
+   */
+  void evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
             Utility::long_float& rutherford_moment,
             const Utility::long_float& eta,
             const double& energy,

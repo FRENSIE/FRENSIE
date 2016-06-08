@@ -109,19 +109,34 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   }
   else
   {
-    double cutoff_pdf = 
+    double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
+
+    double pdf =
+        evaluate( incoming_energy, scattering_angle_cosine, eta );
+
+    return pdf;
+  }
+}
+
+// Evaluate the distribution at the given energy and scattering angle cosine
+//! \details Because the scattering angle cosine is very close to one, precision will be lost.
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
+        const double incoming_energy,
+        const double scattering_angle_cosine,
+        const double eta ) const
+{
+  double delta_mu = 1.0 - scattering_angle_cosine;
+
+  double cutoff_pdf = 
         d_elastic_cutoff_distribution->evaluate( 
             incoming_energy,
             s_cutoff_mu );
 
-    double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
-
-    double pdf = cutoff_pdf*
+  double pdf = cutoff_pdf*
             ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 
-    return pdf;
-  }
+  return pdf;
 }
 
 

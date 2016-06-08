@@ -9,9 +9,6 @@
 #ifndef UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 #define UTILITY_GAUSS_RADAU_QUADRATURE_SET_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 namespace Utility{
 
 //! The Gauss-Radau quadrature set
@@ -22,9 +19,9 @@ public:
 
   //! Constructor
   GaussRadauQuadratureSet( boost::function<double (double, int)>
-                                polynomial_expansion_function,
-                              const double error_tol,
-                              const int polynomial_order );
+                           polynomial_expansion_function,
+                           const double error_tol,
+                           const int polynomial_order );
 
   //! Destructor
   ~GaussRadauQuadratureSet()
@@ -55,20 +52,20 @@ public:
                                         int beta = 1 ) const;
 
   //! Caluclate the roots of the Jacobi Polynomial
-  void getJacobiPolynomialRoots( Teuchos::Array<double>& roots,
+  void getJacobiPolynomialRoots( std::vector<double>& roots,
                                  const int n = 1, 
                                  int alpha = 0,
                                  int beta = 1 ) const;
 
   //! Find the Radau nodes and wieghts including at end point -1 or 1
   void findNodesAndWeights( double end_point, 
-                            Teuchos::Array<double>& nodes,
-                            Teuchos::Array<double>& weights ) const;
+                            std::vector<double>& nodes,
+                            std::vector<double>& weights ) const;
 
   //! Find the Radau nodes and wieghts including at end point -1 or 1
   void findNodesAndPositiveWeights( double end_point, 
-                                    Teuchos::Array<double>& nodes,
-                                    Teuchos::Array<double>& weights ) const;
+                                    std::vector<double>& nodes,
+                                    std::vector<double>& weights ) const;
 
 private:
 

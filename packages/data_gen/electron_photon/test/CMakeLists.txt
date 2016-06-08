@@ -57,5 +57,10 @@ SET_PROPERTY(TEST ElasticElectronMomentsEvaluator_test PROPERTY LABELS data_gen_
 ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator
   tstStandardSoftElasticElectronDataGenerator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardSoftElasticElectronDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_1_native.xml" --test_pb_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml" --test_al_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml")
 SET_PROPERTY(TEST StandardSoftElasticElectronDataGenerator_test PROPERTY LABELS data_gen_electron_photon electron)
+
+ADD_EXECUTABLE(SoftElasticElectronDataOutput
+  SoftElasticElectronDataOutput.cpp)
+TARGET_LINK_LIBRARIES(SoftElasticElectronDataOutput data_gen_electron_photon)
+ADD_TEST(SoftElasticElectronDataOutput_test SoftElasticElectronDataOutput --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_13_native.xml" )

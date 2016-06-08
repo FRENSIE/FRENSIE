@@ -47,8 +47,8 @@ void getLegendrePowerExpansionCoefficients(
  *! M_n = integral_(-1)^(1) x^n f(x) dx = sum_(l=0,..n) f_l c_(n,l).
  *! The zeroth moment should be included
  */
-void getGaussMoments( const Teuchos::Array<long_float>& legendre_expansion_moments,
-                      Teuchos::Array<long_float>& gauss_moments )
+void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
+                      std::vector<long_float>& gauss_moments )
 {
   // Make sure the arrays are the same size
   testPrecondition( gauss_moments.size() == legendre_expansion_moments.size() );
@@ -59,8 +59,8 @@ void getGaussMoments( const Teuchos::Array<long_float>& legendre_expansion_momen
 
   int number_of_moments = legendre_expansion_moments.size();
   long_float moment_n;
-  Teuchos::Array<long_float> coef_n_minus_one( number_of_moments +1), 
-                             coef_n( number_of_moments +1);
+  std::vector<long_float> coef_n_minus_one( number_of_moments +1), 
+                          coef_n( number_of_moments +1);
 
   gauss_moments[0] = legendre_expansion_moments[0];
   gauss_moments[1] = legendre_expansion_moments[1];

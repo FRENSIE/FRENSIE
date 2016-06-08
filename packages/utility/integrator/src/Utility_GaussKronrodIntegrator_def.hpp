@@ -27,11 +27,11 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
     const T relative_error_tol,
     const T absolute_error_tol,
     const size_t subinterval_limit,
-    const bool std_units )
+    const bool ignore_errors )
   : d_relative_error_tol( relative_error_tol ),
     d_absolute_error_tol( absolute_error_tol ),
     d_subinterval_limit( subinterval_limit ),
-    d_std_units( std_units )
+    d_ignore_errors( ignore_errors )
 {
   // Make sure the error tolerances are valid
   testPrecondition( relative_error_tol >= (T)0 );
@@ -40,12 +40,11 @@ GaussKronrodIntegrator<T>::GaussKronrodIntegrator(
   testPrecondition( subinterval_limit > 0 );
 
   TEST_FOR_EXCEPTION( 
-    d_absolute_error_tol <= 0 && 
-    (d_relative_error_tol < 50 * std::numeric_limits<T>::epsilon() ||
-    d_relative_error_tol < 0.5e-28L),
-    Utility::IntegratorException,
-    "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
-
+      d_absolute_error_tol <= 0 && 
+      (d_relative_error_tol < 50 * std::numeric_limits<T>::epsilon() ||
+      d_relative_error_tol < 0.5e-28L),
+      Utility::IntegratorException,
+      "tolerance cannot be acheived with given relative_error_tol and absolute_error_tol" );
 }
 
 // Rescale absolute error from integration
@@ -381,9 +380,20 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
        }
      }
 
-    TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
-                        Utility::IntegratorException,
-                        "Roundoff error prevented tolerance from being achieved" );
+    if ( !d_ignore_errors )
+    {
+      TEST_FOR_EXCEPTION( round_off_1 >= 6 || round_off_2 >= 20, 
+                          Utility::IntegratorException,
+                          "Roundoff error prevented tolerance from being achieved" );
+    }
+  else
+  {
+    if ( round_off_1 >= 6 || round_off_2 >= 20 )
+    {
+       std::cout << "Warning: "
+        << "Roundoff error prevented tolerance from being achieved" << std::endl;
+    }
+  }
 };
 
 
@@ -421,14 +431,31 @@ void GaussKronrodIntegrator<T>::checkRoundoffError(
        }
      }
 
-    TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3, 
-                        Utility::IntegratorException,
-                        "Roundoff error prevented tolerance from being achieved" );
+    if ( !d_ignore_errors )
+    {
+      TEST_FOR_EXCEPTION( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3, 
+                          Utility::IntegratorException,
+                          "Roundoff error prevented tolerance from being achieved" );
 
-    TEST_FOR_EXCEPTION( 5 <= round_off_2, 
-                        Utility::IntegratorException,
-                        "Extremely bad integrand behavior occurs at some points "
-                        "of the integration interval" );
+      TEST_FOR_EXCEPTION( 5 <= round_off_2, 
+                          Utility::IntegratorException,
+                          "Extremely bad integrand behavior occurs at some points "
+                          "of the integration interval" );
+    }
+  else
+  {
+    if ( 10 <= round_off_1 + round_off_2 || 20 <= round_off_3 )
+    {
+       std::cout << "Warning: "
+        << "Roundoff error prevented tolerance from being achieved" << std::endl;
+    }
+    if ( round_off_1 >= 6 || round_off_2 >= 20 )
+    {
+       std::cout << "Warning: "
+        << "Extremely bad integrand behavior occurs at some points "
+        << "of the integration interval" << std::endl;
+    }
+  }
 };
 
 // Integrate the function adaptively with BinQueue
@@ -486,10 +513,21 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
   volatile_round_off = (T)50*std::numeric_limits<T>::epsilon()*result_abs;
   T round_off = volatile_round_off;
 
-  TEST_FOR_EXCEPTION( bin.error <= round_off && bin.error > tolerance, 
-                      Utility::IntegratorException,
-                      "cannot reach tolerance because of roundoff error "
-                      "on first attempt" );
+  if ( !d_ignore_errors )
+  {
+    TEST_FOR_EXCEPTION( bin.error <= round_off && bin.error > tolerance, 
+                        Utility::IntegratorException,
+                        "cannot reach tolerance because of roundoff error "
+                        "on first attempt" );
+  }
+  else
+  {
+    if ( bin.error <= round_off && bin.error > tolerance )
+    {
+       std::cout << "Warning: "
+        << "cannot reach tolerance because of roundoff error on first attempt" << std::endl;
+    }
+  }
 
   if ( ( bin.error <= tolerance && bin.error != result_asc ) || 
             bin.error == (T)0)
@@ -500,10 +538,9 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
       return;
     }
 
-
   TEST_FOR_EXCEPTION( d_subinterval_limit == 1, 
                       Utility::IntegratorException,
-                      "a maximum of one iteration was insufficient" );
+                      "A maximum of one iteration was insufficient" );
 
   T area = bin.result;
   absolute_error = bin.error;
@@ -553,15 +590,39 @@ void GaussKronrodIntegrator<T>::integrateAdaptively(
     if ( absolute_error <= tolerance )
       break;
 
-    TEST_FOR_EXCEPTION( last+1 == d_subinterval_limit, 
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+    if ( !d_ignore_errors )
+    {
+      TEST_FOR_EXCEPTION( last+1 == d_subinterval_limit, 
+                          Utility::IntegratorException,
+                          "Maximum number of subdivisions reached" );
+    }
+    else
+    {
+      if ( bin.error <= round_off && bin.error > tolerance )
+      {
+         std::cout << "Warning: "
+          << "Maximum number of subdivisions reached" << std::endl;
+         break;
+      }
+    }
 
-    TEST_FOR_EXCEPTION( subintervalTooSmall<Points>( bin_1.lower_limit, 
-                                                     bin_2.lower_limit, 
-                                                     bin_2.upper_limit ), 
-                        Utility::IntegratorException,
-                        "Maximum number of subdivisions reached" );
+    if ( !d_ignore_errors )
+    {
+      TEST_FOR_EXCEPTION( subintervalTooSmall<Points>( bin_1.lower_limit, 
+                                                       bin_2.lower_limit, 
+                                                       bin_2.upper_limit ), 
+                          Utility::IntegratorException,
+                          "Subdivisions have become too small" );
+    }
+    else
+    {
+      if ( bin.error <= round_off && bin.error > tolerance )
+      {
+         std::cout << "Warning: "
+          << "Subdivisions have become too small" << std::endl;
+         break;
+      }
+    }
 
   }
 
