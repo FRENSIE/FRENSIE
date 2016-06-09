@@ -413,8 +413,8 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
                          boost::cref( *this ),
                          _1,
                          energy,
-                         0,
-                         (double) eta );
+                         (double) eta,
+                         0 );
 
   integrator.integrateAdaptively<61>(
 					wrapper,
@@ -433,8 +433,8 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
                          boost::cref( *this ),
                          _1,
                          energy,
-                         n,
-                         (double) eta );
+                         (double) eta,
+                         n );
 
     integrator.integrateAdaptively<61>(
 					wrapper,
@@ -473,7 +473,6 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
   }
   else
   {
-std::cout << "eta = " << eta << std::endl;
     evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
       rutherford_moment,
       energy,

@@ -10,9 +10,9 @@
 #include <iostream>
 
 // Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_CommandLineProcessor.hpp>
+#include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
@@ -24,8 +24,13 @@
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 
+/*! \details This exec outputs a test file to see the moment preserving data for
+ *  Al. It was designed to match that of ITS. To run go to bin and run:
+ * ./moment_preserving_test_output --test_native_file="NATIVE_TEST_DATA_SOURCE_DIR/test_epr_13_native.xml"
+ * It should output a file called moment_preserving_elastic_data.txt
+ */
 //---------------------------------------------------------------------------//
-// Testing Structs.
+// Structs.
 //---------------------------------------------------------------------------//
 class TestElasticElectronMomentsEvaluator : public DataGen::ElasticElectronMomentsEvaluator
 {
@@ -46,7 +51,7 @@ public:
 };
 
 //---------------------------------------------------------------------------//
-// Testing Variables
+// Variables
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data;
@@ -59,41 +64,40 @@ Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_distribution;
 
 //---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-bool notEqualZero( double value )
-{
-  return value != 0.0;
-}
-
-//---------------------------------------------------------------------------//
-// Custom main function
+// main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_native_file_name;
-
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_native_file",
-		 &test_native_file_name,
-		 "Test Native file name" );
-
-  const Teuchos::RCP<Teuchos::FancyOStream> out =
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
-    clp.parse(argc,argv);
+  // Set up the command line options
+  Teuchos::CommandLineProcessor mp_data_clp;
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
-    *out << "\nEnd Result: TEST FAILED" << std::endl;
+  std::string test_native_al_file_name;
+
+
+  mp_data_clp.setOption( "test_native_al_file",
+		                 &test_native_al_file_name,
+		                 "Test Native Al file name" );
+
+  mp_data_clp.throwExceptions( false );
+
+  // Parse the command line
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn
+    parse_return = mp_data_clp.parse( argc, argv );
+
+  if( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
+  {
+    mp_data_clp.printHelpMessage( argv[0], *out );
+
     return parse_return;
   }
 
   {
   // Create the native data file container
   data.reset( new Data::ElectronPhotonRelaxationDataContainer(
-						     test_native_file_name ) );
+						     test_native_al_file_name ) );
 
 
   // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
@@ -152,11 +156,10 @@ int main( int argc, char** argv )
          << "\t\tEta" << std::setw(20)
          << "\t\tMoment 1" << std::setw(20)
          << "\t\tMoment 2" << std::setw(20)
-         << "\t\tMu \n";
+         << "\t\tMu\n";
 
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
-
   // Evaluate the 1st and 2nd moment
   test_evaluator->evaluateScreenedRutherfordPDFMomentByRecursion(
         moments[1],
@@ -167,9 +170,6 @@ int main( int argc, char** argv )
         moments[2],
         eta[i]*Utility::long_float(2),
         2 );
-
-  moments[1] /= moments[0];
-  moments[2] /= moments[0];
 
   // Use radau quadrature to find the discrete angles and weights from the moments
   Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
@@ -194,11 +194,10 @@ int main( int argc, char** argv )
          << "\t\tEta" << std::setw(20)
          << "\t\tMoment 1" << std::setw(20)
          << "\t\tMoment 2" << std::setw(20)
-         << "\t\tMu \n";
+         << "\t\tMu\n";
 
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
-
   // Evaluate the 1st and 2nd moment
   test_evaluator->evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
         moments[1],
@@ -211,9 +210,6 @@ int main( int argc, char** argv )
         eta[i]*Utility::long_float(2),
         angular_energy_grid[i],
         2 );
-
-  moments[1] /= moments[0];
-  moments[2] /= moments[0];
 
   // Use radau quadrature to find the discrete angles and weights from the moments
   Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
@@ -232,14 +228,13 @@ int main( int argc, char** argv )
            << discrete_angles[0] << "\n";
   }
 
-/*
   myfile << "\n\nScreened Rutherford moments calculated using the recursion relationship and FRENSIE eta.\n";
   myfile << "Element Z = \t"<< data->getAtomicNumber() << "\n";
   myfile << "\tEnergy" << std::setw(20)
          << "\t\tEta" << std::setw(20)
          << "\t\tMoment 1" << std::setw(20)
          << "\t\tMoment 2" << std::setw(20)
-         << "\t\tMu \n";
+         << "\t\tMu\n";
 
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
@@ -282,7 +277,7 @@ int main( int argc, char** argv )
          << "\t\tEta" << std::setw(20)
          << "\t\tMoment 1" << std::setw(20)
          << "\t\tMoment 2" << std::setw(20)
-         << "\t\tMu \n";
+         << "\t\tMu\n";
 
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
@@ -316,7 +311,6 @@ int main( int argc, char** argv )
            << moments[2] << "\t"
            << discrete_angles[0] << "\n";
   }
-*/
   myfile.close();
 
 
