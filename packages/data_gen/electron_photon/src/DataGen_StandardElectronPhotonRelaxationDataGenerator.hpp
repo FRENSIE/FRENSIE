@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -41,9 +42,10 @@ public:
 	   const double max_photon_energy,
        const double min_electron_energy,
        const double max_electron_energy,
-       const double cutoff_angle_cosine,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
+       const double cutoff_angle_cosine = 1.0,
+       const unsigned number_of_moment_preserving_angles = 0,
 	   const double grid_convergence_tol = 0.001,
 	   const double grid_absolute_diff_tol = 1e-13,
 	   const double grid_distance_tol = 1e-13 );
@@ -120,6 +122,11 @@ private:
     const std::map<double,std::vector<double> >& elastic_pdf,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
+  // Set the screened rutherford data
+  void setMomentPreservingData(
+    const std::vector<double>& elastic_energy_grid,
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
   void extractCrossSection(
@@ -192,6 +199,13 @@ private:
     std::vector<double>& elastic_angle,
     std::vector<double>& elastic_pdf ) const;
 
+  // Generate elastic discrete angle cosines and weights
+  void evaluateDisceteAnglesAndWeights(
+    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const double& energy,
+    std::vector<double>& discrete_angles,
+    std::vector<double>& weights ) const;
+
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
 
@@ -231,6 +245,9 @@ private:
 
   // The grid distance tolerance
   double d_grid_distance_tol;
+
+  // The number of moment preserving angles
+  int d_number_of_moment_preserving_angles;
 };
 
 // Test if a value is greater than or equal to one

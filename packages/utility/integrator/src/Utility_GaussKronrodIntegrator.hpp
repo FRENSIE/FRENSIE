@@ -12,7 +12,7 @@
 // std Includes
 #include <queue>
 
-// Trilinos Includes
+// Trillinos Includes
 #include <Teuchos_Array.hpp>
 
 namespace Utility{
@@ -54,7 +54,7 @@ class GaussKronrodIntegrator
 public:
 
 typedef std::priority_queue<BinTraits<T>> BinQueue;
-typedef Teuchos::Array<ExtrpolatedBinTraits<T>> BinArray;
+typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 
   //! Constructor
   GaussKronrodIntegrator( const T relative_error_tol,
@@ -200,8 +200,8 @@ protected:
 
   // get the Wynn Epsilon-Algoirithm extrapolated value
   void getWynnEpsilonAlgorithmExtrapolation( 
-        Teuchos::Array<T>& bin_extrapolated_result, 
-        Teuchos::Array<T>& last_three_results, 
+        std::vector<T>& bin_extrapolated_result, 
+        std::vector<T>& last_three_results, 
         T& extrapolated_result, 
         T& extrapolated_error,  
         int& number_of_extrapolated_intervals,

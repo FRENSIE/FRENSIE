@@ -19,6 +19,7 @@
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_SloanRadauQuadrature.hpp"
 
 namespace DataGen{
 
@@ -35,9 +36,10 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
         const double max_photon_energy,
         const double min_electron_energy,
         const double max_electron_energy,
-        const double cutoff_angle_cosine,
         const double occupation_number_evaluation_tolerance,
         const double subshell_incoherent_evaluation_tolerance,
+        const double cutoff_angle_cosine,
+        const unsigned number_of_moment_preserving_angles,
         const double grid_convergence_tol,
         const double grid_absolute_diff_tol,
         const double grid_distance_tol )
@@ -48,9 +50,10 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
     d_max_photon_energy( max_photon_energy ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
     d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
+    d_number_of_moment_preserving_angles( number_of_moment_preserving_angles ),
     d_grid_convergence_tol( grid_convergence_tol ),
     d_grid_absolute_diff_tol( grid_absolute_diff_tol ),
     d_grid_distance_tol( grid_distance_tol )
@@ -68,6 +71,8 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   // Make sure the cutoff angle is valid
   testPrecondition( cutoff_angle_cosine <= 1.0 );
   testPrecondition( cutoff_angle_cosine > -1.0 );
+  // Make sure the number of moment preserving angles is valid
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
 }
 
 // Populate the electron-photon-relaxation data container
@@ -766,6 +771,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 //---------------------------------------------------------------------------//
 // Set Elastic Data
 //---------------------------------------------------------------------------//
+  std::cout << " Setting the elastic cutoff data...";
+  std::cout.flush();
 
   // Get cutoff elastic cross section to union energy grid
   std::vector<double> raw_energy_grid = 
@@ -813,12 +820,55 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   data_container.setCutoffElasticPDF( elastic_pdf );
   data_container.setCutoffElasticAngles( elastic_angle );
 
-  // Set the screened Rutherford cross section data
-  setScreenedRutherfordData( cutoff_elastic_cross_section, 
-                             total_elastic_cross_section,
-                             elastic_energy_grid, 
-                             elastic_pdf,
-                             data_container );
+  std::cout << "done." << std::endl;
+
+  if ( d_cutoff_angle_cosine > 0.999999 )
+  {
+    std::cout << " Screened Rutherford data will not be generated because the"
+              << " cutoff angle cosine is greater than 0.999999"
+              << " cutoff_angle_cosine = " << d_cutoff_angle_cosine << std::endl;
+
+    std::cout << " Moment preserving data will not be generated because the"
+              << " cutoff angle cosine is greater than 0.999999"
+              << " cutoff_angle_cosine = " << d_cutoff_angle_cosine << std::endl;
+  }
+  else if ( d_number_of_moment_preserving_angles < 1 )
+  {
+    std::cout << " Setting the elastic screened Rutherford data...";
+    std::cout.flush();
+    // Set the screened Rutherford data
+    setScreenedRutherfordData( cutoff_elastic_cross_section, 
+                               total_elastic_cross_section,
+                               elastic_energy_grid, 
+                               elastic_pdf,
+                               data_container );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << " Moment preserving data will not be generated because the"
+              << " number of moment preserving angles is less than 1"
+              << " number_of_moment_preserving_angles = "
+              << d_number_of_moment_preserving_angles << std::endl;
+  }
+  else
+  {
+    std::cout << " Setting the elastic screened Rutherford data...";
+    std::cout.flush();
+    // Set the screened Rutherford data
+    setScreenedRutherfordData( cutoff_elastic_cross_section, 
+                               total_elastic_cross_section,
+                               elastic_energy_grid, 
+                               elastic_pdf,
+                               data_container );
+
+    std::cout << "done." << std::endl;
+
+    std::cout << " Setting the elastic moment preserving data...";
+    std::cout.flush();
+    // Set the moment preserving data
+    setMomentPreservingData( elastic_energy_grid, data_container );  
+    std::cout << "done." << std::endl;
+  }
 
 //---------------------------------------------------------------------------//
 // Set Electroionization Data
@@ -1092,62 +1142,38 @@ void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
     const std::map<double,std::vector<double> >& elastic_pdf,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
-  // Calculate Moliere's screening constant and the screened rutherford normalization constant
-  std::vector<double> moliere_screening_constant, 
-                      screened_rutherford_normalization_constant;
-  
+
+}
+
+// Set the screened rutherford data
+void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
+    const std::vector<double>& elastic_energy_grid,
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Create the moment evaluator of the elastic scattering distribution
+  Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
+  moments_evaluator.reset( 
+    new DataGen::ElasticElectronMomentsEvaluator( data_container, 
+                                                  d_cutoff_angle_cosine ) );
+
+  std::vector<double> discrete_angles, weights;
+
   // iterate through all angular energy bins
-  for ( int i = 0; i < elastic_energy_grid.size(); ++i )
+  for ( unsigned i = 0; i < elastic_energy_grid.size(); i++ )
   {
-    // get the angular energy bin
-    double energy = elastic_energy_grid[i];
+    evaluateDisceteAnglesAndWeights(
+        moments_evaluator,
+        elastic_energy_grid[i],
+        discrete_angles,
+        weights );
 
-    // get the screened rutherford cross section
-    double sr_cross_section = 
-        ( total_elastic_cross_section->evaluate( energy ) -
-        cutoff_elastic_cross_section->evaluate( energy ) );
-
-    double delta_cutoff_angle_cosine = ( 1.0 - d_cutoff_angle_cosine );
-
-    if ( sr_cross_section == 0.0 )
-    {
-    /* in order to not calculate negative the screened Rutherford cross section
-     * must be greater than ( cutoff_pdf*(1.0 - cutoff_angle_cosine ). It should also be small
-     * enough to give a negligable contribution to the overall cross section.
-     * This can be accomplished by setting eta slightly greater then ( 1.0 - cutoff
-     * angle cosine ).
-     */
-    // get the pdf value at the cutoff angle cosine for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.back(); 
-
-    // calculate Moliere's screening constant
-    moliere_screening_constant.push_back( 1.01*delta_cutoff_angle_cosine );
-
-    // calculate the screened rutherford normalization constant
-    screened_rutherford_normalization_constant.push_back( cutoff_pdf*
-        ( 2.01*delta_cutoff_angle_cosine )*( 2.01*delta_cutoff_angle_cosine ) );
-    }
-    else
-    {
-    // get the pdf value at the cutoff angle for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.back(); 
-
-    // calculate Moliere's screening constant
-    moliere_screening_constant.push_back( delta_cutoff_angle_cosine/( 
-        sr_cross_section/( delta_cutoff_angle_cosine*cutoff_pdf ) - 1.0 ) );
-
-    // calculate the screened rutherford normalization constant
-    screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
-        ( delta_cutoff_angle_cosine + moliere_screening_constant.back() )* 
-        ( delta_cutoff_angle_cosine + moliere_screening_constant.back() ) ) );
-    }
+    data_container.setMomentPreservingElasticDiscreteAngles(
+        elastic_energy_grid[i],
+        discrete_angles );
+    data_container.setMomentPreservingElasticWeights(
+        elastic_energy_grid[i],
+        weights );
   }
-  // Set Moliere's screening constant
-  data_container.setMoliereScreeningConstant( moliere_screening_constant );
-
-  // Set the screened rutherford normalization constant
-  data_container.setScreenedRutherfordNormalizationConstant( 
-    screened_rutherford_normalization_constant );  
 }
 
 // Extract the half Compton profile from the ACE table
@@ -1600,6 +1626,33 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
     r_bin--;
   }
 }
+
+// Generate elastic discrete angle cosines and weights
+void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
+    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const double& energy,
+    std::vector<double>& discrete_angles,
+    std::vector<double>& weights ) const
+{
+  std::vector<Utility::long_float> legendre_moments;
+  double precision = 1e-13;
+  int n = ( d_number_of_moment_preserving_angles+1 )*2 -2;
+
+  // Get the discrete angles and weights
+  moments_evaluator->evaluateElasticMoment( legendre_moments, 
+                                            energy, 
+                                            n, 
+                                            precision );
+
+  // Use radau quadrature to find the discrete angles and weights from the moments
+  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+      new Utility::SloanRadauQuadrature( legendre_moments ) );
+
+  radau_quadrature->getRadauNodesAndWeights( discrete_angles,
+                                             weights,
+                                             d_number_of_moment_preserving_angles+1 );
+}
+
 
 } // end DataGen namespace
 

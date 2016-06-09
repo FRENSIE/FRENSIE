@@ -27,6 +27,7 @@
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_GaussKronrodIntegrator.hpp"
 
 int main( int argc, char** argv )
 {
@@ -42,9 +43,10 @@ int main( int argc, char** argv )
   std::string cross_section_directory, cross_section_alias;
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
   double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
-  double cutoff_angle = 0.000001;
   double occupation_number_evaluation_tol = 1e-3;
   double subshell_incoherent_evaluation_tol = 1e-3;
+  double cutoff_angle_cosine = 0.999999;
+  int number_of_moment_preserving_angles = 0;
   double grid_convergence_tol = 0.001;
   double grid_absolute_diff_tol = 1e-42;
   double grid_distance_tol = 1e-16;
@@ -79,6 +81,12 @@ int main( int argc, char** argv )
   epr_generator_clp.setOption( "subshell_incoherent_tol",
 			       &subshell_incoherent_evaluation_tol,
 			       "Subshell incoherent evaluation tolerance" );
+  epr_generator_clp.setOption( "cutoff_angle_cosine",
+			       &cutoff_angle_cosine,
+			       "Cutoff angle cosine for table" );
+  epr_generator_clp.setOption( "number_of_moment_preserving_angles",
+			       &number_of_moment_preserving_angles,
+			       "Number of moment preserving angles for table" );
   epr_generator_clp.setOption( "grid_convergence_tol",
 			       &grid_convergence_tol,
 			       "Grid convergence tolerance" );
@@ -169,9 +177,10 @@ std::cout << "endl_file_path = " << endl_file_path << std::endl;
 					    max_photon_energy,
 					    min_electron_energy,
 					    max_electron_energy,
-                        cutoff_angle,
 					    occupation_number_evaluation_tol,
                         subshell_incoherent_evaluation_tol,
+                        cutoff_angle_cosine,
+                        number_of_moment_preserving_angles,
 					    grid_convergence_tol,
 					    grid_absolute_diff_tol,
 					    grid_distance_tol ) );

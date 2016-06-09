@@ -25,12 +25,12 @@ StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerat
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
     const double max_electron_energy,
-    const double cutoff_angle )
+    const double cutoff_angle_cosine )
   : SoftElasticElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
-    d_cutoff_angle( cutoff_angle )
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
@@ -61,7 +61,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
     const int& number_of_discrete_angles ) const
 {
   // Set cutoff angle cosine
-  data_container.setCutoffAngleCosine( d_cutoff_angle );
+  data_container.setCutoffAngleCosine( d_cutoff_angle_cosine );
 
   std::vector<double> angular_energy_grid =
     d_native_eedl_data->getElasticAngularEnergyGrid();
@@ -73,7 +73,7 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset( 
     new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data, 
-                                                  d_cutoff_angle ) );
+                                                  d_cutoff_angle_cosine ) );
 
   std::vector<double> discrete_angles, weights;
 
@@ -119,17 +119,6 @@ void StandardSoftElasticElectronDataGenerator::evaluateDisceteAnglesAndWeights(
   radau_quadrature->getRadauNodesAndWeights( discrete_angles,
                                              weights,
                                              number_of_discrete_angles+1 );
-
-for (int j=0; j < legendre_moments.size(); j++)
-{
-    std::cout << std::setprecision(20) << "legendre_moments[" << j << "] = \t" << legendre_moments[j] << std::endl;
-}
-
-for (int i = 0; i < discrete_angles.size(); i++)
-{
-    std::cout << std::setprecision(20) << "discrete_angles["<< i << "] = " << discrete_angles[i] << std::endl;
-    std::cout << std::setprecision(20) << "weights["<< i << "]         = " << weights[i] << std::endl;
-}
 }
 
 } // end DataGen namespace

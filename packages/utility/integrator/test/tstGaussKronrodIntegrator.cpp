@@ -18,7 +18,6 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_GaussKronrodIntegrator.hpp"
@@ -1003,8 +1002,8 @@ TEUCHOS_UNIT_TEST( GaussKronrodIntegrator,
 {
   TestGaussKronrodIntegrator test_integrator( 1e-12 );
   
-  Teuchos::Array<double> bin_extrapolated_result(52);
-  Teuchos::Array<double> last_three_results(3);
+  std::vector<double> bin_extrapolated_result(52);
+  std::vector<double> last_three_results(3);
   double extrapolated_result, extrapolated_error;
   int number_of_extrapolated_intervals, number_of_extrapolated_calls;
   double tol = 1e-16;

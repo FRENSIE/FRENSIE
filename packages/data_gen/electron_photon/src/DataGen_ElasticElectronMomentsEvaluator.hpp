@@ -22,9 +22,9 @@
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
-#include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
+#include "Utility_SloanRadauQuadrature.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 
 
 namespace DataGen{

@@ -57,9 +57,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
                 20.0,
                 1.0e-5,
                 1.0e+5,
-                0.999999,  
                 1e-4,
                 1e-3,
+                1.0,
+                0,
                 0.001,
                 1e-42,
                 1e-15) );
@@ -347,6 +348,49 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( elastic_pdf.back(), 9.86945e+5 );
   TEST_EQUALITY_CONST( elastic_pdf.size(), 96 );
 
+  TEST_ASSERT( !data_container.hasScreenedRutherfordData() );
+  TEST_ASSERT( !data_container.hasMomentPreservingData() );
+/*
+  std::vector<double> discrete_angles =
+    data_container.getMomentPreservingElasticDiscreteAngles( 1.0e-5 );
+
+  TEST_EQUALITY_CONST( discrete_angles.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
+
+std::cout << "discrete_angles.front() = " << discrete_angles.front() <<std::endl;
+std::cout << "discrete_angles.back() = " << discrete_angles.back() <<std::endl;
+
+  discrete_angles =
+    data_container.getMomentPreservingElasticDiscreteAngles( 1.0e+5 );
+
+  TEST_EQUALITY_CONST( discrete_angles.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_angles.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_angles.size(), 1 );
+
+std::cout << "discrete_angles.front() = " << discrete_angles.front() <<std::endl;
+std::cout << "discrete_angles.back() = " << discrete_angles.back() <<std::endl;
+
+  std::vector<double> discrete_weights =
+    data_container.getMomentPreservingElasticWeights( 1.0e-5 );
+
+  TEST_EQUALITY_CONST( discrete_weights.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
+
+std::cout << "discrete_weights.front() = " << discrete_angles.front() <<std::endl;
+std::cout << "discrete_weights.back() = " << discrete_angles.back() <<std::endl;
+
+  discrete_weights =
+    data_container.getMomentPreservingElasticWeights( 1.0e+5 );
+
+  TEST_EQUALITY_CONST( discrete_weights.front(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
+  TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
+
+std::cout << "discrete_weights.front() = " << discrete_angles.front() <<std::endl;
+std::cout << "discrete_weights.back() = " << discrete_angles.back() <<std::endl;
+*/
   // Check the electroionization data
   threshold = 
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u ); 
@@ -490,9 +534,10 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 				     20.0,
                      1.0e-5,
                      1.0e+5,
-                     0.999999,  
-				     1e-4,
 				     1e-3,
+				     1e-3,
+                     1.0,
+                     0,
 				     0.001,
 				     1e-32,
 				     1e-16) );

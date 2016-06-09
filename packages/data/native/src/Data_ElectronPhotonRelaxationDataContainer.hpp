@@ -62,14 +62,17 @@ public:
   //! Return the maximum electron energy
   double getMaxElectronEnergy() const;
 
-  //! Return the upper cutoff scattering angle below which moment preserving elastic scattering is used
-  double getCutoffAngleCosine() const;
-
   //! Return the occupation number evaluation tolerance
   double getOccupationNumberEvaluationTolerance() const;
 
   //! Return the subshell incoherent evaluation tolerance
   double getSubshellIncoherentEvaluationTolerance() const;
+
+  //! Return the upper cutoff scattering angle cosine above which moment preserving elastic scattering is used
+  double getCutoffAngleCosine() const;
+
+  //! Return the number of discrete moment preserving angles
+  unsigned getNumberOfMomentPreservingAngles() const;
 
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
@@ -231,11 +234,17 @@ public:
   const std::vector<double>& getCutoffElasticPDF(
 					       const double incoming_energy ) const;
 
+  //! Return if there is screened Rutherford data
+  bool hasScreenedRutherfordData() const;
+
   //! Return the screened Rutherford elastic normalization constants
   const std::vector<double>& getScreenedRutherfordNormalizationConstant() const;
 
   //! Return Moliere's screening constant
   const std::vector<double>& getMoliereScreeningConstant() const;
+
+  //! Return if there is moment preserving data
+  bool hasMomentPreservingData() const;
 
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
@@ -348,9 +357,6 @@ protected:
   //! Set the maximum electron energy
   void setMaxElectronEnergy( const double max_electron_energy );
 
-  //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
-  void setCutoffAngleCosine( const double cutoff_angle_cosine );
-
   //! Set the occupation number evaluation tolerance
   void setOccupationNumberEvaluationTolerance(
     const double occupation_number_evaluation_tolerance );
@@ -358,6 +364,13 @@ protected:
   //! Set the subshell incoherent evaluation tolerance
   void setSubshellIncoherentEvaluationTolerance(
     const double subshell_incoherent_evaluation_tolerance );
+
+  //! Set the upper cutoff scattering angle below which moment preserving elastic scattering is used
+  void setCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Set the number of discrete moment preserving angles
+  void setNumberOfMomentPreservingAngles(
+    const unsigned number_of_moment_preserving_angles);
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );
@@ -706,14 +719,17 @@ private:
   // The maximum electron energy
   double d_max_electron_energy;
 
-  // The elastic cutoff angle
-  double d_cutoff_angle_cosine;
-
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;
 
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
+
+  // The elastic cutoff angle
+  double d_cutoff_angle_cosine;
+
+  // The number of discrete moment preserving angles
+  double d_number_of_moment_preserving_angles;
 
   // The union energy grid convergence tolerance
   double d_grid_convergence_tol;

@@ -78,16 +78,6 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setMaxElectronEnergy )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the Cutoff Angle can be set
-TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
-{
-  epr_data_container.setCutoffAngleCosine( 0.9 );
-  
-  TEST_EQUALITY_CONST( epr_data_container.getCutoffAngleCosine(), 
-                       0.9 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the occupation number evaluation tolerance can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
                    setOccupationNumberEvaluationTolerance )
@@ -107,6 +97,27 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   
   TEST_EQUALITY_CONST( epr_data_container.getSubshellIncoherentEvaluationTolerance(), 
                        1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the Cutoff Angle can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, setCutoffAngleCosine )
+{
+  epr_data_container.setCutoffAngleCosine( 0.9 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getCutoffAngleCosine(), 
+                       0.9 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the number of discrete moment preserving angles can be set
+TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
+                   setNumberOfMomentPreservingAngles )
+{
+  epr_data_container.setNumberOfMomentPreservingAngles( 1 );
+  
+  TEST_EQUALITY_CONST( epr_data_container.getNumberOfMomentPreservingAngles(), 
+                       1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -724,6 +735,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
                    setScreenedRutherfordNormalizationConstant )
 {
+  TEST_ASSERT( !epr_data_container.hasScreenedRutherfordData() );
+
   std::vector<double> norm( 3 );
   norm[0] = 100;
   norm[1] = 200;
@@ -733,6 +746,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   TEST_COMPARE_ARRAYS( epr_data_container.getScreenedRutherfordNormalizationConstant(),
                        norm );
+
+  TEST_ASSERT( epr_data_container.hasScreenedRutherfordData() );
 }
 
 //---------------------------------------------------------------------------//
@@ -756,6 +771,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer, 
                    setMomentPreservingElasticDiscreteAngles )
 {
+  TEST_ASSERT( !epr_data_container.hasMomentPreservingData() );
+
   std::vector<double> discrete_angles( 3 );
   discrete_angles[0] = 0.90;
   discrete_angles[1] = 0.95;
@@ -766,6 +783,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 
   TEST_COMPARE_ARRAYS( epr_data_container.getMomentPreservingElasticDiscreteAngles(1.0),
                        discrete_angles );
+
+  TEST_ASSERT( epr_data_container.hasMomentPreservingData() );
 }
 
 //---------------------------------------------------------------------------//
@@ -1266,7 +1285,28 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy( test_ascii_file_name, 
 			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
+  // Table Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
+                       0.9 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
+                       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridConvergenceTolerance(),
+                       0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridDistanceTolerance(),
+                       1e-15 );
+
+  // Relaxation Tests
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 2 ) );
@@ -1283,6 +1323,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
+
+  // Photon Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
@@ -1349,10 +1391,12 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasScreenedRutherfordData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1453,7 +1497,28 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy( test_xml_file_name, 
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
+  // Table Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
+                       0.9 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
+                       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridConvergenceTolerance(),
+                       0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridDistanceTolerance(),
+                       1e-15 );
+
+  // Relaxation Tests
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 2 ) );
@@ -1470,6 +1535,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
+
+  // Photon Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
@@ -1536,10 +1603,12 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasScreenedRutherfordData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
@@ -1637,7 +1706,28 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   
   epr_data_container_copy.unpackDataFromString( packed_data );
   
+  // Table Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinPhotonEnergy(), 0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxPhotonEnergy(), 20.0 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMinElectronEnergy(), 1.0e-5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getMaxElectronEnergy(), 1.0e5 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberEvaluationTolerance(),
+                       1e-4 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellIncoherentEvaluationTolerance(),
+                       1e-3 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getCutoffAngleCosine(),
+                       0.9 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getNumberOfMomentPreservingAngles(),
+                       1 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridConvergenceTolerance(),
+                       0.001 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridAbsoluteDifferenceTolerance(),
+                       1e-42 );
+  TEST_EQUALITY_CONST( epr_data_container_copy.getGridDistanceTolerance(),
+                       1e-15 );
+
+  // Relaxation Tests
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 0 ) );
   TEST_ASSERT( !epr_data_container_copy.getSubshells().count( 2 ) );
@@ -1654,6 +1744,8 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
+
+  // Photon Tests
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
@@ -1720,10 +1812,12 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
     epr_data_container_copy.getCutoffElasticAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getCutoffElasticPDF(1.0).size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasScreenedRutherfordData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getScreenedRutherfordNormalizationConstant().size(), 3 );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMoliereScreeningConstant().size(), 3 );
+  TEST_ASSERT( epr_data_container_copy.hasMomentPreservingData() );
   TEST_EQUALITY_CONST( 
     epr_data_container_copy.getMomentPreservingElasticDiscreteAngles(1.0).size(), 3 );
   TEST_EQUALITY_CONST( 

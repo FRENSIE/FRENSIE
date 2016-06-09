@@ -33,12 +33,14 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
                                         d_min_electron_energy );
   ar & boost::serialization::make_nvp( "max_electron_energy",
                                         d_max_electron_energy );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
-                                        d_cutoff_angle_cosine );
   ar & boost::serialization::make_nvp( "occupation_number_evaluation_tolerance",
                                         d_occupation_number_evaluation_tolerance );
   ar & boost::serialization::make_nvp( "subshell_incoherent_evaluation_tolerance",
                                         d_subshell_incoherent_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "number_of_moment_preserving_angles", 
+                                        d_number_of_moment_preserving_angles );
   ar & boost::serialization::make_nvp( "grid_convergence_tol",
                                         d_grid_convergence_tol );
   ar & boost::serialization::make_nvp( "grid_absolute_diff_tol",
@@ -207,12 +209,14 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
                                         d_min_electron_energy );
   ar & boost::serialization::make_nvp( "max_electron_energy",
                                         d_max_electron_energy );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
-                                        d_cutoff_angle_cosine );
   ar & boost::serialization::make_nvp( "occupation_number_evaluation_tolerance",
                                         d_occupation_number_evaluation_tolerance );
   ar & boost::serialization::make_nvp( "subshell_incoherent_evaluation_tolerance",
                                         d_subshell_incoherent_evaluation_tolerance );
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+                                        d_cutoff_angle_cosine );
+  ar & boost::serialization::make_nvp( "number_of_moment_preserving_angles", 
+                                        d_number_of_moment_preserving_angles );
   ar & boost::serialization::make_nvp( "grid_convergence_tol",
                                         d_grid_convergence_tol );
   ar & boost::serialization::make_nvp( "grid_absolute_diff_tol",

@@ -178,8 +178,8 @@ void GaussKronrodIntegrator<T>::sortBins(
 // get the Wynn Epsilon-Algoirithm extrapolated value
 template<typename T>
 void GaussKronrodIntegrator<T>::getWynnEpsilonAlgorithmExtrapolation( 
-        Teuchos::Array<T>& bin_extrapolated_result, 
-        Teuchos::Array<T>& last_three_results, 
+        std::vector<T>& bin_extrapolated_result, 
+        std::vector<T>& last_three_results, 
         T& extrapolated_result, 
         T& extrapolated_error,  
         int& number_of_extrapolated_intervals,
@@ -656,13 +656,13 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
   ExtrpolatedBinTraits<T> bin;
   BinArray bin_array( d_subinterval_limit );
   
-  Teuchos::Array<T> bin_extrapolated_result( 52 ); 
-  Teuchos::Array<T> last_three_results( 3 ); 
+  std::vector<T> bin_extrapolated_result( 52 ); 
+  std::vector<T> last_three_results( 3 ); 
   T total_area = (T)0;
   T total_error = (T)0, total_area_abs = (T)0;  
 
   int number_of_intervals = points_of_interest.size() - 1;
-  Teuchos::Array<bool> rescale_bin_error( number_of_intervals );
+  std::vector<bool> rescale_bin_error( number_of_intervals );
 
   absolute_error = (T)0;
   // Compute the integration between the points of interest
@@ -947,7 +947,7 @@ void GaussKronrodIntegrator<T>::integrateAdaptivelyWynnEpsilon(
     //  Compute global integral sum.
    
     T long_result = (T)0;
-    Teuchos::Array<int>::reverse_iterator j =  bin_order.rbegin();
+    std::vector<int>::reverse_iterator j =  bin_order.rbegin();
     // Sum result over all bins
     for ( j; j != bin_order.rend(); j++ )
     {
@@ -1038,10 +1038,10 @@ void GaussKronrodIntegrator<T>::integrateWithPointRule(
     int number_of_weights =
         GaussKronrodQuadratureSetTraits<Points>::kronrod_weights.size();
 
-    Teuchos::Array<T> integrand_values_lower( number_of_weights );
-    Teuchos::Array<T> integrand_values_upper( number_of_weights );
-    Teuchos::Array<T> integrand_values_sum( number_of_weights );
-    Teuchos::Array<T> kronrod_values( number_of_weights );
+    std::vector<T> integrand_values_lower( number_of_weights );
+    std::vector<T> integrand_values_upper( number_of_weights );
+    std::vector<T> integrand_values_sum( number_of_weights );
+    std::vector<T> kronrod_values( number_of_weights );
 
     // Estimate Kronrod and absolute value integral for all but last weight
     T kronrod_result = (T)0;

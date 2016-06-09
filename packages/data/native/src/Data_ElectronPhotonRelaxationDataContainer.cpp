@@ -71,12 +71,6 @@ double ElectronPhotonRelaxationDataContainer::getMaxElectronEnergy() const
   return d_max_electron_energy;
 }
 
-// Return the elastic cutoff angle
-double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
-{
-  return d_cutoff_angle_cosine;
-}
-
 // Return the occupation number evaluation tolerance
 double
 ElectronPhotonRelaxationDataContainer::getOccupationNumberEvaluationTolerance() const
@@ -89,6 +83,18 @@ double
 ElectronPhotonRelaxationDataContainer::getSubshellIncoherentEvaluationTolerance() const
 {
   return d_subshell_incoherent_evaluation_tolerance;
+}
+
+// Return the elastic cutoff angle
+double ElectronPhotonRelaxationDataContainer::getCutoffAngleCosine() const
+{
+  return d_cutoff_angle_cosine;
+}
+
+// Return the number of discrete moment preserving angles
+unsigned ElectronPhotonRelaxationDataContainer::getNumberOfMomentPreservingAngles() const
+{
+  return d_number_of_moment_preserving_angles;
 }
 
 // Return the union energy grid convergence tolerance
@@ -465,6 +471,12 @@ ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF(
   return d_cutoff_elastic_pdf.find( incoming_energy )->second;
 }
 
+// Return if there is screened Rutherford data
+bool ElectronPhotonRelaxationDataContainer::hasScreenedRutherfordData() const
+{
+  return d_screened_rutherford_normalization_constant.size() > 0;
+}
+
 // Return the screened Rutherford elastic normalization constant 
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getScreenedRutherfordNormalizationConstant() const
@@ -477,6 +489,12 @@ const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMoliereScreeningConstant() const
 {
   return d_moliere_screening_constant;
+}
+
+// Return if there is moment preserving data
+bool ElectronPhotonRelaxationDataContainer::hasMomentPreservingData() const
+{
+  return d_moment_preserving_elastic_discrete_angles.size() > 0;
 }
 
 // Return the moment preserving elastic discrete angles for an incoming energy
@@ -756,17 +774,6 @@ void ElectronPhotonRelaxationDataContainer::setMaxElectronEnergy(
   d_max_electron_energy = max_electron_energy;
 }
 
-// Set the elastic cutoff angle
-void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine( 
-                         const double cutoff_angle_cosine )
-{
-  // Make sure the elastic cutoff angle is valid
-  testPrecondition( cutoff_angle_cosine <= 1.0 );
-  testPrecondition( cutoff_angle_cosine > -1.0 );
-
-  d_cutoff_angle_cosine = cutoff_angle_cosine;
-}
-
 // Set the occupation number evaluation tolerance
 void ElectronPhotonRelaxationDataContainer::setOccupationNumberEvaluationTolerance(
     const double occupation_number_evaluation_tolerance )
@@ -787,6 +794,27 @@ void ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationToler
 
   d_subshell_incoherent_evaluation_tolerance =
     subshell_incoherent_evaluation_tolerance;
+}
+
+// Set the elastic cutoff angle
+void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine( 
+                         const double cutoff_angle_cosine )
+{
+  // Make sure the elastic cutoff angle is valid
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+
+  d_cutoff_angle_cosine = cutoff_angle_cosine;
+}
+
+// Set the number of discrete moment preserving angles
+void ElectronPhotonRelaxationDataContainer::setNumberOfMomentPreservingAngles(
+    const unsigned number_of_moment_preserving_angles )
+{
+  // Make sure the number of angles is valid
+  testPrecondition( number_of_moment_preserving_angles >= 0 );
+
+  d_number_of_moment_preserving_angles = number_of_moment_preserving_angles;
 }
 
 // Set the union energy grid convergence tolerance

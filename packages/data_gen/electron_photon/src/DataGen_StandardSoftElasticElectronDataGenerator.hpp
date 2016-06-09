@@ -36,7 +36,7 @@ public:
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
     const double max_electron_energy,
-    const double cutoff_angle );
+    const double cutoff_angle_cosine );
 
   //! Destructor
   ~StandardSoftElasticElectronDataGenerator()
@@ -73,8 +73,8 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle between soft and hard elastic collisions
-  double d_cutoff_angle;
+  // The cutoff angle cosine between soft and hard elastic collisions
+  double d_cutoff_angle_cosine;
 };
 
 
