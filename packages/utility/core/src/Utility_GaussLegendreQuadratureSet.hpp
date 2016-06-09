@@ -24,7 +24,7 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
                       std::vector<long_float>& gauss_moments );
 
 //! Return the coefficients of the legendre expansion of x^n
-void getLegendrePowerExpansionCoefficients( 
+void getLegendrePowerExpansionCoefficients(
                       Teuchos::TwoDArray<long_float>& coefficients,
                       const int power = 0 );
 } // end Utility namespace

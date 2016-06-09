@@ -28,7 +28,7 @@ namespace DataGen{
 //! The free gas elastic scattering gkq_set factor class
 class FreeGasElasticScatteringKernelFactor
 {
-  
+
 private:
 
   // Typedef for bessel function error policy
@@ -40,21 +40,21 @@ private:
     boost::math::policies::throw_on_error> overflow_error;
   typedef boost::math::policies::evaluation_error<
     boost::math::policies::throw_on_error> evaluation_error;
-  
+
   typedef boost::math::policies::policy<
     domain_error,
     pole_error,
     overflow_error,
     evaluation_error> Policy;
-  
+
   // Typedef for extended precision floating point values
   typedef boost::multiprecision::float128 BoostLongDouble;
 
 public:
 
   //! Constructor
-  FreeGasElasticScatteringKernelFactor( 
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+  FreeGasElasticScatteringKernelFactor(
+	  const Teuchos::RCP<Utility::OneDDistribution>&
 	  zero_temp_elastic_cross_section,
           const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
@@ -63,7 +63,7 @@ public:
 	  const double alpha,
 	  const double beta,
 	  const double E );
-  
+
   //! Destructor
   ~FreeGasElasticScatteringKernelFactor()
   { /* ... */ }

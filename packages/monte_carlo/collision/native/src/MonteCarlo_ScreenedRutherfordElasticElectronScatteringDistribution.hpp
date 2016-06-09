@@ -39,19 +39,19 @@ class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronS
 public:
 
   //! Typedef for the array of energy dependent screened rutherford paramters
-  //! (first = energy, second = Moliere screening constant, 
+  //! (first = energy, second = Moliere screening constant,
   //!  third = normalization constant
   typedef Teuchos::Array<Utility::Trip<double,double,double> > ParameterArray;
 
   typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
-            ElasticDistribution;    
+            ElasticDistribution;
 
   //! Constructor from table data
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number );
 
-  //! Destructor 
+  //! Destructor
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -96,7 +96,7 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                        
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,

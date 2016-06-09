@@ -21,9 +21,9 @@ namespace MonteCarlo{
  */
 class SimulationPhotonProperties
 {
-  
+
 public:
-  
+
   //! Set the minimum photon energy (MeV)
   static void setMinPhotonEnergy( const double energy );
 
@@ -32,7 +32,7 @@ public:
 
   //! Return the absolute minimum photon energy (MeV)
   static double getAbsoluteMinPhotonEnergy();
-  
+
   //! Set the maximum photon energy (MeV)
   static void setMaxPhotonEnergy( const double energy );
 
@@ -42,7 +42,7 @@ public:
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
 
-  //! Set the Kahn sampling cutoff energy (MeV) 
+  //! Set the Kahn sampling cutoff energy (MeV)
   static void setKahnSamplingCutoffEnergy( const double energy );
 
   //! Return the Kahn sampling cutoff energy (MeV)
@@ -128,7 +128,7 @@ inline double SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
 {
   return SimulationPhotonProperties::absolute_min_photon_energy;
 }
-  
+
 // Return the maximum photon energy (MeV) - cannot be set at runtime
 inline double SimulationPhotonProperties::getMaxPhotonEnergy()
 {

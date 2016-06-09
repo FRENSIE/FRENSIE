@@ -39,7 +39,7 @@ ParticleTracker::ParticleTracker( const ParticleHistoryObserver::idType id,
 {
   // Make sure there are some particles being tracked
   testPrecondition( d_number_of_histories >= 0 );
-  
+
   // Initialize the data maps
   this->initialize( 0u );
 }
@@ -48,28 +48,28 @@ ParticleTracker::ParticleTracker( const ParticleHistoryObserver::idType id,
 void ParticleTracker::initialize( unsigned thread )
 {
   d_particle_reset.insert( std::pair<unsigned,bool>(thread, true) );
-  d_x_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_x_pos.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_y_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_y_pos.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_z_pos.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_z_pos.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_x_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_x_dir.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_y_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_y_dir.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_z_dir.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_z_dir.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_energy.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_energy.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_col_num.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_col_num.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
-  d_weight.insert( std::pair<unsigned, std::vector<double> >(thread, 
+  d_weight.insert( std::pair<unsigned, std::vector<double> >(thread,
                                                     std::vector<double>() ) );
   d_history_number.insert( std::pair<unsigned, unsigned>(thread, 0u) );
   d_generation_number.insert( std::pair<unsigned, unsigned>(thread, 0u) );
   d_particle_type.insert( std::pair<unsigned, unsigned>(thread, 0u) );
-  
+
   d_first_particle = true;
 }
 
@@ -80,7 +80,7 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
 						 const double end_point[3] )
 {
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-  
+
   // Check if we still need to be tracking particles
   if ( particle.getHistoryNumber() <= d_number_of_histories )
   {
@@ -89,13 +89,13 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
     {
       // History Number
       d_history_number[thread_id] = particle.getHistoryNumber();
-      
+
       // Generation Number
       d_generation_number[thread_id] = particle.getGenerationNumber();
-      
+
       // Particle Type
       d_particle_type[thread_id] = particle.getParticleType();
-      
+
       // Flag that we are working on an existing particle
       d_particle_reset[thread_id] = false;
     }
@@ -104,18 +104,18 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
     d_x_pos[thread_id].push_back( start_point[0] );
     d_y_pos[thread_id].push_back( start_point[1] );
     d_z_pos[thread_id].push_back( start_point[2] );
-    
+
     // Append the initial direction data
     d_x_dir[thread_id].push_back( particle.getXDirection() );
     d_y_dir[thread_id].push_back( particle.getYDirection() );
     d_z_dir[thread_id].push_back( particle.getZDirection() );
-    
+
     // Append the initial energy data
     d_energy[thread_id].push_back( particle.getEnergy() );
-    
+
     // Append the initial collision number data
     d_col_num[thread_id].push_back( static_cast< double >( particle.getCollisionNumber() ) );
-    
+
     // Append the initial weight data
     d_weight[thread_id].push_back( particle.getWeight() );
 
@@ -124,12 +124,12 @@ void ParticleTracker::updateFromGlobalParticleSubtrackEndingEvent(
     {
       // Commit particle track data
       commitParticleTrackData();
-      
+
       // Reset particle track data
       resetParticleTrackData();
     }
   }
-  
+
   // Test that there is a valid history/generation number
   testPostcondition( d_history_number[thread_id] >= 0 );
   testPostcondition( d_generation_number[thread_id] >= 0 );
@@ -140,7 +140,7 @@ void ParticleTracker::commitParticleTrackData()
   #pragma omp critical
   {
     unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
-    
+
     ParticleTrackerHDF5FileHandler::ParticleDataTwoDArray particle_data;
 
     // Start by adding the arrays of data to the total particle array
@@ -153,11 +153,11 @@ void ParticleTracker::commitParticleTrackData()
     particle_data.push_back( d_energy[thread_id] );
     particle_data.push_back( d_col_num[thread_id] );
     particle_data.push_back( d_weight[thread_id] );
-    
+
     unsigned history_number = d_history_number[thread_id];
     unsigned particle_type = d_particle_type[thread_id];
     unsigned generation_number = d_generation_number[thread_id];
-    
+
     // Begin the process of narrowing down where to add new data
     if ( d_first_particle )
     {
@@ -170,14 +170,14 @@ void ParticleTracker::commitParticleTrackData()
       // Map of generation number to individual particles
       ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
       generation_number_map[ generation_number ] = individual_particle_map;
-        
+
       // Map of particle type to generation number
       ParticleTrackerHDF5FileHandler::ParticleTypeSubmap particle_type_map;
       particle_type_map[ particle_type ] = generation_number_map;
-      
+
       // Map of the history number to the particle type map
       d_history_number_map[ history_number ] = particle_type_map;
-      
+
       d_first_particle = false;
     }
     else if ( d_history_number_map.find( history_number ) != d_history_number_map.end()  )
@@ -190,26 +190,26 @@ void ParticleTracker::commitParticleTrackData()
         if ( d_history_number_map[ history_number ][ particle_type ].count( generation_number ) )
         {
           unsigned i = 0u;
-                
+
           // If the generation number exists, add it to the list of particles
           while ( d_history_number_map[ history_number ][ particle_type ][ generation_number ].count( i ) )
           {
             ++i;
           }
-          
+
           // Assign the data
           d_history_number_map[ history_number ][ particle_type ][ generation_number ][ i ] =
-            particle_data;  
+            particle_data;
         }
         else
         {
           // Map of individual particles to array of particle data
           ParticleTrackerHDF5FileHandler::IndividualParticleSubmap individual_particle_map;
           individual_particle_map[ 0u ] = particle_data;
-            
+
           d_history_number_map[ history_number ][ particle_type ][ generation_number ] =
             individual_particle_map;
-        } 
+        }
       }
       else
       {
@@ -220,7 +220,7 @@ void ParticleTracker::commitParticleTrackData()
         // Map of generation number to individual particles
         ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
         generation_number_map[ generation_number ] = individual_particle_map;
-          
+
         d_history_number_map[ history_number ][ particle_type ] =
           generation_number_map;
       }
@@ -237,11 +237,11 @@ void ParticleTracker::commitParticleTrackData()
       // Map of generation number to individual particles
       ParticleTrackerHDF5FileHandler::GenerationNumberSubmap generation_number_map;
       generation_number_map[ generation_number ] = individual_particle_map;
-        
+
       // Map of particle type to generation number
       ParticleTrackerHDF5FileHandler::ParticleTypeSubmap particle_type_map;
       particle_type_map[ particle_type ] = generation_number_map;
-    
+
       // Map of the history number to the particle type map
       d_history_number_map[ history_number ] = particle_type_map;
     }
@@ -262,11 +262,11 @@ void ParticleTracker::resetParticleTrackData()
   d_energy[thread_id].clear();
   d_col_num[thread_id].clear();
   d_weight[thread_id].clear();
-  
+
   // Clear the particle lifetime data
   d_history_number[thread_id] = 0u;
   d_generation_number[thread_id] = 0u;
-  
+
   // Flag that the particle is reset and lifetime information should be found
   d_particle_reset[thread_id] = true;
 }
@@ -276,9 +276,9 @@ void ParticleTracker::exportData(  const std::shared_ptr<Utility::HDF5FileHandle
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   ParticleTrackerHDF5FileHandler ptrac_hdf5_file( hdf5_file );
-  
+
   ptrac_hdf5_file.setParticleTrackerData( d_history_number_map );
 }
 
@@ -354,13 +354,13 @@ void ParticleTracker::getWeightData( std::vector< double >& array )
 }
 
 // Get the data map
-void ParticleTracker::getDataMap( 
+void ParticleTracker::getDataMap(
                 ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
 {
   history_map = d_history_number_map;
 }
 
-// Check if particle is reset 
+// Check if particle is reset
 bool ParticleTracker::isParticleReset()
 {
   unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
@@ -372,15 +372,15 @@ void ParticleTracker::resetData()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   ParticleTracker::resetParticleTrackData();
-  
+
   d_history_number_map.clear();
 }
 
 // Has Uncommited History Contribution
 bool ParticleTracker::hasUncommittedHistoryContribution() const
-{ 
+{
   return false;
 }
 
@@ -393,30 +393,30 @@ std::string ParticleTracker::packDataInString()
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   // Serialize the history number map
   std::ostringstream output_stream("ptrack_data_map");
   boost::archive::binary_oarchive output_archive(output_stream);
   output_archive << d_history_number_map;
-    
+
   return output_stream.str();
 }
 
 // Unpack the data from a string and store into a container
-void ParticleTracker::unpackDataFromString( 
+void ParticleTracker::unpackDataFromString(
               std::string& packed_string,
               ParticleTrackerHDF5FileHandler::OverallHistoryMap& history_map )
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   std::istringstream input_stream( packed_string );
   boost::archive::binary_iarchive input_archive( input_stream );
   input_archive >> history_map;
 }
 
 // Reduce data
-void ParticleTracker::reduceData( 
+void ParticleTracker::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
@@ -434,12 +434,12 @@ void ParticleTracker::reduceData(
     if( comm->getRank() == root_process )
     {
       // Start at one since the root process does not need to report
-      int nodes_reporting = 1; 
-      
+      int nodes_reporting = 1;
+
       while( nodes_reporting < comm->getSize() )
       {
         Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > status;
-        
+
         // Probe for incoming sends to determine message size
         try{
           Utility::probe( *comm, status );
@@ -448,13 +448,13 @@ void ParticleTracker::reduceData(
                                  "Error: Root process (" << root_process <<
                                  " was unable to probe for particle tracker "
                                  "data sent by non-root processes!" );
-        
+
         // Get the size of the incoming message
         std::string packaged_data;
-        
+
         try{
           int message_size = Utility::getMessageSize<char>( *status );
-          
+
           packaged_data.resize( message_size );
         }
         EXCEPTION_CATCH_RETHROW( std::runtime_error,
@@ -462,7 +462,7 @@ void ParticleTracker::reduceData(
                                  " was unable to determine the size of the "
                                  "particle tracker data sent from process "
                                  << status->getSourceRank() << "!" );
-        
+
         // Get the message
         try{
           Teuchos::receive( *comm,
@@ -475,17 +475,17 @@ void ParticleTracker::reduceData(
                                  " was unable to receive particle tracker data"
                                  " from process "
                                  << status->getSourceRank() << "!" );
-              
-        // Contribute the data from this worker to the node map.       
+
+        // Contribute the data from this worker to the node map.
         this->contributeDataFromWorkers( packaged_data );
-        
+
         ++nodes_reporting;
       }
     }
     else // Handle the workers
     {
       std::string packaged_data = this->packDataInString();
-      
+
       try{
         Teuchos::send( *comm,
                        (unsigned long long)packaged_data.size(),
@@ -497,7 +497,7 @@ void ParticleTracker::reduceData(
                                " was unable to send particle tracker data "
                                "to the root process ("
                                << root_process << "!" );
-      
+
       // Reset the non-root process data
       this->resetData();
     }
@@ -508,7 +508,7 @@ void ParticleTracker::reduceData(
 
 // Print a summary of the data
 void ParticleTracker::printSummary( std::ostream& os ) const
-{ 
+{
   os << "Particle tracker " << this->getId() << ": " << std::endl
      << "\t Histories tracked: " << d_number_of_histories << std::endl;
 }
@@ -516,18 +516,18 @@ void ParticleTracker::printSummary( std::ostream& os ) const
 void ParticleTracker::contributeDataFromWorkers( std::string packaged_data )
 {
   ParticleTrackerHDF5FileHandler::OverallHistoryMap worker_history_map;
-  
+
   unpackDataFromString( packaged_data, worker_history_map );
-  
+
   ParticleTrackerHDF5FileHandler::OverallHistoryMap::const_iterator
     history_number, end_history_number;
   history_number = worker_history_map.begin();
   end_history_number = worker_history_map.end();
-  
+
   while( history_number != end_history_number )
   {
     d_history_number_map[ history_number->first ] = history_number->second;
-    
+
     ++history_number;
   }
 }

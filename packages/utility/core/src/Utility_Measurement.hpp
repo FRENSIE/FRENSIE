@@ -38,12 +38,12 @@ private:
 
   // The scalar traits typedef
   typedef Teuchos::ScalarTraits<T> ST;
-  
+
 public:
 
   //! The typedef for this type
   typedef Measurement<T> ThisType;
-  
+
   //! The typedef for the value type
   typedef T ValueType;
 
@@ -72,7 +72,7 @@ public:
 
   //! Return the lower bound of the measurement
   const ValueType getLowerBound() const;
-  
+
   //! Return the upper bound of the measurement
   const ValueType getUpperBound() const;
 
@@ -118,9 +118,9 @@ inline Measurement<T> operator+( T lhs, const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs, T(0) ) += rhs);
-  
+
   testNestedConditionsEnd(1);
 }
 
@@ -130,7 +130,7 @@ inline Measurement<T> operator+( const Measurement<T>& lhs, T rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) += Measurement<T>( rhs, T(0) ));
 
   testNestedConditionsEnd(1);
@@ -138,12 +138,12 @@ inline Measurement<T> operator+( const Measurement<T>& lhs, T rhs )
 
 //! Addition operator
 template<typename T>
-inline Measurement<T> operator+( const Measurement<T>& lhs, 
+inline Measurement<T> operator+( const Measurement<T>& lhs,
 				 const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) += rhs );
 
   testNestedConditionsEnd(1);
@@ -155,7 +155,7 @@ inline Measurement<T> operator-( T lhs, const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs, T(0) ) -= rhs);
 
   testNestedConditionsEnd(1);
@@ -167,7 +167,7 @@ inline Measurement<T> operator-( const Measurement<T>& lhs, T rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) -= Measurement<T>( rhs, T(0) ));
 
   testNestedConditionsEnd(1);
@@ -175,12 +175,12 @@ inline Measurement<T> operator-( const Measurement<T>& lhs, T rhs )
 
 //! Subtraction operator
 template<typename T>
-inline Measurement<T> operator-( const Measurement<T>& lhs, 
+inline Measurement<T> operator-( const Measurement<T>& lhs,
 				 const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) -= rhs );
 
   testNestedConditionsEnd(1);
@@ -192,7 +192,7 @@ inline Measurement<T> operator*( T lhs, const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs, T(0) ) *= rhs);
 
   testNestedConditionsEnd(1);
@@ -204,7 +204,7 @@ inline Measurement<T> operator*( const Measurement<T>& lhs, T rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) *= Measurement<T>( rhs, T(0) ));
 
   testNestedConditionsEnd(1);
@@ -212,12 +212,12 @@ inline Measurement<T> operator*( const Measurement<T>& lhs, T rhs )
 
 //! Multiplication operator
 template<typename T>
-inline Measurement<T> operator*( const Measurement<T>& lhs, 
+inline Measurement<T> operator*( const Measurement<T>& lhs,
 				 const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) *= rhs );
 
   testNestedConditionsEnd(1);
@@ -229,7 +229,7 @@ inline Measurement<T> operator/( T lhs, const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   // Make sure nested conditions are met
   return (Measurement<T>( lhs, T(0) ) /= rhs);
 
@@ -242,20 +242,20 @@ inline Measurement<T> operator/( const Measurement<T>& lhs, T rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) /= Measurement<T>( rhs, T(0) ));
-  
+
   testNestedConditionsEnd(1);
 }
 
 //! Division operator
 template<typename T>
-inline Measurement<T> operator/( const Measurement<T>& lhs, 
+inline Measurement<T> operator/( const Measurement<T>& lhs,
 				 const Measurement<T>& rhs )
 {
   // Make sure nested conditions are met
   testNestedConditionsBegin(1);
-  
+
   return (Measurement<T>( lhs ) /= rhs );
 
   testNestedConditionsEnd(1);
@@ -267,7 +267,7 @@ inline Measurement<T> sqrt( const Measurement<T>& x )
 {
   // Make sure the measurement is valid
   testPrecondition( x.getValue() >= 0.0 );
-  
+
   const T new_value = std::sqrt( x.getValue() );
 
   const T propagated_uncertainty = 0.5*(new_value/x.getValue())*
@@ -275,7 +275,7 @@ inline Measurement<T> sqrt( const Measurement<T>& x )
 
   // Make sure reasonable values have been calculated
   testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						    propagated_uncertainty ) );
 
   return Measurement<T>( new_value, propagated_uncertainty );
@@ -283,7 +283,7 @@ inline Measurement<T> sqrt( const Measurement<T>& x )
 
 //! Overload of pow for a measurement
 template<typename T, typename ExponentType>
-inline Measurement<T> pow( const Measurement<T>& x, 
+inline Measurement<T> pow( const Measurement<T>& x,
 			   const ExponentType exponent )
 {
   const T new_value = std::pow( x.getValue(), exponent );
@@ -293,7 +293,7 @@ inline Measurement<T> pow( const Measurement<T>& x,
 
   // Make sure reasonable values have been calculated
   testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
-  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						    propagated_uncertainty ) );
   testPostcondition( propagated_uncertainty >= 0.0 );
 
@@ -312,13 +312,13 @@ template<typename Y, long N, long D>
 struct power_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
 {
   typedef Utility::Measurement<typename power_typeof_helper<Y,static_rational<N,D> >::type> type;
-  
+
   static type value( const Utility::Measurement<Y>& x)
   {
     const static_rational<N,D> rational;
 
     const Y rational_power = Y(rational.numerator())/Y(rational.denominator());
-    
+
     return Utility::pow( x, rational_power );
   }
 };
@@ -354,7 +354,7 @@ struct ScalarTraits<Utility::Measurement<T> >
   typedef T magnitudeType;
   typedef typename Teuchos::ScalarTraits<T>::halfPrecision halfPrecision;
   typedef typename Teuchos::ScalarTraits<T>::doublePrecision doublePrecision;
-  
+
   static const bool isComplex = Teuchos::ScalarTraits<T>::isComplex;
   static const bool isOrdinal = Teuchos::ScalarTraits<T>::isOrdinal;
   static const bool isComparable = Teuchos::ScalarTraits<T>::isComparable;

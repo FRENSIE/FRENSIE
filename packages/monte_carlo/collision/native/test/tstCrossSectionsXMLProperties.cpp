@@ -29,7 +29,7 @@ std::string cross_sections_xml_directory;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that photoatom cross section info can be extracted
-TEUCHOS_UNIT_TEST( CrossSectionXMLProperties, 
+TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 		   extractInfoFromPhotoatomTableInfoParameterList )
 {
   std::string data_file_path, data_file_type, data_file_table_name;
@@ -46,18 +46,18 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  data_file_start_line,
 						  atomic_weight );
 
-  TEST_EQUALITY( data_file_path, 
+  TEST_EQUALITY( data_file_path,
 		 cross_sections_xml_directory + "/ace/test_h_epr_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );
-  TEST_EQUALITY_CONST( atomic_weight, 
+  TEST_EQUALITY_CONST( atomic_weight,
 		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
 }
 
 //---------------------------------------------------------------------------//
 // Check that electroatom cross section info can be extracted
-TEUCHOS_UNIT_TEST( CrossSectionXMLProperties, 
+TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 		   extractInfoFromElectroatomTableInfoParameterList )
 {
   std::string data_file_path, data_file_type, data_file_table_name;
@@ -74,12 +74,12 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  data_file_start_line,
 						  atomic_weight );
 
-  TEST_EQUALITY( data_file_path, 
+  TEST_EQUALITY( data_file_path,
 		 cross_sections_xml_directory + "/ace/test_h_epr_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
   TEST_EQUALITY_CONST( data_file_start_line, 1 );
-  TEST_EQUALITY_CONST( atomic_weight, 
+  TEST_EQUALITY_CONST( atomic_weight,
 		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
 }
 
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 						  atomic_weight_ratio,
 						  temperature );
 
-  TEST_EQUALITY( data_file_path, 
+  TEST_EQUALITY( data_file_path,
 		 cross_sections_xml_directory + "/ace/test_h1_ace_file.txt" );
   TEST_EQUALITY_CONST( data_file_type, "ACE" );
   TEST_EQUALITY_CONST( data_file_table_name, "1001.70c" );
@@ -125,15 +125,15 @@ TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_cross_sections_xml_directory",
 		 &cross_sections_xml_directory,
 		 "Test cross_section.xml file directory" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -143,20 +143,20 @@ int main( int argc, char** argv )
 
   std::string cross_sections_xml_file = cross_sections_xml_directory;
   cross_sections_xml_file += "/cross_sections.xml";
-  
-  cross_section_info = 
+
+  cross_section_info =
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
-  
+
   if (success)
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;
-  
+
   clp.printFinalTimerSummary(out.ptr());
 
   return (success ? 0 : 1);

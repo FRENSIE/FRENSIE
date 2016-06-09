@@ -31,7 +31,7 @@ struct X2Functor
     else
       return 0.0;
   }
-  
+
   static double getIntegratedValue()
   {
     return 2.0/3.0;
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussRadauQuadratureSet,
   double result;
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = P_n;
 
   Utility::GaussRadauQuadratureSet set( P_n, tol, n );
@@ -255,7 +255,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = P_n;
 
   Utility::GaussRadauQuadratureSet set( P_n, tol, n );
@@ -346,7 +346,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 16;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -400,7 +400,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -468,7 +468,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
-  // n = 2 
+  // n = 2
   double jacobi =
     set.getJacobiPolynomialDerivative( 1.0, 2 );
 
@@ -485,7 +485,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 
   TEST_FLOATING_EQUALITY( jacobi, -6.0, tol );
 
-  // n = 4 
+  // n = 4
   jacobi =
     set.getJacobiPolynomialDerivative( 1.0, n );
 
@@ -511,7 +511,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
 {
   double tol = 1e-12;
   int n = 4;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 
@@ -536,7 +536,7 @@ TEUCHOS_UNIT_TEST( GaussRadauQuadratureSet,
   double tol = 1e-12;
   int n = 4;
   double end_point = -1.0;
- 
+
   boost::function<double (double, int)> function_wrapper = f_x;
   Utility::GaussRadauQuadratureSet set( f_x, tol, n );
 

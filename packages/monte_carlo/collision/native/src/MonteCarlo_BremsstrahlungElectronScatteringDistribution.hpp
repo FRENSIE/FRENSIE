@@ -56,7 +56,7 @@ public:
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
     const int atomic_number );
 
-  //! Destructor 
+  //! Destructor
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
 
@@ -75,7 +75,7 @@ public:
   { /* ... */ }
 
   //! Evaluate the PDF value for a given incoming and photon energy
-  double evaluatePDF( const double incoming_energy, 
+  double evaluatePDF( const double incoming_energy,
                       const double photon_energy ) const;
 
   //! Evaluate the CDF
@@ -116,16 +116,16 @@ private:
   // bremsstrahlung angular distribution of generated photons
   Teuchos::RCP<Utility::OneDDistribution> d_angular_distribution;
 
-  // Sample the outgoing photon angle from a tabular distribution 
-  double SampleTabularAngle(  const double incoming_electron_energy, 
+  // Sample the outgoing photon angle from a tabular distribution
+  double SampleTabularAngle(  const double incoming_electron_energy,
                               const double photon_energy ) const ;
 
   // Sample the outgoing photon angle from a dipole distribution
-  double SampleDipoleAngle(  const double incoming_electron_energy, 
+  double SampleDipoleAngle(  const double incoming_electron_energy,
                              const double photon_energy ) const ;
 
   // Sample the outgoing photon angle using the 2BS sampling routine of Kock and Motz
-  double Sample2BSAngle(  const double incoming_electron_energy, 
+  double Sample2BSAngle(  const double incoming_electron_energy,
                           const double photon_energy ) const ;
 
   // Calculate the rejection function for the 2BS sampling routine
@@ -135,8 +135,8 @@ private:
                                 const double x ) const;
 
   // The doppler broadening function pointer
-  boost::function<double ( const double, const double )> 
-                                        d_angular_distribution_func; 
+  boost::function<double ( const double, const double )>
+                                        d_angular_distribution_func;
 
 };
 

@@ -17,7 +17,7 @@
 namespace Utility{
 
 //! The unit-aware exponential distribution class
-/*! \details Only decaying exponential distributions are allowed (the 
+/*! \details Only decaying exponential distributions are allowed (the
  * exponent is always assumed to be negative).
  * \ingroup one_d_distributions
  */
@@ -67,7 +67,7 @@ public:
   UnitAwareExponentialDistribution(
 			   const InputDepQuantity constant_multiplier,
 			   const InputInverseIndepQuantity exponent_multiplier,
-			   const InputIndepQuantity lower_limit = 
+			   const InputIndepQuantity lower_limit =
                            QuantityTraits<InputIndepQuantity>::zero(),
                            const InputIndepQuantity upper_limit =
                            QuantityTraits<InputIndepQuantity>::inf());
@@ -80,7 +80,7 @@ public:
   static UnitAwareExponentialDistribution fromUnitlessDistribution( const UnitAwareExponentialDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
-  UnitAwareExponentialDistribution& operator=( 
+  UnitAwareExponentialDistribution& operator=(
 		       const UnitAwareExponentialDistribution& dist_instance );
 
   //! Destructor
@@ -143,12 +143,12 @@ private:
   friend class UnitAwareExponentialDistribution;
 
   // The distribution type
-  static const OneDDistributionType distribution_type = 
+  static const OneDDistributionType distribution_type =
     EXPONENTIAL_DISTRIBUTION;
 
   // The constant multiplier
   DepQuantity d_constant_multiplier;
-  
+
   // The exponent multiplier
   InverseIndepQuantity d_exponent_multiplier;
 
@@ -187,14 +187,14 @@ public:
   {
     return "Exponential Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 			     const Utility::ExponentialDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareExponentialDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -210,7 +210,7 @@ public:
       Utility::UnitTraits<U>::symbol() + "," +
       Utility::UnitTraits<V>::symbol() + ")";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 	       const Utility::UnitAwareExponentialDistribution<U,V>& instance )
   {
     return name();

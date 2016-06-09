@@ -19,9 +19,9 @@
 namespace MonteCarlo{
 
 // Create a electroatom core (using the provided atomic relaxation model)
-/*! \details The provided atomic relaxation model will be used with this 
+/*! \details The provided atomic relaxation model will be used with this
  * core. Special care must be taken to assure that the model corresponds to
- * the atom of interest. If the use of atomic relaxation data has been 
+ * the atom of interest. If the use of atomic relaxation data has been
  * requested, a electroionization reaction for each subshell will be created.
  * Otherwize a single total electroionization reaction will be created.
  */
@@ -30,7 +30,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
           Teuchos::RCP<ElectroatomCore>& electroatom_core,
         const unsigned hash_grid_bins,
-        const BremsstrahlungAngularDistributionType 
+        const BremsstrahlungAngularDistributionType
           photon_distribution_function,
         const bool use_atomic_relaxation_data,
         const double cutoff_angle_cosine )
@@ -55,7 +55,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
   // Create the cutoff elastic scattering reaction
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
@@ -69,7 +69,7 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
   if ( cutoff_angle_cosine >= 0.999999 )
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
@@ -82,57 +82,57 @@ void ElectroatomNativeFactory::createElectroatomCore(
 
   // Create the bremsstrahlung scattering reaction
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[BREMSSTRAHLUNG_ELECTROATOMIC_REACTION];
-    
+
     ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
 						 raw_electroatom_data,
 						 energy_grid,
 					     grid_searcher,
-						 reaction_pointer, 
+						 reaction_pointer,
                          photon_distribution_function );
   }
-  
+
   // Create the atomic excitation scattering reaction
   {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[ATOMIC_EXCITATION_ELECTROATOMIC_REACTION];
-    
-    ElectroatomicReactionNativeFactory::createAtomicExcitationReaction( 
+
+    ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
                                raw_electroatom_data,
 	                           energy_grid,
 					           grid_searcher,
                                reaction_pointer );
   }
-    
+
   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
 
   ElectroatomicReactionNativeFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
-							   energy_grid, 
+							   energy_grid,
 					           grid_searcher,
 							   reaction_pointers );
 
   for( unsigned i = 0; i < reaction_pointers.size(); ++i )
   {
-    scattering_reactions[reaction_pointers[i]->getReactionType()] = 
+    scattering_reactions[reaction_pointers[i]->getReactionType()] =
         reaction_pointers[i];
   }
-			
+
   // Create the electroatom core
   electroatom_core.reset( new ElectroatomCore( energy_grid,
                                                scattering_reactions,
                                                absorption_reactions,
                                                atomic_relaxation_model,
                                                false,
-                                               Utility::LinLin() ) );	   
+                                               Utility::LinLin() ) );
 }
 
 // Create a electroatom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * atom. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
- * requested, a electroionization reaction for each subshell will be created. 
+ * requested, a electroionization reaction for each subshell will be created.
  * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomNativeFactory::createElectroatom(
@@ -142,7 +142,7 @@ void ElectroatomNativeFactory::createElectroatom(
         const unsigned hash_grid_bins,
         const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
           Teuchos::RCP<Electroatom>& electroatom,
-        const BremsstrahlungAngularDistributionType 
+        const BremsstrahlungAngularDistributionType
           photon_distribution_function,
         const bool use_atomic_relaxation_data,
         const double cutoff_angle_cosine )
@@ -151,17 +151,17 @@ void ElectroatomNativeFactory::createElectroatom(
   testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
-  
+
   Teuchos::RCP<ElectroatomCore> core;
 
   ElectroatomNativeFactory::createElectroatomCore(raw_electroatom_data,
                                                   atomic_relaxation_model,
                                                   core,
-                                                  hash_grid_bins,  
+                                                  hash_grid_bins,
                                                   photon_distribution_function,
                                                   use_atomic_relaxation_data,
                                                   cutoff_angle_cosine );
-					    
+
   // Create the electroatom
   electroatom.reset(
     new Electroatom( electroatom_name,

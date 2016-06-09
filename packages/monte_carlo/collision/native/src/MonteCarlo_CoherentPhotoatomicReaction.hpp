@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_CoherentPhotoatomicReaction.hpp
 //! \author Alex Robinson
 //! \brief  The incoherent photoatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_COHERENT_PHOTOATOMIC_REACTION_HPP
@@ -26,7 +26,7 @@ class CoherentPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPol
 public:
 
   //! Basic Constructor
-  CoherentPhotoatomicReaction( 
+  CoherentPhotoatomicReaction(
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index,
@@ -34,7 +34,7 @@ public:
 		   scattering_distribution );
 
   //! Constructor
-  CoherentPhotoatomicReaction( 
+  CoherentPhotoatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
@@ -56,7 +56,7 @@ public:
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, 
+  void react( PhotonState& photon,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
 

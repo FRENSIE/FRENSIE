@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_MomentPreservingElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The single scattering elastic electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_HPP
@@ -26,7 +26,7 @@ class MomentPreservingElectroatomicReaction : public StandardElectroatomicReacti
 public:
 
   //! Constructor
-  MomentPreservingElectroatomicReaction( 
+  MomentPreservingElectroatomicReaction(
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
@@ -48,7 +48,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
@@ -56,7 +56,7 @@ private:
 
 
   // The moment preserving elastic scattering distribution
-  Teuchos::RCP<const MomentPreservingElectronScatteringDistribution> 
+  Teuchos::RCP<const MomentPreservingElectronScatteringDistribution>
     d_scattering_distribution;
 };
 

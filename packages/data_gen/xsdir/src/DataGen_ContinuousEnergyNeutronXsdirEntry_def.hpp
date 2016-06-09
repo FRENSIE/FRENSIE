@@ -20,14 +20,14 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry( 
+ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_atomic_number(),
     d_atomic_mass_number(),
     d_isomer_number( 0 ),
     d_alias()
-{ 
+{
   // Make sure the table type is valid
   testPrecondition( extractTableTypeFromEntryTokens( entry_tokens ) ==
 		    CONTINUOUS_ENERGY_NEUTRON_TABLE );
@@ -45,7 +45,7 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
     d_isomer_number = 1;
   }
 
-  MonteCarlo::AtomType atom = 
+  MonteCarlo::AtomType atom =
     MonteCarlo::convertAtomicNumberToAtomTypeEnum( d_atomic_number );
 
   std::ostringstream oss;
@@ -57,13 +57,13 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
 
   if( d_isomer_number > 0 )
     oss << "m";
-  
+
   oss << "_"
       << std::fixed << this->getTableTemperatureKelvin() << "K_v"
       << this->getTableVersion()/10;
 
-  d_alias = oss.str();  
-  
+  d_alias = oss.str();
+
   // Make sure the atomic number is valid
   testPostcondition( d_atomic_number > 0 );
   testPostcondition( d_atomic_number <= 100 );

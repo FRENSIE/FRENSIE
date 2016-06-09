@@ -14,7 +14,7 @@
 
 namespace MonteCarlo{
 
-void NuclideACEFactory::createNuclide( 
+void NuclideACEFactory::createNuclide(
 			 const Data::XSSNeutronDataExtractor& raw_nuclide_data,
 			 const std::string& nuclide_alias,
 			 const unsigned atomic_number,
@@ -36,18 +36,18 @@ void NuclideACEFactory::createNuclide(
 					      temperature,
 					      energy_grid.getConst(),
 					      raw_nuclide_data );
-					  
+
   // Create the standard scattering reactions
   Nuclide::ReactionMap standard_scattering_reactions;
-  
+
   reaction_factory.createScatteringReactions( standard_scattering_reactions );
   reaction_factory.createFissionReactions( standard_scattering_reactions );
-  
+
   // Create the standard absorption reactions
   Nuclide::ReactionMap standard_absorption_reactions;
-  
+
   reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
-                                                  
+
   if( use_unresolved_resonance_data )
   {
     std::cerr << std::endl
@@ -59,20 +59,20 @@ void NuclideACEFactory::createNuclide(
   if( use_photon_production_data )
   {
     // Create the photon production reaction factory
-    DecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory( 
+    DecoupledPhotonProductionReactionACEFactory photon_production_reaction_factory(
                   nuclide_alias,
 					        atomic_weight_ratio,
 					        temperature,
 					        energy_grid.getConst(),
-					        raw_nuclide_data ); 
-				        
-		// Create the photon production reactions 
+					        raw_nuclide_data );
+
+		// Create the photon production reactions
 		DecoupledPhotonProductionNuclide::PhotonProductionReactionMap
 		                                               photon_production_reactions;
-		                                               
-		photon_production_reaction_factory.createPhotonProductionReactions( 
+
+		photon_production_reaction_factory.createPhotonProductionReactions(
 		                                             photon_production_reactions );
-   
+
     nuclide.reset( new DecoupledPhotonProductionNuclide( nuclide_alias,
 			        atomic_number,
 			        atomic_mass_number,

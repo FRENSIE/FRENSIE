@@ -51,7 +51,7 @@ std::shared_ptr<MonteCarlo::ParticleSource> source;
 TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, sampleParticleState )
 {
   MonteCarlo::ParticleBank bank;
-  
+
   source->sampleParticleState( bank, 0 );
 
   TEST_ASSERT( bank.top().getParticleType() == MonteCarlo::PHOTON ||
@@ -78,30 +78,30 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, sampleParticleState )
 
 //---------------------------------------------------------------------------//
 // Check that particle states can be sampled
-TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, 
+TEUCHOS_UNIT_TEST( CompoundStandardParticleSource,
                    sampleParticleState_thread_safe )
 {
   source->resetData();
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
+
   std::vector<MonteCarlo::ParticleBank> banks( threads );
 
-  source->enableThreadSupport( 
+  source->enableThreadSupport(
                  Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   // Create a sample for each thread
   #pragma omp parallel num_threads( threads )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                             banks[Utility::GlobalOpenMPSession::getThreadId()],
                             Utility::GlobalOpenMPSession::getThreadId() );
   }
 
   // Splice all of the banks
   MonteCarlo::ParticleBank combined_bank;
-  
+
   for( unsigned i = 0; i < banks.size(); ++i )
     combined_bank.splice( banks[i] );
 
@@ -115,13 +115,13 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, exportData )
   source->resetData();
 
   MonteCarlo::ParticleBank bank;
-  
+
   // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
     source->sampleParticleState( bank, i );
 
   // Export the source data
-  std::string source_data_file_name( 
+  std::string source_data_file_name(
                                  "test_compound_standard_particle_source.h5" );
 
   {
@@ -133,24 +133,24 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, exportData )
   }
 
   // Check that the source data was written correctly
-  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+  MonteCarlo::SourceHDF5FileHandler source_file_handler(
                source_data_file_name,
                MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
 
   TEST_ASSERT( source_file_handler.doesSourceExist( 0 ) );
   TEST_ASSERT( source_file_handler.doesSourceExist( 1 ) );
 
-  unsigned long long total_trials = 
+  unsigned long long total_trials =
     source_file_handler.getNumberOfSourceSamplingTrials( 0 ) +
     source_file_handler.getNumberOfSourceSamplingTrials( 1 );
-  
+
   TEST_EQUALITY( source_file_handler.getNumberOfDefaultSourceSamplingTrials(),
                  total_trials );
-  
-  unsigned long long total_samples = 
+
+  unsigned long long total_samples =
     source_file_handler.getNumberOfSourceSamples( 0 ) +
     source_file_handler.getNumberOfSourceSamples( 1 );
-  
+
   TEST_EQUALITY( source_file_handler.getNumberOfDefaultSourceSamples(),
                  total_samples );
 }
@@ -161,15 +161,15 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfTrials )
 {
   source->resetData();
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
+
   // Create a sample for each thread
   #pragma omp parallel num_threads( threads )
   {
     MonteCarlo::ParticleBank bank;
-    
-    source->sampleParticleState( bank, 
+
+    source->sampleParticleState( bank,
                                  Utility::GlobalOpenMPSession::getThreadId() );
   }
 
@@ -182,15 +182,15 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfSamples )
 {
   source->resetData();
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
+
   // Create a sample for each thread
   #pragma omp parallel num_threads( threads )
   {
     MonteCarlo::ParticleBank bank;
-    
-    source->sampleParticleState( bank, 
+
+    source->sampleParticleState( bank,
                                  Utility::GlobalOpenMPSession::getThreadId() );
   }
 
@@ -202,9 +202,9 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getNumberOfSamples )
 TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getSamplingEfficiency )
 {
   source->resetData();
-  
+
   MonteCarlo::ParticleBank bank;
-  
+
   // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
     source->sampleParticleState( bank, i );
@@ -223,24 +223,24 @@ TEUCHOS_UNIT_TEST( CompoundStandardParticleSource, getSamplingEfficiency )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   int threads = 1;
 
   clp.setOption( "threads",
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   // Initialize the source
@@ -249,7 +249,7 @@ int main( int argc, char** argv )
     std::shared_ptr<Utility::OneDDistribution>
       r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
     std::shared_ptr<Utility::OneDDistribution>
-      theta_distribution( new Utility::UniformDistribution( 
+      theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
@@ -265,13 +265,13 @@ int main( int argc, char** argv )
 							    0.0,
 							    0.0 ) );
     std::shared_ptr<Utility::DirectionalDistribution>
-      directional_distribution( new Utility::SphericalDirectionalDistribution( 
+      directional_distribution( new Utility::SphericalDirectionalDistribution(
 							   theta_distribution,
 							   mu_distribution ) );
 
     std::shared_ptr<Utility::OneDDistribution>
-      source_1_energy_distribution( new Utility::UniformDistribution( 1e-3, 
-                                                                      1.0, 
+      source_1_energy_distribution( new Utility::UniformDistribution( 1e-3,
+                                                                      1.0,
                                                                       1.0 ) );
     std::shared_ptr<Utility::OneDDistribution>
       time_distribution( new Utility::DeltaDistribution( 0.0 ) );
@@ -282,7 +282,7 @@ int main( int argc, char** argv )
       y_distribution( new Utility::DeltaDistribution( 0.0 ) );
     std::shared_ptr<Utility::OneDDistribution>
       z_distribution( new Utility::DeltaDistribution( 0.0 ) );
-    
+
     std::shared_ptr<Utility::SpatialDistribution>
       source_2_spatial_distribution( new Utility::CartesianSpatialDistribution(
 							    x_distribution,
@@ -290,9 +290,9 @@ int main( int argc, char** argv )
 							    z_distribution ) );
     std::shared_ptr<Utility::OneDDistribution>
       source_2_energy_distribution( new Utility::DeltaDistribution( 14.1 ) );
-  
+
     // Create the uniform spherical source
-    std::shared_ptr<MonteCarlo::StandardParticleSource> spherical_source( 
+    std::shared_ptr<MonteCarlo::StandardParticleSource> spherical_source(
                                      new MonteCarlo::StandardParticleSource(
                                                  0u,
 	                                         source_1_spatial_distribution,
@@ -300,9 +300,9 @@ int main( int argc, char** argv )
                                                  source_1_energy_distribution,
                                                  time_distribution,
                                                  MonteCarlo::PHOTON ) );
-  
+
     // Create the point source
-    std::shared_ptr<MonteCarlo::StandardParticleSource> point_source( 
+    std::shared_ptr<MonteCarlo::StandardParticleSource> point_source(
                                      new MonteCarlo::StandardParticleSource(
 	                                         1u,
                                                  source_2_spatial_distribution,
@@ -310,19 +310,19 @@ int main( int argc, char** argv )
                                                  source_2_energy_distribution,
                                                  time_distribution,
                                                  MonteCarlo::NEUTRON ) );
-    
 
-    Teuchos::Array<std::shared_ptr<MonteCarlo::StandardParticleSource> > 
+
+    Teuchos::Array<std::shared_ptr<MonteCarlo::StandardParticleSource> >
       sources( 2 );
     sources[0] = spherical_source;
     sources[1] = point_source;
-    
+
     Teuchos::Array<double> source_weights( 2 );
     source_weights[0] = 0.5;
     source_weights[1] = 0.5;
-    
+
     // Create the compound source
-    source.reset( new MonteCarlo::CompoundStandardParticleSource( 
+    source.reset( new MonteCarlo::CompoundStandardParticleSource(
                                                    sources, source_weights ) );
   }
 
@@ -332,7 +332,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

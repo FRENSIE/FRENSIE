@@ -44,7 +44,7 @@ enum PhaseSpaceDimension{
 };
 
 //! Convert the PhaseSpaceDimension to a string
-std::string convertPhaseSpaceDimensionToString( 
+std::string convertPhaseSpaceDimensionToString(
 				         const PhaseSpaceDimension dimension );
 
 //! Convert the PhaseSpaceDimension to a string (basic)
@@ -78,24 +78,24 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   //! Return the HDF5 data type
   static inline H5::EnumType dataType()
   {
-    H5::EnumType hdf5_phase_space_dimension_type( 
+    H5::EnumType hdf5_phase_space_dimension_type(
 				   sizeof( MonteCarlo::PhaseSpaceDimension ) );
 
     MonteCarlo::PhaseSpaceDimension value;
     std::string value_name;
-    
-    for( unsigned i = MonteCarlo::DIMENSION_start; 
-         i < MonteCarlo::DIMENSION_end; 
+
+    for( unsigned i = MonteCarlo::DIMENSION_start;
+         i < MonteCarlo::DIMENSION_end;
          ++i )
     {
       value = MonteCarlo::convertUnsignedToPhaseSpaceDimensionEnum( i );
 
-      value_name = 
+      value_name =
         MonteCarlo::convertPhaseSpaceDimensionToStringBasic( value );
 
       hdf5_phase_space_dimension_type.insert( value_name.c_str(), &value );
     }
-    
+
     return hdf5_phase_space_dimension_type;
   }
 
@@ -104,7 +104,7 @@ struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
   {
     return "PhaseSpaceDimension";
   }
-  
+
   //! Returns the zero value for this type
   static inline MonteCarlo::PhaseSpaceDimension zero()
   {

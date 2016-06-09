@@ -26,7 +26,7 @@
 
 namespace MonteCarlo{
 
-/*! The incoherent photon scattering distribution factory class that uses ACE 
+/*! The incoherent photon scattering distribution factory class that uses ACE
  * data
  * \details The scattering function argument has units of inverse angstroms.
  */
@@ -36,7 +36,7 @@ class IncoherentPhotonScatteringDistributionACEFactory : public IncoherentPhoton
 public:
 
   //! Create the requested incoherent distribution
-  static void createDistribution( 
+  static void createDistribution(
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
@@ -44,7 +44,7 @@ public:
 		    const double kahn_sampling_cutoff_energy );
 
 protected:
-  
+
   //! Create a Waller-Hartree incoherent distribution
   static void createWallerHartreeDistribution(
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
@@ -58,13 +58,13 @@ protected:
     const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-    incoherent_distribution,     
+    incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 
 private:
 
   //! Create the scattering function
-  static void createScatteringFunction( 
+  static void createScatteringFunction(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  std::shared_ptr<const ScatteringFunction>& scattering_function );
 };

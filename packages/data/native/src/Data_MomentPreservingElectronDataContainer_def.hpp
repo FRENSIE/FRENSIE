@@ -20,53 +20,53 @@ namespace Data{
 
 // Save the data to an archive
 template<typename Archive>
-void MomentPreservingElectronDataContainer::save( Archive& ar, 
+void MomentPreservingElectronDataContainer::save( Archive& ar,
 						  const unsigned version) const
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine",
                                         d_cutoff_angle_cosine );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
-  ar & boost::serialization::make_nvp( "number_of_discrete_angles", 
+  ar & boost::serialization::make_nvp( "number_of_discrete_angles",
                                         d_number_of_discrete_angles );
-  ar & boost::serialization::make_nvp( "moment_preserving_elastic_discrete_angles", 
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_discrete_angles",
                                         d_moment_preserving_elastic_discrete_angles );
-  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights",
                                         d_moment_preserving_elastic_weights );
 /*  ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
-  ar & boost::serialization::make_nvp( 
-            "moment_preserving_moment_preserving_elastic_cross_section", 
+  ar & boost::serialization::make_nvp(
+            "moment_preserving_moment_preserving_elastic_cross_section",
             d_moment_preserving_moment_preserving_elastic_cross_section );
-  ar & boost::serialization::make_nvp( 
-            "moment_preserving_moment_preserving_elastic_cross_section_threshold_index", 
+  ar & boost::serialization::make_nvp(
+            "moment_preserving_moment_preserving_elastic_cross_section_threshold_index",
             d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index );*/
 }
-  
+
 // Load the data from an archive
 template<typename Archive>
-void MomentPreservingElectronDataContainer::load( Archive& ar, 
+void MomentPreservingElectronDataContainer::load( Archive& ar,
 						  const unsigned version )
 {
   ar & boost::serialization::make_nvp( "atomic_number", d_atomic_number );
-  ar & boost::serialization::make_nvp( "cutoff_angle_cosine", 
+  ar & boost::serialization::make_nvp( "cutoff_angle_cosine",
                                         d_cutoff_angle_cosine );
   ar & boost::serialization::make_nvp( "angular_energy_grid",
 				                        d_angular_energy_grid );
-  ar & boost::serialization::make_nvp( "number_of_discrete_angles", 
+  ar & boost::serialization::make_nvp( "number_of_discrete_angles",
                                         d_number_of_discrete_angles );
-  ar & boost::serialization::make_nvp( "moment_preserving_elastic_discrete_angles", 
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_discrete_angles",
                                         d_moment_preserving_elastic_discrete_angles );
-  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights", 
+  ar & boost::serialization::make_nvp( "moment_preserving_elastic_weights",
                                         d_moment_preserving_elastic_weights );
 /*  ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
-  ar & boost::serialization::make_nvp( 
-            "moment_preserving_moment_preserving_elastic_cross_section", 
+  ar & boost::serialization::make_nvp(
+            "moment_preserving_moment_preserving_elastic_cross_section",
             d_moment_preserving_moment_preserving_elastic_cross_section );
-  ar & boost::serialization::make_nvp( 
-            "moment_preserving_moment_preserving_elastic_cross_section_threshold_index", 
+  ar & boost::serialization::make_nvp(
+            "moment_preserving_moment_preserving_elastic_cross_section_threshold_index",
             d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index );*/
 }
 

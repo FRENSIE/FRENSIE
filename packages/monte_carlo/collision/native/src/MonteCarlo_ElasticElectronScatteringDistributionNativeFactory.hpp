@@ -25,12 +25,12 @@ class ElasticElectronScatteringDistributionNativeFactory
 
 public:
 
-  typedef ScreenedRutherfordElasticElectronScatteringDistribution::ParameterArray 
+  typedef ScreenedRutherfordElasticElectronScatteringDistribution::ParameterArray
             ParameterArray;
   typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
-            ElasticDistribution;    
+            ElasticDistribution;
 
-  //! Create a elastic distributions ( both Cutoff and Screened Rutherford ) 
+  //! Create a elastic distributions ( both Cutoff and Screened Rutherford )
   static void createHardElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -65,14 +65,14 @@ protected:
   //! Create the elastic scattering function
   static void createScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::vector<double> angular_energy_grid, 
+        const std::vector<double> angular_energy_grid,
         ElasticDistribution& scattering_function );
 
 /*
   //! Create the screened Rutherford parameter array
   static void createScreenedRutherfordParameterArray(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::vector<double> angular_energy_grid, 
+        const std::vector<double> angular_energy_grid,
         ParameterArray& screened_rutherford_parameters );
 */
 };

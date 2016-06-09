@@ -25,7 +25,7 @@ EnergySpaceResponseFunction::EnergySpaceResponseFunction(
 }
 
 // Evaluate the response function at the desired energy
-double EnergySpaceResponseFunction::evaluate( 
+double EnergySpaceResponseFunction::evaluate(
 				          const ParticleState& particle ) const
 {
   return d_energy_distribution->evaluate( particle.getEnergy() );

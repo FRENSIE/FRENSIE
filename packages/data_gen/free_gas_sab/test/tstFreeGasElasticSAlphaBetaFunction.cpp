@@ -251,30 +251,30 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 		   getIntegratedValue_alpha_beta_range )
 {
   // Calculate the integral value at energy 1e-6 MeV
-  double beta_min = Utility::calculateBetaMin( 1e-6, 
+  double beta_min = Utility::calculateBetaMin( 1e-6,
 					       sab_function->getTemperature());
-  double alpha_min = Utility::calculateAlphaMin( 
+  double alpha_min = Utility::calculateAlphaMin(
 					  1e-6,
 					  beta_min,
 					  sab_function->getAtomicWeightRatio(),
 					  sab_function->getTemperature() );
-  
-  double alpha_max = Utility::calculateAlphaMax( 
+
+  double alpha_max = Utility::calculateAlphaMax(
 					  1e-6,
 					  beta_min,
 					  sab_function->getAtomicWeightRatio(),
 					  sab_function->getTemperature() );
-  
+
   double sab_value = (*sab_function)( alpha_min, beta_min, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   double value = integratedCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      alpha_min,
 					      beta_min,
 					      1.0e-06,
 					      sab_value );
-  
+
   double analytic_value = analyticCrossSectionValue( 0.999167,
 						     2.53010e-8,
 						     alpha_min,
@@ -287,14 +287,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, beta_min, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       alpha_max,
 				       beta_min,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      alpha_max,
@@ -309,7 +309,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					  -15.0,
 					  sab_function->getAtomicWeightRatio(),
 					  sab_function->getTemperature() );
-  
+
   alpha_max = Utility::calculateAlphaMax( 1e-6,
 					  -15.0,
 					  sab_function->getAtomicWeightRatio(),
@@ -317,14 +317,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   sab_value = (*sab_function)( alpha_min, -15.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       alpha_min,
 				       -15.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      alpha_min,
@@ -337,14 +337,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( alpha_max, -15.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       alpha_max,
 				       -15.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      alpha_max,
@@ -354,14 +354,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 15.0, -15.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       15.0,
 				       -15.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      15.0,
@@ -374,14 +374,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-9, 0.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       1e-9,
 				       0.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      1e-9,
@@ -394,14 +394,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 1e-12, 0.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       1e-12,
 				       0.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      1e-12,
@@ -414,14 +414,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 0.0, 0.0, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       0.0,
 				       0.0,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      0.0,
@@ -434,14 +434,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Calculate the integral value at energy 1e-6 MeV
   sab_value = (*sab_function)( 450, 700, 1e-6 );
   std::cout << sab_value << std::endl;
-  
+
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       450,
 				       700,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      450,
@@ -461,7 +461,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 				       700,
 				       1.0e-06,
 				       sab_value );
-  
+
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
 					      1000,
@@ -479,10 +479,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -504,18 +504,18 @@ int main( int argc, char** argv )
 
   distribution[0].first = 0.0;
   distribution[0].second = isotropic_distribution;
-  
+
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> 
-    scattering_distribution( 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
+    scattering_distribution(
 			 new MonteCarlo::NuclearScatteringAngularDistribution(
 							      distribution ) );
 
   // Initialize the S(alpha,beta) function
   sab_function.reset( new DataGen::FreeGasElasticSAlphaBetaFunction(
-						    cross_section, 
+						    cross_section,
 						    scattering_distribution,
 						    0.999167,
 						    2.53010e-8 ) );
@@ -532,7 +532,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -52,18 +52,18 @@ public:
   void scatterAdjointElectron( AdjointElectronState& electron,
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
-/*  
+/*
 protected:
 
   //! Return the max energy
   double getMaxEnergy() const;
 */
-  
+
 private:
 
   // adjoint atomic excitation energy gain tables
   AtomicDistribution d_energy_gain_distribution;
-  
+
   // The maximum energy
   double d_max_energy;
 

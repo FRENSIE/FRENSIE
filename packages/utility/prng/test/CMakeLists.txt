@@ -28,7 +28,7 @@ IF(${FRENSIE_ENABLE_OPENMP})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  ADD_TEST(DistributedParallelRandomNumberGenerator_2_test 
+  ADD_TEST(DistributedParallelRandomNumberGenerator_2_test
     ${MPIEXEC} -n 2 tstRandomNumberGenerator)
   ADD_TEST(DistributedParallelRandomNumberGenerator_4_test
     ${MPIEXEC} -n 4 tstRandomNumberGenerator)

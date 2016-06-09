@@ -32,7 +32,7 @@ namespace DataGen{
 //! The elastic electron cross section moments class
 class ElasticElectronMomentsEvaluator
 {
-  
+
 public:
 
   //! Typedef for the elastic distribution
@@ -69,11 +69,11 @@ public:
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDF(
             const double scattering_angle_cosine,
-            const double incoming_energy, 
+            const double incoming_energy,
             const int polynomial_order = 0) const;
 
   //! Evaluate the nth cross section moment of the elastic cutoff distribution at the energy
-  void evaluateCutoffMoment( 
+  void evaluateCutoffMoment(
             Utility::long_float& cutoff_moment,
             const std::vector<double>& angular_grid,
             const Integrator& integrator,
@@ -81,13 +81,13 @@ public:
             const int n ) const;
 
   //! Evaluate the nth cross section moment of the screened Rutherford peak distribution at the energy
-  void evaluateScreenedRutherfordMoment( 
+  void evaluateScreenedRutherfordMoment(
             Utility::long_float& rutherford_moment,
             const double& energy,
             const int& n ) const;
 
   //! Evaluate the first n moments of the elastic scattering distribution at a given energy
-  void evaluateElasticMoment( 
+  void evaluateElasticMoment(
             std::vector<Utility::long_float>& legendre_moments,
             const double energy,
             const int n,
@@ -104,7 +104,7 @@ protected:
             const int n ) const;
 
   // Evaluate the nth PDF moment of the screened Rutherford peak distribution at the energy
-  void evaluateScreenedRutherfordPDFMoment( 
+  void evaluateScreenedRutherfordPDFMoment(
             Utility::long_float& rutherford_moment,
             const double& energy,
             const int& n ) const;

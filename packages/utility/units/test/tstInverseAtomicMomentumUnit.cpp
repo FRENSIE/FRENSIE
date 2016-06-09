@@ -32,7 +32,7 @@ BOOST_UNITS_STATIC_CONSTANT(cgs_momentum,boost::units::cgs::momentum);
 // Check that the inverse atomic momentum unit can be initialized
 TEUCHOS_UNIT_TEST( InverseAtomicMomentumUnit, initialize )
 {
-  quantity<InverseAtomicMomentum> 
+  quantity<InverseAtomicMomentum>
     inverse_momentum( 1.0*inverse_atomic_momentum );
 
   TEST_EQUALITY_CONST( inverse_momentum.value(), 1.0 );

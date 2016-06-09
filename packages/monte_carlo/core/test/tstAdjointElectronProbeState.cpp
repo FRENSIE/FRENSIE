@@ -29,7 +29,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, getParticleType )
 {
   MonteCarlo::AdjointElectronProbeState particle( 1ull );
 
-  TEST_EQUALITY_CONST( particle.getParticleType(), 
+  TEST_EQUALITY_CONST( particle.getParticleType(),
 		       MonteCarlo::ADJOINT_ELECTRON_PROBE );
 }
 
@@ -42,10 +42,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, getSpeed )
   TEST_EQUALITY_CONST( particle.getSpeed(), 0.0 );
 
   particle.setEnergy( 1.0 );
- 
+
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   double rest_mass = Utility::PhysicalConstants::electron_rest_mass_energy;
- 
+
   TEST_FLOATING_EQUALITY( particle.getSpeed(),
                           speed_of_light * sqrt( 1.0 - rest_mass * rest_mass /
                           ((1.0 + rest_mass) * (1.0 + rest_mass))),
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, setSpeed )
 
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   double rest_mass = Utility::PhysicalConstants::electron_rest_mass_energy;
- 
+
   particle.setSpeed( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
                      ((1 + rest_mass) * (1 + rest_mass))) );
 
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, setEnergy )
 
   TEST_ASSERT( particle_a.isActive() );
   TEST_ASSERT( !particle_a.isGone() );
-  
+
   particle_a.setEnergy( 1.0 );
 
   TEST_ASSERT( particle_a.isActive() );
@@ -124,16 +124,16 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, setEnergy )
 TEUCHOS_UNIT_TEST( AdjointElectronProbeState, advance )
 {
   const double position[3] = {1.0, 1.0, 1.0};
-  const double direction[3] = {0.5773502691896258, 
+  const double direction[3] = {0.5773502691896258,
 			       0.5773502691896258,
 			       0.5773502691896258};
-  
+
   MonteCarlo::AdjointElectronProbeState particle( 1ull );
   particle.setPosition( position );
   particle.setDirection( direction );
   particle.setEnergy( 1.0 );
   particle.setTime( 0.0 );
-  
+
   particle.advance( 1.7320508075688772 );
 
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
@@ -142,10 +142,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, advance )
   TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getYPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getZPosition(), 2.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( 
-    particle.getTime(), 
+  TEST_FLOATING_EQUALITY(
+    particle.getTime(),
     1.7320508075688772 / ( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
-    ((1 + rest_mass) * (1 + rest_mass)))), 
+    ((1 + rest_mass) * (1 + rest_mass)))),
     1e-12 );
 }
 
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, isProbe )
 // Check that the particle can be cloned
 TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone )
 {
-  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
 			     new MonteCarlo::AdjointElectronProbeState( 0ull ) );
   particle->setPosition( 1.0, 1.0, 1.0 );
   particle->setDirection( 0.0, 0.0, 1.0 );
@@ -171,10 +171,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone )
   particle->setTime( 0.5 );
   particle->incrementCollisionNumber();
   particle->setWeight( 0.25 );
-    
-  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
 							   particle->clone() );
-  
+
   TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone )
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(),
 		       MonteCarlo::ADJOINT_ELECTRON_PROBE );
 }
 
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone )
 // Check that the particle can be cloned
 TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone_new_hist )
 {
-  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
 			     new MonteCarlo::AdjointElectronProbeState( 0ull ) );
   particle->setPosition( 1.0, 1.0, 1.0 );
   particle->setDirection( 0.0, 0.0, 1.0 );
@@ -203,10 +203,10 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone_new_hist )
   particle->setTime( 0.5 );
   particle->incrementCollisionNumber();
   particle->setWeight( 0.25 );
-    
-  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone( 
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle_clone(
 						    particle->clone( 10ull ) );
-  
+
   TEST_EQUALITY_CONST( particle_clone->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle_clone->getZPosition(), 1.0 );
@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, clone_new_hist )
   TEST_EQUALITY_CONST( particle_clone->getGenerationNumber(), 0 );
   TEST_EQUALITY_CONST( particle_clone->getWeight(), 0.25 );
   TEST_EQUALITY_CONST( particle_clone->getHistoryNumber(), 10ull );
-  TEST_EQUALITY_CONST( particle_clone->getParticleType(), 
+  TEST_EQUALITY_CONST( particle_clone->getParticleType(),
 		       MonteCarlo::ADJOINT_ELECTRON_PROBE );
 }
 
@@ -243,7 +243,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, archive )
     boost::archive::xml_oarchive ar(ofs);
     ar << BOOST_SERIALIZATION_NVP( particle );
   }
-  
+
   // Load the archived particle
   MonteCarlo::AdjointElectronProbeState loaded_particle;
 
@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, archive )
   TEST_EQUALITY_CONST( loaded_particle.getWeight(), 0.25 );
   TEST_EQUALITY_CONST( loaded_particle.getHistoryNumber(), 1ull );
   TEST_ASSERT( loaded_particle.isActive() );
-  TEST_EQUALITY_CONST( loaded_particle.getParticleType(), 
+  TEST_EQUALITY_CONST( loaded_particle.getParticleType(),
 		       MonteCarlo::ADJOINT_ELECTRON_PROBE );
 }
 
@@ -282,18 +282,18 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, copy_constructor )
   particle_gen_a.setWeight( 0.5 );
 
   MonteCarlo::AdjointElectronProbeState particle_gen_a_copy( particle_gen_a );
-  
-  TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
+
+  TEST_EQUALITY( particle_gen_a_copy.getXPosition(),
 		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
+  TEST_EQUALITY( particle_gen_a_copy.getYPosition(),
 		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getZPosition(), 
+  TEST_EQUALITY( particle_gen_a_copy.getZPosition(),
 		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getXDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getXDirection(),
 		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getYDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getYDirection(),
 		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getZDirection(), 
+  TEST_EQUALITY( particle_gen_a_copy.getZDirection(),
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
 		 particle_gen_a.getEnergy() );
@@ -312,17 +312,17 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, copy_constructor )
   // Create a second generation particle with the same collision number
   MonteCarlo::AdjointElectronProbeState particle_gen_b( particle_gen_a, true );
 
-  TEST_EQUALITY( particle_gen_b.getXPosition(), 
+  TEST_EQUALITY( particle_gen_b.getXPosition(),
 		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_b.getYPosition(), 
+  TEST_EQUALITY( particle_gen_b.getYPosition(),
 		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_b.getZPosition(), 
+  TEST_EQUALITY( particle_gen_b.getZPosition(),
 		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_b.getXDirection(), 
+  TEST_EQUALITY( particle_gen_b.getXDirection(),
 		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_b.getYDirection(), 
+  TEST_EQUALITY( particle_gen_b.getYDirection(),
 		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_b.getZDirection(), 
+  TEST_EQUALITY( particle_gen_b.getZDirection(),
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 particle_gen_a.getEnergy() );
@@ -333,23 +333,23 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, copy_constructor )
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
 		 particle_gen_a.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_b.getWeight(),
-		 particle_gen_a.getWeight() ); 
-  TEST_ASSERT( !particle_gen_b.isGone() ); 
+		 particle_gen_a.getWeight() );
+  TEST_ASSERT( !particle_gen_b.isGone() );
 
   // Create a third generation particle and reset the collision counter
   MonteCarlo::AdjointElectronProbeState particle_gen_c( particle_gen_b, true, true );
 
-  TEST_EQUALITY( particle_gen_c.getXPosition(), 
+  TEST_EQUALITY( particle_gen_c.getXPosition(),
 		 particle_gen_b.getXPosition() );
-  TEST_EQUALITY( particle_gen_c.getYPosition(), 
+  TEST_EQUALITY( particle_gen_c.getYPosition(),
 		 particle_gen_b.getYPosition() );
-  TEST_EQUALITY( particle_gen_c.getZPosition(), 
+  TEST_EQUALITY( particle_gen_c.getZPosition(),
 		 particle_gen_b.getZPosition() );
-  TEST_EQUALITY( particle_gen_c.getXDirection(), 
+  TEST_EQUALITY( particle_gen_c.getXDirection(),
 		 particle_gen_b.getXDirection() );
-  TEST_EQUALITY( particle_gen_c.getYDirection(), 
+  TEST_EQUALITY( particle_gen_c.getYDirection(),
 		 particle_gen_b.getYDirection() );
-  TEST_EQUALITY( particle_gen_c.getZDirection(), 
+  TEST_EQUALITY( particle_gen_c.getZDirection(),
 		 particle_gen_b.getZDirection() );
   TEST_EQUALITY( particle_gen_c.getEnergy(),
 		 particle_gen_b.getEnergy() );
@@ -378,17 +378,17 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, probe_nonprobe_copy_constructor )
   MonteCarlo::AdjointElectronProbeState probe_gen_a( particle_gen_a );
 
   TEST_ASSERT( !probe_gen_a.isActive() );
-  TEST_EQUALITY( probe_gen_a.getXPosition(), 
+  TEST_EQUALITY( probe_gen_a.getXPosition(),
 		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( probe_gen_a.getYPosition(), 
+  TEST_EQUALITY( probe_gen_a.getYPosition(),
 		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( probe_gen_a.getZPosition(), 
+  TEST_EQUALITY( probe_gen_a.getZPosition(),
 		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( probe_gen_a.getXDirection(), 
+  TEST_EQUALITY( probe_gen_a.getXDirection(),
 		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( probe_gen_a.getYDirection(), 
+  TEST_EQUALITY( probe_gen_a.getYDirection(),
 		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( probe_gen_a.getZDirection(), 
+  TEST_EQUALITY( probe_gen_a.getZDirection(),
 		 particle_gen_a.getZDirection() );
   TEST_EQUALITY( probe_gen_a.getEnergy(),
 		 particle_gen_a.getEnergy() );
@@ -407,17 +407,17 @@ TEUCHOS_UNIT_TEST( AdjointElectronProbeState, probe_nonprobe_copy_constructor )
   TEST_ASSERT( !particle_gen_a.isProbe() );
 
   MonteCarlo::AdjointElectronState particle_gen_b( probe_gen_a, true );
-  TEST_EQUALITY( particle_gen_b.getXPosition(), 
+  TEST_EQUALITY( particle_gen_b.getXPosition(),
 		 probe_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_b.getYPosition(), 
+  TEST_EQUALITY( particle_gen_b.getYPosition(),
 		 probe_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_b.getZPosition(), 
+  TEST_EQUALITY( particle_gen_b.getZPosition(),
 		 probe_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_b.getXDirection(), 
+  TEST_EQUALITY( particle_gen_b.getXDirection(),
 		 probe_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_b.getYDirection(), 
+  TEST_EQUALITY( particle_gen_b.getYDirection(),
 		 probe_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_b.getZDirection(), 
+  TEST_EQUALITY( particle_gen_b.getZDirection(),
 		 probe_gen_a.getZDirection() );
   TEST_EQUALITY( particle_gen_b.getEnergy(),
 		 probe_gen_a.getEnergy() );

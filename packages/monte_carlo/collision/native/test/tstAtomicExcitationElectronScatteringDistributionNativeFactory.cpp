@@ -24,14 +24,14 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution> 
+Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
    distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
                    sample )
 {
   MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
@@ -47,8 +47,8 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
                         scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 
-                          1.000000000000e-03- 9.32298000000E-06, 
+  TEST_FLOATING_EQUALITY( outgoing_energy,
+                          1.000000000000e-03- 9.32298000000E-06,
                           1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
 
@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
@@ -74,11 +74,11 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
                                        trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 
-                          1.000000000000e-03- 9.32298000000E-06, 
+  TEST_FLOATING_EQUALITY( outgoing_energy,
+                          1.000000000000e-03- 9.32298000000E-06,
                           1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 ); 
+  TEST_EQUALITY_CONST( trials, 11 );
 
 }
 
@@ -89,28 +89,28 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistributionNativeFactory,
 int main( int argc, char** argv )
 {
   std::string test_native_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
- 
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -123,7 +123,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

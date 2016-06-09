@@ -29,7 +29,7 @@ public:
 
   //! Typedef for EntityHandle type
   typedef EntityHandle EntityHandleType;
-  
+
   //! Typedef for Observer type
   typedef Observer ObserverType;
 
@@ -62,7 +62,7 @@ protected:
 
   // Get the observer map
   ObserverIdMap& observer_id_map();
-  
+
 private:
 
   // The entity id for which the particle event will be dispatched

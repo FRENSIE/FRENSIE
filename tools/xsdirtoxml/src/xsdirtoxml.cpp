@@ -24,7 +24,7 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -50,7 +50,7 @@ int main( int argc, char** argv )
   if( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     xsdirtoxml_clp.printHelpMessage( argv[0], *out );
-    
+
     return parse_return;
   }
 
@@ -60,11 +60,11 @@ int main( int argc, char** argv )
   try{
     xsdir.reset( new DataGen::Xsdir( xsdir_file_name.c_str() ) );
   }
-  EXCEPTION_CATCH_AND_EXIT( std::exception, 
+  EXCEPTION_CATCH_AND_EXIT( std::exception,
 			    "Error creating the xsdir object!" );
 
   // Open the cross_sections.xml file
-  Teuchos::RCP<Teuchos::ParameterList> cross_sections_xml( 
+  Teuchos::RCP<Teuchos::ParameterList> cross_sections_xml(
 		    new Teuchos::ParameterList( "Cross Sections Directory" ) );
 
   if( !overwrite )
@@ -73,7 +73,7 @@ int main( int argc, char** argv )
 
     if( file.good() )
     {
-      cross_sections_xml = 
+      cross_sections_xml =
 	Teuchos::getParametersFromXmlFile( "cross_sections.xml" );
     }
   }
@@ -81,14 +81,14 @@ int main( int argc, char** argv )
   // Add the alias map sublist if necessary
   if( !cross_sections_xml->isSublist( "alias map" ) )
   {
-    Teuchos::ParameterList& alias_map_list = 
+    Teuchos::ParameterList& alias_map_list =
       cross_sections_xml->sublist( "alias map" );
   }
 
   // Export the xsdir info
   xsdir->exportInfo( *cross_sections_xml );
 
-  Teuchos::writeParameterListToXmlFile( *cross_sections_xml, 
+  Teuchos::writeParameterListToXmlFile( *cross_sections_xml,
 					"cross_sections.xml" );
 
   return 0;

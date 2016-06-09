@@ -43,8 +43,8 @@ protected:
   //! Create the energy loss function
   static void createEnergyLossFunction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::vector<double> energy_grid, 
-    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+    const std::vector<double> energy_grid,
+    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
         energy_loss_function );
 };
 

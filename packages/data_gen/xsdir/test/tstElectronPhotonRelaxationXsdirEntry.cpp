@@ -37,14 +37,14 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, getTableAlias )
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	     new DataGen::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "H" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset(new DataGen::ElectronPhotonRelaxationXsdirEntry( entry_tokens ));
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Fm" );
@@ -55,15 +55,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, getTableAlias )
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, addInfoToParameterList )
 {
   Teuchos::ParameterList parameter_list( "Cross Sections Directory" );
-  
+
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	     new DataGen::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_a = 
+  Teuchos::ParameterList& sublist_a =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_a );
@@ -89,12 +89,12 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, addInfoToParameterList )
 		       1 );
   TEST_EQUALITY_CONST( sublist_a.get<double>( MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
 		       0.999242 );
-  
+
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset(new DataGen::ElectronPhotonRelaxationXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_b = 
+  Teuchos::ParameterList& sublist_b =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_b );
@@ -121,14 +121,14 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationXsdirEntry, addInfoToParameterList )
   TEST_EQUALITY_CONST( sublist_b.get<double>( MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop ),
 		       254.792000 );
 
-  // Make sure important info will not be overridden 
-  Teuchos::ParameterList& sublist_c = 
+  // Make sure important info will not be overridden
+  Teuchos::ParameterList& sublist_c =
     parameter_list.sublist( "Fm-254_293.6K_v7" );
 
-  sublist_c.set<int>( 
+  sublist_c.set<int>(
 		    MonteCarlo::CrossSectionsXMLProperties::atomic_number_prop,
 		    100 );
-  sublist_c.set( 
+  sublist_c.set(
 	      MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
 	      255.0 );
   sublist_c.set( MonteCarlo::CrossSectionsXMLProperties::temperature_prop,

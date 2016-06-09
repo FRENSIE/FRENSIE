@@ -88,13 +88,13 @@ ElectroatomicReactionType ScreenedRutherfordElasticElectroatomicReaction<InterpP
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron, 
-                                              bank, 
+  d_scattering_distribution->scatterElectron( electron,
+                                              bank,
                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();

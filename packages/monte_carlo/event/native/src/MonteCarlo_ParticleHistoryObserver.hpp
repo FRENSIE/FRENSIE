@@ -26,18 +26,18 @@ namespace MonteCarlo{
 //! The particle history observer base class
 class ParticleHistoryObserver
 {
-  
+
 public:
-  
+
   //! Typedef for observer id
   typedef ModuleTraits::InternalEventObserverHandle idType;
 
   //! Set the number of particle histories observed
   static void setNumberOfHistories( const unsigned long long num_histories );
-  
-  //! Set the start time (for analysis of observer data) 
+
+  //! Set the start time (for analysis of observer data)
   static void setStartTime( const double start_time );
-  
+
   //! Set the end time (for analysis of observer data)
   static void setEndTime( const double end_time );
 
@@ -69,7 +69,7 @@ public:
             const int root_process ) = 0;
 
   //! Export the estimator data
-  virtual void exportData( 
+  virtual void exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const = 0;
 
@@ -106,7 +106,7 @@ inline ParticleHistoryObserver::idType ParticleHistoryObserver::getId() const
 }
 
 //! Stream operator for printing summaries of particle history observers
-inline std::ostream& operator<<( 
+inline std::ostream& operator<<(
                           std::ostream& os,
                           const MonteCarlo::ParticleHistoryObserver& observer )
 {

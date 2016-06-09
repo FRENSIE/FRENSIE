@@ -204,7 +204,7 @@ class XSSEPRDataExtractorBTestCase(unittest.TestCase):
         self.assertEqual(sphel_block[len(sphel_block)-1], -3.682568500852e1)
 
     def testExtractRELOBlock(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method" 
+        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method"
         relo_block = self.xss_extractor.extractRELOBlock()
         self.assertEqual(len(relo_block), 0)
 
@@ -497,7 +497,7 @@ class XSSEPRDataExtractorPbTestCase(unittest.TestCase):
         self.assertEqual(sphel_block[len(sphel_block)-1], -2.364731020721e1)
 
     def testExtractRELOBlock(self):
-        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method" 
+        "*Test Data.ACE.XSSEPRDataExtractor extractRELOBlock method"
         relo_block = self.xss_extractor.extractRELOBlock()
         self.assertEqual(len(relo_block), 24)
         self.assertEqual(relo_block[0], 0.0)
@@ -650,7 +650,7 @@ if __name__ == "__main__":
 
     # Exit
     sys.exit(errs_plus_fails)
-        
+
 #-----------------------------------------------------------------------------#
 # end Data.ACE.XSSEPRDataExtractor.py
 #-----------------------------------------------------------------------------#

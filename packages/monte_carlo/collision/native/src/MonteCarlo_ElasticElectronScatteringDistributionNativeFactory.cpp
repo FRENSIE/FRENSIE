@@ -17,7 +17,7 @@
 
 namespace MonteCarlo{
 
-// Create the hard elastic distributions ( both Cutoff and Screened Rutherford ) 
+// Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
 void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -27,7 +27,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
     const double cutoff_upper_cutoff_angle_cosine )
 {
   // Get the energy grid
-  std::vector<double> angular_energy_grid = 
+  std::vector<double> angular_energy_grid =
     data_container.getElasticAngularEnergyGrid();
 
   // Get size of paramters
@@ -35,14 +35,14 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
 
   // Create the scattering function
   ElasticDistribution scattering_function(size);
-  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction( 
-	data_container, 
+  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
+	data_container,
 	angular_energy_grid,
 	scattering_function );
 
   // Create cutoff distribution
-  cutoff_elastic_distribution.reset( 
-        new CutoffElasticElectronScatteringDistribution( 
+  cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
                 cutoff_upper_cutoff_angle_cosine ) );
 
@@ -54,7 +54,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
                                           screened_rutherford_parameters );
 */
 
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = data_container.getAtomicNumber();
 /*
   // Create the screened Rutherford distribution
@@ -78,7 +78,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
     const double lower_cutoff_angle )
 {
   // Get the energy grid for elastic scattering angular distributions
-  std::vector<double> angular_energy_grid = 
+  std::vector<double> angular_energy_grid =
         data_container.getElasticAngularEnergyGrid();
 
   // Get size of paramters
@@ -87,13 +87,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   // Create the scattering function
   ElasticDistribution scattering_function(size);
 
-  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction( 
-		data_container, 
+  ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
+		data_container,
         angular_energy_grid,
 		scattering_function );
 
-  cutoff_elastic_distribution.reset( 
-        new CutoffElasticElectronScatteringDistribution( 
+  cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
                 lower_cutoff_angle ) );
 }
@@ -109,7 +109,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
 {
 /*
   // Get the energy grid
-  std::vector<double> angular_energy_grid = 
+  std::vector<double> angular_energy_grid =
     data_container.getElasticAngularEnergyGrid();
 
   // Get size of paramters
@@ -127,7 +127,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
         new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 screened_rutherford_parameters ) );
 */
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = data_container.getAtomicNumber();
 
   // Create the screened Rutherford distribution
@@ -144,7 +144,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
                  const double cutoff_angle_cosine )
 {
   // Get the angular grid
-  std::vector<double> raw_grid = 
+  std::vector<double> raw_grid =
     data_container.getCutoffElasticAngles( energy );
 
   // Find the first angle cosine above the cutoff angle cosine
@@ -168,7 +168,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 // Create the scattering function
 void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& data_container,
-        const std::vector<double> angular_energy_grid,      
+        const std::vector<double> angular_energy_grid,
         ElasticDistribution& scattering_function )
 {
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
@@ -176,14 +176,14 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
     scattering_function[n].first = angular_energy_grid[n];
 
     // Get the cutoff elastic scattering angles at the energy
-    std::vector<double> angles( 
+    std::vector<double> angles(
         data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
 
     // Get the cutoff elastic scatering pdf at the energy
-    std::vector<double> pdf( 
+    std::vector<double> pdf(
         data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
 
-    scattering_function[n].second.reset( 
+    scattering_function[n].second.reset(
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 }
@@ -195,11 +195,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
         ParameterArray& screened_rutherford_parameters )
 {
   // Get Moliere's screening constants
-  std::vector<double> moliere_screening_constant = 
+  std::vector<double> moliere_screening_constant =
     data_container.getMoliereScreeningConstant();
 
   // Get the normalization constants
-  std::vector<double> normalization_constant = 
+  std::vector<double> normalization_constant =
     data_container.getScreenedRutherfordNormalizationConstant();
 
   for ( int i = 0; i < angular_energy_grid.size(); ++i )

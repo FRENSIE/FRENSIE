@@ -38,8 +38,8 @@ Teuchos::RCP<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
 TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 		   evaluateDifferentialCrossSection_h )
 {
-  
-  double diff_cross_section = 
+
+  double diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 0.00001,
 						    0.000001 );
 
@@ -47,7 +47,7 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 				  5.432887601098890E+06,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 0.005,
 						    0.0025 );
 
@@ -55,10 +55,10 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 				  1.081861861761940E+02,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 100000,
 						    20000 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
 				  1.322404823505140E-06,
 				  1e-12 );
@@ -71,22 +71,22 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 {
 /*
   double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 1e-4);
-  
-  
-  
+
+
+
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
 				  2.050,
   				  1e-15 );
 
-  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001,
   						      0.0010039292814978508 );
 
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
 				  8.523,
   				  1e-15 );
   				  */
@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -109,10 +109,10 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -127,7 +127,7 @@ int main( int argc, char** argv )
 							   1u ) );
 
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
+				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -138,10 +138,10 @@ int main( int argc, char** argv )
 
   // Index of first non zero cross section in the energy grid
   unsigned threshold_energy_index;
-  
+
   // Bremsstrahlung cross section with zeros removed
   Teuchos::ArrayRCP<double> bremsstrahlung_cross_section;
-  
+
   MonteCarlo::ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
 			energy_grid,
 			xss_data_extractor->extractBremsstrahlungCrossSection(),
@@ -165,18 +165,18 @@ int main( int argc, char** argv )
   Teuchos::Array<double> offset(bremi_block(2*N,N));
 
   // Extract the bremsstrahlung photon energy distributions block (BREME)
-  Teuchos::ArrayView<const double> breme_block = 
+  Teuchos::ArrayView<const double> breme_block =
     xss_data_extractor->extractBREMEBlock();
 
   // Create the bremsstrahlung scattering functions
   DataGen::AdjointBremsstrahlungCrossSectionEvaluator::BremsstrahlungDistribution
     energy_loss_distribution( N );
-  
+
   for( unsigned n = 0; n < N; ++n )
   {
     energy_loss_distribution[n].first = electron_energy_grid[n];
 
-    energy_loss_distribution[n].second.reset( 
+    energy_loss_distribution[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 breme_block( offset[n], table_length[n] ),
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -186,14 +186,14 @@ int main( int argc, char** argv )
   Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
     b_scattering_distribution;
 
-    b_scattering_distribution.reset( 
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+    b_scattering_distribution.reset(
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
             energy_loss_distribution ) );
 
   // Create standard electroatomic reaction
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> bremsstrahlung_reaction;
-  
-  bremsstrahlung_reaction.reset( 
+
+  bremsstrahlung_reaction.reset(
     new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
                       energy_grid,
                       bremsstrahlung_cross_section,
@@ -218,7 +218,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

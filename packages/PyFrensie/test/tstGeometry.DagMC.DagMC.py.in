@@ -3,7 +3,7 @@
 ## Geometry.DagMC.DagMC class unit tests
 #  \file   tstGeometry.DagMC.DagMC.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.DagMC.DagMC class 
+#  \brief  Unit tests for the Geometry.DagMC.DagMC class
 #-----------------------------------------------------------------------------#
 
 # System imports
@@ -137,7 +137,7 @@ class DagMCPreInitTestCase(unittest.TestCase):
         self.assertTrue(self.geom.isParticleTypeValid( 'p' ))
         self.assertTrue(self.geom.isParticleTypeValid( 'e' ))
         self.assertFalse(self.geom.isParticleTypeValid( 'z' ))
-    
+
 #-----------------------------------------------------------------------------#
 # Test the DagMC class (post-initialization)
 class DagMCPostInitTestCase(unittest.TestCase):
@@ -299,9 +299,9 @@ class DagMCPostInitTestCase(unittest.TestCase):
         self.assertTrue(self.geom.doesCellExist( 168 ))
         self.assertTrue(self.geom.doesCellExist( 184 ))
         self.assertTrue(self.geom.doesCellExist( 188 ))
-        
+
         #Implicit compliment cell
-        self.assertTrue(self.geom.doesCellExist( 189 )) 
+        self.assertTrue(self.geom.doesCellExist( 189 ))
 
     def testDoesSurfaceExist(self):
         "*Test Geometry.DagMC.DagMC doesSurfaceExist method"
@@ -714,7 +714,7 @@ class DagMCPostInitTestCase(unittest.TestCase):
         ray = Geometry.Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 )
         cell = self.geom.findCellContainingExternalRay( ray )
         self.assertEqual(cell, 53)
-        
+
         distance,surface_hit = self.geom.fireExternalRay( ray, cell )
         self.assertAlmostEqual(distance, 1.959999084, delta=1e-9)
         self.assertEqual(surface_hit, 242)
@@ -722,7 +722,7 @@ class DagMCPostInitTestCase(unittest.TestCase):
         ray.advanceHead( distance )
         cell = self.geom.getBoundaryCell( cell, surface_hit )
         self.assertEqual(cell, 54)
-        
+
         distance,surface_hit = self.geom.fireExternalRay( ray, cell )
         self.assertAlmostEqual(distance, 2.54, delta=1e-6)
         self.assertEqual(surface_hit, 248)
@@ -864,7 +864,7 @@ class DagMCPostInitTestCase(unittest.TestCase):
         self.assertEqual(direction[0], 1.0)
         self.assertEqual(direction[1], 0.0)
         self.assertEqual(direction[2], 0.0)
-        
+
     def testFindCellContainingInternalRay(self):
         "*Test Geometry.DagMC.DagMC findCellContainingInternalRay method"
         self.geom.setInternalRay((-40.0, -40.0, 59.0), (0.0, 0.0, 1.0), False)
@@ -911,7 +911,7 @@ class DagMCPostInitTestCase(unittest.TestCase):
         self.assertEqual(normal[2], 1.0)
         cell = self.geom.findCellContainingInternalRay()
         self.assertEqual(cell, 54)
-        
+
     def testInternalRayTrace(self):
         "*Test that an internal ray trace can be done"
         self.geom.setInternalRay( (-40.0, -40.0, 59.0), (0.0, 0.0, 1.0), False )
@@ -974,7 +974,7 @@ class DagMCPostInitTestCase(unittest.TestCase):
         distance,surface_hit = self.geom.fireInternalRay()
         self.assertAlmostEqual(distance, 17.526, delta=1e-6)
         self.assertEqual(surface_hit, 394)
-        
+
 
 #-----------------------------------------------------------------------------#
 # Custom main

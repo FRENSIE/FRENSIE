@@ -232,7 +232,7 @@ int main( int argc, char** argv )
            << discrete_angles[0] << "\n";
   }
 
-
+/*
   myfile << "\n\nScreened Rutherford moments calculated using the recursion relationship and FRENSIE eta.\n";
   myfile << "Element Z = \t"<< data->getAtomicNumber() << "\n";
   myfile << "\tEnergy" << std::setw(20)
@@ -258,10 +258,7 @@ int main( int argc, char** argv )
         moments[2],
         eta[i],
         2 );
-/*
-  moments[1] /= moments[0];
-  moments[2] /= moments[0];
-*/
+
   // Use radau quadrature to find the discrete angles and weights from the moments
   Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
@@ -302,10 +299,7 @@ int main( int argc, char** argv )
         eta[i],
         angular_energy_grid[i],
         2 );
-/*
-  moments[1] /= moments[0];
-  moments[2] /= moments[0];
-*/
+
   // Use radau quadrature to find the discrete angles and weights from the moments
   Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
@@ -322,7 +316,7 @@ int main( int argc, char** argv )
            << moments[2] << "\t"
            << discrete_angles[0] << "\n";
   }
-
+*/
   myfile.close();
 
 

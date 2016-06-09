@@ -28,11 +28,11 @@ class StandardAdjointElectroionizationSubshellGridGenerator : public AdjointElec
 {
 
 public:
-  
+
   //! Constructor
-  StandardAdjointElectroionizationSubshellGridGenerator( 
+  StandardAdjointElectroionizationSubshellGridGenerator(
       const double& binding_energy,
-      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
                                        electroionization_subshell_reaction,
       const ElectroionizationSubshellDistribution& knock_on_distribution,
       const double convergence_tol = 0.001,
@@ -51,10 +51,10 @@ public:
 
   //! Set the convergence tolerance
   void setConvergenceTolerance( const double convergence_tol );
-  
+
   //! Set the absolute difference tolerance
   void setAbsoluteDifferenceTolerance( const double absolute_diff_tol );
-  
+
   //! Set the distance tolerance
   void setDistanceTolerance( const double distance_tol );
 
@@ -75,7 +75,7 @@ public:
 			 const Teuchos::Array<double>& max_energy_grid_1,
 			 const Teuchos::Array<double>& cross_section_0,
 			 const Teuchos::Array<double>& cross_section_1 ) const;
-			     
+
 private:
 
   // Calculate the energy midpoint
@@ -97,16 +97,16 @@ private:
 
   // The absolute difference tolerance
   double d_absolute_diff_tol;
-  
+
   // The distance tolerance
   double d_distance_tol;
 
   // The grid generator
-  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy> 
+  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy>
   d_max_energy_grid_generator;
-  
+
   // The adjoint electroionization subshell cross section evaluator
-  AdjointElectroionizationSubshellCrossSectionEvaluator d_adjoint_electroionization_subshell_cross_section;  
+  AdjointElectroionizationSubshellCrossSectionEvaluator d_adjoint_electroionization_subshell_cross_section;
 };
 
 } // end DataGen namespace

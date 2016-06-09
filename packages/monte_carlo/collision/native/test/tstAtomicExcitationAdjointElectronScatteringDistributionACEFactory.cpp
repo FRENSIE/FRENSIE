@@ -26,14 +26,14 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> 
+Teuchos::RCP<const MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution>
    distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFactory,
                    sample )
 {
   MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createAtomicExcitationAdjointDistribution(
@@ -49,8 +49,8 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFacto
                         scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 
-                          1.000000000000e-03, 
+  TEST_FLOATING_EQUALITY( outgoing_energy,
+                          1.000000000000e-03,
                           1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
 
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFacto
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::AtomicExcitationAdjointElectronScatteringDistributionACEFactory::createAtomicExcitationAdjointDistribution(
@@ -76,11 +76,11 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFacto
                                        trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( outgoing_energy, 
-                          1.000000000000e-03, 
+  TEST_FLOATING_EQUALITY( outgoing_energy,
+                          1.000000000000e-03,
                           1e-12 );
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
-  TEST_EQUALITY_CONST( trials, 11 ); 
+  TEST_EQUALITY_CONST( trials, 11 );
 
 }
 
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistributionACEFacto
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -101,23 +101,23 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -134,7 +134,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

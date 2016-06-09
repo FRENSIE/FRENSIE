@@ -29,7 +29,7 @@ private:
 
 public:
 
-  //! Constructor 
+  //! Constructor
   DecoupledYieldBasedPhotonProductionReaction(
 	 const NuclearReactionType base_reaction_type,
 	 const unsigned photon_production_id,
@@ -37,14 +37,14 @@ public:
 	 const Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >& total_mt_yield_array,
 	 const std::shared_ptr<Utility::OneDDistribution>& mtp_yield,
 	 const Teuchos::RCP<NuclearReaction>& base_reaction,
-	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >& 
+	 const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >&
 	 photon_production_distribution,
 	 const Teuchos::RCP<NuclearReaction>& total_reaction );
 
   //! Destructor
   ~DecoupledYieldBasedPhotonProductionReaction()
   { /* ... */ }
-  
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
 

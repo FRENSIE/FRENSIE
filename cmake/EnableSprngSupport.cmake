@@ -9,7 +9,7 @@ MACRO(ENABLE_SPRNG_SUPPORT)
 
   # Set the include paths for Sprng
   INCLUDE_DIRECTORIES(${SPRNG_INCLUDE_DIRS})
-  
+
   # Set the link paths for Sprng
   LINK_DIRECTORIES(${SPRNG_LIBRARY_DIRS})
 

@@ -37,7 +37,7 @@ Teuchos::RCP<Utility::TabularOneDDistribution> elastic_distribution;
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   typedef Utility::LinLin LinLin;					\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )			
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LinLin )
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -50,7 +50,7 @@ void initializeACEDistribution()
   independent_values[0] = -1.0;
   independent_values[1] = 0.999999;
   independent_values[2] = 1.0;
-  
+
   Teuchos::Array<double> dependent_values( 3 );
   dependent_values[0] = 0.0;
   dependent_values[1] = 0.9999995;
@@ -74,7 +74,7 @@ void initializeENDLDistribution()
   independent_values[2] = 2.0;
   independent_values[1] = 1.0E-6;
   independent_values[0] = 0.0;
-  
+
   Teuchos::Array<double> dependent_values( 3 );
   dependent_values[2] = 5.0000000019895100E-01;
   dependent_values[1] = 4.9999999980104900E-01;
@@ -96,20 +96,20 @@ void initializeENDLDistribution()
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution, 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 				   evaluate,
 				   InterpolationPolicy )
 {
   initializeACEDistribution<InterpolationPolicy>();
 
   TEST_EQUALITY_CONST( distribution->evaluate( 3.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 2.0 ),
                           5.0000000019895100E-01,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.000001 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.000001 ),
                           4.9999999980104900E-01,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluate( 0.0 ),
                           5.0000000019895100E-01,
                           1e-10 );
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 0.0 );
@@ -118,21 +118,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, evaluate );
 
 //---------------------------------------------------------------------------//
-// Check that the PDF can be evaluated 
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution, 
+// Check that the PDF can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 				   evaluatePDF,
 				   InterpolationPolicy )
 {
   initializeACEDistribution<InterpolationPolicy>();
 
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 3.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 2.0 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 2.0 ),
                           5.0000000019895100E-01,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.000001 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.000001 ),
                           4.9999999980104900E-01,
                           1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.0 ), 
+  TEST_FLOATING_EQUALITY( distribution->evaluatePDF( 0.0 ),
                           5.0000000019895100E-01,
                           1e-10 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 0.0 );
@@ -141,22 +141,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
-// Check that the CDF can be evaluated 
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution, 
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 				   evaluateCDF,
 				   InterpolationPolicy )
 {
   initializeACEDistribution<InterpolationPolicy>();
 
   TEST_EQUALITY_CONST( elastic_distribution->evaluateCDF( 3.0 ), 1.0 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 2.0 ), 
-			  1.0000000000, 
+  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 2.0 ),
+			  1.0000000000,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.000001 ), 
-			  0.0000005000, 
+  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.000001 ),
+			  0.0000005000,
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.0 ), 
-			  0.0000000000, 
+  TEST_FLOATING_EQUALITY( elastic_distribution->evaluateCDF( 0.0 ),
+			  0.0000000000,
 			  1e-10 );
   TEST_EQUALITY_CONST( elastic_distribution->evaluateCDF( -1.0 ), 0.0 );
 }
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = distribution->sample();
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 2.0 );
@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 2.0 );
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = elastic_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 2.0 );
@@ -295,13 +295,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 
   double sample = elastic_distribution->sampleInSubrange( 0.000001 );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
+
   sample = elastic_distribution->sampleInSubrange( 0.000001 );
   TEST_FLOATING_EQUALITY( sample, 0.000001, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
-  
+
   sample = elastic_distribution->sampleInSubrange( 0.000001 );
   TEST_COMPARE( sample, >=, 0.0 );
   TEST_COMPARE( sample, <=, 0.000001 );
@@ -317,16 +317,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 {
   initializeACEDistribution<InterpolationPolicy>();
 
-  double sample = 
+  double sample =
     elastic_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.000001  );
   TEST_EQUALITY_CONST( sample, 0.0 );
-  
-  sample = 
+
+  sample =
         elastic_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.000001 );
   TEST_FLOATING_EQUALITY( sample, 0.000001, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, 
+UNIT_TEST_INSTANTIATION( ElasticElectronDistribution,
 			 sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
@@ -365,7 +365,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
 {
   initializeACEDistribution<InterpolationPolicy>();
 
-  TEST_EQUALITY_CONST( distribution->getDistributionType(), 
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::ELASTIC_ELECTRON_DISTRIBUTION );
 }
 
@@ -411,27 +411,27 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ElasticElectronDistribution,
     Teuchos::rcp_dynamic_cast<Distribution>( distribution );
 
   Teuchos::ParameterList parameter_list;
-  
-  parameter_list.set<Distribution>( "test distribution", 
+
+  parameter_list.set<Distribution>( "test distribution",
 				      *true_distribution );
 
   std::ostringstream xml_file_name;
-  xml_file_name << "elastic_electron_" << InterpolationPolicy::name() 
+  xml_file_name << "elastic_electron_" << InterpolationPolicy::name()
 		<< "_dist_test_list.xml";
-  
+
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					xml_file_name.str() );
 
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( xml_file_name.str() );
 
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
-  Teuchos::RCP<Distribution> 
+  Teuchos::RCP<Distribution>
     copy_distribution( new Distribution );
 
-  *copy_distribution = 
+  *copy_distribution =
     read_parameter_list->get<Distribution>("test distribution");
 
   TEST_EQUALITY( *copy_distribution, *true_distribution );
@@ -443,7 +443,7 @@ UNIT_TEST_INSTANTIATION( ElasticElectronDistribution, toParameterList );
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( ElasticElectronDistribution, fromParameterList )
 {
-  Utility::ElasticElectronDistribution<Utility::LinLin> distribution_1 = 
+  Utility::ElasticElectronDistribution<Utility::LinLin> distribution_1 =
     test_dists_list->get<Utility::ElasticElectronDistribution<Utility::LinLin> >( "Elastic Electron Distribution B" );
 
   TEST_EQUALITY_CONST( distribution_1.getLowerBoundOfIndepVar(), 0.0 );
@@ -456,17 +456,17 @@ TEUCHOS_UNIT_TEST( ElasticElectronDistribution, fromParameterList )
 int main( int argc, char** argv )
 {
   std::string test_dists_xml_file;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_dists_xml_file",
 		 &test_dists_xml_file,
 		 "Test distributions xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -477,10 +477,10 @@ int main( int argc, char** argv )
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::ElasticElectronDistribution<Utility::LinLin> );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

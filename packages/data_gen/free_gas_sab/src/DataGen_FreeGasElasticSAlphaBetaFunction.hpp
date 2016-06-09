@@ -28,7 +28,7 @@ namespace DataGen{
 //! The free gas elastic s(alpha,beta) function
 class FreeGasElasticSAlphaBetaFunction
 {
-  
+
 private:
 
   // Typedef for bessel function error policy
@@ -40,13 +40,13 @@ private:
     boost::math::policies::throw_on_error> overflow_error;
   typedef boost::math::policies::evaluation_error<
     boost::math::policies::throw_on_error> evaluation_error;
-  
+
   typedef boost::math::policies::policy<
     domain_error,
     pole_error,
     overflow_error,
     evaluation_error> Policy;
-  
+
   // Typedef for extended precision floating point values
   typedef boost::multiprecision::float128 BoostLongDouble;
 
@@ -54,7 +54,7 @@ public:
 
   //! Constructor
   FreeGasElasticSAlphaBetaFunction(
-	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  const Teuchos::RCP<Utility::OneDDistribution>&
 	  zero_temp_elastic_cross_section,
           const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	  cm_scattering_distribution,
@@ -64,10 +64,10 @@ public:
   //! Destructor
   ~FreeGasElasticSAlphaBetaFunction()
   { /* ... */ }
-  
+
   //! Return the atomic weight ratio
   double getAtomicWeightRatio() const;
-  
+
   //! Return the temperature
   double getTemperature() const;
 
@@ -101,7 +101,7 @@ private:
   void findLimits( const double alpha,
 		   const double beta,
 		   const double E,
-		   double& lower_limit, 
+		   double& lower_limit,
 		   double& upper_limit ) const;
 
   // Find a CM scattering angle cosine where the function is non-zero

@@ -33,7 +33,7 @@ public:
 
   //! Constructor
   FreeGasElasticMarginalBetaFunction(
-	      const Teuchos::RCP<Utility::OneDDistribution>& 
+	      const Teuchos::RCP<Utility::OneDDistribution>&
 	      zero_temp_elastic_cross_section,
               const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	      cm_scattering_distribution,
@@ -50,7 +50,7 @@ public:
 
   //! Get the lower beta limit
   double getBetaMin() const;
-  
+
   //! Get the normalization constant
   double getNormalizationConstant() const;
 

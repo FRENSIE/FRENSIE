@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The electroionization subshell electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTROATOMIC_REACTION_HPP
@@ -26,7 +26,7 @@ class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationE
 public:
 
   //! Basic Constructor
-  ElectroionizationSubshellElectroatomicReaction( 
+  ElectroionizationSubshellElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
@@ -35,7 +35,7 @@ public:
             electroionization_subshell_distribution );
 
   //! Constructor
-  ElectroionizationSubshellElectroatomicReaction( 
+  ElectroionizationSubshellElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
@@ -50,7 +50,7 @@ public:
   { /* ... */ }
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
 	      ParticleBank& bank,
 	      Data::SubshellType& shell_of_interaction ) const;
 

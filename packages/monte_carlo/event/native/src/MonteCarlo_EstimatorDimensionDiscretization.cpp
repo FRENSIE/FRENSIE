@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Constructor
-EstimatorDimensionDiscretization::EstimatorDimensionDiscretization( 
+EstimatorDimensionDiscretization::EstimatorDimensionDiscretization(
 				          const PhaseSpaceDimension dimension )
   : d_dimension( dimension )
 { /* ... */ }

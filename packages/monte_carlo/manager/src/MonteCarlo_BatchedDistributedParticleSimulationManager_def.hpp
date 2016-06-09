@@ -20,11 +20,11 @@
 namespace MonteCarlo{
 
 // Constructor
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
-BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::BatchedDistributedParticleSimulationManager( 
+BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::BatchedDistributedParticleSimulationManager(
       const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process,
 	    const unsigned long long number_of_histories,
@@ -45,7 +45,7 @@ BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,Estima
 }
 
 // Run the simulation set up by the user
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -57,9 +57,9 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   // Enable geometry thread support
   GMI::enableThreadSupport(
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   // Enable estimator thread support
-  EMI::enableThreadSupport( 
+  EMI::enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
   d_comm->barrier();
@@ -91,18 +91,18 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Coordinate the workers (master only)
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::coordinateWorkers()
 {
   // The number of batches that need to be run (don't count master proc.)
-  unsigned long long number_of_batches = 
+  unsigned long long number_of_batches =
     d_number_of_batches_per_processor*(d_comm->getSize()-1);
-  
+
   // The size of each batch (except possibly the last batch)
-  unsigned long long batch_size = 
+  unsigned long long batch_size =
     this->getNumberOfHistories()/number_of_batches;
 
   // The current batch number
@@ -112,9 +112,9 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   Teuchos::Tuple<unsigned long long,2> batch_info;
 
   // The idle worker info
-  Teuchos::RCP<Teuchos::CommStatus<unsigned long long> > 
+  Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >
     idle_worker_info;
-  
+
   // The root process will handle all batch requests and data collection
   while( true )
   {
@@ -127,45 +127,45 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     }
     // Check for an idle worker to assign the next batch to
     else if( this->isIdleWorkerPresent( idle_worker_info ) )
-    {  
+    {
       // Set the batch start history
       batch_info[0] = batch_number*batch_size;
-      
+
       // Set the batch end history (plus one)
       batch_info[1] = batch_info[0] + batch_size;
-      
+
       // Check if the size of the last batch is correct
       if( batch_number == number_of_batches - 1 )
       {
-	batch_info[1] += 
+	batch_info[1] +=
 	  this->getNumberOfHistories()-number_of_batches*batch_size;
       }
-      
+
       this->assignWorkToIdleWorker( *idle_worker_info, batch_info );
-      
+
       // Increment the batch number
       ++batch_number;
     }
-  }  
+  }
 }
 
 // Tell workers to stop working
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::stopWorkersAndRecordWork()
-	       
+
 {
   // The number of histories completed by each worker
-  Teuchos::Array<Teuchos::RCP<unsigned long long> > 
+  Teuchos::Array<Teuchos::RCP<unsigned long long> >
     worker_histories_completed( d_comm->getSize() );
-  
+
   for( unsigned i = 0; i < worker_histories_completed.size(); ++i )
     worker_histories_completed[i].reset( new unsigned long long( 0ull ) );
 
   // The request for each worker
-  Teuchos::Array<Teuchos::RCP<Teuchos::CommRequest<unsigned long long> > > 
+  Teuchos::Array<Teuchos::RCP<Teuchos::CommRequest<unsigned long long> > >
     requests;
 
   // The stop message
@@ -176,24 +176,24 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
     if( i != d_root_process )
     {
       try{
-        requests.push_back( 
+        requests.push_back(
               Teuchos::ireceive( *d_comm, worker_histories_completed[i], i ) );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Error: unable to get receive message on root "
                                "process " << d_root_process << " from worker "
                                "process " << i << "! " );
-      
+
       try{
         requests.push_back( Teuchos::isend( *d_comm, stop, i ) );
       }
       EXCEPTION_CATCH_RETHROW( std::runtime_error,
                                "Error: unable to send batch info from "
-                               "root process " << d_root_process << 
+                               "root process " << d_root_process <<
                                "to worker process " << i << "! " );
     }
   }
-  
+
   // Wait until all workers have responded to the stop request to
   // ensure that the work completed by each worker is up-to-date
   Teuchos::waitAll( *d_comm, requests() );
@@ -208,13 +208,13 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Check for idle worker
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
 bool BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::isIdleWorkerPresent(
      Teuchos::RCP<Teuchos::CommStatus<unsigned long long> >& idle_worker_info )
-{  
+{
   // Probe for an idle worker
   bool idle_worker_present = false;
 
@@ -229,7 +229,7 @@ bool BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Assign work to idle workers
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -242,38 +242,38 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 
   // Note: the Teuchos::CommStatus object does not declare the getter functions
   // const (possible bug)
-  Teuchos::CommStatus<unsigned long long>& idle_worker_info = 
+  Teuchos::CommStatus<unsigned long long>& idle_worker_info =
     const_cast<Teuchos::CommStatus<unsigned long long>&>( c_idle_worker_info );
 
   unsigned long long message;
-	
+
   // Contact the idle worker
   try{
-    unsigned long long source_rank = 
+    unsigned long long source_rank =
       Teuchos::receive( *d_comm, idle_worker_info.getSourceRank(), &message );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: unable to get receive message on root "
                            "process " << d_root_process << " from worker "
-                           "process " 
+                           "process "
                            << idle_worker_info.getSourceRank() << "! " );
-  
+
   // Assign the task to the worker
   try{
-    Teuchos::send<unsigned long long>( *d_comm, 
+    Teuchos::send<unsigned long long>( *d_comm,
                                        task.size(),
-                                       task.getRawPtr(), 
+                                       task.getRawPtr(),
                                        idle_worker_info.getSourceRank() );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: unable to send batch info from "
                            "root process " << d_root_process << "to worker "
-                           "process " 
+                           "process "
                            << idle_worker_info.getSourceRank() << "! " );
 }
 
 // Complete work for the master
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -281,26 +281,26 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 {
   // The batch info array that will be passed to workers
   Teuchos::Tuple<unsigned long long,2> batch_info;
-  
+
   while( true )
   {
-    unsigned long long work_completed = 
+    unsigned long long work_completed =
       this->getNumberOfHistoriesCompleted();
-      
+
     // Wait patiently for some work...
     try{
       Teuchos::send( *d_comm, work_completed, d_root_process );
     }
     EXCEPTION_CATCH_RETHROW( std::runtime_error,
-                             "Error: worker process " 
+                             "Error: worker process "
                              << d_comm->getRank() <<
                              " unable to request work from root process "
                              << d_root_process << "! " );
-        
+
     // Job assigned, lets get to it...
     try{
-      Teuchos::receive<unsigned long long>( *d_comm, 
-                                            d_root_process, 
+      Teuchos::receive<unsigned long long>( *d_comm,
+                                            d_root_process,
                                             batch_info.size(),
                                             batch_info.getRawPtr() );
     }
@@ -309,7 +309,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
                              << d_comm->getRank() <<
                              " unable to receive work from root process "
                              << d_root_process << "! " );
-    
+
     // Run the simulation batch
     if( batch_info[0] < batch_info[1] )
       this->runSimulationBatch( batch_info[0], batch_info[1] );
@@ -320,7 +320,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Print the data in all estimators to the desired stream
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -329,7 +329,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   // Make sure the global MPI session has been initialized
   testPrecondition( Teuchos::GlobalMPISession::mpiIsInitialized() );
   testPrecondition( !Teuchos::GlobalMPISession::mpiIsFinalized() );
-  
+
   if( d_comm->getRank() == d_root_process )
   {
     ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::printSimulationSummary( os );
@@ -337,11 +337,11 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Export the simulation data (to an hdf5 file)
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
-void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData( 
+void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::exportSimulationData(
                                              const std::string& data_file_name,
                                              std::ostream& os ) const
 {
@@ -356,7 +356,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
 }
 
 // Signal handler
-template<typename GeometryHandler, 
+template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
@@ -369,7 +369,7 @@ void BatchedDistributedParticleSimulationManager<GeometryHandler,SourceHandler,E
   if( d_comm->getRank() == d_root_process )
   {
     //ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::signalHandler( signal );
-    
+
     // Ask the user what to do
     std::cerr << " Status (s), Kill (k)" << std::endl;
     std::string option;

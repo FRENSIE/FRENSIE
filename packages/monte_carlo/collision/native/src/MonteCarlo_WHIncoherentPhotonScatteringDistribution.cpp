@@ -41,11 +41,11 @@ double WHIncoherentPhotonScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double scattering_function_value = 
-    this->evaluateScatteringFunction( incoming_energy, 
+  const double scattering_function_value =
+    this->evaluateScatteringFunction( incoming_energy,
 				      scattering_angle_cosine );
 
-  const double diff_kn_cross_section = 
+  const double diff_kn_cross_section =
     this->evaluateKleinNishinaDist( incoming_energy,
 				    scattering_angle_cosine );
 
@@ -53,15 +53,15 @@ double WHIncoherentPhotonScatteringDistribution::evaluate(
 }
 
 // Evaluate the integrated cross section (b)
-double WHIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+double WHIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 						  const double incoming_energy,
 						  const double precision) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper = 
+  boost::function<double (double x)> diff_cs_wrapper =
     boost::bind<double>( &WHIncoherentPhotonScatteringDistribution::evaluate,
 			 boost::cref( *this ),
 			 incoming_energy,
@@ -86,17 +86,17 @@ double WHIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 // Sample an outgoing energy and direction from the distribution
 /*! \details This function will only sample a Compton line energy (no
  * Doppler broadening).
- */ 
-void WHIncoherentPhotonScatteringDistribution::sample( 
+ */
+void WHIncoherentPhotonScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   unsigned trial_dummy;
-  
+
   return this->sampleAndRecordTrials( incoming_energy,
 				      outgoing_energy,
 				      scattering_angle_cosine,
@@ -106,8 +106,8 @@ void WHIncoherentPhotonScatteringDistribution::sample(
 // Sample an outgoing energy and direction and record the number of trials
 /*! \details This function will only sample a Compton line energy (no
  * Doppler broadening).
- */ 
-void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
+ */
+void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -115,9 +115,9 @@ void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   // Evaluate the maximum scattering function value
-  const double max_scattering_function_value = 
+  const double max_scattering_function_value =
     this->evaluateScatteringFunction( incoming_energy, -1.0 );
 
   while( true )
@@ -127,8 +127,8 @@ void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					     scattering_angle_cosine,
 					     trials );
 
-    const double scattering_function_value = 
-      this->evaluateScatteringFunction( incoming_energy, 
+    const double scattering_function_value =
+      this->evaluateScatteringFunction( incoming_energy,
 					scattering_angle_cosine );
 
     const double scaled_random_number = max_scattering_function_value*

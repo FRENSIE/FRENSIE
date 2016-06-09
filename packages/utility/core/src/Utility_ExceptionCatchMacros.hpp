@@ -30,7 +30,7 @@
  */
 
 /*! Catch statement macro for catching HDF5 H5::Exception exceptions
- * 
+ *
  * This macro is based off of the Teuchos_StandardCatchMacro. The only class
  * that handles the HDF5 interface is the Utility::HDF5FileHandler. This
  * macro will only appear in that class. The HDF5 library can throw a
@@ -76,7 +76,7 @@
     }							\
     else						\
       throw NewException( oss.str() );			\
-  } 
+  }
 
 /*! Catch statement macro for catching std::exception Exceptions
  *
@@ -115,11 +115,11 @@
     std::cerr << std::flush;						\
     std::cerr << oss.str();						\
     exit(EXIT_FAILURE);							\
-  } 
+  }
 
 /*! Catch macro for catching exceptions, adding error info, rethrowing
- * 
- * This macro should be used anywhere an exception is thrown in order to 
+ *
+ * This macro should be used anywhere an exception is thrown in order to
  * properly document the exception and add additional information to it before
  * throwing it again.
  * \ingroup exception_macros
@@ -173,8 +173,8 @@ catch( const ExceptionIn &exception )					\
     }									\
     else								\
       throw Exception(oss.str());					\
-  } 
- 
+  }
+
 
 #endif // end UTILITY_EXCEPTION_CATCH_MACROS_HPP
 

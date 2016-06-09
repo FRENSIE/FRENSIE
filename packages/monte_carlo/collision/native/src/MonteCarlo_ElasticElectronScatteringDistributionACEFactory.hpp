@@ -26,9 +26,9 @@ class ElasticElectronScatteringDistributionACEFactory
 public:
 
   typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
-            ElasticDistribution; 
+            ElasticDistribution;
 
-  //! Create a elastic distributions ( both Cutoff and Screened Rutherford ) 
+  //! Create a elastic distributions ( both Cutoff and Screened Rutherford )
   static void createCutoffElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -63,7 +63,7 @@ protected:
   //! Create the elastic scattering function
   static void createScatteringFunction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        ElasticDistribution& 
+        ElasticDistribution&
             scattering_function );
 };
 

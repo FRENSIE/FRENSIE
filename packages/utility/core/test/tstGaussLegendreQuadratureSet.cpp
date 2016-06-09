@@ -69,31 +69,31 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureSet,
 
   Utility::getGaussMoments( legendre_moments, gauss_moments );
 
-  TEST_FLOATING_EQUALITY( gauss_moments[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( gauss_moments[0].convert_to<double>(),
                           1.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[1].convert_to<double>(),
                           19.0/20.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[2].convert_to<double>(),
                           14.0/15.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[3].convert_to<double>(),
                           91.0/100.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[4].convert_to<double>(),
                           157.0/175.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[5].convert_to<double>(),
                           1109.0/1260.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[6].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[6].convert_to<double>(),
                           1004.0/1155.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[7].convert_to<double>(),
                           7339.0/8580.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[8].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[8].convert_to<double>(),
                           27211.0/32175.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[9].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[9].convert_to<double>(),
                           202673.0/243100.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[10].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[10].convert_to<double>(),
                           190518.0/230945.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[11].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[11].convert_to<double>(),
                           95731.0/117572.0, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[12].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[12].convert_to<double>(),
                           544993.0/676039.0, 1e-15);
 
   number_of_moments = 9;
@@ -101,23 +101,23 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureSet,
 
   Utility::getGaussMoments( legendre_moments_8, gauss_moments );
 
-  TEST_FLOATING_EQUALITY( gauss_moments[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( gauss_moments[0].convert_to<double>(),
                           2.597000000000000E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[1].convert_to<double>(),
                           2.596999988559773E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[2].convert_to<double>(),
                           2.596999978158346E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[3].convert_to<double>(),
                           2.596999967756919E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[4].convert_to<double>(),
                           2.596999957701758742857142857E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[5].convert_to<double>(),
                           2.596999947646598333333333333E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[6].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[6].convert_to<double>(),
                           2.596999937799198103896103896E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[7].convert_to<double>(),
                           2.596999927951797666666666667E+05, 1e-15);
-  TEST_FLOATING_EQUALITY( gauss_moments[8].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( gauss_moments[8].convert_to<double>(),
                           2.596999918252797445221445221E+05, 1e-15);
 }
 
@@ -132,32 +132,32 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureSet,
   Utility::getLegendrePowerExpansionCoefficients( coefs, power );
 
   TEST_EQUALITY_CONST( coefs[power][0].convert_to<double>(), 0.0);
-  TEST_FLOATING_EQUALITY( coefs[power][1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefs[power][1].convert_to<double>(),
                           3315.0/12155.0, 1e-15);
   TEST_EQUALITY_CONST( coefs[power][2].convert_to<double>(), 0.0);
-  TEST_FLOATING_EQUALITY( coefs[power][3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( coefs[power][3].convert_to<double>(),
                           4760.0/12155.0, 1e-15);
   TEST_EQUALITY_CONST( coefs[power][4].convert_to<double>(), 0.0);
-  TEST_FLOATING_EQUALITY( coefs[power][5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( coefs[power][5].convert_to<double>(),
                           2992.0/12155.0, 1e-15);
   TEST_EQUALITY_CONST( coefs[power][6].convert_to<double>(), 0.0);
-  TEST_FLOATING_EQUALITY( coefs[power][7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( coefs[power][7].convert_to<double>(),
                           960.0/12155.0, 1e-15);
   TEST_EQUALITY_CONST( coefs[power][8].convert_to<double>(), 0.0);
-  TEST_FLOATING_EQUALITY( coefs[power][9].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( coefs[power][9].convert_to<double>(),
                           128.0/12155.0, 1e-15);
 }
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{  
+{
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -174,7 +174,7 @@ int main( int argc, char** argv )
   legendre_moments_8[6] = 2.596999791386693E+05L;//2.597000000000000E+05;
   legendre_moments_8[7] = 2.596999726004124E+05L;//2.597000000000000E+05;
   legendre_moments_8[8] = 2.596999652394188E+05L;//2.597000000000000E+05;
-   
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -187,7 +187,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 //---------------------------------------------------------------------------//
 // end tstGaussLegendreQuadratureSet.cpp

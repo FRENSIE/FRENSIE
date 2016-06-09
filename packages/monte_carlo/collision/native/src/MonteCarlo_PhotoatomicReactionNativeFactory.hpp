@@ -51,14 +51,14 @@ public:
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
        const bool use_detailed_pair_production_data );
-  
+
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
-					       
+
   //! Create the subshell photoelectric photoatomic reactions
   static void createSubshellPhotoelectricReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
@@ -80,7 +80,7 @@ private:
   PhotoatomicReactionNativeFactory();
 
 };
-				     
+
 
 } // end MonteCarlo namespace
 

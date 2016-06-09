@@ -36,14 +36,14 @@ public:
 };
 
 // Convert a subshell enum to a compton profile subshell index
-inline unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex( 
+inline unsigned VoidComptonProfileSubshellConverter::convertSubshellToIndex(
 					    const Data::SubshellType subshell ) const
 {
   return (unsigned)subshell - 1u;
 }
 
 // Test if a subshell enum is valid
-inline bool VoidComptonProfileSubshellConverter::isSubshellValid( 
+inline bool VoidComptonProfileSubshellConverter::isSubshellValid(
 					    const Data::SubshellType subshell ) const
 {
   return true;

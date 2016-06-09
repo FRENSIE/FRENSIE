@@ -24,7 +24,7 @@ public:
   //! Constructor
   ScatteringDistribution()
   { /* ... */ }
-  
+
   //! Destructor
   virtual ~ScatteringDistribution()
   { /* ... */ }
@@ -36,7 +36,7 @@ protected:
 };
 
 // Sample an azimuthal angle from a uniform distribution
-inline double 
+inline double
 ScatteringDistribution::sampleAzimuthalAngle() const
 {
   return 2*Utility::PhysicalConstants::pi*

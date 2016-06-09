@@ -94,15 +94,15 @@ tutorial for this class is shown below:
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-  
+
   h_data_list = cs_list.get( 'H-Native' )
   h_native_file_name = 'datadir' + h_data_list.get( 'photoatomic_file_path' )
-  
+
   h_native_data = PyFrensie.Data.Native.ElectronPhotonRelaxationDataContainer( h_native_file_name )
 
   matplotlib.pyplot.loglog( h_native_data.getPhotonEnergyGrid(), h_native_data.getWallerHartreeIncoherentCrossSection() )
   matplotlib.pyplot.loglog( h_native_data.getPhotonEnergyGrid(), h_native_data.getImpulseApproxIncoherentCrossSection() )
-  matplotlib.pyplot.show()  
+  matplotlib.pyplot.show()
 "
 
 // Allow std::set<unsigned> output type
@@ -117,11 +117,11 @@ tutorial for this class is shown below:
 // methods.
 %extend Data::ElectronPhotonRelaxationDataContainer
 {
-  static const Utility::ArchivableObject::ArchiveType ASCII = 
+  static const Utility::ArchivableObject::ArchiveType ASCII =
     Utility::ArchivableObject::ASCII_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType BINARY = 
+  static const Utility::ArchivableObject::ArchiveType BINARY =
     Utility::ArchivableObject::BINARY_ARCHIVE;
-  static const Utility::ArchivableObject::ArchiveType XML = 
+  static const Utility::ArchivableObject::ArchiveType XML =
     Utility::ArchivableObject::XML_ARCHIVE;
 
   // String conversion method
@@ -129,7 +129,7 @@ tutorial for this class is shown below:
   {
     std::ostringstream oss;
     oss << "EPR for Z=" << $self->getAtomicNumber();
-    
+
     return PyString_FromString( oss.str().c_str() );
   }
 
@@ -137,9 +137,9 @@ tutorial for this class is shown below:
   PyObject* __repr__() const
   {
     std::ostringstream oss;
-    oss << "ElectronPhotonRelaxationDataContainer(EPR for Z=" 
+    oss << "ElectronPhotonRelaxationDataContainer(EPR for Z="
         << $self->getAtomicNumber() << ")";
-          
+
     return PyString_FromString( oss.str().c_str() );
   }
 }

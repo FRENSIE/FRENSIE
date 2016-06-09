@@ -52,7 +52,7 @@ SourceHDF5FileHandler::SourceHDF5FileHandler(
   EXCEPTION_CATCH_RETHROW( std::runtime_error,
                            "Error: Unable to construct the source HDF5 file "
                            "handler!" );
-  
+
 }
 
 // Constructor (file sharing)
@@ -64,7 +64,7 @@ SourceHDF5FileHandler::SourceHDF5FileHandler(
   // Make sure the file is valid
   testPrecondition( hdf5_file.get() );
   testPrecondition( hdf5_file->hasOpenFile() );
-  
+
   Utility::HDF5FileHandler::throwExceptions();
 }
 
@@ -78,43 +78,43 @@ SourceHDF5FileHandler::~SourceHDF5FileHandler()
 // Check if a source exists
 bool SourceHDF5FileHandler::doesSourceExist( const unsigned source_id ) const
 {
-  return d_hdf5_file->doesGroupExist( 
+  return d_hdf5_file->doesGroupExist(
                                    this->getSourceGroupLocation( source_id ) );
 }
 
 // Set the number of source sampling trials
-void SourceHDF5FileHandler::setNumberOfSourceSamplingTrials( 
+void SourceHDF5FileHandler::setNumberOfSourceSamplingTrials(
                                               const unsigned source_id,
                                               const unsigned long long trials )
 {
-  std::string group_location = 
+  std::string group_location =
     this->getSourceGroupLocation( source_id );
-  
+
   try{
-    d_hdf5_file->writeValueToGroupAttribute( trials, 
-                                             group_location, 
+    d_hdf5_file->writeValueToGroupAttribute( trials,
+                                             group_location,
                                              "trials" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the number of trials for "
                            "source " << source_id << "!" );
 }
 
 // Get the number of source sampling trials
-unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamplingTrials( 
+unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamplingTrials(
                                                const unsigned source_id ) const
 {
-  std::string group_location = 
+  std::string group_location =
     this->getSourceGroupLocation( source_id );
 
   unsigned long long trials;
 
   try{
-    d_hdf5_file->readValueFromGroupAttribute( trials, 
+    d_hdf5_file->readValueFromGroupAttribute( trials,
                                               group_location,
                                               "trials" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the number of trials for "
                            "source" << source_id << "!" );
 
@@ -122,37 +122,37 @@ unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamplingTrials(
 }
 
 // Set the number of default source sampling trials
-void SourceHDF5FileHandler::setNumberOfDefaultSourceSamplingTrials( 
+void SourceHDF5FileHandler::setNumberOfDefaultSourceSamplingTrials(
                                               const unsigned long long trials )
 {
-  std::string group_location = 
+  std::string group_location =
     SourceHDF5FileHandler::source_group_loc_name;
 
   try{
-    d_hdf5_file->writeValueToGroupAttribute( trials, 
-                                             group_location, 
+    d_hdf5_file->writeValueToGroupAttribute( trials,
+                                             group_location,
                                              "trials" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the number of trials for "
                            "the default source!" );
 }
 
 // Get the number of default source sampling trials
-unsigned long long 
+unsigned long long
 SourceHDF5FileHandler::getNumberOfDefaultSourceSamplingTrials() const
 {
-  std::string group_location = 
+  std::string group_location =
     SourceHDF5FileHandler::source_group_loc_name;
 
   unsigned long long trials;
 
   try{
-    d_hdf5_file->readValueFromGroupAttribute( trials, 
-                                              group_location, 
+    d_hdf5_file->readValueFromGroupAttribute( trials,
+                                              group_location,
                                               "trials" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the number of trials for "
                            "the default source!" );
 
@@ -161,38 +161,38 @@ SourceHDF5FileHandler::getNumberOfDefaultSourceSamplingTrials() const
 
 
 // Set the number of source samples
-void SourceHDF5FileHandler::setNumberOfSourceSamples( 
+void SourceHDF5FileHandler::setNumberOfSourceSamples(
                                              const unsigned source_id,
                                              const unsigned long long samples )
 {
-  std::string group_location = 
+  std::string group_location =
     this->getSourceGroupLocation( source_id );
-  
+
   try{
-    d_hdf5_file->writeValueToGroupAttribute( samples, 
+    d_hdf5_file->writeValueToGroupAttribute( samples,
                                              group_location,
                                              "samples" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the number of samples for "
                            "source " << source_id << "!" );
 }
 
 // Get the number of source samples
-unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamples( 
+unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamples(
                                                const unsigned source_id ) const
 {
-  std::string group_location = 
+  std::string group_location =
     this->getSourceGroupLocation( source_id );
 
   unsigned long long samples;
-  
+
   try{
-    d_hdf5_file->readValueFromGroupAttribute( samples, 
+    d_hdf5_file->readValueFromGroupAttribute( samples,
                                               group_location,
                                               "samples" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the number of samples for "
                            "source " << source_id << "!" );
 
@@ -200,37 +200,37 @@ unsigned long long SourceHDF5FileHandler::getNumberOfSourceSamples(
 }
 
 // Set the number of default source samples
-void SourceHDF5FileHandler::setNumberOfDefaultSourceSamples( 
+void SourceHDF5FileHandler::setNumberOfDefaultSourceSamples(
                                              const unsigned long long samples )
 {
-  std::string group_location = 
+  std::string group_location =
     SourceHDF5FileHandler::source_group_loc_name;
-  
+
   try{
-    d_hdf5_file->writeValueToGroupAttribute( samples, 
+    d_hdf5_file->writeValueToGroupAttribute( samples,
                                              group_location,
                                              "samples" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to set the number of samples for "
                            "the default source!" );
 }
 
 // Get the number of default source samples
-unsigned long long 
+unsigned long long
 SourceHDF5FileHandler::getNumberOfDefaultSourceSamples() const
 {
-  std::string group_location = 
+  std::string group_location =
     SourceHDF5FileHandler::source_group_loc_name;
 
   unsigned long long samples;
-  
+
   try{
-    d_hdf5_file->readValueFromGroupAttribute( samples, 
+    d_hdf5_file->readValueFromGroupAttribute( samples,
                                               group_location,
                                               "samples" );
   }
-  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+  EXCEPTION_CATCH_RETHROW( std::runtime_error,
 			   "Error: Unable to get the number of samples for "
                            "the default source!" );
 
@@ -238,7 +238,7 @@ SourceHDF5FileHandler::getNumberOfDefaultSourceSamples() const
 }
 
 // Get the source location
-std::string SourceHDF5FileHandler::getSourceGroupLocation( 
+std::string SourceHDF5FileHandler::getSourceGroupLocation(
                                                const unsigned source_id ) const
 {
   std::ostringstream oss;

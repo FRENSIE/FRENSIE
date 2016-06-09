@@ -66,7 +66,7 @@ public:
         Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
 //protected:
-  
+
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
         const Teuchos::ArrayRCP<const double>& energy_grid,

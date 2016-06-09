@@ -21,11 +21,11 @@ ENDLDataGenerator::ENDLDataGenerator( const unsigned atomic_number )
 }
 
 // Set the atomic number
-void ENDLDataGenerator::setAtomicNumber( 
+void ENDLDataGenerator::setAtomicNumber(
         Data::ENDLVolatileDataContainer&
         data_container ) const
 {
-  data_container.setAtomicNumber( d_atomic_number ); 
+  data_container.setAtomicNumber( d_atomic_number );
 }
 
 // Get the atomic number
@@ -33,7 +33,7 @@ unsigned ENDLDataGenerator::getAtomicNumber() const
 {
   return d_atomic_number;
 }
-			    
+
 
 } // end DataGen
 

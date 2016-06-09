@@ -31,7 +31,7 @@ public:
   TestHardElasticElectronScatteringDistribution(
     const double atomic_number,
     const Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > > elastic_scattering_distribution )
-    : MonteCarlo::HardElasticElectronScatteringDistribution( 
+    : MonteCarlo::HardElasticElectronScatteringDistribution(
         atomic_number,
         elastic_scattering_distribution )
   { /* ... */ }
@@ -49,26 +49,26 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HardElasticElectronScatteringDistribution> 
+Teuchos::RCP<MonteCarlo::HardElasticElectronScatteringDistribution>
   ace_basic_elastic_distribution;
 
-Teuchos::RCP<TestHardElasticElectronScatteringDistribution> 
+Teuchos::RCP<TestHardElasticElectronScatteringDistribution>
   test_ace_basic_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluatePDF )
 {
-  // Set energy in MeV and angle cosine 
+  // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
   double scattering_angle_cosine = 0.0;
 
   // Calculate the pdf
-  double pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
+  double pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 1 energy 1
@@ -76,8 +76,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   scattering_angle_cosine = 9.800000000000E-01;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 2
@@ -86,8 +86,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E+05;
   scattering_angle_cosine = -1.000000000000E+00;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 1
@@ -95,20 +95,20 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   scattering_angle_cosine = 9.999990000000E-01;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 4.48786781766095E+05, 1e-15 );
 
-  // Set energy in MeV and angle cosine 
+  // Set energy in MeV and angle cosine
   unsigned energy_bin = 1;
   scattering_angle_cosine = 0.0;
 
   // Calculate the pdf
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin,
                                                  scattering_angle_cosine );
 
   // Test 1 energy_bin 1
@@ -116,8 +116,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   scattering_angle_cosine = 9.800000000000E-01;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin,
                                                  scattering_angle_cosine );
 
   // Test 2
@@ -126,8 +126,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   // Test with a different energy_bin
   energy_bin = 13;
   scattering_angle_cosine = -1.000000000000E+00;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin,
                                                  scattering_angle_cosine );
 
   // Test 1
@@ -135,8 +135,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   scattering_angle_cosine = 9.999990000000E-01;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin,
                                                  scattering_angle_cosine );
 
   // Test 2
@@ -147,47 +147,47 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the pdf can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordPDF )
 {
-  // Set energy in MeV and angle cosine 
+  // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
 
   long double scattering_angle_cosine = 9.999992000000E-01L;
-  double pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  double pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 1
   TEST_FLOATING_EQUALITY( pdf_value, 9.07761855353150E+01, 1e-12 );
 
   scattering_angle_cosine = 9.999994000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 9.07761990732033E+01, 1e-12 );
 
   scattering_angle_cosine = 9.999996000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 3
   TEST_FLOATING_EQUALITY( pdf_value, 9.07762126110947E+01, 1e-12 );
 
   scattering_angle_cosine = 9.999998000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 4
   TEST_FLOATING_EQUALITY( pdf_value, 9.07762261489891E+01, 1e-12 );
 
   scattering_angle_cosine = 1.000000000000E+00L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 5
@@ -198,40 +198,40 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   energy = 1.00E+05;
 
   scattering_angle_cosine = 9.99999200000000000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 1
   TEST_FLOATING_EQUALITY( pdf_value, 7.01229331962953E+05, 1e-12 );
 
   scattering_angle_cosine = 9.999994000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 1.24662988038874E+06, 1e-12 );
 
   scattering_angle_cosine = 9.999996000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 3
   TEST_FLOATING_EQUALITY( pdf_value, 2.80491703692042E+06, 1e-12 );
 
   scattering_angle_cosine = 9.999998000000E-01L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 4
   TEST_FLOATING_EQUALITY( pdf_value, 1.12196658202311E+07, 1e-12 );
 
   scattering_angle_cosine = 1.000000000000E+00L;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy, 
+  pdf_value =
+    ace_basic_elastic_distribution->evaluateScreenedRutherfordPDF( energy,
                                                  scattering_angle_cosine );
 
   // Test 5
@@ -241,20 +241,20 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the energy can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    getEnergy )
 {
   // Set energy bin
   unsigned energy_bin = 1;
 
-  double energy = 
+  double energy =
     ace_basic_elastic_distribution->getEnergy( energy_bin );
 
   TEST_FLOATING_EQUALITY( energy, 1.0e-3, 1e-12 );
 
 
   energy_bin = 13;
-  energy = 
+  energy =
     ace_basic_elastic_distribution->getEnergy( energy_bin );
 
   TEST_FLOATING_EQUALITY( energy, 1.0e+5, 1e-12 );
@@ -263,23 +263,23 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened Rutherford cross section ratio can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluateScreenedRutherfordCrossSectionRatio )
 {
   // Set energy in MeV
   double energy = 1.0e-5;
 
   // Calculate screening constant
-  double ratio = 
+  double ratio =
     ace_basic_elastic_distribution->
                 evaluateScreenedRutherfordCrossSectionRatio( energy );
 
   // Test 1
   TEST_FLOATING_EQUALITY( ratio, 5.000000001434400E-07, 1e-12 );
 
- 
+
   energy = 1.0;
-  ratio = 
+  ratio =
     ace_basic_elastic_distribution->
                 evaluateScreenedRutherfordCrossSectionRatio( energy );
 
@@ -288,7 +288,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   energy = 1.0e5;
-  ratio = 
+  ratio =
     ace_basic_elastic_distribution->
                 evaluateScreenedRutherfordCrossSectionRatio( energy );
 
@@ -299,22 +299,22 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that Moliere's screening constant can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluateMoliereScreeningConstant )
 {
   // Set energy in MeV
   double energy = 1.0e-5;
 
   // Calculate screening constant
-  double screening_factor = 
+  double screening_factor =
     test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 1
   TEST_FLOATING_EQUALITY( screening_factor, 2.5131795894201700E+03, 1e-12 );
 
- 
+
   energy = 1.0;
-  screening_factor = 
+  screening_factor =
     test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 2
@@ -322,7 +322,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 
   energy = 1.0e5;
-  screening_factor = 
+  screening_factor =
     test_ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test 3
@@ -331,7 +331,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the screened analytical function angle can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluateScreenedScatteringAngle )
 {
   // Set fake random number stream
@@ -344,7 +344,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   double energy = 1.0;
 
   // Calculate screening angle
-  double scattering_angle_cosine = 
+  double scattering_angle_cosine =
     test_ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
 
   // Test
@@ -353,7 +353,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl_distribution )
 {
   // Set fake random number stream
@@ -371,7 +371,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 electron.getEnergy(),
                                                 scattering_angle_cosine,
                                                 trials );
@@ -382,7 +382,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl_analytical )
 {
   // Set fake random number stream
@@ -391,7 +391,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
@@ -400,7 +400,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from analytical function
-  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  test_ace_basic_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 electron.getEnergy(),
                                                 scattering_angle_cosine,
                                                 trials );;
@@ -413,7 +413,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sample_distribution )
 {
   // Set fake random number stream
@@ -440,7 +440,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that sample can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sample_analytical )
 {
   // Set fake random number stream
@@ -449,7 +449,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
@@ -468,7 +468,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sampleAndRecordTrials_distribution )
 {
   // Set fake random number stream
@@ -486,7 +486,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  ace_basic_elastic_distribution->sampleAndRecordTrials( 
+  ace_basic_elastic_distribution->sampleAndRecordTrials(
                                           electron.getEnergy(),
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -498,7 +498,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrials can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    sampleAndRecordTrials_analytical )
 {
   // Set fake random number stream
@@ -507,7 +507,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
@@ -516,7 +516,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from analytical function
-  ace_basic_elastic_distribution->sampleAndRecordTrials( 
+  ace_basic_elastic_distribution->sampleAndRecordTrials(
                                           electron.getEnergy(),
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -529,7 +529,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterElectron_distribution )
 {
   // Set fake random number stream
@@ -541,14 +541,14 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
-  
+
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.0e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  ace_basic_elastic_distribution->scatterElectron( electron, 
-                                                   bank, 
+  ace_basic_elastic_distribution->scatterElectron( electron,
+                                                   bank,
                                                    shell_of_interaction );
 
   // Test
@@ -558,7 +558,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterElectron_analytical )
 {
   // Set fake random number stream
@@ -570,14 +570,14 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
-  
+
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  ace_basic_elastic_distribution->scatterElectron( electron, 
-                                                   bank, 
+  ace_basic_elastic_distribution->scatterElectron( electron,
+                                                   bank,
                                                    shell_of_interaction );
 
   // Test
@@ -587,7 +587,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_distribution )
 {
   // Set fake random number stream
@@ -599,27 +599,27 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
-  
+
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
   adjoint_electron.setEnergy( 1.0e-3 );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  ace_basic_elastic_distribution->scatterAdjointElectron( 
-                                                   adjoint_electron, 
-                                                   bank, 
+  ace_basic_elastic_distribution->scatterAdjointElectron(
+                                                   adjoint_electron,
+                                                   bank,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 
-                          9.874339332031E-01, 
+  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
+                          9.874339332031E-01,
                           1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 //---------------------------------------------------------------------------//
 // Check that the angle can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterAdjointElectron_analytical )
 {
   // Set fake random number stream
@@ -631,20 +631,20 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   MonteCarlo::ParticleBank bank;
   Data::SubshellType shell_of_interaction;
-  
+
   MonteCarlo::AdjointElectronState adjoint_electron( 0 );
   adjoint_electron.setEnergy( 1.1e-3 );
   adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter adjoint electron
-  ace_basic_elastic_distribution->scatterAdjointElectron( 
-                                                   adjoint_electron, 
-                                                   bank, 
+  ace_basic_elastic_distribution->scatterAdjointElectron(
+                                                   adjoint_electron,
+                                                   bank,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(), 
-                          0.999999500000, 
+  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
+                          0.999999500000,
                           1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.1e-3, 1e-12 );
 
@@ -656,7 +656,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -666,24 +666,24 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -691,7 +691,7 @@ int main( int argc, char** argv )
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				      xss_data_extractor->extractELASIBlock() );
-  
+
   // Extract the number of tabulated distributions
   int size = elasi_block.size()/3;
 
@@ -705,18 +705,18 @@ int main( int argc, char** argv )
   Teuchos::Array<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
+  Teuchos::ArrayView<const double> elas_block =
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     elastic_scattering_distribution( size );
-  
+
   for( unsigned n = 0; n < size; ++n )
   {
     elastic_scattering_distribution[n].first = energy_grid[n];
 
-    elastic_scattering_distribution[n].second.reset( 
+    elastic_scattering_distribution[n].second.reset(
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -725,9 +725,9 @@ int main( int argc, char** argv )
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n] ) ) );
 */
-  }  
+  }
 
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
   // Create the distributions
@@ -760,7 +760,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

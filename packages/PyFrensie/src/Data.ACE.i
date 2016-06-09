@@ -12,7 +12,7 @@ PyFrensie.Data.ACE is the python interface to the FRENSIE data/ace
 subpackage.
 
 The purpose of ACE is to provide tools for reading data from an ACE table
-and extracting data blocks from the XSS array. 
+and extracting data blocks from the XSS array.
 "
 %enddef
 
@@ -81,21 +81,21 @@ Data::ACEFileHandler
 "
 The ACEFileHandler can be used to read in any ACE table and extract
 the NXS array, JXS array and XSS array. Usually, these arrays are then
-passed to one of the XSSDataExtractor classes to extract the individual 
+passed to one of the XSSDataExtractor classes to extract the individual
 data blocks from the XSS array. A brief usage tutorial for this class is
 shown below:
 
   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy
-  
+
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-  
+
   h_data_list = cs_list.get( 'H' )
   h_ace_file_name = 'datadir' + h_data_list.get( 'photoatomic_file_path' )
 
   h_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_ace_file_name, h_data_list.get( 'photoatomic_table_name' ), h_data_list.get( 'photoatomic_file_start_line' ) )
-  
+
   nxs_array = h_ace_file.getTableNXSArray()
   jxs_array = h_ace_file.getTableJXSArray()
   xss_array = h_ace_file.getTableXSSArray()
@@ -110,7 +110,7 @@ shown below:
     std::string string_rep( $self->getTableName() );
     string_rep += " from ";
     string_rep += $self->getLibraryName();
-    
+
     return PyString_FromString( string_rep.c_str() );
   }
 
@@ -122,7 +122,7 @@ shown below:
     string_rep += " from ";
     string_rep += $self->getLibraryName();
     string_rep += ")";
-      
+
     return PyString_FromString( string_rep.c_str() );
   }
 };
@@ -142,8 +142,8 @@ shown below:
 %extend Data::EXTRACTOR
 {
   // Constructor
-  EXTRACTOR( PyObject* nxs_py_array, 
-             PyObject* jxs_py_array, 
+  EXTRACTOR( PyObject* nxs_py_array,
+             PyObject* jxs_py_array,
              PyObject* xss_py_array )
   {
     Teuchos::Array<int> nxs_array;
@@ -178,17 +178,17 @@ xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
-  
+
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-  
+
   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'nuclear_file_path' )
 
   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'nuclear_table_name' ), h_1_data_list.get( 'nuclear_file_start_line' ) )
-  
-  neutron_data_extractor = PyFrensie.Data.ACE.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
+
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSNeutronDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
 
   matplotlib.pyplot.loglog( neutron_data_extractor.extractEnergyGrid(), neutron_data_extractor.extractTotalCrossSection() )
   matplotlib.pyplot.show()
@@ -211,17 +211,17 @@ xss array found in an ACE data table.  A brief usage tutorial for this class is
 shown below:
 
   import PyFrensie.Data.ACE, PyTrilinos.Teuchos, numpy, matplotlib.pyplot
-  
+
   source = PyTrilinos.Teuchos.FileInputSource( 'datadir/cross_sections.xml' )
   xml_obj = source.getObject()
   cs_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )
-  
+
   h_1_data_list = cs_list.get( 'H-1_293.6K_v8' )
   h_1_ace_file_name = 'datadir' + h_1_data_list.get( 'photoatomic_file_path' )
 
   h_1_ace_file = PyFrensie.Data.ACE.ACEFileHandler( h_1_ace_file_name, h_1_data_list.get( 'photoatomic_table_name' ), h_1_data_list.get( 'photoatomic_file_start_line' ) )
-  
-  neutron_data_extractor = PyFrensie.Data.ACE.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )  
+
+  neutron_data_extractor = PyFrensie.Data.ACE.XSSEPRDataExtractor( h_1_ace_file.getTableNXSArray(), h_1_ace_file.getTableJXSArray(), h_1_ace_file.getTableXSSArray() )
 
   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractIncoherentCrossSection() )
   matplotlib.pyplot.loglog( neutron_data_extractor.extractPhotonEnergyGrid(), neutron_data_extractor.extractCoherentCrossSection() )

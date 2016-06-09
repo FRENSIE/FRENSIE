@@ -27,14 +27,14 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP< const MonteCarlo::HardElasticElectronScatteringDistribution> 
+Teuchos::RCP< const MonteCarlo::HardElasticElectronScatteringDistribution>
   ace_basic_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the common angular grid can be created
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    createCommonAngularGrid )
 {
 
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    getAngularGrid )
 {
 
@@ -120,7 +120,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    evaluateMoliereScreeningConstant )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   double energy = 1.0;
 
   // Calculate scrrening angle
-  double screening_factor = 
+  double screening_factor =
     ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test
@@ -139,7 +139,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the screened analytical function angle can be evaluated
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    evaluateScreenedScatteringAngle )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   double energy = 1.0;
 
   // Calculate screening angle
-  double scattering_angle_cosine = 
+  double scattering_angle_cosine =
     ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
 
   // Test
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrialsImpl_distribution )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -184,7 +184,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 }
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrialsImpl_analytical )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -208,13 +208,13 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incoming_energy = 1.0e-3;
   double scattering_angle_cosine;
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from analytical function
-  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl( 
+  ace_basic_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );;
@@ -227,7 +227,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sample_distribution )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 }
 //---------------------------------------------------------------------------//
 // Check that sample can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sample_analytical )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incoming_energy = 1.1e-3 ;
   double scattering_angle_cosine, outgoing_energy;
 
@@ -283,7 +283,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 }
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated from the distribution
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_distribution )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  ace_basic_elastic_distribution->sampleAndRecordTrials( 
+  ace_basic_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -313,7 +313,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 }
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrials can be evaluated from the screened analytical function
-TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials_analytical )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
@@ -325,13 +325,13 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   double incoming_energy = 1.1e-3;
   double scattering_angle_cosine, outgoing_energy;
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from analytical function
-  ace_basic_elastic_distribution->sampleAndRecordTrials( 
+  ace_basic_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -349,7 +349,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -359,23 +359,23 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -395,7 +395,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

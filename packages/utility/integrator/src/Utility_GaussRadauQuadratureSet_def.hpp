@@ -28,7 +28,7 @@ namespace Utility{
 
 // Function wrapper for evaluating the functor
 template<typename Functor>
-double GaussRadauQuadratureSet::functorWrapper( const double x, 
+double GaussRadauQuadratureSet::functorWrapper( const double x,
 						     void* indirected_functor )
 {
   // Make sure the functor is valid
@@ -41,10 +41,10 @@ double GaussRadauQuadratureSet::functorWrapper( const double x,
 
 // Integrate the function
 template<typename Functor>
-void GaussRadauQuadratureSet::integrate( 
-        Functor& integrand, 
+void GaussRadauQuadratureSet::integrate(
+        Functor& integrand,
         double fixed_point,
-        double lower_limit, 
+        double lower_limit,
         double upper_limit,
         double& result ) const
 {
@@ -55,9 +55,9 @@ void GaussRadauQuadratureSet::integrate(
   // Make sure the integration limits are bounded
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( lower_limit ) );
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
-  
+
   // Get the Radau quadrature weights and nodes
-  std::vector<double> nodes( d_polynomial_order + 1 ),  
+  std::vector<double> nodes( d_polynomial_order + 1 ),
                       weights( d_polynomial_order + 1 );
 
   findNodesAndWeights( fixed_point, nodes, weights );

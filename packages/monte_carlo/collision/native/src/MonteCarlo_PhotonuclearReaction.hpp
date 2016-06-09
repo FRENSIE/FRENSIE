@@ -27,7 +27,7 @@ namespace MonteCarlo{
 template<typename OutgoingParticleType>
 class PhotonuclearReaction
 {
-  
+
 private:
 
   // Teuchos ScalarTraits typedef
@@ -36,7 +36,7 @@ private:
 public:
 
   //! Constructor
-  PhotonuclearReaction( 
+  PhotonuclearReaction(
 		   const PhotonuclearReactionType reaction_type,
       		   const double q_value,
 		   const unsigned threshold_energy_index,

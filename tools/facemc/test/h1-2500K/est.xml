@@ -1,5 +1,5 @@
 <ParameterList name="Estimators">
-  
+
   <ParameterList name="H Sphere Surface Current">
     <Parameter name="Id" type="unsigned int" value="1"/>
     <Parameter name="Type" type="string" value="Surface Current"/>

@@ -58,12 +58,12 @@ void SurfaceCurrentEstimator<
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
-  
+
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    double contribution = 
+    double contribution =
       ContributionMultiplierPolicy::multiplier( particle );
-    
+
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
     particle_state_wrapper.setAngleCosine( angle_cosine );
 
@@ -78,7 +78,7 @@ void SurfaceCurrentEstimator<
 // Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
-		 ContributionMultiplierPolicy>::printSummary( 
+		 ContributionMultiplierPolicy>::printSummary(
                                                        std::ostream& os ) const
 {
   os << "Surface Current Estimator: " << getId() << std::endl;

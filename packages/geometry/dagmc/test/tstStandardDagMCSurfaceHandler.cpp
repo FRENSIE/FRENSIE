@@ -30,8 +30,8 @@ std::shared_ptr<Geometry::DagMCSurfaceHandler> surface_handler;
 // Check that the surface handler can be constructed
 TEUCHOS_UNIT_TEST( StandardDagMCSurfaceHandler, constructor )
 {
-  TEST_NOTHROW( surface_handler.reset( 
-                                new Geometry::StandardDagMCSurfaceHandler( 
+  TEST_NOTHROW( surface_handler.reset(
+                                new Geometry::StandardDagMCSurfaceHandler(
                                                  moab::DagMC::instance() ) ) );
 }
 
@@ -1244,17 +1244,17 @@ TEUCHOS_UNIT_TEST( StandardDagMCSurfaceHandler, getSurfaceHandle )
 int main( int argc, char** argv )
 {
   std::string test_dagmc_geom_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cad_file",
                  &test_dagmc_geom_file_name,
 		 "Test cad file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -1267,15 +1267,15 @@ int main( int argc, char** argv )
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
-  
+
   mpiSession.barrier();
 
   // Initialize dagmc
   moab::DagMC* dagmc_instance = moab::DagMC::instance();
 
-  moab::ErrorCode return_value = 
+  moab::ErrorCode return_value =
     dagmc_instance->load_file( test_dagmc_geom_file_name.c_str(), 1e-3 );
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

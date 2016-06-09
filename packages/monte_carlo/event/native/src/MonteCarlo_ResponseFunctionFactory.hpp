@@ -27,11 +27,11 @@ namespace MonteCarlo{
 //! The response function factory
 class ResponseFunctionFactory
 {
-  
+
 public:
 
   //! Create the response functions specified
-  static void createResponseFunctions( 
+  static void createResponseFunctions(
 	     const Teuchos::ParameterList& response_reps,
 	     boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
              response_id_map );
@@ -64,7 +64,7 @@ private:
 //! The invalid response function representation error
 class InvalidResponseFunctionRepresentation : public std::logic_error
 {
-  
+
 public:
 
   InvalidResponseFunctionRepresentation( const std::string& what_arg )

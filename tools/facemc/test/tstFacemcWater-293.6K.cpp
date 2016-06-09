@@ -28,7 +28,7 @@
 #endif // end HAVE_FRENSIE_MPI
 
 // Conduct a serial test
-int conductSerialTest( int argc, 
+int conductSerialTest( int argc,
                        char** argv,
                        const std::string& simulation_hdf5_file_name,
                        const bool surface_estimators_present )
@@ -36,7 +36,7 @@ int conductSerialTest( int argc,
   // Create the communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm(
                                 new Teuchos::SerialComm<unsigned long long> );
-  
+
   // Run the test problem
   int return_value = facemcCore( argc, argv, comm );
 
@@ -68,22 +68,22 @@ int conductParallelTest( int argc,
 #ifdef HAVE_FRENSIE_MPI
   // Initialize the global MPI session
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   // Create the communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
-  
+
   if( Teuchos::GlobalMPISession::mpiIsInitialized() )
     comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
   else
     comm.reset( new Teuchos::SerialComm<unsigned long long> );
-  
+
   int local_return_value = facemcCore( argc, argv, comm );
-  
+
   // Test the simulation results (with root process only)
   if( comm->getRank() == 0 )
   {
     bool local_success;
-    
+
     if( local_return_value == 0 )
     {
       local_success = testSimulationResults( simulation_hdf5_file_name,
@@ -104,7 +104,7 @@ int conductParallelTest( int argc,
                       Teuchos::inOutArg( return_value ) );
 
   bool success = (return_value == 0 ? true : false );
-      
+
   if( comm->getRank() == 0 )
   {
     if( success )
@@ -112,7 +112,7 @@ int conductParallelTest( int argc,
     else
       std::cout << "\nEnd Result: TEST FAILED" << std::endl;
   }
-  
+
   comm->barrier();
 
   return (success ? 0 : 1);
@@ -130,12 +130,12 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name,
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
          simulation_hdf5_file_name,
 	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
-  
+
   // Check estimator 1 data
   if( surface_estimators_present )
   {
     bool local_success = testEstimator1Data( hdf5_file_handler );
-    
+
     if( !local_success )
       success = false;
   }
@@ -144,7 +144,7 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name,
   if( surface_estimators_present )
   {
     bool local_success = testEstimator2Data( hdf5_file_handler );
-    
+
     if( !local_success )
       success = false;
   }
@@ -164,20 +164,20 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name,
     if( !local_success )
       success = false;
   }
-  
+
   return success;
 }
 
 // Test estimator 1 data
-bool testEstimator1Data( 
+bool testEstimator1Data(
                const MonteCarlo::EstimatorHDF5FileHandler& hdf5_file_handler )
 {
-  Teuchos::FancyOStream& out = 
+  Teuchos::FancyOStream& out =
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
 
   out << "\nEstimator 1 Tests: " << std::endl;
-  
+
   bool success = true;
 
   // Check the dimension ordering
@@ -185,7 +185,7 @@ bool testEstimator1Data(
     dimension_ordering_result;
 
   dimension_ordering[0] = MonteCarlo::ENERGY_DIMENSION;
-  
+
   hdf5_file_handler.getEstimatorDimensionOrdering(
 					       1u, dimension_ordering_result );
 
@@ -197,7 +197,7 @@ bool testEstimator1Data(
 
   Teuchos::Array<double> energy_bins, energy_bins_result;
   energy_bins = energy_bin_string.getConcreteArray<double>();
-    
+
   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						      1u, energy_bins_result );
 
@@ -211,7 +211,7 @@ bool testEstimator1Data(
   raw_bin_data[0]( 3545, 3545 );
   raw_bin_data[1]( 19866, 19882 );
   raw_bin_data[2]( 9864020, 9866206 );
-    
+
   hdf5_file_handler.getRawEstimatorEntityBinData( 1u, 1u, raw_bin_data_result);
 
   TEST_FLOATING_EQUALITY( raw_bin_data[0].first,
@@ -239,10 +239,10 @@ bool testEstimator1Data(
   processed_bin_data[0]( 0.000354499999999999997, 0.0167924818626849701 );
   processed_bin_data[1]( 0.00198659999999999982, 0.00709068410485995219 );
   processed_bin_data[2]( 0.986402000000000001, 3.74300990581649494e-05 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   1u, 1u, processed_bin_data_result );
-    
+
   TEST_FLOATING_EQUALITY( processed_bin_data[0].first,
                           processed_bin_data_result[0].first,
                           5e-3 );
@@ -266,9 +266,9 @@ bool testEstimator1Data(
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1 ), raw_total_data_result;
   raw_total_data[0]( 9887431, 9890059, 9895315, 9905827 );
-    
+
   hdf5_file_handler.getRawEstimatorTotalData( 1u, raw_total_data_result );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data,
                                         raw_total_data_result,
                                         1e-6 );
@@ -276,11 +276,11 @@ bool testEstimator1Data(
   // Check the processed total data (ignore fom)
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     processed_total_data( 1 ), processed_total_data_result;
-  processed_total_data[0]( 0.9887431, 
-                           3.41377775187904e-05, 
-                           8.39116752915233e-06, 
+  processed_total_data[0]( 0.9887431,
+                           3.41377775187904e-05,
+                           8.39116752915233e-06,
                            0.0 );
-    
+
   hdf5_file_handler.getProcessedEstimatorTotalData(
 					     1u, processed_total_data_result );
 
@@ -292,7 +292,7 @@ bool testEstimator1Data(
                           1e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-4 );    
+                          1e-4 );
 
   if( success )
     out << "\nEstimator 1 Tests Passed!" << std::endl;
@@ -306,7 +306,7 @@ bool testEstimator1Data(
 bool testEstimator2Data(
                const MonteCarlo::EstimatorHDF5FileHandler& hdf5_file_handler )
 {
-  Teuchos::FancyOStream& out = 
+  Teuchos::FancyOStream& out =
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
 
@@ -319,7 +319,7 @@ bool testEstimator2Data(
     dimension_ordering_result;
 
   dimension_ordering[0] = MonteCarlo::ENERGY_DIMENSION;
-  
+
   hdf5_file_handler.getEstimatorDimensionOrdering(
 					       2u, dimension_ordering_result );
 
@@ -331,7 +331,7 @@ bool testEstimator2Data(
 
   Teuchos::Array<double> energy_bins, energy_bins_result;
   energy_bins = energy_bin_string.getConcreteArray<double>();
-    
+
   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						      2u, energy_bins_result );
 
@@ -345,9 +345,9 @@ bool testEstimator2Data(
   raw_bin_data[0]( 5683.86952697513971, 14594.7812532433054 );
   raw_bin_data[1]( 31100.183422347498, 69401.3506014862796 );
   raw_bin_data[2]( 10228878.5287133697, 11123227.5197692532 );
-    
+
   hdf5_file_handler.getRawEstimatorEntityBinData( 2u, 1u, raw_bin_data_result);
-    
+
   TEST_FLOATING_EQUALITY( raw_bin_data[0].first,
                           raw_bin_data_result[0].first,
                           5e-3 );
@@ -373,10 +373,10 @@ bool testEstimator2Data(
   processed_bin_data[0]( 5.02704148647381354e-06, 0.0212523335207946001 );
   processed_bin_data[1]( 2.75062457994683313e-05, 0.00846482861318997165 );
   processed_bin_data[2]( 0.00904682918562853093, 7.94365252412609289e-05 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   2u, 1u, processed_bin_data_result );
-    
+
   TEST_FLOATING_EQUALITY( processed_bin_data[0].first,
                           processed_bin_data_result[0].first,
                           5e-3 );
@@ -399,13 +399,13 @@ bool testEstimator2Data(
   // Check the raw total data
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     raw_total_data( 1 ), raw_total_data_result;
-  raw_total_data[0]( 10265662.5816628225, 
+  raw_total_data[0]( 10265662.5816628225,
                      11208082.2996950392,
                      21504184.959070228,
                      790802399.980736852 );
-    
+
   hdf5_file_handler.getRawEstimatorTotalData( 2u, raw_total_data_result );
-  
+
   TEST_FLOATING_EQUALITY( raw_total_data[0].first,
                           raw_total_data_result[0].first,
                           1e-5 );
@@ -426,7 +426,7 @@ bool testEstimator2Data(
                            7.97173758261474205e-05,
                            0.00164997048202018414,
                            0.0 );
-    
+
   hdf5_file_handler.getProcessedEstimatorTotalData(
 					     2u, processed_total_data_result );
 
@@ -438,7 +438,7 @@ bool testEstimator2Data(
                           1e-3 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          2e-3 );    
+                          2e-3 );
 
   if( success )
     out << "\nEstimator 2 Tests Passed!" << std::endl;
@@ -452,7 +452,7 @@ bool testEstimator2Data(
 bool testEstimator3Data(
                const MonteCarlo::EstimatorHDF5FileHandler& hdf5_file_handler )
 {
-  Teuchos::FancyOStream& out = 
+  Teuchos::FancyOStream& out =
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
 
@@ -465,7 +465,7 @@ bool testEstimator3Data(
     dimension_ordering_result;
 
   dimension_ordering[0] = MonteCarlo::ENERGY_DIMENSION;
-  
+
   hdf5_file_handler.getEstimatorDimensionOrdering(
 					       3u, dimension_ordering_result );
 
@@ -477,7 +477,7 @@ bool testEstimator3Data(
 
   Teuchos::Array<double> energy_bins, energy_bins_result;
   energy_bins = energy_bin_string.getConcreteArray<double>();
-    
+
   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						      3u, energy_bins_result );
 
@@ -491,13 +491,13 @@ bool testEstimator3Data(
   raw_bin_data[0]( 16280.8059085589884, 129925.681132914382 );
   raw_bin_data[1]( 63224.6278668959931, 256824.094405798562 );
   raw_bin_data[2]( 30727006.5592518859, 96461378.8857043236 );
-    
+
   hdf5_file_handler.getRawEstimatorEntityBinData( 3u, 1u, raw_bin_data_result);
-    
-  UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0].first, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0].first,
                                   raw_bin_data_result[0].first,
                                   1e-2 );
-                                  
+
   // There is a sizable difference in the second moments between root and dag!
   UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0].second,
                                   raw_bin_data_result[0].second,
@@ -518,8 +518,8 @@ bool testEstimator3Data(
   UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[2].second,
                                   raw_bin_data[2].second,
                                   5e-4 );
-                                  
-                                  
+
+
 
   // Check the processed entity bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data( 3 ),
@@ -527,10 +527,10 @@ bool testEstimator3Data(
   processed_bin_data[0]( 1.44033996682406438e-05, 0.0221374348955674823 );
   processed_bin_data[1]( 5.59339377397742945e-05, 0.00800927780320575405 );
   processed_bin_data[2]( 0.0271837499057028462, 4.65569049863550464e-05 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   3u, 1u, processed_bin_data_result );
-    
+
   UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0].first,
                                   processed_bin_data_result[0].first,
                                   1e-2 );
@@ -547,7 +547,7 @@ bool testEstimator3Data(
   UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[1].second,
                                   processed_bin_data_result[1].second,
                                   2e-3 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[2].first,
                                   processed_bin_data_result[2].first,
                                   5e-4 );
@@ -563,13 +563,13 @@ bool testEstimator3Data(
                      97716642.5806116909,
                      333284440.509885013,
                      1434200222.78973603 );
-    
+
   hdf5_file_handler.getRawEstimatorTotalData( 3u, raw_total_data_result );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_data[0].first,
                                   raw_total_data_result[0].first,
                                   5e-4 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_data[0].second,
                                   raw_total_data_result[0].second,
                                   1e-3 );
@@ -590,7 +590,7 @@ bool testEstimator3Data(
                            5.44384342159306568e-05,
                            2.38507360683533061e-05,
                            0.0 );
-    
+
   hdf5_file_handler.getProcessedEstimatorTotalData(
 					     3u, processed_total_data_result );
 
@@ -615,12 +615,12 @@ bool testEstimator3Data(
 bool testEstimator4Data(
                const MonteCarlo::EstimatorHDF5FileHandler& hdf5_file_handler )
 {
-  Teuchos::FancyOStream& out = 
+  Teuchos::FancyOStream& out =
     *Teuchos::VerboseObjectBase::getDefaultOStream();
   out.precision( 18 );
 
   out << "\nEstimator 4 Tests: " << std::endl;
-  
+
   bool success = true;
 
   // Check the dimension ordering
@@ -628,7 +628,7 @@ bool testEstimator4Data(
     dimension_ordering_result;
 
   dimension_ordering[0] = MonteCarlo::ENERGY_DIMENSION;
-  
+
   hdf5_file_handler.getEstimatorDimensionOrdering(
 					       4u, dimension_ordering_result );
 
@@ -640,7 +640,7 @@ bool testEstimator4Data(
 
   Teuchos::Array<double> energy_bins, energy_bins_result;
   energy_bins = energy_bin_string.getConcreteArray<double>();
-    
+
   hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						      4u, energy_bins_result );
 
@@ -654,9 +654,9 @@ bool testEstimator4Data(
   raw_bin_data[0]( 16100.3441694685825, 139109.114816707821 );
   raw_bin_data[1]( 63632.6260250982305, 300378.663723571168 );
   raw_bin_data[2]( 30712007.4940253682, 440645646.957247078 );
-    
+
   hdf5_file_handler.getRawEstimatorEntityBinData( 4u, 1u, raw_bin_data_result);
-    
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0].first,
                                   raw_bin_data_result[0].first,
                                   1e-2 );
@@ -677,7 +677,7 @@ bool testEstimator4Data(
   UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[2].first,
                                   raw_bin_data_result[2].first,
                                   5e-4 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[2].second,
                                   raw_bin_data_result[2].second,
                                   5e-4 );
@@ -688,10 +688,10 @@ bool testEstimator4Data(
   processed_bin_data[0]( 1.42437477095143013e-05, 0.0231633924805241184 );
   processed_bin_data[1]( 5.62948879635837658e-05, 0.00860719776501863917 );
   processed_bin_data[2]( 0.0271704804439623811, 0.000605943880365985578 );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 					   4u, 1u, processed_bin_data_result );
-    
+
   UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0].first,
                                   processed_bin_data_result[0].first,
                                   1e-2 );
@@ -724,9 +724,9 @@ bool testEstimator4Data(
                      444447533.520741999,
                      7447492414.4294672,
                      148234600622.715698 );
-    
+
   hdf5_file_handler.getRawEstimatorTotalData( 4u, raw_total_data_result );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_data[0].first,
                                   raw_total_data_result[0].first,
                                   5e-4 );
@@ -738,7 +738,7 @@ bool testEstimator4Data(
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_data[0].third,
                                   raw_total_data_result[0].third,
                                   1e-3 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_data[0].fourth,
                                   raw_total_data_result[0].fourth,
                                   5e-3 );
@@ -750,7 +750,7 @@ bool testEstimator4Data(
                            0.00060725743895694679,
                            5.47007430075160271e-07,
                            0.0 );
-    
+
   hdf5_file_handler.getProcessedEstimatorTotalData(
 					     4u, processed_total_data_result );
 
@@ -762,7 +762,7 @@ bool testEstimator4Data(
                           1e-4 );
   TEST_FLOATING_EQUALITY( processed_total_data[0].third,
                           processed_total_data_result[0].third,
-                          1e-2 ); 
+                          1e-2 );
 
   if( success )
     out << "\nEstimator 4 Tests Passed!" << std::endl;

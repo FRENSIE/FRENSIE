@@ -34,7 +34,7 @@ namespace DataGen{
 //! The adjoint bremsstrahlung cross section class
 class AdjointBremsstrahlungCrossSectionEvaluator
 {
-  
+
 public:
 
   //! Typedef for the bremsstrahlung distribution
@@ -53,11 +53,11 @@ public:
 
   //! Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
   double evaluateDifferentialCrossSection(
-	  const double incoming_energy, 
+	  const double incoming_energy,
           const double outgoing_energy ) const;
 
   //! Return the cross section value at a given energy
-  double evaluateCrossSection( const double energy, 
+  double evaluateCrossSection( const double energy,
 			       const double precision = 1e-6 ) const;
 
 private:

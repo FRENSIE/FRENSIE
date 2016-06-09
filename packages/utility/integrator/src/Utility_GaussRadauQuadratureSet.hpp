@@ -30,40 +30,40 @@ public:
   //! Integrate the function
   template<typename Functor>
   void integrate( Functor& integrand,
-                  double end_point, 
-                  double lower_limit, 
+                  double end_point,
+                  double lower_limit,
                   double upper_limit,
                   double& result ) const;
 
   //! Caluclate the Jacobi Polynomial at x
   double getJacobiPolynomial( double x,
-                              int n = 1, 
+                              int n = 1,
                               int alpha = 0,
                               int beta = 1 ) const;
 
   //! Caluclate the Legendre Polynomial at x
   double getLegendrePolynomial( double x,
                               int n = 1) const;
-  
+
   //! Calculate the derivative of the nth order Jacobi Polynomial at x
   double getJacobiPolynomialDerivative( double x,
-                                        int n = 1, 
+                                        int n = 1,
                                         int alpha = 0,
                                         int beta = 1 ) const;
 
   //! Caluclate the roots of the Jacobi Polynomial
   void getJacobiPolynomialRoots( std::vector<double>& roots,
-                                 const int n = 1, 
+                                 const int n = 1,
                                  int alpha = 0,
                                  int beta = 1 ) const;
 
   //! Find the Radau nodes and wieghts including at end point -1 or 1
-  void findNodesAndWeights( double end_point, 
+  void findNodesAndWeights( double end_point,
                             std::vector<double>& nodes,
                             std::vector<double>& weights ) const;
 
   //! Find the Radau nodes and wieghts including at end point -1 or 1
-  void findNodesAndPositiveWeights( double end_point, 
+  void findNodesAndPositiveWeights( double end_point,
                                     std::vector<double>& nodes,
                                     std::vector<double>& weights ) const;
 
@@ -72,7 +72,7 @@ private:
   // Create the integrand function for the weight at a given node with end point -1 or 1
   double getWeightIntegrand( double x,
                              double node,
-                             double end_point, 
+                             double end_point,
                              int n ) const;
 
   // Create the integrand function for the weight at the end point -1 or 1

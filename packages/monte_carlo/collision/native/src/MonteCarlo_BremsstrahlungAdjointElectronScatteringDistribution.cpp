@@ -29,7 +29,7 @@ BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectr
 }
 
 // Sample an outgoing energy and direction from the distribution
-void BremsstrahlungAdjointElectronScatteringDistribution::sample( 
+void BremsstrahlungAdjointElectronScatteringDistribution::sample(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine ) const
@@ -37,14 +37,14 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sample(
   // The adjoint electron angle scattering is assumed to be negligible
   scattering_angle_cosine = 1.0;
 
-  outgoing_energy = incoming_energy + 
-                    sampleTwoDDistributionCorrelated( 
+  outgoing_energy = incoming_energy +
+                    sampleTwoDDistributionCorrelated(
                                      incoming_energy,
                                      d_bremsstrahlung_scattering_distribution );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void BremsstrahlungAdjointElectronScatteringDistribution::sampleAndRecordTrials( 
+void BremsstrahlungAdjointElectronScatteringDistribution::sampleAndRecordTrials(
                             const double incoming_energy,
                             double& outgoing_energy,
                             double& scattering_angle_cosine,
@@ -53,10 +53,10 @@ void BremsstrahlungAdjointElectronScatteringDistribution::sampleAndRecordTrials(
   trials++;
 
   sample( incoming_energy, outgoing_energy, scattering_angle_cosine );
-  
+
 }
 // Randomly scatter the electron
-void BremsstrahlungAdjointElectronScatteringDistribution::scatterAdjointElectron( 
+void BremsstrahlungAdjointElectronScatteringDistribution::scatterAdjointElectron(
                                 AdjointElectronState& adjoint_electron,
                                 ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
@@ -68,8 +68,8 @@ void BremsstrahlungAdjointElectronScatteringDistribution::scatterAdjointElectron
   double scattering_angle_cosine;
 
   // Sample outgoing electron energy
-  sample( adjoint_electron.getEnergy(), 
-          outgoing_energy, 
+  sample( adjoint_electron.getEnergy(),
+          outgoing_energy,
           scattering_angle_cosine );
 
   // Set the new electron energy

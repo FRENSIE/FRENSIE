@@ -36,7 +36,7 @@
 TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  FRENSIE::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned>
     intersection_point( -1.0, -1.0, 2, 4 );
 
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 					   6 ) );
 
   intersection_point( 1.0, -1.0, 1, 4 );
-  
+
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
 					   6 ) );
@@ -98,9 +98,9 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
 					   6 ) );
-  
+
   intersection_point( -1.0, 1.0, 2, 3 );
-  
+
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
 					   6 ) );
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 
   TEST_EQUALITY_CONST( intersection_points.size(), 4 );
 
-  FRENSIE::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned>
     ref_intersection_point( 1.0, 1.0, 1, 3 );
 
   std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
@@ -183,17 +183,17 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 
   ref_intersection_point( -1.0, -1.0, 2, 4 );
   ++point;
-  
+
   FRENSIE_TEST_EQUALITY( *point, ref_intersection_point );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell can initialize a polygon from a list of intersection 
-// points 
+// Check that the cell can initialize a polygon from a list of intersection
+// points
 TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -237,8 +237,8 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> > 
-    intersection_points, polygon;    
+  std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >
+    intersection_points, polygon;
 
   cell.calculatePolygonIntersectionPoints( 6,
 					   copy_cell_surfaces,
@@ -254,8 +254,8 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
   TEST_EQUALITY_CONST( polygon.size(), 3 );
   TEST_EQUALITY_CONST( intersection_points.size(), 1 );
   TEST_EQUALITY_CONST( current_surface_id, 2 );
-  
-  FRENSIE::Quad<double,double,unsigned,unsigned> 
+
+  FRENSIE::Quad<double,double,unsigned,unsigned>
     ref_corner_point( 1.0, -1.0, 1, 4 );
 
   std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
@@ -266,27 +266,27 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 
   ref_corner_point( 1.0, 1.0, 1, 3 );
   ++point;
-  
+
   FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, 1.0, 2, 3 );
   ++point;
-  
+
   FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, -1.0, 2, 4 );
   point = intersection_points.begin();
 
-  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );  
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell can create a polygon from a list of intersection 
-// points 
+// Check that the cell can create a polygon from a list of intersection
+// points
 TEUCHOS_UNIT_TEST( Cell, createPolygon )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -296,7 +296,7 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -341,7 +341,7 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 
   TEST_EQUALITY_CONST( intersection_points.size(), 5 );
 
-  FRENSIE::Quad<double,double,unsigned,unsigned> 
+  FRENSIE::Quad<double,double,unsigned,unsigned>
     ref_corner_point( 1.0, -1.0, 1, 4 );
 
   std::list<FRENSIE::Quad<double,double,unsigned,unsigned> >::const_iterator
@@ -351,18 +351,18 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 
   ref_corner_point( 1.0, 1.0, 1, 3 );
   ++point;
-  
+
   FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, 1.0, 2, 3 );
   ++point;
-  
+
   FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 
   ref_corner_point( -1.0, -1.0, 2, 4 );
   ++point;
 
-  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );  
+  FRENSIE_TEST_EQUALITY( *point, ref_corner_point );
 }
 
 //---------------------------------------------------------------------------//
@@ -371,7 +371,7 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -381,7 +381,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -434,12 +434,12 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell can calculate the volume contribution of the polygon 
+// Check that the cell can calculate the volume contribution of the polygon
 // created from intersection points
 TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   Teuchos::Array<FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> >
@@ -449,7 +449,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 							      1, 0, 0,
 							      -1 ) );
 
-  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense> 
+  FRENSIE::Pair<FRENSIE::Surface,FRENSIE::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -517,7 +517,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   TestCell cell( cell_definition );
 
   std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
@@ -550,7 +550,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
   surface.reset( new FRENSIE::Surface( 6,
 				      0, 0, 1,
 				      1 ) );
-  global_surface_map[6] = surface;				 
+  global_surface_map[6] = surface;
 
   cell.simplifyCellDefinitionString( cell_definition );
   cell.assignSurfaces( cell_definition,
@@ -571,7 +571,7 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
 TEUCHOS_UNIT_TEST( Cell, constructor )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
-  
+
   std::map<unsigned,Teuchos::RCP<FRENSIE::Surface> > global_surface_map;
 
   Teuchos::RCP<FRENSIE::Surface> surface( new FRENSIE::Surface( 1,

@@ -21,7 +21,7 @@ namespace MonteCarlo{
 //! The Compton profile class
 class ComptonProfile
 {
-   
+
 public:
 
   //! The Compton profile independent quantity type

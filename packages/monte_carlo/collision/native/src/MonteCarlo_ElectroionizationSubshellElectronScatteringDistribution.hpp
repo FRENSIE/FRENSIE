@@ -25,7 +25,7 @@
 namespace MonteCarlo{
 
 /*! The scattering distribution base class
- *  \details currently the binding energy is not taken into account when 
+ *  \details currently the binding energy is not taken into account when
  *  calculating the outgoing energy and direction of the original electron
  */
 class ElectroionizationSubshellElectronScatteringDistribution : public ElectronScatteringDistribution
@@ -38,13 +38,13 @@ public:
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   ElectroionizationSubshellDistribution;
 
-  //! Constructor 
+  //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(
-    const ElectroionizationSubshellDistribution& 
+    const ElectroionizationSubshellDistribution&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy );
 
-  //! Destructor 
+  //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
 
@@ -66,7 +66,7 @@ public:
   { /* ... */ }
 
   //! Evaluate the PDF value for a given incoming and knock-on energy
-  double evaluatePDF( const double incoming_energy, 
+  double evaluatePDF( const double incoming_energy,
                       const double knock_on_energy ) const;
 
   //! Evaluate the CDF
@@ -100,7 +100,7 @@ public:
 private:
 
   // electroionization subshell scattering cross sections
-  ElectroionizationSubshellDistribution 
+  ElectroionizationSubshellDistribution
      d_electroionization_subshell_scattering_distribution;
 
   // Subshell binding energy

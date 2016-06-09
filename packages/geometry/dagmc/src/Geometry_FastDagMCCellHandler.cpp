@@ -24,18 +24,18 @@ FastDagMCCellHandler::FastDagMCCellHandler( const moab::DagMC* dagmc_instance )
 
   while( cell_it != this->end() )
   {
-    ModuleTraits::InternalCellHandle cell_id = 
+    ModuleTraits::InternalCellHandle cell_id =
       const_cast<moab::DagMC*>( dagmc_instance )->get_entity_id( *cell_it );
-    
-    d_cell_id_handle_map.insert( 
+
+    d_cell_id_handle_map.insert(
                             CellIdHandleMap::value_type( cell_id, *cell_it ) );
-    
+
     ++cell_it;
   }
 }
 
 // Get the cell id from a cell handle
-ModuleTraits::InternalCellHandle FastDagMCCellHandler::getCellId( 
+ModuleTraits::InternalCellHandle FastDagMCCellHandler::getCellId(
                                   const moab::EntityHandle cell_handle ) const
 {
   // Make sure the cell handle exists
@@ -50,13 +50,13 @@ moab::EntityHandle FastDagMCCellHandler::getCellHandle(
 {
   // Make sure the cell id exists
   testPrecondition( this->doesCellExist( cell_id ) );
-  
+
 
   return d_cell_id_handle_map.left.find( cell_id )->second;
 }
 
 // Check if the cell exists
-bool FastDagMCCellHandler::doesCellExist( 
+bool FastDagMCCellHandler::doesCellExist(
                          const ModuleTraits::InternalCellHandle cell_id ) const
 {
   return d_cell_id_handle_map.left.find( cell_id ) !=
@@ -64,7 +64,7 @@ bool FastDagMCCellHandler::doesCellExist(
 }
 
 // Check if the cell handle exists
-bool FastDagMCCellHandler::doesCellHandleExist( 
+bool FastDagMCCellHandler::doesCellHandleExist(
                                    const moab::EntityHandle cell_handle ) const
 {
   return d_cell_id_handle_map.right.find( cell_handle ) !=

@@ -32,7 +32,7 @@ public:
   AtomicExcitationElectronScatteringDistribution(
     const AtomicDistribution& energy_loss_distribution );
 
-  //! Destructor 
+  //! Destructor
   virtual ~AtomicExcitationElectronScatteringDistribution()
   { /* ... */ }
 

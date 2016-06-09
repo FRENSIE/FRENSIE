@@ -18,7 +18,7 @@ double AdjointElectronGridGenerator::s_min_table_energy = 0.00001;
 double AdjointElectronGridGenerator::s_max_table_energy = 20;
 
 //! Set the min table energy (default is 0.00001 MeV)
-void AdjointElectronGridGenerator::setMinTableEnergy( 
+void AdjointElectronGridGenerator::setMinTableEnergy(
 						      const double min_energy )
 {
   // Make sure the min energy is valid
@@ -35,7 +35,7 @@ double AdjointElectronGridGenerator::getMinTableEnergy()
 }
 
 // Set the max table energy (default is 20.0 MeV)
-void AdjointElectronGridGenerator::setMaxTableEnergy( 
+void AdjointElectronGridGenerator::setMaxTableEnergy(
 						      const double max_energy )
 {
   // Make sure the max energy is valid

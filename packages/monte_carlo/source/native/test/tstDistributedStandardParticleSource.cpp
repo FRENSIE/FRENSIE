@@ -46,7 +46,7 @@ TEUCHOS_UNIT_TEST( StandardParticleSource, reduceData )
 
   for( unsigned i = 0; i < 10; ++i )
   {
-    source->sampleParticleState( bank, 
+    source->sampleParticleState( bank,
                                  Teuchos::GlobalMPISession::getRank()*10+i );
   }
 
@@ -54,9 +54,9 @@ TEUCHOS_UNIT_TEST( StandardParticleSource, reduceData )
   TEST_EQUALITY_CONST( source->getNumberOfSamples(), 10 );
   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
-  
+
   comm->barrier();
 
   source->reduceData( comm, 0 );
@@ -84,17 +84,17 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-const Teuchos::RCP<Teuchos::FancyOStream> out = 
+const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
-  
+
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
@@ -102,12 +102,12 @@ const Teuchos::RCP<Teuchos::FancyOStream> out =
   // Initialize the source
   {
     // Power distribution in r dimension
-    std::shared_ptr<Utility::OneDDistribution> 
+    std::shared_ptr<Utility::OneDDistribution>
       r_distribution( new Utility::PowerDistribution<2u>( 3.0, 0.0, 2.0 ) );
-  
+
     // Uniform distribution in theta dimension
     std::shared_ptr<Utility::OneDDistribution>
-      theta_distribution( new Utility::UniformDistribution( 
+      theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
@@ -117,7 +117,7 @@ const Teuchos::RCP<Teuchos::FancyOStream> out =
 
     // Create the spatial distribution
     std::shared_ptr<Utility::SpatialDistribution>
-      spatial_distribution( new Utility::SphericalSpatialDistribution( 
+      spatial_distribution( new Utility::SphericalSpatialDistribution(
 							    r_distribution,
 							    theta_distribution,
 							    mu_distribution,
@@ -127,7 +127,7 @@ const Teuchos::RCP<Teuchos::FancyOStream> out =
 
     // Create the directional distribution
     std::shared_ptr<Utility::DirectionalDistribution>
-      directional_distribution( new Utility::SphericalDirectionalDistribution( 
+      directional_distribution( new Utility::SphericalDirectionalDistribution(
 							   theta_distribution,
 							   mu_distribution ) );
 
@@ -140,7 +140,7 @@ const Teuchos::RCP<Teuchos::FancyOStream> out =
       time_distribution( new Utility::DeltaDistribution( 0.0 ) );
 
     // Create the distributed source
-    source.reset( new MonteCarlo::StandardParticleSource( 
+    source.reset( new MonteCarlo::StandardParticleSource(
                                                       0u,
                                                       spatial_distribution,
                                                       directional_distribution,
@@ -153,23 +153,23 @@ const Teuchos::RCP<Teuchos::FancyOStream> out =
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
-  
+
   mpiSession.barrier();
 
   out->setOutputToRootOnly( 0 );
-    
+
   if( success )
     *out << "\nEnd Result: TEST PASSED" << std::endl;
   else
     *out << "\nEnd Result: TEST FAILED" << std::endl;
 
   clp.printFinalTimerSummary(out.ptr());
-  
+
   return (success ? 0 : 1);
 }
 

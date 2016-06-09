@@ -19,7 +19,7 @@ EstimatorParticleStateWrapper::EstimatorParticleStateWrapper()
 { /* ... */ }
 
 // Particle state constructor
-EstimatorParticleStateWrapper::EstimatorParticleStateWrapper( 
+EstimatorParticleStateWrapper::EstimatorParticleStateWrapper(
                                                 const ParticleState& particle )
   : d_particle( &particle ),
     d_angle_cosine( 0.0 )

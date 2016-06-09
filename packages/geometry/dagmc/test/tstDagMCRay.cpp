@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, isReady )
 TEUCHOS_UNIT_TEST( DagMCRay, getPosition )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   const double* position = ray.getPosition();
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, getPosition )
 TEUCHOS_UNIT_TEST( DagMCRay, getDirection )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   const double* direction = ray.getDirection();
@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, getDirection )
 TEUCHOS_UNIT_TEST( DagMCRay, getCurrentCell )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   TEST_EQUALITY_CONST( ray.getCurrentCell(), 1 );
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, getCurrentCell )
 // Check that the ray can be reset
 TEUCHOS_UNIT_TEST( DagMCRay, set )
 {
-  std::shared_ptr<Geometry::Ray> raw_ray( 
+  std::shared_ptr<Geometry::Ray> raw_ray(
                            new Geometry::Ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::DagMCRay ray( *raw_ray, 1 );
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, set )
   raw_ray.reset( new Geometry::Ray( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0 ) );
 
   ray.set( raw_ray->getPosition(), raw_ray->getDirection(), 3 );
-           
+
   TEST_EQUALITY_CONST( ray.getPosition()[0], -1.0 );
   TEST_EQUALITY_CONST( ray.getPosition()[1], -1.0 );
   TEST_EQUALITY_CONST( ray.getPosition()[2], -1.0 );
@@ -120,7 +120,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, set )
 TEUCHOS_UNIT_TEST( DagMCRay, setIntersetionSurfaceData )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   TEST_ASSERT( !ray.knowsIntersectionSurface() );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, setIntersetionSurfaceData )
   TEST_EQUALITY_CONST( ray.getDistanceToIntersectionSurface(), 3.0 );
 
   ray.resetIntersectionSurfaceData();
-  
+
   TEST_ASSERT( !ray.knowsIntersectionSurface() );
 }
 
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, changeDirection )
 
   Geometry::DagMCRay ray( position, direction, 1 );
   ray.setIntersectionSurfaceData( 10, 3.0 );
-  
+
   direction[0] = 0.0;
   direction[1] = 1.0;
   direction[2] = 0.0;
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, changeDirection )
 TEUCHOS_UNIT_TEST( DagMCRay, getHistory )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   TEST_EQUALITY_CONST( ray.getHistory().size(), 0 );
@@ -174,7 +174,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, getHistory )
 TEUCHOS_UNIT_TEST( DagMCRay, advanceToIntersectionSurface )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   ray.setIntersectionSurfaceData( 10, 3.0 );
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, advanceToIntersectionSurface )
   TEST_EQUALITY_CONST( ray.getPosition()[1], 1.0 );
   TEST_EQUALITY_CONST( ray.getPosition()[2], 4.0 );
   TEST_EQUALITY_CONST( ray.getCurrentCell(), 2 );
-  
+
   // Once the ray is advanced the intersection data will be reset
   TEST_ASSERT( !ray.knowsIntersectionSurface() );
 }
@@ -195,7 +195,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, advanceToIntersectionSurface )
 TEUCHOS_UNIT_TEST( DagMCRay, advanceSubstep )
 {
   Geometry::Ray raw_ray( 1.0, 1.0, 1.0, 0.0, 0.0, 1.0 );
-  
+
   Geometry::DagMCRay ray( raw_ray, 1 );
 
   ray.setIntersectionSurfaceData( 10, 3.0 );
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST( DagMCRay, advanceSubstep )
   TEST_EQUALITY_CONST( ray.getPosition()[0], 1.0 );
   TEST_EQUALITY_CONST( ray.getPosition()[1], 1.0 );
   TEST_EQUALITY_CONST( ray.getPosition()[2], 3.0 );
-  
+
   TEST_ASSERT( ray.knowsIntersectionSurface() );
   TEST_EQUALITY_CONST( ray.getIntersectionSurface(), 10 );
   TEST_EQUALITY_CONST( ray.getDistanceToIntersectionSurface(), 1.0 );

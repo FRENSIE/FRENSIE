@@ -24,10 +24,10 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound_histogram )
 {
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -63,7 +63,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -73,17 +73,17 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(0.5), 3.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound_histogram )
 {
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -119,7 +119,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -129,17 +129,17 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(2.5), 4.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 		   sampleEnergy_histogram )
 {
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution(
 							  outgoing_energy_grid,
 							  pdf ) );
 
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NuclearScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(1.5), 3.5, 1e-15);

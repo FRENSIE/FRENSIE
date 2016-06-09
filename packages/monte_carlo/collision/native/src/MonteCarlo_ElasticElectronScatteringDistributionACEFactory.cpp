@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
 
-// Create the cutoff elastic distributions ( both Cutoff and Screened Rutherford ) 
+// Create the cutoff elastic distributions ( both Cutoff and Screened Rutherford )
 void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
@@ -30,19 +30,19 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   // Extract the number of tabulated distributions
   int size = raw_electroatom_data.extractELASIBlock().size()/3;
 
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
 
   // Create the scattering function
   ElasticDistribution scattering_function(size);
 
-  ElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
-							  raw_electroatom_data, 
+  ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
+							  raw_electroatom_data,
 							  scattering_function );
 
   // Create cutoff distribution
-  cutoff_elastic_distribution.reset( 
-        new CutoffElasticElectronScatteringDistribution( 
+  cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
                 upper_cutoff_angle_cosine ) );
 
@@ -68,12 +68,12 @@ void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistrib
   // Create the scattering function
   ElasticDistribution scattering_function(size);
 
-  ElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
-							  raw_electroatom_data, 
+  ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
+							  raw_electroatom_data,
 							  scattering_function );
 
-  cutoff_elastic_distribution.reset( 
-        new CutoffElasticElectronScatteringDistribution( 
+  cutoff_elastic_distribution.reset(
+        new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
                 upper_cutoff_angle_cosine ) );
 }
@@ -87,7 +87,7 @@ void ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordEl
         cutoff_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data )
 {
-  // Get the atomic number 
+  // Get the atomic number
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
 
   // Create the screened Rutherford distribution
@@ -123,10 +123,10 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionACEFactory::getAngul
   Teuchos::Array<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
+  Teuchos::ArrayView<const double> elas_block =
     raw_electroatom_data.extractELASBlock();
 
-  Teuchos::Array<double> raw_grid( elas_block( offset[energy_bin], 
+  Teuchos::Array<double> raw_grid( elas_block( offset[energy_bin],
                                    table_length[energy_bin] ) );
 
   // Find the first angle cosine above the cutoff mu
@@ -150,7 +150,7 @@ Teuchos::Array<double> ElasticElectronScatteringDistributionACEFactory::getAngul
 
 // Create the scattering function
 void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
-        const Data::XSSEPRDataExtractor& raw_electroatom_data,      
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
         ElasticDistribution& scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
@@ -170,14 +170,14 @@ void ElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
   Teuchos::Array<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
+  Teuchos::ArrayView<const double> elas_block =
     raw_electroatom_data.extractELASBlock();
-  
+
   for( unsigned n = 0; n < size; ++n )
   {
     scattering_function[n].first = angular_energy_grid[n];
 
-    scattering_function[n].second.reset( 
+    scattering_function[n].second.reset(
 	  new const Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),

@@ -28,7 +28,7 @@
 namespace Data{
 
 // Constructor (from saved archive)
-MomentPreservingElectronDataContainer::MomentPreservingElectronDataContainer( 
+MomentPreservingElectronDataContainer::MomentPreservingElectronDataContainer(
 		    const std::string& archive_name,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
 {
@@ -49,14 +49,14 @@ double MomentPreservingElectronDataContainer::getCutoffAngleCosine() const
 }
 
 // Return the elastic angular energy grid
-const std::vector<double>& 
+const std::vector<double>&
 MomentPreservingElectronDataContainer::getElasticAngularEnergyGrid() const
 {
   return d_angular_energy_grid;
 }
 
 // Return the number of discrete angles for an angular energy bin
-unsigned MomentPreservingElectronDataContainer::getNumberOfDiscreteAngles( 
+unsigned MomentPreservingElectronDataContainer::getNumberOfDiscreteAngles(
                             const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
@@ -67,7 +67,7 @@ unsigned MomentPreservingElectronDataContainer::getNumberOfDiscreteAngles(
 }
 
 // Return the moment preserving discrete angles for an angular energy bin
-const std::vector<double>& 
+const std::vector<double>&
 MomentPreservingElectronDataContainer::getMomentPreservingDiscreteAngles(
 					        const unsigned angular_energy_bin ) const
 {
@@ -79,7 +79,7 @@ MomentPreservingElectronDataContainer::getMomentPreservingDiscreteAngles(
 }
 
 // Return the moment preserving weights for an angular energy bin
-const std::vector<double>& 
+const std::vector<double>&
 MomentPreservingElectronDataContainer::getMomentPreservingWeights(
 					        const unsigned angular_energy_bin ) const
 {
@@ -91,14 +91,14 @@ MomentPreservingElectronDataContainer::getMomentPreservingWeights(
 }
 /*
 // Return the electron energy grid
-const std::vector<double>& 
+const std::vector<double>&
 MomentPreservingElectronDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
 }
 
 // Return the Moment Preserving (MP) moment preserving electron cross section
-const std::vector<double>& 
+const std::vector<double>&
 MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSection() const
 {
   return d_moment_preserving_moment_preserving_elastic_cross_section;
@@ -112,7 +112,7 @@ MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossS
 }
 */
 // Set the atomic number
-void MomentPreservingElectronDataContainer::setAtomicNumber( 
+void MomentPreservingElectronDataContainer::setAtomicNumber(
 						 const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
@@ -123,7 +123,7 @@ void MomentPreservingElectronDataContainer::setAtomicNumber(
 }
 
 // Set the elastic cutoff angle cosine
-void MomentPreservingElectronDataContainer::setCutoffAngleCosine( 
+void MomentPreservingElectronDataContainer::setCutoffAngleCosine(
                          const double cutoff_angle_cosine )
 {
   // Make sure the elastic cutoff angle cosine is valid
@@ -134,12 +134,12 @@ void MomentPreservingElectronDataContainer::setCutoffAngleCosine(
 }
 
 // Set the elastic angular energy grid
-void MomentPreservingElectronDataContainer::setElasticAngularEnergyGrid( 
+void MomentPreservingElectronDataContainer::setElasticAngularEnergyGrid(
 				       const std::vector<double>& angular_energy_grid )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.size() > 0 );
-  testPrecondition( 
+  testPrecondition(
         Utility::Sort::isSortedAscending( angular_energy_grid.begin(),
 			                              angular_energy_grid.end() ) );
 
@@ -152,7 +152,7 @@ void MomentPreservingElectronDataContainer::setElasticAngularEnergyGrid(
 }
 
 // Set the number of discrete angles for an angular energy bin
-void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles( 
+void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles(
              const unsigned angular_energy_bin,
              const unsigned number_of_discrete_angles )
 {
@@ -161,7 +161,7 @@ void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles(
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
   // Make sure the number of discrete angles is valid
   testPrecondition( number_of_discrete_angles > 0 );
-  
+
   d_number_of_discrete_angles[angular_energy_bin] = number_of_discrete_angles;
 }
 
@@ -191,12 +191,12 @@ std::cout << "angle 2 =\t" << moment_preserving_elastic_discrete_angles[1] << st
                                   isValueGreaterThanOne ) ==
                     moment_preserving_elastic_discrete_angles.end() );
 
-  d_moment_preserving_elastic_discrete_angles[angular_energy_bin] = 
+  d_moment_preserving_elastic_discrete_angles[angular_energy_bin] =
         moment_preserving_elastic_discrete_angles;
 }
 
 // Set the moment preserving weights for an angular energy bin
-void MomentPreservingElectronDataContainer::setMomentPreservingWeights( 
+void MomentPreservingElectronDataContainer::setMomentPreservingWeights(
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& moment_preserving_elastic_weights )
 {/*
@@ -220,12 +220,12 @@ std::cout << std::setprecision(20) << "weight 2 =\t" << moment_preserving_elasti
                                   moment_preserving_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==
                     moment_preserving_elastic_weights.end() );
-  
+
   d_moment_preserving_elastic_weights[angular_energy_bin] = moment_preserving_elastic_weights;
 }
 /*
 // Set the electron energy grid
-void MomentPreservingElectronDataContainer::setElectronEnergyGrid( 
+void MomentPreservingElectronDataContainer::setElectronEnergyGrid(
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -242,13 +242,13 @@ void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingC
 			 const std::vector<double>& moment_preserving_elastic_cross_section )
 {
   // Make sure the moment preserving cross section is valid
-  testPrecondition( moment_preserving_elastic_cross_section.size() <= 
+  testPrecondition( moment_preserving_elastic_cross_section.size() <=
                     d_electron_energy_grid.size() );
   testPrecondition( std::find_if( moment_preserving_elastic_cross_section.begin(),
                                   moment_preserving_elastic_cross_section.end(),
                                   isValueLessThanOrEqualToZero ) ==
                     moment_preserving_elastic_cross_section.end() );
-  
+
   d_moment_preserving_moment_preserving_elastic_cross_section = moment_preserving_elastic_cross_section;
 }
 
@@ -257,36 +257,36 @@ void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingC
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
-  testPrecondition( 
+  testPrecondition(
         d_moment_preserving_moment_preserving_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
-  
+
  d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index= index;
 }
 */
 // Test if a value is less than or equal to zero
-bool MomentPreservingElectronDataContainer::isValueLessThanOrEqualToZero( 
+bool MomentPreservingElectronDataContainer::isValueLessThanOrEqualToZero(
 							   const double value )
 {
   return value <= 0.0;
 }
 
 // Test if a value is less than zero
-bool MomentPreservingElectronDataContainer::isValueLessThanZero( 
+bool MomentPreservingElectronDataContainer::isValueLessThanZero(
 							   const double value )
 {
   return value < 0.0;
 }
 
 // Test if a value is greater than one
-bool MomentPreservingElectronDataContainer::isValueGreaterThanOne( 
+bool MomentPreservingElectronDataContainer::isValueGreaterThanOne(
 							   const double value )
 {
   return value > 1.0;
 }
 
 // Test if a value is less than the angle cosine cutoff
-bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne( 
+bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne(
 							   const double value )
 {
   return value < -1.0;

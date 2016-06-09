@@ -25,7 +25,7 @@ typedef Teuchos::Array<Utility::Pair<double,
 
 //! Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
-void findLowerAndUpperBinBoundary( 
+void findLowerAndUpperBinBoundary(
 	const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
 	typename DependentTwoDDistribution::const_iterator& lower_bin_boundary,
@@ -33,71 +33,71 @@ void findLowerAndUpperBinBoundary(
 	double& interpolation_fraction );
 
 //! Sample a two dimensional distribution using correlated sampling
-template<typename DependentTwoDDistribution> 
-double sampleTwoDDistributionCorrelated( 
+template<typename DependentTwoDDistribution>
+double sampleTwoDDistributionCorrelated(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
-//! Sample a two dimensional distribution with a random number using correlated sampling 
-template<typename DependentTwoDDistribution> 
-double sampleTwoDDistributionCorrelatedWithRandomNumber( 
+//! Sample a two dimensional distribution with a random number using correlated sampling
+template<typename DependentTwoDDistribution>
+double sampleTwoDDistributionCorrelatedWithRandomNumber(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution,
     const double random_number );
 /*
-//! Sample a two dimensional distribution with a random number using correlated sampling 
-double sampleTwoDDistributionCorrelatedWithRandomNumber( 
+//! Sample a two dimensional distribution with a random number using correlated sampling
+double sampleTwoDDistributionCorrelatedWithRandomNumber(
     const double independent_variable,
     const TwoDDistribution& dependent_distribution,
     const double random_number );
 */
 //! Sample a two dimensional distribution using independent sampling
-template<typename DependentTwoDDistribution> 
+template<typename DependentTwoDDistribution>
 double sampleTwoDDistributionIndependent(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated value from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelated( 
+template<typename DependentTwoDDistribution>
+double evaluateTwoDDistributionCorrelated(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated PDF from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelatedPDF( 
+template<typename DependentTwoDDistribution>
+double evaluateTwoDDistributionCorrelatedPDF(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated CDF from a two dimensional distribution
-template<typename DependentTwoDDistribution> 
-double evaluateTwoDDistributionCorrelatedCDF( 
+template<typename DependentTwoDDistribution>
+double evaluateTwoDDistributionCorrelatedCDF(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 /*
 //! Evaluate a correlated value from a two dimensional distribution
-double evaluateTwoDDistributionCorrelated( 
+double evaluateTwoDDistributionCorrelated(
     const double independent_variable,
     const double dependent_variable,
     const TwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated PDF from a two dimensional distribution
-double evaluateTwoDDistributionCorrelatedPDF( 
+double evaluateTwoDDistributionCorrelatedPDF(
     const double independent_variable,
     const double dependent_variable,
     const TwoDDistribution& dependent_distribution );
 
 //! Evaluate a correlated CDF from a two dimensional distribution
-double evaluateTwoDDistributionCorrelatedCDF( 
+double evaluateTwoDDistributionCorrelatedCDF(
     const double independent_variable,
     const double dependent_variable,
     const TwoDDistribution& dependent_distribution );
 */
 //! Sample an upper and lower distribution using a common random variable
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double correlatedSample(
     const Teuchos::RCP<const DependentDistribution>& upper_distribution,
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
@@ -105,7 +105,7 @@ double correlatedSample(
 
 
 //! Sample an upper and lower distribution using a common given random variable
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double correlatedSampleWithRandomNumber(
     const Teuchos::RCP<const DependentDistribution>& upper_distribution,
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
@@ -122,15 +122,15 @@ double correlatedSampleWithRandomNumber(
 		    const double random_number );
 */
 //! Sample an upper and lower distribution using a common random variable in a subrange
-template<typename DependentDistribution> 
-double correlatedSampleInSubrange( 
+template<typename DependentDistribution>
+double correlatedSampleInSubrange(
     const Teuchos::RCP<const DependentDistribution>& upper_distribution,
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
 	const double interpolation_fraction,
 	const double max_indep_var );
 
 //! Evaluate a correlated value
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double evaluateCorrelated(
    const Teuchos::RCP<const DependentDistribution>& upper_distribution,
    const Teuchos::RCP<const DependentDistribution>& lower_distribution,
@@ -138,7 +138,7 @@ double evaluateCorrelated(
    const double independent_value );
 
 //! Evaluate a correlated pdf value
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double evaluateCorrelatedPDF(
     const Teuchos::RCP<const DependentDistribution>& upper_distribution,
     const Teuchos::RCP<const DependentDistribution>& lower_distribution,
@@ -146,7 +146,7 @@ double evaluateCorrelatedPDF(
     const double independent_value );
 
 //! Evaluate a correlated cdf value
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double evaluateCorrelatedCDF(
 	const Teuchos::RCP<const DependentDistribution>& upper_distribution,
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
@@ -161,7 +161,7 @@ double evaluateCorrelated(
    const double independent_value );
 */
 //! Sample from either the lower or upper distribution depending on interp frac
-template<typename DependentDistribution> 
+template<typename DependentDistribution>
 double independentSample(
     const Teuchos::RCP<const DependentDistribution>& upper_distribution,
     const Teuchos::RCP<const DependentDistribution>& lower_distribution,

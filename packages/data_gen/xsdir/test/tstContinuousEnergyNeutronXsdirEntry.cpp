@@ -41,38 +41,38 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, getTableAlias )
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	      new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "H-1_293.6K_v8" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "H-2_293.6K_v7" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "He-4_293.6K_v6" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_d, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Co-58m_600.0K_v7" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_e, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "Cd-115m_293.6K_v7" );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_f, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
   TEST_EQUALITY_CONST( entry->getTableAlias(), "C_293.6K_v7" );
@@ -83,15 +83,15 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, getTableAlias )
 TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 {
   Teuchos::ParameterList parameter_list( "Cross Sections Directory" );
-  
+
   Teuchos::Array<std::string> entry_tokens;
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_a, entry_tokens );
-  
+
   Teuchos::RCP<DataGen::XsdirEntry> entry(
 	      new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_a = 
+  Teuchos::ParameterList& sublist_a =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_a );
@@ -115,12 +115,12 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 		       0.999167 );
   TEST_EQUALITY_CONST( sublist_a.get<double>( MonteCarlo::CrossSectionsXMLProperties::temperature_prop ),
 		       2.5301E-08 );
-  
+
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_b, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_b = 
+  Teuchos::ParameterList& sublist_b =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_b );
@@ -146,10 +146,10 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 		       2.5301E-08 );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_c, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_c = 
+  Teuchos::ParameterList& sublist_c =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_c );
@@ -175,10 +175,10 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 		       2.5301E-08 );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_d, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_d = 
+  Teuchos::ParameterList& sublist_d =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_d );
@@ -204,10 +204,10 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 		       5.1704E-08 );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_e, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_e = 
+  Teuchos::ParameterList& sublist_e =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_e );
@@ -233,10 +233,10 @@ TEUCHOS_UNIT_TEST( ContinuousEnergyNeutronXsdirEntry, addInfoToParameterList )
 		       2.5301E-08 );
 
   DataGen::XsdirEntry::extractTableTokensFromXsdirLine( line_f, entry_tokens );
-  
+
   entry.reset(new DataGen::ContinuousEnergyNeutronXsdirEntry( entry_tokens ) );
 
-  Teuchos::ParameterList& sublist_f = 
+  Teuchos::ParameterList& sublist_f =
     parameter_list.sublist( entry->getTableAlias() );
 
   entry->addInfoToParameterList( sublist_f );

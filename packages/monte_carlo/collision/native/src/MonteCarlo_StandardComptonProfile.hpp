@@ -25,7 +25,7 @@ template<typename StoredMomentumUnit,
 	 template<typename> class SmartPointer = std::shared_ptr>
 class StandardComptonProfile : public ComptonProfile
 {
-  
+
 private:
 
   //! The stored momentum quantity type

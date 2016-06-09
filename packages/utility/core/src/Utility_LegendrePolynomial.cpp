@@ -41,7 +41,7 @@ double getLegendrePolynomial( const double value,
       p_n_minus_2 = p_n_minus_1;
       p_n_minus_1 = p_n;
     }
-    
+
     return p_n;
   }
 }
@@ -75,7 +75,7 @@ long double getLegendrePolynomial( const long double value,
       p_n_minus_2 = p_n_minus_1;
       p_n_minus_1 = p_n;
     }
-    
+
     return p_n;
   }
 }

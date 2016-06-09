@@ -18,7 +18,7 @@
 namespace Utility{
 
 // Constructor
-GaussRadauQuadratureSet::GaussRadauQuadratureSet( 
+GaussRadauQuadratureSet::GaussRadauQuadratureSet(
     boost::function<double (double, int)> polynomial_expansion_function,
     const double error_tol,
     const int polynomial_order )
@@ -34,18 +34,18 @@ GaussRadauQuadratureSet::GaussRadauQuadratureSet(
 }
 
 // Caluclate the nth order Jacobi Polynomial at x
-/*! \details The Jacobi Polynomials can be calculated by the following recursion 
+/*! \details The Jacobi Polynomials can be calculated by the following recursion
  * relationship:
  * a1_n P_{n+1}^{\alpha,\beta}(x) = (a2_n + a3_n x)P_n^{\alpha,\beta}(x) - a4_n P_{n-1}^{\alpha,\beta}(x)
- * where: 
+ * where:
  * a1_n = 2(n+1)(n+\alpha+\beta+1)(2n+\alpha+\beta)
  * a2_n = (2n+\alpha+\beta+1)(\alpha^2-\beta^2)
  * a3_n = (2n + \alpha + \beta)(2n + \alpha + \beta + 1)(2n + \alpha +\beta + 2)
  * a4_n = 2(n+\alpha)(n+\beta)(2n+\alpha+\beta+2)
  */
-double GaussRadauQuadratureSet::getJacobiPolynomial( 
+double GaussRadauQuadratureSet::getJacobiPolynomial(
     double x,
-    int n, 
+    int n,
     int alpha,
     int beta ) const
 {
@@ -94,7 +94,7 @@ double GaussRadauQuadratureSet::getJacobiPolynomial(
   }
 }
 
-double GaussRadauQuadratureSet::getLegendrePolynomial( 
+double GaussRadauQuadratureSet::getLegendrePolynomial(
                                         double x,
                                         int n ) const
 {
@@ -102,13 +102,13 @@ double GaussRadauQuadratureSet::getLegendrePolynomial(
 }
 
 // Calculate the derivative of the nth order Jacobi Polynomial at x
-/* \details The Jacobi Polynomials can be calculated by the following recursion 
+/* \details The Jacobi Polynomials can be calculated by the following recursion
  * relationship:
- * 1/2( n + \alpha + \beta + 1 )P_{n-1}^{\alpha + 1,\beta + 1}(x) 
+ * 1/2( n + \alpha + \beta + 1 )P_{n-1}^{\alpha + 1,\beta + 1}(x)
  */
-double GaussRadauQuadratureSet::getJacobiPolynomialDerivative( 
+double GaussRadauQuadratureSet::getJacobiPolynomialDerivative(
                               double x,
-                              int n, 
+                              int n,
                               int alpha,
                               int beta ) const
 {
@@ -123,21 +123,21 @@ double GaussRadauQuadratureSet::getJacobiPolynomialDerivative(
   }
   else
   {
-    return 0.5 * (alpha + beta + n + 1.0) * getJacobiPolynomial( x,  
-                                                                 n-1, 
-                                                                 alpha + 1, 
+    return 0.5 * (alpha + beta + n + 1.0) * getJacobiPolynomial( x,
+                                                                 n-1,
+                                                                 alpha + 1,
                                                                  beta + 1 );
   }
 }
 
 // Estimate the roots of the Jacobi Polynomial
-/* \details The roots of the Jacobi Polynomials can be estimated by the roots of 
+/* \details The roots of the Jacobi Polynomials can be estimated by the roots of
  * the Chebyshev Polynomials which are given by the relationship:
- * x_k = cos( (2k - 1)\pi/2n ) , k = 1, ... , n 
+ * x_k = cos( (2k - 1)\pi/2n ) , k = 1, ... , n
  */
-void GaussRadauQuadratureSet::getJacobiPolynomialRoots( 
+void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
                                  std::vector<double>& roots,
-                                 const int n, 
+                                 const int n,
                                  int alpha,
                                  int beta ) const
 {
@@ -147,7 +147,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
   int iteration;
   double root_k, s, jacobi, jacobi_derivative, delta_root;
 
-  // Iterate through all n roots ( 0 < k < n ) 
+  // Iterate through all n roots ( 0 < k < n )
   for (int k = 0; k < n; k++)
   {
     // Make an initial guess that the roots are equal to the roots of the Chebyshev Polynomial
@@ -165,30 +165,30 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
     do
     {
       s = 0;
-      
+
       for (int i = 0; i < k; i++)
       {
         s += 1.0/( root_k - roots[i] );
       }
-      
+
       // Get error
       jacobi = getJacobiPolynomial( root_k, n, alpha, beta );
-      jacobi_derivative = 
+      jacobi_derivative =
                getJacobiPolynomialDerivative( root_k, n, alpha, beta );\
-  
+
       delta_root = -jacobi/( jacobi_derivative - jacobi*s );
 
       // Update root value
       root_k += delta_root;
-      
+
       // Update iteration
       ++iteration;
-   
+
       if ( iteration > max_iterations )
          break;
-/*  
-      TEST_FOR_EXCEPTION( iteration > max_iterations, 
-		          RadauQuadratueError, 
+/*
+      TEST_FOR_EXCEPTION( iteration > max_iterations,
+		          RadauQuadratueError,
 		          "Error: the root of the Jacobi Polynomial "
                           "did not converge" );
 */
@@ -201,7 +201,7 @@ void GaussRadauQuadratureSet::getJacobiPolynomialRoots(
 
 // Find the Radau nodes and wieghts including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndWeights(
-                            double end_point, 
+                            double end_point,
                             std::vector<double>& nodes,
                             std::vector<double>& weights ) const
 {
@@ -241,7 +241,7 @@ void GaussRadauQuadratureSet::findNodesAndWeights(
     for ( int i = 0; i < n; ++i )
     {
       nodes[i] = roots[i];
-       
+
       weights[i] = findWeightAtNode( roots[i], end_point, n );
     }
   }
@@ -249,7 +249,7 @@ void GaussRadauQuadratureSet::findNodesAndWeights(
 
 // Find the Radau nodes and wieghts including at end point -1 or 1
 void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
-                            double end_point, 
+                            double end_point,
                             std::vector<double>& nodes,
                             std::vector<double>& weights ) const
 {
@@ -277,7 +277,7 @@ void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
     {
       nodes[i+1] = roots[i];
 
-      jacobi_derivative = 
+      jacobi_derivative =
               getJacobiPolynomialDerivative( nodes[i+1], n, alpha, beta );
 
       weights[i+1] = findWeightAtNode( roots[i], end_point, n );
@@ -294,18 +294,18 @@ void GaussRadauQuadratureSet::findNodesAndPositiveWeights(
       nodes[n-1-i] = -roots[i];
 
       // Get the derivative of the Jacobi Polynomial of order n
-      jacobi_derivative = 
-              getJacobiPolynomialDerivative( roots[i], 
-                                             n, 
+      jacobi_derivative =
+              getJacobiPolynomialDerivative( roots[i],
+                                             n,
                                              alpha, beta );
-       
+
       weights[n-1-i] = findWeightAtNode( roots[i], -end_point, n );
     }
   }
 }
 
 // Create the integrand function for the weight at the end point -1 or 1
-double GaussRadauQuadratureSet::getFixedWeightIntegrand( 
+double GaussRadauQuadratureSet::getFixedWeightIntegrand(
                                double end_point,
                                int n ) const
 {
@@ -316,7 +316,7 @@ double GaussRadauQuadratureSet::getFixedWeightIntegrand(
 double GaussRadauQuadratureSet::getWeightIntegrand(
                                double x,
                                double node,
-                               double end_point, 
+                               double end_point,
                                int n ) const
 {
   return getFixedWeightIntegrand( x, n )*( x - end_point )/( x - node );
@@ -339,7 +339,7 @@ double GaussRadauQuadratureSet::findWeightAtEndPoint( double end_point,
 
   double abs_error, result;
   double precision = 1e-12;
-    
+
   Utility::GaussKronrodIntegrator<double> integrator( precision );
 
   integrator.integrateAdaptively<15>(
@@ -376,7 +376,7 @@ double GaussRadauQuadratureSet::findWeightAtNode( double node,
 
   double abs_error, result;
   double precision = 1e-12;
-    
+
   Utility::GaussKronrodIntegrator<double> integrator( precision );
 
   integrator.integrateAdaptively<15>(

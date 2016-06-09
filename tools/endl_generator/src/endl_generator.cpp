@@ -2,7 +2,7 @@
 //!
 //! \file   endl_generator.cpp
 //! \author Luke Kersting
-//! \brief  endl_generator tool 
+//! \brief  endl_generator tool
 //!
 //---------------------------------------------------------------------------//
 
@@ -27,10 +27,10 @@
 
 int main( int argc, char** argv )
 {/*
-  Teuchos::RCP<const DataGen::EvaluatedElectronDataGenerator> 
+  Teuchos::RCP<const DataGen::EvaluatedElectronDataGenerator>
     endl_generator;
-  
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -92,9 +92,9 @@ int main( int argc, char** argv )
   data_file_path += "/";
   data_file_path += cross_section_alias;
 
-  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler( 
+  Teuchos::RCP<Data::ENDLFileHandler> endl_file_handler(
         new Data::ENDLFileHandler( data_file_path ) );
-    
+
   int atomic_number,outgoing_particle_designator, interpolation_flag;
   double atomic_weight;
   // Read first table header and determine which element is being processed
@@ -103,8 +103,8 @@ int main( int argc, char** argv )
                                            atomic_weight,
                                            interpolation_flag );
 
-  endl_generator.reset( 
-	    new const DataGen::StandardEvaluatedElectronDataGenerator( 
+  endl_generator.reset(
+	    new const DataGen::StandardEvaluatedElectronDataGenerator(
 					    atomic_number,
 					    endl_file_handler,
 					    min_electron_energy,
@@ -125,10 +125,10 @@ int main( int argc, char** argv )
   std::string new_file_name;
 
   new_file_name = oss.str();
-  
+
   data_container.exportData( new_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
-*/							      
+*/
   return 0;
 }
 

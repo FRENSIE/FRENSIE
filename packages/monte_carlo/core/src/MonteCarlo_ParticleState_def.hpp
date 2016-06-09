@@ -20,9 +20,9 @@ template<typename DerivedType>
 void ParticleState::printImplementation( std::ostream& os ) const
 {
   os.precision( 18 );
-  
+
   boost::archive::xml_oarchive ar(os);
-  ar << boost::serialization::make_nvp( 
+  ar << boost::serialization::make_nvp(
   			typeid(*dynamic_cast<const DerivedType*>(this)).name(),
   			*dynamic_cast<const DerivedType*>(this) );
 }

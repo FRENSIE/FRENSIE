@@ -26,29 +26,29 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 	  electroionization_subshell_distribution )
 {
   // Get the energies for which knock-on sampling tables are given
-  std::vector<double> energy_grid = 
+  std::vector<double> energy_grid =
         raw_electroionization_data.getElectroionizationEnergyGrid( subshell );
 
-  // Subshell distribution 
+  // Subshell distribution
   ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
         subshell_distribution( energy_grid.size() );
 
   // Create the subshell distribution
-  createSubshellDistribution( raw_electroionization_data, 
+  createSubshellDistribution( raw_electroionization_data,
                               energy_grid,
                               subshell,
 	                          subshell_distribution );
- 
-  electroionization_subshell_distribution.reset( 
-    new ElectroionizationSubshellElectronScatteringDistribution( 
-            subshell_distribution, 
+
+  electroionization_subshell_distribution.reset(
+    new ElectroionizationSubshellElectronScatteringDistribution(
+            subshell_distribution,
             binding_energy ) );
 }
 
 // Create the subshell recoil distribution
 void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::createSubshellDistribution(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
-    const std::vector<double> energy_grid, 
+    const std::vector<double> energy_grid,
     const unsigned subshell,
     ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&
 	 subshell_distribution )
@@ -58,19 +58,19 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
     subshell_distribution[n].first = energy_grid[n];
 
     // Get the recoil energy distribution at the incoming energy
-    Teuchos::Array<double> recoil_energy( 
-        raw_electroionization_data.getElectroionizationRecoilEnergy( 
+    Teuchos::Array<double> recoil_energy(
+        raw_electroionization_data.getElectroionizationRecoilEnergy(
             subshell,
             energy_grid[n] ) );
 
     // Get the recoil energy pdf at the incoming energy
-    Teuchos::Array<double> pdf( 
-        raw_electroionization_data.getElectroionizationRecoilPDF( 
+    Teuchos::Array<double> pdf(
+        raw_electroionization_data.getElectroionizationRecoilPDF(
             subshell,
             energy_grid[n] ) );
 
-    subshell_distribution[n].second.reset( 
-	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy, 
+    subshell_distribution[n].second.reset(
+	  new const Utility::TabularDistribution<Utility::LinLin>( recoil_energy,
                                                                pdf ) );
   }
 }

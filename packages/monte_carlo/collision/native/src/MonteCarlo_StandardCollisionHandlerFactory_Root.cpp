@@ -45,7 +45,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
 			"Error: Root has requested material number "
 			<< *root_mat_id_it << " which is lacking "
 			"a definition!" );
-    
+
     ++root_mat_id_it;
   }
 
@@ -60,7 +60,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
                         << *mat_id_it << ". It will be ignored."
                         << std::endl;
     }
-    
+
     ++mat_id_it;
   }
 }
@@ -76,7 +76,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
                               InvalidMaterialRepresentation,
                               "Error: could not parse the material ids "
-                              "associated with cells in Root!" );  
+                              "associated with cells in Root!" );
 
   try{
     Geometry::Root::getCellDensities( cell_id_density_map );
@@ -84,25 +84,25 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   EXCEPTION_CATCH_RETHROW_AS( Geometry::InvalidRootGeometry,
                               InvalidMaterialRepresentation,
                               "Error: could not parse the cell densities in"
-                              "Root!" );  
+                              "Root!" );
 
-  CellIdMatIdMap::const_iterator cell_id_mat_id_it = 
+  CellIdMatIdMap::const_iterator cell_id_mat_id_it =
     cell_id_mat_id_map.begin();
-    
+
   // Make sure that the maps have the same size
   while( cell_id_mat_id_it != cell_id_mat_id_map.end() )
   {
     TEST_FOR_EXCEPTION( cell_id_density_map.find( cell_id_mat_id_it->first ) ==
                         cell_id_density_map.end(),
                         InvalidMaterialRepresentation,
-                        "Error: Cell " << cell_id_mat_id_it->first << 
+                        "Error: Cell " << cell_id_mat_id_it->first <<
                         " has a material id assigned in Root but not a "
                         "density!" );
 
     ++cell_id_mat_id_it;
   }
-  
-  CellIdDensityMap::const_iterator cell_id_density_it = 
+
+  CellIdDensityMap::const_iterator cell_id_density_it =
     cell_id_density_map.begin();
 
   while( cell_id_density_it != cell_id_density_map.end() )

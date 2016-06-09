@@ -24,9 +24,9 @@ namespace Utility{
 /*! \brief A class which wraps the HDF5 interface and adds some additional
  * functionality useful for FRENSIE.
  *
- * This class wraps the HDF5 file interface. It is used to either write data to 
+ * This class wraps the HDF5 file interface. It is used to either write data to
  * an HDF5 file or to read data from an HDF5 file. Depending on how the file
- * is opened, write operations might be disabled. 
+ * is opened, write operations might be disabled.
  */
 class HDF5FileHandler
 {
@@ -37,7 +37,7 @@ public:
   static void printErrorMessages();
 
   //! Throw exceptions
-  static void throwExceptions();  
+  static void throwExceptions();
 
   //! Default Constructor
   HDF5FileHandler();
@@ -45,7 +45,7 @@ public:
   //! Destructor
   ~HDF5FileHandler()
   { /* ... */ }
-  
+
   //! Open an HDF5 file and overwrite any existing data
   void openHDF5FileAndOverwrite( const std::string &file_name );
 
@@ -57,7 +57,7 @@ public:
 
   //! Close an HDF5 file
   void closeHDF5File();
-  
+
   //! Check if the handler has an open file
   bool hasOpenFile() const;
 
@@ -142,7 +142,7 @@ private:
 
   // Error handling behavior (true = print errors and exit, false = throw)
   static bool print_and_exit;
-  
+
   // HDF5 file identifier
   Teuchos::RCP<H5::H5File> d_hdf5_file;
 

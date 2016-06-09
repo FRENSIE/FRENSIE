@@ -57,7 +57,7 @@ protected:
   // Register a global observer with the appropraite particle subtrack ending
   // global event dispatcher
   template<typename Observer>
-  void registerGlobalObserverWithTag( 
+  void registerGlobalObserverWithTag(
 			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
 
@@ -71,14 +71,14 @@ private:
 // Register a global observer with the appropraite particle subtrack ending
 // global event dispatcher
 template<typename Observer>
-void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag( 
+void ParticleSubtrackEndingGlobalEventHandler::registerGlobalObserverWithTag(
 			 const std::shared_ptr<Observer>& observer,
 			 ParticleSubtrackEndingGlobalEventObserver::EventTag )
 {
   // Make sure the Observer class has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingGlobalEventObserver::EventTag>::value));
 
-  std::shared_ptr<ParticleSubtrackEndingGlobalEventObserver> observer_base = 
+  std::shared_ptr<ParticleSubtrackEndingGlobalEventObserver> observer_base =
     observer;
 
   d_particle_subtrack_ending_global_event_dispatcher.attachObserver(

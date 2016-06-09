@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp
 //! \author Alex Robinson
 //! \brief  Neutron nuclear scattering distribution factory class declaration
@@ -32,15 +32,15 @@ namespace MonteCarlo{
 //! The scattering distribution factory class
 class NeutronNuclearScatteringDistributionACEFactory : public NuclearScatteringDistributionACEFactory<MonteCarlo::NeutronState,MonteCarlo::NeutronState>
 {
-  
+
 public:
 
-  //! Constructor 
-  NeutronNuclearScatteringDistributionACEFactory( 
+  //! Constructor
+  NeutronNuclearScatteringDistributionACEFactory(
 		       const std::string& table_name,
 		       const double atomic_weight_ratio,
 		       const Data::XSSNeutronDataExtractor& raw_nuclide_data );
-			
+
   //! Destructor
   ~NeutronNuclearScatteringDistributionACEFactory()
   { /* ... */ }

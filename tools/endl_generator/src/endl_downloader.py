@@ -143,7 +143,7 @@ endl_file.write( "  fi\n\n" )
 for i in range( 0, len(elemental_information) ):
     ELEMENT = "za" + elemental_information[i][1] + elemental_information[i][2]
     endl_file.write( "  printf \"Getting " + ELEMENT + " data:\\t\"\n" )
-    
+
     endl_file.write( "  if [ -f ./eadl/" + ELEMENT + " ]; then\n" )
     endl_file.write( "    printf \"EADL data already exists\\t\"\n" )
     endl_file.write( "  else\n" )

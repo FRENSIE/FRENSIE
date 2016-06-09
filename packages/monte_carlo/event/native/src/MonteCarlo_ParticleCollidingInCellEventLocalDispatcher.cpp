@@ -20,7 +20,7 @@ ParticleCollidingInCellEventLocalDispatcher::ParticleCollidingInCellEventLocalDi
 { /* ... */ }
 
 // Dispatch the new event to the observers
-void 
+void
 ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEvent(
 	    const ParticleState& particle,
 	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
@@ -33,8 +33,8 @@ ParticleCollidingInCellEventLocalDispatcher::dispatchParticleCollidingInCellEven
 
   while( it != observer_id_map().end() )
   {
-    it->second->updateFromParticleCollidingInCellEvent( 
-						 particle, 
+    it->second->updateFromParticleCollidingInCellEvent(
+						 particle,
 						 cell_of_collision,
 						 inverse_total_cross_section );
 

@@ -19,7 +19,7 @@
 namespace MonteCarlo{
 
 //! The standard scattering function class
-template<typename StoredArgUnit, 
+template<typename StoredArgUnit,
 	 template<typename> class SmartPointer = std::shared_ptr>
 class StandardScatteringFunction : public ScatteringFunction
 {
@@ -28,7 +28,7 @@ private:
 
   //! The stored scattering function independent quantity type
   typedef typename Utility::UnitAwareOneDDistribution<StoredArgUnit,void>::IndepQuantity StoredArgumentQuantity;
-  
+
 public:
 
   //! Constructor
@@ -46,7 +46,7 @@ public:
 
   //! Return the lower bound of the argument
   ArgumentQuantity getLowerBoundOfArgument() const;
-  
+
   //! Return the upper bound of the argument
   ArgumentQuantity getUpperBoundOfArgument() const;
 

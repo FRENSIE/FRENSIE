@@ -1,10 +1,10 @@
 <ParameterList name="Source">
-  
+
   <ParameterList name="Distributed Source">
     <Parameter name="Id" type="int" value="1"/>
 
     <Parameter name="Particle Type" type="string" value="Photon"/>
-    
+
     <ParameterList name="Spatial Distribution">
       <Parameter name="Position" type="Array(double)" value="{1,1,1}"/>
     </ParameterList>
@@ -15,8 +15,8 @@
       <Parameter name="Theta Distribution" type="Delta Distribution"
                  value="{0}"/>
     </ParameterList>
-    
-    <Parameter name="Energy Distribution" type="Delta Distribution" 
+
+    <Parameter name="Energy Distribution" type="Delta Distribution"
                value="{1}"/>
   </ParameterList>
 

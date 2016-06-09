@@ -22,7 +22,7 @@
 
 namespace MonteCarlo{
 
-/*! The Doppler broadened subshell incoherent photon scattering distribution 
+/*! The Doppler broadened subshell incoherent photon scattering distribution
  * class
  */
 class DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution : public SubshellIncoherentPhotonScatteringDistribution
@@ -49,7 +49,7 @@ public:
 private:
 
   // The compton profile for the subshell
-  std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution> 
+  std::shared_ptr<const SubshellDopplerBroadenedPhotonEnergyDistribution>
   d_doppler_broadened_energy_dist;
 };
 

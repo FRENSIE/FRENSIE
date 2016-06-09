@@ -36,8 +36,8 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
@@ -66,8 +66,8 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 
@@ -99,8 +99,8 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -126,8 +126,8 @@ StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::StandardEle
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the grid searcher is valid
@@ -152,25 +152,25 @@ inline bool StandardElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Return the cross section at the given energy
 template<typename InterpPolicy>
-double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection( 
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
   double cross_section;
-  
+
   if( energy >= this->getThresholdEnergy() )
   {
     unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
 
     unsigned cs_index = energy_index - d_threshold_energy_index;
 
-    double processed_slope = 
+    double processed_slope =
       (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
       (d_incoming_energy_grid[energy_index+1]-
        d_incoming_energy_grid[energy_index]);
-    
+
     cross_section =
       InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
 				 InterpPolicy::processIndepVar( energy ),
@@ -188,7 +188,7 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -220,7 +220,7 @@ double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getC
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy>
-double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection( 
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 				const double energy,
                 const unsigned bin_index ) const
 {
@@ -233,14 +233,14 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
   if( bin_index >= d_threshold_energy_index )
   {
     unsigned cs_index = bin_index - d_threshold_energy_index;
-    
-    double processed_slope = 
+
+    double processed_slope =
       (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
       (d_incoming_energy_grid[bin_index+1]-
        d_incoming_energy_grid[bin_index]);
 
     double processed_energy = InterpPolicy::processIndepVar( energy );
-    
+
     return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
 				      processed_energy,
 				      d_cross_section[cs_index],
@@ -252,7 +252,7 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy, bool processed_cross_section>
-double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 				const double energy,
                 const unsigned bin_index ) const
 {
@@ -278,10 +278,10 @@ double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getC
 template<typename InterpPolicy>
 double StandardElectroatomicReaction<InterpPolicy,true>::getThresholdEnergy() const
 {
-  return InterpPolicy::recoverProcessedIndepVar( 
+  return InterpPolicy::recoverProcessedIndepVar(
 			    d_incoming_energy_grid[d_threshold_energy_index] );
 }
-	
+
 // Return the threshold energy
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const

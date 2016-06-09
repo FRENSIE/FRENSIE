@@ -69,8 +69,8 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 /*
   //! Integrate the function
   template<typename Functor>
-  void integrate( Functor& integrand, 
-		  T lower_limit, 
+  void integrate( Functor& integrand,
+		  T lower_limit,
 		  T upper_limit,
 		  T& result,
 		  T& absolute_error,
@@ -86,13 +86,13 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 
   //! Integrate the function with point rule
   template<int Points, typename FunctorType = double, typename Functor>
-  void integrateWithPointRule( 
+  void integrateWithPointRule(
                 Functor& integrand,
 			    T lower_limit,
 			    T upper_limit,
 			    T& result,
 			    T& absolute_error,
-                T& result_abs, 
+                T& result_abs,
                 T& result_asc ) const;
 /*
   //! Integrate the function over a semi-infinite interval (+infinity)
@@ -125,18 +125,18 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 */
   //! Integrate a function with known integrable singularities adaptively
   template<typename FunctorType = double, typename Functor>
-  void integrateAdaptivelyWynnEpsilon( 
+  void integrateAdaptivelyWynnEpsilon(
 			  Functor& integrand,
 			  const Teuchos::ArrayView<T>& points_of_interest,
 			  T& result,
 			  T& absolute_error ) const;
 
 protected:
-  
+
   // Calculate the quadrature upper and lower integrand values at an abscissa
   template<typename FunctorType = double, typename Functor>
-  void calculateQuadratureIntegrandValuesAtAbscissa( 
-    Functor& integrand, 
+  void calculateQuadratureIntegrandValuesAtAbscissa(
+    Functor& integrand,
     T abscissa,
     T half_length,
     T midpoint,
@@ -145,8 +145,8 @@ protected:
 
   // Bisect and integrate the given bin interval
   template<int Points, typename FunctorType = double, typename Functor, typename Bin>
-  void bisectAndIntegrateBinInterval( 
-    Functor& integrand, 
+  void bisectAndIntegrateBinInterval(
+    Functor& integrand,
     const Bin& bin,
     Bin& bin_1,
     Bin& bin_2,
@@ -154,56 +154,56 @@ protected:
     T& bin_2_asc ) const;
 
   // Rescale absolute error from integration
-  void rescaleAbsoluteError( 
-    T& absolute_error, 
-    T result_abs, 
+  void rescaleAbsoluteError(
+    T& absolute_error,
+    T result_abs,
     T result_asc ) const;
 
   // Test if subinterval is too small
   template<int Points>
-  bool subintervalTooSmall( T& lower_limit_1, 
-                                   T& lower_limit_2, 
+  bool subintervalTooSmall( T& lower_limit_1,
+                                   T& lower_limit_2,
                                    T& upper_limit_2 ) const;
 
-  // check the roundoff error 
-  void checkRoundoffError( 
-                       const BinTraits<T>& bin, 
-                       const BinTraits<T>& bin_1, 
-                       const BinTraits<T>& bin_2,    
+  // check the roundoff error
+  void checkRoundoffError(
+                       const BinTraits<T>& bin,
+                       const BinTraits<T>& bin_1,
+                       const BinTraits<T>& bin_2,
                        const T& bin_1_asc,
                        const T& bin_2_asc,
                        int& round_off_1,
                        int& round_off_2,
                        const int number_of_iterations ) const;
 
-  // check the roundoff error 
-  void checkRoundoffError( 
-                       const ExtrpolatedBinTraits<T>& bin, 
-                       const ExtrpolatedBinTraits<T>& bin_1, 
-                       const ExtrpolatedBinTraits<T>& bin_2,    
+  // check the roundoff error
+  void checkRoundoffError(
+                       const ExtrpolatedBinTraits<T>& bin,
+                       const ExtrpolatedBinTraits<T>& bin_1,
+                       const ExtrpolatedBinTraits<T>& bin_2,
                        const T& bin_1_asc,
                        const T& bin_2_asc,
                        int& round_off_1,
                        int& round_off_2,
                        int& round_off_3,
-                       const bool extrapolate, 
+                       const bool extrapolate,
                        const int number_of_iterations ) const;
- 
-  // Sort the bin order from highest to lowest error 
-  void sortBins( 
+
+  // Sort the bin order from highest to lowest error
+  void sortBins(
         Teuchos::Array<int>& bin_order,
-        BinArray& bin_array, 
+        BinArray& bin_array,
         const ExtrpolatedBinTraits<T>& bin_1,
         const ExtrpolatedBinTraits<T>& bin_2,
         const int& number_of_intervals,
         int& nr_max ) const;
 
   // get the Wynn Epsilon-Algoirithm extrapolated value
-  void getWynnEpsilonAlgorithmExtrapolation( 
-        std::vector<T>& bin_extrapolated_result, 
-        std::vector<T>& last_three_results, 
-        T& extrapolated_result, 
-        T& extrapolated_error,  
+  void getWynnEpsilonAlgorithmExtrapolation(
+        std::vector<T>& bin_extrapolated_result,
+        std::vector<T>& last_three_results,
+        T& extrapolated_result,
+        T& extrapolated_error,
         int& number_of_extrapolated_intervals,
         int& number_of_extrapolated_calls  ) const;
 

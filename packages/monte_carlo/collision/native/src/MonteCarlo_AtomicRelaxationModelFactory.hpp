@@ -24,12 +24,12 @@
 
 namespace MonteCarlo{
 
-/*! The atomic relaxation model factory class 
+/*! The atomic relaxation model factory class
  * \details This class will cache the relaxation models associated with
- * a particular atom so that they will not be duplicated (e.g. when 
+ * a particular atom so that they will not be duplicated (e.g. when
  * constructing a photoatom and an electroatom). To create an atomic relaxation
  * model using different data, create an overload of the
- * createAtomicRelaxationModel static member function and 
+ * createAtomicRelaxationModel static member function and
  * createAndCacheAtomicRelaxationModel member function.
  */
 class AtomicRelaxationModelFactory
@@ -58,7 +58,7 @@ public:
   //! Constructor
   AtomicRelaxationModelFactory()
   { /* ... */ }
-  
+
   //! Destructor
   ~AtomicRelaxationModelFactory()
   { /* ... */ }
@@ -73,13 +73,13 @@ public:
   void createAndCacheAtomicRelaxationModel(
         const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
         Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const bool use_atomic_relaxation_data ); 
+        const bool use_atomic_relaxation_data );
 
   //! Create and cache the atomic relaxation model (ENDL)
   void createAndCacheAtomicRelaxationModel(
         const Data::ENDLDataContainer& raw_photoatom_data,
         Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-        const bool use_atomic_relaxation_data ); 
+        const bool use_atomic_relaxation_data );
 
 private:
 
@@ -91,7 +91,7 @@ private:
 		  const Teuchos::ArrayView<const double>& xprob_block,
 		  Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
 		  subshell_relaxation_models );
-  
+
   // The default void atomic relaxation model
   static const Teuchos::RCP<AtomicRelaxationModel> default_void_model;
 

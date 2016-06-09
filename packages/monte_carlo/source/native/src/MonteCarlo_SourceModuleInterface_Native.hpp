@@ -46,9 +46,9 @@ public:
 	    const int root_process );
 
   //! Export the source data
-  static void exportSourceData( 
+  static void exportSourceData(
                   const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
-  
+
   //! Sample a particle state (or possibly states)
   static void sampleParticleState( ParticleBank& bank,
 				   const unsigned long long history );
@@ -64,7 +64,7 @@ public:
 
   //! Print the source data
   static void printSourceSummary( std::ostream& os );
-  
+
 private:
 
   //! Constructor
@@ -75,14 +75,14 @@ private:
 };
 
 // Enable support for multiple threads
-inline void SourceModuleInterface<ParticleSource>::enableThreadSupport( 
+inline void SourceModuleInterface<ParticleSource>::enableThreadSupport(
                                                    const unsigned num_threads )
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   s_source->enableThreadSupport( num_threads );
 }
 
@@ -93,7 +93,7 @@ inline void SourceModuleInterface<ParticleSource>::resetSourceData()
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   s_source->resetData();
 }
 
@@ -106,54 +106,54 @@ inline void SourceModuleInterface<ParticleSource>::reduceSourceData(
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   s_source->reduceData( comm, root_process );
 }
 
 // Export the source data
-inline void SourceModuleInterface<ParticleSource>::exportSourceData( 
+inline void SourceModuleInterface<ParticleSource>::exportSourceData(
                    const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file )
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   s_source->exportData( hdf5_file );
 }
 
 // Sample the starting particle state
-inline void SourceModuleInterface<ParticleSource>::sampleParticleState( 
+inline void SourceModuleInterface<ParticleSource>::sampleParticleState(
 					     ParticleBank& bank,
 					     const unsigned long long history )
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
-  
+
   s_source->sampleParticleState( bank, history );
 }
 
 // Return the number of trials
-inline unsigned long long 
+inline unsigned long long
 SourceModuleInterface<ParticleSource>::getNumberOfTrials()
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   return s_source->getNumberOfTrials();
 }
 
 // Return the number of samples
-inline unsigned long long 
+inline unsigned long long
 SourceModuleInterface<ParticleSource>::getNumberOfSamples()
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   return s_source->getNumberOfSamples();
 }
 
@@ -164,19 +164,19 @@ inline double SourceModuleInterface<ParticleSource>::getSamplingEfficiency()
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   return s_source->getSamplingEfficiency();
 }
 
 // Print the source data
-inline void SourceModuleInterface<ParticleSource>::printSourceSummary( 
+inline void SourceModuleInterface<ParticleSource>::printSourceSummary(
                                                              std::ostream& os )
 {
   // Make sure the source has been set
   testPrecondition( s_source.get() );
   // Make sure only the master thread calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   s_source->printSummary( os );
 }
 

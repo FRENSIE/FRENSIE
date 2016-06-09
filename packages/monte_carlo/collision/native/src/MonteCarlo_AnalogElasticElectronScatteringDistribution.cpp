@@ -25,7 +25,7 @@
 
 namespace MonteCarlo{
 
-// Constructor 
+// Constructor
 AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_scattering_distribution,
     const double lower_cutoff_angle,
@@ -42,7 +42,7 @@ AnalogElasticElectronScatteringDistribution::AnalogElasticElectronScatteringDist
 }
 
 // Evaluate the distribution
-double AnalogElasticElectronScatteringDistribution::evaluate( 
+double AnalogElasticElectronScatteringDistribution::evaluate(
                             const double incoming_energy,
                             const double scattering_angle ) const
 {
@@ -52,8 +52,8 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle <= 2.0 );
 
   if ( d_angle_is_used_as_independent_variable )
-  {  
-    return MonteCarlo::evaluateTwoDDistributionCorrelated( 
+  {
+    return MonteCarlo::evaluateTwoDDistributionCorrelated(
                          incoming_energy,
                          scattering_angle,
                          d_elastic_scattering_distribution );
@@ -61,7 +61,7 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   else
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
-    return MonteCarlo::evaluateTwoDDistributionCorrelated( 
+    return MonteCarlo::evaluateTwoDDistributionCorrelated(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_scattering_distribution );
@@ -69,12 +69,12 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
 }
 
 // Evaluate the distribution
-double AnalogElasticElectronScatteringDistribution::evaluate( 
+double AnalogElasticElectronScatteringDistribution::evaluate(
                             const unsigned incoming_energy_bin,
                             const double scattering_angle ) const
 {
   // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin < 
+  testPrecondition( incoming_energy_bin <
                     d_elastic_scattering_distribution.size() );
   testPrecondition( incoming_energy_bin >= 0 );
   testPrecondition( scattering_angle >= 0.0 );
@@ -83,17 +83,17 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   double pdf;
 
   if ( d_angle_is_used_as_independent_variable )
-  { 
-    pdf = 
-     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate( 
+  {
+    pdf =
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate(
         scattering_angle );
   }
   else
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
 
-    pdf = 
-     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate( 
+    pdf =
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluate(
         scattering_angle_cosine );
   }
 
@@ -101,7 +101,7 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
 }
 
 // Evaluate the PDF
-double AnalogElasticElectronScatteringDistribution::evaluatePDF( 
+double AnalogElasticElectronScatteringDistribution::evaluatePDF(
                             const double incoming_energy,
                             const double scattering_angle ) const
 {
@@ -111,8 +111,8 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle <= 2.0 );
 
   if ( d_angle_is_used_as_independent_variable )
-  {  
-    double pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+  {
+    double pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
                          incoming_energy,
                          scattering_angle,
                          d_elastic_scattering_distribution );
@@ -122,7 +122,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_scattering_distribution );
@@ -130,12 +130,12 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the PDF
-double AnalogElasticElectronScatteringDistribution::evaluatePDF( 
+double AnalogElasticElectronScatteringDistribution::evaluatePDF(
                             const unsigned incoming_energy_bin,
                             const double scattering_angle ) const
 {
   // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy_bin < 
+  testPrecondition( incoming_energy_bin <
                     d_elastic_scattering_distribution.size() );
   testPrecondition( incoming_energy_bin >= 0 );
   testPrecondition( scattering_angle >= d_lower_cutoff_angle );
@@ -144,17 +144,17 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   double pdf;
 
   if ( d_angle_is_used_as_independent_variable )
-  { 
-    pdf = 
-     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF( 
+  {
+    pdf =
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF(
         scattering_angle );
   }
   else
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
 
-    pdf = 
-     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF( 
+    pdf =
+     d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF(
         scattering_angle_cosine );
   }
 
@@ -162,7 +162,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the CDF
-double AnalogElasticElectronScatteringDistribution::evaluateCDF( 
+double AnalogElasticElectronScatteringDistribution::evaluateCDF(
                             const double incoming_energy,
                             const double scattering_angle ) const
 {
@@ -172,8 +172,8 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle <= 2.0 );
 
   if ( d_angle_is_used_as_independent_variable )
-  {  
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF( 
+  {
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF(
                          incoming_energy,
                          scattering_angle,
                          d_elastic_scattering_distribution );
@@ -182,7 +182,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   {
     double scattering_angle_cosine = 1.0L - scattering_angle;
 
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF( 
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_scattering_distribution );
@@ -190,13 +190,13 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
 }
 
 // Evaluate the cross section ratio for the cutoff angle
-double AnalogElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio( 
+double AnalogElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRatio(
         const double incoming_energy ) const
 {
   double cross_section_ratio = 0.0;
 
   if ( d_angle_is_used_as_independent_variable )
-  {  
+  {
     // Get the cdf
     double cutoff_cdf = evaluateCDF( incoming_energy, d_lower_cutoff_angle );
     cross_section_ratio = 1.0 - cutoff_cdf;
@@ -223,7 +223,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRa
 
 
 // Return the energy at a given energy bin
-double AnalogElasticElectronScatteringDistribution::getEnergy( 
+double AnalogElasticElectronScatteringDistribution::getEnergy(
     const unsigned energy_bin ) const
 {
   // Make sure the energy bin is valid
@@ -234,7 +234,7 @@ double AnalogElasticElectronScatteringDistribution::getEnergy(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void AnalogElasticElectronScatteringDistribution::sample( 
+void AnalogElasticElectronScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
@@ -251,7 +251,7 @@ void AnalogElasticElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials( 
+void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -259,7 +259,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
-  
+
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
                                    scattering_angle_cosine,
@@ -267,7 +267,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the electron
-void AnalogElasticElectronScatteringDistribution::scatterElectron( 
+void AnalogElasticElectronScatteringDistribution::scatterElectron(
 				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -284,12 +284,12 @@ void AnalogElasticElectronScatteringDistribution::scatterElectron(
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  electron.rotateDirection( scattering_angle_cosine, 
+  electron.rotateDirection( scattering_angle_cosine,
 			  this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
-void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron( 
+void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
 				     AdjointElectronState& adjoint_electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -302,16 +302,16 @@ void AnalogElasticElectronScatteringDistribution::scatterAdjointElectron(
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
 				                   scattering_angle_cosine,
 				                   trial_dummy );
-  
+
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  adjoint_electron.rotateDirection( scattering_angle_cosine, 
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
 				                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution
-void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
+void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
         const double incoming_energy,
         double& scattering_angle_cosine,
         unsigned& trials ) const
@@ -325,9 +325,9 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   double scaled_random_number;
 
   if ( d_angle_is_used_as_independent_variable )
-  {  
+  {
     // evaluate the cdf value at the lower cutoff angle
-    double lower_cutoff_cdf = 
+    double lower_cutoff_cdf =
             evaluateCDF( incoming_energy, d_lower_cutoff_angle );
 
     // scale the random number to only sample above the lower cutoff angle
@@ -335,8 +335,8 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
         Utility::RandomNumberGenerator::getRandomNumber<double>() +
         lower_cutoff_cdf;
 
-  double scattering_angle = 
-        sampleTwoDDistributionCorrelatedWithRandomNumber( 
+  double scattering_angle =
+        sampleTwoDDistributionCorrelatedWithRandomNumber(
             incoming_energy,
             d_elastic_scattering_distribution,
             scaled_random_number );
@@ -346,15 +346,15 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   else
   {
     // evaluate the cdf value at the upper cutoff angle cosine
-    double upper_cutoff_cdf = 
+    double upper_cutoff_cdf =
             evaluateCDF( incoming_energy, d_lower_cutoff_angle );
 
     // scale the random number to only sample below the upper cutoff angle cosine
     scaled_random_number = upper_cutoff_cdf*
         Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    scattering_angle_cosine = 
-        sampleTwoDDistributionCorrelatedWithRandomNumber( 
+    scattering_angle_cosine =
+        sampleTwoDDistributionCorrelatedWithRandomNumber(
             incoming_energy,
             d_elastic_scattering_distribution,
             scaled_random_number );

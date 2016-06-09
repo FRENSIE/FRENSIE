@@ -25,7 +25,7 @@ class SourceHDF5FileHandler
 {
 
 public:
-  
+
   //! Enum for file operations
   enum SourceHDF5FileOps{
     OVERWRITE_SOURCE_HDF5_FILE = 0,
@@ -53,11 +53,11 @@ public:
                                         const unsigned long long trials );
 
   //! Get the number of source sampling trials
-  unsigned long long getNumberOfSourceSamplingTrials( 
+  unsigned long long getNumberOfSourceSamplingTrials(
                                               const unsigned source_id ) const;
-  
+
   //! Set the number of default source sampling trials
-  void setNumberOfDefaultSourceSamplingTrials( 
+  void setNumberOfDefaultSourceSamplingTrials(
                                              const unsigned long long trials );
 
   //! Get the number of default source sampling trials
@@ -77,7 +77,7 @@ public:
   unsigned long long getNumberOfDefaultSourceSamples() const;
 
 private:
-  
+
   // Get the source location
   std::string getSourceGroupLocation( const unsigned source_id ) const;
 

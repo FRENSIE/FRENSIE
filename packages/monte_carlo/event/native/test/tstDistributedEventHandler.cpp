@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstDistributedEventHandler.cpp
 //! \author Alex Robinson
 //! \brief  Event handler distributed parallel unit tests
@@ -73,16 +73,16 @@ std::shared_ptr<MonteCarlo::EventHandler> event_handler;
 //---------------------------------------------------------------------------//
 // Initialize a cell estimator
 template<typename CellEstimator>
-void initializeCellEstimator( 
+void initializeCellEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     std::shared_ptr<CellEstimator>& estimator )
-{  
+{
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
   Teuchos::Array<double> cell_volumes( cell_ids.size(), 1.0 );
-  
+
   estimator.reset( new CellEstimator( estimator_id,
 				      estimator_multiplier,
 				      cell_ids,
@@ -90,7 +90,7 @@ void initializeCellEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -100,7 +100,7 @@ void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     std::shared_ptr<CellPulseHeightEstimator>& estimator )
-{  
+{
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
@@ -110,13 +110,13 @@ void initializeCellPulseHeightEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
 // Initialize a surface flux estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceFluxEstimator( 
+void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
@@ -140,7 +140,7 @@ void initializeSurfaceFluxEstimator(
 
 // Initialize a surface current estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceCurrentEstimator( 
+void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
@@ -169,11 +169,11 @@ void initializeMeshEstimator( const unsigned estimator_id,
 				      1.0,
 				      mesh_file_name,
 				      "unit_cube_output.vtk" ) );
-  
+
   // Set the particle types
   Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-    
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -198,10 +198,10 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
-  
+
   // Update the cell track length flux estimators
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() ); 
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
 
   event_handler->getParticleSubtrackEndingInCellEventDispatcher().dispatchParticleSubtrackEndingInCellEvent(
 								      particle,
@@ -209,17 +209,17 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 								      1.0 );
 
   TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() ); 
+  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
 
   // Update the cell pulse height estimators
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() ); 
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
 
   event_handler->getParticleEnteringCellEventDispatcher().dispatchParticleEnteringCellEvent(
 								      particle,
 								      0 );
 
-  
+
   TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
 
@@ -233,7 +233,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 								      particle,
 								      0,
 								      1.0 );
-  
+
   TEST_ASSERT( estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_9->hasUncommittedHistoryContribution() );
@@ -248,19 +248,19 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
     double start_point_4[3] = { 0.0, 0.75, 0.25 };
     double start_point_5[3] = { 0.75, 0.25, 0.0 };
     double start_point_6[3] = { 0.25, 0.75, 0.0 };
-    
+
     double end_point_1[3] = { 0.75, 0.25, 1.0 };
     double end_point_2[3] = { 0.25, 0.75, 1.0 };
     double end_point_3[3] = { 1.0, 0.25, 0.75 };
     double end_point_4[3] = { 0.25, 1.0, 0.75 };
     double end_point_5[3] = { 1.0, 0.75, 0.25 };
     double end_point_6[3] = { 0.75, 1.0, 0.25 };
-  
+
     event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_1,
 								 end_point_1 );
-  
+
     event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_2,
@@ -280,7 +280,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 							         particle,
 							         start_point_5,
 								 end_point_5 );
-    
+
     event_handler->getParticleSubtrackEndingGlobalEventDispatcher().dispatchParticleSubtrackEndingGlobalEvent(
 							         particle,
 							         start_point_6,
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
 
   comm->barrier();
@@ -318,12 +318,12 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
   if( comm->getRank() == 0 )
   {
     std::string estimator_file_name( "test_estimator_handler_rank_0.h5" );
-    
+
     {
       std::shared_ptr<Utility::HDF5FileHandler>
         hdf5_file( new Utility::HDF5FileHandler );
       hdf5_file->openHDF5FileAndOverwrite( estimator_file_name );
-      
+
       event_handler->exportObserverData( hdf5_file,
                                          procs,
                                          procs,
@@ -352,7 +352,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -366,7 +366,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -380,7 +380,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   2u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -394,7 +394,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   3u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -408,7 +408,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   4u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -422,7 +422,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   5u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -436,7 +436,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   6u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -450,7 +450,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   7u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -464,7 +464,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   8u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -478,80 +478,80 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   9u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
 
     double track_length = 0.6123724356957940;
     raw_bin_data_used[0]( procs*track_length, procs*track_length*track_length);
-    
+
     const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
     moab::Range::const_iterator tet = all_tet_elements.begin();
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
 					  raw_bin_data_copy,
-					  1e-12 );  
+					  1e-12 );
   }
   // Make sure estimators on other processes were reset
   else
   {
     std::ostringstream oss;
     oss << "test_estimator_handler_rank_ " << comm->getRank() << ".h5";
-    
+
     {
       std::shared_ptr<Utility::HDF5FileHandler>
         hdf5_file( new Utility::HDF5FileHandler );
       hdf5_file->openHDF5FileAndOverwrite( oss.str() );
-      
+
       event_handler->exportObserverData( hdf5_file,
                                          procs,
                                          procs,
@@ -559,7 +559,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
                                          1.0,
                                          false );
     }
-    
+
     // Initialize the HDF5 file
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
 	 oss.str(),
@@ -579,7 +579,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   0u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -593,7 +593,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   1u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -607,7 +607,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   2u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -621,7 +621,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   3u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -635,7 +635,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   4u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -649,7 +649,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
 						   5u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -663,7 +663,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   6u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -677,7 +677,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   7u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -691,7 +691,7 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   8u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
@@ -705,65 +705,65 @@ TEUCHOS_UNIT_TEST( EventHandler, reduceData )
 
     hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
 						   9u, 1u, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
 
     const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
     moab::Range::const_iterator tet = all_tet_elements.begin();
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-12 );
 
     ++tet;
-    
+
     hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
 						10u, *tet, raw_bin_data_copy );
-  
+
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
-					  1e-12 );  
+					  1e-12 );
   }
 
   //comm->barrier();
@@ -784,11 +784,11 @@ int main( int argc, char** argv )
   clp.setOption( "test_input_mesh_file_name",
 		 &test_input_mesh_file_name,
 		 "Test input mesh file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -810,7 +810,7 @@ int main( int argc, char** argv )
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
   cell_ids[0] = 0;
   cell_ids[1] = 1;
-  
+
   initializeCellEstimator( 0u, cell_ids, estimator_1 );
   initializeCellEstimator( 1u, cell_ids, estimator_2 );
   initializeCellEstimator( 2u, cell_ids, estimator_3 );
@@ -828,7 +828,7 @@ int main( int argc, char** argv )
   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
   surface_ids[0] = 0;
   surface_ids[1] = 1;
-  
+
   initializeSurfaceFluxEstimator( 6u, surface_ids, estimator_7 );
   initializeSurfaceFluxEstimator( 7u, surface_ids, estimator_8 );
   initializeSurfaceCurrentEstimator( 8u, surface_ids, estimator_9 );
@@ -845,7 +845,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
 
   mpiSession.barrier();

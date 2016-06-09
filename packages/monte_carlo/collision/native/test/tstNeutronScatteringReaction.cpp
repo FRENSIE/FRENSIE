@@ -37,14 +37,14 @@ Teuchos::RCP<MonteCarlo::NuclearReaction> nuclear_reaction;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeReaction()
-{   
-  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory 
+{
+  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
     factory( test_basic_ace_table_name,
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     *xss_data_extractor );
 
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
-  
+
   factory.createScatteringDistribution( MonteCarlo::N__N_ELASTIC_REACTION,
 					scattering_dist );
 
@@ -54,7 +54,7 @@ void initializeReaction()
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
 
-  nuclear_reaction.reset( new MonteCarlo::NeutronScatteringReaction( 
+  nuclear_reaction.reset( new MonteCarlo::NeutronScatteringReaction(
 				       MonteCarlo::N__N_ELASTIC_REACTION,
 			               ace_file_handler->getTableTemperature(),
 				       0.0,
@@ -69,7 +69,7 @@ void initializeReaction()
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of emitted neutrons can be returned
-TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
+TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic,
 		   getNumberOfEmittedNeutrons )
 {
   TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
@@ -77,20 +77,20 @@ TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic,
 
 //---------------------------------------------------------------------------//
 // Check that the reaction can be simulated
-TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
+TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic,
 		   react )
 {
   MonteCarlo::ParticleBank bank;
 
   {
     Teuchos::RCP<MonteCarlo::NeutronState> neutron( new MonteCarlo::NeutronState(0ull) );
-  
+
     neutron->setDirection( 0.0, 0.0, 1.0 );
     neutron->setEnergy( 1.0 );
 
     bank.push( neutron );
   }
-  
+
   nuclear_reaction->react( dynamic_cast<MonteCarlo::NeutronState&>(bank.top()),
 			   bank );
 
@@ -113,10 +113,10 @@ int main( int argc, char** argv )
 		 &test_basic_ace_table_name,
 		 "Test basic ACE table name in basic ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

@@ -55,7 +55,7 @@ public:
   virtual void printSummary( std::ostream& os ) const = 0;
 
   //! Sample a particle state from the source
-  virtual void sampleParticleState( ParticleBank& bank, 
+  virtual void sampleParticleState( ParticleBank& bank,
 				    const unsigned long long history ) = 0;
 
   //! Return the number of sampling trials
@@ -78,7 +78,7 @@ protected:
 };
 
 // Print a standard summary of the source data
-inline void ParticleSource::printStandardSummary( 
+inline void ParticleSource::printStandardSummary(
                                               const std::string& source_name,
                                               const unsigned long long trials,
                                               const unsigned long long samples,

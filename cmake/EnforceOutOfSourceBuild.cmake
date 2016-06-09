@@ -20,4 +20,3 @@ MACRO(ENFORCE_OUT_OF_SOURCE_BUILD)
     MESSAGE(FATAL_ERROR "This project cannot be installed in the source directory.")
   ENDIF()
 ENDMACRO()
-      

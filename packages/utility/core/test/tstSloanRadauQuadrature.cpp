@@ -26,18 +26,18 @@
 //---------------------------------------------------------------------------//
 
 // P_4 expansion test variables
-std::vector<Utility::long_float> legendre_moments( 5 ), 
+std::vector<Utility::long_float> legendre_moments( 5 ),
   radau_moments( 4 ), weights_4( 3 ),
-  normalization_factors_N( 3 ), normalization_ratios( 3 ), 
+  normalization_factors_N( 3 ), normalization_ratios( 3 ),
   variances( 3 ), mean_coefficients( 3 );
 
 Teuchos::TwoDArray<Utility::long_float> orthogonal_coefficients( 3, 3 );
 Teuchos::TwoDArray<Utility::long_float> roots( 3, 2 );
 
 // P_8 expansion test variables
-std::vector<Utility::long_float> legendre_moments_8( 9 ), 
+std::vector<Utility::long_float> legendre_moments_8( 9 ),
   radau_moments_8( 8 ), weights_8( 5 ),
-  normalization_factors_N_8( 5 ), normalization_ratios_8( 5 ), 
+  normalization_factors_N_8( 5 ), normalization_ratios_8( 5 ),
   variances_8( 5 ), mean_coefficients_8( 5 );
 
 Teuchos::TwoDArray<Utility::long_float> roots_8( 5, 4 );
@@ -48,7 +48,7 @@ std::vector<Utility::long_float> test_legendre( 17 );
 Utility::long_float test_weight;
 
 
-Teuchos::RCP<Utility::SloanRadauQuadrature> quadrature, 
+Teuchos::RCP<Utility::SloanRadauQuadrature> quadrature,
                                             quadrature_8,
                                             test_quadrature;
 
@@ -74,16 +74,16 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   quadrature2.getRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),  
-                          .05,  
+  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+                          .05,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),  
-                          1.0/60.0,  
+  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+                          1.0/60.0,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),  
-                          14.0/15.0 - 91.0/100.0,  
+  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+                          14.0/15.0 - 91.0/100.0,
                           1e-14);
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
                           91.0/100.0 - 157.0/175.0, 1e-14);
 
   number_of_moments = 8;
@@ -91,29 +91,29 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   quadrature_8->getRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(), 
-                          radau_moments_8[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+                          radau_moments_8[0].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(), 
-                          radau_moments_8[1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+                          radau_moments_8[1].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),  
-                          radau_moments_8[2].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+                          radau_moments_8[2].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),  
-                          radau_moments_8[3].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
+                          radau_moments_8[3].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),  
-                          radau_moments_8[4].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
+                          radau_moments_8[4].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),  
-                          radau_moments_8[5].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
+                          radau_moments_8[5].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),  
-                          radau_moments_8[6].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
+                          radau_moments_8[6].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),  
-                          radau_moments_8[7].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
+                          radau_moments_8[7].convert_to<double>(),
                           1e-14 );
 
 }
@@ -128,29 +128,29 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   quadrature_8->getLongRadauMoments( radau_moment );
 
-  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(), 
-                          radau_moments_8[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[0].convert_to<double>(),
+                          radau_moments_8[0].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(), 
-                          radau_moments_8[1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[1].convert_to<double>(),
+                          radau_moments_8[1].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),  
-                          radau_moments_8[2].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[2].convert_to<double>(),
+                          radau_moments_8[2].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),  
-                          radau_moments_8[3].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[3].convert_to<double>(),
+                          radau_moments_8[3].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),  
-                          radau_moments_8[4].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[4].convert_to<double>(),
+                          radau_moments_8[4].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),  
-                          radau_moments_8[5].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[5].convert_to<double>(),
+                          radau_moments_8[5].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),  
-                          radau_moments_8[6].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[6].convert_to<double>(),
+                          radau_moments_8[6].convert_to<double>(),
                           1e-14 );
-  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),  
-                          radau_moments_8[7].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( radau_moment[7].convert_to<double>(),
+                          radau_moments_8[7].convert_to<double>(),
                           1e-14 );
 
 }
@@ -169,8 +169,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                     radau_moments,
                                                     i );
 
-  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(), 
-                          normalization_ratios[i].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
+                          normalization_ratios[i].convert_to<double>(),
                           1e-12);
 
   i = 2;
@@ -180,8 +180,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                                                     radau_moments,
                                                     i );
 
-  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(),  
-                          normalization_ratios[i].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( ratios[i].convert_to<double>(),
+                          normalization_ratios[i].convert_to<double>(),
                           1e-12);
 
 }
@@ -193,20 +193,20 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 {
   int i = 1;
   Utility::long_float result1 =
-    quadrature->evaluateMeanCoefficient( normalization_ratios, 
+    quadrature->evaluateMeanCoefficient( normalization_ratios,
                                          i );
 
-  TEST_FLOATING_EQUALITY( result1.convert_to<double>(), 
-                          mean_coefficients[i].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( result1.convert_to<double>(),
+                          mean_coefficients[i].convert_to<double>(),
                           1e-12);
 
   i = 2;
   Utility::long_float result2 =
-    quadrature->evaluateMeanCoefficient( normalization_ratios, 
+    quadrature->evaluateMeanCoefficient( normalization_ratios,
                                          i );
 
-  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),  
-                          mean_coefficients[i].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),
+                          mean_coefficients[i].convert_to<double>(),
                           1e-12);
 
 }
@@ -222,36 +222,36 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   int i = 1;
 
-  quadrature->evaluateOrthogonalCoefficients( coefficients, 
+  quadrature->evaluateOrthogonalCoefficients( coefficients,
                                               variances,
                                               mean_coefficients,
                                               i );
 
-  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(), 
-                          orthogonal_coefficients[i][0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
+                          orthogonal_coefficients[i][0].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(), 
-                          orthogonal_coefficients[i][1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
+                          orthogonal_coefficients[i][1].convert_to<double>(),
                           1e-12);
 
 
   i = 2;
-  quadrature->evaluateOrthogonalCoefficients( coefficients, 
+  quadrature->evaluateOrthogonalCoefficients( coefficients,
                                               variances,
                                               mean_coefficients,
                                               i );
 
-  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(), 
-                          orthogonal_coefficients[i][0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefficients[i][0].convert_to<double>(),
+                          orthogonal_coefficients[i][0].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(), 
-                          orthogonal_coefficients[i][1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefficients[i][1].convert_to<double>(),
+                          orthogonal_coefficients[i][1].convert_to<double>(),
                           1e-12);
 
-  TEST_FLOATING_EQUALITY( coefficients[i][2].convert_to<double>(), 
-                          orthogonal_coefficients[i][2].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( coefficients[i][2].convert_to<double>(),
+                          orthogonal_coefficients[i][2].convert_to<double>(),
                           1e-12);
 
 }
@@ -265,22 +265,22 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   int i = 0;
 
   quadrature->evaluateOrthogonalNormalizationFactor( N,
-                                                     orthogonal_coefficients, 
+                                                     orthogonal_coefficients,
                                                      radau_moments,
                                                      i );
 
-  TEST_FLOATING_EQUALITY( N[0].convert_to<double>(), 
-                          normalization_factors_N[i].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( N[0].convert_to<double>(),
+                          normalization_factors_N[i].convert_to<double>(),
                           1e-12);
 
   i = 1;
   quadrature->evaluateOrthogonalNormalizationFactor( N,
-                                                     orthogonal_coefficients, 
+                                                     orthogonal_coefficients,
                                                      radau_moments,
                                                      i );
 
-  TEST_FLOATING_EQUALITY( N[1].convert_to<double>(), 
-                          normalization_factors_N[i].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( N[1].convert_to<double>(),
+                          normalization_factors_N[i].convert_to<double>(),
                           1e-12);
 }
 
@@ -292,12 +292,12 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   int i = 1;
 
-  Utility::long_float result = 
+  Utility::long_float result =
     quadrature->evaluateVariance( normalization_factors_N,
                                   i );
 
-  TEST_FLOATING_EQUALITY( result.convert_to<double>(), 
-                          variances[i].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( result.convert_to<double>(),
+                          variances[i].convert_to<double>(),
                           1e-12);
 }
 
@@ -307,23 +307,23 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 		           evaluateOrthogonalPolynomial )
 {
   Utility::long_float result1 =
-    quadrature->evaluateOrthogonalPolynomial( variances, 
-                                              mean_coefficients, 
-                                              -Utility::long_float(1), 
+    quadrature->evaluateOrthogonalPolynomial( variances,
+                                              mean_coefficients,
+                                              -Utility::long_float(1),
                                               2 );
 
-  TEST_FLOATING_EQUALITY( result1.convert_to<double>(), 
-                          1.30003428811616E+00,  
+  TEST_FLOATING_EQUALITY( result1.convert_to<double>(),
+                          1.30003428811616E+00,
                           1e-12);
 
   Utility::long_float result2 =
-    quadrature->evaluateOrthogonalPolynomial( variances, 
-                                              mean_coefficients, 
-                                              Utility::long_float(1), 
+    quadrature->evaluateOrthogonalPolynomial( variances,
+                                              mean_coefficients,
+                                              Utility::long_float(1),
                                               2 );
 
-  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),  
-                          3.32904776851917E-02,  
+  TEST_FLOATING_EQUALITY( result2.convert_to<double>(),
+                          3.32904776851917E-02,
                           1e-12);
 
 }
@@ -339,17 +339,17 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   int i = 2;
   bool root_found =
-    quadrature->evaluateOrthogonalRoots( test_roots, 
+    quadrature->evaluateOrthogonalRoots( test_roots,
                                          variances,
-                                         mean_coefficients, 
+                                         mean_coefficients,
                                          i );
 
-  TEST_EQUALITY_CONST( root_found, 1 ); 
-  TEST_FLOATING_EQUALITY( test_roots[2][0].convert_to<double>(), 
-                          roots[2][0].convert_to<double>(),  
+  TEST_EQUALITY_CONST( root_found, 1 );
+  TEST_FLOATING_EQUALITY( test_roots[2][0].convert_to<double>(),
+                          roots[2][0].convert_to<double>(),
                           1e-12);
-  TEST_FLOATING_EQUALITY( test_roots[2][1].convert_to<double>(),  
-                          roots[2][1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( test_roots[2][1].convert_to<double>(),
+                          roots[2][1].convert_to<double>(),
                           1e-12);
 
 }
@@ -378,38 +378,38 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_4[0].convert_to<double>(), 
-                          legendre_moments[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( legendres_4[0].convert_to<double>(),
+                          legendre_moments[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[1].convert_to<double>(), 
-                          legendre_moments[1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( legendres_4[1].convert_to<double>(),
+                          legendre_moments[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[2].convert_to<double>(), 
-                          legendre_moments[2].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( legendres_4[2].convert_to<double>(),
+                          legendre_moments[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[3].convert_to<double>(), 
-                          legendre_moments[3].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( legendres_4[3].convert_to<double>(),
+                          legendre_moments[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_4[4].convert_to<double>(), 
-                          legendre_moments[4].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( legendres_4[4].convert_to<double>(),
+                          legendre_moments[4].convert_to<double>(),
                           tol);
 
 /*
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(), 
-                          weights_4[0].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weights_4[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weights_4[1].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weights_4[1].convert_to<double>(),
                            tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
-                          weights_4[2].convert_to<double>(), 
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+                          weights_4[2].convert_to<double>(),
                            tol);
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(), 
-                          roots[2][0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          roots[2][0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          roots[2][1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          roots[2][1].convert_to<double>(),
                           tol);
   TEST_EQUALITY_CONST( nodes[2].convert_to<double>(), 1.0 );
 */
@@ -430,61 +430,61 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_8[0].convert_to<double>(), 
-                          legendre_moments_8[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[0].convert_to<double>(),
+                          legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[1].convert_to<double>(),  
-                          legendre_moments_8[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[1].convert_to<double>(),
+                          legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[2].convert_to<double>(),  
-                          legendre_moments_8[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[2].convert_to<double>(),
+                          legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[3].convert_to<double>(),  
-                          legendre_moments_8[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[3].convert_to<double>(),
+                          legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[4].convert_to<double>(),  
-                          legendre_moments_8[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[4].convert_to<double>(),
+                          legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[5].convert_to<double>(),  
-                          legendre_moments_8[5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[5].convert_to<double>(),
+                          legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[6].convert_to<double>(),  
-                          legendre_moments_8[6].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[6].convert_to<double>(),
+                          legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[7].convert_to<double>(),  
-                          legendre_moments_8[7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[7].convert_to<double>(),
+                          legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_8[8].convert_to<double>(),  
-                          legendre_moments_8[8].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_8[8].convert_to<double>(),
+                          legendre_moments_8[8].convert_to<double>(),
                           tol);
 /*
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
-                          weights_8[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weights_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weights_8[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weights_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
-                          weights_8[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+                          weights_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),  
-                          weights_8[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+                          weights_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[4].convert_to<double>(),  
-                          weights_8[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[4].convert_to<double>(),
+                          weights_8[4].convert_to<double>(),
                           tol);
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
-                          roots_8[4][0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          roots_8[4][0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          roots_8[4][1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          roots_8[4][1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),  
-                          roots_8[4][2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+                          roots_8[4][2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),  
-                          roots_8[4][3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+                          roots_8[4][3].convert_to<double>(),
                           tol);
   TEST_EQUALITY_CONST( nodes[4].convert_to<double>(), 1.0 );
 */
@@ -506,38 +506,38 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_double[0].convert_to<double>(), 
-                          legendre_moments_8[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[0].convert_to<double>(),
+                          legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[1].convert_to<double>(),  
-                          legendre_moments_8[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[1].convert_to<double>(),
+                          legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[2].convert_to<double>(),  
-                          legendre_moments_8[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[2].convert_to<double>(),
+                          legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[3].convert_to<double>(),  
-                          legendre_moments_8[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[3].convert_to<double>(),
+                          legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[4].convert_to<double>(),  
-                          legendre_moments_8[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[4].convert_to<double>(),
+                          legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[5].convert_to<double>(),  
-                          legendre_moments_8[5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[5].convert_to<double>(),
+                          legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[6].convert_to<double>(),  
-                          legendre_moments_8[6].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[6].convert_to<double>(),
+                          legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[7].convert_to<double>(),  
-                          legendre_moments_8[7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[7].convert_to<double>(),
+                          legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_double[8].convert_to<double>(),  
-                          legendre_moments_8[8].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_double[8].convert_to<double>(),
+                          legendre_moments_8[8].convert_to<double>(),
                           tol);
 
   std::vector<long double> node_ld, weight_ld;
   number_of_angles_wanted = 5;
   quadrature_8->getRadauNodesAndWeights( node_ld,
-                                         weight_ld, 
+                                         weight_ld,
                                          number_of_angles_wanted );
 
   std::vector<Utility::long_float>  legendres_ld( 9 );
@@ -553,32 +553,32 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     }
   }
 
-  TEST_FLOATING_EQUALITY( legendres_ld[0].convert_to<double>(), 
-                          legendre_moments_8[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[0].convert_to<double>(),
+                          legendre_moments_8[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[1].convert_to<double>(),  
-                          legendre_moments_8[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[1].convert_to<double>(),
+                          legendre_moments_8[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[2].convert_to<double>(),  
-                          legendre_moments_8[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[2].convert_to<double>(),
+                          legendre_moments_8[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[3].convert_to<double>(),  
-                          legendre_moments_8[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[3].convert_to<double>(),
+                          legendre_moments_8[3].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[4].convert_to<double>(),  
-                          legendre_moments_8[4].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[4].convert_to<double>(),
+                          legendre_moments_8[4].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[5].convert_to<double>(),  
-                          legendre_moments_8[5].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[5].convert_to<double>(),
+                          legendre_moments_8[5].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[6].convert_to<double>(),  
-                          legendre_moments_8[6].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[6].convert_to<double>(),
+                          legendre_moments_8[6].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[7].convert_to<double>(),  
-                          legendre_moments_8[7].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[7].convert_to<double>(),
+                          legendre_moments_8[7].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( legendres_ld[8].convert_to<double>(),  
-                          legendre_moments_8[8].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( legendres_ld[8].convert_to<double>(),
+                          legendre_moments_8[8].convert_to<double>(),
                           tol);
 
   number_of_angles_wanted = 7;
@@ -652,19 +652,19 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = Utility::long_float(3)/Utility::long_float(4);
   weight[1] = Utility::long_float(1)/Utility::long_float(4);
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
-                          weight[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weight[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weight[1].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
-                          node[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          node[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          node[1].convert_to<double>(),
                           tol);
 
 
@@ -686,7 +686,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
 
-  node[1] = -1.810662711185306E-01L; 
+  node[1] = -1.810662711185306E-01L;
   node[2] = 5.753189235216941E-01L;
   node[0] = -8.228240809745921E-01L;
   node[3] = 1.000000000000000E+00L;
@@ -696,31 +696,31 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = 2.204622111767684E-01L;
   weight[3] = 6.250000000000000E-02L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
-                          weight[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weight[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weight[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
-                          weight[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+                          weight[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),  
-                          weight[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+                          weight[3].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
-                          node[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          node[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          node[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),  
-                          node[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+                          node[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),  
-                          node[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+                          node[3].convert_to<double>(),
                           tol);
 
   number_of_angles_wanted = 4;
@@ -740,7 +740,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
 
   test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
 
-  node[1] = -1.762533480739568E-01L; 
+  node[1] = -1.762533480739568E-01L;
   node[2] = 5.786796265405898E-01L;
   node[0] = -8.212296972700518E-01L;
   node[3] = 1.000000000000000E+00L;
@@ -750,31 +750,31 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   weight[0] = 2.222576041068843E-01L;
   weight[3] = 6.186868686868687E-02L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
-                          weight[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weight[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weight[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
-                          weight[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),
+                          weight[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),  
-                          weight[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),
+                          weight[3].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
-                          node[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          node[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          node[1].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),  
-                          node[2].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),
+                          node[2].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),  
-                          node[3].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),
+                          node[3].convert_to<double>(),
                           tol);
 /*
   number_of_angles_wanted = 2;
@@ -802,19 +802,19 @@ std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
   weight[0] = 1.536960881469447E-07L;
   weight[1] = 9.999998463039118E-01L;
 
-  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
-                          weight[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),
+                          weight[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
-                          weight[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),
+                          weight[1].convert_to<double>(),
                           tol);
 
 
-  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
-                          node[0].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),
+                          node[0].convert_to<double>(),
                           tol);
-  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
-                          node[1].convert_to<double>(),  
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),
+                          node[1].convert_to<double>(),
                           tol);
 */
 }
@@ -823,13 +823,13 @@ std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{  
+{
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -870,7 +870,7 @@ int main( int argc, char** argv )
   roots[2][1] = 9.7519006900E-01L;
   roots[2][1] += 8.79891800E-10L;
   */
-  variances[0] = Utility::long_float(0);  
+  variances[0] = Utility::long_float(0);
   variances[1] = 8.2558188369131800E-02L;
   variances[2] = Utility::long_float(0);
 
@@ -878,11 +878,11 @@ int main( int argc, char** argv )
   mean_coefficients[1] = 9.09197067532404E-01L;
   mean_coefficients[2] = -2.75825162316919E-01L;
 
-  normalization_factors_N[0] = 4.4051713388171300E-09L;  
+  normalization_factors_N[0] = 4.4051713388171300E-09L;
   normalization_factors_N[1] = 3.6368296518836500E-10L;
   normalization_factors_N[2] = Utility::long_float(0);
 
-  normalization_ratios[0] =  Utility::long_float(0);  
+  normalization_ratios[0] =  Utility::long_float(0);
   normalization_ratios[1] =  9.0919706753240400E-01L;
   normalization_ratios[2] =  6.3337190521548500E-01L;
 
@@ -988,14 +988,14 @@ int main( int argc, char** argv )
     for ( int m = 1; m < num_moments; m++ )
     {
       test_legendre[m] +=
-        Utility::getLegendrePolynomial( test_roots[i].convert_to<long double>(), 
+        Utility::getLegendrePolynomial( test_roots[i].convert_to<long double>(),
                                         m )*test_weight;
-    }    
+    }
   }
 
   test_quadrature.reset(
     new Utility::SloanRadauQuadrature( test_legendre ) );
-   
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -1008,7 +1008,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

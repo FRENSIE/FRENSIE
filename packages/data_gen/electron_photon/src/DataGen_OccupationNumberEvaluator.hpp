@@ -3,7 +3,7 @@
 //! \file   DataGen_OccupationNumberEvaluator.hpp
 //! \author Alex Robinson
 //! \brief  The occupation number evaluator declaration
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef DATA_GEN_OCCUPATION_NUMBER_EVALUATOR_HPP
@@ -25,7 +25,7 @@ class OccupationNumberEvaluator
 {
 
 public:
-  
+
   //! Constructor
   OccupationNumberEvaluator(
 		   const Teuchos::Array<double>& electron_momentum_projections,
@@ -40,7 +40,7 @@ public:
   double getComptonProfileNormConstant() const;
 
   //! Evaluate the compton profile
-  double evaluateComptonProfile( 
+  double evaluateComptonProfile(
 			     const double electron_momentum_projection ) const;
 
   //! Return the occupation number at a given electron momentum projection

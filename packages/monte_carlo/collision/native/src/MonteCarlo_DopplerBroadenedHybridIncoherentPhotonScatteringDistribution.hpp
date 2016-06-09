@@ -30,7 +30,7 @@ class DopplerBroadenedHybridIncoherentPhotonScatteringDistribution : public WHIn
 public:
 
   //! Constructor
-  DopplerBroadenedHybridIncoherentPhotonScatteringDistribution( 
+  DopplerBroadenedHybridIncoherentPhotonScatteringDistribution(
 	  const std::shared_ptr<const ScatteringFunction>& scattering_function,
 	  const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
 	  doppler_broadened_energy_dist,

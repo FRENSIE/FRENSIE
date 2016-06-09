@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Calculate the AND/DLW block distribution array sizes
-void calculateDistArraySizes( 
+void calculateDistArraySizes(
                      const Teuchos::ArrayView<const double>& location_block,
 		     const Teuchos::ArrayView<const double>& data_block,
                      Teuchos::Array<unsigned>& dist_array_sizes )
@@ -47,7 +47,7 @@ void calculateDistArraySizes(
         if( second_index == location_block.size() and first_index != location_block.size() - 1 )
         {
           dist_array_sizes[ first_index ] = data_block.size() + 1 - location_block[first_index];
-        }  
+        }
         first_index = second_index;
         ++second_index;
       }
@@ -65,7 +65,7 @@ void calculateDistArraySizes(
       ++second_index;
     }
   }
- 
+
   // Make sure every index in the location block has a corresponding array size
   testPostcondition( dist_array_sizes.size() ==
 		     location_block.size() );

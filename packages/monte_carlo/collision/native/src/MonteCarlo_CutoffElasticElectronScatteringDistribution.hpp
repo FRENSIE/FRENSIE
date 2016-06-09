@@ -44,7 +44,7 @@ public:
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
         const double upper_cutoff_angle_cosine = 0.999999 );
 
-  //! Destructor 
+  //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -89,7 +89,7 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                    
+
 protected:
 
    //! Sample an outgoing direction from the distribution

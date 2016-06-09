@@ -31,7 +31,7 @@ MomentPreservingElectronScatteringDistribution::MomentPreservingElectronScatteri
 }
 
 // Sample an outgoing energy and direction from the distribution
-void MomentPreservingElectronScatteringDistribution::sample( 
+void MomentPreservingElectronScatteringDistribution::sample(
                const double incoming_energy,
                double& outgoing_energy,
                double& scattering_angle_cosine ) const
@@ -48,7 +48,7 @@ void MomentPreservingElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrials( 
+void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrials(
                 const double incoming_energy,
                 double& outgoing_energy,
                 double& scattering_angle_cosine,
@@ -56,7 +56,7 @@ void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrials(
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
-  
+
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
 				                   scattering_angle_cosine,
@@ -64,7 +64,7 @@ void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the electron
-void MomentPreservingElectronScatteringDistribution::scatterElectron( 
+void MomentPreservingElectronScatteringDistribution::scatterElectron(
                 ElectronState& electron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction ) const
@@ -81,12 +81,12 @@ void MomentPreservingElectronScatteringDistribution::scatterElectron(
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  electron.rotateDirection( scattering_angle_cosine, 
+  electron.rotateDirection( scattering_angle_cosine,
 			                this->sampleAzimuthalAngle() );
 }
-                        
+
 // Randomly scatter the adjoint electron
-void MomentPreservingElectronScatteringDistribution::scatterAdjointElectron( 
+void MomentPreservingElectronScatteringDistribution::scatterAdjointElectron(
                 AdjointElectronState& adjoint_electron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction ) const
@@ -99,16 +99,16 @@ void MomentPreservingElectronScatteringDistribution::scatterAdjointElectron(
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
 				                   scattering_angle_cosine,
 				                   trial_dummy );
-  
+
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  adjoint_electron.rotateDirection( scattering_angle_cosine, 
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
 				                    this->sampleAzimuthalAngle() );
 }
 
 // Sample an outgoing direction from the distribution
-void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
+void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                 const double incoming_energy,
                 double& scattering_angle_cosine,
                 unsigned& trials ) const

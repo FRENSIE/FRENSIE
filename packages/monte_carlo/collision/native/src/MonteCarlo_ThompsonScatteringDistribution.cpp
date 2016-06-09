@@ -36,14 +36,14 @@ double ThompsonScatteringDistribution::evaluateIntegratedCrossSection(
 }
 
 // Sample an outgoing direction from the distribution
-void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl( 
+void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl(
 					    const double incoming_energy,
 					    double& scattering_angle_cosine,
 					    unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  
+
   this->sampleAndRecordTrialsBasicImpl( incoming_energy,
 					scattering_angle_cosine,
 					trials );

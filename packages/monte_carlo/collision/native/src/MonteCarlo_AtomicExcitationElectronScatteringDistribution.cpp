@@ -29,7 +29,7 @@ AtomicExcitationElectronScatteringDistribution::AtomicExcitationElectronScatteri
 }
 
 // Sample an outgoing energy and direction from the distribution
-void AtomicExcitationElectronScatteringDistribution::sample( 
+void AtomicExcitationElectronScatteringDistribution::sample(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine ) const
@@ -45,7 +45,7 @@ void AtomicExcitationElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void AtomicExcitationElectronScatteringDistribution::sampleAndRecordTrials( 
+void AtomicExcitationElectronScatteringDistribution::sampleAndRecordTrials(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine,
@@ -57,7 +57,7 @@ void AtomicExcitationElectronScatteringDistribution::sampleAndRecordTrials(
   // Sample an outgoing direction
   this->sample( incoming_energy,
                 outgoing_energy,
-                scattering_angle_cosine ); 
+                scattering_angle_cosine );
 }
 
 // Randomly scatter the electron
@@ -72,7 +72,7 @@ void AtomicExcitationElectronScatteringDistribution::scatterElectron( ElectronSt
   this->sample( electron.getEnergy(),
                 outgoing_energy,
                 scattering_angle_cosine );
-  
+
   // Set the new energy
   electron.setEnergy( outgoing_energy );
 }

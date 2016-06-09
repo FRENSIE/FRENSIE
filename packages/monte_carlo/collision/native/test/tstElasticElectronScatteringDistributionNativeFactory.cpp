@@ -25,17 +25,17 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution> 
+Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   native_cutoff_elastic_distribution;
 
-Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> 
+Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
   native_sr_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    getAngularGrid )
 {
 
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 /*
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrialsImpl )
 {
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
@@ -106,20 +106,20 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from cutoff distribution
-  native_cutoff_elastic_distribution->sampleAndRecordTrialsImpl( 
+  native_cutoff_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-                          1.0 - 1.249161208881750E-02, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          1.0 - 1.249161208881750E-02,
                           1e-12 );
 
   TEST_EQUALITY_CONST( trials, 11 );
 
   // sampleAndRecordTrialsImpl from screened Rutherford distribution
-  native_sr_elastic_distribution->sampleAndRecordTrialsImpl( 
+  native_sr_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( trials, 12 );
 
   // sampleAndRecordTrialsImpl from screened Rutherford distribution
-  native_sr_elastic_distribution->sampleAndRecordTrialsImpl( 
+  native_sr_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -139,7 +139,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( trials, 13 );
 
   // sampleAndRecordTrialsImpl from screened Rutherford distribution
-  native_sr_elastic_distribution->sampleAndRecordTrialsImpl( 
+  native_sr_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 */
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    sample )
 {
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
@@ -179,8 +179,8 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                                               scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-                          1.0 - 1.249161208881750E-02, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          1.0 - 1.249161208881750E-02,
                           1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
@@ -218,7 +218,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
@@ -247,15 +247,15 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  native_cutoff_elastic_distribution->sampleAndRecordTrials( 
+  native_cutoff_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
-                          1.0 - 1.249161208881750E-02, 
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine,
+                          1.0 - 1.249161208881750E-02,
                           1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   outgoing_energy = 0;
 
   // sampleAndRecordTrialsImpl screened rutherford
-  native_sr_elastic_distribution->sampleAndRecordTrials( 
+  native_sr_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -276,7 +276,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( trials, 12 );
 
   // sampleAndRecordTrialsImpl screened rutherford
-  native_sr_elastic_distribution->sampleAndRecordTrials( 
+  native_sr_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -287,7 +287,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( trials, 13 );
 
   // sampleAndRecordTrialsImpl screened rutherford
-  native_sr_elastic_distribution->sampleAndRecordTrials( 
+  native_sr_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -305,26 +305,26 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 int main( int argc, char** argv )
 {
   std::string test_native_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
 
   // Initialize the random number generator
@@ -342,7 +342,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

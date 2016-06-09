@@ -35,7 +35,7 @@ public:
                                                            atomic_weight_ratio,
 							   raw_nuclide_data )
   { /* ... */ }
-  
+
   ~TestPhotonuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
@@ -61,7 +61,7 @@ Teuchos::RCP<TestPhotonuclearScatteringDistributionACEFactory> photonuclear_dist
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionOrdering_c12 )
 {
   ace_file_handler_c12.reset(new Data::ACEFileHandler( test_basic_c12_ace_file_name,
@@ -72,8 +72,8 @@ TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
    new Data::XSSPhotonuclearDataExtractor( ace_file_handler_c12->getTableNXSArray(),
                                       ace_file_handler_c12->getTableJXSArray(),
                                       ace_file_handler_c12->getTableXSSArray()));
- 
-  photonuclear_distribution_factory_c12.reset( 
+
+  photonuclear_distribution_factory_c12.reset(
     new TestPhotonuclearScatteringDistributionACEFactory(
                              test_basic_c12_ace_table_name,
                              ace_file_handler_c12->getTableAtomicWeightRatio(),
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionCMScattering_c12 )
 {
   // Only 1 reaction produces an outgoing photon, reaction 5
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionWithIsotropicScatteringOnly_c12 )
 {
   // Only 1 reaction produces an outgoing photon, reaction 5. This reaction has dist_index = 0 -> iso scat only
@@ -106,14 +106,14 @@ TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionWithCoupledEnergyAngleDist_c12 )
 {
   // Only 1 reaction produces an outgoing photon, reaction 5. This reaction has dist_index = 0 -> no Energy Angle dependence
   TEST_COMPARE( photonuclear_distribution_factory_c12->getReactionsWithCoupledEnergyAngleDist().size() ,==, 0);
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionAngularDist_c12 )
 {
 TEST_COMPARE( photonuclear_distribution_factory_c12->getReactionAngularDist().size() ,==, 0 );
@@ -122,14 +122,14 @@ TEST_COMPARE( photonuclear_distribution_factory_c12->getReactionAngularDist().si
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionAngularDistStartIndex_c12 )
 {
   TEST_COMPARE( photonuclear_distribution_factory_c12->getReactionAngularDistStartIndex().size() ,==, 0 );
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDist_c12 )
 {
 
@@ -141,7 +141,7 @@ TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 
 }
 
-TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( PhotonuclearScatteringDistributionACEFactory,
 		   getReactionEnergyDistStartIndex_c12 )
 {
 

@@ -21,7 +21,7 @@ namespace MonteCarlo{
  */
 class SimulationElectronProperties
 {
-  
+
 public:
 
   //! Set the minimum electron energy (MeV)
@@ -35,7 +35,7 @@ public:
 
   //! Set the maximum electron energy (MeV)
   static void setMaxElectronEnergy( const double energy );
-  
+
   //! Return the maximum electron energy (MeV)
   static double getMaxElectronEnergy();
 
@@ -49,11 +49,11 @@ public:
   static bool isAtomicRelaxationModeOn();
 
   //! Set the bremsstrahlung photon angular distribution function (2BS by default)
-  static void setBremsstrahlungAngularDistributionFunction( 
+  static void setBremsstrahlungAngularDistributionFunction(
                          const BremsstrahlungAngularDistributionType function );
 
   //! Return the bremsstrahlung photon angular distribution function
-  static BremsstrahlungAngularDistributionType 
+  static BremsstrahlungAngularDistributionType
           getBremsstrahlungAngularDistributionFunction();
 
   //! Set the elastic cutoff angle cosine (mu = 0.999999 by default)
@@ -89,7 +89,7 @@ private:
   static bool detailed_pair_production_mode_on;
 
   // The bremsstrahlung photon angular distribution function (default is 2BS)
-  static BremsstrahlungAngularDistributionType 
+  static BremsstrahlungAngularDistributionType
            bremsstrahlung_angular_distribution_function;
 
   // The elastic cutoff angle cosine (mu = 0.999999 by default)
@@ -110,7 +110,7 @@ inline double SimulationElectronProperties::getAbsoluteMinElectronEnergy()
 {
   return SimulationElectronProperties::absolute_min_electron_energy;
 }
-  
+
 // Return the maximum electron energy (MeV) - cannot be set at runtime
 inline double SimulationElectronProperties::getMaxElectronEnergy()
 {
@@ -130,7 +130,7 @@ inline bool SimulationElectronProperties::isAtomicRelaxationModeOn()
 }
 
 // Return if detailed bremsstrahlung mode is on
-inline BremsstrahlungAngularDistributionType 
+inline BremsstrahlungAngularDistributionType
   SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction()
 {
   return SimulationElectronProperties::bremsstrahlung_angular_distribution_function;

@@ -36,7 +36,7 @@ public:
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double max_energy,
 					 const double precision ) const;
-  
+
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,

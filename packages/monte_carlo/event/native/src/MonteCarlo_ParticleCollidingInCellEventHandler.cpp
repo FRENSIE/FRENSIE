@@ -17,7 +17,7 @@ ParticleCollidingInCellEventHandler::ParticleCollidingInCellEventHandler()
 { /* ... */ }
 
 // Return the particle colliding in cell event dispatcher
-ParticleCollidingInCellEventDispatcher& 
+ParticleCollidingInCellEventDispatcher&
 ParticleCollidingInCellEventHandler::getParticleCollidingInCellEventDispatcher()
 {
   return d_particle_colliding_in_cell_event_dispatcher;

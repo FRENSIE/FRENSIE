@@ -30,14 +30,14 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 		      0.001 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
                        400.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                MonteCarlo::SimulationProperties::getAbsoluteMinNeutronEnergy(),
                1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
                        1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxNeutronEnergy(),
                        20.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                MonteCarlo::SimulationProperties::getAbsoluteMaxNeutronEnergy(),
                20.0 );
   TEST_EQUALITY_CONST(
@@ -47,9 +47,9 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 		       1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
                        20.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                 MonteCarlo::SimulationProperties::getAbsoluteMaxPhotonEnergy(),
-                20.0 );    
+                20.0 );
   TEST_EQUALITY_CONST(
                MonteCarlo::SimulationProperties::getAbsoluteMinElectronEnergy(),
                1.5e-5 );
@@ -75,10 +75,10 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TWOBS_DISTRIBUTION );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
         MonteCarlo::SimulationProperties::getElasticCutoffAngle(),
 	    1.0e-6 );
 }
@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 // Test that the particle mode can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setParticleMode )
 {
-  MonteCarlo::ParticleModeType default_mode = 
+  MonteCarlo::ParticleModeType default_mode =
     MonteCarlo::SimulationProperties::getParticleMode();
 
   MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_MODE);
@@ -100,25 +100,25 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setParticleMode )
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
 		       MonteCarlo::PHOTON_MODE );
 
-  MonteCarlo::SimulationProperties::setParticleMode( 
+  MonteCarlo::SimulationProperties::setParticleMode(
 						   MonteCarlo::ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
 		       MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::SimulationProperties::setParticleMode( 
+  MonteCarlo::SimulationProperties::setParticleMode(
 					     MonteCarlo::NEUTRON_PHOTON_MODE );
 
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
 
-  MonteCarlo::SimulationProperties::setParticleMode( 
+  MonteCarlo::SimulationProperties::setParticleMode(
 					    MonteCarlo::PHOTON_ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
 		       MonteCarlo::PHOTON_ELECTRON_MODE );
-  
-  MonteCarlo::SimulationProperties::setParticleMode( 
+
+  MonteCarlo::SimulationProperties::setParticleMode(
 				    MonteCarlo::NEUTRON_PHOTON_ELECTRON_MODE );
 
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
@@ -131,11 +131,11 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setParticleMode )
 // Test that the number of histories to run can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfHistories )
 {
-  unsigned long long default_value = 
+  unsigned long long default_value =
     MonteCarlo::SimulationProperties::getNumberOfHistories();
 
   MonteCarlo::SimulationProperties::setNumberOfHistories( 1000000000 );
-  
+
   TEST_ASSERT( MonteCarlo::SimulationProperties::getNumberOfHistories() !=
 	       default_value );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
@@ -144,10 +144,10 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfHistories )
 
 //---------------------------------------------------------------------------//
 // Test that the surface flux angle cosine cutoff can be set
-TEUCHOS_UNIT_TEST( SimulationProperties, 
+TEUCHOS_UNIT_TEST( SimulationProperties,
 		   setSurfaceFluxEstimatorAngleCosineCutoff )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
 
   MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties,
 // Test that the free gas thermal treatment temp threshold can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setFreeGasThreshold )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getFreeGasThreshold();
 
   MonteCarlo::SimulationProperties::setFreeGasThreshold( 1000.0 );
@@ -183,11 +183,11 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setFreeGasThreshold )
 // Test that the min neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMinNeutronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMinNeutronEnergy();
 
   MonteCarlo::SimulationProperties::setMinNeutronEnergy( 1e-8 );
-  
+
   TEST_ASSERT( MonteCarlo::SimulationProperties::getMinNeutronEnergy() !=
 	       default_value );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
@@ -201,11 +201,11 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMinNeutronEnergy )
 // Test that the max neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMaxNeutronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMaxNeutronEnergy();
 
   MonteCarlo::SimulationProperties::setMaxNeutronEnergy( 15.0 );
-  
+
   TEST_ASSERT( MonteCarlo::SimulationProperties::getMaxNeutronEnergy() !=
 	       default_value );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxNeutronEnergy(),
@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxNeutronEnergy )
 // Test that the min photon energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMinPhotonEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMinPhotonEnergy();
 
   MonteCarlo::SimulationProperties::setMinPhotonEnergy( 1e-2 );
@@ -237,7 +237,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMinPhotonEnergy )
 // Test that the max photon energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMaxPhotonEnergy();
 
   MonteCarlo::SimulationProperties::setMaxPhotonEnergy( 15.0 );
@@ -255,20 +255,20 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 // Test that the Kahn sampling cutoff energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setKahnSamplingCutoffEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy();
 
   MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 2.5 );
 
-  TEST_ASSERT( 
+  TEST_ASSERT(
 	    MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy() !=
 	    default_value );
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
 	      2.5 );
-  
+
   // Reset the default value
-  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 
+  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy(
 							       default_value );
 }
 
@@ -276,18 +276,18 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setKahnSamplingCutoffEnergy )
 // Test that the number of photon hash grid bins can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
 {
-  unsigned default_value = 
+  unsigned default_value =
     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins();
 
   MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
 
-  TEST_ASSERT( 
+  TEST_ASSERT(
 	  MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins() !=
 	  default_value );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
 	     500 );
-  
+
   // Reset the default value
   MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
 }
@@ -296,7 +296,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
 // Test that the min electron energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMinElectronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMinElectronEnergy();
 
   MonteCarlo::SimulationProperties::setMinElectronEnergy( 1e-2 );
@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMinElectronEnergy )
 // Test that the max electron energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMaxElectronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationProperties::getMaxElectronEnergy();
 
   MonteCarlo::SimulationProperties::setMaxElectronEnergy( 15.0 );
@@ -332,17 +332,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxElectronEnergy )
 // Test that the min particle energy can be returned
 TEUCHOS_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 {
-  double default_value_neutron = 
+  double default_value_neutron =
     MonteCarlo::SimulationProperties::getMinNeutronEnergy();
 
   MonteCarlo::SimulationProperties::setMinNeutronEnergy( 1e-8 );
-  
-  double default_value_photon = 
+
+  double default_value_photon =
     MonteCarlo::SimulationProperties::getMinPhotonEnergy();
 
   MonteCarlo::SimulationProperties::setMinPhotonEnergy( 1e-2 );
-  
-  double default_value_electron = 
+
+  double default_value_electron =
     MonteCarlo::SimulationProperties::getMinElectronEnergy();
 
   MonteCarlo::SimulationProperties::setMinElectronEnergy( 1e-2 );
@@ -364,17 +364,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
 // Test that the max particle energy can be returned
 TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
 {
-  double default_value_neutron = 
+  double default_value_neutron =
     MonteCarlo::SimulationProperties::getMaxNeutronEnergy();
 
   MonteCarlo::SimulationProperties::setMaxNeutronEnergy( 15.0 );
-  
-  double default_value_photon = 
+
+  double default_value_photon =
     MonteCarlo::SimulationProperties::getMaxPhotonEnergy();
 
   MonteCarlo::SimulationProperties::setMaxPhotonEnergy( 15.0 );
-  
-  double default_value_electron = 
+
+  double default_value_electron =
     MonteCarlo::SimulationProperties::getMaxElectronEnergy();
 
   MonteCarlo::SimulationProperties::setMaxElectronEnergy( 15.0 );
@@ -418,7 +418,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 // Test that the incoherent model type can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setIncoherentModelType )
 {
-  MonteCarlo::IncoherentModelType default_model = 
+  MonteCarlo::IncoherentModelType default_model =
     MonteCarlo::SimulationProperties::getIncoherentModelType();
 
   MonteCarlo::SimulationProperties::setIncoherentModelType(
@@ -429,7 +429,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setIncoherentModelType )
   TEST_EQUALITY_CONST(
 		    MonteCarlo::SimulationProperties::getIncoherentModelType(),
 		    MonteCarlo::KN_INCOHERENT_MODEL );
-  
+
   // Reset the default model
   MonteCarlo::SimulationProperties::setIncoherentModelType( default_model );
 }
@@ -439,7 +439,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setIncoherentModelType )
 TEUCHOS_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOff )
 {
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
-  
+
   MonteCarlo::SimulationProperties::setAtomicRelaxationModeOff();
 
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
@@ -450,7 +450,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setAtomicRelaxationModeOff )
 TEUCHOS_UNIT_TEST( SimulationProperties, setDetailedPairProductionModeOn )
 {
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
-  
+
   MonteCarlo::SimulationProperties::setDetailedPairProductionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
@@ -461,7 +461,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setDetailedPairProductionModeOn )
 TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonuclearInteractionModeOn )
 {
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
-  
+
   MonteCarlo::SimulationProperties::setPhotonuclearInteractionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -471,17 +471,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonuclearInteractionModeOn )
 // Test that the bremsstrahlung angular distribution function can be turned to Dipole
 TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Dipole )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TWOBS_DISTRIBUTION );
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction(
                           function );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
 }
@@ -490,17 +490,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFun
 // Test that the bremsstrahlung angular distribution function can be turned to Tabular
 TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Tabular )
 {
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
-  
+
   MonteCarlo::BremsstrahlungAngularDistributionType function;
   function = MonteCarlo::TABULAR_DISTRIBUTION;
 
-  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction(
                           function );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::TABULAR_DISTRIBUTION );
 }
@@ -509,13 +509,13 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFun
 // Test that the elastic cutoff angle cosine can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setElasticCutoffAngle )
 {
-  TEST_EQUALITY( 
+  TEST_EQUALITY(
     MonteCarlo::SimulationProperties::getElasticCutoffAngle(),
 	1.0e-6 );
-  
+
   MonteCarlo::SimulationProperties::setElasticCutoffAngle( 0.1 );
 
-  TEST_EQUALITY( 
+  TEST_EQUALITY(
     MonteCarlo::SimulationProperties::getElasticCutoffAngle(),
 	0.1 );
 }

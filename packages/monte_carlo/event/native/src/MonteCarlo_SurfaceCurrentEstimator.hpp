@@ -28,7 +28,7 @@ public:
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
-  SurfaceCurrentEstimator( 
+  SurfaceCurrentEstimator(
    const Estimator::idType id,
    const double multiplier,
    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids);
@@ -36,9 +36,9 @@ public:
   //! Destructor
   ~SurfaceCurrentEstimator()
   { /* ... */ }
-  
+
   //! Set the response functions
-  void setResponseFunctions( 
+  void setResponseFunctions(
                       const Teuchos::Array<std::shared_ptr<ResponseFunction> >&
                       response_functions );
 
@@ -47,7 +47,7 @@ public:
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine );
-  
+
   //! Print the estimator data summary
   void printSummary( std::ostream& os ) const;
 };

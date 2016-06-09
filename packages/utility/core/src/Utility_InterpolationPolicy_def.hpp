@@ -65,24 +65,24 @@ inline T LogLog::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return exp( processed_dep_var_0 + 
+
+  return exp( processed_dep_var_0 +
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
 // Interpolate between two points and return the processed value
 template<typename IndepType, typename DepType>
-inline typename QuantityTraits<DepType>::RawType 
+inline typename QuantityTraits<DepType>::RawType
 LogLog::interpolateAndProcess( const IndepType indep_var_0,
 			       const IndepType indep_var_1,
 			       const IndepType indep_var,
@@ -107,7 +107,7 @@ LogLog::interpolateAndProcess( const IndepType indep_var_0,
   testPrecondition( !QuantityTraits<DepType>::isnaninf( dep_var_1 ) );
   testPrecondition( LogLog::isDepVarInValidRange( dep_var_0 ) );
   testPrecondition( LogLog::isDepVarInValidRange( dep_var_1 ) );
-  
+
   return log( getRawQuantity(dep_var_0) ) + log ( dep_var_1/dep_var_0 )*
     log( indep_var/indep_var_0 )/log( indep_var_1/indep_var_0 );
 }
@@ -122,18 +122,18 @@ inline T LogLog::interpolateAndProcess( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
@@ -144,13 +144,13 @@ LogLog::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
   testPrecondition( LogLog::isIndepVarInValidRange( indep_var ) );
-  
+
   return log( getRawQuantity(indep_var) );
 }
 
 // Process the dependent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LogLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
@@ -165,7 +165,7 @@ inline T LogLog::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return exp( processed_indep_var );
 }
-  
+
 // Recover the processed dependent value
 template<typename T>
 inline T LogLog::recoverProcessedDepVar( const T processed_dep_var )
@@ -179,7 +179,7 @@ inline bool LogLog::isIndepVarInValidRange( const T indep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-    
+
   return indep_var > QuantityTraits<T>::zero();
 }
 
@@ -189,7 +189,7 @@ inline bool LogLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-    
+
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -239,24 +239,24 @@ inline T LogLin::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return exp( processed_dep_var_0 + 
+
+  return exp( processed_dep_var_0 +
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
 // Interpolate between two points and return the processed value
 template<typename IndepType, typename DepType>
-inline typename QuantityTraits<DepType>::RawType 
+inline typename QuantityTraits<DepType>::RawType
 LogLin::interpolateAndProcess( const IndepType indep_var_0,
 			       const IndepType indep_var_1,
 			       const IndepType indep_var,
@@ -296,35 +296,35 @@ inline T LogLin::interpolateAndProcess( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
 // Process the independent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LogLin::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
   testPrecondition( LogLin::isIndepVarInValidRange( indep_var ) );
-  
+
   return getRawQuantity(indep_var);
 }
 
 // Process the dependent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LogLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
@@ -339,7 +339,7 @@ inline T LogLin::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return processed_indep_var;
 }
-  
+
 // Recover the processed dependent value
 template<typename T>
 inline T LogLin::recoverProcessedDepVar( const T processed_dep_var )
@@ -353,7 +353,7 @@ inline bool LogLin::isIndepVarInValidRange( const T indep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-    
+
   return true;
 }
 
@@ -363,7 +363,7 @@ inline bool LogLin::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-    
+
   return dep_var > QuantityTraits<T>::zero();
 }
 
@@ -416,34 +416,34 @@ inline T LinLog::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0 );
 }
 
 // Interpolate between two points and return the processed value
 template<typename IndepType, typename DepType>
-inline typename QuantityTraits<DepType>::RawType 
+inline typename QuantityTraits<DepType>::RawType
 LinLog::interpolateAndProcess( const IndepType indep_var_0,
 			       const IndepType indep_var_1,
 			       const IndepType indep_var,
 			       const DepType dep_var_0,
 			       const DepType dep_var_1 )
 {
-  return getRawQuantity( interpolate( indep_var_0, 
-				      indep_var_1, 
-				      indep_var, 
-				      dep_var_0, 
+  return getRawQuantity( interpolate( indep_var_0,
+				      indep_var_1,
+				      indep_var,
+				      dep_var_0,
 				      dep_var_1 ) );
 }
 
@@ -453,7 +453,7 @@ inline T LinLog::interpolateAndProcess( const T processed_indep_var_0,
 					const T processed_indep_var,
 					const T processed_dep_var_0,
 					const T processed_slope )
-{  
+{
   return interpolate( processed_indep_var_0,
 		      processed_indep_var,
 		      processed_dep_var_0,
@@ -462,18 +462,18 @@ inline T LinLog::interpolateAndProcess( const T processed_indep_var_0,
 
 // Process the independent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LinLog::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
   testPrecondition( LinLog::isIndepVarInValidRange( indep_var ) );
-  
+
   return log( getRawQuantity(indep_var) );
 }
 
 // Process the dependent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LinLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
@@ -488,7 +488,7 @@ inline T LinLog::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return exp( processed_indep_var );
 }
-  
+
 // Recover the processed dependent value
 template<typename T>
 inline T LinLog::recoverProcessedDepVar( const T processed_dep_var )
@@ -502,7 +502,7 @@ inline bool LinLog::isIndepVarInValidRange( const T indep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-    
+
   return indep_var > QuantityTraits<T>::zero();
 }
 
@@ -512,7 +512,7 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-    
+
   return true;
 }
 
@@ -575,8 +575,8 @@ inline T LinLin::interpolate( const T processed_indep_var_0,
 						       processed_dep_var_0 ) );
   // Make sure the slope is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(processed_slope));
-  
-  return processed_dep_var_0 + 
+
+  return processed_dep_var_0 +
     processed_slope*(processed_indep_var - processed_indep_var_0 );
 }
 
@@ -616,13 +616,13 @@ LinLin::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
   testPrecondition( LinLin::isIndepVarInValidRange( indep_var  ) );
-  
+
   return getRawQuantity(indep_var);
 }
 
 // Process the dependent value
 template<typename T>
-inline typename QuantityTraits<T>::RawType 
+inline typename QuantityTraits<T>::RawType
 LinLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
@@ -637,7 +637,7 @@ inline T LinLin::recoverProcessedIndepVar( const T processed_indep_var )
 {
   return processed_indep_var;
 }
-  
+
 // Recover the processed dependent value
 template<typename T>
 inline T LinLin::recoverProcessedDepVar( const T processed_dep_var )
@@ -651,7 +651,7 @@ inline bool LinLin::isIndepVarInValidRange( const T indep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( indep_var ) );
-    
+
   return true;
 }
 
@@ -661,7 +661,7 @@ inline bool LinLin::isDepVarInValidRange( const T dep_var )
 {
   // Make sure the indep var is not inf or nan
   testPrecondition( !QuantityTraits<T>::isnaninf( dep_var ) );
-    
+
   return true;
 }
 

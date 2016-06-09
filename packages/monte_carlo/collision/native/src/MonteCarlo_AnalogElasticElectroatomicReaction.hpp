@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_AnalogElasticElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The analog scattering elastic electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ANALOG_ELASTIC_ELECTROATOMIC_REACTION_HPP
@@ -26,7 +26,7 @@ class AnalogElasticElectroatomicReaction : public StandardElectroatomicReaction<
 public:
 
   //! Basic Constructor
-  AnalogElasticElectroatomicReaction( 
+  AnalogElasticElectroatomicReaction(
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
@@ -34,7 +34,7 @@ public:
             scattering_distribution );
 
   //! Constructor
-  AnalogElasticElectroatomicReaction( 
+  AnalogElasticElectroatomicReaction(
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
@@ -57,7 +57,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
@@ -72,7 +72,7 @@ private:
 
 
   // The analog_elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> 
+  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>
     d_scattering_distribution;
 
   // The incoming energy grid (logarithms)

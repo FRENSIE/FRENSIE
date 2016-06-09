@@ -23,8 +23,8 @@ namespace MonteCarlo{
 /*! The standard Electroatomic reaction base class
  * \details Use the InterpPolicy template parameter and the
  * processed_cross_section template parameter to customize the behavior of
- * this class. Raw cross section data from a EPR library would use a LinLin 
- * policy with processed_cross_section = false. When data is processed, 
+ * this class. Raw cross section data from a EPR library would use a LinLin
+ * policy with processed_cross_section = false. When data is processed,
  * the policy is used to indicate how the data was processed.
  */
 template<typename InterpPolicy, bool processed_cross_section>
@@ -34,13 +34,13 @@ class StandardElectroatomicReaction : public ElectroatomicReaction
 public:
 
   //! Basic Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index,
@@ -90,13 +90,13 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
   public:
 
   //! Basic Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
 	const unsigned threshold_energy_index );
 
   //! Constructor
-  StandardElectroatomicReaction( 
+  StandardElectroatomicReaction(
 	const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,

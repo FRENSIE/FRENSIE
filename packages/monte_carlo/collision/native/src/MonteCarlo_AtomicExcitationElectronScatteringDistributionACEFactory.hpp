@@ -36,7 +36,7 @@ protected:
   //! Create the energy loss function
   static void createEnergyLossFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      AtomicExcitationElectronScatteringDistribution::AtomicDistribution& 
+      AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
                                                         scattering_function );
 };
 

@@ -50,7 +50,7 @@
   typedef Utility::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
   typedef Utility::Quad<double,unsigned,double,double> quad_d_u_d_d; \
   typedef Utility::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
-  
+
 #define UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( type, name, array )	\
   TUPLE_TYPEDEFS()							\
   UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
@@ -107,16 +107,16 @@
 //---------------------------------------------------------------------------//
 // Helper functions.
 //---------------------------------------------------------------------------//
-template<Utility::TupleMember member, 
-	 typename T, 
+template<Utility::TupleMember member,
+	 typename T,
 	 template<typename> class Array>
 void fillSortedArray( Array<T> &array )
 {
   typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
-  
+
   typename Array<T>::size_type size = Utility::getArraySize( array );
-  
+
   if( size > 0 )
   {
     for( unsigned int i = 0; i < size; ++i )
@@ -141,13 +141,13 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Sort,
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending( data.begin(), 
+  TEST_ASSERT( Utility::Sort::isSortedAscending( data.begin(),
 						data.end() ) );
 
   // Unsort the array
   data[0] = 10.0;
 
-  TEST_ASSERT( !Utility::Sort::isSortedAscending( data.begin(), 
+  TEST_ASSERT( !Utility::Sort::isSortedAscending( data.begin(),
 						 data.end() ) );
 
 }
@@ -176,13 +176,13 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Sort,
   array<type> data;
   Utility::copyArrayView( data, raw_data() );
 
-  TEST_ASSERT( Utility::Sort::isSortedAscending<member>( data.begin(), 
+  TEST_ASSERT( Utility::Sort::isSortedAscending<member>( data.begin(),
 							data.end() ) );
 
   // Unsort the array
   Utility::set<member>( data[0], 10.0 );
 
-  TEST_ASSERT( !Utility::Sort::isSortedAscending<member>( data.begin(), 
+  TEST_ASSERT( !Utility::Sort::isSortedAscending<member>( data.begin(),
 							 data.end() ) );
 
 }

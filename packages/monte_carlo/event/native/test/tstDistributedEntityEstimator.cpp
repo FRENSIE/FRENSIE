@@ -36,15 +36,15 @@ typedef Geometry::ModuleTraits::InternalCellHandle CellId;
 //---------------------------------------------------------------------------//
 template<typename EntityId>
 class TestEntityEstimator : public MonteCarlo::EntityEstimator<EntityId>
-{  
+{
 public:
   TestEntityEstimator( const unsigned long long id,
 		       const double multiplier,
 		       const Teuchos::Array<EntityId>& entity_ids,
 		       const Teuchos::Array<double>& entity_norm_constants )
-    : MonteCarlo::EntityEstimator<EntityId>( id, 
-					 multiplier, 
-					 entity_ids, 
+    : MonteCarlo::EntityEstimator<EntityId>( id,
+					 multiplier,
+					 entity_ids,
 					 entity_norm_constants )
   { /* ... */ }
 
@@ -56,7 +56,7 @@ public:
 
   ~TestEntityEstimator()
   { /* ... */ }
-  
+
   void printSummary( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
@@ -80,12 +80,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     Teuchos::Array<EntityId> entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;
-        
+
     // Set the entity normalization constants
     Teuchos::Array<double> entity_norm_constants( 2 );
     entity_norm_constants[0] = 1.0;
     entity_norm_constants[1] = 2.0;
-        
+
     entity_estimator.reset(
 		 new TestEntityEstimator<EntityId>( 0u,
 						    10u,
@@ -96,8 +96,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 1e-1;
     energy_bin_boundaries[2] = 1.0;
-    
-    entity_estimator->template setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+
+    entity_estimator->template setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
 
     // Set the cosine bins
@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     cosine_bin_boundaries[1] = 0.0;
     cosine_bin_boundaries[2] = 1.0;
 
-    entity_estimator->template setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( 
+    entity_estimator->template setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
 						       cosine_bin_boundaries );
 
     // Set the time bins
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     time_bin_boundaries[1] = 1e3;
     time_bin_boundaries[2] = 1e5;
 
-    entity_estimator->template setBinBoundaries<MonteCarlo::TIME_DIMENSION>( 
+    entity_estimator->template setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
 							 time_bin_boundaries );
 
     // Set the collision number bins
@@ -127,30 +127,30 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
     entity_estimator->template setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 						       collision_number_bins );
   }
-  
+
   unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
       entity_estimator->getNumberOfResponseFunctions();
 
-  // Commit one contribution to every bin of the estimator 
+  // Commit one contribution to every bin of the estimator
   for( unsigned i = 0u; i < num_estimator_bins; ++i )
   {
     entity_estimator->commitHistoryContributionToBinOfEntity( 0, i, 1.0 );
     entity_estimator->commitHistoryContributionToBinOfEntity( 1, i, 1.0 );
-    
+
     entity_estimator->commitHistoryContributionToBinOfTotal( i, 2.0 );
   }
 
-  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
+  Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm =
     Teuchos::DefaultComm<unsigned long long>::getComm();
-  
+
   comm->barrier();
-  
+
   entity_estimator->reduceData( comm, 0 );
 
   unsigned procs = comm->getSize();
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( procs );
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
-  
+
   if( comm->getRank() == 0 )
   {
     // Initialize the hdf5 file
@@ -163,7 +163,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 
     // Create an estimator hdf5 file handler
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-    
+
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> >
       raw_bin_data( 24, Utility::Pair<double,double>( procs, procs ) ),
@@ -171,33 +171,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 
     hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy);
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					  raw_bin_data_copy,
   					  1e-15 );
 
     hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy);
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					  raw_bin_data_copy,
   					  1e-15 );
-    
+
     // Retrieve the raw total data for each entity
-    Teuchos::Array<Utility::Pair<double,double> > 
+    Teuchos::Array<Utility::Pair<double,double> >
       raw_total_bin_data( 24, Utility::Pair<double,double>(2*procs, 4*procs) ),
       raw_total_bin_data_copy;
-    
+
     hdf5_file_handler.getRawEstimatorTotalBinData(0u, raw_total_bin_data_copy);
-    
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					  raw_total_bin_data_copy,
   					  1e-15 );
   }
   // Make sure estimators on other processes were reset
-  else 
+  else
   {
     std::ostringstream oss;
     oss << "test_entity_estimator_rank_" << comm->getRank() << ".h5";
-    
+
     // Initialize the hdf5 file
     std::shared_ptr<Utility::HDF5FileHandler>
       hdf5_file( new Utility::HDF5FileHandler );
@@ -208,7 +208,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 
     // Create an estimator hdf5 file handler
     MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
-    
+
     // Retrieve the raw bin data for each entity
     Teuchos::Array<Utility::Pair<double,double> >
       raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
@@ -216,28 +216,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 
     hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data_copy);
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					  raw_bin_data_copy,
   					  1e-15 );
 
     hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data_copy);
 
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					  raw_bin_data_copy,
   					  1e-15 );
-    
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
   					  raw_bin_data_copy,
   					  1e-15 );
-    
+
     // Retrieve the raw total data for each entity
-    Teuchos::Array<Utility::Pair<double,double> > 
+    Teuchos::Array<Utility::Pair<double,double> >
       raw_total_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
       raw_total_bin_data_copy;
-    
+
     hdf5_file_handler.getRawEstimatorTotalBinData(0u, raw_total_bin_data_copy);
-    
-    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data,
   					  raw_total_bin_data_copy,
   					  1e-15 );
   }
@@ -253,11 +253,11 @@ UNIT_TEST_INSTANTIATION( EntityEstimator, reduceData )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -269,12 +269,12 @@ int main( int argc, char** argv )
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
-  
+
   mpiSession.barrier();
 
   // Run the unit tests
   Teuchos::UnitTestRepository::setGloballyReduceTestResult( true );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   mpiSession.barrier();

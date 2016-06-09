@@ -16,7 +16,7 @@
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 //! Conduct a serial test
-int conductSerialTest( int argc, 
+int conductSerialTest( int argc,
                        char** argv,
                        const std::string& simulation_hdf5_file_name,
                        const bool surface_estimators_present );
@@ -32,7 +32,7 @@ bool testSimulationResults( const std::string& simulation_hdf5_file_name,
                             const bool surface_estimators_present );
 
 //! Test estimator 1 data
-bool testEstimator1Data( 
+bool testEstimator1Data(
                const MonteCarlo::EstimatorHDF5FileHandler& hdf5_file_handler );
 
 //! Test estimator 2 data

@@ -46,7 +46,7 @@ public:
                  const int atomic_number,
                  const ElasticDistribution& elastic_scattering_distribution);
 
-  //! Destructor 
+  //! Destructor
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -71,12 +71,12 @@ public:
   double getEnergy( const unsigned energy_bin ) const;
 
   // Evaluate the analytical Screened Rutherford PDF
-  double evaluateScreenedRutherfordPDF( 
+  double evaluateScreenedRutherfordPDF(
                       const double incoming_energy,
                       const long double scattering_angle_cosine ) const;
 
   //! Evaluate the screened Rutherford cross section ratio above the cutoff mu
-  double evaluateScreenedRutherfordCrossSectionRatio( 
+  double evaluateScreenedRutherfordCrossSectionRatio(
                                   const double incoming_energy ) const;
 
   //! Sample an outgoing energy and direction from the distribution
@@ -94,7 +94,7 @@ public:
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                        
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
@@ -113,7 +113,7 @@ protected:
   double evaluateMoliereScreeningConstant( const double energy ) const;
 
   //! Evaluate the scattering angle from the analytical screened Rutherford function
-  double evaluateScreenedScatteringAngle( const double energy ) const; 
+  double evaluateScreenedScatteringAngle( const double energy ) const;
 
 private:
 

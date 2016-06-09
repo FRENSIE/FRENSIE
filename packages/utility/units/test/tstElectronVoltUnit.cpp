@@ -32,9 +32,9 @@ TEUCHOS_UNIT_TEST( ElectronVolt, initialize )
   quantity<ElectronVolt> ev_energy( 1*eV );
 
   TEST_EQUALITY_CONST( ev_energy.value(), 1.0 );
-  
+
   ev_energy = 2.0*eV;
-  
+
   TEST_EQUALITY_CONST( ev_energy.value(), 2.0 );
 }
 
@@ -43,14 +43,14 @@ TEUCHOS_UNIT_TEST( ElectronVolt, initialize )
 TEUCHOS_UNIT_TEST( ElectronVolt, initialize_from_cgs_si )
 {
   quantity<ElectronVolt> ev_energy_cgs( 1.0*cgs::erg );
-  
+
   quantity<ElectronVolt> ev_energy_si( 1.0*si::joule );
 
-  TEST_FLOATING_EQUALITY( ev_energy_cgs.value(), 
-			  6.24150934326017944e+11, 
+  TEST_FLOATING_EQUALITY( ev_energy_cgs.value(),
+			  6.24150934326017944e+11,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( ev_energy_si.value(), 
-			  1.0/1.602176565e-19, 
+  TEST_FLOATING_EQUALITY( ev_energy_si.value(),
+			  1.0/1.602176565e-19,
 			  1e-15 );
 }
 
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize )
 TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize_from_cgs_si )
 {
   quantity<KiloElectronVolt> kev_energy_cgs( 1.0*cgs::erg );
-  
+
   quantity<KiloElectronVolt> kev_energy_si( 1.0*si::joule );
 
   TEST_FLOATING_EQUALITY( kev_energy_cgs.value(),
@@ -124,7 +124,7 @@ TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize_from_ev_mev )
 TEUCHOS_UNIT_TEST( KiloElectronVolt, initialize_cgs_si )
 {
   quantity<cgs::energy> cgs_energy( 1.0*keV );
-  
+
   quantity<si::energy> si_energy( 1.0*keV );
 
   TEST_FLOATING_EQUALITY( cgs_energy.value(),1.602176565e-09, 1e-15 );
@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize )
   TEST_EQUALITY_CONST( mev_energy.value(), 1.0 );
 
   mev_energy = 2.0*MeV;
-  
+
   TEST_EQUALITY_CONST( mev_energy.value(), 2.0 );
 }
 
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize )
 TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize_from_cgs_si )
 {
   quantity<MegaElectronVolt> mev_energy_cgs( 1.0*cgs::erg );
-  
+
   quantity<MegaElectronVolt> mev_energy_si( 1.0*si::joule );
 
   TEST_FLOATING_EQUALITY( mev_energy_cgs.value(),
@@ -177,7 +177,7 @@ TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize_from_ev_kev )
 TEUCHOS_UNIT_TEST( MegaElectronVolt, initialize_cgs_si )
 {
   quantity<cgs::energy> cgs_energy( 1.0*MeV );
-  
+
   quantity<si::energy> si_energy( 1.0*MeV );
 
   TEST_FLOATING_EQUALITY( cgs_energy.value(), 1.602176565e-06, 1e-15 );

@@ -40,7 +40,7 @@ public:
 
   //! Return the subshell
   Data::SubshellType getSubshell() const;
-  
+
   //! Return the number of electrons in the subshell
   double getSubshellOccupancy() const;
 
@@ -78,7 +78,7 @@ protected:
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
-  // Evaluate the occupation number 
+  // Evaluate the occupation number
   double evaluateOccupationNumber(const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
@@ -92,7 +92,7 @@ private:
 
   // The subshell binding energy
   double d_binding_energy;
-  
+
   // The occupation number
   Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
 };

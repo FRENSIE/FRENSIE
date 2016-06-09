@@ -36,7 +36,7 @@ struct QuantityTraits
 {
   //! The unit type
   typedef void UnitType;
-  
+
   //! The raw quantity type
   typedef T RawType;
 
@@ -45,7 +45,7 @@ struct QuantityTraits
 
   //! Used to check if the quantity is a floating point quantity
   typedef boost::is_floating_point<T> is_floating_point;
-  
+
   //! The quantity raised to power N/D type
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
@@ -92,7 +92,7 @@ struct QuantityTraits
   template<boost::units::integer_type N, boost::units::integer_type D>
   static inline typename GetQuantityToPowerType<N,D>::type rpow( const QuantityType& quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
-  
+
   //! Initialize a quantity (potentially dangerous!)
   static inline QuantityType initializeQuantity( const RawType& raw_quantity )
   { return UndefinedQuantityTraits<T>::notDefined(); }
@@ -120,7 +120,7 @@ struct QuantityTraitsHelper
  * \ingroup quantity_traits
  */
 template<typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::type 
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::type
 sqrt( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::sqrt( quantity );
@@ -143,8 +143,8 @@ rpow( const Quantity& quantity )
  */
 template<typename Quantity>
 inline const typename QuantityTraits<Quantity>::RawType& getRawQuantity( const Quantity& quantity )
-{ 
-  return QuantityTraits<Quantity>::getRawQuantity( quantity ); 
+{
+  return QuantityTraits<Quantity>::getRawQuantity( quantity );
 }
 
 /*! This function allows access to the setQuantity QuantityTraits function
@@ -158,7 +158,7 @@ inline const typename QuantityTraits<Quantity>::RawType& getRawQuantity( const Q
 template<typename Quantity>
 inline void setQuantity( Quantity& quantity,
 			 const typename QuantityTraits<Quantity>::RawType& raw_quantity )
-{ 
+{
   QuantityTraits<Quantity>::setQuantity( quantity, raw_quantity );
 }
 

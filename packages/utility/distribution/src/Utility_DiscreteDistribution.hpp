@@ -65,26 +65,26 @@ public:
 			const Teuchos::Array<double>& dependent_values,
 			const bool interpret_dependent_values_as_cdf = false );
 
-  //! CDF constructor 
+  //! CDF constructor
   template<typename InputIndepQuantity>
-  UnitAwareDiscreteDistribution( 
+  UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
 	      const Teuchos::Array<double>& cdf_values );
 
   //! Constructor
   template<typename InputIndepQuantity, typename InputDepQuantity>
-  UnitAwareDiscreteDistribution( 
+  UnitAwareDiscreteDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
 	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
-			
-  
+
+
   //! Copy constructor
   template<typename InputIndepUnit, typename InputDepUnit>
   UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Construct distribution from a unitless dist. (potentially dangerous)
   static UnitAwareDiscreteDistribution fromUnitlessDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_distribution );
-  
+
   //! Assignment operator
   UnitAwareDiscreteDistribution& operator=( const UnitAwareDiscreteDistribution& dist_instance );
 
@@ -117,10 +117,10 @@ public:
   IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  IndepQuantity sampleWithRandomNumberInSubrange( 
+  IndepQuantity sampleWithRandomNumberInSubrange(
 				     const double random_number,
 				     const IndepQuantity max_indep_var ) const;
-  
+
 
   //! Return the upper bound of the distribution independent variable
   IndepQuantity getUpperBoundOfIndepVar() const;
@@ -144,7 +144,7 @@ public:
   bool isEqual( const UnitAwareDiscreteDistribution& other ) const;
 
 protected:
-  
+
   //! Copy constructor (copying from unitless distribution only)
   UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution<void,void>& unitless_dist_instance, int );
 
@@ -168,7 +168,7 @@ private:
 
   // Initialize the distribution
   template<typename InputIndepQuantity,typename InputDepQuantity>
-  void initializeDistribution( 
+  void initializeDistribution(
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
 	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
 
@@ -184,7 +184,7 @@ private:
 
   // Convert the unitless values to the correct units
   template<typename Quantity>
-  static void convertUnitlessValues( 
+  static void convertUnitlessValues(
 		                 const Teuchos::Array<double>& unitless_values,
 				 Teuchos::Array<Quantity>& quantities );
 
@@ -211,7 +211,7 @@ typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 namespace Teuchos{
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::DiscreteDistribution
  *
  * \details The name function will set the type name that must be used in
@@ -232,7 +232,7 @@ public:
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareDiscreteDistribution
  *
  * \details The name function will set the type name that must be used in

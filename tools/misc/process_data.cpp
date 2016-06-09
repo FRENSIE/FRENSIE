@@ -28,26 +28,26 @@ int main( int argc, char* argv[] )
   {
     Teuchos::CommandLineProcessor clp;
     clp.setDocString( "This program processes the EPDL, EADL and Compton Profile data files\n" );
-    clp.setOption( "photon-data-min-energy", 
+    clp.setOption( "photon-data-min-energy",
 		   &min_photon_energy,
 		   "Minimum photon energy to extract from the data files" );
     clp.setOption( "photon-data-max-energy",
 		   &max_photon_energy,
 		   "Maximum photon energy to extract from the data files" );
-    
+
     // Parse the command line
     Teuchos::CommandLineProcessor::EParseCommandLineReturn
       parseReturn = clp.parse( argc, argv );
-    
+
     if( parseReturn == Teuchos::CommandLineProcessor::PARSE_HELP_PRINTED )
       return 0;
-    
+
     if( parseReturn != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
       return 1;
-  
+
   } // try
   STD_EXCEPTION_CATCH_AND_EXIT();
-  
+
   // Create the DataProcessor Array
   Teuchos::Array<Teuchos::RCP<FACEMC::DataProcessor> > data_processors;
   Teuchos::RCP<FACEMC::DataProcessor> processor;
@@ -55,14 +55,14 @@ int main( int argc, char* argv[] )
   // Create the Photon Data Processor
   if( min_photon_energy == 0.0 )
     min_photon_energy = MIN_ENERGY_DEFAULT;
-  
+
   if( max_photon_energy == std::numeric_limits<double>::infinity() )
     max_photon_energy = MAX_ENERGY_DEFAULT;
 
   // Photon data file names
   std::string epdl_file_name = FACEMC_DATA_DIRECTORY;
   epdl_file_name += "EPDL";
-  
+
   std::string eadl_file_name = FACEMC_DATA_DIRECTORY;
   eadl_file_name += "EADL";
 
@@ -83,7 +83,7 @@ int main( int argc, char* argv[] )
 
   return 0;
 }
-  
+
 //---------------------------------------------------------------------------//
 // end process_data.cpp
 //---------------------------------------------------------------------------//

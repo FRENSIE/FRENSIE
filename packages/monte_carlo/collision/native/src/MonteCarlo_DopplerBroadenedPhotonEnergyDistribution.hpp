@@ -30,11 +30,11 @@ class DopplerBroadenedPhotonEnergyDistribution
 {
 
 public:
-  
+
   //! The electron momentum distribution array (Compton Profiles)
   typedef Teuchos::Array<std::shared_ptr<const ComptonProfile> >
   ElectronMomentumDistArray;
-  
+
   //! Constructor
   DopplerBroadenedPhotonEnergyDistribution()
   { /* ... */ }
@@ -57,7 +57,7 @@ public:
 			      const double scattering_angle_cosine ) const = 0;
 
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateIntegratedCrossSection( 
+  virtual double evaluateIntegratedCrossSection(
 			                  const double incoming_energy,
 			                  const double scattering_angle_cosine,
 					  const double precision ) const = 0;
@@ -69,7 +69,7 @@ public:
 		       Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Sample an outgoing energy and record the number of trials
-  virtual void sampleAndRecordTrials( 
+  virtual void sampleAndRecordTrials(
 				const double incoming_energy,
 				const double scattering_angle_cosine,
 				double& outgoing_energy,
@@ -93,7 +93,7 @@ protected:
 
 // Evaluate the cross section multiplier
 /*! \details It is assumed that the Compton profiles have been divided by
- * the average electron momentum in the ground state of hydrogen (atomic 
+ * the average electron momentum in the ground state of hydrogen (atomic
  * units). This multiplier term therefore has units of b/(m_e*c).
  */
 inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
@@ -106,12 +106,12 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double term_1 = 
+  const double term_1 =
     Utility::PhysicalConstants::pi*1e24*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius;
-  
-  const double compton_line_energy = 
+
+  const double compton_line_energy =
     calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
   const double term_2 = (compton_line_energy/incoming_energy)*
@@ -120,7 +120,7 @@ inline double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
      compton_line_energy/incoming_energy +
      scattering_angle_cosine*
      scattering_angle_cosine - 1.0);
-  
+
   return term_1*term_2;
 }
 

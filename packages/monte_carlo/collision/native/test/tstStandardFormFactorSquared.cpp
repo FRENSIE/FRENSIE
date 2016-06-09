@@ -50,7 +50,7 @@ TEUCHOS_UNIT_TEST( StandardFormFactorSquared, evaluate )
   value = form_factor_squared->evaluate( sqr_arg );
 
   UTILITY_TEST_FLOATING_EQUALITY( value, 0.0, 1e-15 );
-  
+
   sqr_arg = 1e35*Utility::Units::inverse_square_centimeter;
   value = form_factor_squared->evaluate( sqr_arg );
 
@@ -61,7 +61,7 @@ TEUCHOS_UNIT_TEST( StandardFormFactorSquared, evaluate )
 // Check that the form factor squared can be sampled from
 TEUCHOS_UNIT_TEST( StandardFormFactorSquared, sample )
 {
-  MonteCarlo::FormFactorSquared::SquaredArgumentQuantity 
+  MonteCarlo::FormFactorSquared::SquaredArgumentQuantity
     sqr_arg = form_factor_squared->sample();
 
   TEST_ASSERT( sqr_arg >= 0.0*Utility::Units::inverse_square_centimeter );
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( StandardFormFactorSquared, getLowerBoundOfSquaredArgument )
 // Check that the upper bound of the squared argument can be returned
 TEUCHOS_UNIT_TEST( StandardFormFactorSquared, getUpperBoundOfSquaredArgument )
 {
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 			 form_factor_squared->getUpperBoundOfSquaredArgument(),
 			 1e34*Utility::Units::inverse_square_centimeter,
 			 1e-15 );
@@ -120,24 +120,24 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the form factor squared
   {
     Teuchos::Array<double> sqr_args( 3 ), sqr_form_factor_vals( 3 );
     sqr_args[0] = 0.0;
     sqr_args[1] = 10.0;
     sqr_args[2] = 1e18;
-    
+
     sqr_form_factor_vals[0] = 1.0;
     sqr_form_factor_vals[1] = 1e-6;
     sqr_form_factor_vals[2] = 0.0;
@@ -150,7 +150,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

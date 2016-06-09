@@ -28,7 +28,7 @@ namespace DataGen{
 template<typename TwoDInterpPolicy>
 StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::StandardAdjointElectroionizationSubshellGridGenerator(
       const double& binding_energy,
-      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
                                        electroionization_subshell_reaction,
       const ElectroionizationSubshellDistribution& knock_on_distribution,
       const double convergence_tol,
@@ -39,10 +39,10 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::Standar
     d_convergence_tol( convergence_tol ),
     d_absolute_diff_tol( absolute_diff_tol ),
     d_distance_tol( distance_tol ),
-    d_max_energy_grid_generator( convergence_tol, 
+    d_max_energy_grid_generator( convergence_tol,
 				 absolute_diff_tol,
 				 distance_tol ),
-  d_adjoint_electroionization_subshell_cross_section( 
+  d_adjoint_electroionization_subshell_cross_section(
                                             binding_energy,
                                             electroionization_subshell_reaction,
                                             knock_on_distribution  )
@@ -77,12 +77,12 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::se
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol > 0.0 );
   testPrecondition( convergence_tol <= 1.0 );
-  
+
   d_convergence_tol = convergence_tol;
 
   d_max_energy_grid_generator.setConvergenceTolerance( convergence_tol );
 }
-  
+
 // Set the absolute difference tolerance
 template<typename TwoDInterpPolicy>
 void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::setAbsoluteDifferenceTolerance( const double absolute_diff_tol )
@@ -92,7 +92,7 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::se
 
   d_absolute_diff_tol = absolute_diff_tol;
 
-  d_max_energy_grid_generator.setAbsoluteDifferenceTolerance( 
+  d_max_energy_grid_generator.setAbsoluteDifferenceTolerance(
 							   absolute_diff_tol );
 }
 
@@ -110,7 +110,7 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::se
 
 // Generate the bilinear grid
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate( 
+void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate(
 		 Teuchos::Array<double>& energy_grid,
 		 Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
 		 Teuchos::Array<Teuchos::Array<double> >& cross_section ) const
@@ -119,7 +119,7 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
   testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Reset the energy grid
   energy_grid.clear();
-      
+
   // Reset the max energy grids and cross section
   max_energy_grids.clear();
   cross_section.clear();
@@ -127,8 +127,8 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
   // Initialize the energy grid queue
   std::deque<double> energy_grid_queue;
 
-  // Enter energy grid min and max energies  
-  energy_grid_queue.push_back( getMinTableEnergy() );  
+  // Enter energy grid min and max energies
+  energy_grid_queue.push_back( getMinTableEnergy() );
   energy_grid_queue.push_back( getMaxTableEnergy() );
 
   double energy_0, energy_1;
@@ -138,39 +138,39 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
   // Generate the first max energy grid
   energy_0 = energy_grid_queue.front();
   energy_grid_queue.pop_front();
-  
+
   this->generate( max_energy_grid_0, cross_section_grid_0, energy_0 );
-  
+
   // Optimize the 2D grid
   while( !energy_grid_queue.empty() )
   {
     // Generate the max energy grid at the second energy grid point
     energy_1 = energy_grid_queue.front();
-    
+
     this->generate( max_energy_grid_1, cross_section_grid_1, energy_1 );
-    
-    bool converged = this->hasGridConverged( energy_0, 
-					     energy_1, 
-					     max_energy_grid_0, 
+
+    bool converged = this->hasGridConverged( energy_0,
+					     energy_1,
+					     max_energy_grid_0,
 					     max_energy_grid_1,
 					     cross_section_grid_0,
 					     cross_section_grid_1 );
-    
+
     // Keep the grid points
     if( converged )
     {
       energy_grid.push_back( energy_0 );
       max_energy_grids.push_back( max_energy_grid_0 );
       cross_section.push_back( cross_section_grid_0 );
-      
+
       if( d_verbose )
       {
 	std::cout.precision( 18 );
-	std::cout << "Added " << energy_0 << " (" 
+	std::cout << "Added " << energy_0 << " ("
 		  << energy_grid.size()-1 << ")"
 		  << std::endl;
       }
-      
+
       energy_0 = energy_1;
       energy_grid_queue.pop_front();
 
@@ -180,7 +180,7 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
     // Refine the grid
     else
     {
-      energy_grid_queue.push_front( 
+      energy_grid_queue.push_front(
 			 this->calculateEnergyMidpoint( energy_0, energy_1 ) );
     }
   }
@@ -198,7 +198,7 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
 
 // Generate a max energy grid at the desired energy
 template<typename TwoDInterpPolicy>
-void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate( 
+void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::generate(
 			               Teuchos::Array<double>& max_energy_grid,
 				       Teuchos::Array<double>& cross_section,
 				       const double energy ) const
@@ -207,20 +207,20 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
   testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the energy is valid
   testPrecondition( energy <= getMaxTableEnergy() );
-  
+
   // Load the initial max energy grid
 
   double max_outgoing_energy =
-    AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy( 
+    AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
                                                                        energy );
-    
+
     max_energy_grid.resize( 2 );
-      
+
     max_energy_grid[0] = energy;
     max_energy_grid[1] = max_outgoing_energy;
 
   // Create the boost function that returns the processed cross section
-  boost::function<double (double max_energy)> grid_function = 
+  boost::function<double (double max_energy)> grid_function =
     boost::bind( &AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection,
 		 boost::cref( d_adjoint_electroionization_subshell_cross_section ),
 		 energy,
@@ -234,8 +234,8 @@ void StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::ge
 
 // Check for 2D grid convergence
 template<typename TwoDInterpPolicy>
-bool 
-StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGridConverged( 
+bool
+StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 		          const double energy_0,
 			  const double energy_1,
 			  const Teuchos::Array<double>& max_energy_grid_0,
@@ -248,14 +248,14 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
   // Make sure the process energies are valid
   testPrecondition( energy_0 < energy_1 );
   // Make sure the processed max energy grids are valid
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					 max_energy_grid_0.begin(),
 					 max_energy_grid_0.end() ) );
   testPrecondition( Utility::Sort::isSortedAscending(
 					 max_energy_grid_1.begin(),
 					 max_energy_grid_1.end() ) );
   // Make sure the processed cross sections are valid
-  testPrecondition( cross_section_0.size() == 
+  testPrecondition( cross_section_0.size() ==
 		    max_energy_grid_0.size() );
   testPrecondition( cross_section_1.size() ==
 		    max_energy_grid_1.size() );
@@ -267,19 +267,19 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
   if( distance > d_distance_tol )
   {
     // Generate an optimized grid at the intermediate energy
-    const double intermediate_energy = 
+    const double intermediate_energy =
       this->calculateEnergyMidpoint( energy_0, energy_1 );
-        
+
     Teuchos::Array<double> max_energy_grid_mid, cross_section_grid_mid;
-    
+
     this->generate( max_energy_grid_mid,
 		    cross_section_grid_mid,
 		    intermediate_energy );
-    
+
     for( unsigned i = 0; i < max_energy_grid_mid.size(); ++i )
     {
       // Check for convergence at the grid point
-      double interp_cross_section = TwoDInterpPolicy::interpolateUnitBase( 
+      double interp_cross_section = TwoDInterpPolicy::interpolateUnitBase(
 					   energy_0,
 					   energy_1,
 					   intermediate_energy,
@@ -292,7 +292,7 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
 					   max_energy_grid_1.end(),
 					   cross_section_1.begin(),
 					   cross_section_1.end() );
-    
+
       double relative_error =
 	Utility::Policy::relError( cross_section_grid_mid[i],
 				   interp_cross_section );
@@ -304,7 +304,7 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
 	  abs_diff > d_absolute_diff_tol )
       {
 	converged = false;
-	
+
 	break;
       }
       else if( relative_error > d_convergence_tol &&
@@ -321,11 +321,11 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
       // Check for convergence at the grid mid point
       if( i < max_energy_grid_mid.size()-1 )
       {
-	double max_energy_mid_point = this->calculateMaxEnergyMidpoint( 
+	double max_energy_mid_point = this->calculateMaxEnergyMidpoint(
 						    max_energy_grid_mid[i],
 						    max_energy_grid_mid[i+1] );
-	
-	interp_cross_section = TwoDInterpPolicy::interpolateUnitBase( 
+
+	interp_cross_section = TwoDInterpPolicy::interpolateUnitBase(
 					   energy_0,
 					   energy_1,
 					   intermediate_energy,
@@ -338,13 +338,13 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
 					   max_energy_grid_1.end(),
 					   cross_section_1.begin(),
 					   cross_section_1.end() );
-    
-	double true_cross_section = 
+
+	double true_cross_section =
 	  d_adjoint_electroionization_subshell_cross_section.evaluateCrossSection(
 							intermediate_energy,
 							max_energy_mid_point,
 							d_precision );
-	
+
 	relative_error = Utility::Policy::relError( true_cross_section,
 						    interp_cross_section );
 
@@ -354,7 +354,7 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
 	    abs_diff > d_absolute_diff_tol )
 	{
 	  converged = false;
-	  
+
 	  break;
 	}
 	else if( relative_error > d_convergence_tol &&
@@ -369,23 +369,23 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::hasGrid
 		    << abs_diff << std::endl;
 	}
       }
-    }    
+    }
   }
   else
   {
     std::cerr.precision( 18 );
     std::cerr << "Warning: distance tolerance hit before convergence - "
-	      << "relError(energy_0,energy_1) =\n" 
-	      << "relError(" << energy_0 << "," 
+	      << "relError(energy_0,energy_1) =\n"
+	      << "relError(" << energy_0 << ","
 	      << energy_1 << ") = " << distance << std::endl;
   }
-    
+
   return converged;
 }
 
 // Calculate the energy midpoint
 template<typename TwoDInterpPolicy>
-double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateEnergyMidpoint( 
+double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateEnergyMidpoint(
 						  const double energy_0,
 						  const double energy_1 ) const
 {
@@ -396,7 +396,7 @@ double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::
 
 // Calculate the max energy midpoint
 template<typename TwoDInterpPolicy>
-double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateMaxEnergyMidpoint( 
+double StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::calculateMaxEnergyMidpoint(
 					      const double max_energy_0,
 					      const double max_energy_1 ) const
 {

@@ -26,7 +26,7 @@ PhotoatomFactory::PhotoatomFactory(
 		    const std::string& cross_sections_xml_directory,
 		    const Teuchos::ParameterList& cross_section_table_info,
 		    const std::unordered_set<std::string>& photoatom_aliases,
-		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+		    const Teuchos::RCP<AtomicRelaxationModelFactory>&
 		    atomic_relaxation_model_factory,
 		    const unsigned hash_grid_bins,
 		    const IncoherentModelType incoherent_model,
@@ -38,9 +38,9 @@ PhotoatomFactory::PhotoatomFactory(
 {
   // Make sure the message output stream is valid
   testPrecondition( os_message != NULL );
-  
+
   // Create each photoatom in the set
-  std::unordered_set<std::string>::const_iterator photoatom_name = 
+  std::unordered_set<std::string>::const_iterator photoatom_name =
     photoatom_aliases.begin();
 
   std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
@@ -49,7 +49,7 @@ PhotoatomFactory::PhotoatomFactory(
 
   while( photoatom_name != photoatom_aliases.end() )
   {
-    
+
     CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *photoatom_name,
@@ -59,10 +59,10 @@ PhotoatomFactory::PhotoatomFactory(
 						  photoatom_table_name,
 						  photoatom_file_start_line,
 						  atomic_weight );
-						   
+
     if( photoatom_file_type == CrossSectionsXMLProperties::ace_file )
     {
-      createPhotoatomFromACETable( cross_sections_xml_directory, 
+      createPhotoatomFromACETable( cross_sections_xml_directory,
 				   *photoatom_name,
 				   photoatom_file_path,
 				   photoatom_table_name,
@@ -91,7 +91,7 @@ PhotoatomFactory::PhotoatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: photoatomic file type " 
+		       "Error: photoatomic file type "
 		       << photoatom_file_type <<
 		       " is not supported!" );
     }
@@ -112,7 +112,7 @@ void PhotoatomFactory::createPhotoatomMap(
   photoatom_map.clear();
 
   // Copy the stored map
-  photoatom_map.insert( d_photoatom_name_map.begin(), 
+  photoatom_map.insert( d_photoatom_name_map.begin(),
 			d_photoatom_name_map.end() );
 }
 
@@ -124,7 +124,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			  const std::string& photoatomic_table_name,
 			  const int photoatomic_file_start_line,
 			  const double atomic_weight,
-			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
 			  const IncoherentModelType incoherent_model,
@@ -144,16 +144,16 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 					   photoatomic_table_name,
 					   photoatomic_file_start_line,
 					   true );
-    
+
     // Create the XSS data extractor
-    Data::XSSEPRDataExtractor xss_data_extractor( 
+    Data::XSSEPRDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() );
-  
+
     // Create the atomic relaxation model
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
-    
+
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
 						  xss_data_extractor,
 						  atomic_relaxation_model,
@@ -180,7 +180,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   // The table has already been loaded
   else
   {
-    d_photoatom_name_map[photoatom_alias] = 
+    d_photoatom_name_map[photoatom_alias] =
       d_photoatomic_table_name_map[photoatomic_table_name];
   }
 
@@ -203,18 +203,18 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
 {
   *d_os_message << "Loading native photoatomic cross section table "
 	    << photoatom_alias << " ... ";
-  
+
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( native_file_path ) ==
       d_photoatomic_table_name_map.end() )
   {
     // Create the epr data container
-    Data::ElectronPhotonRelaxationDataContainer 
+    Data::ElectronPhotonRelaxationDataContainer
       data_container( native_file_path );
-  
+
     // Create the atomic relaxation model
     Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
-    
+
     atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
 						  data_container,
 						  atomic_relaxation_model,
@@ -241,7 +241,7 @@ void PhotoatomFactory::createPhotoatomFromNativeTable(
   // The table has already been loaded
   else
   {
-    d_photoatom_name_map[photoatom_alias] = 
+    d_photoatom_name_map[photoatom_alias] =
       d_photoatomic_table_name_map[native_file_path];
   }
 

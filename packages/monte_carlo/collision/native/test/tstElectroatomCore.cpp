@@ -50,24 +50,24 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalReaction )
   const MonteCarlo::ElectroatomicReaction& total_reaction =
     ace_electroatom_core->getTotalReaction();
 
-  double cross_section = 
+  double cross_section =
     total_reaction.getCrossSection( 2.000000000000E-03 );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 
+
+  TEST_FLOATING_EQUALITY( cross_section,
                           9.258661418255E+03 + 1.965170000000E+08,
                           1e-12 );
 
-  cross_section = 
+  cross_section =
     total_reaction.getCrossSection( 4.000000000000E-04 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           8.914234996439E+03 + 6.226820000000E+08,
                           1e-12 );
 
-  cross_section = 
+  cross_section =
     total_reaction.getCrossSection( 9.000000000000E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           7.249970966838E+03 + 1.160420000000E+09,
                           1e-12 );
 }
@@ -76,13 +76,13 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalReaction )
 // Check that the absorption reaction can be returned
 TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalAbsorptionReaction )
 {
-  const MonteCarlo::ElectroatomicReaction& absorption_reaction = 
+  const MonteCarlo::ElectroatomicReaction& absorption_reaction =
     ace_electroatom_core->getTotalAbsorptionReaction();
 
   double cross_section = absorption_reaction.getCrossSection( 1.000000000E-02 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-    
+
   cross_section = absorption_reaction.getCrossSection( 2.000000000000E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
@@ -100,36 +100,36 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getTotalAbsorptionReaction )
 // Check that the scattering reactions can be returned
 TEUCHOS_UNIT_TEST( ElectroatomCore, getScatteringReactions )
 {
-  const MonteCarlo::ElectroatomCore::ConstReactionMap& scattering_reactions = 
+  const MonteCarlo::ElectroatomCore::ConstReactionMap& scattering_reactions =
     ace_electroatom_core->getScatteringReactions();
 
   TEST_EQUALITY_CONST( scattering_reactions.size(), 2 );
 
-  const MonteCarlo::ElectroatomicReaction& ae_reaction = 
+  const MonteCarlo::ElectroatomicReaction& ae_reaction =
     *(scattering_reactions.find(MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION)->second);
 
-  const MonteCarlo::ElectroatomicReaction& b_reaction = 
+  const MonteCarlo::ElectroatomicReaction& b_reaction =
     *(scattering_reactions.find(MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION)->second);
 
-  double cross_section = 
+  double cross_section =
     ae_reaction.getCrossSection( 2.000000000000E-03 ) +
      b_reaction.getCrossSection( 2.000000000000E-03 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           9.258661418255E+03 + 1.965170000000E+08,
                           1e-12 );
-  
+
   cross_section = ae_reaction.getCrossSection( 4.000000000000E-04 ) +
                    b_reaction.getCrossSection( 4.000000000000E-04 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           8.914234996439E+03 + 6.226820000000E+08,
                           1e-12 );
 
   cross_section = ae_reaction.getCrossSection( 9.000000000000E-05 ) +
                    b_reaction.getCrossSection( 9.000000000000E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           7.249970966838E+03 + 1.160420000000E+09,
                           1e-12 );
 }
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getAbsorptionReactions )
 // Check that miscellaneous reactions can be returned
 TEUCHOS_UNIT_TEST( ElectroatomCore, getMiscReactions )
 {
-  const MonteCarlo::ElectroatomCore::ConstReactionMap& misc_reactions = 
+  const MonteCarlo::ElectroatomCore::ConstReactionMap& misc_reactions =
     ace_electroatom_core->getMiscReactions();
 
   TEST_EQUALITY_CONST( misc_reactions.size(), 0 );
@@ -168,12 +168,12 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getAtomicRelaxationModel )
 
   MonteCarlo::ParticleBank bank;
 
-  const MonteCarlo::AtomicRelaxationModel& relaxation_model = 
+  const MonteCarlo::AtomicRelaxationModel& relaxation_model =
     ace_electroatom_core->getAtomicRelaxationModel();
 
   relaxation_model.relaxAtom( vacancy, electron, bank );
 
-  TEST_EQUALITY_CONST( bank.size(), 0u );  
+  TEST_EQUALITY_CONST( bank.size(), 0u );
 }
 
 //---------------------------------------------------------------------------//
@@ -192,25 +192,25 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -218,11 +218,11 @@ int main( int argc, char** argv )
     // Create the atomic excitation, bremsstrahlung cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
-        
-    Teuchos::ArrayView<const double> raw_ae_cross_section = 
+
+    Teuchos::ArrayView<const double> raw_ae_cross_section =
       xss_data_extractor->extractExcitationCrossSection();
-    
-    Teuchos::ArrayView<const double>::iterator start = 
+
+    Teuchos::ArrayView<const double>::iterator start =
       std::find_if( raw_ae_cross_section.begin(),
 		    raw_ae_cross_section.end(),
 		    notEqualZero );
@@ -230,13 +230,13 @@ int main( int argc, char** argv )
     Teuchos::ArrayRCP<double> ae_cross_section;
     ae_cross_section.assign( start, raw_ae_cross_section.end() );
 
-    unsigned ae_threshold_index = 
+    unsigned ae_threshold_index =
       energy_grid.size() - ae_cross_section.size();
 
     // Extract the atomic excitation information data block (EXCIT)
     Teuchos::ArrayView<const double> excit_block(
 				      xss_data_extractor->extractEXCITBlock() );
-  
+
     // Extract the number of tabulated energies
     int size = excit_block.size()/2;
 
@@ -249,16 +249,16 @@ int main( int argc, char** argv )
     // Create the energy loss distributions
     MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
      ae_energy_loss_function;
-  
-    ae_energy_loss_function.reset( 
+
+    ae_energy_loss_function.reset(
       new Utility::TabularDistribution<Utility::LinLin>( ae_energy_grid,
                                                          energy_loss ) );
 
     Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
                       ae_energy_loss_distribution;
 
-    ae_energy_loss_distribution.reset( 
-    new MonteCarlo::AtomicExcitationElectronScatteringDistribution( 
+    ae_energy_loss_distribution.reset(
+    new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
 
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
@@ -267,19 +267,19 @@ int main( int argc, char** argv )
 			    ae_cross_section,
 			    ae_threshold_index,
                 ae_energy_loss_distribution ) );
-    
-    // Bremsstrahlung  
-    Teuchos::ArrayView<const double> raw_b_cross_section = 
+
+    // Bremsstrahlung
+    Teuchos::ArrayView<const double> raw_b_cross_section =
       xss_data_extractor->extractBremsstrahlungCrossSection();
-    
+
     start = std::find_if( raw_b_cross_section.begin(),
 		    raw_b_cross_section.end(),
 		    notEqualZero );
-  
+
     Teuchos::ArrayRCP<double> b_cross_section;
     b_cross_section.assign( start, raw_b_cross_section.end() );
-    
-    unsigned b_threshold_index = 
+
+    unsigned b_threshold_index =
       energy_grid.size() - b_cross_section.size();
 
     //! \todo Find real bremsstrahlung photon angular distribution
@@ -288,14 +288,14 @@ int main( int argc, char** argv )
     b_energy_bins[0] = 1e-7;
     b_energy_bins[1] = 1.0;
     b_energy_bins[2] = 1e5;
- 
+
     Teuchos::Array<double> b_angular_distribution_values( 3 );
     b_angular_distribution_values[0] =  0.0;
     b_angular_distribution_values[1] =  0.5;
     b_angular_distribution_values[2] =  1.0;
 
     Teuchos::RCP<const Utility::OneDDistribution> b_angular_distribution(
-	  		    new Utility::TabularDistribution<Utility::LinLin>( 
+	  		    new Utility::TabularDistribution<Utility::LinLin>(
 						b_energy_bins,
 						b_angular_distribution_values ) );
 
@@ -316,18 +316,18 @@ int main( int argc, char** argv )
     Teuchos::Array<double> offset(bremi_block(2*N,N));
 
     // Extract the bremsstrahlung photon energy distributions block (BREME)
-    Teuchos::ArrayView<const double> breme_block = 
+    Teuchos::ArrayView<const double> breme_block =
       xss_data_extractor->extractBREMEBlock();
 
     // Create the bremsstrahlung scattering distributions
     MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
       b_scattering_function( N );
-  
+
     for( unsigned n = 0; n < N; ++n )
     {
       b_scattering_function[n].first = b_energy_grid[n];
 
-      b_scattering_function[n].second.reset( 
+      b_scattering_function[n].second.reset(
 	    new Utility::HistogramDistribution(
 		   breme_block( offset[n], table_length[n] ),
 		   breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -337,11 +337,11 @@ int main( int argc, char** argv )
 	Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution;
 
-    b_scattering_distribution.reset( 
-        new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+    b_scattering_distribution.reset(
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
             b_scattering_function,
             xss_data_extractor->extractAtomicNumber() ) );
-    
+
 
     // Create the bremsstrahlung scattering reaction
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
@@ -352,13 +352,13 @@ int main( int argc, char** argv )
             b_scattering_distribution ) );
 
     // Create the reaction maps
-    MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 
+    MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions,
       absorption_reactions;
-    
+
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
-    
+
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
 				   new MonteCarlo::VoidAtomicRelaxationModel );
@@ -387,7 +387,7 @@ int main( int argc, char** argv )
 
   return (success ? 0 : 1);
 }
-							   
+
 
 //---------------------------------------------------------------------------//
 // end tstElectroatomCore.cpp

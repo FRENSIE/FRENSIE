@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_NeutronState.hpp
 //! \author Alex Robinson
 //! \brief  Neutron state class declaration
@@ -17,9 +17,9 @@ namespace MonteCarlo{
 //! The neutron state class
 class NeutronState : public MassiveParticleState
 {
-  
+
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 

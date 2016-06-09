@@ -19,18 +19,18 @@ MasslessParticleState::MasslessParticleState()
 { /* ... */ }
 
 // Constructor
-MasslessParticleState::MasslessParticleState( 
+MasslessParticleState::MasslessParticleState(
 				        const historyNumberType history_number,
 					const ParticleType type )
   : ParticleState( history_number, type )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-MasslessParticleState::MasslessParticleState( 
+MasslessParticleState::MasslessParticleState(
 				      const ParticleState& existing_base_state,
 				      const ParticleType new_type,
 				      const bool increment_generation_number,
-				      const bool reset_collision_number ) 
+				      const bool reset_collision_number )
   : ParticleState( existing_base_state,
 		   new_type,
 		   increment_generation_number,
@@ -44,7 +44,7 @@ double MasslessParticleState::getSpeed() const
 }
 
 // Calculate the time to traverse a distance
-ParticleState::timeType 
+ParticleState::timeType
 MasslessParticleState::calculateTraversalTime( const double distance ) const
 {
   return distance/Utility::PhysicalConstants::speed_of_light;

@@ -40,7 +40,7 @@ struct UndefinedCollisionHandler
 template<typename CollisionHandler>
 class CollisionModuleInterface
 {
-  
+
 public:
 
   //! The external material handle class (used within the collision handler)
@@ -77,7 +77,7 @@ public:
   static inline double getMacroscopicTotalCrossSection(
 						 const ElectronState& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
-  
+
   //! Get the macroscopic cross section for a specific reaction
   static inline double getMacroscopicReactionCrossSection(
 					   const NeutronState& particle,
@@ -109,19 +109,19 @@ public:
   //! Collide with the material in a cell
   static inline void collideWithCellMaterial( NeutronState& particle,
 					      ParticleBank& bank,
-					      const bool analogue ) 
+					      const bool analogue )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Collide with the material in a cell
   static inline void collideWithCellMaterial( PhotonState& particle,
 					      ParticleBank& bank,
-					      const bool analogue ) 
+					      const bool analogue )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Collide with the material in a cell
   static inline void collideWithCellMaterial( ElectronState& particle,
                                               ParticleBank& bank,
-                                              const bool analogue ) 
+                                              const bool analogue )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 };
 
@@ -130,7 +130,7 @@ template<typename CollisionHandler>
 inline void setCollisionHandlerInstance(
 	     const Teuchos::RCP<CollisionHandler>& collision_handler_instance )
 {
-  CollisionModuleInterface<CollisionHandler>::setHHandlerInstance( 
+  CollisionModuleInterface<CollisionHandler>::setHHandlerInstance(
 						  collision_handler_instance );
 }
 

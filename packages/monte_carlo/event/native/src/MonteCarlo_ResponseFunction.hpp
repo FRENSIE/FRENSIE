@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ResponseFunction.hpp
 //! \author Alex Robinson
-//! \brief  Response function base class declaration 
+//! \brief  Response function base class declaration
 //!
 //---------------------------------------------------------------------------//
 

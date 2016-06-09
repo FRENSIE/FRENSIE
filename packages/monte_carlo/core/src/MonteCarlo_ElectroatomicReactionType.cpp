@@ -17,14 +17,14 @@
 namespace MonteCarlo{
 
 // Convert a ElectroatomicReactionType enum to a string
-std::string convertElectroatomicReactionEnumToString( 
+std::string convertElectroatomicReactionEnumToString(
 				       const ElectroatomicReactionType reaction )
 {
   switch( reaction )
   {
-  case TOTAL_ELECTROATOMIC_REACTION: 
+  case TOTAL_ELECTROATOMIC_REACTION:
     return "Total Electroatomic Reaction";
-  case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION: 
+  case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION:
     return "Total Absorption Electroatomic Reaction";
   case CUTOFF_ELASTIC_ELECTROATOMIC_REACTION:
     return "Cutoff Elastic Electroatomic Reaction";
@@ -36,7 +36,7 @@ std::string convertElectroatomicReactionEnumToString(
     return "Bremsstrahlung Electroatomic Reaction";
   case POSITRON_ANNIHILATION_ELECTROATOMIC_REACTION:
     return "Positron Annihilation Electroatomic Reaction";
-  case ATOMIC_EXCITATION_ELECTROATOMIC_REACTION: 
+  case ATOMIC_EXCITATION_ELECTROATOMIC_REACTION:
     return "Atomic Excitation Electroatomic Reaction";
   case TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
     return "Total Electroionization Electroatomic Reaction";
@@ -172,7 +172,7 @@ ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: the invalid shell does not have a corresponding " 
+		     "Error: the invalid shell does not have a corresponding "
 		     "Electroionization Electroatomic reaction!" );
   }
 }

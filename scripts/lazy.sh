@@ -4,7 +4,7 @@ function build {
 
 build cmake
 source ../src/scripts/source_deps.sh
-build lapack  
+build lapack
 build mpi
 build trilinos
 build boost

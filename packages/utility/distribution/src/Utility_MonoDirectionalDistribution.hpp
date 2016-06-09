@@ -23,10 +23,10 @@ class MonoDirectionalDistribution : public DirectionalDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
-  
+
 public:
 
   //! Constructor
@@ -60,9 +60,9 @@ private:
 
   // The y-direction
   double d_y_direction;
-  
+
   // The z-direction
-  double d_z_direction;			       
+  double d_z_direction;
 };
 
 } // end Utility namespace

@@ -36,7 +36,7 @@ AdjointBremsstrahlungCrossSectionEvaluator::AdjointBremsstrahlungCrossSectionEva
 
 // Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
 double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSection(
-	  const double incoming_energy, 
+	  const double incoming_energy,
           const double outgoing_energy ) const
 {
   // Make sure the energies are valid
@@ -47,7 +47,7 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSect
   double forward_cs = d_bremsstrahlung_reaction->getCrossSection( incoming_energy );
 
   // Evaluate the energy loss distribution at a given incoming and outgoing energy
-  double forward_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+  double forward_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
                                      incoming_energy,
                                      outgoing_energy,
                                      d_energy_loss_distribution );
@@ -56,8 +56,8 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSect
 }
 
 // Return the cross section value at a given energy
-double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection( 
-                               const double energy, 
+double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
+                               const double energy,
 			       const double precision ) const
 {
   // Make sure the energies are valid
@@ -66,14 +66,14 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
   double cross_section = 0.0;
 
   // Create boost rapper function for the adjoint Bremsstahlung differential cross section
-  boost::function<double (double x)> diff_adjoint_brem_wrapper = 
+  boost::function<double (double x)> diff_adjoint_brem_wrapper =
     boost::bind<double>( &AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSection,
                          boost::cref( *this ),
                          _1,
                          energy );
 
     double abs_error;
-    
+
     Utility::GaussKronrodIntegrator<double> integrator( precision );
 
     integrator.integrateAdaptively<15>(

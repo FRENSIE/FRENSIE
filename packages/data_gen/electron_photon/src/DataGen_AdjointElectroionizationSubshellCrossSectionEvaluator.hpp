@@ -35,7 +35,7 @@ namespace DataGen{
 //! The adjoint electroionization subshell cross section class
 class AdjointElectroionizationSubshellCrossSectionEvaluator
 {
-  
+
 public:
 
   //! Typedef for the electroionization subshell distribution
@@ -46,7 +46,7 @@ public:
   //! Constructor
   AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
                                electroionization_subshell_reaction,
     const Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
                                knock_on_distribution );
@@ -57,11 +57,11 @@ public:
 
   //! Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
   double evaluateDifferentialCrossSection(
-            const double incoming_energy, 
+            const double incoming_energy,
             const double outgoing_energy ) const;
 
   //! Return the cross section value at a given energy
-  double evaluateCrossSection( const double energy, 
+  double evaluateCrossSection( const double energy,
                                const double precision = 1e-6 ) const;
 
   //! Return the max outgoing adjoint energy for a given energy
@@ -75,7 +75,7 @@ private:
   // The knock on energy distribution
   Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
                                          d_knock_on_distribution;
-  
+
   // The subshell binding energy
   double d_binding_energy;
 };

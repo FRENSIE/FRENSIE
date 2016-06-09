@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw2NuclearScatteringEnergyDistribution.hpp
 //! \author Eli Moll
 //! \brief  The law 2 scattering energy distribution class
@@ -30,7 +30,7 @@ class AceLaw2NuclearScatteringEnergyDistribution : public NuclearScatteringEnerg
 public:
 
   //! Constructor
-  AceLaw2NuclearScatteringEnergyDistribution( 
+  AceLaw2NuclearScatteringEnergyDistribution(
                                             int photonType,
                                             double photonEnergy,
                                             const double atomic_weight_ratio );
@@ -45,9 +45,9 @@ public:
 private:
 
   int d_photon_type;
-  
+
   double d_photon_energy;
-  
+
   double d_atomic_weight_ratio;
 
 };

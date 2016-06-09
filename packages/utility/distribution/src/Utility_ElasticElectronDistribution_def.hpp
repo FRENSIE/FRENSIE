@@ -37,15 +37,15 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution()
 
 // Constructor for ENDL tables data given as PDF
 /*! \details The independent values, x, are the scattering angle in units of pi
- * ie: x = (1 - mu), where mu is the scattering angle cosine. 
+ * ie: x = (1 - mu), where mu is the scattering angle cosine.
  * They range from 0 (forward scattering) to 2 (backscattering) ( 0 <= x <= 2 )
  * They are assumed to be sorted (lowest to highest).
- */ 
+ */
 template<typename InterpolationPolicy>
-ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution( 
+ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
                        const Teuchos::Array<double>& independent_values,
 		               const Teuchos::Array<double>& dependent_values,
-                       const double moliere_screening_constant, 
+                       const double moliere_screening_constant,
                        const double screened_rutherford_normalization_constant )
   : d_moliere_screening_constant( moliere_screening_constant ),
     d_screened_rutherford_normalization_constant( screened_rutherford_normalization_constant ),
@@ -74,13 +74,13 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
 
 
 // Constructor for ACE tables data given as CDF
-  /*! \details For ACE tables data the independent values must be changed from 
+  /*! \details For ACE tables data the independent values must be changed from
    * the angle cosine (mu) to angle (x) in units of pi ( x = 1 - mu )
    * The dependent values must also be changed to be in reverse ascending order
    * where: cdf(x) = 1 - cdf(mu)
    */
 template<typename InterpolationPolicy>
-ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution( 
+ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
 			      const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values,
                   const double energy,
@@ -106,7 +106,7 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
 			       independent_values.end() ) );
   // Make sure that the bin values are sorted
-  testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
+  testPrecondition( Sort::isSortedAscending( dependent_values.begin(),
 			        dependent_values.end() ) );
   // Make sure that the independent values are valid
   testPrecondition( independent_values.front() >= -1.0 );
@@ -131,7 +131,7 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
 
 // Assignment operator
 template<typename InterpolationPolicy>
-ElasticElectronDistribution<InterpolationPolicy>& 
+ElasticElectronDistribution<InterpolationPolicy>&
 ElasticElectronDistribution<InterpolationPolicy>::operator=(
 		const ElasticElectronDistribution<InterpolationPolicy>& dist_instance )
 {
@@ -143,13 +143,13 @@ ElasticElectronDistribution<InterpolationPolicy>::operator=(
     d_distribution = dist_instance.d_distribution;
     d_norm_constant = dist_instance.d_norm_constant;
   }
-  
+
   return *this;
 }
 
 // Evaluate the distribution
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::evaluate( 
+double ElasticElectronDistribution<InterpolationPolicy>::evaluate(
 					   const double indep_var_value ) const
 {
   return evaluatePDF( indep_var_value );
@@ -157,7 +157,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluate(
 
 // Evaluate the PDF
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF( 
+double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF(
 					   const double indep_var_value ) const
 {
   if( indep_var_value < 0.0 )
@@ -185,12 +185,12 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF(
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
-    
+
     double lower_indep_value = lower_bin_boundary->first;
     double lower_pdf_value = lower_bin_boundary->third;
     double upper_indep_value = upper_bin_boundary->first;
     double upper_pdf_value = upper_bin_boundary->third;
-    
+
     return InterpolationPolicy::interpolate( lower_indep_value,
 					     upper_indep_value,
 					     indep_var_value,
@@ -201,7 +201,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF(
 
 // Evaluate the CDF
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF( 
+double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF(
 					   const double indep_var_value ) const
 {
   if( indep_var_value < 0.0 )
@@ -237,15 +237,15 @@ template<typename InterpolationPolicy>
 inline double ElasticElectronDistribution<InterpolationPolicy>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
-  
+
   unsigned dummy_index;
-  
+
   return this->sampleImplementation( random_number, dummy_index );
 }
 
 // Return a random sample and record the number of trials
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordTrials( 
+double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordTrials(
 						       unsigned& trials ) const
 {
   ++trials;
@@ -255,7 +255,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordTrials(
 
 // Return a random sample and bin index from the distribution
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordBinIndex( 
+double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordBinIndex(
 					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -265,7 +265,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleAndRecordBinIndex
 
 // Return a sample from the distribution at the given CDF value
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandomNumber( 
+double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandomNumber(
 					     const double random_number ) const
 {
   unsigned dummy_index;
@@ -275,12 +275,12 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandomNumber(
 
 // Return a random sample from the corresponding CDF in a subrange
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::sampleInSubrange( 
+double ElasticElectronDistribution<InterpolationPolicy>::sampleInSubrange(
 					     const double max_indep_var ) const
 {
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-    
+
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   return this->sampleWithRandomNumberInSubrange( random_number,
@@ -289,7 +289,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleInSubrange(
 
 // Return a random sample from the distribution at the given CDF value in a subrange
 template<typename InterpolationPolicy>
-inline double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandomNumberInSubrange( 
+inline double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandomNumberInSubrange(
 					     const double random_number,
 					     const double max_indep_var ) const
 {
@@ -298,22 +298,22 @@ inline double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandom
   testPrecondition( random_number <= 1.0 );
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-  
+
   // Calculate a scaled random number
-  double scaled_random_number = 
+  double scaled_random_number =
     random_number*this->evaluateCDF( max_indep_var );
-    
+
   unsigned dummy_index;
 
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
 // Return a random sample using the random number and record the bin index
-/*! !\details If the screened Rutherford portion is sampled a bin index of 0 
+/*! !\details If the screened Rutherford portion is sampled a bin index of 0
  *  will be returned
  */
 template<typename InterpolationPolicy>
-double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation( 
+double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
 					    double random_number,
 					    unsigned& sampled_bin_index ) const
 {
@@ -342,10 +342,10 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
     double pdf_value = lower_bin_boundary->third;
     double slope = lower_bin_boundary->fourth;
 
-    // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
+    // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m
     if( slope != 0.0 )
     {
-      sample = indep_value + 
+      sample = indep_value +
         (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
     }
     // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
@@ -377,7 +377,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
 
 // Return the upper bound of the distribution independent variable
 template<typename InterpolationPolicy>
-double 
+double
 ElasticElectronDistribution<InterpolationPolicy>::getUpperBoundOfIndepVar() const
 {
   return d_distribution.back().first;
@@ -385,7 +385,7 @@ ElasticElectronDistribution<InterpolationPolicy>::getUpperBoundOfIndepVar() cons
 
 // Return the lower bound of the distribution independent variable
 template<typename InterpolationPolicy>
-double 
+double
 ElasticElectronDistribution<InterpolationPolicy>::getLowerBoundOfIndepVar() const
 {
   return 0.0;
@@ -393,7 +393,7 @@ ElasticElectronDistribution<InterpolationPolicy>::getLowerBoundOfIndepVar() cons
 
 // Return the distribution type
 template<typename InterpolationPolicy>
-OneDDistributionType 
+OneDDistributionType
 ElasticElectronDistribution<InterpolationPolicy>::getDistributionType() const
 {
   return ElasticElectronDistribution<InterpolationPolicy>::distribution_type;
@@ -408,7 +408,7 @@ bool ElasticElectronDistribution<InterpolationPolicy>::isContinuous() const
 
 // Method for placing the object in an output stream
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::toStream( 
+void ElasticElectronDistribution<InterpolationPolicy>::toStream(
 						       std::ostream& os ) const
 {
   Teuchos::Array<double> independent_values( d_distribution.size() );
@@ -431,9 +431,9 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
   std::string start_bracket;
   std::getline( is, start_bracket, '{' );
   start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
-  
-  TEST_FOR_EXCEPTION( start_bracket.size() != 0, 
-		      InvalidDistributionStringRepresentation, 
+
+  TEST_FOR_EXCEPTION( start_bracket.size() != 0,
+		      InvalidDistributionStringRepresentation,
 		      "Error: the input stream is not a valid elastic electron "
 		      "distribution representation!" );
 
@@ -451,10 +451,10 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
 			      "Error: the elastic electron distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-  
+
   Teuchos::Array<double> independent_values;
-  try{ 
-    independent_values = 
+  try{
+    independent_values =
       Teuchos::fromStringToArray<double>( independent_values_rep );
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
@@ -462,14 +462,14 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
 			      "Error: the elastic electron distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-    
+
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
 						independent_values.end() ),
-		      InvalidDistributionStringRepresentation, 
+		      InvalidDistributionStringRepresentation,
 		      "Error: the elastic electron distribution cannot be constructed "
 		      "because the bin boundaries "
 		      << independent_values_rep << " are not sorted!" );
-  
+
   // Read the ","
   std::string separator;
   std::getline( is, separator, ',' );
@@ -488,10 +488,10 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
 			      "Error: the elastic electron distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-  
+
   Teuchos::Array<double> dependent_values;
   try{
-    dependent_values = 
+    dependent_values =
       Teuchos::fromStringToArray<double>( dependent_values_rep );
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
@@ -499,25 +499,25 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
 			      "Error: the elastic electron distribution cannot be "
 			      "constructed because the representation is not "
 			      "valid (see details below)!\n" );
-			      
+
   TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
-		      InvalidDistributionStringRepresentation, 
+		      InvalidDistributionStringRepresentation,
 		      "Error: the elastic electron distribution "
 		      "{" << independent_values_rep << "},{"
 		      << dependent_values_rep << "} "
 		      "cannot be constructed because the number of "
 		      "independent values does not equal the number of "
 		      "dependent values" );
-		      
+
   initializeDistributionENDL( independent_values, dependent_values );
 }
 
 // Method for testing if two objects are equivalent
 template<typename InterpolationPolicy>
-bool ElasticElectronDistribution<InterpolationPolicy>::isEqual( 
+bool ElasticElectronDistribution<InterpolationPolicy>::isEqual(
 		  const ElasticElectronDistribution<InterpolationPolicy>& other ) const
 {
-  return d_distribution == other.d_distribution && 
+  return d_distribution == other.d_distribution &&
     d_norm_constant == other.d_norm_constant;
 }
 
@@ -527,7 +527,7 @@ double ElasticElectronDistribution<InterpolationPolicy>::getMoliereScreeningCons
 {
   return d_moliere_screening_constant;
 }
- 
+
 // Return the normalization constant for the screened Rutherford component of the distribution
 template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::getScreenedRutherfordNormalizationConstant() const
@@ -551,7 +551,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE
   d_distribution[0].second = 1.0 - dependent_values[size-1];
   d_distribution[1].first = 1.0 - independent_values[size-2];
   d_distribution[1].second = 1.0 - dependent_values[size-2];
-  setFirstTwoPDFs( 1.0-dependent_values[size-1], 
+  setFirstTwoPDFs( 1.0-dependent_values[size-1],
                    1.0-dependent_values[size-2] );
 
   d_screened_rutherford_cutoff_cdf = d_distribution[1].third;
@@ -572,13 +572,13 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE
     }
     else // If the cdf does not change inbetween angular bins, set the pdf to zero
     {
-       d_distribution[i].third = 0.0; 
+       d_distribution[i].third = 0.0;
     }
   }
 
   // Set normalization constant
   d_norm_constant = d_distribution.back().second;
- 
+
   // Verify that the CDF is normalized (in event of round-off errors)
   if( dependent_values.back() != 1.0 )
   {
@@ -609,7 +609,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
 
   // Resize the distribution
   d_distribution.resize( independent_values.size() );
-  
+
   // Assign the raw distribution data
   for( unsigned i = 0; i < independent_values.size(); ++i )
   {
@@ -618,16 +618,16 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
   }
 
   // Create a CDF from the raw distribution data
-  double max_tabular_cdf = 
+  double max_tabular_cdf =
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>(d_distribution);
 
   // The cutoff angle above which the screened Rutherford distribution is sampled
-  d_screened_rutherford_cutoff_cdf = 
+  d_screened_rutherford_cutoff_cdf =
     ( s_sr_angle*d_screened_rutherford_normalization_constant )/
     ( d_moliere_screening_constant*( s_sr_angle+d_moliere_screening_constant ) );
 
   /* Normalize the CDF by:
-    (the max cutoff cdf) + 
+    (the max cutoff cdf) +
     (the ratio of the screened Ruthreford to the cutoff distribution ) */
   d_norm_constant = max_tabular_cdf + d_screened_rutherford_cutoff_cdf;
 
@@ -636,7 +636,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
   {
     d_distribution[j].second /= d_norm_constant;
   }
-  
+
 
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
@@ -644,7 +644,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
 
 // Set the first two PDF values
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs( 
+void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
         const double& first_cdf,
         const double& second_cdf )
 {
@@ -652,13 +652,13 @@ void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
   unsigned size = d_distribution.size();
 
   // get the momentum**2 of the electron in units of electron_rest_mass_energy
-  double electron_momentum_squared = 
-           Utility::calculateDimensionlessRelativisticMomentumSquared( 
+  double electron_momentum_squared =
+           Utility::calculateDimensionlessRelativisticMomentumSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           d_energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared( 
+  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
            Utility::PhysicalConstants::electron_rest_mass_energy,
            d_energy );
 
@@ -676,14 +676,14 @@ void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
           ( d_energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
 
   // Calculate Moliere's atomic screening constant
-  d_moliere_screening_constant = 
-            screening_param1 * 1.0/electron_momentum_squared * 
+  d_moliere_screening_constant =
+            screening_param1 * 1.0/electron_momentum_squared *
             d_Z_two_thirds_power * ( 1.13 + screening_param2*screening_param3 );
- 
+
   double var = (s_sr_angle + d_moliere_screening_constant);
 
   // Calculate the normalization constant
-  d_screened_rutherford_normalization_constant = 
+  d_screened_rutherford_normalization_constant =
             ( second_cdf -first_cdf )*
             d_moliere_screening_constant*var/s_sr_angle;
 
@@ -695,7 +695,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs(
 std::cout << std::setprecision(20)<<"d_moliere_screening_constant =\t"<<d_moliere_screening_constant<<std::endl;
 std::cout << std::setprecision(20)<<"d_screened_rutherford_normalization_constant =\t"<<d_screened_rutherford_normalization_constant<<std::endl;*/
 }
-				       			    
+
 } // end Utility namespace
 
 #endif // end Utility_ElasticElectronDistribution_def.hpp

@@ -29,19 +29,19 @@
 namespace MonteCarlo{
 
 // Constructor
-CachedStateParticleSource::CachedStateParticleSource( 
+CachedStateParticleSource::CachedStateParticleSource(
 		    const std::string& state_source_bank_archive_name,
 		    const std::string& bank_name_in_archive,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
   : d_particle_states(),
     d_number_of_samples( 1, 0ull )
-{ 
+{
   // Make sure that the source bank archive name is valid
   testPrecondition( state_source_bank_archive_name.size() > 0 );
 
   // Load the the archived bank
   ParticleBank state_bank;
-  
+
   std::ifstream ifs( state_source_bank_archive_name.c_str() );
 
   switch( archive_type )
@@ -49,27 +49,27 @@ CachedStateParticleSource::CachedStateParticleSource(
     case Utility::ArchivableObject::ASCII_ARCHIVE:
     {
       boost::archive::text_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(), 
+      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(),
 					    state_bank );
-      
+
       break;
     }
 
     case Utility::ArchivableObject::BINARY_ARCHIVE:
     {
       boost::archive::binary_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(), 
+      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(),
 					    state_bank );
-      
+
       break;
     }
 
     case Utility::ArchivableObject::XML_ARCHIVE:
     {
       boost::archive::xml_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(), 
+      ar >> boost::serialization::make_nvp( bank_name_in_archive.c_str(),
 					    state_bank );
-      
+
       break;
     }
   }
@@ -79,19 +79,19 @@ CachedStateParticleSource::CachedStateParticleSource(
 
   // Reset the history numbers
   unsigned long long history_number = 0ull;
-  unsigned long long current_history_number = 
+  unsigned long long current_history_number =
     state_bank.top().getHistoryNumber();
-  
+
   while( !state_bank.isEmpty() )
   {
     if( state_bank.top().getHistoryNumber() != current_history_number )
     {
       ++history_number;
-      
+
       current_history_number = state_bank.top().getHistoryNumber();
     }
-    
-    boost::shared_ptr<ParticleState> modified_state( 
+
+    boost::shared_ptr<ParticleState> modified_state(
 				    state_bank.top().clone( history_number ) );
 
     d_particle_states[history_number].push_back( modified_state );
@@ -168,7 +168,7 @@ void CachedStateParticleSource::exportData(
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure the hdf5 file is valid
   testPrecondition( hdf5_file.get() != NULL );
-  
+
   // Open the source hdf5 file
   SourceHDF5FileHandler source_hdf5_file( hdf5_file );
 
@@ -180,7 +180,7 @@ void CachedStateParticleSource::exportData(
   // Set the number of samples
   unsigned long long samples = this->getNumberOfSamples();
 
-  source_hdf5_file.setNumberOfDefaultSourceSamples( samples );  
+  source_hdf5_file.setNumberOfDefaultSourceSamples( samples );
 }
 
 // Print a summary of the source data
@@ -205,7 +205,7 @@ void CachedStateParticleSource::printSummary( std::ostream& os ) const
  * thread-safe. The cell that contains the sampled particle state will
  * not be set and must be determined by the geometry module.
  */
-void CachedStateParticleSource::sampleParticleState( 
+void CachedStateParticleSource::sampleParticleState(
                                              ParticleBank& bank,
                                              const unsigned long long history )
 {
@@ -218,7 +218,7 @@ void CachedStateParticleSource::sampleParticleState(
   for( unsigned i = 0; i < d_particle_states[history].size(); ++i )
   {
     bank.push( *d_particle_states[history][i] );
-    
+
     ++d_number_of_samples[Utility::GlobalOpenMPSession::getThreadId()];
   }
 }
@@ -230,7 +230,7 @@ unsigned long long CachedStateParticleSource::getNumberOfTrials() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   return this->reduceLocalSamplesCounters();
 }
 
@@ -241,7 +241,7 @@ unsigned long long CachedStateParticleSource::getNumberOfSamples() const
 {
   // Make sure only the root process calls this function
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
-  
+
   return this->reduceLocalSamplesCounters();
 }
 
@@ -254,7 +254,7 @@ double CachedStateParticleSource::getSamplingEfficiency() const
 }
 
 // Compare two particle state cores
-bool CachedStateParticleSource::compareHistoryNumbers( 
+bool CachedStateParticleSource::compareHistoryNumbers(
                                                  const ParticleState& state_a,
                                                  const ParticleState& state_b )
 {
@@ -262,14 +262,14 @@ bool CachedStateParticleSource::compareHistoryNumbers(
 }
 
 // Reduce the local samples counters
-unsigned long long 
+unsigned long long
 CachedStateParticleSource::reduceLocalSamplesCounters() const
 {
   return std::accumulate( d_number_of_samples.begin(),
                           d_number_of_samples.end(),
                           0ull );
 }
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

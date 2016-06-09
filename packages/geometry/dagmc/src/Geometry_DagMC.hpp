@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Geometry_DagMC.hpp
 //! \author Alex Robinson
 //! \brief  DagMC wrapper class declaration
@@ -164,34 +164,34 @@ public:
   static bool isVoidCell( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Check if the surface exists
-  static bool doesSurfaceExist( 
+  static bool doesSurfaceExist(
                         const ModuleTraits::InternalSurfaceHandle surface_id );
-  
+
   //! Get the problem surfaces
   template<typename Set>
   static void getSurfaces( Set& surface_set );
 
   //! Get the surface area
-  static double getSurfaceArea( 
+  static double getSurfaceArea(
                         const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Check if the surface is a reflecting surface
-  static bool isReflectingSurface( 
+  static bool isReflectingSurface(
                         const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( 
+  static PointLocation getPointLocation(
                               const Ray& ray,
                               const ModuleTraits::InternalCellHandle cell_id );
 
-  //! Get the boundary cell 
+  //! Get the boundary cell
   static ModuleTraits::InternalCellHandle
-  getBoundaryCell( 
+  getBoundaryCell(
                const ModuleTraits::InternalCellHandle cell_id,
                const ModuleTraits::InternalSurfaceHandle boundary_surface_id );
 
   //! Get the surface normal at a point on the surface
-  static void getSurfaceNormal( 
+  static void getSurfaceNormal(
                           const ModuleTraits::InternalSurfaceHandle surface_id,
                           const double position[3],
                           double normal[3] );
@@ -209,12 +209,12 @@ public:
                                             const bool boundary_check = true );
 
   //! Find and cached the cell that contains the external ray
-  static ModuleTraits::InternalCellHandle 
+  static ModuleTraits::InternalCellHandle
   findAndCacheCellContainingExternalRay( const Ray& ray );
 
   //! Get the distance from the external ray position to the nearest boundary
-  static double fireExternalRay( 
-                            const Ray& ray, 
+  static double fireExternalRay(
+                            const Ray& ray,
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Get the distance from the external ray position to the nearest boundary
@@ -232,7 +232,7 @@ public:
                               const bool cache_start_cell = false );
 
   //! Initialize (or reset) an internal DagMC ray
-  static void setInternalRay( 
+  static void setInternalRay(
                          const double position[3],
                          const double direction[3],
                          const ModuleTraits::InternalCellHandle current_cell,
@@ -243,7 +243,7 @@ public:
                               const bool cache_start_cell = false );
 
   //! Initialize (or reset) an internal DagMC ray
-  static void setInternalRay( 
+  static void setInternalRay(
                          const Ray& ray,
                          const ModuleTraits::InternalCellHandle current_cell,
                          const bool cache_start_cell = false );
@@ -266,7 +266,7 @@ public:
   static ModuleTraits::InternalCellHandle findCellContainingInternalRay();
 
   //! Get the distance from the internal DagMC ray pos. to the nearest boundary
-  static double fireInternalRay( 
+  static double fireInternalRay(
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Advance the internal DagMC ray to the next boundary
@@ -292,7 +292,7 @@ private:
                                     std::ostream& os_warn );
 
   // Get the surface normal at a point on the surface
-  static void getSurfaceHandleNormal( 
+  static void getSurfaceHandleNormal(
                                const moab::EntityHandle surface_handle,
                                const double position[3],
                                double normal[3],
@@ -304,7 +304,7 @@ private:
                                  StringArray& values );
 
   // Get the property values associated with a property name
-  static void getPropertyValues( const std::string& property, 
+  static void getPropertyValues( const std::string& property,
                                  std::vector<std::string>& values );
 
   // Get the cells associated with a property name
@@ -313,7 +313,7 @@ private:
                                     const std::string* property_value = NULL );
 
   // Get the surfaces associated with a property name
-  static void getSurfacesWithProperty( 
+  static void getSurfacesWithProperty(
                                     std::vector<moab::EntityHandle>& surfaces,
                                     const std::string& property,
                                     const std::string* property_value = NULL );
@@ -345,11 +345,11 @@ private:
 					      std::string& particle_type );
 
   //! Check if the surface handle is a reflecting surface
-  static bool isReflectingSurfaceHandle( 
+  static bool isReflectingSurfaceHandle(
                                      const moab::EntityHandle surface_handle );
 
   // Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( 
+  static PointLocation getPointLocation(
                                const double position[3],
                                const double direction[3],
                                const moab::EntityHandle cell_handle,
@@ -360,24 +360,24 @@ private:
   getBoundaryCellHandle( const moab::EntityHandle cell_handle,
                          const moab::EntityHandle boundary_surface_handle );
 
-  // Find the cell handle that contains the external ray 
-  static moab::EntityHandle findCellHandleContainingExternalRay( 
+  // Find the cell handle that contains the external ray
+  static moab::EntityHandle findCellHandleContainingExternalRay(
                                             const Ray& ray,
                                             const bool boundary_check = true );
 
-  // Find the cell handle that contains the external ray 
-  static moab::EntityHandle findCellHandleContainingRay( 
+  // Find the cell handle that contains the external ray
+  static moab::EntityHandle findCellHandleContainingRay(
                                         const double position[3],
                                         const double direction[3],
                                         const bool check_on_boundary = false );
 
-  // Find and cache the cell handle that contains the external ray 
-  static moab::EntityHandle findAndCacheCellHandleContainingRay( 
+  // Find and cache the cell handle that contains the external ray
+  static moab::EntityHandle findAndCacheCellHandleContainingRay(
                                                    const double position[3],
                                                    const double direction[3] );
 
   // Get the distance from the external ray position to the nearest boundary
-  static double fireExternalRayWithCellHandle( 
+  static double fireExternalRayWithCellHandle(
                             const double position[3],
                             const double direction[3],
                             const moab::EntityHandle current_cell_handle,
@@ -421,7 +421,7 @@ private:
 
   // The found cell cache
   static std::unordered_set<moab::EntityHandle> s_found_cell_cache;
-  
+
   // The internal rays
   static std::vector<DagMCRay> s_internal_rays;
 
@@ -472,7 +472,7 @@ public:
  */
 class DagMCGeometryError : public std::runtime_error
 {
- 
+
 public:
 
   DagMCGeometryError( const std::string& what_arg )

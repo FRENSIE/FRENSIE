@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_HardElasticElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The single scattering elastic electroatomic reaction class decl.
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_HARD_ELASTIC_ELECTROATOMIC_REACTION_HPP
@@ -26,7 +26,7 @@ class HardElasticElectroatomicReaction : public StandardElectroatomicReaction<In
 public:
 
   //! Constructor
-  HardElasticElectroatomicReaction( 
+  HardElasticElectroatomicReaction(
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
@@ -52,7 +52,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 
@@ -60,7 +60,7 @@ private:
 
 
   // The hard_elastic scattering distribution
-  Teuchos::RCP<const HardElasticElectronScatteringDistribution> 
+  Teuchos::RCP<const HardElasticElectronScatteringDistribution>
     d_scattering_distribution;
 
   // The incoming energy grid (logarithms)

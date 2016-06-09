@@ -33,9 +33,9 @@ void Root::setMaterialPropertyName( const std::string& material_property_name )
 {
   // Make sure Root has not been initialized
   testPrecondition( !Root::isInitialized() );
-  
+
   testPrecondition( material_property_name.size() > 0 );
-  
+
   s_material_property_name = material_property_name;
 }
 
@@ -46,7 +46,7 @@ void Root::setVoidMaterialName( const std::string& void_material_name )
   testPrecondition( !Root::isInitialized() );
   // Make sure the void material name is valid
   testPrecondition( void_material_name.size() > 0 );
-  
+
   s_void_material_name = void_material_name;
 }
 
@@ -57,7 +57,7 @@ void Root::setTerminalMaterialName( const std::string& terminal_material_name )
   testPrecondition( !Root::isInitialized() );
   // Make sure the terminal property name is valid
   testPrecondition( terminal_material_name.size() > 0 );
-  
+
   s_terminal_material_name = terminal_material_name;
 }
 
@@ -73,7 +73,7 @@ void Root::initialize( const std::string& filename )
 
   // Initialize the internal ray set array
   s_internal_ray_set.resize( 1, false );
-  
+
   // Tell ROOT to suppress all non-fatal messages
   gErrorIgnoreLevel = kFatal;
 
@@ -87,7 +87,7 @@ void Root::initialize( const std::string& filename )
 
   // Lock the geometry so no other geometries can be imported
   TGeoManager::LockGeometry();
-  
+
   // Get the list of volumes
   TObjArray* volume_list = s_manager->GetListOfVolumes();
   TIterator* volume_it = volume_list->MakeIterator();
@@ -95,12 +95,12 @@ void Root::initialize( const std::string& filename )
 
   unsigned num_termination_cells = 0u;
 
-  // Set up the cell id to UID map and make sure that the cell ids are unique 
-  for( unsigned long long i = 0; i < number_volumes; ++i ) 
+  // Set up the cell id to UID map and make sure that the cell ids are unique
+  for( unsigned long long i = 0; i < number_volumes; ++i )
   {
     TObject* object = volume_it->Next();
     TGeoVolume* cell = dynamic_cast<TGeoVolume*>( object );
-    
+
     TEST_FOR_EXCEPTION( cell->GetUniqueID() == 0,
                         InvalidRootGeometry,
                         "Error: ROOT contains a cell which has not been "
@@ -113,18 +113,18 @@ void Root::initialize( const std::string& filename )
                         << ModuleTraits::invalid_internal_cell_handle <<
                         ") in the input file!" );
 
-    TEST_FOR_EXCEPTION( s_cell_id_uid_map.find( cell->GetUniqueID() ) != 
+    TEST_FOR_EXCEPTION( s_cell_id_uid_map.find( cell->GetUniqueID() ) !=
                         s_cell_id_uid_map.end(),
                         InvalidRootGeometry,
                         "Error: ROOT contains cells with the same id ("
                         << cell->GetUniqueID() << ") in the input file!" );
 
-    s_cell_id_uid_map[cell->GetUniqueID()] = 
+    s_cell_id_uid_map[cell->GetUniqueID()] =
       s_manager->GetUID( cell->GetName() );
 
     if( Root::isTerminationCell( cell->GetUniqueID() ) )
       ++num_termination_cells;
-  } 
+  }
 
   // Make sure at least one termination cell is present
   TEST_FOR_EXCEPTION( num_termination_cells == 0,
@@ -142,7 +142,7 @@ void Root::enableThreadSupport( const unsigned num_threads )
   testPrecondition( num_threads > 0 );
 
   s_manager->SetMaxThreads( num_threads );
-  
+
   // A navigator must be created for each thread
   // NOTE: this is not done by the SetMaxThreads method (why????)
   #pragma omp parallel num_threads( num_threads )
@@ -162,7 +162,7 @@ bool Root::doesCellExist( const ModuleTraits::InternalCellHandle cell_id )
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return s_cell_id_uid_map.find( cell_id ) !=
     s_cell_id_uid_map.end();
 }
@@ -179,7 +179,7 @@ double Root::getCellVolume( const ModuleTraits::InternalCellHandle cell_id )
   testPrecondition( Root::isInitialized() );
   // Make sure the cell exists
   testPrecondition( Root::doesCellExist( cell_id ) );
-  
+
   // Get the volume of the cell
   double volume = Root::getVolumePtr( cell_id )->Capacity();
 
@@ -196,7 +196,7 @@ double Root::getCellVolume( const ModuleTraits::InternalCellHandle cell_id )
       // Obtain the next object in the array and cast it to its derived class
       TObject* daughter_object = daughter_it->Next();
       TGeoNode* daughter_node = dynamic_cast<TGeoNode*>( daughter_object );
-      
+
       TGeoVolume* daughter_volume = daughter_node->GetVolume();
 
       // Subtract the daughter volume
@@ -248,7 +248,7 @@ bool Root::isVoidCell( const ModuleTraits::InternalCellHandle cell_id )
 /*! \details This method is thread safe as long as enableThreadSupport has
  * been called.
  */
-PointLocation Root::getPointLocation( 
+PointLocation Root::getPointLocation(
                               const Ray& ray,
                               const ModuleTraits::InternalCellHandle cell_id )
 {
@@ -262,7 +262,7 @@ PointLocation Root::getPointLocation(
  * cell or interest). This method is thread safe as long as enableThreadSupport
  * has been called.
  */
-PointLocation Root::getPointLocation( 
+PointLocation Root::getPointLocation(
                                const double position[3],
                                const ModuleTraits::InternalCellHandle cell_id )
 {
@@ -270,7 +270,7 @@ PointLocation Root::getPointLocation(
   testPrecondition( Root::isInitialized() );
   // Make sure the cell exists
   testPrecondition( Root::doesCellExist( cell_id ) );
-  
+
   TGeoVolume* cell = Root::getVolumePtr( cell_id );
 
   PointLocation location;
@@ -278,7 +278,7 @@ PointLocation Root::getPointLocation(
   if( cell->Contains( position ) )
   {
     location = POINT_INSIDE_CELL;
-    
+
     // Check if the point is an any daughters
     TObjArray* daughters = Root::getVolumePtr( cell_id )->GetNodes();
 
@@ -292,13 +292,13 @@ PointLocation Root::getPointLocation(
         // Obtain the next object in the array and cast it to its derived class
         TObject* daughter_object = daughter_it->Next();
         TGeoNode* daughter_node = dynamic_cast<TGeoNode*>( daughter_object );
-      
+
         TGeoVolume* daughter_volume = daughter_node->GetVolume();
-        
+
         if( daughter_volume->Contains( position ) )
         {
           location = POINT_OUTSIDE_CELL;
-          
+
           break;
         }
       }
@@ -311,7 +311,7 @@ PointLocation Root::getPointLocation(
 }
 
 // Find the node containing the point
-// Note: This will update the internal state of Root. This method is thread 
+// Note: This will update the internal state of Root. This method is thread
 // safe as long as enableThreadSupport has been called.
 TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
 {
@@ -329,7 +329,7 @@ TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
   double distance_to_boundary = s_manager->GetStep();
 
   TGeoNode* node_containing_point;
-  
+
   // If the point is within the boundary tolerance return the next node
   if( distance_to_boundary < 1e-5 )
     node_containing_point = s_manager->Step();
@@ -344,10 +344,10 @@ TGeoNode* Root::findNodeContainingPoint( const Ray& ray )
 
 // Find the cell that contains the external ray
 /*! \details This method is thread safe as long as enableThreadSupport has
- * been called. 
+ * been called.
  * \warning This method will reset the internal ray.
  */
-ModuleTraits::InternalCellHandle 
+ModuleTraits::InternalCellHandle
 Root::findCellContainingExternalRay( const Ray& ray )
 {
   // Make sure root has been initialized
@@ -365,12 +365,12 @@ double Root::fireExternalRay( const Ray& ray )
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
-  
+
   TGeoNode* start_node = Root::findNodeContainingPoint( ray );
 
   // Find the boundary and distance but do not move the internal ray to it
   TGeoNode* next_node = s_manager->FindNextBoundaryAndStep();
-  
+
   return s_manager->GetStep();
 }
 
@@ -385,7 +385,7 @@ bool Root::isInternalRaySet()
   // Make sure thread support has been set up correctly
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
                     s_internal_ray_set.size() );
-  
+
   return s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()];
 }
 
@@ -397,7 +397,7 @@ void Root::internalRayUnset()
   // Make sure thread support has been set up correctly
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
                     s_internal_ray_set.size() );
-  
+
   s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()] = false;
 }
 
@@ -409,15 +409,15 @@ void Root::internalRaySet()
   // Make sure thread support has been set up correctly
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
                     s_internal_ray_set.size() );
-  
+
   s_internal_ray_set[Utility::GlobalOpenMPSession::getThreadId()] = true;
 }
 
-// Initialize (or reset) an internal root ray 
+// Initialize (or reset) an internal root ray
 /*! \details This method is thread safe as long as enableThreadSupport has
  * been called.
  */
-void Root::setInternalRay( const double position[3], 
+void Root::setInternalRay( const double position[3],
                            const double direction[3] )
 {
   // Make sure root has been initialized
@@ -433,13 +433,13 @@ void Root::setInternalRay( const double position[3],
 
 // Initialize (or reset) an internal root ray
 /*! \details This method is thread safe as long as enableThreadSupport has
- * been called. 
+ * been called.
  */
 void Root::setInternalRay( const Ray& ray )
 {
   // Make sure root has been initialized
   testPrecondition( Root::isInitialized() );
-  
+
   Root::setInternalRay( ray.getPosition(), ray.getDirection() );
 }
 
@@ -468,7 +468,7 @@ void Root::changeInternalRayDirection( const double x_direction,
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
   // Make sure the direction is valid
-  testPrecondition( Utility::validDirection( x_direction, 
+  testPrecondition( Utility::validDirection( x_direction,
                                              y_direction,
                                              z_direction ) );
 
@@ -486,7 +486,7 @@ const double* Root::getInternalRayPosition()
   testPrecondition( Root::isInitialized() );
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
-  
+
   return s_manager->GetCurrentPoint();
 }
 
@@ -500,7 +500,7 @@ const double* Root::getInternalRayDirection()
   testPrecondition( Root::isInitialized() );
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
-  
+
   return s_manager->GetCurrentDirection();
 }
 
@@ -514,7 +514,7 @@ ModuleTraits::InternalCellHandle Root::findCellContainingInternalRay()
   testPrecondition( Root::isInitialized() );
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
-  
+
   return s_manager->GetCurrentVolume()->GetUniqueID();
 }
 
@@ -528,7 +528,7 @@ double Root::fireInternalRay()
   testPrecondition( Root::isInitialized() );
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
-  
+
   TGeoNode* boundary_node = s_manager->FindNextBoundary();
 
   return s_manager->GetStep();
@@ -544,7 +544,7 @@ void Root::advanceInternalRayToCellBoundary()
   testPrecondition( Root::isInitialized() );
   // Make sure the internal ray is set
   testPrecondition( Root::isInternalRaySet() );
-  
+
   TGeoNode* next_node = s_manager->Step();
 }
 

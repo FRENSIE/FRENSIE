@@ -47,7 +47,7 @@ struct PhaseSpaceDimensionTraits
 
   //! The name of the dimension
   static inline std::string name()
-  { 
+  {
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return std::string();
   }
@@ -86,10 +86,10 @@ struct PhaseSpaceDimensionTraits
  * \ingrouop phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline typename PhaseSpaceDimensionTraits<dimension>::dimensionType 
+inline typename PhaseSpaceDimensionTraits<dimension>::dimensionType
 getDimensionValue( const EstimatorParticleStateWrapper& particle_wrapper )
 {
-  return PhaseSpaceDimensionTraits<dimension>::getDimensionValue( 
+  return PhaseSpaceDimensionTraits<dimension>::getDimensionValue(
                                                             particle_wrapper );
 }
 
@@ -103,7 +103,7 @@ getDimensionValue( const Teuchos::any& any_value )
 {
   return PhaseSpaceDimensionTraits<dimension>::getDimensionValue( any_value );
 }
-								    
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP

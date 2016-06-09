@@ -22,9 +22,9 @@
 namespace MonteCarlo{
 
 // Constructor
-/*! \details The Compton profile grids must be in me*c units (not atomic 
- * units). The Compton profiles must be in inverse me*c units (not inverse 
- * atomic units). Only half profiles should be provided (grid ranges from 0.0 
+/*! \details The Compton profile grids must be in me*c units (not atomic
+ * units). The Compton profiles must be in inverse me*c units (not inverse
+ * atomic units). Only half profiles should be provided (grid ranges from 0.0
  * to 1.0).
  */
 template<typename ComptonProfilePolicy>
@@ -64,7 +64,7 @@ DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfile
 
 // Return the binding energy of a subshell
 template<typename ComptonProfilePolicy>
-double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellBindingEnergy(
                                             const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -74,10 +74,10 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
   return d_old_subshell_binding_energy[old_subshell_index];
 }
-  
+
 // Return the occupancy of a subshell (default is the ENDF occupacy)
 template<typename ComptonProfilePolicy>
-double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::getSubshellOccupancy(
                                             const Data::SubshellType subshell ) const
 {
   // Make sure the subshell is valid
@@ -90,7 +90,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
 // Evaluate the distribution
 template<typename ComptonProfilePolicy>
-double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluate( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluate(
 				   const double incoming_energy,
 				   const double outgoing_energy,
 				   const double scattering_angle_cosine ) const
@@ -105,7 +105,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the electron momentum projection
-  const ComptonProfile::MomentumQuantity electron_momentum_projection = 
+  const ComptonProfile::MomentumQuantity electron_momentum_projection =
     Utility::Units::mec_momentum*
     calculateElectronMomentumProjection( incoming_energy,
                                          outgoing_energy,
@@ -148,7 +148,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
 
 // Evaluate the distribution
 template<typename ComptonProfilePolicy>
-double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSection( 
+double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::evaluateIntegratedCrossSection(
                                          const double incoming_energy,
                                          const double scattering_angle_cosine,
                                          const double precision ) const
@@ -159,7 +159,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  boost::function<double (double x)> double_diff_cs_wrapper = 
+  boost::function<double (double x)> double_diff_cs_wrapper =
     boost::bind<double>( &DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution::evaluate,
                          boost::cref( *this ),
                          incoming_energy,
@@ -179,7 +179,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
   // Make sure that the differential cross section is valid
   testPostcondition( diff_cs >= 0.0 );
 
-  return diff_cs;                         
+  return diff_cs;
 }
 
 // Sample an interaction subshell
@@ -188,7 +188,7 @@ double DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<Compton
  * separately - i.e. they are decoupled).
  */
 template<typename ComptonProfilePolicy>
-void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell( 
+void DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleInteractionSubshell(
                                                unsigned& old_subshell_index,
                                                double& subshell_binding_energy,
                                                Data::SubshellType& subshell ) const
@@ -205,8 +205,8 @@ template<typename ComptonProfilePolicy>
 unsigned DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<ComptonProfilePolicy>::sampleOldInteractionSubshell() const
 {
   unsigned old_subshell_of_interaction;
-  
-  d_old_subshell_occupancy_distribution->sampleAndRecordBinIndex( 
+
+  d_old_subshell_occupancy_distribution->sampleAndRecordBinIndex(
                                                  old_subshell_of_interaction );
 
   return old_subshell_of_interaction;

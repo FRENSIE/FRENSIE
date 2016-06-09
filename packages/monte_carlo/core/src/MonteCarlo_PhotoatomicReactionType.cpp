@@ -17,16 +17,16 @@
 namespace MonteCarlo{
 
 // Convert a PhotoatomicReactionType enum to a string
-std::string convertPhotoatomicReactionEnumToString( 
+std::string convertPhotoatomicReactionEnumToString(
 				       const PhotoatomicReactionType reaction )
 {
   switch( reaction )
   {
-  case TOTAL_PHOTOATOMIC_REACTION: 
+  case TOTAL_PHOTOATOMIC_REACTION:
     return "Total Photoatomic Reaction";
   case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
     return "Total Absorption Photoatomic Reaction";
-  case TOTAL_INCOHERENT_PHOTOATOMIC_REACTION: 
+  case TOTAL_INCOHERENT_PHOTOATOMIC_REACTION:
     return "Total Incoherent Photoatomic Reaction";
   case K_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION:
     return "K Subshell Incoherent Photoatomic Reaction";
@@ -202,7 +202,7 @@ std::string convertPhotoatomicReactionEnumToString(
 }
 
 // Convert a Data::SubshellType enum to a PhotoatomicReactionType enum
-PhotoatomicReactionType 
+PhotoatomicReactionType
 convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
 						  const Data::SubshellType subshell )
 {
@@ -249,13 +249,13 @@ convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: the invalid shell does not have a corresponding " 
+		     "Error: the invalid shell does not have a corresponding "
 		     "photoelectric photoatomic reaction!" );
   }
 }
 
   // Convert a Data::SubshellType enum to a PhotoatomicReactionType enum
-PhotoatomicReactionType 
+PhotoatomicReactionType
 convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
 						  const Data::SubshellType subshell )
 {
@@ -302,7 +302,7 @@ convertSubshellEnumToIncoherentPhotoatomicReactionEnum(
   case Data::Q3_SUBSHELL: return Q3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION;
   default:
     THROW_EXCEPTION( std::logic_error,
-		     "Error: the invalid shell does not have a corresponding " 
+		     "Error: the invalid shell does not have a corresponding "
 		     "photoelectric photoatomic reaction!" );
   }
 }

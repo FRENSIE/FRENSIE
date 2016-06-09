@@ -42,7 +42,7 @@ public:
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double outgoing_energy ) const
-  { /* ... */ }  
+  { /* ... */ }
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
@@ -70,7 +70,7 @@ public:
   void scatterAdjointElectron( AdjointElectronState& electron,
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
-  
+
 private:
 
   // bremsstrahlung scattering distribution

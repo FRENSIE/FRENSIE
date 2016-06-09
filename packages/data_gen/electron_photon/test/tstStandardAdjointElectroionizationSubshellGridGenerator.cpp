@@ -3,7 +3,7 @@
 //! \file   tstStandardAdjointElectroionizationSubshellGridGenerator.cpp
 //! \author Luke Kersting
 //! \brief  Standard adjoint electroionization subshell grid generator unit tests
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -27,19 +27,19 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   linlinlin_grid_generator_free;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   linloglog_grid_generator_free;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   logloglog_grid_generator_free;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   linlinlin_grid_generator_h;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   linloglog_grid_generator_h;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   logloglog_grid_generator_h;
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator> 
+Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
   logloglog_grid_generator_pb;
 
 //---------------------------------------------------------------------------//
@@ -48,11 +48,11 @@ Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
 // Check that an max energy grid can be generated at a single energy
 TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, generate_single_h )
 {
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy(
                                                                       0.00001 );
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy(
                                                                          20.0 );
-  
+
   Teuchos::Array<double> max_energy_grid, cross_section;
 
   double max_outgoing_energy = DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
@@ -62,28 +62,28 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   linlinlin_grid_generator_h->generate( max_energy_grid,
 					cross_section,
 					0.1 );
-  
+
   TEST_EQUALITY_CONST( max_energy_grid.size(), 36 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
 				  0.1,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
 				  20.0,
 				  1e-15 );
   TEST_EQUALITY_CONST( max_energy_grid[max_energy_grid.size()-1],
 		       max_outgoing_energy );
   TEST_EQUALITY_CONST( cross_section.size(), 36 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.3432, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
+				  9.3432,
 				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
 				  7.01235,
 				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 		     cross_section[cross_section.size()-1],
 		     7.0123556,
-		     1e-12 );		       
+		     1e-12 );
 
   max_energy_grid.clear();
   cross_section.clear();
@@ -94,25 +94,25 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
 					0.1 );
 
   TEST_EQUALITY_CONST( max_energy_grid.size(), 263 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  0.1, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
+  				  0.1,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.0, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
+  				  20.0,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
   		 max_energy_grid[max_energy_grid.size()-1],
 		 max_outgoing_energy,
   		 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 263 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.3432, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
+				  9.3432,
 				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
   				  7.0123,
   				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
   		     cross_section[cross_section.size()-1],
   		     7.0123,
   		     1e-12 );
@@ -124,27 +124,27 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   logloglog_grid_generator_h->generate( max_energy_grid,
 					cross_section,
 					0.1 );
-  						  
+
   TEST_EQUALITY_CONST( max_energy_grid.size(), 354 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  0.1, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
+  				  0.1,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.0, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
+  				  20.0,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
   		 max_energy_grid[max_energy_grid.size()-1],
   		 max_outgoing_energy,
   		 1e-15 );
-  
+
   TEST_EQUALITY_CONST( cross_section.size(), 354 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
 				  9.3432893,
   				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
   				  7.01235,
   				  1e-12 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
   		     cross_section[cross_section.size()-1],
   		     7.01235,
   		     1e-12 );
@@ -156,20 +156,20 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   linlinlin_grid_generator_h->generate( max_energy_grid,
 					cross_section,
 					1.0 );
-  
+
   TEST_EQUALITY_CONST( max_energy_grid.size(), 62 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
   				  1.0,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
   				  20.0,
   				  1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 62 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.343289, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
+  				  9.343289,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
   				  3.9741,
   				  1e-12 );
 
@@ -180,20 +180,20 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   linloglog_grid_generator_h->generate( max_energy_grid,
 					cross_section,
 					1.0 );
-  
+
   TEST_EQUALITY_CONST( max_energy_grid.size(), 33 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  1.0, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
+  				  1.0,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.0, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
+  				  20.0,
   				  1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 33 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.3432895, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
+  				  9.3432895,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
   				  3.974164,
   				  1e-15 );
 
@@ -204,21 +204,21 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   logloglog_grid_generator_h->generate( max_energy_grid,
 					cross_section,
 					1.0 );
-  
+
   TEST_EQUALITY_CONST( max_energy_grid.size(), 371 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(),
 				  1.0,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.0, 
+  UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(),
+  				  20.0,
   				  1e-15 );
-  
+
   TEST_EQUALITY_CONST( cross_section.size(), 371 );
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(),
   				  9.343289537,
   				  1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(),
   				  3.97416434,
   				  1e-15 );
 
@@ -259,7 +259,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
 {
   DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.00001 );
   DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 20.0 );
-  
+
   Teuchos::RCP<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> > derived_pointer = Teuchos::rcp_dynamic_cast<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> >( logloglog_grid_generator_pb );
 
   derived_pointer->setConvergenceTolerance( 0.05 );
@@ -289,7 +289,7 @@ int main( int argc, char** argv )
 
   std::string test_h_ace_file_name, test_h_ace_table_name;
   std::string test_pb_ace_file_name, test_pb_ace_table_name;
-  
+
   clp.setOption( "test_h_ace_file",
 		 &test_h_ace_file_name,
 		 "Test ACE file name" );
@@ -303,10 +303,10 @@ int main( int argc, char** argv )
 		 &test_pb_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -317,18 +317,18 @@ int main( int argc, char** argv )
   {
     // Initialize the dummy scattering function
     Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::UniformDistribution( 0.0, 
+	  new Utility::UniformDistribution( 0.0,
 					    std::numeric_limits<double>::max(),
 					    1.0 ) );
 
     // Initialize the grid generator
-    linlinlin_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLinLin>( 
+    linlinlin_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLinLin>(
 						       scattering_function ) );
-							
-    linloglog_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLogLog>( 
+
+    linloglog_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLogLog>(
 						       scattering_function ) );
-    
-    logloglog_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>( 
+
+    logloglog_grid_generator_free.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>(
 						       scattering_function ) );
   }
 
@@ -340,19 +340,19 @@ int main( int argc, char** argv )
 							 1u ) );
 
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
+				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 /*
     // Create the scattering function
-    Teuchos::ArrayView<const double> jince_block = 
+    Teuchos::ArrayView<const double> jince_block =
       xss_data_extractor->extractJINCEBlock();
 
     unsigned scatt_func_size = jince_block.size()/2;
 
     Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
-    Teuchos::Array<double> scattering_func_vals( 
+    Teuchos::Array<double> scattering_func_vals(
 			     jince_block( scatt_func_size, scatt_func_size ) );
 
     for( unsigned i = 0; i < scatt_func_size; ++i )
@@ -360,26 +360,26 @@ int main( int argc, char** argv )
 
     if( recoil_momentum.front() == 0.0 )
       recoil_momentum.front() = 1e-30;
-    
+
     if( scattering_func_vals.front() == 0.0 )
       scattering_func_vals.front() = 1e-30;
-    
+
     Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 		   new Utility::TabularDistribution<Utility::LogLog>(
 			   recoil_momentum,
 			   scattering_func_vals ) );
-    
-    linlinlin_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLinLin>( 
+
+    linlinlin_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLinLin>(
 							   scattering_function,
 							   0.001,
 							   1e-15 ) );
 
-    linloglog_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLogLog>( 
+    linloglog_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LinLogLog>(
 						           scattering_function,
 							   0.001,
 							   1e-15 ) );
 
-    logloglog_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>( 
+    logloglog_grid_generator_h.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>(
 							   scattering_function,
 							   0.001,
 							   1e-15 ) );
@@ -393,13 +393,13 @@ int main( int argc, char** argv )
 							1u ) );
 
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
+				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
     // Create the scattering function
-    Teuchos::ArrayView<const double> jince_block = 
+    Teuchos::ArrayView<const double> jince_block =
       xss_data_extractor->extractJINCEBlock();
 
     unsigned scatt_func_size = jince_block.size()/2;
@@ -413,11 +413,11 @@ int main( int argc, char** argv )
 		   new Utility::TabularDistribution<Utility::LogLog>(
 			   recoil_momentum,
 			   jince_block( scatt_func_size, scatt_func_size ) ) );
-    Teuchos::ArrayView<const double> func = 
+    Teuchos::ArrayView<const double> func =
       jince_block( scatt_func_size, scatt_func_size );
-    
+
     logloglog_grid_generator_pb.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>(
-                                binding_energy, 
+                                binding_energy,
                                 electroionization_subshell_reaction,
                                 knock_on_distribution ) );
   }
@@ -434,7 +434,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

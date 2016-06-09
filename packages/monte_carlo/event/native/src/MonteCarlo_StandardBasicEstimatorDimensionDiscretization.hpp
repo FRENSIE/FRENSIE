@@ -27,18 +27,18 @@ template<typename T, typename Enabled = void>
 class StandardBasicEstimatorDimensionDiscretization : public BasicEstimatorDimensionDiscretization<T>
 { /* ... */ };
 
-/*! The standard basic estimator dimension discretization class partial 
+/*! The standard basic estimator dimension discretization class partial
  * specialization for floating point types (continuous dimensions)
  */
 template<typename T>
 class StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type> : public BasicEstimatorDimensionDiscretization<T>
 {
-  
+
 public:
 
   //! Constructor
   StandardBasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension, 
+                           const PhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries );
 
   //! Destructor
@@ -49,7 +49,7 @@ public:
   unsigned getNumberOfBins() const;
 
   //! Print the boundaries of a bin
-  void printBoundariesOfBin( std::ostream& os, 
+  void printBoundariesOfBin( std::ostream& os,
                              const unsigned bin_index ) const;
 
 protected:
@@ -72,7 +72,7 @@ class StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<
 
   //! Constructor
   StandardBasicEstimatorDimensionDiscretization(
-                           const PhaseSpaceDimension dimension, 
+                           const PhaseSpaceDimension dimension,
                            const Teuchos::Array<T>& dimension_bin_boundaries );
 
   //! Destructor
@@ -83,7 +83,7 @@ class StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<
   unsigned getNumberOfBins() const;
 
   //! Print the boundaries of a bin
-  void printBoundariesOfBin( std::ostream& os, 
+  void printBoundariesOfBin( std::ostream& os,
                              const unsigned bin_index ) const;
 
 protected:

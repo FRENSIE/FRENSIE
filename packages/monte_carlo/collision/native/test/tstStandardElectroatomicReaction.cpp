@@ -48,7 +48,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const double threshold_energy )
-    : MonteCarlo::StandardElectroatomicReaction<InterpPolicy,processed_cross_section>( 
+    : MonteCarlo::StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
         incoming_energy_grid, cross_section, threshold_energy )
   { /* ... */ }
 
@@ -83,15 +83,15 @@ TEUCHOS_UNIT_TEST( StandardElectroatomicReaction, getThresholdEnergy_ace_ae )
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( StandardElectroatomicReaction, getThresholdEnergy_ace_b )
 {
-  TEST_EQUALITY_CONST( ace_b_reaction->getThresholdEnergy(), 
-                       1.0e-5 );    
+  TEST_EQUALITY_CONST( ace_b_reaction->getThresholdEnergy(),
+                       1.0e-5 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( StandardElectroatomicReaction, getCrossSection_ace_ae )
 {
-  double cross_section = 
+  double cross_section =
     ace_ae_reaction->getCrossSection( ace_ae_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, 8.757550E+06, 1e-12 );
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( StandardElectroatomicReaction, getCrossSection_ace_ae )
 // \todo Complete tests using the raw EPDL cross section data
 TEUCHOS_UNIT_TEST( StandardElectroatomicReaction, getCrossSection_ace_pe )
 {
-  double cross_section = 
+  double cross_section =
     ace_b_reaction->getCrossSection( ace_b_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
@@ -140,49 +140,49 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-  
+
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
-  
-  Teuchos::ArrayView<const double> raw_ae_cross_section = 
+
+  Teuchos::ArrayView<const double> raw_ae_cross_section =
     xss_data_extractor->extractExcitationCrossSection();
 
-  Teuchos::ArrayView<const double>::iterator start = 
+  Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_ae_cross_section.begin(),
 		  raw_ae_cross_section.end(),
 		  notEqualZero );
-  
+
   Teuchos::ArrayRCP<double> ae_cross_section;
   ae_cross_section.assign( start, raw_ae_cross_section.end() );
-  						  
-  unsigned ae_threshold_index = 
+
+  unsigned ae_threshold_index =
     energy_grid.size() - ae_cross_section.size();
-  
+
   Teuchos::ArrayRCP<double> b_cross_section;
   b_cross_section.deepCopy( xss_data_extractor->extractBremsstrahlungCrossSection() );
 
-  unsigned b_threshold_index = 
+  unsigned b_threshold_index =
     energy_grid.size() - b_cross_section.size();
 
   ace_ae_reaction.reset(
@@ -211,7 +211,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

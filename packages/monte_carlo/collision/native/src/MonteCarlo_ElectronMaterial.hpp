@@ -33,25 +33,25 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
-  
+
   //! Typedef for electroatom name map
   typedef std::unordered_map<std::string,Teuchos::RCP<Electroatom> >
   ElectroatomNameMap;
 
-  //! Constructor 
+  //! Constructor
   ElectronMaterial( const ModuleTraits::InternalMaterialHandle id,
                     const double density,
                     const ElectroatomNameMap& electroatom_name_map,
                     const Teuchos::Array<double>& electroatom_fractions,
                     const Teuchos::Array<std::string>& electroatom_names );
-  
+
   //! Destructor
   ~ElectronMaterial()
   { /* ... */ }
 
   //! Return the material id
   ModuleTraits::InternalMaterialHandle getId() const;
-  
+
   //! Return the number density (atom/b-cm)
   double getNumberDensity() const;
 
@@ -65,7 +65,7 @@ public:
   double getSurvivalProbability( const double energy ) const;
 
   //! Return the macroscopic cross section (1/cm) for a specific reaction
-  double getMacroscopicReactionCrossSection( 
+  double getMacroscopicReactionCrossSection(
 				const double energy,
 				const ElectroatomicReactionType reaction ) const;
 
@@ -82,16 +82,16 @@ private:
 	    const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair );
 
   // Sample the atom that is collided with
-  unsigned sampleCollisionAtom( const double energy ) const;  
+  unsigned sampleCollisionAtom( const double energy ) const;
 
   // The material id
   ModuleTraits::InternalMaterialHandle d_id;
 
-  // The number density of the atoms of the material 
+  // The number density of the atoms of the material
   double d_number_density;
 
   // The atoms that make up the material
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Electroatom> > > 
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Electroatom> > >
   d_atoms;
 };
 

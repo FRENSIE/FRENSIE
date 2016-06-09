@@ -23,20 +23,20 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
 		   sampleEnergy_LP_is_0_or_1 )
 {
    int LP_0 = 0;
    int LP_1 = 1;
    double EG = 1.0;
    const double atomic_weight_ratio = 1.0;
-   
-   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_0( 
+
+   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_0(
                                                       LP_0,
                                                       EG,
                                                       atomic_weight_ratio );
 
-   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_1( 
+   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_1(
                                                       LP_0,
                                                       EG,
                                                       atomic_weight_ratio );
@@ -46,14 +46,14 @@ TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw2NuclearScatteringEnergyDistribution,
 		   sampleEnergy_LP_is_2 )
 {
    int LP_2 = 2;
    double EG = 1.0;
    const double atomic_weight_ratio = 1.0;
-   
-   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_2( 
+
+   MonteCarlo::AceLaw2NuclearScatteringEnergyDistribution distribution_2(
                                                       LP_2,
                                                       EG,
                                                       atomic_weight_ratio );

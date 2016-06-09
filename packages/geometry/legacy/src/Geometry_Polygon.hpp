@@ -34,7 +34,7 @@ public:
   typedef OrdinalType ordinalType;
   //! Typedef for scalar type
   typedef ScalarType scalarType;
-  //! Typedef 
+  //! Typedef
   //@}
 
 protected:
@@ -80,7 +80,7 @@ public:
 
   //! Return the minimum z-coordinate
   inline ScalarType getMinZCoordinate() const;
-  
+
   //! Return the maximum z-coordinate
   inline ScalarType getMaxZCoordinate() const;
 
@@ -92,7 +92,7 @@ public:
 
   //! Return the centroid z-coordinate
   inline ScalarType getCentroidZCoordinate() const;
-	   
+
   //! Return the polygon centroid
   inline Vector<ScalarType> getCentroid() const;
 
@@ -113,14 +113,14 @@ protected:
   //! Check that the point list has the correct size
   template<typename Point>
   static bool hasCorrectSize( const std::list<Point> &polygon_corners );
-  
+
   //! Check that the point list is closed
   template<typename Point>
   static bool isClosed( const std::list<Point> &polygon_corners );
 
   //! Check that the point list doesn't contain any consecutive repeated points
   template<typename Point>
-  static bool hasNoConsecutiveRepeatedPoints( 
+  static bool hasNoConsecutiveRepeatedPoints(
 			             const std::list<Point> &polygon_corners );
 
   //! Check that the point list is initialized properly
@@ -129,7 +129,7 @@ protected:
 
   // Check that the point list has all points on the same plane
   template<typename Point>
-  static bool hasAllPointsOnSamePlane( 
+  static bool hasAllPointsOnSamePlane(
 				     const std::list<Point> &polygon_corners );
   //@}
 
@@ -142,7 +142,7 @@ protected:
 
   //! Compute the unit normal to the plane of the polygon
   template<typename Point>
-  static Vector<ScalarType> calculatePolygonPlaneUnitNormal( 
+  static Vector<ScalarType> calculatePolygonPlaneUnitNormal(
 		       const std::list<Point> &polygon_corners );
 
   //! Find and the maximum and minimum coordinates of the polygon
@@ -153,15 +153,15 @@ protected:
 
   //! Create and set the transformation matrix and vector
   template<typename Point>
-  static void getTransformMatrixAndVector( 
+  static void getTransformMatrixAndVector(
 			  const Vector<ScalarType> &polygon_plane_unit_normal,
 			  const Point &polygon_corner,
 			  Matrix<ScalarType> &rotation_matrix,
 			  Vector<ScalarType> &translation_vector );
-  
+
   //! Simplify the polygon by transforming plane-of-polygon to x-y plane
   template<typename Point>
-  static void transformPolygon( 
+  static void transformPolygon(
 		     const std::list<Point> &polygon_corners,
 		     std::list<PointProjection> &transformed_polygon_corners,
 		     const Matrix<ScalarType> &rotation_matrix,
@@ -169,23 +169,23 @@ protected:
 
   //! Apply transform to a point on the polygon (move to x-y plane)
   template<typename Point>
-  static PointProjection applyTransform( 
+  static PointProjection applyTransform(
 				const Point &point_on_polygon,
 				const Matrix<ScalarType> &rotation_matrix,
 				const Vector<ScalarType> &translation_vector );
 
   //! Apply reverse transform to point on the x-y plane
-  static Vector<ScalarType> applyReverseTransform( 
+  static Vector<ScalarType> applyReverseTransform(
 				const PointProjection &xy_plane_point,
 				const Matrix<ScalarType> &rotation_matrix,
 				const Vector<ScalarType> &translation_vector );
 
   //! Calculate the area of a simplified polygon
-  static ScalarType calculateArea( 
+  static ScalarType calculateArea(
 		        const std::list<PointProjection> &simplified_polygon );
 
   //! Calculate the polygon centroid
-  static PointProjection calculateCentroid( 
+  static PointProjection calculateCentroid(
 			  const std::list<PointProjection> &simplified_polygon,
 			  const ScalarType polygon_area );
 

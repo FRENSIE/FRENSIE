@@ -52,7 +52,7 @@ protected:
   //! Create the energy loss function
   static void createScatteringFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
-      BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+      BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
                                                         scattering_function );
 };
 

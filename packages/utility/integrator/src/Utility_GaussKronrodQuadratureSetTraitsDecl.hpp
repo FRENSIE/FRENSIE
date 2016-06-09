@@ -22,17 +22,17 @@ namespace Utility{
 
 typedef boost::multiprecision::cpp_dec_float_50 long_float;
 
-  //! Gauss-Kronrod quadrature set traits 
+  //! Gauss-Kronrod quadrature set traits
   template<int Points>
   struct GaussKronrodQuadratureSetTraits
   {
     //! Valid rule
     static const bool valid_rule = false;
 
-    //! Gauss quadrature weights 
+    //! Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    //! Kronrad quadrature weights 
+
+    //! Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     //! Kronrad quadrature abscissae

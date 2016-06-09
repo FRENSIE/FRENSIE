@@ -25,7 +25,7 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 ENABLE_CXX11_STANDARD_SUPPORT()
 
 # Load the patch files
-SET(TEUCHOS_TWO_D_ARRAY_PATCH 
+SET(TEUCHOS_TWO_D_ARRAY_PATCH
   ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
   CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
 
@@ -83,7 +83,7 @@ IF(FRENSIE_ENABLE_PROFILING)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
   SET(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -pg")
   SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -pg")
-  
+
   IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
     MESSAGE(WARNING "profiling can only be done in debug builds!")
   ENDIF()
@@ -159,7 +159,7 @@ ENABLE_MOAB_SUPPORT()
 ##---------------------------------------------------------------------------##
 ## Configure Trilinos Support
 ##---------------------------------------------------------------------------##
-# If the Trilinos package is in a non-standard location, set the 
+# If the Trilinos package is in a non-standard location, set the
 # TRILINOS_PREFIX variable. If the Trilinos source directory is not located
 # in the TRILINOS_PREFIX directory, the TRILINOS_SOURCE variable can also be
 # set.
@@ -185,21 +185,21 @@ ENDIF()
 ##---------------------------------------------------------------------------##
 ## Configure Dashboard Client Support
 ##---------------------------------------------------------------------------##
-# The default build name is CMAKE_SYSTEM_NAME, which is often not very 
-# descriptive. Set the BUILDNAME_PREFIX if a more descriptive name is 
+# The default build name is CMAKE_SYSTEM_NAME, which is often not very
+# descriptive. Set the BUILDNAME_PREFIX if a more descriptive name is
 # desired. It can be useful to use the following command:
 # BUILDNAME_PREFIX="$(lsb_release -i -s)-$(lsb_release -r -s)"
 IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
   SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
-  
+
   # Set the BuildName used by the dashboard (see DartConfiguration.tcl)
   DETERMINE_COMPILER_ID(CXX ${CMAKE_CXX_COMPILER})
   STRING(TOLOWER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
-  
+
   IF(NOT BUILDNAME_PREFIX)
     SET(BUILDNAME_PREFIX ${CMAKE_SYSTEM_NAME})
   ENDIF()
-  
+
   SET(BUILDNAME "${BUILDNAME_PREFIX}_${ID}-${VERSION}_${BUILD_TYPE}")
 
   UNSET(ID)
@@ -208,7 +208,7 @@ IF(FRENSIE_ENABLE_DASHBOARD_CLIENT)
 
   # Set the valgrind supressions file
   SET(MEMORYCHECK_SUPPRESSIONS_FILE ${CMAKE_SOURCE_DIR}/valgrind/frensie-deps.supp CACHE STRING "File that contains suppressions for the memory checker" FORCE)
-  
+
   # Initialize CTest
   INCLUDE(CTest)
 
@@ -242,11 +242,11 @@ ADD_SUBDIRECTORY(doc)
 ## Add additional testing targets for convenience
 ##---------------------------------------------------------------------------##
 # run `make test-fast` to run all tests except for the facemc tests
-ADD_CUSTOM_TARGET(test-fast 
+ADD_CUSTOM_TARGET(test-fast
   COMMAND ctest -E Facemc --no-labels-summary
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
-ADD_CUSTOM_TARGET(test-fast4 
+ADD_CUSTOM_TARGET(test-fast4
   COMMAND ctest -E Facemc -LE no_threads -j4 --no-labels-summary
   COMMAND ctest -E Facemc -L no_threads --no-labels-summary
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

@@ -11,7 +11,7 @@
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
-void getLegendrePowerExpansionCoefficients( 
+void getLegendrePowerExpansionCoefficients(
                                   Teuchos::TwoDArray<long_float>& coefficients,
                                   const int power )
 {
@@ -32,8 +32,8 @@ void getLegendrePowerExpansionCoefficients(
       // Loop through the rest of the coefficients
       for ( int l = 1; l <= n; l++ )
       {
-        coefficients[n][l] = 
-            l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1] + 
+        coefficients[n][l] =
+            l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1] +
             ( l + long_float(1) )/
             ( long_float(2)*l + long_float(3) )*coefficients[n-1][l+1];
       }
@@ -59,7 +59,7 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
 
   int number_of_moments = legendre_expansion_moments.size();
   long_float moment_n;
-  std::vector<long_float> coef_n_minus_one( number_of_moments +1), 
+  std::vector<long_float> coef_n_minus_one( number_of_moments +1),
                           coef_n( number_of_moments +1);
 
   gauss_moments[0] = legendre_expansion_moments[0];
@@ -80,17 +80,17 @@ void getGaussMoments( const std::vector<long_float>& legendre_expansion_moments,
     for ( int l = 1; l <= n; l++ )
     {
       // Calculate coefficient n
-      coef_n[l] = l/( long_float(2)*l - long_float(1) )*coef_n_minus_one[l-1] + 
+      coef_n[l] = l/( long_float(2)*l - long_float(1) )*coef_n_minus_one[l-1] +
                   ( l + long_float(1) )/
                   ( long_float(2)*l + long_float(3) )*coef_n_minus_one[l+1];
 
       // Calculate moment n
-      moment_n += coef_n[l]*legendre_expansion_moments[l];   
+      moment_n += coef_n[l]*legendre_expansion_moments[l];
     }
     gauss_moments[n] = moment_n;
 
     // Update coefficients
-    coef_n_minus_one = coef_n;  
+    coef_n_minus_one = coef_n;
   }
 }
 

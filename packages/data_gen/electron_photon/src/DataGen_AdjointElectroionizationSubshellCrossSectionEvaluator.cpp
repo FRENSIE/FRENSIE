@@ -25,7 +25,7 @@ namespace DataGen{
 // Constructor
 AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
                                      electroionization_subshell_reaction,
     const Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
                                      knock_on_distribution )
@@ -41,7 +41,7 @@ AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationS
 
 // Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
 double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferentialCrossSection(
-	  const double incoming_energy, 
+	  const double incoming_energy,
           const double outgoing_energy ) const
 {
   // Make sure the energies are valid
@@ -49,34 +49,34 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
   testPrecondition( outgoing_energy > 0.0 );
 
   // Evaluate the forward cross section at the incoming energy
-  double forward_cs = d_electroionization_subshell_reaction->getCrossSection( 
+  double forward_cs = d_electroionization_subshell_reaction->getCrossSection(
                                                               incoming_energy );
 
   // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
   double knock_on_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
                                                               outgoing_energy );
-                   
-  /* Calculate the energy of a knock on electron from a primary electron with 
+
+  /* Calculate the energy of a knock on electron from a primary electron with
      outgoing energy = outgoing_energy */
-  double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy; 
+  double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy;
 
   // Evaluate the primary electron pdf value at a given incoming and outgoing energy
   double primary_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
                                                              knock_on_energy );
- 
-/*                 
+
+/*
   // Evaluate the primary electron pdf value at a given incoming and outgoing energy
-  double primary_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+  double primary_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
                                      incoming_energy,
                                      knock_on_energy,
-                                     d_knock_on_distribution );           
+                                     d_knock_on_distribution );
 */
   return forward_cs*( knock_on_pdf + primary_pdf );
 }
 
 // Return the cross section value at a given energy
-double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection( 
-                               const double energy, 
+double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSection(
+                               const double energy,
 			       const double precision ) const
 {
   // Make sure the energies are valid
@@ -85,14 +85,14 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
   double cross_section = 0.0;
 
   // Create boost rapper function for the adjoint electroionization subshell differential cross section
-  boost::function<double (double x)> diff_adjoint_subshell_wrapper = 
+  boost::function<double (double x)> diff_adjoint_subshell_wrapper =
     boost::bind<double>( &AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferentialCrossSection,
                          boost::cref( *this ),
                          _1,
                          energy );
 
     double abs_error;
-    
+
     Utility::GaussKronrodIntegrator<double> integrator( precision );
 
     integrator.integrateAdaptively<15>(
@@ -112,9 +112,9 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
 }
 
 // Return the max outgoing adjoint energy for a given energy
-double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy( 
+double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
                                 const double energy )
-{ 
+{
   return d_knock_on_distribution->getMaxIncomingEnergyAtOutgoingEnergy( energy );
 }
 

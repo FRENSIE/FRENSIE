@@ -16,7 +16,7 @@ namespace MonteCarlo{
 const double SimulationElectronProperties::absolute_min_electron_energy = 1.5e-5;
 
 // The minimum electron energy (MeV)
-double SimulationElectronProperties::min_electron_energy = 
+double SimulationElectronProperties::min_electron_energy =
   SimulationElectronProperties::absolute_min_electron_energy;
 
 // The absolute max electron energy (MeV)
@@ -30,8 +30,8 @@ double SimulationElectronProperties::max_electron_energy =
 bool SimulationElectronProperties::atomic_relaxation_mode_on = true;
 
 // The bremsstrahlung photon angular distribution function (2BS by default)
-BremsstrahlungAngularDistributionType 
-  SimulationElectronProperties::bremsstrahlung_angular_distribution_function = 
+BremsstrahlungAngularDistributionType
+  SimulationElectronProperties::bremsstrahlung_angular_distribution_function =
                              TWOBS_DISTRIBUTION;
 
 // The elastic cutoff angle cosine (default 0.999999)
@@ -39,14 +39,14 @@ double SimulationElectronProperties::elastic_cutoff_angle_cosine = 0.999999;
 
 // The number of electron has grid bins
 unsigned SimulationElectronProperties::num_electron_hash_grid_bins = 1000;
-    
+
 // Set the minimum electron energy (MeV)
 void SimulationElectronProperties::setMinElectronEnergy( const double energy )
 {
   // Make sure the energy is valid
   testPrecondition(energy >= SimulationElectronProperties::absolute_min_electron_energy);
   testPrecondition( energy < SimulationElectronProperties::max_electron_energy );
-  
+
   SimulationElectronProperties::min_electron_energy = energy;
 }
 
@@ -67,17 +67,17 @@ void SimulationElectronProperties::setAtomicRelaxationModeOff()
 }
 
 // Set the bremsstrahlung photon angular distribution function (2BS by default)
-void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction( 
+void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
                           const BremsstrahlungAngularDistributionType function )
 {
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
 // Set the elastic cutoff angle cosine (mu = 0.999999 by default)
-void SimulationElectronProperties::setElasticCutoffAngleCosine( 
+void SimulationElectronProperties::setElasticCutoffAngleCosine(
                           const double cutoff_angle_cosine )
 {
-  SimulationElectronProperties::elastic_cutoff_angle_cosine = 
+  SimulationElectronProperties::elastic_cutoff_angle_cosine =
     cutoff_angle_cosine;
 }
 

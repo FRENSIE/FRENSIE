@@ -29,7 +29,7 @@ void ParticleEventLocalDispatcher<EntityHandle,Observer>::attachObserver(
 {
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
-  
+
   if( d_observer_map.find( id ) == d_observer_map.end() )
     d_observer_map[id] = observer;
 }
@@ -44,7 +44,7 @@ void ParticleEventLocalDispatcher<EntityHandle,Observer>::detachObserver(
 
 // Get the entity id corresponding to this particle event dispatcher
 template<typename EntityHandle, typename Observer>
-inline EntityHandle 
+inline EntityHandle
 ParticleEventLocalDispatcher<EntityHandle,Observer>::getId() const
 {
   return d_entity_id;
@@ -52,7 +52,7 @@ ParticleEventLocalDispatcher<EntityHandle,Observer>::getId() const
 
 // Get the number of attached observers
 template<typename EntityHandle, typename Observer>
-unsigned 
+unsigned
 ParticleEventLocalDispatcher<EntityHandle,Observer>::getNumberOfObservers() const
 {
   return d_observer_map.size();

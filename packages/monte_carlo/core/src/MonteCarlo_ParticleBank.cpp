@@ -58,7 +58,7 @@ const ParticleState& ParticleBank::top() const
  * ensure that it has ownership it will create a copy (clone) of the particle.
  */
 void ParticleBank::push( const ParticleState& particle )
-{    
+{
   d_particle_states.emplace_back( particle.clone() );
 }
 
@@ -79,7 +79,7 @@ void ParticleBank::pop()
 {
   // Make sure the bank is not empty
   testPrecondition( !this->isEmpty() );
-  
+
   d_particle_states.pop_front();
 }
 
@@ -88,7 +88,7 @@ bool ParticleBank::isSorted( const CompareFunctionType& compare_function )
 {
   return std::is_sorted( d_particle_states.begin(),
 			 d_particle_states.end(),
-			 boost::bind<bool>(compare_function, 
+			 boost::bind<bool>(compare_function,
 					   boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
 					   boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
 }
@@ -96,13 +96,13 @@ bool ParticleBank::isSorted( const CompareFunctionType& compare_function )
 // Sort the particle states
 bool ParticleBank::sort( const CompareFunctionType& compare_function )
 {
-  d_particle_states.sort( boost::bind<bool>(compare_function, 
+  d_particle_states.sort( boost::bind<bool>(compare_function,
 					    boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
 					    boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
 }
 
 // Merge the bank with another bank
-/*! Both banks must be sorted before calling this method. The input bank will 
+/*! Both banks must be sorted before calling this method. The input bank will
  * be emptied by this operation.
  */
 void ParticleBank::merge( ParticleBank& other_bank,
@@ -111,15 +111,15 @@ void ParticleBank::merge( ParticleBank& other_bank,
   // Make sure the states are sorted
   testPrecondition( this->isSorted( compare_function ) );
   testPrecondition( other_bank.isSorted( compare_function ) );
-  
+
   d_particle_states.merge( other_bank.d_particle_states,
-			   boost::bind<bool>(compare_function, 
+			   boost::bind<bool>(compare_function,
 					     boost::bind<const ParticleState&>(ParticleBank::dereference, _1),
 					     boost::bind<const ParticleState&>(ParticleBank::dereference, _2) ) );
 }
 
 // Splice the bank with another bank
-/*! The contents of the input bank are added to the end of this bank. The 
+/*! The contents of the input bank are added to the end of this bank. The
  * input bank will be emptied by this operation.
  */
 void ParticleBank::splice( ParticleBank& other_bank )

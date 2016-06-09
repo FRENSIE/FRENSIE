@@ -33,7 +33,7 @@ DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScat
 
   // Create the shell interaction data distribution
   Teuchos::Array<double> dummy_indep_vals( subshell_occupancies.size() );
-  
+
   d_subshell_occupancy_distribution.reset(
 	           new Utility::DiscreteDistribution( dummy_indep_vals,
 						      subshell_occupancies ) );
@@ -41,11 +41,11 @@ DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScat
 
 // Randomly scatter the photon and return the shell that was interacted with
 /*! \details The particle bank is used to store the electron that is emitted
- * from the collision. The energy and direction of the outgoing electron is 
- * calculated as if it were at rest initially (feel free to update this 
+ * from the collision. The energy and direction of the outgoing electron is
+ * calculated as if it were at rest initially (feel free to update this
  * model!).
- */ 
-void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton( 
+ */
+void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton(
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -63,12 +63,12 @@ void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton(
   // Sample the azimuthal angle of the outgoing photon
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
-  // Create the ejectected electron 
-  this->createEjectedElectron( photon, 
-			       scattering_angle_cosine, 
+  // Create the ejectected electron
+  this->createEjectedElectron( photon,
+			       scattering_angle_cosine,
 			       azimuthal_angle,
 			       bank );
-  
+
   // Set the new energy
   photon.setEnergy( outgoing_energy );
 

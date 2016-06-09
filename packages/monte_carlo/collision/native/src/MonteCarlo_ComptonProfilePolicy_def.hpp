@@ -24,9 +24,9 @@ namespace MonteCarlo{
 
 // Check if the full Compton profile is valid
 /*! \details A full Compton profile must have a range between +/- m_e*c. The
- * upper bound can be greater than m_e*c but no less. 
+ * upper bound can be greater than m_e*c but no less.
  */
-inline bool FullComptonProfilePolicy::isValidProfile( 
+inline bool FullComptonProfilePolicy::isValidProfile(
                                                 const ComptonProfile& profile )
 {
   return profile.getLowerBoundOfMomentum() == -1.0*Utility::Units::mec_momentum
@@ -34,29 +34,29 @@ inline bool FullComptonProfilePolicy::isValidProfile(
 }
 
 // Get the lower bound of the momentum
-inline ComptonProfile::MomentumQuantity 
+inline ComptonProfile::MomentumQuantity
 FullComptonProfilePolicy::getLowerBoundOfMomentum(
                                                 const ComptonProfile& profile )
 {
   return profile.getLowerBoundOfMomentum();
 }
-  
+
 // Get the upper bound of the momentum
-inline ComptonProfile::MomentumQuantity 
+inline ComptonProfile::MomentumQuantity
 FullComptonProfilePolicy::getUpperBoundOfMomentum(
                                                 const ComptonProfile& profile )
 {
   return profile.getUpperBoundOfMomentum();
 }
-  
+
 // Evaluate a full Compton profile
-inline ComptonProfile::ProfileQuantity FullComptonProfilePolicy::evaluate( 
+inline ComptonProfile::ProfileQuantity FullComptonProfilePolicy::evaluate(
                               const ComptonProfile& profile,
                               const ComptonProfile::MomentumQuantity momentum )
 {
   return profile.evaluate( momentum );
 }
-  
+
 // Sample from a full Compton profile
 inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
                           const ComptonProfile& profile,
@@ -64,7 +64,7 @@ inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
 {
   // Make sure the max momentum is valid
   testPrecondition( max_momentum >= -1.0*Utility::Units::mec_momentum );
-  
+
   if( max_momentum >= profile.getUpperBoundOfMomentum() )
     return profile.sample();
   else
@@ -76,7 +76,7 @@ inline ComptonProfile::MomentumQuantity FullComptonProfilePolicy::sample(
  * true profile. The lower momentum bound must be zero. The upper bound
  * can be anything (since this is an approximation).
  */
-inline bool HalfComptonProfilePolicyHelper::isValidProfile( 
+inline bool HalfComptonProfilePolicyHelper::isValidProfile(
                                                const ComptonProfile& profile )
 {
   return profile.getLowerBoundOfMomentum() == 0.0*Utility::Units::mec_momentum
@@ -84,15 +84,15 @@ inline bool HalfComptonProfilePolicyHelper::isValidProfile(
 }
 
 // Get the lower bound of the momentum
-inline ComptonProfile::MomentumQuantity 
+inline ComptonProfile::MomentumQuantity
 HalfComptonProfilePolicyHelper::getLowerBoundOfMomentum(
                                                 const ComptonProfile& profile )
 {
   return -profile.getUpperBoundOfMomentum();
 }
-  
+
 // Get the upper bound of the momentum
-inline ComptonProfile::MomentumQuantity 
+inline ComptonProfile::MomentumQuantity
 HalfComptonProfilePolicyHelper::getUpperBoundOfMomentum(
                                                 const ComptonProfile& profile )
 {
@@ -103,7 +103,7 @@ HalfComptonProfilePolicyHelper::getUpperBoundOfMomentum(
 /*! \details Using only half of the profile is a way to approximate the
  * true profile. The momentum sampled from the half distribution will be
  * randomly multiplied by -1 to account for the other half of the distribution
- * (part of it at least). As the max momentum approaches zero this 
+ * (part of it at least). As the max momentum approaches zero this
  * approximation of the true distribution becomes poor. If the max momentum
  * is negative, which is physically acceptable, a momentum of zero is returned,
  * which is the value associated with no Doppler broadening (it corresponds
@@ -115,11 +115,11 @@ inline ComptonProfile::MomentumQuantity HalfComptonProfilePolicyHelper::sample(
 {
   // Make sure the max momentum is valid
   testPrecondition( max_momentum >= -1.0*Utility::Units::mec_momentum );
-  
+
   if( max_momentum > 0.0*Utility::Units::mec_momentum )
   {
     ComptonProfile::MomentumQuantity pz;
-    
+
     if( max_momentum >= profile.getUpperBoundOfMomentum() )
       pz = profile.sample();
     else

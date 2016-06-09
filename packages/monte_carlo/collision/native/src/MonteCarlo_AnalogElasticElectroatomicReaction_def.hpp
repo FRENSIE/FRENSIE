@@ -39,8 +39,8 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -81,8 +81,8 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -116,13 +116,13 @@ ElectroatomicReactionType AnalogElasticElectroatomicReaction<InterpPolicy,proces
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron, 
-                                              bank, 
+  d_scattering_distribution->scatterElectron( electron,
+                                              bank,
                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();
@@ -134,14 +134,14 @@ void AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::r
 
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
   // Get the cross section ratio for the cutoff angle
-  double cross_section_ratio = 
+  double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   double cross_section;
@@ -174,7 +174,7 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy, bool processed_cross_section>
-double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 				const double energy,
                 const unsigned bin_index ) const
 {
@@ -185,7 +185,7 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 		    InterpPolicy::processIndepVar( energy ) );
 
   // Get the cross section ratio for the cutoff angle
-  double cross_section_ratio = 
+  double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   double cross_section;
@@ -193,14 +193,14 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   if( bin_index >= d_threshold_energy_index )
   {
     unsigned cs_index = bin_index - d_threshold_energy_index;
-    
-    double processed_slope = 
+
+    double processed_slope =
       (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
       (d_incoming_energy_grid[bin_index+1]-
        d_incoming_energy_grid[bin_index]);
 
     double processed_energy = InterpPolicy::processIndepVar( energy );
-    
+
     cross_section =
         InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
 				      processed_energy,

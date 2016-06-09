@@ -42,7 +42,7 @@ void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
 {
   // Make sure the critical line energies are valid
   testPrecondition( critical_line_energies.size() > 0 );
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
 					      critical_line_energies.begin(),
 					      critical_line_energies.end() ) );
 
@@ -50,12 +50,12 @@ void IncoherentAdjointPhotonScatteringDistribution::setCriticalLineEnergies(
 }
 
 // Set the max energy
-void IncoherentAdjointPhotonScatteringDistribution::setMaxEnergy( 
+void IncoherentAdjointPhotonScatteringDistribution::setMaxEnergy(
 						      const double max_energy )
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
-  
+
   d_max_energy = max_energy;
 }
 
@@ -66,7 +66,7 @@ double IncoherentAdjointPhotonScatteringDistribution::getMaxEnergy() const
 }
 
 // Evaluate the distribution
-double IncoherentAdjointPhotonScatteringDistribution::evaluate( 
+double IncoherentAdjointPhotonScatteringDistribution::evaluate(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -79,13 +79,13 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluate(
 						       d_max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return this->evaluate( incoming_energy, 
-			 d_max_energy, 
+  return this->evaluate( incoming_energy,
+			 d_max_energy,
 			 scattering_angle_cosine );
 }
 
 // Evaluate the pdf
-double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF( 
+double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
 				  const double incoming_energy,
 				  const double max_energy,
 				  const double scattering_angle_cosine ) const
@@ -104,7 +104,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the pdf
-double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF( 
+double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const
 {
@@ -123,7 +123,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the integrated cross section (b)
-double IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+double IncoherentAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 					         const double incoming_energy,
 					         const double precision ) const
 {
@@ -150,7 +150,7 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
     return false;
   else
   {
-    if( this->isEnergyAboveScatteringWindow( energy_of_interest, 
+    if( this->isEnergyAboveScatteringWindow( energy_of_interest,
 					     initial_energy ) )
       return false;
     else if( this->isEnergyBelowScatteringWindow( energy_of_interest,
@@ -162,10 +162,10 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
 }
 
 // Check if an energy is below the scattering window
-/*! \details This is the lower boundary of the energy window when binding 
+/*! \details This is the lower boundary of the energy window when binding
  * effects are ignored.
  */
-bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindow( 
+bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindow(
 					   const double energy_of_interest,
 					   const double initial_energy ) const
 {
@@ -173,7 +173,7 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindo
   testPrecondition( initial_energy > 0.0 );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
-  
+
   const double lower_energy_boundary = energy_of_interest/
       (1.0 + 2*energy_of_interest/
        Utility::PhysicalConstants::electron_rest_mass_energy);
@@ -182,10 +182,10 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindo
 }
 
 // Check if an energy is above the scattering window
-/*! \details This is the upper boundary of the energy window when binding 
+/*! \details This is the upper boundary of the energy window when binding
  * effects are ignored.
  */
-bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow( 
+bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow(
 					   const double energy_of_interest,
 					   const double initial_energy ) const
 {
@@ -193,15 +193,15 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindo
   testPrecondition( initial_energy > 0.0 );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest >= 0.0 );
-  
+
   return initial_energy > energy_of_interest;
-}				     
+}
 
 // Evaluate the adjoint Klein-Nishina distribution
-/*! The adjoint Klein-Nishina cross section (b) differential in the scattering 
+/*! The adjoint Klein-Nishina cross section (b) differential in the scattering
  * angle cosine is returned from this function.
  */
-double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishinaDist( 
+double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishinaDist(
 				   const double incoming_energy,
 				   const double max_energy,
 				   const double scattering_angle_cosine ) const
@@ -210,10 +210,10 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishin
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
+  testPrecondition( scattering_angle_cosine >=
 		    calculateMinScatteringAngleCosine( incoming_energy,
 						       max_energy ));
-  
+
   double kn_cross_section;
 
   if( scattering_angle_cosine >=
@@ -226,7 +226,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishin
     const double outgoing_energy = calculateAdjointComptonLineEnergy(
 						     incoming_energy,
 						     scattering_angle_cosine );
-      
+
 
     kn_cross_section = mult*(outgoing_energy/incoming_energy +
 			     incoming_energy/outgoing_energy - 1.0 +
@@ -242,7 +242,7 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishin
 }
 
 // Basic sampling implementation
-void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishina( 
+void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishina(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -254,10 +254,10 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
 
   const double alpha = incoming_energy/
     Utility::PhysicalConstants::electron_rest_mass_energy;
-  
-  const double min_inverse_energy_gain_ratio = 
+
+  const double min_inverse_energy_gain_ratio =
     calculateMinInverseEnergyGainRatio( incoming_energy, d_max_energy );
-  
+
   const double term_1 = -3.0*log(min_inverse_energy_gain_ratio)*
     (1.0 - min_inverse_energy_gain_ratio)*alpha*alpha;
 
@@ -269,7 +269,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
 
   const double all_terms = term_1+term_2+term_3;
-    
+
   double inverse_energy_gain_ratio;
 
   double random_number_1, random_number_2;
@@ -278,20 +278,20 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   {
     ++trials;
 
-    random_number_1 = 
+    random_number_1 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    random_number_2 = 
+    random_number_2 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
     if( random_number_1 < term_1/all_terms )
     {
-      inverse_energy_gain_ratio = 
+      inverse_energy_gain_ratio =
 	pow( min_inverse_energy_gain_ratio, random_number_2 );
 
       const double rejection_value = (1.0 - inverse_energy_gain_ratio)/
 	(1.0 - min_inverse_energy_gain_ratio);
 
-      double random_number_3 = 
+      double random_number_3 =
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
 
       if( random_number_3 < rejection_value )
@@ -300,9 +300,9 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
     else if( random_number_1 < (term_1+term_2)/all_terms )
     {
       const double arg = 1.0 - min_inverse_energy_gain_ratio;
-      
-      inverse_energy_gain_ratio = 
-	sqrt( random_number_2*arg*arg + 
+
+      inverse_energy_gain_ratio =
+	sqrt( random_number_2*arg*arg +
 	      min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
 
       break;
@@ -310,10 +310,10 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
     else
     {
       const double term_3_arg_cubed = term_3_arg*term_3_arg*term_3_arg;
-      
+
       const double arg = random_number_2*
-	(alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed; 
-      
+	(alpha*alpha*alpha - term_3_arg_cubed) + term_3_arg_cubed;
+
       if( arg < 0.0 )
 	inverse_energy_gain_ratio = 1.0 - alpha - pow( fabs(arg), 1/3.0 );
       else
@@ -332,22 +332,22 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
-  
+
   // Make sure all of the branching values were positive
   testPostcondition( term_1 >= 0.0 );
   testPostcondition( term_2 >= 0.0 );
   testPostcondition( term_3 >= 0.0 );
   testPostcondition( all_terms > 0.0 );
   // Make sure the sampled value is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( 
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
 						 inverse_energy_gain_ratio ) );
   testPostcondition( inverse_energy_gain_ratio <= 1.0 );
-  testPostcondition( inverse_energy_gain_ratio >= 
+  testPostcondition( inverse_energy_gain_ratio >=
 		     min_inverse_energy_gain_ratio );
   // Make sure the sampled energy is valid
   testPostcondition( outgoing_energy >= incoming_energy );
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= 
+  testPostcondition( scattering_angle_cosine >=
 		    calculateMinScatteringAngleCosine( incoming_energy,
 						       d_max_energy ) );
   testPostcondition( scattering_angle_cosine <= 1.0 );
@@ -359,8 +359,8 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
  * possible) even if the incoming particle is a probe (be careful about
  * create probe cascades).
  */
-void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle( 
-				      const double energy_of_interest, 
+void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
+				      const double energy_of_interest,
 				      const AdjointPhotonState& adjoint_photon,
 				      ParticleBank& bank ) const
 {
@@ -370,32 +370,32 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
   // Make sure the adjoint photon energy is valid
   testPrecondition( adjoint_photon.getEnergy() <= d_max_energy );
   // Make sure the energy of interest is in the scattering window
-  testPrecondition( this->isEnergyInScatteringWindow( 
+  testPrecondition( this->isEnergyInScatteringWindow(
 						energy_of_interest,
 						adjoint_photon.getEnergy() ) );
-  
+
   // Only generate the probe if the energy is in the scattering window
   if( this->isEnergyInScatteringWindow( energy_of_interest,
 					adjoint_photon.getEnergy() ) )
   {
-    const double scattering_angle_cosine = 
+    const double scattering_angle_cosine =
       calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
 					     energy_of_interest );
-    
-    const double pdf_conversion = 
+
+    const double pdf_conversion =
       Utility::PhysicalConstants::electron_rest_mass_energy/
       (energy_of_interest*energy_of_interest);
 
-    const double weight_mult = 
+    const double weight_mult =
       this->evaluatePDF( adjoint_photon.getEnergy(), scattering_angle_cosine )*
       pdf_conversion;
 
     // Create the probe with the desired energy and modified weight
-    Teuchos::RCP<AdjointPhotonProbeState> probe( 
+    Teuchos::RCP<AdjointPhotonProbeState> probe(
 			       new AdjointPhotonProbeState( adjoint_photon ) );
-    
+
     probe->setEnergy( energy_of_interest );
-    probe->rotateDirection( scattering_angle_cosine, 
+    probe->rotateDirection( scattering_angle_cosine,
 			    this->sampleAzimuthalAngle() );
     probe->multiplyWeight( weight_mult );
     probe->activate();
@@ -409,7 +409,7 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle(
 /*! \details Currently, probe cascades are not allowed (only non-probe states
  * can generate new probe states).
  */
-void IncoherentAdjointPhotonScatteringDistribution::createProbeParticles( 
+void IncoherentAdjointPhotonScatteringDistribution::createProbeParticles(
 				      const AdjointPhotonState& adjoint_photon,
 				      ParticleBank& bank ) const
 {
@@ -418,7 +418,7 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticles(
   {
     // Find the critical line energies in the scattering window
     LineEnergyIterator line_energy, end_line_energy;
-    
+
     this->getCriticalLineEnergiesInScatteringWindow(adjoint_photon.getEnergy(),
 						    line_energy,
 						    end_line_energy );
@@ -426,14 +426,14 @@ void IncoherentAdjointPhotonScatteringDistribution::createProbeParticles(
     while( line_energy != end_line_energy )
     {
       this->createProbeParticle( *line_energy, adjoint_photon, bank );
-      
+
       ++line_energy;
     }
   }
 }
 
 // Return only the critical line energies that can be scattered into
-void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInScatteringWindow( 
+void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInScatteringWindow(
 					 const double energy,
 				         LineEnergyIterator& start_energy,
 					 LineEnergyIterator& end_energy ) const
@@ -454,26 +454,26 @@ void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInSca
   else
   {
     start_energy = d_critical_line_energies.begin();
-    
+
     while( start_energy != d_critical_line_energies.end() )
     {
       if( this->isEnergyInScatteringWindow( *start_energy, energy ) )
 	break;
-      
+
       ++start_energy;
     }
-    
+
     end_energy = start_energy;
-    
+
     if( start_energy != d_critical_line_energies.end() )
     {
       ++end_energy;
-      
+
       while( end_energy != d_critical_line_energies.end() )
       {
 	if( !this->isEnergyInScatteringWindow( *end_energy, energy ) )
 	  break;
-	
+
 	++end_energy;
       }
     }

@@ -23,7 +23,7 @@ namespace MonteCarlo{
  */
 class ParticleLeavingCellEventDispatcher : public ParticleEventDispatcher<ParticleLeavingCellEventLocalDispatcher>
 {
-  
+
 public:
 
   //! Constructor
@@ -42,7 +42,7 @@ public:
 
 // Dispatch the particle leaving cell event to the observers
 inline void
-ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent( 
+ParticleLeavingCellEventDispatcher::dispatchParticleLeavingCellEvent(
 	        const ParticleState& particle,
 	        const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
 {

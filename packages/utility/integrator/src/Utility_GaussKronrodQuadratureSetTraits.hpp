@@ -21,10 +21,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
@@ -49,10 +49,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
@@ -77,10 +77,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
@@ -105,10 +105,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
@@ -133,10 +133,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae
@@ -161,10 +161,10 @@ namespace Utility{
     // Valid rule
     static const bool valid_rule = true;
 
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     static const std::vector<long_float> gauss_weights;
-    
-    // Kronrad quadrature weights 
+
+    // Kronrad quadrature weights
     static const std::vector<long_float> kronrod_weights;
 
     // Kronrad quadrature abscissae

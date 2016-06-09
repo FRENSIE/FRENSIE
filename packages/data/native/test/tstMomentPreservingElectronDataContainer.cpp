@@ -33,28 +33,28 @@ Data::MomentPreservingElectronVolatileDataContainer mp_data_container;
 TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, setAtomicNumber )
 {
   mp_data_container.setAtomicNumber( 1u );
-  
+
   TEST_EQUALITY_CONST( mp_data_container.getAtomicNumber(), 1u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshells can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, 
+TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setElasticAngularEnergyGrid )
 {
   std::vector<double> angular_energy_grid(1), grid(1);
   angular_energy_grid[0] = 1.0;
 
-  mp_data_container.setElasticAngularEnergyGrid( 
+  mp_data_container.setElasticAngularEnergyGrid(
                                     angular_energy_grid );
-  
+
   grid = mp_data_container.getElasticAngularEnergyGrid();
   TEST_EQUALITY_CONST( grid[0], 1.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the number of discrete angles can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, 
+TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setNumberOfDiscreteAngles )
 {
   mp_data_container.setNumberOfDiscreteAngles( 0, 3 );
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving discrete angles can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, 
+TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setMomentPreservingDiscreteAngles )
 {
   std::vector<double> discrete_angles( 3 );
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
   discrete_angles[1] = 0.95;
   discrete_angles[2] = 0.99;
 
-  mp_data_container.setMomentPreservingDiscreteAngles( 0, 
+  mp_data_container.setMomentPreservingDiscreteAngles( 0,
                                                             discrete_angles );
 
   TEST_COMPARE_ARRAYS( mp_data_container.getMomentPreservingDiscreteAngles(0),
@@ -81,7 +81,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 
 //---------------------------------------------------------------------------//
 // Check that the moment preserving weights can be set
-TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer, 
+TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    setMomentPreservingWeights )
 {
   std::vector<double> weights( 3 );
@@ -121,10 +121,10 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
   cross_section[1] = 1e-1;
   cross_section[2] = 1.0;
 
-  mp_data_container.setMomentPreservingMomentPreservingCrossSection( 
+  mp_data_container.setMomentPreservingMomentPreservingCrossSection(
                         cross_section );
 
-  TEST_COMPARE_ARRAYS( 
+  TEST_COMPARE_ARRAYS(
             mp_data_container.getMomentPreservingMomentPreservingCrossSection(),
             cross_section );
 }
@@ -145,32 +145,32 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_ascii )
 {
-  const std::string test_ascii_file_name( 
+  const std::string test_ascii_file_name(
                     "test_mp_data_container.txt" );
 
   mp_data_container.exportData( test_ascii_file_name,
 				 Utility::ArchivableObject::ASCII_ARCHIVE );
 
-  const Data::MomentPreservingElectronDataContainer 
-    mp_data_container_copy( test_ascii_file_name, 
+  const Data::MomentPreservingElectronDataContainer
+    mp_data_container_copy( test_ascii_file_name,
 			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
   TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( 
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(), 
+  TEST_EQUALITY_CONST(
+    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST( 
+/*  TEST_EQUALITY_CONST(
     mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
 		       3u );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
 		       0 );*/
 }
@@ -180,32 +180,32 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_binary )
 {
-  const std::string test_binary_file_name( 
+  const std::string test_binary_file_name(
                     "test_mp_data_container.bin" );
 
   mp_data_container.exportData( test_binary_file_name,
 				 Utility::ArchivableObject::BINARY_ARCHIVE );
 
-  const Data::MomentPreservingElectronDataContainer 
-    mp_data_container_copy( test_binary_file_name, 
+  const Data::MomentPreservingElectronDataContainer
+    mp_data_container_copy( test_binary_file_name,
 			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
   TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( 
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(), 
+  TEST_EQUALITY_CONST(
+    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST( 
+/*  TEST_EQUALITY_CONST(
     mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
 		       3u );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
 		       0 );*/
 }
@@ -215,32 +215,32 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
 TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
                    export_importData_xml )
 {
-  const std::string test_xml_file_name( 
+  const std::string test_xml_file_name(
                     "test_mp_data_container.xml" );
 
   mp_data_container.exportData( test_xml_file_name,
 				 Utility::ArchivableObject::XML_ARCHIVE );
 
-  const Data::MomentPreservingElectronDataContainer 
-    mp_data_container_copy( test_xml_file_name, 
+  const Data::MomentPreservingElectronDataContainer
+    mp_data_container_copy( test_xml_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
   TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( 
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(), 
+  TEST_EQUALITY_CONST(
+    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST( 
+/*  TEST_EQUALITY_CONST(
     mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
 		       3u );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
 		       0 );*/
 }
@@ -253,25 +253,25 @@ TEUCHOS_UNIT_TEST( MomentPreservingElectronDataContainer,
   std::string packed_data = mp_data_container.packDataInString();
 
   Data::MomentPreservingElectronVolatileDataContainer mp_data_container_copy;
-  
+
   mp_data_container_copy.unpackDataFromString( packed_data );
-  
+
   TEST_EQUALITY_CONST( mp_data_container_copy.getAtomicNumber(), 1 );
-  TEST_EQUALITY_CONST( 
-    mp_data_container_copy.getElasticAngularEnergyGrid().front(), 
+  TEST_EQUALITY_CONST(
+    mp_data_container_copy.getElasticAngularEnergyGrid().front(),
     1.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingDiscreteAngles(0).size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingWeights(0).size(), 3 );
-/*  TEST_EQUALITY_CONST( 
+/*  TEST_EQUALITY_CONST(
     mp_data_container_copy.getElectronEnergyGrid().size(), 3 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSection().size(),
 		       3u );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     mp_data_container_copy.getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(),
 		       0 );*/
 }

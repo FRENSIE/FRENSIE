@@ -40,7 +40,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::s_fine_structure
         Utility::PhysicalConstants::fine_structure_constant;
 
 // A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
-double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_param1 = 
+double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_param1 =
       ScreenedRutherfordElasticElectronScatteringDistribution::s_fine_structure_const_squared/
       ( 2.0*0.885*0.885 );
 
@@ -63,7 +63,7 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
 
 // Evaluate the distribution at the given energy and scattering angle cosine
 //! \details Because the scattering angle cosine is very close to one, precision will be lost.
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -72,14 +72,14 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
+  double eta = evaluateMoliereScreeningConstant( incoming_energy );
 
   return this->evaluate( incoming_energy, scattering_angle_cosine, eta );
 }
 
 // Evaluate the distribution at the given energy and scattering angle cosine
 //! \details Because the scattering angle cosine is very close to one, precision will be lost.
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
         const double incoming_energy,
         const double scattering_angle_cosine,
         const double eta ) const
@@ -92,7 +92,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 
   double delta_mu = 1.0 - scattering_angle_cosine;
 
-  double cutoff_pdf = 
+  double cutoff_pdf =
     d_elastic_cutoff_distribution->evaluate( incoming_energy, s_cutoff_mu );
 
   double pdf = cutoff_pdf*
@@ -104,7 +104,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluate(
 
 
 // Evaluate the PDF at the given energy and scattering angle cosine
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -112,14 +112,14 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
- 
+
   double eta = evaluateMoliereScreeningConstant( incoming_energy );
-   
-  return this->evaluatePDF( incoming_energy, scattering_angle_cosine, eta ); 
+
+  return this->evaluatePDF( incoming_energy, scattering_angle_cosine, eta );
 }
 
 // Evaluate the PDF at the given energy and scattering angle cosine
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
         const double incoming_energy,
         const double scattering_angle_cosine,
         const double eta ) const
@@ -132,28 +132,28 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluatePDF(
 
   double delta_mu = 1.0 - scattering_angle_cosine;
 
-  double cutoff_pdf = 
-    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, s_cutoff_mu ); 
-   
+  double cutoff_pdf =
+    d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, s_cutoff_mu );
+
   return cutoff_pdf*
             ( s_cutoff_delta_mu + eta )*( s_cutoff_delta_mu + eta )/(
             ( delta_mu + eta )*( delta_mu + eta ) );
 }
 
 // Evaluate the integrated PDF at the given energy
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF(
         const double incoming_energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
 
-  double eta = evaluateMoliereScreeningConstant( incoming_energy ); 
-   
+  double eta = evaluateMoliereScreeningConstant( incoming_energy );
+
   return this->evaluateIntegratedPDF( incoming_energy, eta );
 }
 
 // Evaluate the integrated PDF at the given energy
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegratedPDF(
         const double incoming_energy,
         const double eta ) const
 {
@@ -161,14 +161,14 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateIntegrat
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( eta > 0.0 );
 
-  double cutoff_pdf = 
+  double cutoff_pdf =
     d_elastic_cutoff_distribution->evaluatePDF( incoming_energy, s_cutoff_mu );
-   
+
   return cutoff_pdf*s_cutoff_delta_mu*( s_cutoff_delta_mu + eta )/( eta );
 }
 
 // Evaluate the CDF
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine ) const
 {
@@ -177,13 +177,13 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine >= s_cutoff_mu );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double eta = this->evaluateMoliereScreeningConstant( incoming_energy ); 
-   
+  double eta = this->evaluateMoliereScreeningConstant( incoming_energy );
+
   return this->evaluateCDF( incoming_energy, scattering_angle_cosine, eta );
 }
 
 // Evaluate the CDF
-double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF( 
+double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
         const double incoming_energy,
         const double scattering_angle_cosine,
         const double eta ) const
@@ -195,13 +195,13 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( eta > 0.0 );
 
   double delta_mu = 1.0 - scattering_angle_cosine;
-   
+
   return ( s_cutoff_delta_mu + eta )/( delta_mu + eta )*
          ( delta_mu/s_cutoff_delta_mu );
 }
 
 // Sample an outgoing energy and direction from the distribution
-void ScreenedRutherfordElasticElectronScatteringDistribution::sample( 
+void ScreenedRutherfordElasticElectronScatteringDistribution::sample(
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
@@ -218,7 +218,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrials( 
+void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -226,7 +226,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
-  
+
   // Sample an outgoing direction
   this->sampleAndRecordTrialsImpl( incoming_energy,
                                    scattering_angle_cosine,
@@ -234,7 +234,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
 }
 
 // Randomly scatter the electron
-void ScreenedRutherfordElasticElectronScatteringDistribution::scatterElectron( 
+void ScreenedRutherfordElasticElectronScatteringDistribution::scatterElectron(
 				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -251,12 +251,12 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterElectron(
   shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  electron.rotateDirection( scattering_angle_cosine, 
+  electron.rotateDirection( scattering_angle_cosine,
 			  this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
-void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElectron( 
+void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElectron(
 				     AdjointElectronState& adjoint_electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -269,11 +269,11 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::scatterAdjointElec
   this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
 				                   scattering_angle_cosine,
 				                   trial_dummy );
-  
+
   shell_of_interaction = Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
-  adjoint_electron.rotateDirection( scattering_angle_cosine, 
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
 				                    this->sampleAzimuthalAngle() );
 }
 
@@ -282,13 +282,13 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereS
                                               const double energy ) const
 {
   // get the energy-momentum**2 of the electron in units of electron_rest_mass_energy
-  double electron_energy_momentum_squared = 
-           Utility::calculateDimensionlessRelativisticMomentumSquared( 
+  double electron_energy_momentum_squared =
+           Utility::calculateDimensionlessRelativisticMomentumSquared(
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared( 
+  double beta_squared = Utility::calculateDimensionlessRelativisticSpeedSquared(
            Utility::PhysicalConstants::electron_rest_mass_energy,
            energy );
 
@@ -296,12 +296,12 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereS
             ( energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
 
  // Calculate Moliere's atomic screening constant
- return s_screening_param1 * 1.0/electron_energy_momentum_squared * 
+ return s_screening_param1 * 1.0/electron_energy_momentum_squared *
         d_Z_two_thirds_power * ( 1.13 + d_screening_param2*screening_param3 );
 }
 
 // Sample an outgoing direction from the distribution
-void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
+void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                                 const double incoming_energy,
                                                 double& scattering_angle_cosine,
                                                 unsigned& trials ) const
@@ -312,7 +312,7 @@ void ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTri
   // Increment the number of trials
   ++trials;
 
-  double random_number = 
+  double random_number =
               Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   double eta = evaluateMoliereScreeningConstant( incoming_energy );

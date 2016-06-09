@@ -24,7 +24,7 @@ namespace Data{
  *
  * After a neutron S(a,b) table has been read by the Data::ACEFileHandler the
  * individual data blocks must be extracted from the XSS array using the
- * Data::XSSSabDataExtractor. Both the NXS array and the JXS array are 
+ * Data::XSSSabDataExtractor. Both the NXS array and the JXS array are
  * required to successfully extract the blocks. The NXS array elements have
  * the following meanings:
  * <ul>

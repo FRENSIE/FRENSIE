@@ -32,13 +32,13 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 		   sampleAngle )
 {
-   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution
      energy_distribution(2);
 
-   Teuchos::Array<Teuchos::RCP<MonteCarlo::AceLaw44ARDistribution> > 
+   Teuchos::Array<Teuchos::RCP<MonteCarlo::AceLaw44ARDistribution> >
      ar_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -77,15 +77,15 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    a_array[3] = 4.0;
    a_array[4] = 5.0;
 
-   energy_distribution[0].second.reset( 
-		       new Utility::TabularDistribution<Utility::LinLin>( 
+   energy_distribution[0].second.reset(
+		       new Utility::TabularDistribution<Utility::LinLin>(
 							  outgoing_energy_grid,
 							  pdf_linear ) );
 
-   ar_distribution[0].reset( 
+   ar_distribution[0].reset(
      new MonteCarlo::StandardAceLaw44ARDistribution<MonteCarlo::AceLaw44LinLinInterpolationPolicy>(
                                                           outgoing_energy_grid,
-                                                          a_array(), 
+                                                          a_array(),
                                                           r_array() ) );
 
 
@@ -112,14 +112,14 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    a_array[3] = 5.0;
    a_array[4] = 6.0;
 
-   energy_distribution[1].second.reset( 
+   energy_distribution[1].second.reset(
 		      new Utility::HistogramDistribution( outgoing_energy_grid,
 							  pdf ) );
 
-   ar_distribution[1].reset( 
+   ar_distribution[1].reset(
      new MonteCarlo::StandardAceLaw44ARDistribution<MonteCarlo::AceLaw44HistogramInterpolationPolicy>(
                                                           outgoing_energy_grid,
-							  a_array(), 
+							  a_array(),
 							  r_array()) );
 
    // Create the fake stream
@@ -131,19 +131,19 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> 
+   Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution>
    energy_scattering_distribution;
 
-   energy_scattering_distribution.reset( 
+   energy_scattering_distribution.reset(
 		   new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution(
 							 energy_distribution));
 
-   
+
 
    Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > distribution( new MonteCarlo::AceLaw44NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::LabSystemConversionPolicy>( 1.0, energy_scattering_distribution, ar_distribution ) );
 
    MonteCarlo::NeutronState neutron( 0ull );
-   
+
    double initial_angle[3];
    initial_angle[0] = 0.0;
    initial_angle[1] = 0.0;
@@ -154,8 +154,8 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    distribution->scatterParticle( neutron, 1.0 );
 
-   double angle = 
-     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
+   double angle =
+     Utility::calculateCosineOfAngleBetweenVectors( initial_angle,
 						    neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.6958068, 1e-7);
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    fake_stream[3] = 0.6;
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
- 
+
    initial_angle[0] = 0.0;
    initial_angle[1] = 0.0;
    initial_angle[2] = 1.0;
@@ -178,8 +178,8 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    distribution->scatterParticle( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( 
-						      initial_angle, 
+   angle = Utility::calculateCosineOfAngleBetweenVectors(
+						      initial_angle,
 						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.48174437, 1e-7);
@@ -192,7 +192,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    fake_stream[3] = 0.2;
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
- 
+
    initial_angle[0] = 0.0;
    initial_angle[1] = 0.0;
    initial_angle[2] = 1.0;
@@ -202,8 +202,8 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    distribution->scatterParticle( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( 
-						      initial_angle, 
+   angle = Utility::calculateCosineOfAngleBetweenVectors(
+						      initial_angle,
 						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.607568, 1e-6);
@@ -216,7 +216,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    fake_stream[3] = 0.2;
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
- 
+
    initial_angle[0] = 0.0;
    initial_angle[1] = 0.0;
    initial_angle[2] = 1.0;
@@ -226,8 +226,8 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    distribution->scatterParticle( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( 
-						      initial_angle, 
+   angle = Utility::calculateCosineOfAngleBetweenVectors(
+						      initial_angle,
 						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.607568, 1e-6);
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
    fake_stream[3] = 0.4;
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-   
+
    initial_angle[0] = 0.0;
    initial_angle[1] = 0.0;
    initial_angle[2] = 1.0;
@@ -249,8 +249,8 @@ TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution,
 
    distribution->scatterParticle( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( 
-						      initial_angle, 
+   angle = Utility::calculateCosineOfAngleBetweenVectors(
+						      initial_angle,
 						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.6958068, 1e-7);

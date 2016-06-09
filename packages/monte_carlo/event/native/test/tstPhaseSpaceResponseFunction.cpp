@@ -35,16 +35,16 @@ std::shared_ptr<MonteCarlo::ResponseFunction> response_function;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize the time and energy distributions
-void initializeEnergyAndTimeDists( 
+void initializeEnergyAndTimeDists(
 	       std::shared_ptr<Utility::OneDDistribution>& energy_distribution,
 	       std::shared_ptr<Utility::OneDDistribution>& time_distribution )
 {
-  energy_distribution.reset( new Utility::UniformDistribution( 
-				       0.0, 
+  energy_distribution.reset( new Utility::UniformDistribution(
+				       0.0,
 				       std::numeric_limits<double>::max(),
 				       1.0 ) );
-  time_distribution.reset( new Utility::UniformDistribution( 
-				       0.0, 
+  time_distribution.reset( new Utility::UniformDistribution(
+				       0.0,
 				       std::numeric_limits<double>::max(),
 				       1.0 ) );
 }
@@ -55,15 +55,15 @@ void initializeDirectionalDistribution(
 {
   // Uniform distribution in theta dimension
   std::shared_ptr<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
+    theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
   std::shared_ptr<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
-  directional_distribution.reset( new Utility::SphericalDirectionalDistribution( 
+
+  directional_distribution.reset( new Utility::SphericalDirectionalDistribution(
 							   theta_distribution,
 							   mu_distribution ) );
 }
@@ -76,7 +76,7 @@ void initializeCartesianResponseFunction( const bool uniform )
 
   if( uniform )
   {
-    x_distribution.reset( new Utility::UniformDistribution( 
+    x_distribution.reset( new Utility::UniformDistribution(
 					   -std::numeric_limits<double>::max(),
 					   std::numeric_limits<double>::max(),
 					   1.0 ) );
@@ -91,7 +91,7 @@ void initializeCartesianResponseFunction( const bool uniform )
   }
 
   std::shared_ptr<Utility::SpatialDistribution>
-    spatial_distribution( new Utility::CartesianSpatialDistribution( 
+    spatial_distribution( new Utility::CartesianSpatialDistribution(
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );
@@ -100,7 +100,7 @@ void initializeCartesianResponseFunction( const bool uniform )
 
   initializeDirectionalDistribution( directional_distribution );
 
-  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution,
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
@@ -119,31 +119,31 @@ void initializeCylindricalResponseFunction( const bool uniform )
 {
   // Uniform distribution in theta dimension
   std::shared_ptr<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
+    theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
   // Uniform distribution in mu dimension
   std::shared_ptr<Utility::OneDDistribution>
     axis_distribution( new Utility::UniformDistribution( 0.0, 10.0, 1.0 ) );
-  
+
   std::shared_ptr<Utility::OneDDistribution> r_distribution;
-  
+
   if( uniform )
-    r_distribution.reset( new Utility::PowerDistribution<1u>( 
-				   1.0, 
-				   0.0, 
+    r_distribution.reset( new Utility::PowerDistribution<1u>(
+				   1.0,
+				   0.0,
 				   std::numeric_limits<double>::max() ) );
   else
   {
-    r_distribution.reset( new Utility::UniformDistribution( 
-				       0.0, 
+    r_distribution.reset( new Utility::UniformDistribution(
+				       0.0,
 				       std::numeric_limits<double>::max(),
 				       1.0 ) );
   }
 
   std::shared_ptr<Utility::SpatialDistribution>
-    spatial_distribution( new Utility::CylindricalSpatialDistribution( 
+    spatial_distribution( new Utility::CylindricalSpatialDistribution(
 							 r_distribution,
 							 theta_distribution,
 							 axis_distribution,
@@ -155,7 +155,7 @@ void initializeCylindricalResponseFunction( const bool uniform )
 
   initializeDirectionalDistribution( directional_distribution );
 
-  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution,
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
@@ -174,7 +174,7 @@ void initializeSphericalResponseFunction( const bool uniform )
 {
   // Uniform distribution in theta dimension
   std::shared_ptr<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
+    theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
@@ -183,22 +183,22 @@ void initializeSphericalResponseFunction( const bool uniform )
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
   std::shared_ptr<Utility::OneDDistribution> r_distribution;
-  
+
   if( uniform )
-    r_distribution.reset( new Utility::PowerDistribution<2u>( 
-					1.0, 
-					0.0, 
+    r_distribution.reset( new Utility::PowerDistribution<2u>(
+					1.0,
+					0.0,
 				        std::numeric_limits<double>::max() ) );
   else
   {
-    r_distribution.reset( new Utility::UniformDistribution( 
-					    0.0, 
+    r_distribution.reset( new Utility::UniformDistribution(
+					    0.0,
 					    std::numeric_limits<double>::max(),
 					    1.0 ) );
   }
 
   std::shared_ptr<Utility::SpatialDistribution>
-    spatial_distribution( new Utility::SphericalSpatialDistribution( 
+    spatial_distribution( new Utility::SphericalSpatialDistribution(
 							   r_distribution,
 							   theta_distribution,
 							   mu_distribution,
@@ -210,7 +210,7 @@ void initializeSphericalResponseFunction( const bool uniform )
 
   initializeDirectionalDistribution( directional_distribution );
 
-  std::shared_ptr<Utility::OneDDistribution> energy_distribution, 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution,
     time_distribution;
 
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, getName )
   TEST_EQUALITY( response_function->getName(), "cylindrical_response" );
 
   initializeSphericalResponseFunction( true );
-  
+
   TEST_EQUALITY( response_function->getName(), "spherical_response" );
 }
 
@@ -256,7 +256,7 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, getId )
   TEST_EQUALITY( response_function->getId(), 1 );
 
   initializeSphericalResponseFunction( true );
-  
+
   TEST_EQUALITY( response_function->getId(), 2 );
 }
 
@@ -266,14 +266,14 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, evaluate )
 {
   double position[3] = {0.0, 0.0, 0.0};
   double direction[3] = {1.0, 0.0, 0.0};
-  
+
   MonteCarlo::PhotonState particle( 0ull );
   particle.setPosition( position );
   particle.setDirection( direction );
   particle.setEnergy( 1.0 );
   particle.setTime( 0.0 );
   particle.setWeight( 1.0 );
-  
+
   initializeCartesianResponseFunction( true );
 
   TEST_EQUALITY_CONST( response_function->evaluate( particle ), 1.0 );
@@ -287,11 +287,11 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, evaluate )
   TEST_EQUALITY_CONST( response_function->evaluate( particle ), 1.0 );
 
   initializeCartesianResponseFunction( false );
-  
+
   TEST_FLOATING_EQUALITY( response_function->evaluate( particle ),
 			  1.0,
 			  1e-15 );
-  
+
   initializeCylindricalResponseFunction( false );
 
   TEST_EQUALITY_CONST( response_function->evaluate( particle ),
@@ -308,11 +308,11 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, evaluate )
 TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, isSpatiallyUniform )
 {
   initializeCartesianResponseFunction( true );
-  
+
   TEST_ASSERT( response_function->isSpatiallyUniform() );
 
   initializeCartesianResponseFunction( false );
-  
+
   TEST_ASSERT( !response_function->isSpatiallyUniform() );
 
   initializeCylindricalResponseFunction( true );

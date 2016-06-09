@@ -21,12 +21,12 @@
 #include "Utility_KinematicHelpers.hpp"
 
 namespace MonteCarlo{
-// Constructor 
+// Constructor
 ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellElectronScatteringDistribution(
-    const ElectroionizationSubshellDistribution& 
+    const ElectroionizationSubshellDistribution&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy )
-  : d_electroionization_subshell_scattering_distribution( 
+  : d_electroionization_subshell_scattering_distribution(
       electroionization_subshell_scattering_distribution ),
     d_binding_energy( binding_energy )
 {
@@ -53,13 +53,13 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxEnergy() c
 }
 
 // Return the max incoming electron energy for a given knock-on electron energy
-double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy( 
+double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy(
         const double energy ) const
 {
   // Start at the largest energy grid point
   unsigned grid_point = d_electroionization_subshell_scattering_distribution.size();
 
-  MonteCarlo::TwoDDistribution::const_iterator 
+  MonteCarlo::TwoDDistribution::const_iterator
                                         highest_energy_bin, lowest_energy_bin;
 
   lowest_energy_bin = d_electroionization_subshell_scattering_distribution.begin();
@@ -67,16 +67,16 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEn
   highest_energy_bin--;
 
   // Make sure the knock-on energy is possible
-  testPrecondition( energy < 
+  testPrecondition( energy <
                     highest_energy_bin->second->sampleWithRandomNumber( 1.0 ) );
 
-  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- ) 
+  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- )
   {
     // Find the minimum knock-on energy for an electron at the grid_point energy
-    double min_energy = 
+    double min_energy =
       highest_energy_bin->second->sampleWithRandomNumber( 0.0 );
 
-    /* If the minimum knock-on energy is at or below the given energy then 
+    /* If the minimum knock-on energy is at or below the given energy then
        return the grid_point energy */
     if ( min_energy <= energy )
     {
@@ -89,10 +89,10 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEn
     grid_point--;
 
     // Find the minimum knock-on energy for an electron at the grid_point energy
-    double min_energy = 
+    double min_energy =
       d_electroionization_subshell_scattering_distribution[grid_point].second->sampleWithRandomNumber( 0.0 );
 
-    /* If the minimum knock-on energy is at or below the given energy then 
+    /* If the minimum knock-on energy is at or below the given energy then
        return the grid_point energy /
     if ( min_energy <= energy )
     {
@@ -105,29 +105,29 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEn
 }
 
 // Evaluate the PDF value for a given incoming and knock-on energy
-double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF( 
-                     const double incoming_energy, 
+double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF(
+                     const double incoming_energy,
                      const double knock_on_energy ) const
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( knock_on_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElectroionizationSubshellDistribution>( 
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElectroionizationSubshellDistribution>(
                          incoming_energy,
                          knock_on_energy,
                          d_electroionization_subshell_scattering_distribution );
 }
 
 // Sample an knock on energy and direction from the distribution
-void ElectroionizationSubshellElectronScatteringDistribution::sample( 
+void ElectroionizationSubshellElectronScatteringDistribution::sample(
                const double incoming_energy,
                double& knock_on_energy,
                double& knock_on_angle_cosine ) const
 {
   // Sample knock-on electron energy
-  knock_on_energy = 
-    sampleTwoDDistributionCorrelated<ElectroionizationSubshellDistribution>( 
+  knock_on_energy =
+    sampleTwoDDistributionCorrelated<ElectroionizationSubshellDistribution>(
                          incoming_energy,
                          d_electroionization_subshell_scattering_distribution );
 
@@ -137,7 +137,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 }
 
 // Sample an knock on energy and direction from the distribution
-void ElectroionizationSubshellElectronScatteringDistribution::sample( 
+void ElectroionizationSubshellElectronScatteringDistribution::sample(
                const double incoming_energy,
                double& outgoing_energy,
                double& knock_on_energy,
@@ -147,7 +147,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
   // Sample knock-on electron energy and outgoing angle
   sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
-  outgoing_energy = 
+  outgoing_energy =
         std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );
 
   // Calculate the outgoing angle cosine for the primary electron
@@ -156,7 +156,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sample(
 }
 
 // Sample an knock on energy and direction and record the number of trials
-void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTrials( 
+void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTrials(
                               const double incoming_energy,
                               double& knock_on_energy,
                               double& knock_on_angle_cosine,
@@ -168,7 +168,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTri
 }
 
 // Randomly scatter the electron
-void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron( 
+void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                                 ElectronState& electron,
 			                    ParticleBank& bank,
                                 Data::SubshellType& shell_of_interaction ) const
@@ -180,14 +180,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine, knock_on_angle_cosine;
 
   // Sample the distribution
-  sample( electron.getEnergy(), 
-          outgoing_energy, 
-          knock_on_energy, 
+  sample( electron.getEnergy(),
+          outgoing_energy,
+          knock_on_energy,
           scattering_angle_cosine,
           knock_on_angle_cosine );
 
   // Create new elecrton
-  Teuchos::RCP<ElectronState> knock_on_electron( 
+  Teuchos::RCP<ElectronState> knock_on_electron(
                            new ElectronState( electron, true, true ) );
 
   // Set knock-on electron energy
@@ -195,7 +195,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 
 
   // Set the direction of the knock-on electron
-  knock_on_electron->rotateDirection( knock_on_angle_cosine, 
+  knock_on_electron->rotateDirection( knock_on_angle_cosine,
 			                          this->sampleAzimuthalAngle() );
 
   // Bank the knock-on electron
@@ -214,12 +214,12 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 }
 
 // Calculate the outgoing angle cosine
-double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle( 
+double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle(
                                             const double incoming_energy,
                                             const double outgoing_energy ) const
 {
   // The normalized incoming electron energy
-  double normalized_incoming_energy = 
+  double normalized_incoming_energy =
           incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // The ratio of incoming to outgoing energy

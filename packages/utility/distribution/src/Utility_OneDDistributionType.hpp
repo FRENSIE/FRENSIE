@@ -39,7 +39,7 @@ enum OneDDistributionType{
 };
 
 //! Convert the OneDDistribution type to a string
-std::string convertOneDDistributionTypeToString( 
+std::string convertOneDDistributionTypeToString(
 					     const OneDDistributionType type );
 
 } // end Utility namespace

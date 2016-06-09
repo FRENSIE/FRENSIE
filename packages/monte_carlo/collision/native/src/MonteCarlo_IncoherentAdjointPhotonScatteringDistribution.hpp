@@ -39,7 +39,7 @@ public:
   { /* ... */ }
 
   //! Set the critical line energies
-  void setCriticalLineEnergies( 
+  void setCriticalLineEnergies(
 	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
   //! Set the max energy
@@ -74,29 +74,29 @@ public:
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double precision ) const;
-  
+
 protected:
 
   //! Evaluate the adjoint Klein-Nishina distribution
-  double evaluateAdjointKleinNishinaDist( 
+  double evaluateAdjointKleinNishinaDist(
 				  const double incoming_energy,
 				  const double max_energy,
 				  const double scattering_angle_cosine ) const;
 
   //! Basic sampling implementation
-  void sampleAndRecordTrialsAdjointKleinNishina( 
+  void sampleAndRecordTrialsAdjointKleinNishina(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
 					    unsigned& trials ) const;
 
   //! Check if an energy is below the scattering window
-  virtual bool isEnergyBelowScatteringWindow( 
+  virtual bool isEnergyBelowScatteringWindow(
 					   const double energy_of_interest,
 					   const double initial_energy ) const;
 
   //! Check if an energy is above the scattering window
-  virtual bool isEnergyAboveScatteringWindow( 
+  virtual bool isEnergyAboveScatteringWindow(
 					   const double energy_of_interest,
 					   const double initial_energy ) const;
 
@@ -105,20 +105,20 @@ protected:
 				   const double initial_energy ) const;
 
   // Return only the critical line energies that can be scattered into
-  void getCriticalLineEnergiesInScatteringWindow( 
+  void getCriticalLineEnergiesInScatteringWindow(
 					const double energy,
 				        LineEnergyIterator& start_energy,
 					LineEnergyIterator& end_energy ) const;
 
   //! Create a probe particle
-  virtual void createProbeParticle( const double energy_of_interest, 
+  virtual void createProbeParticle( const double energy_of_interest,
 				    const AdjointPhotonState& adjoint_photon,
 				    ParticleBank& bank ) const;
 
   //! Create the probe particles
   void createProbeParticles( const AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank ) const;
-  
+
 private:
 
   // The maximum energy

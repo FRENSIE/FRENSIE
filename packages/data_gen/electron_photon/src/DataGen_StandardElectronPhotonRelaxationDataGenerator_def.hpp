@@ -22,7 +22,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
 	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
 {
   // Find the first non-zero cross section value
-  Teuchos::ArrayView<const double>::iterator start = 
+  Teuchos::ArrayView<const double>::iterator start =
     std::find_if( raw_cross_section.begin(),
 		  raw_cross_section.end(),
 		  notEqualZero );
@@ -30,12 +30,12 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
   Teuchos::Array<double> processed_cross_section;
   processed_cross_section.assign( start, raw_cross_section.end() );
 
-  unsigned start_energy_index = 
+  unsigned start_energy_index =
     raw_energy_grid.size() - processed_cross_section.size();
 
   start = raw_energy_grid.begin();
   std::advance( start, start_energy_index );
-  
+
   Teuchos::Array<double> energy_grid;
   energy_grid.assign( start, raw_energy_grid.end() );
 
@@ -43,8 +43,8 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
   for( unsigned i = 0; i < energy_grid.size(); ++i )
   {
     energy_grid[i] = InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
-    
-    processed_cross_section[i] = 
+
+    processed_cross_section[i] =
       InterpPolicy::recoverProcessedDepVar( processed_cross_section[i] );
   }
 
@@ -57,7 +57,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
 template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
        const std::vector<double>& raw_energy_grid,
-       const std::vector<double>& raw_cross_section,        
+       const std::vector<double>& raw_cross_section,
 	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
 {
   Teuchos::Array<double> processed_cross_section( raw_cross_section );

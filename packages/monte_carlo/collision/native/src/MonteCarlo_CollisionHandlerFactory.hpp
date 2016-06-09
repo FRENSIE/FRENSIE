@@ -41,7 +41,7 @@ public:
   { /* ... */ }
 
   //! Initialize the collision handler
-  void initializeHandler( 
+  void initializeHandler(
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory );
@@ -65,7 +65,7 @@ protected:
   virtual void validateMaterialIds( const MatIdSet& material_ids ) const = 0;
 
   //! Create the cell id data maps using the GeometryHandler
-  virtual void createCellIdDataMaps( 
+  virtual void createCellIdDataMaps(
                              CellIdMatIdMap& cell_id_mat_id_map,
                              CellIdDensityMap& cell_id_density_map ) const = 0;
 
@@ -73,16 +73,16 @@ protected:
   std::ostream& getOsWarn() const;
 
 private:
-  
+
   //! The nuclide alias set
   typedef std::unordered_set<std::string> AliasSet;
 
-  //! The material id fraction map typedef 
+  //! The material id fraction map typedef
   typedef std::unordered_map<ModuleTraits::InternalMaterialHandle,
                              Teuchos::Array<double> >
   MatIdFractionMap;
 
-  //! The material id component map typedef 
+  //! The material id component map typedef
   typedef std::unordered_map<ModuleTraits::InternalMaterialHandle,
                              Teuchos::Array<std::string> >
   MatIdComponentMap;
@@ -96,19 +96,19 @@ private:
                                    MatIdSet& material_ids );
 
   //! Create the set of all nuclides/atoms needed to construct materials
-  static void createAliasSet( 
+  static void createAliasSet(
 		        const Teuchos::ParameterList& material_reps,
 		        const Teuchos::ParameterList& cross_sections_alias_map,
 		        AliasSet& nuclides );
 
   //! Create the material id data maps
-  static void createMaterialIdDataMaps( 
+  static void createMaterialIdDataMaps(
                                 const Teuchos::ParameterList& material_reps,
                                 MatIdFractionMap& material_id_fraction_map,
                                 MatIdComponentMap& material_id_component_map );
 
   //! Create the neutron materials
-  void createNeutronMaterials( 
+  void createNeutronMaterials(
                        const Teuchos::ParameterList& cross_sections_table_info,
                        const std::string& cross_sections_xml_directory,
                        const MatIdFractionMap& material_id_fraction_map,
@@ -118,7 +118,7 @@ private:
                        const CellIdDensityMap& cell_id_density_map,
                        const bool use_unresolved_resonance_data,
                        const bool use_photon_production_data );
-   
+
   //! Create the photon materials
   void createPhotonMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
@@ -128,7 +128,7 @@ private:
    const AliasSet& nuclide_aliases,
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
-   const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+   const Teuchos::RCP<AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
    const IncoherentModelType incoherent_model,
@@ -146,7 +146,7 @@ private:
    const AliasSet& nuclide_aliases,
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
-   const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+   const Teuchos::RCP<AtomicRelaxationModelFactory>&
     atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
    const BremsstrahlungAngularDistributionType photon_distribution_function,
@@ -163,9 +163,9 @@ private:
    scattering_center_map,
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
-   std::unordered_map<std::string,Teuchos::RCP<MaterialType> >& 
+   std::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
    material_name_pointer_map,
-   MatNameCellIdsMap& material_name_cell_ids_map );  
+   MatNameCellIdsMap& material_name_cell_ids_map );
 
   //! Register materials with the collision handler
   template<typename MaterialType>
@@ -187,7 +187,7 @@ private:
 //! The invalid material representation error
 class InvalidMaterialRepresentation : public std::runtime_error
 {
-  
+
 public:
 
   InvalidMaterialRepresentation( const std::string& what_arg )

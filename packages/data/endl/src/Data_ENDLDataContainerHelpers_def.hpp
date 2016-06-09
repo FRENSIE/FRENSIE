@@ -25,7 +25,7 @@ inline void testPreconditionEnergyGrid(
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanZero( 
+inline void testPreconditionValuesGreaterThanZero(
     const Array& values )
 {
   testPrecondition( std::find_if( values.begin(),
@@ -36,7 +36,7 @@ inline void testPreconditionValuesGreaterThanZero(
 
 // Test preconditions for values in array greater than zero
 template<typename Array>
-inline void testPreconditionValuesGreaterThanOrEqualToZero( 
+inline void testPreconditionValuesGreaterThanOrEqualToZero(
     const Array& values )
 {
   testPrecondition( std::find_if( values.begin(),

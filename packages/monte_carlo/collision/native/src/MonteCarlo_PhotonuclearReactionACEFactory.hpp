@@ -23,9 +23,9 @@
 namespace MonteCarlo{
 
 /*! The nuclear reaction factory class
- * \details This factory class stores all of the data blocks found in the 
- * ACE tables that describe specific reactions (except for fission reactions). 
- * The array parameters used in the class constructor have the same name as 
+ * \details This factory class stores all of the data blocks found in the
+ * ACE tables that describe specific reactions (except for fission reactions).
+ * The array parameters used in the class constructor have the same name as
  * the corresponding ACE data block.
  */
 class PhotonuclearReactionACEFactory
@@ -34,36 +34,36 @@ class PhotonuclearReactionACEFactory
 public:
 
   //! Constructor
-  PhotonuclearReactionACEFactory( 
+  PhotonuclearReactionACEFactory(
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
 		 const Data::XSSPhotonnuclearDataExtractor& raw_nuclide_data );
-		 
+
   //! Destructor
   ~PhotonuclearReactionACEFactory()
   { /* ... */ }
 
-  //! Create the scattering reactions 
-  void createScatteringReactions( 
+  //! Create the scattering reactions
+  void createScatteringReactions(
       boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >&
       scattering_reactions ) const;
 
-  //! Create the absorption reactions 
+  //! Create the absorption reactions
   void createAbsorptionReactions(
       boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >&
-      absorption_reactions ) const;	     
+      absorption_reactions ) const;
 
 
 protected:
 
   //! Create the reaction type ordering map
-  static void createReactionOrderingMap( 
+  static void createReactionOrderingMap(
        const Teuchos::ArrayView<const double>& mtr_block,
        boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering );
 
   //! Create the reaction type Q-value map
-  static void createReactionQValueMap( 
+  static void createReactionQValueMap(
    const Teuchos::ArrayView<const double>& lqr_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value );
@@ -74,7 +74,7 @@ protected:
    const Teuchos::ArrayView<const double>& tyr_block,
    const Teuchos::ArrayView<const double>& dlw_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,unsigned>& 
+   boost::unordered_map<PhotonuclearReactionType,unsigned>&
    reaction_multiplicity,
    boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayView<const double> >&
    reaction_energy_dependent_multiplicity );
@@ -84,7 +84,7 @@ protected:
    const Teuchos::ArrayView<const double>& lsig_block,
    const Teuchos::ArrayView<const double>& sig_block,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,unsigned>& 
+   boost::unordered_map<PhotonuclearReactionType,unsigned>&
    reaction_threshold_index );
 
   //! Create the reaction cross section map
@@ -93,13 +93,13 @@ protected:
    const Teuchos::ArrayView<const double>& sig_block,
    const Teuchos::ArrayView<const double>& elastic_cross_section,
    const boost::unordered_map<PhotonuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayRCP<double> >& 
+   boost::unordered_map<PhotonuclearReactionType,Teuchos::ArrayRCP<double> >&
    reaction_cross_section );
 
 private:
 
   // Initialize the scattering reactions
-  void initializeScatteringReactions( 
+  void initializeScatteringReactions(
     const Teuchos::ArrayRCP<const double> energy_grid,
     const boost::unordered_map<PhotonuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<PhotonuclearReactionType,unsigned>&
@@ -128,7 +128,7 @@ private:
   // A map of the scattering reactions
   boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >
   d_scattering_reactions;
-  
+
   // A map of the absorption reactions
   boost::unordered_map<PhotonuclearReactionType,Teuchos::RCP<PhotonuclearReaction> >
   d_absorption_reactions;

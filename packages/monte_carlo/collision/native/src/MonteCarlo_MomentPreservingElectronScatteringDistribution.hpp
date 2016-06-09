@@ -47,7 +47,7 @@ public:
                  const double mu_cutoff,
                  const ElasticDistribution& discrete_scattering_distribution );
 
-  //! Destructor 
+  //! Destructor
   virtual ~MomentPreservingElectronScatteringDistribution()
   { /* ... */ }
 
@@ -66,7 +66,7 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                        
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,

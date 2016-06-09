@@ -33,7 +33,7 @@ class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelax
 public:
 
   //! Constructor
-  StandardElectronPhotonRelaxationDataGenerator( 
+  StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
        const Teuchos::RCP<const Data::ENDLDataContainer>&
@@ -65,7 +65,7 @@ protected:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Compton profile data
-  void setComptonProfileData( 
+  void setComptonProfileData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the occupation number data
@@ -81,11 +81,11 @@ protected:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the photon data
-  void setPhotonData( 
+  void setPhotonData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the electron data
-  void setElectronData( 
+  void setElectronData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
 private:
@@ -107,16 +107,16 @@ private:
 			  data_container ) const;
 
   // Extract the half Compton profile from the ACE table
-  void extractHalfComptonProfile( 
+  void extractHalfComptonProfile(
 			   const unsigned subshell,
 			   std::vector<double>& half_momentum_grid,
 			   std::vector<double>& half_profile ) const;
 
   // Set the screened rutherford data
-  void setScreenedRutherfordData( 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
-        cutoff_elastic_cross_section, 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
+  void setScreenedRutherfordData(
+    const Teuchos::RCP<const Utility::OneDDistribution>&
+        cutoff_elastic_cross_section,
+    const Teuchos::RCP<const Utility::OneDDistribution>&
         total_elastic_cross_section,
     const std::vector<double>& elastic_energy_grid,
     const std::map<double,std::vector<double> >& elastic_pdf,
@@ -150,7 +150,7 @@ private:
      Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
-  void initializePhotonUnionEnergyGrid( 
+  void initializePhotonUnionEnergyGrid(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
 
@@ -170,12 +170,12 @@ private:
 	     unsigned& threshold_index ) const;
 
   // Merge the electron union energy grid
-  void mergeElectronUnionEnergyGrid( 
+  void mergeElectronUnionEnergyGrid(
     const std::vector<double>& energy_grid,
     std::list<double>& union_energy_grid ) const;
 
   // Calculate the total photoelectric cross section
-  void calculateTotalPhotoelectricCrossSection( 
+  void calculateTotalPhotoelectricCrossSection(
     Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const;
 
@@ -236,7 +236,7 @@ private:
 
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
-  
+
   // The grid convergence tolerance
   double d_grid_convergence_tol;
 
@@ -251,23 +251,23 @@ private:
 };
 
 // Test if a value is greater than or equal to one
-inline bool 
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne( 
+inline bool
+StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
 							   const double value )
 {
   return value >= 1.0;
 }
 
 // Test if a value is greater than one
-inline bool 
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOne( 
+inline bool
+StandardElectronPhotonRelaxationDataGenerator::greaterThanOne(
 							   const double value )
 {
   return value > 1.0;
 }
 
 // The if a value is not equal to zero
-inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero( 
+inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
 							   const double value )
 {
   return value != 0.0;

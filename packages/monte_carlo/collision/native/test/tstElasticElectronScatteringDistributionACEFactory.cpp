@@ -28,17 +28,17 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution> 
+Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   ace_cutoff_elastic_distribution;
 
-Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution> 
+Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
   ace_sr_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the angular grid can be returned
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    getAngularGrid )
 {
 
@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 /*
 //---------------------------------------------------------------------------//
 // Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrialsImpl )
 {
   MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from cutoff distribution
-  ace_cutoff_elastic_distribution->sampleAndRecordTrialsImpl( 
+  ace_cutoff_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   TEST_EQUALITY_CONST( trials, 11 );
 
   // sampleAndRecordTrialsImpl from screened Rutherford distribution
-  ace_sr_elastic_distribution->sampleAndRecordTrialsImpl( 
+  ace_sr_elastic_distribution->sampleAndRecordTrialsImpl(
                                                 incoming_energy,
                                                 scattering_angle_cosine,
                                                 trials );
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 */
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    sample )
 {
   MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
@@ -170,7 +170,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check sampleAndRecordTrials can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    sampleAndRecordTrials )
 {
   MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
@@ -193,7 +193,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   unsigned trials = 10;
 
   // sampleAndRecordTrialsImpl from distribution
-  ace_cutoff_elastic_distribution->sampleAndRecordTrials( 
+  ace_cutoff_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -209,7 +209,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   outgoing_energy = 0;
 
   // sampleAndRecordTrialsImpl screened rutherford
-  ace_sr_elastic_distribution->sampleAndRecordTrials( 
+  ace_sr_elastic_distribution->sampleAndRecordTrials(
                                           incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine,
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -236,23 +236,23 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -272,7 +272,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

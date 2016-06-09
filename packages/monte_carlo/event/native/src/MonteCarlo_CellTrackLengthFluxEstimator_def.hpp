@@ -46,9 +46,9 @@ void CellTrackLengthFluxEstimator<
 		<< "will not be correct." << std::endl;
     }
   }
-  
+
   Estimator::setResponseFunctions( response_functions );
-}  
+}
 
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
@@ -62,14 +62,14 @@ void CellTrackLengthFluxEstimator<
   testPrecondition( isEntityAssigned( cell_of_subtrack ) );
   // Make sure the subtrack length is valid
   testPrecondition( !ST::isnaninf( track_length ) );
-    
+
   if( isParticleTypeAssigned( particle.getParticleType() ) )
   {
     double contribution = track_length*
       ContributionMultiplierPolicy::multiplier( particle );
 
     EstimatorParticleStateWrapper particle_state_wrapper( particle );
-  
+
     StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
                                                         cell_of_subtrack,

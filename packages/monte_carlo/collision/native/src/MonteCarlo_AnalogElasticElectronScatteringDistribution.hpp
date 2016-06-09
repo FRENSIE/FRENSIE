@@ -47,7 +47,7 @@ public:
         const double lower_cutoff_angle = 1.0e-6,
         const bool angle_is_used_as_independent_variable = true );
 
-  //! Destructor 
+  //! Destructor
   virtual ~AnalogElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -92,7 +92,7 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                        
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,

@@ -19,12 +19,12 @@ class KleinNishinaPhotonScatteringDistribution : public IncoherentPhotonScatteri
 {
 
 public:
-  
+
   //! Default Constructor
   KleinNishinaPhotonScatteringDistribution();
 
   //! Constructor
-  KleinNishinaPhotonScatteringDistribution( 
+  KleinNishinaPhotonScatteringDistribution(
 				    const double kahn_sampling_cutoff_energy );
 
   //! Destructor

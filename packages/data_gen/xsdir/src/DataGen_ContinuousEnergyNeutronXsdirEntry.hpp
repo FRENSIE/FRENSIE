@@ -17,12 +17,12 @@ namespace DataGen{
 //! The continuous energy neutron xsdir entry
 class ContinuousEnergyNeutronXsdirEntry : public XsdirEntry
 {
-  
+
 public:
 
   //! Constructor
   template<typename STLCompliantContainer>
-  ContinuousEnergyNeutronXsdirEntry( 
+  ContinuousEnergyNeutronXsdirEntry(
 				   const STLCompliantContainer& entry_tokens );
 
   //! Destructor

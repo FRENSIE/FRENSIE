@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw11NuclearScatteringEnergyDistribution.hpp
 //! \author Eli Moll
 //! \brief  The law 11 scattering energy distribution class
@@ -48,9 +48,9 @@ public:
 private:
 
   EnergyDistribution d_a_distribution;
-  
+
   EnergyDistribution d_b_distribution;
-  
+
   double d_restriction_energy;
 
 };

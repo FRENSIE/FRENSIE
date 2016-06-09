@@ -26,19 +26,19 @@ TEUCHOS_UNIT_TEST( FakeGenerator, getRandomNumber )
   fake_stream[0] = 0.1;
   fake_stream[1] = 0.2;
   fake_stream[2] = 0.3;
-  
-  Teuchos::RCP<Utility::LinearCongruentialGenerator> 
+
+  Teuchos::RCP<Utility::LinearCongruentialGenerator>
     generator( new Utility::FakeGenerator( fake_stream ) );
-  
+
   double random_number = generator->getRandomNumber();
   TEST_EQUALITY_CONST( random_number, 0.1 );
 
   random_number = generator->getRandomNumber();
   TEST_EQUALITY_CONST( random_number, 0.2 );
-  
+
   random_number = generator->getRandomNumber();
   TEST_EQUALITY_CONST( random_number, 0.3 );
-  
+
   // Test that it wraps correctly
   random_number = generator->getRandomNumber();
   TEST_EQUALITY_CONST( random_number, 0.1 );

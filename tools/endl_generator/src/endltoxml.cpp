@@ -2,7 +2,7 @@
 //!
 //! \file   endltoxml.cpp
 //! \author Luke Kersting
-//! \brief  tool to convert endl data files to xml format 
+//! \brief  tool to convert endl data files to xml format
 //!
 //---------------------------------------------------------------------------//
 
@@ -28,10 +28,10 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<const DataGen::ENDLDataGenerator> 
+  Teuchos::RCP<const DataGen::ENDLDataGenerator>
     endl_to_xml;
-  
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -57,7 +57,7 @@ int main( int argc, char** argv )
 
     return parse_return;
   }
-		
+
   // Set array of endl element id's
   Teuchos::Array<std::string> endl_element_id(100);
 
@@ -81,18 +81,18 @@ int main( int argc, char** argv )
   {
 
   unsigned atomic_number = i+1;
-  std::string eadl_file_path = 
+  std::string eadl_file_path =
     endl_directory_path + "/eadl/" + endl_element_id[i];
-  std::string epdl_file_path = 
+  std::string epdl_file_path =
     endl_directory_path + "/epdl/" + endl_element_id[i];
-  std::string eedl_file_path = 
+  std::string eedl_file_path =
     endl_directory_path + "/eedl/" + endl_element_id[i];
 
-  endl_to_xml.reset( 
-	    new const DataGen::StandardENDLDataGenerator( 
+  endl_to_xml.reset(
+	    new const DataGen::StandardENDLDataGenerator(
 					    atomic_number,
 					    eadl_file_path,
-                        epdl_file_path,    
+                        epdl_file_path,
 					    eedl_file_path ) );
 
   endl_to_xml->populateENDLDataContainer( data_container );
@@ -110,7 +110,7 @@ int main( int argc, char** argv )
 
   std::cout << "The ENDL Library has been processed!\n" <<
                "To generate Native data using the ENDL Library run the endl_cs_xml_modifier tool!" << std::endl;
-							      
+
   return 0;
 }
 

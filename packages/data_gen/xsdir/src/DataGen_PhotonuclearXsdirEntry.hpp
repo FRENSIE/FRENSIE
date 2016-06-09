@@ -22,7 +22,7 @@ public:
 
   //! Constructor
   template<typename STLCompliantContainer>
-  PhotonuclearXsdirEntry( 
+  PhotonuclearXsdirEntry(
 				   const STLCompliantContainer& entry_tokens );
 
   //! Destructor

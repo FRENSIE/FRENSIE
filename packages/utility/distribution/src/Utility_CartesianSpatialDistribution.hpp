@@ -28,14 +28,14 @@ class CartesianSpatialDistribution : public SpatialDistribution
 {
 
 private:
-  
+
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
   //! Constructor
-  CartesianSpatialDistribution( 
+  CartesianSpatialDistribution(
 		      const std::shared_ptr<OneDDistribution>& x_distribution,
                       const std::shared_ptr<OneDDistribution>& y_distribution,
                       const std::shared_ptr<OneDDistribution>& z_distribution );
@@ -55,7 +55,7 @@ public:
 
   //! Return the distribution type
   SpatialDistributionType getDistributionType() const;
-  
+
   //! Check if the distribution is uniform
   bool isUniform() const;
 

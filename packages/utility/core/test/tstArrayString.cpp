@@ -40,7 +40,7 @@ TEUCHOS_UNIT_TEST( ArrayString, locateAndReplacePi )
   TEST_EQUALITY_CONST( array_string, "{0.0,3.14159265358979312}" );
 
   array_string = "{0.0, 1*pi}";
-  
+
   Utility::ArrayString::locateAndReplacePi( array_string );
 
   TEST_EQUALITY_CONST( array_string, "{0.0,3.14159265358979312}" );
@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( ArrayString, locateAndReplacePi )
   Utility::ArrayString::locateAndReplacePi( array_string );
 
   TEST_EQUALITY_CONST( array_string, "{-6.28318530717958623,-3.14159265358979312, 0.0}" );
-  
+
   array_string = "{0.0, pi/2, 3pi / 4, pi, 2*pi}";
 
   Utility::ArrayString::locateAndReplacePi( array_string );
@@ -114,7 +114,7 @@ TEUCHOS_UNIT_TEST( ArrayString, getString )
 TEUCHOS_UNIT_TEST( ArrayString, getConcreteArray )
 {
   Utility::ArrayString array_string( "{-pi, 2i, pi/2, 2.0, 2l, 10.0}" );
-  
+
   Teuchos::Array<double> array = array_string.getConcreteArray<double>();
 
   TEST_EQUALITY_CONST( array.size(), 8 );
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( ArrayString, isMultidimensionalDataPresent )
 TEUCHOS_UNIT_TEST( ArrayString, toParameterList )
 {
   Utility::ArrayString array_string( "{0.0, 1.0, 2.0}" );
-  
+
   Teuchos::ParameterList parameter_list;
 
   parameter_list.set<Utility::ArrayString>( "test array string",
@@ -200,14 +200,14 @@ TEUCHOS_UNIT_TEST( ArrayString, toParameterList )
   Teuchos::writeParameterListToXmlFile( parameter_list,
 					"array_string_test_list.xml" );
 
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
     Teuchos::getParametersFromXmlFile( "array_string_test_list.xml" );
-  
+
   TEST_EQUALITY( parameter_list, *read_parameter_list );
 
   Utility::ArrayString copy_array_string =
     read_parameter_list->get<Utility::ArrayString>( "test array string" );
-  
+
   TEST_EQUALITY( array_string.getString(), copy_array_string.getString() );
 }
 
@@ -217,31 +217,31 @@ TEUCHOS_UNIT_TEST( ArrayString, fromParameterList )
 {
   Utility::ArrayString test_array_string;
 
-  test_array_string = 
+  test_array_string =
     test_arrays_list->get<Utility::ArrayString>( "test pi array" );
 
   TEST_EQUALITY_CONST( test_array_string.getString(),
 		       "{-3.14159265358979312,-1.57079632679489656, 0.0,2.35619449019234484,3.14159265358979312,6.28318530717958623}" );
 
-  test_array_string = 
+  test_array_string =
     test_arrays_list->get<Utility::ArrayString>( "test linear interval op float array" );
 
   TEST_EQUALITY_CONST( test_array_string.getString(),
 		       "{-1.0,-0.5,0,0.5, 1.0}" );
 
-  test_array_string = 
+  test_array_string =
     test_arrays_list->get<Utility::ArrayString>( "test linear interval op int array" );
 
   TEST_EQUALITY_CONST( test_array_string.getString(),
 		       "{0,1,2,3, 4}" );
 
-  test_array_string = 
+  test_array_string =
     test_arrays_list->get<Utility::ArrayString>( "test log interval op float array" );
 
   TEST_EQUALITY_CONST( test_array_string.getString(),
 		       "{1e-3,0.00231012970008315915,0.00533669923120631134,0.0123284673944206707,0.0284803586843580293,0.0657933224657567955,0.151991108295293442,0.351119173421513442,0.811130830789687507,1.87381742286038433,4.32876128108305736, 10.0}" );
 
-  test_array_string = 
+  test_array_string =
     test_arrays_list->get<Utility::ArrayString>( "test all array" );
 
   TEST_EQUALITY_CONST( test_array_string.getString(),
@@ -261,13 +261,13 @@ int main( int argc, char** argv )
 		 &test_array_xml_file,
 		 "Test array xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -278,7 +278,7 @@ int main( int argc, char** argv )
   test_arrays_list = Teuchos::getParametersFromXmlFile( test_array_xml_file );
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

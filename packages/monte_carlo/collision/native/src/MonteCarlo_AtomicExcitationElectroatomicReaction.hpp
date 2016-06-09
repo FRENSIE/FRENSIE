@@ -31,7 +31,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution );
 
   //! Constructor
@@ -40,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>& 
+    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution );
 
   //! Destructor
@@ -57,7 +57,7 @@ public:
   ElectroatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
-  void react( ElectronState& electron, 
+  void react( ElectronState& electron,
               ParticleBank& bank,
               Data::SubshellType& shell_of_interaction ) const;
 

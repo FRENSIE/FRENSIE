@@ -32,16 +32,16 @@ std::string test_xml_file_name;
 // Check that all distributions of interest can be constructed from
 // parameter entries
 TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCartesianDistribution )
-{  
-  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+{
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list =
     Teuchos::getParametersFromXmlFile( test_xml_file_name );
 
-  Teuchos::ParameterList spatial_distribution_rep = 
-    parameter_list->get<Teuchos::ParameterList>( 
+  Teuchos::ParameterList spatial_distribution_rep =
+    parameter_list->get<Teuchos::ParameterList>(
 					    "Cartesian Distribution Example" );
 
-  std::shared_ptr<Utility::SpatialDistribution> distribution = 
-    Utility::SpatialDistributionFactory::createDistribution( 
+  std::shared_ptr<Utility::SpatialDistribution> distribution =
+    Utility::SpatialDistributionFactory::createDistribution(
 						    spatial_distribution_rep );
 
   std::cout << std::endl;
@@ -50,9 +50,9 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCartesianDistribution )
   for( unsigned i = 0; i < 5; ++i )
   {
     Teuchos::Array<double> sampled_point( 3 );
-    
+
     distribution->sample( sampled_point.getRawPtr() );
-    
+
     std::cout << sampled_point << std::endl;
   }
 }
@@ -61,16 +61,16 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCartesianDistribution )
 // Check that all distributions of interest can be constructed from
 // parameter entries
 TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCylindricalDistribution )
-{  
-  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+{
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list =
     Teuchos::getParametersFromXmlFile( test_xml_file_name );
 
-  Teuchos::ParameterList spatial_distribution_rep = 
-    parameter_list->get<Teuchos::ParameterList>( 
+  Teuchos::ParameterList spatial_distribution_rep =
+    parameter_list->get<Teuchos::ParameterList>(
 					  "Cylindrical Distribution Example" );
 
-  std::shared_ptr<Utility::SpatialDistribution> distribution = 
-    Utility::SpatialDistributionFactory::createDistribution( 
+  std::shared_ptr<Utility::SpatialDistribution> distribution =
+    Utility::SpatialDistributionFactory::createDistribution(
 						    spatial_distribution_rep );
 
   TEST_ASSERT( distribution.get() );
@@ -79,9 +79,9 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCylindricalDistribution )
   for( unsigned i = 0; i < 5; ++i )
   {
     Teuchos::Array<double> sampled_point( 3 );
-    
+
     distribution->sample( sampled_point.getRawPtr() );
-    
+
     std::cout << sampled_point << std::endl;
   }
 }
@@ -90,27 +90,27 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createCylindricalDistribution )
 // Check that all distributions of interest can be constructed from
 // parameter entries
 TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createSphericalDistribution )
-{  
-  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+{
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list =
     Teuchos::getParametersFromXmlFile( test_xml_file_name );
 
-  Teuchos::ParameterList spatial_distribution_rep = 
-    parameter_list->get<Teuchos::ParameterList>( 
+  Teuchos::ParameterList spatial_distribution_rep =
+    parameter_list->get<Teuchos::ParameterList>(
 					  "Spherical Distribution Example" );
-  
-  std::shared_ptr<Utility::SpatialDistribution> distribution = 
-    Utility::SpatialDistributionFactory::createDistribution( 
+
+  std::shared_ptr<Utility::SpatialDistribution> distribution =
+    Utility::SpatialDistributionFactory::createDistribution(
 						    spatial_distribution_rep );
-  
+
   TEST_ASSERT( distribution.get() );
-  
+
   std::cout << std::endl;
   for( unsigned i = 0; i < 5; ++i )
   {
     Teuchos::Array<double> sampled_point( 3 );
-    
+
     distribution->sample( sampled_point.getRawPtr() );
-    
+
     std::cout << sampled_point << std::endl;
   }
 }
@@ -119,20 +119,20 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createSphericalDistribution )
 // Check that all distributions of interest can be constructed from
 // parameter entries
 TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createPointDistribution )
-{  
-  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+{
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list =
     Teuchos::getParametersFromXmlFile( test_xml_file_name );
 
-  Teuchos::ParameterList spatial_distribution_rep = 
-    parameter_list->get<Teuchos::ParameterList>( 
+  Teuchos::ParameterList spatial_distribution_rep =
+    parameter_list->get<Teuchos::ParameterList>(
 					  "Point Distribution Example" );
-  
-  std::shared_ptr<Utility::SpatialDistribution> distribution = 
-    Utility::SpatialDistributionFactory::createDistribution( 
+
+  std::shared_ptr<Utility::SpatialDistribution> distribution =
+    Utility::SpatialDistributionFactory::createDistribution(
 						    spatial_distribution_rep );
-  
+
   TEST_ASSERT( distribution.get() );
-  
+
   double position[3];
 
   distribution->sample( position );
@@ -149,7 +149,7 @@ int main( int argc, char** argv )
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_xml_file",

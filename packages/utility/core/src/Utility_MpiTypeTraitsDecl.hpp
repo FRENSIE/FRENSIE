@@ -18,7 +18,7 @@
 /*! \defgroup mpi_type_traits MPI Type Traits
  * \ingroup traits
  *
- * Attempting to use the class without a specialization will result in a 
+ * Attempting to use the class without a specialization will result in a
  * compile time error.
  */
 
@@ -34,7 +34,7 @@ struct MpiTypeTraits
   static MPI_Datatype getType( const T& )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 };
-  
+
 } // end Utility namespace
 
 #endif // end HAVE_FRENSIE_MPI

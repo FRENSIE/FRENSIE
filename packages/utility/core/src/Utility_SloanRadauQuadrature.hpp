@@ -27,7 +27,7 @@ class SloanRadauQuadrature
 public:
 
   //! Constructor
-  SloanRadauQuadrature( 
+  SloanRadauQuadrature(
             const std::vector<long_float>& legendre_expansion_moments );
 
   //! Destructor
@@ -58,7 +58,7 @@ public:
   void getLongRadauMoments( std::vector<long_float>& radau_moments ) const;
 
   // Evaulate the normalization ratio for the orthogonal polynomials, Q and x*Q
-  void evaluateOrthogonalNormalizationRatio( 
+  void evaluateOrthogonalNormalizationRatio(
         std::vector<long_float>& normalization_ratios,
         const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
         const std::vector<long_float>& normalization_factors_N,
@@ -66,38 +66,38 @@ public:
         const int i ) const;
 
   // Evaulate the ith mean coefficients for orthogonal polynomial recursion relation
-  long_float evaluateMeanCoefficient( 
+  long_float evaluateMeanCoefficient(
                      const std::vector<long_float>& normalization_ratios,
                      const int i ) const;
 
   // Evaulate the ith row of coefficients of the orthogonal polynomial Q
-  void evaluateOrthogonalCoefficients( 
+  void evaluateOrthogonalCoefficients(
         Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const int i ) const;
 
   // Evaulate the normalization factors, N_i for the orthogonal polynomial, Q
-  void evaluateOrthogonalNormalizationFactor( 
+  void evaluateOrthogonalNormalizationFactor(
         std::vector<long_float>& normalization_factors_N,
         const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
         const std::vector<long_float>& radau_moments,
         const int i ) const;
 
   // Evaulate the variance of the moments of the orthogonal polynomial, Q_i
-  long_float evaluateVariance( 
+  long_float evaluateVariance(
         const std::vector<long_float>& normalization_factors_N,
         const int i ) const;
 
   // Evaulate the nth orthogonal polynomial at x, Q_n(x)
-  long_float evaluateOrthogonalPolynomial( 
+  long_float evaluateOrthogonalPolynomial(
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
         const long_float x,
         const int i ) const;
 
   // Evaulate the roots of the nth orthogonal polynomial using the roots of the (n-1)th
-  bool evaluateOrthogonalRoots( 
+  bool evaluateOrthogonalRoots(
         Teuchos::TwoDArray<long_float>& roots,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& mean_coefficients,
@@ -105,15 +105,15 @@ public:
 
   // Estimate an extra (i+1)th mean coefficient for the ith orthogonal polynomial
   void estimateExtraMeanCoefficient(
-        std::vector<long_float>& mean_coefficients, 
+        std::vector<long_float>& mean_coefficients,
         const std::vector<long_float>& variances,
         const std::vector<long_float>& normalization_factors_N,
         const std::vector<long_float>& radau_moments,
-        const int i ) const;  
+        const int i ) const;
 
 private:
 
-// Moments of the Legendre expansion of weighting function f(x)             
+// Moments of the Legendre expansion of weighting function f(x)
 std::vector<long_float> d_legendre_expansion_moments;
 
 };

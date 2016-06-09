@@ -122,9 +122,9 @@ Geometric Entity Properties:
   *getCellMaterialIds
   *getCellDensities
 
-The initialize method is used to load the ROOT file and parse its properties 
+The initialize method is used to load the ROOT file and parse its properties
 and geometric information. It is recommended that one use
-PyFrensie.Geometry.ROOT.initializeRoot to load the geometry instead of 
+PyFrensie.Geometry.ROOT.initializeRoot to load the geometry instead of
 calling the initialize method directly. Once the geometry has been loaded one
 may ray trace on the geometry. This can be useful for debugging ray trace
 errors encountered while running Monte Carlo particle simulations. A brief
@@ -260,13 +260,13 @@ assigned densities.
 %feature("docstring")
 initializeRoot
 "
-This is the recommended way to initialize a ROOT geometry. The 
+This is the recommended way to initialize a ROOT geometry. The
 PyTrilinos.Teuchos.ParameterList object should store all of the ROOT file
 properties and the ROOT initialization options. A brief usage tutorial for
 this class is shown below:
 
   import PyFrensie.Geometry.Root, PyTrilinos.Teuchos, numpy
-  
+
   source = PyTrilinos.Teuchos.FileInputSource( 'my_geom_file.xml' )
   xml_obj = source.getObject()
   geom_init_list = PyTrilinos.Teuchos.XMLParameterListReader().toParameterList( xml_obj )

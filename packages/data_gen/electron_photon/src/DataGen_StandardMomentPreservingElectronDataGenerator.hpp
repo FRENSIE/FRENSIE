@@ -31,7 +31,7 @@ class StandardMomentPreservingElectronDataGenerator : public MomentPreservingEle
 public:
 
   //! Constructor
-  StandardMomentPreservingElectronDataGenerator( 
+  StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,

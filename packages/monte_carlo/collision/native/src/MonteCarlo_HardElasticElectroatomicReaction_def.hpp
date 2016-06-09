@@ -41,8 +41,8 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -57,11 +57,11 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
  *! section and the normalized screened rutherford cross section.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-double HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+double HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 						    const double energy ) const
 {
   double cross_section;
-  
+
   double processed_energy = InterpPolicy::processIndepVar( energy );
 
   // cutoff between tabular distribution and screened Rutherford
@@ -74,30 +74,30 @@ double HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::g
 std::cout << " d_cutoff_angle_cosine = " << d_cutoff_angle_cosine << std::endl;
 std::cout << " rutherford_cutoff = " << rutherford_cutoff << std::endl;
     screened_rutherford_ratio =
-      d_scattering_distribution->evaluateScreenedRutherfordCrossSectionRatio( 
+      d_scattering_distribution->evaluateScreenedRutherfordCrossSectionRatio(
                                         energy );
   }
   else
   {
     screened_rutherford_ratio = 0.0;
   }
-  
+
   if( energy >= this->getThresholdEnergy() &&
       processed_energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
   {
-    unsigned energy_index = 
+    unsigned energy_index =
       Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
 					      d_incoming_energy_grid.end(),
 					      processed_energy );
 
     unsigned cs_index = energy_index - d_threshold_energy_index;
 
-    double processed_slope = 
+    double processed_slope =
       (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
       (d_incoming_energy_grid[energy_index+1]-
        d_incoming_energy_grid[energy_index]);
 
-    cross_section = 
+    cross_section =
       InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
 				 processed_energy,
 				 d_cross_section[cs_index],
@@ -108,16 +108,16 @@ std::cout << " rutherford_cutoff = " << rutherford_cutoff << std::endl;
   else if( processed_energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
   {
 
-    cross_section = InterpPolicy::recoverProcessedDepVar( 
+    cross_section = InterpPolicy::recoverProcessedDepVar(
         				   d_cross_section[d_cross_section.size()-1] );
   }
   else // energy > max_energy_grid_pt
     cross_section = 0.0;
 
   // The hard elastic cross section must be normalized for scattering below the cutoff angle cosine
-  double cutoff_cdf = 
+  double cutoff_cdf =
         d_scattering_distribution->evaluateCDF( energy, d_cutoff_angle_cosine);
-    
+
 
   // Make sure the cross section is valid
   testPostcondition( cross_section >= 0.0 );
@@ -153,13 +153,13 @@ ElectroatomicReactionType HardElasticElectroatomicReaction<InterpPolicy,processe
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron, 
-                                              bank, 
+  d_scattering_distribution->scatterElectron( electron,
+                                              bank,
                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();

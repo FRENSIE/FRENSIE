@@ -31,13 +31,13 @@ Teuchos::RCP<Teuchos::ParameterList> parameter_list;
 //---------------------------------------------------------------------------//
 // Check that the distribution of interest can be constructed from parameter
 // entries
-TEUCHOS_UNIT_TEST( DirectionalDistributionFactory, 
+TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createDistribution_default_axis )
 {
-  Teuchos::ParameterList directional_distribution_rep = 
+  Teuchos::ParameterList directional_distribution_rep =
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution A" );
 
-  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution =
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
@@ -65,19 +65,19 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   UTILITY_TEST_FLOATING_EQUALITY( sampled_dir[1], 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sampled_dir[2], 1.0, 1e-14 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();    
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution of interest can be constructed from parameter
 // entries
-TEUCHOS_UNIT_TEST( DirectionalDistributionFactory, 
+TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createDistribution_specific )
 {
-  Teuchos::ParameterList directional_distribution_rep = 
+  Teuchos::ParameterList directional_distribution_rep =
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution B" );
 
-  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution =
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
@@ -110,10 +110,10 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createDistribution_default_theta_axis )
 {
-  Teuchos::ParameterList directional_distribution_rep = 
+  Teuchos::ParameterList directional_distribution_rep =
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution C" );
 
-  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution =
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
 
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   Teuchos::Array<double> sampled_dir( 3 );
-  
+
   distribution->sample( sampled_dir.getRawPtr() );
 
   UTILITY_TEST_FLOATING_EQUALITY( sampled_dir[0], 0.6189908924466622, 1e-15 );
@@ -145,20 +145,20 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 //---------------------------------------------------------------------------//
 // Check that the distribution of interest can be constructed from parameter
 // entries
-TEUCHOS_UNIT_TEST( DirectionalDistributionFactory, 
+TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createDistribution_monodirectional )
 {
-  Teuchos::ParameterList directional_distribution_rep = 
+  Teuchos::ParameterList directional_distribution_rep =
     parameter_list->get<Teuchos::ParameterList>("Directional Distribution D" );
 
-  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution =
     Utility::DirectionalDistributionFactory::createDistribution(
 						directional_distribution_rep );
-  
+
   TEST_ASSERT( distribution.get() );
 
   Teuchos::Array<double> sampled_dir( 3 );
-  
+
   distribution->sample( sampled_dir.getRawPtr() );
 
   TEST_FLOATING_EQUALITY( sampled_dir[0], 0.5773502691896258, 1e-15 );
@@ -171,7 +171,7 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
 		   createIsotropicDistribution )
 {
-  std::shared_ptr<Utility::DirectionalDistribution> distribution = 
+  std::shared_ptr<Utility::DirectionalDistribution> distribution =
     Utility::DirectionalDistributionFactory::createIsotropicDistribution();
 
   TEST_ASSERT( distribution.get() );
@@ -198,26 +198,26 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory,
   UTILITY_TEST_FLOATING_EQUALITY( sampled_dir[1], 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( sampled_dir[2], 1.0, 1e-14 );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();    
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
-{  
+{
   std::string test_xml_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_xml_file",
 		 &test_xml_file_name,
 		 "Test spatial distribution xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

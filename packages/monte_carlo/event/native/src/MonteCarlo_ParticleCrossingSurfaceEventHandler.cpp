@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_ParticleCrossingSurfaceEventHandler.cpp
 //! \author Alex Robinson
 //! \brief  Particle crossing surface event handler definition
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes

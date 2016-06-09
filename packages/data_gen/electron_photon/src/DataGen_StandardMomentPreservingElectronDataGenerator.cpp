@@ -20,7 +20,7 @@
 namespace DataGen{
 
 // Constructor
-StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronDataGenerator( 
+StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronDataGenerator(
     const unsigned atomic_number,
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
@@ -56,7 +56,7 @@ void StandardMomentPreservingElectronDataGenerator::populateMomentPreservingData
 }
 
 // Set the moment preserving electron data
-void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronData( 
+void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronData(
     Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const
 {
@@ -71,8 +71,8 @@ void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronD
 
   // Create the moment evaluator of the elastic scattering distribution
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
-  moments_evaluator.reset( 
-    new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data, 
+  moments_evaluator.reset(
+    new DataGen::ElasticElectronMomentsEvaluator( *d_native_eedl_data,
                                                   d_cutoff_angle_cosine ) );
 
   std::vector<double> discrete_angles, weights;
@@ -107,9 +107,9 @@ void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeig
   //int n = ( number_of_discrete_angles+1 )*2 + 2+10;
 
   // Get the discrete angles and weights
-  moments_evaluator->evaluateElasticMoment( legendre_moments, 
-                                            energy, 
-                                            n, 
+  moments_evaluator->evaluateElasticMoment( legendre_moments,
+                                            energy,
+                                            n,
                                             precision );
 
   // Use radau quadrature to find the discrete angles and weights from the moments

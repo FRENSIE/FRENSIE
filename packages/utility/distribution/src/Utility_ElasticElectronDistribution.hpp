@@ -34,26 +34,26 @@ public:
   //! Constructor for ENDL tables data
   ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
 		               const Teuchos::Array<double>& dependent_values,
-                       const double moliere_screening_constant, 
+                       const double moliere_screening_constant,
                        const double screened_rutherford_normalization_constant );
 
   //! Constructor for ACE tables data
   ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
 		               const Teuchos::Array<double>& dependent_values,
-                       const double energy, 
+                       const double energy,
                        const int atomic_number );
 
   //! Copy constructor
-  ElasticElectronDistribution( 
+  ElasticElectronDistribution(
 	       const ElasticElectronDistribution<InterpolationPolicy>& dist_instance );
 
   //! Assignment operator
-  ElasticElectronDistribution<InterpolationPolicy>& operator=( 
+  ElasticElectronDistribution<InterpolationPolicy>& operator=(
 	       const ElasticElectronDistribution<InterpolationPolicy>& dist_instance );
 
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;
-  
+
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
@@ -81,7 +81,7 @@ public:
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
-  
+
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
@@ -102,7 +102,7 @@ public:
 
   //! Return Moliere's screening constant
   double getMoliereScreeningConstant() const;
- 
+
   //! Return the normalization constant for the screened Rutherford component of the distribution
   double getScreenedRutherfordNormalizationConstant() const;
 
@@ -127,10 +127,10 @@ private:
                         const double& second_cdf );
 
   // The distribution type
-  static const OneDDistributionType distribution_type = 
+  static const OneDDistributionType distribution_type =
                                         ELASTIC_ELECTRON_DISTRIBUTION;
 
-  // The distribution (first = indep_var, second = cdf, third = pdf, 
+  // The distribution (first = indep_var, second = cdf, third = pdf,
   // fourth = slope)
   typedef Teuchos::Array<Quad<double,double,double,double> > DistributionArray;
   DistributionArray d_distribution;
@@ -149,7 +149,7 @@ private:
 
   // Moliere's screening constant
   double d_moliere_screening_constant;
- 
+
   // The normalization constant for the screened Rutherford component of the distribution
   double d_screened_rutherford_normalization_constant;
 
@@ -177,10 +177,10 @@ public:
   {
     std::ostringstream iss;
     iss << "Elastic Electron " << InterpolationPolicy::name() << " Distribution";
-    
+
     return iss.str();
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 	    const Utility::ElasticElectronDistribution<InterpolationPolicy>& instance )
   {
     return name();

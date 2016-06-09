@@ -41,7 +41,7 @@ double upper_cutoff_energy, lower_cutoff_energy;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_DipoleBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
@@ -51,8 +51,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function 
-  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 0.0009;
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   // sample dipole_distribution
   dipole_distribution->sample( incoming_energy,
-                               photon_energy, 
+                               photon_energy,
                                photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function for a dipole distribution
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_DipoleBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
@@ -82,16 +82,16 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // Correlated sample the 7.94968E-04 MeV and 1.18921E-02 MeV distributions
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function 
-  
+  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 10;
   double incoming_energy = 0.0009;
   double photon_energy, photon_angle_cosine;
 
-  dipole_distribution->sampleAndRecordTrials( incoming_energy, 
-                                              photon_energy, 
+  dipole_distribution->sampleAndRecordTrials( incoming_energy,
+                                              photon_energy,
                                               photon_angle_cosine,
                                               trials );
 
@@ -99,12 +99,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
   TEST_FLOATING_EQUALITY( photon_energy, 1.51455974406695E-05, 1e-12 );
   TEST_FLOATING_EQUALITY( photon_angle_cosine, 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 ); 
+  TEST_EQUALITY_CONST( trials, 11 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sample() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sample_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
@@ -120,14 +120,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
   fake_stream[4] = 0.48; // Accept the angle
 
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
-  twobs_distribution->sample( incoming_energy, 
-                              photon_energy, 
+  twobs_distribution->sample( incoming_energy,
+                              photon_energy,
                               photon_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function using detailed 2BS
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory, 
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
                    sampleAndRecordTrials_TwoBSBremsstrahlung )
 {
   MonteCarlo::BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
@@ -154,15 +154,15 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
   fake_stream[3] = 0.5; // Sample a photon angle of 0.9118675275
   fake_stream[4] = 0.48; // Accept the angle
 
- 
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   unsigned trials = 0.0;
   double incoming_energy = 1.0;
   double photon_energy, photon_angle_cosine;
 
-  twobs_distribution->sampleAndRecordTrials( incoming_energy, 
-                                             photon_energy, 
+  twobs_distribution->sampleAndRecordTrials( incoming_energy,
+                                             photon_energy,
                                              photon_angle_cosine,
                                              trials );
 
@@ -180,27 +180,27 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistributionNativeFactory,
 int main( int argc, char** argv )
 {
   std::string test_native_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_native_file",
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
 
   upper_cutoff_energy = 1000;
@@ -208,7 +208,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -221,7 +221,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  					    
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -40,8 +40,8 @@ Teuchos::RCP<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>
 TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 		   evaluateDifferentialCrossSection )
 {
-  
-  double diff_cross_section = 
+
+  double diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
 						    1.584900000000E-05 );
 
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 				  6.582854525864990E+11,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
 						    7.054100000000E-05 );
 
@@ -57,15 +57,15 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 				  6.582854525864990E+11,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
 						    1.009140000000E-03 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
 				  9.362881076230510E+05,
 				  1e-12 );
-				  
-  diff_cross_section = 
+
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
 						    3.154110000000E-02 );
 
@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 				  2.802751399940720E+03,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
 						    1.042750000000E+01 );
 
@@ -81,13 +81,13 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 				  1.959197477405080E-03,
 				  1e-12 );
 
-  diff_cross_section = 
+  diff_cross_section =
     adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
 						    9.999999510161E+04 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
 				  9.534573269680380E+03,
-				  1e-12 );				  				  
+				  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -96,22 +96,22 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 		   evaluateCrossSection )
 {/*
   double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 1e-4);
-  
-  
-  
+
+
+
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
 				  2.050,
   				  1e-15 );
 
-  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001,
   						      0.0010039292814978508 );
 
-  
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
+
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
 				  8.523,
   				  1e-15 );
   				  */
@@ -123,19 +123,19 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 		   getMaxEnergyAtEnergy_h )
 {
   double max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 1.0 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
 				  1e5,
   				  1e-15 );
 
   max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 1e-8 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
 				  1.416970000000E-05		,
   				  1e-15 );
 
   max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 0.00000000279860 );
-  
+
   UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
 				  0.0,
   				  1e-15 );
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
@@ -157,10 +157,10 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -175,7 +175,7 @@ int main( int argc, char** argv )
 							   1u ) );
 
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-				new Data::XSSEPRDataExtractor( 
+				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -185,9 +185,9 @@ int main( int argc, char** argv )
   energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
 
   // Extract the subshell information
-  Teuchos::ArrayView<const double> subshell_endf_designators = 
+  Teuchos::ArrayView<const double> subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
-    
+
   // Extract the subshell binding energies
   Teuchos::ArrayView<const double> binding_energies =
     xss_data_extractor->extractSubshellBindingEnergies();
@@ -203,7 +203,7 @@ int main( int argc, char** argv )
 
   // Extract the number of subshells (N_s)
   unsigned num_subshells = subshell_order.size();
-  
+
   // Extract the number of points in the energy grid
   unsigned num_energy_points = energy_grid.size();
 
@@ -239,13 +239,13 @@ int main( int argc, char** argv )
   unsigned subshell_loc = table_loc[first_subshell]- eion_loc - 1;
 
 
-  // Subshell cross section without zeros removed  
+  // Subshell cross section without zeros removed
   Teuchos::ArrayView<const double> raw_subshell_cross_section =
   raw_subshell_cross_sections( first_subshell*num_energy_points,num_energy_points );
 
   // Electroionization cross section with zeros removed
   Teuchos::ArrayRCP<double> subshell_cross_section;
-  
+
   // Index of first non zero cross section in the energy grid
   unsigned threshold_energy_index;
 
@@ -256,29 +256,29 @@ int main( int argc, char** argv )
                            subshell_cross_section,
                            threshold_energy_index );
 /*
-  // Subshell distribution 
+  // Subshell distribution
   DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator::ElectroionizationSubshellDistribution
              subshell_distribution( num_tables[first_subshell] );
 
   // Create the subshell distribution
-  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSubshellDistribution( 
+  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSubshellDistribution(
         subshell_info,
         subshell_loc,
         num_tables[first_subshell],
 	eion_block,
 	subshell_distribution );
- 
+
   // The electroionization subshell distribution
   Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     electroionization_subshell_distribution;
-    
-  electroionization_subshell_distribution.reset( 
-    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
-                                subshell_distribution, 
+
+  electroionization_subshell_distribution.reset(
+    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
+                                subshell_distribution,
                                 binding_energies[first_subshell] ) );
-*/                                                    
+*/
     // Create the electroionization subshell distribution
-   
+
   // The electroionization subshell distribution
   Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     electroionization_subshell_distribution;
@@ -319,7 +319,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -17,7 +17,7 @@
 #include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
-  
+
 //! The electroatomic reaction type enum.
 enum ElectroatomicReactionType{
   TOTAL_ELECTROATOMIC_REACTION = 1,
@@ -71,7 +71,7 @@ enum ElectroatomicReactionType{
 };
 
 //! Convert a ElectroatomicReactionType enum to a string
-std::string convertElectroatomicReactionEnumToString( 
+std::string convertElectroatomicReactionEnumToString(
 				      const ElectroatomicReactionType reaction );
 
 //! Convert a Data::SubshellType enum to a ElectroatomicReactionType enum

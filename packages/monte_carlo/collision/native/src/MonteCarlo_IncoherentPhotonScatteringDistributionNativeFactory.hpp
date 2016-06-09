@@ -27,7 +27,7 @@
 
 namespace MonteCarlo{
 
-/*! The incoherent photon scattering distribution factory class that uses 
+/*! The incoherent photon scattering distribution factory class that uses
  * native data.
  */
 class IncoherentPhotonScatteringDistributionNativeFactory : public IncoherentPhotonScatteringDistributionFactory
@@ -36,7 +36,7 @@ class IncoherentPhotonScatteringDistributionNativeFactory : public IncoherentPho
 public:
 
   //! Create an incoherent distribution
-  static void createDistribution( 
+  static void createDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
@@ -51,15 +51,15 @@ protected:
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy );			       
-  
+	 const double kahn_sampling_cutoff_energy );
+
   //! Create a Doppler broadened hybrid incoherent distribution
   static void createDopplerBroadenedHybridDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
     const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_dist,
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-    incoherent_distribution,     
+    incoherent_distribution,
     const double kahn_sampling_cutoff_energy );
 
   //! Create a subshell incohrent distribution
@@ -69,7 +69,7 @@ protected:
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy );
-  
+
   //! Create a Doppler broadened subshell incoherent distribution
   static void createDopplerBroadenedSubshellDistribution(
     const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
@@ -81,9 +81,9 @@ protected:
     const double kahn_sampling_cutoff_energy );
 
 private:
-  
+
   //! Create the scattering function
-  static void createScatteringFunction( 
+  static void createScatteringFunction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        std::shared_ptr<const ScatteringFunction>& scattering_function );
 };

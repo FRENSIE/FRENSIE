@@ -17,20 +17,20 @@
 namespace Utility{
 
 // Create the spatial distribution represented by the parameter list
-std::shared_ptr<SpatialDistribution> 
-SpatialDistributionFactory::createDistribution( 
+std::shared_ptr<SpatialDistribution>
+SpatialDistributionFactory::createDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   // Validate the distribution representation
   SpatialDistributionFactory::validateDistributionRep( distribution_rep );
-  
+
   // Create a cartesian spatial distribution
   if( distribution_rep.isParameter( "X Distribution" ) )
   {
-    return SpatialDistributionFactory::createCartesianDistribution( 
+    return SpatialDistributionFactory::createCartesianDistribution(
 							    distribution_rep );
   }
-  
+
   // Create a cylindrical spatial distribution
   else if( distribution_rep.isParameter( "Axis Distribution" ) )
   {
@@ -54,11 +54,11 @@ SpatialDistributionFactory::createDistribution(
 }
 
 // Validate the distribution representation
-void SpatialDistributionFactory::validateDistributionRep( 
+void SpatialDistributionFactory::validateDistributionRep(
 			       const Teuchos::ParameterList& distribution_rep )
 {
   bool valid_distribution = false;
-  
+
   // Make sure a valid cartesian distribution has been specified
   if( distribution_rep.isParameter( "X Distribution" ) )
   {
@@ -68,7 +68,7 @@ void SpatialDistributionFactory::validateDistributionRep(
 			InvalidSpatialDistributionRepresentation,
 			"Error: A cartesian spatial distribution needs to "
 			"have the x, y, and z distributions specified!" );
-    
+
     TEST_FOR_EXCEPTION( distribution_rep.numParams() != 3,
 			InvalidSpatialDistributionRepresentation,
 			"Error: Three 1D distributions must be specified for "
@@ -151,7 +151,7 @@ void SpatialDistributionFactory::validateDistributionRep(
 			"Error: Three 1D distributions, the center "
 			"coordinates and the axis must be specified for "
 			"a spherical spatial distribution!" );
-    
+
     valid_distribution = true;
   }
 
@@ -167,85 +167,85 @@ void SpatialDistributionFactory::validateDistributionRep(
 }
 
 // Validate the axis name
-void SpatialDistributionFactory::validateAxisName( 
+void SpatialDistributionFactory::validateAxisName(
 						 const std::string& axis_name )
 {
   TEST_FOR_EXCEPTION( !isValidAxisName( axis_name ),
 		      InvalidSpatialDistributionRepresentation,
-		      "Error: An invalid axis was specified (" 
+		      "Error: An invalid axis was specified ("
 		      << axis_name << "). Only 'X', 'Y', and 'Z' are valid "
 		      " names!" );
 }
 
 // Create a cartesian distribution
-std::shared_ptr<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution>
 SpatialDistributionFactory::createCartesianDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
-  Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
+  Teuchos::RCP<const Teuchos::ParameterEntry> entry =
     distribution_rep.getEntryRCP( "X Distribution" );
-  
-  std::shared_ptr<OneDDistribution> x_distribution = 
+
+  std::shared_ptr<OneDDistribution> x_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Y Distribution" );
-  
-  std::shared_ptr<OneDDistribution> y_distribution = 
+
+  std::shared_ptr<OneDDistribution> y_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Z Distribution" );
-  
-  std::shared_ptr<OneDDistribution> z_distribution = 
+
+  std::shared_ptr<OneDDistribution> z_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
   distribution_rep.unused( std::cout );
-  
-  return std::shared_ptr<SpatialDistribution>( 
+
+  return std::shared_ptr<SpatialDistribution>(
 			  new CartesianSpatialDistribution( x_distribution,
 							    y_distribution,
 							    z_distribution ) );
 }
 
 // Create a cylindrical distribution
-std::shared_ptr<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution>
 SpatialDistributionFactory::createCylindricalDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
-  Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
+  Teuchos::RCP<const Teuchos::ParameterEntry> entry =
     distribution_rep.getEntryRCP( "R Distribution" );
 
-  std::shared_ptr<OneDDistribution> r_distribution = 
+  std::shared_ptr<OneDDistribution> r_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Theta Distribution" );
-  
-  std::shared_ptr<OneDDistribution> theta_distribution = 
+
+  std::shared_ptr<OneDDistribution> theta_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Axis Distribution" );
-  
-  std::shared_ptr<OneDDistribution> axis_distribution = 
+
+  std::shared_ptr<OneDDistribution> axis_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
-  double center_x_position = 
-    distribution_rep.get<double>( "Center X Position" );  
-  
-  double center_y_position = 
-    distribution_rep.get<double>( "Center Y Position" );  
-  
-  double center_z_position = 
-    distribution_rep.get<double>( "Center Z Position" );  
-  
-  std::string axis_name = 
+
+  double center_x_position =
+    distribution_rep.get<double>( "Center X Position" );
+
+  double center_y_position =
+    distribution_rep.get<double>( "Center Y Position" );
+
+  double center_z_position =
+    distribution_rep.get<double>( "Center Z Position" );
+
+  std::string axis_name =
     distribution_rep.get<std::string>( "Axis" );
-  
+
   SpatialDistributionFactory::validateAxisName( axis_name );
-  
+
   Axis axis = convertAxisNameToAxisEnum( axis_name );
-  
+
   distribution_rep.unused( std::cout );
 
-  return std::shared_ptr<SpatialDistribution>( 
+  return std::shared_ptr<SpatialDistribution>(
 			new CylindricalSpatialDistribution( r_distribution,
 						            theta_distribution,
 							    axis_distribution,
@@ -256,45 +256,45 @@ SpatialDistributionFactory::createCylindricalDistribution(
 }
 
 // Create a spherical distribution
-std::shared_ptr<Utility::SpatialDistribution> 
+std::shared_ptr<Utility::SpatialDistribution>
 SpatialDistributionFactory::createSphericalDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
-  Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
+  Teuchos::RCP<const Teuchos::ParameterEntry> entry =
     distribution_rep.getEntryRCP( "R Distribution" );
-  
-  std::shared_ptr<OneDDistribution> r_distribution = 
+
+  std::shared_ptr<OneDDistribution> r_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Theta Distribution" );
-  
-  std::shared_ptr<OneDDistribution> theta_distribution = 
+
+  std::shared_ptr<OneDDistribution> theta_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
+
   entry = distribution_rep.getEntryRCP( "Mu Distribution" );
-  
-  std::shared_ptr<OneDDistribution> mu_distribution = 
+
+  std::shared_ptr<OneDDistribution> mu_distribution =
     OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-  
-  double center_x_position = 
-    distribution_rep.get<double>( "Center X Position" );  
-  
-  double center_y_position = 
-    distribution_rep.get<double>( "Center Y Position" );  
-  
-  double center_z_position = 
-    distribution_rep.get<double>( "Center Z Position" );  
-  
-  std::string axis_name = 
+
+  double center_x_position =
+    distribution_rep.get<double>( "Center X Position" );
+
+  double center_y_position =
+    distribution_rep.get<double>( "Center Y Position" );
+
+  double center_z_position =
+    distribution_rep.get<double>( "Center Z Position" );
+
+  std::string axis_name =
     distribution_rep.get<std::string>( "Axis" );
-  
+
   SpatialDistributionFactory::validateAxisName( axis_name );
-  
+
   Axis axis = convertAxisNameToAxisEnum( axis_name );
-  
+
   distribution_rep.unused( std::cout );
 
-  return std::shared_ptr<SpatialDistribution>( 
+  return std::shared_ptr<SpatialDistribution>(
 			  new SphericalSpatialDistribution( r_distribution,
 							    theta_distribution,
 							    mu_distribution,
@@ -306,10 +306,10 @@ SpatialDistributionFactory::createSphericalDistribution(
 
 // Create a point distribution
 std::shared_ptr<Utility::SpatialDistribution>
-SpatialDistributionFactory::createPointDistribution( 
+SpatialDistributionFactory::createPointDistribution(
 			       const Teuchos::ParameterList& distribution_rep )
 {
-  Teuchos::Array<double> position = 
+  Teuchos::Array<double> position =
     distribution_rep.get<Teuchos::Array<double> >( "Position" );
 
   TEST_FOR_EXCEPTION( position.size() != 3,

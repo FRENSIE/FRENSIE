@@ -34,7 +34,7 @@ class MomentPreservingElectronDataContainer : public Utility::StandardArchivable
 public:
 
   //! Constructor (from saved archive)
-  MomentPreservingElectronDataContainer( 
+  MomentPreservingElectronDataContainer(
 		  const std::string& archive_name,
                   const Utility::ArchivableObject::ArchiveType archive_type =
 		  Utility::ArchivableObject::XML_ARCHIVE );
@@ -67,11 +67,11 @@ public:
   const std::vector<double>& getElectronEnergyGrid() const;
 
   //! Return the Moment Preserving (MP) moment preserving electron cross section
-  const std::vector<double>& 
+  const std::vector<double>&
   getMomentPreservingMomentPreservingCrossSection() const;
 
   //! Return the MP moment preserving cross section threshold energy bin index
-  unsigned 
+  unsigned
   getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const;
 */
 protected:
@@ -82,16 +82,16 @@ protected:
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
-  
+
   //! Set the elastic cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
   //! Set the elastic angular energy grid
-  void setElasticAngularEnergyGrid( 
+  void setElasticAngularEnergyGrid(
             const std::vector<double>& angular_energy_grid );
 
   //! Set the number of discrete angles for an angular energy bin
-  void setNumberOfDiscreteAngles( 
+  void setNumberOfDiscreteAngles(
              const unsigned angular_energy_bin,
              const unsigned number_of_discrete_angles );
 
@@ -101,7 +101,7 @@ protected:
 		     const std::vector<double>& moment_preserving_elastic_discrete_angles );
 
   //! Set the moment preserving weights for an angular energy bin
-  void setMomentPreservingWeights( 
+  void setMomentPreservingWeights(
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& moment_preserving_elastic_weights );
   /*
@@ -116,7 +116,7 @@ protected:
   void setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
 */
-  
+
 private:
 
   // Test if a value is less than or equal to zero
@@ -134,7 +134,7 @@ private:
   // Save the data to an archive
   template<typename Archive>
   void save( Archive& ar, const unsigned version ) const;
-  
+
   // Load the data from an archive
   template<typename Archive>
   void load( Archive& ar, const unsigned version );

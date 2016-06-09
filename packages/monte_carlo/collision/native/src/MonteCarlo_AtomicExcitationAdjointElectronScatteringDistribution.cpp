@@ -24,13 +24,13 @@ AtomicExcitationAdjointElectronScatteringDistribution::AtomicExcitationAdjointEl
 	      const AtomicDistribution& energy_gain_distribution )
   : //d_max_energy( max_energy ),
     d_energy_gain_distribution( energy_gain_distribution )
-{  
+{
   // Make sure the array is valid
   testPrecondition( !d_energy_gain_distribution.is_null() );
 }
 
 // Sample an outgoing energy and direction from the distribution
-void AtomicExcitationAdjointElectronScatteringDistribution::sample( 
+void AtomicExcitationAdjointElectronScatteringDistribution::sample(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine ) const
@@ -46,7 +46,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrials( 
+void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrials(
              const double incoming_energy,
              double& outgoing_energy,
              double& scattering_angle_cosine,
@@ -58,11 +58,11 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrial
   // Sample an outgoing direction
   this->sample( incoming_energy,
                 outgoing_energy,
-                scattering_angle_cosine ); 
+                scattering_angle_cosine );
 }
 
 // Randomly scatter the adjoint electron
-void AtomicExcitationAdjointElectronScatteringDistribution::scatterAdjointElectron( 
+void AtomicExcitationAdjointElectronScatteringDistribution::scatterAdjointElectron(
                       AdjointElectronState& adjoint_electron,
                       ParticleBank& bank,
                       Data::SubshellType& shell_of_interaction ) const
@@ -74,7 +74,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::scatterAdjointElectr
   this->sample( adjoint_electron.getEnergy(),
                 outgoing_energy,
                 scattering_angle_cosine );
-  
+
   // Set the new energy
   adjoint_electron.setEnergy( outgoing_energy );
 }

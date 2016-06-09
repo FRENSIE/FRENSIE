@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_GaussKronrodQuadratureSetTraits.cpp
 //! \author Luke Kersting
-//! \brief  Gauss-Kronrod quadrature set traits 
+//! \brief  Gauss-Kronrod quadrature set traits
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,12 +12,12 @@
 namespace Utility{
 
     /******************* 15 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::gauss_weights =
         GaussKronrodQuadratureSetTraits<15>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<15>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -26,7 +26,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<15>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(4);
         gauss_weights[0] = (long_float)0.129484966168869693270611432679082L;
         gauss_weights[1] = (long_float)0.279705391489276667901467771423780L;
@@ -70,12 +70,12 @@ namespace Utility{
 
 
     /******************* 21 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::gauss_weights =
         GaussKronrodQuadratureSetTraits<21>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<21>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -84,7 +84,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<21>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(5);
         gauss_weights[0] = (long_float)0.066671344308688137593568809893332L;
         gauss_weights[1] = (long_float)0.149451349150580593145776339657697L;
@@ -135,12 +135,12 @@ namespace Utility{
 
 
     /******************* 31 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::gauss_weights =
         GaussKronrodQuadratureSetTraits<31>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<31>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -149,7 +149,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<31>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(8);
         gauss_weights[0] = (long_float)0.030753241996117268354628393577204L;
         gauss_weights[1] = (long_float)0.070366047488108124709267416450667L;
@@ -213,12 +213,12 @@ namespace Utility{
 
 
     /******************* 41 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::gauss_weights =
         GaussKronrodQuadratureSetTraits<41>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<41>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -227,7 +227,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<41>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(10);
         gauss_weights[0] = (long_float)0.017614007139152118311861962351853L;
         gauss_weights[1] = (long_float)0.040601429800386941331039952274932L;
@@ -303,12 +303,12 @@ namespace Utility{
 
 
     /******************* 51 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::gauss_weights =
         GaussKronrodQuadratureSetTraits<51>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<51>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -317,7 +317,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<51>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(13);
         gauss_weights[0] = (long_float)0.011393798501026287947902964113235L;
         gauss_weights[1] = (long_float)0.026354986615032137261901815295299L;
@@ -406,12 +406,12 @@ namespace Utility{
 
 
     /******************* 61 point rule *******************/
-    // Gauss quadrature weights 
+    // Gauss quadrature weights
     const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::gauss_weights =
         GaussKronrodQuadratureSetTraits<61>::initializeGaussWeights();
-    
-    // Kronrad quadrature weights 
-    const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::kronrod_weights = 
+
+    // Kronrad quadrature weights
+    const std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::kronrod_weights =
         GaussKronrodQuadratureSetTraits<61>::initializeKronrodWeights();
 
     // Kronrad quadrature abscissae
@@ -420,7 +420,7 @@ namespace Utility{
 
     // Initialize the gauss weight array
     std::vector<long_float> GaussKronrodQuadratureSetTraits<61>::initializeGaussWeights()
-    { 
+    {
         std::vector<long_float> gauss_weights(15);
         gauss_weights[0] = (long_float)0.007968192496166605615465883474674L;
         gauss_weights[1] = (long_float)0.018466468311090959142302131912047L;

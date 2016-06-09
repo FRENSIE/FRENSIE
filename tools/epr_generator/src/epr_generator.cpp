@@ -2,7 +2,7 @@
 //!
 //! \file   epr_generator.cpp
 //! \author Alex Robinson, Luke Kersting
-//! \brief  epr_generator tool 
+//! \brief  epr_generator tool
 //!
 //---------------------------------------------------------------------------//
 
@@ -31,10 +31,10 @@
 
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<const DataGen::ElectronPhotonRelaxationDataGenerator> 
+  Teuchos::RCP<const DataGen::ElectronPhotonRelaxationDataGenerator>
     epr_generator;
-  
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -118,14 +118,14 @@ int main( int argc, char** argv )
   std::string cross_sections_xml_file = cross_section_directory;
   cross_sections_xml_file += "/cross_sections.xml";
 
-  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
   std::string data_file_path, data_file_type, data_table_name;
   int data_file_start_line, atomic_number;
   double atomic_weight;
-    
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList( 
+
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
@@ -134,7 +134,7 @@ int main( int argc, char** argv )
 						    data_table_name,
 						    data_file_start_line,
 						    atomic_weight );
-  
+
   // Create the data generator
   if( data_file_type == "ACE" )
   {
@@ -142,13 +142,13 @@ int main( int argc, char** argv )
 					   data_table_name,
 					   data_file_start_line,
 					   true );
-    
+
     Teuchos::RCP<const Data::XSSEPRDataExtractor> ace_epr_extractor(
 				new const Data::XSSEPRDataExtractor(
 				       ace_file_handler.getTableNXSArray(),
 				       ace_file_handler.getTableJXSArray(),
 				       ace_file_handler.getTableXSSArray() ) );
-    
+
     atomic_number = ace_epr_extractor->extractAtomicNumber();
 
     std::ostringstream oss;
@@ -163,16 +163,16 @@ int main( int argc, char** argv )
 */
 std::cout << "endl_file_path = " << endl_file_path << std::endl;
 
-    Teuchos::RCP<Data::ENDLDataContainer> endl_data_container( 
-        new Data::ENDLDataContainer( 
+    Teuchos::RCP<Data::ENDLDataContainer> endl_data_container(
+        new Data::ENDLDataContainer(
             endl_file_path,
             Utility::ArchivableObject::XML_ARCHIVE ) );
 
-    epr_generator.reset( 
-	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator( 
+    epr_generator.reset(
+	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator(
 					    atomic_number,
 					    ace_epr_extractor,
-                        endl_data_container,    
+                        endl_data_container,
 					    min_photon_energy,
 					    max_photon_energy,
 					    min_electron_energy,
@@ -207,41 +207,41 @@ std::cout << "endl_file_path = " << endl_file_path << std::endl;
     new_file_name = cross_section_directory;
     new_file_name += "/";
     new_file_name += oss.str();
-    
+
     std::string new_cross_section_alias( cross_section_alias );
     new_cross_section_alias += "-Native";
 
-    Teuchos::ParameterList& old_table_info = 
+    Teuchos::ParameterList& old_table_info =
       cross_sections_table_info->sublist( cross_section_alias );
-    
-    Teuchos::ParameterList& new_table_info = 
+
+    Teuchos::ParameterList& new_table_info =
       cross_sections_table_info->sublist( new_cross_section_alias );
 
     new_table_info.setParameters( old_table_info );
-    
-    new_table_info.set( 
+
+    new_table_info.set(
 	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop,
 	    oss.str() );
-    new_table_info.set( 
+    new_table_info.set(
 	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop,
 	    MonteCarlo::CrossSectionsXMLProperties::native_file );
-    new_table_info.set( 
+    new_table_info.set(
       MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
       -1 );
-    new_table_info.set( 
+    new_table_info.set(
 	   MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
 	   "" );
 
-    new_table_info.set( 
+    new_table_info.set(
 	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
 	    oss.str() );
-    new_table_info.set( 
+    new_table_info.set(
 	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
 	    MonteCarlo::CrossSectionsXMLProperties::native_file );
-    new_table_info.set( 
+    new_table_info.set(
       MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
       -1 );
-    new_table_info.set( 
+    new_table_info.set(
 	   MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
 	   "" );
 
@@ -250,10 +250,10 @@ std::cout << "endl_file_path = " << endl_file_path << std::endl;
   }
   else
     new_file_name = oss.str();
-  
+
   data_container.exportData( new_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
-									      
+
   return 0;
 }
 

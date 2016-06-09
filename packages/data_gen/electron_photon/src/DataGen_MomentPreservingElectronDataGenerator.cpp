@@ -22,11 +22,11 @@ MomentPreservingElectronDataGenerator::MomentPreservingElectronDataGenerator(
 }
 
 // Set the atomic number
-void MomentPreservingElectronDataGenerator::setAtomicNumber( 
+void MomentPreservingElectronDataGenerator::setAtomicNumber(
 			   Data::MomentPreservingElectronVolatileDataContainer&
 			   data_container ) const
 {
-  data_container.setAtomicNumber( d_atomic_number ); 
+  data_container.setAtomicNumber( d_atomic_number );
 }
 
 // Get the atomic number
@@ -34,7 +34,7 @@ unsigned MomentPreservingElectronDataGenerator::getAtomicNumber() const
 {
   return d_atomic_number;
 }
-			    
+
 
 } // end DataGen
 

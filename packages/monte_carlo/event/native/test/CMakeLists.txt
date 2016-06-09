@@ -74,14 +74,14 @@ IF(${FRENSIE_ENABLE_OPENMP})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  Add_EXECUTABLE(tstDistributedEntityEstimator 
+  Add_EXECUTABLE(tstDistributedEntityEstimator
     tstDistributedEntityEstimator.cpp)
   TARGET_LINK_LIBRARIES(tstDistributedEntityEstimator monte_carlo_estimator_native)
-  ADD_TEST(DistributedParallelEntityEstimator_1_test 
+  ADD_TEST(DistributedParallelEntityEstimator_1_test
     ${MPIEXEC} -n 1 tstDistributedEntityEstimator)
-  ADD_TEST(DistributedParallelEntityEstimator_2_test 
+  ADD_TEST(DistributedParallelEntityEstimator_2_test
     ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
-  ADD_TEST(DistributedParallelEntityEstimator_4_test 
+  ADD_TEST(DistributedParallelEntityEstimator_4_test
     ${MPIEXEC} -n 4 tstDistributedEntityEstimator)
   SET_PROPERTY(TEST DistributedParallelEntityEstimator_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
   SET_PROPERTY(TEST DistributedParallelEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
@@ -94,23 +94,23 @@ ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
 SET_PROPERTY(TEST StandardEntityEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelStandardEntityEstimator_2_test 
+  ADD_TEST(SharedParallelStandardEntityEstimator_2_test
     tstStandardEntityEstimator --threads=2)
-  ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
+  ADD_TEST(SharedParallelStandardEntityEstimator_4_test
     tstStandardEntityEstimator --threads=4)
   SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  Add_EXECUTABLE(tstDistributedStandardEntityEstimator 
+  Add_EXECUTABLE(tstDistributedStandardEntityEstimator
     tstDistributedStandardEntityEstimator.cpp)
   TARGET_LINK_LIBRARIES(tstDistributedStandardEntityEstimator monte_carlo_estimator_native)
-  ADD_TEST(DistributedParallelStandardEntityEstimator_1_test 
+  ADD_TEST(DistributedParallelStandardEntityEstimator_1_test
     ${MPIEXEC} -n 1 tstDistributedStandardEntityEstimator)
-  ADD_TEST(DistributedParallelStandardEntityEstimator_2_test 
+  ADD_TEST(DistributedParallelStandardEntityEstimator_2_test
     ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
-  ADD_TEST(DistributedParallelStandardEntityEstimator_4_test 
+  ADD_TEST(DistributedParallelStandardEntityEstimator_4_test
     ${MPIEXEC} -n 4 tstDistributedStandardEntityEstimator)
   SET_PROPERTY(TEST DistributedParallelStandardEntityEstimator_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
   SET_PROPERTY(TEST DistributedParallelStandardEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
@@ -154,9 +154,9 @@ ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
 SET_PROPERTY(TEST CellPulseHeightEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelCellPulseHeightEstimator_2_test 
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_2_test
     tstCellPulseHeightEstimator --threads=2)
-  ADD_TEST(SharedParallelCellPulseHeightEstimator_4_test 
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_4_test
     tstCellPulseHeightEstimator --threads=4)
   SET_PROPERTY(TEST SharedParallelCellPulseHeightEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelCellPulseHeightEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
@@ -176,9 +176,9 @@ ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
 SET_PROPERTY(TEST CellCollisionFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test 
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test
     tstCellCollisionFluxEstimator --threads=2)
-  ADD_TEST(SharedParallelCellCollisionFluxEstimator_4_test 
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_4_test
     tstCellCollisionFluxEstimator --threads=4)
   SET_PROPERTY(TEST SharedParallelCellCollisionFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelCellCollisionFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
@@ -191,9 +191,9 @@ ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
 SET_PROPERTY(TEST CellTrackLengthFluxEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test 
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test
     tstCellTrackLengthFluxEstimator --threads=2)
-  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4_test 
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4_test
     tstCellTrackLengthFluxEstimator --threads=4)
   SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelCellTrackLengthFluxEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
@@ -319,23 +319,23 @@ ADD_TEST(EventHandler_test tstEventHandler --test_input_mesh_file_name="${CMAKE_
 SET_PROPERTY(TEST EventHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelEventHandler_2_test 
+  ADD_TEST(SharedParallelEventHandler_2_test
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
-  ADD_TEST(SharedParallelEventHandler_4_test 
+  ADD_TEST(SharedParallelEventHandler_4_test
     tstEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
   SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
   SET_PROPERTY(TEST SharedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
-  Add_EXECUTABLE(tstDistributedEventHandler 
+  Add_EXECUTABLE(tstDistributedEventHandler
     tstDistributedEventHandler.cpp)
   TARGET_LINK_LIBRARIES(tstDistributedEventHandler monte_carlo_estimator_native ${MOAB})
-  ADD_TEST(DistributedParallelEventHandler_1_test 
+  ADD_TEST(DistributedParallelEventHandler_1_test
     ${MPIEXEC} -n 1 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-  ADD_TEST(DistributedParallelEventHandler_2_test 
+  ADD_TEST(DistributedParallelEventHandler_2_test
     ${MPIEXEC} -n 2 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
-  ADD_TEST(DistributedParallelEventHandler_4_test 
+  ADD_TEST(DistributedParallelEventHandler_4_test
     ${MPIEXEC} -n 4 tstDistributedEventHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   SET_PROPERTY(TEST DistributedParallelEventHandler_1_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)
   SET_PROPERTY(TEST DistributedParallelEventHandler_2_test PROPERTY LABELS monte_carlo_estimator_native mpi no_threads)

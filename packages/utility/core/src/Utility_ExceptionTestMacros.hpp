@@ -17,7 +17,7 @@
  * fails.
  *
  * This macro is based off of the Teuchos_TestForException macro. This macro
- * should be used anywhere that the failure of a specified conditions 
+ * should be used anywhere that the failure of a specified conditions
  * warrants the throwing of an exception.
  * \ingroup execption_macros
  */
@@ -32,7 +32,7 @@
    const std::string &detailed_msg_str = detailed_msg.str();		\
    throw Exception(detailed_msg_str);					\
  }									\
-} 
+}
 
 /*! Throw an exception always
  *

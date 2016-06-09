@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_UnitTestHarnessExtensions.hpp
 //! \author Alex Robinson
-//! \brief  Extentions to the Teuchos_UnitTestHarness 
+//! \brief  Extentions to the Teuchos_UnitTestHarness
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,7 +23,7 @@
  *
  * Several macros have been written that extend the functionality of the
  * Teuchos Unit Test Harness. This additional functionality allows some
- * objects commonly used by Utility to be tested more easily. 
+ * objects commonly used by Utility to be tested more easily.
  */
 
 /*! \brief A macro for the Teuchos Unit Test Harness for creating a
@@ -50,7 +50,7 @@
   template<typename TYPE, template<typename> class ARRAY>		\
   void TEST_GROUP##_##TEST_NAME##_UnitTest<TYPE,ARRAY>::runUnitTestImpl( \
                       Teuchos::FancyOStream &out, bool &success ) const \
-    
+
 /*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
  * templated unit test on one type and one template template parameter.
  * \ingroup unit_test_harness_extensions
@@ -60,7 +60,7 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<TYPE, Teuchos::ARRAY >		\
   instance_##TEST_GROUP##_##TYPE##_##ARRAY##_##TEST_NAME##_UnitTest(#TYPE,#ARRAY);
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a
  * templated unit test on a Tuple Member and a type.
  * \ingroup unit_test_harness_extensions
  */
@@ -94,7 +94,7 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER, TUPLE>		\
   instance_##TEST_GROUP##_##MEMBER##_##TUPLE##_##TEST_NAME##_UnitTest(#MEMBER,#TUPLE);
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a
  * templated unit test on two Tuple Member and a tuple type.
  * \ingroup unit_test_harness_extensions
  */
@@ -129,7 +129,7 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE> \
   instance_##TEST_GROUP##_##MEMBER1##_##MEMBER2##_##TUPLE##_##TEST_NAME##_UnitTest(#MEMBER1,#MEMBER2,#TUPLE);
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a
  * templated unit test on two Tuple Members and two tuple types.
  * \ingroup unit_test_harness_extensions
  */
@@ -173,7 +173,7 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE1, TUPLE2> \
   instance_##TEST_GROUP##_##MEMBER1##_##TUPLE1##_##MEMBER2##_##TUPLE2##TEST_NAME##_UnitTest(#MEMBER1,#MEMBER2,#TUPLE1,#TUPLE2);
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a templated 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a templated
  * unit test on two Tuple Member enums, one Tuple and a Teuchos Array.
  * \ingroup unit_test_harness_extensions
  */
@@ -206,8 +206,8 @@
   void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER1,MEMBER2,TUPLE,ARRAY>::runUnitTestImpl( \
 	Teuchos::FancyOStream &out, bool &success ) const \
 
-/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a 
- * templated unit test on two Tuple Member enums, one Tuple and a Teuchos 
+/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
+ * templated unit test on two Tuple Member enums, one Tuple and a Teuchos
  * Array.
  * \ingroup unit_test_harness_extensions
  */
@@ -251,9 +251,9 @@
 	     template<typename> class ARRAY>				\
     void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER1,MEMBER2,TUPLE1,TUPLE2,ARRAY>::runUnitTestImpl( \
 	Teuchos::FancyOStream &out, bool &success ) const \
-  
-/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a 
- * templated unit test on two Tuple Member enums, two Tuples and a Teuchos 
+
+/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
+ * templated unit test on two Tuple Member enums, two Tuples and a Teuchos
  * Array.
  * \ingroup unit_test_harness_extensions
  */
@@ -262,7 +262,7 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE1, TUPLE2, Teuchos::Array> \
   instance_##TEST_GROUP##_##MEMBER##_##MEMBER1##_##MEMBER2##_##TUPLE1##_##TUPLE2##_##ARRAY##_##TEST_NAME##_UnitTest(#MEMBER1,#MEMBER2,#TUPLE1,#TUPLE2,#ARRAY);
 
-/*! \brief A macro for the Teuchos Unit Test Harness for creating a templated 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a templated
  * unit test on two types and one template template parameter.
  * \ingroup unit_test_harness_extensions
  */
@@ -288,7 +288,7 @@
   void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER,TYPE1,ARRAY>::runUnitTestImpl(\
                       Teuchos::FancyOStream &out, bool &success ) const \
 
-/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a 
+/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
  * templated unit test on two types and one template template parameter.
  * \ingroup unit_test_harness_extensions
  */
@@ -321,7 +321,7 @@
 
 /*! A macro for the Teuchos Unit Test Harness for comparing ordinal data types
  * and containers of ordinal data types.
- * 
+ *
  * This macro allows tuples (Utility::Pair, Utility::Trip and Utility::Quad),
  * which are not supported by the standard Teuchos Unit Test Harness, to be
  * easily tested.
@@ -334,11 +334,11 @@
     if( !result ) success = false;					\
   }
 
-/*! \brief A macro for the Teuchos Unit Test Harness for comparing floating 
+/*! \brief A macro for the Teuchos Unit Test Harness for comparing floating
  * point data types and containers of floating point data types.
  *
- * This macro allows tuples (Utility::Pair, Utility::Trip and Utility::Quad), 
- * which are not supported by the standard Teuchos Unit Test Harness, to be 
+ * This macro allows tuples (Utility::Pair, Utility::Trip and Utility::Quad),
+ * which are not supported by the standard Teuchos Unit Test Harness, to be
  * easily tested.
  * \ingroup unit_test_harness_extensions
  */
@@ -349,7 +349,7 @@
     if( !result ) success = false;					\
   }
 
-/*! A macro for the Teuchos Unit Test Harness for comparing arrays of ordinal 
+/*! A macro for the Teuchos Unit Test Harness for comparing arrays of ordinal
  * data types and arrays of containers of ordinal data types.
  *
  * This macro allows arrays of tuples (Utility::Pair, Utility::Trip and
@@ -380,6 +380,6 @@
 #endif // end UTILITY_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_UnitTestHarnessExtensions.hpp 
+// end Utility_UnitTestHarnessExtensions.hpp
 //---------------------------------------------------------------------------//
 

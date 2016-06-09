@@ -40,7 +40,7 @@
 //! Main funciton for the sample_pdopp (Doppler Broadened Photon Erg.) tool
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -148,7 +148,7 @@ int main( int argc, char** argv )
   // Check if the scattering angle cosine is valid
   if( scattering_angle_cosine < -1.0 || scattering_angle_cosine > 1.0 )
   {
-    std::cerr << "Error: the scattering angle cosine (" 
+    std::cerr << "Error: the scattering angle cosine ("
               << scattering_angle_cosine << ") "
               << "must be in [-1,1]!" << std::endl;
   }
@@ -165,8 +165,8 @@ int main( int argc, char** argv )
     // Open the cross_section.xml file
     std::string cross_sections_xml_file = cross_section_directory;
     cross_sections_xml_file += "/cross_sections.xml";
-    
-    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+
+    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
       Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
     std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
@@ -186,7 +186,7 @@ int main( int argc, char** argv )
     if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::ace_file )
     {
       std::cerr << "Loading ACE photoatomic cross section table "
-		<< photoatom_table_name << " (" << cross_section_alias 
+		<< photoatom_table_name << " (" << cross_section_alias
 		<< ") ... ";
 
       // Create the ACEFileHandler
@@ -194,9 +194,9 @@ int main( int argc, char** argv )
 					     photoatom_table_name,
 					     photoatom_file_start_line,
 					     true );
-    
+
       // Create the XSS data extractor
-      Data::XSSEPRDataExtractor xss_data_extractor( 
+      Data::XSSEPRDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() );
@@ -236,7 +236,7 @@ int main( int argc, char** argv )
     {
       std::cerr << "Error: photoatomic file type " << photoatom_file_type
                 << " is not supported!" << std::endl;
-                
+
       return 1;
     }
   }
@@ -258,7 +258,7 @@ int main( int argc, char** argv )
 
   for( unsigned i = 0; i < 2001; ++i )
     pdf_evaluation_energies[i] = 0.0 + initial_energy*i/2000.0;
-  
+
   // Generate the samples
   return samplePhotonDopplerDistributionCore( doppler_dist,
                                               initial_energy,

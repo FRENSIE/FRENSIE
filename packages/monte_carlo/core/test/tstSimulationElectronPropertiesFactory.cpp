@@ -32,10 +32,10 @@ Teuchos::ParameterList properties;
 TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
 		   initializeSimulationElectronProperties )
 {
-  Teuchos::ParameterList electron_properties = 
+  Teuchos::ParameterList electron_properties =
       properties.get<Teuchos::ParameterList>( "Electron Properties" );
 
-  MonteCarlo::SimulationElectronPropertiesFactory::initializeSimulationElectronProperties( 
+  MonteCarlo::SimulationElectronPropertiesFactory::initializeSimulationElectronProperties(
 						electron_properties );
 
 
@@ -44,10 +44,10 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
   TEST_EQUALITY_CONST( MonteCarlo::SimulationElectronProperties::getMaxElectronEnergy(),
 		       10.0 );
   TEST_ASSERT( !MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationElectronProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
-  TEST_EQUALITY_CONST(  
+  TEST_EQUALITY_CONST(
     MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
 	0.9 );
 }
@@ -58,17 +58,17 @@ TEUCHOS_UNIT_TEST( SimulationElectronPropertiesFactory,
 int main( int argc, char** argv )
 {
   std::string test_properties_xml_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_properties_xml_file",
 		 &test_properties_xml_file_name,
 		 "Test properties.xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -92,7 +92,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);				      
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

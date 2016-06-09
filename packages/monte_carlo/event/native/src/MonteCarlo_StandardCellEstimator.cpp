@@ -23,7 +23,7 @@ StandardCellEstimator::StandardCellEstimator(
 
 // Set the particle types that can contribute to the estimator
 /*! \details Photons, electrons and neutrons (or their adjoint
- * couterparts) can contribute to the estimator. Combinations are not 
+ * couterparts) can contribute to the estimator. Combinations are not
  * allowed.
  */
 void StandardCellEstimator::setParticleTypes(
@@ -33,13 +33,13 @@ void StandardCellEstimator::setParticleTypes(
   {
     std::cerr << "Warning: Standard cell estimators can only have one "
 	      << "particle type contribute. All but the first particle type "
-	      << "requested in estimator " << this->getId() 
+	      << "requested in estimator " << this->getId()
 	      << " will be ignored."
 	      << std::endl;
-    
+
     Teuchos::Array<ParticleType> valid_particle_types( 1 );
     valid_particle_types[0] = particle_types.front();
-    
+
     Estimator::setParticleTypes( valid_particle_types );
   }
   else
@@ -47,12 +47,12 @@ void StandardCellEstimator::setParticleTypes(
 }
 
 // Export the estimator data
-void StandardCellEstimator::exportData( 
+void StandardCellEstimator::exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const
 {
   // Export the lower level data first
-  StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData( 
+  StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
 								hdf5_file,
 								process_data );
 

@@ -138,14 +138,14 @@ TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, getDistributionType )
 // Check that the bounds of two distributions can be tested
 TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, hasSameBounds )
 {
-  std::shared_ptr<Utility::OneDDistribution> theta_distribution( 
+  std::shared_ptr<Utility::OneDDistribution> theta_distribution(
 	    new Utility::UniformDistribution( 0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );
 
-  std::shared_ptr<Utility::OneDDistribution> uniform_distribution( 
+  std::shared_ptr<Utility::OneDDistribution> uniform_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-  
+
   std::shared_ptr<Utility::OneDDistribution> histogram_distribution(
 	  new Utility::HistogramDistribution( Teuchos::tuple( -1.0, 0.0, 1.0 ),
 					      Teuchos::tuple( 1.0, 1.0 ) ) );
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, hasSameBounds )
 	     new Utility::DiscreteDistribution( Teuchos::tuple( 0.0, 1.0 ),
 						Teuchos::tuple( 1.0, 1.0 ) ) );
 
-  
+
   std::shared_ptr<Utility::DirectionalDistribution> directional_dist_a(
 	   new Utility::SphericalDirectionalDistribution( theta_distribution,
 							  uniform_distribution,
@@ -188,10 +188,10 @@ int main( int argc, char** argv )
 {
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Uniform distribution in theta dimension
   std::shared_ptr<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
+    theta_distribution( new Utility::UniformDistribution(
 					      0.0,
 					      2*Utility::PhysicalConstants::pi,
 					      1.0 ) );

@@ -25,22 +25,22 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 		scattering_distribution )
 {
   // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> energy_grid = 
+  std::vector<double> energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
   // Get size of the distribution
   int size = energy_grid.size();
 
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution 
+  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
          energy_loss_function( size );
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction( 
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
         energy_grid,
         energy_loss_function );
 
-  scattering_distribution.reset( 
+  scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function ) );
 }
 
@@ -52,22 +52,22 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
     const int atomic_number )
 {
   // Get the energy grid for bremsstrahlung energy distributions
-  std::vector<double> energy_grid = 
+  std::vector<double> energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
   // Get size of the distribution
   int size = energy_grid.size();
 
   // Create the scattering function
-  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution 
+  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
         energy_loss_function( size );
 
-  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction( 
+  BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
         energy_grid,
         energy_loss_function );
 
-  scattering_distribution.reset( 
+  scattering_distribution.reset(
    new BremsstrahlungElectronScatteringDistribution( energy_loss_function,
                                                      atomic_number ) );
 }
@@ -75,8 +75,8 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 // Create the energy loss function
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const std::vector<double> energy_grid, 
-    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+    const std::vector<double> energy_grid,
+    BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
         energy_loss_function )
 {
   for( unsigned n = 0; n < energy_grid.size(); ++n )
@@ -84,15 +84,15 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
     energy_loss_function[n].first = energy_grid[n];
 
     // Get the energy of the bremsstrahlung photon at the incoming energy
-    Teuchos::Array<double> photon_energy( 
+    Teuchos::Array<double> photon_energy(
         raw_electroatom_data.getBremsstrahlungPhotonEnergy( energy_grid[n] ) );
 
     // Get the bremsstrahlung photon pdf at the incoming energy
-    Teuchos::Array<double> pdf( 
+    Teuchos::Array<double> pdf(
         raw_electroatom_data.getBremsstrahlungPhotonPDF( energy_grid[n] ) );
 
-    energy_loss_function[n].second.reset( 
-	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy, 
+    energy_loss_function[n].second.reset(
+	  new const Utility::TabularDistribution<Utility::LinLin>( photon_energy,
                                                                pdf ) );
   }
 }

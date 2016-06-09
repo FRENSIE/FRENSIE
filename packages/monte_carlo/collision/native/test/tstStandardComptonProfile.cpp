@@ -41,20 +41,20 @@ std::shared_ptr<MonteCarlo::ComptonProfile> compton_profile;
 // Check that the Compton profile can be evaluated
 TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
 {
-  MonteCarlo::ComptonProfile::MomentumQuantity 
+  MonteCarlo::ComptonProfile::MomentumQuantity
     momentum( -1.0*Utility::Units::mec_momentum );
 
   MonteCarlo::ComptonProfile::ProfileQuantity
     profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST( profile_value, 
+  TEST_EQUALITY_CONST( profile_value,
 		       0.0*Utility::Units::inverse_mec_momentum );
 
   momentum = 0.0*Utility::Units::mec_momentum;
-  
+
   profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   profile_value,
 		   Utility::PhysicalConstants::inverse_fine_structure_constant*
 		   Utility::Units::inverse_mec_momentum );
@@ -63,7 +63,7 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
 
   profile_value = compton_profile->evaluate( momentum );
 
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   profile_value,
 		   Utility::PhysicalConstants::inverse_fine_structure_constant*
 		   Utility::Units::inverse_mec_momentum );
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, evaluate )
 // Check that the Compton profile can be sampled from
 TEUCHOS_UNIT_TEST( StandardComptonProfile, sample )
 {
-  MonteCarlo::ComptonProfile::MomentumQuantity 
+  MonteCarlo::ComptonProfile::MomentumQuantity
     momentum = compton_profile->sample();
 
   TEST_ASSERT( momentum >= 0.0*Utility::Units::mec_momentum );
@@ -124,11 +124,11 @@ TEUCHOS_UNIT_TEST( StandardComptonProfile, getUpperBoundOfMomentum )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -141,19 +141,19 @@ int main( int argc, char** argv )
     Teuchos::Array<double> momentums( 2 ), profile_vals( 2 );
     momentums[0] = 0.0;
     momentums[1] = Utility::PhysicalConstants::inverse_fine_structure_constant;
-    
+
     profile_vals[0] = 1.0;
     profile_vals[1] = 1.0;
-    
-    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > 
+
+    std::shared_ptr<Utility::UnitAwareTabularOneDDistribution<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >
       raw_compton_profile( new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>( momentums, profile_vals ) );
-    
+
     compton_profile.reset( new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>( raw_compton_profile ) );
   }
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -166,7 +166,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

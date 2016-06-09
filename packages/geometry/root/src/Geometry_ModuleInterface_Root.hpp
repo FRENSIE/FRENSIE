@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Geometry_ModuleInterface_Root.hpp
 //! \author Alex Robinson, Eli Moll
 //! \brief  Root specialization decl. of the geometry ModuleInterface class
@@ -25,10 +25,10 @@
 
 namespace Geometry{
 
-/*! The specialization of the GeometryModuleInterface class for the Root 
+/*! The specialization of the GeometryModuleInterface class for the Root
  * geometry handler.
  * \ingroup geometry_module
- */ 
+ */
 template<>
 class ModuleInterface<Root>
 {
@@ -48,23 +48,23 @@ public:
   static bool doesCellExist( const ModuleTraits::InternalCellHandle cell_id );
 
   //! Check if the surface exists
-  static bool doesSurfaceExist( 
+  static bool doesSurfaceExist(
                         const ModuleTraits::InternalSurfaceHandle surface_id );
 
   //! Set the internal ray
-  static void setInternalRay( 
-                           const Ray& ray, 
+  static void setInternalRay(
+                           const Ray& ray,
                            const ModuleTraits::InternalCellHandle start_cell );
 
   //! Find the cell that contains a given start ray
-  static ModuleTraits::InternalCellHandle findCellContainingStartRay( 
+  static ModuleTraits::InternalCellHandle findCellContainingStartRay(
                                                               const Ray& ray );
 
   //! Find the cell that containsa the internal ray
   static ModuleTraits::InternalCellHandle findCellContainingInternalRay();
 
   //! Fire the internal ray through the geometry
-  static double fireInternalRay( 
+  static double fireInternalRay(
                             ModuleTraits::InternalSurfaceHandle& surface_hit );
 
   //! Advance the internal ray to the cell boundary
@@ -86,7 +86,7 @@ public:
   static bool isTerminationCell( const ModuleTraits::InternalCellHandle cell );
 
   //! Get the point location w.r.t. a given cell
-  static PointLocation getPointLocation( 
+  static PointLocation getPointLocation(
                                  const Ray& ray,
 				 const ModuleTraits::InternalCellHandle cell );
 };
@@ -95,7 +95,7 @@ public:
 /*! \details The Root wrapper class has only static methods. Only one instance
  * will ever be active so this funciton call can be ignored.
  */
-inline void ModuleInterface<Root>::setHandlerInstance( 
+inline void ModuleInterface<Root>::setHandlerInstance(
                                    const std::shared_ptr<Root>& root_instance )
 { /* ... */ }
 
@@ -110,18 +110,18 @@ inline void ModuleInterface<Root>::initialize()
 }
 
 // Enable support for multiple threads
-inline void ModuleInterface<Root>::enableThreadSupport( 
+inline void ModuleInterface<Root>::enableThreadSupport(
                                                    const unsigned num_threads )
-{ 
+{
   // Make sure root is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   Root::enableThreadSupport( num_threads );
 }
 
 // Set the internal ray
-inline void ModuleInterface<Root>::setInternalRay( 
-                            const Ray& ray, 
+inline void ModuleInterface<Root>::setInternalRay(
+                            const Ray& ray,
                             const ModuleTraits::InternalCellHandle start_cell )
 {
   // Make sure root is initialized
@@ -131,22 +131,22 @@ inline void ModuleInterface<Root>::setInternalRay(
 }
 
 // Find the cell that contains a given start ray
-inline ModuleTraits::InternalCellHandle 
+inline ModuleTraits::InternalCellHandle
 ModuleInterface<Root>::findCellContainingStartRay( const Ray& ray )
 {
   // Make sure root is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return Root::findCellContainingExternalRay( ray );
 }
 
 // Find the cell that contains the internal ray
-inline ModuleTraits::InternalCellHandle 
+inline ModuleTraits::InternalCellHandle
 ModuleInterface<Root>::findCellContainingInternalRay()
 {
   // Make sure root is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return Root::findCellContainingInternalRay();
 }
 
@@ -154,7 +154,7 @@ ModuleInterface<Root>::findCellContainingInternalRay()
 /*! \details Root does not keep track of surfaces so this method will
  * always set the surface hit to 0.
  */
-inline double ModuleInterface<Root>::fireInternalRay( 
+inline double ModuleInterface<Root>::fireInternalRay(
                              ModuleTraits::InternalSurfaceHandle& surface_hit )
 {
   // Make sure root is initialized
@@ -162,7 +162,7 @@ inline double ModuleInterface<Root>::fireInternalRay(
 
   // Dummy return surface
   surface_hit = 0;
-  
+
   // Fire the internal root ray
   return Root::fireInternalRay();
 }
@@ -188,7 +188,7 @@ inline bool ModuleInterface<Root>::advanceInternalRayToCellBoundary(
 }
 
 // Advance the internal ray by a substep (< than the distance to boundary)
-inline void ModuleInterface<Root>::advanceInternalRayBySubstep( 
+inline void ModuleInterface<Root>::advanceInternalRayBySubstep(
                                                        const double step_size )
 {
   // Make sure the DagMC wrapper is initialized
@@ -198,7 +198,7 @@ inline void ModuleInterface<Root>::advanceInternalRayBySubstep(
 }
 
 // Change the internal ray direction
-inline void ModuleInterface<Root>::changeInternalRayDirection( 
+inline void ModuleInterface<Root>::changeInternalRayDirection(
                                                     const double direction[3] )
 {
   // Make sure the DagMC wrapper is initialized
@@ -226,7 +226,7 @@ inline const double* ModuleInterface<Root>::getInternalRayDirection()
 }
 
 // Check if the cell is a termination cell
-inline bool ModuleInterface<Root>::isTerminationCell( 
+inline bool ModuleInterface<Root>::isTerminationCell(
                                   const ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the DagMC wrapper is initialized
@@ -236,23 +236,23 @@ inline bool ModuleInterface<Root>::isTerminationCell(
 }
 
 // Get the point location w.r.t. a given cell
-inline PointLocation ModuleInterface<Root>::getPointLocation( 
+inline PointLocation ModuleInterface<Root>::getPointLocation(
                                   const Ray& ray,
 			          const ModuleTraits::InternalCellHandle cell )
 {
   // Make sure the DagMC wrapper is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return Root::getPointLocation( ray, cell );
 }
 
 // Check if a cell exists
-inline bool ModuleInterface<Root>::doesCellExist( 
+inline bool ModuleInterface<Root>::doesCellExist(
                                const ModuleTraits::InternalCellHandle cell_id )
 {
   // Make sure the DagMC wrapper is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return Root::doesCellExist( cell_id );
 }
 
@@ -260,12 +260,12 @@ inline bool ModuleInterface<Root>::doesCellExist(
 /*! \details Root does not keep track of surfaces so this method will
  * always return false.
  */
-inline bool ModuleInterface<Root>::doesSurfaceExist( 
+inline bool ModuleInterface<Root>::doesSurfaceExist(
                          const ModuleTraits::InternalSurfaceHandle surface_id )
 {
   // Make sure the DagMC wrapper is initialized
   testPrecondition( Root::isInitialized() );
-  
+
   return false;
 }
 

@@ -36,8 +36,8 @@ MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::Mom
 						incoming_energy_grid.end() ) );
   // Make sure the cross section is valid
   testPrecondition( cross_section.size() > 0 );
-  testPrecondition( cross_section.size() == 
-		    incoming_energy_grid.size() - threshold_energy_index );    
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
@@ -69,13 +69,13 @@ ElectroatomicReactionType MomentPreservingElectroatomicReaction<InterpPolicy,pro
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterElectron( electron, 
-                                              bank, 
+  d_scattering_distribution->scatterElectron( electron,
+                                              bank,
                                               shell_of_interaction);
 
   electron.incrementCollisionNumber();
