@@ -46,4 +46,6 @@ ADD_SUBDIRECTORY(epr_generator)
 
 ADD_SUBDIRECTORY(endl_generator)
 
+ADD_SUBDIRECTORY(moment_preserving_generator)
+
 ADD_SUBDIRECTORY(sample)
