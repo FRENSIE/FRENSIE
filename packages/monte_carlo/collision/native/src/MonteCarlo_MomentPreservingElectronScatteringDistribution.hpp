@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SoftElasticElectronScatteringDistribution.hpp
+//! \file   MonteCarlo_MomentPreservingElectronScatteringDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The soft electron elastic scattering distribution base class
+//! \brief  The moment preserving electron elastic scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SOFT_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_SOFT_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_MOMENT_PRESERVING_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_MOMENT_PRESERVING_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -29,8 +29,8 @@
 
 namespace MonteCarlo{
 
-//! The soft scattering distribution base class
-class SoftElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+//! The moment preserving scattering distribution base class
+class MomentPreservingElectronScatteringDistribution : public ElectronScatteringDistribution,
                                                   public AdjointElectronScatteringDistribution
 {
 
@@ -42,13 +42,13 @@ public:
   ElasticDistribution;
 
   //! Constructor
-  SoftElasticElectronScatteringDistribution(
+  MomentPreservingElectronScatteringDistribution(
                  const int atomic_number,
                  const double mu_cutoff,
                  const ElasticDistribution& discrete_scattering_distribution );
 
   //! Destructor 
-  virtual ~SoftElasticElectronScatteringDistribution()
+  virtual ~MomentPreservingElectronScatteringDistribution()
   { /* ... */ }
 
   //! Sample an outgoing energy and direction from the distribution
@@ -89,7 +89,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_SOFT_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_MOMENT_PRESERVING_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElasticElectronScatteringDistribution.hpp

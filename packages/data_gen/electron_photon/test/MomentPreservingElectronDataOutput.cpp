@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   SoftElasticElectronDataOutput.cpp
+//! \file   MomentPreservingElectronDataOutput.cpp
 //! \author Luke Kersting
-//! \brief  Soft elastic electron data output
+//! \brief  moment preserving elastic electron data output
 //!
 //---------------------------------------------------------------------------//
 
@@ -22,7 +22,7 @@
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "DataGen_StandardSoftElasticElectronDataGenerator.hpp"
+#include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -52,7 +52,7 @@ public:
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> evaluator;
 Teuchos::RCP<TestElasticElectronMomentsEvaluator> test_evaluator;
-Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator> data_generator;
+Teuchos::RCP<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
 Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
     rutherford_distribution;
 Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
@@ -112,7 +112,7 @@ int main( int argc, char** argv )
                                     *data ) );
 
   data_generator.reset(
-		   new DataGen::StandardSoftElasticElectronDataGenerator(
+		   new DataGen::StandardMomentPreservingElectronDataGenerator(
 				     data->getAtomicNumber(),
 				     data,
 				     0.00001,
@@ -145,7 +145,7 @@ int main( int argc, char** argv )
   moments[0] = Utility::long_float(1);
 
   std::ofstream myfile;
-  myfile.open ("soft_elastic_data.txt");
+  myfile.open ("moment_preserving_elastic_data.txt");
   myfile << "Screened Rutherford moments calculated using the recursion relationship and ITS eta.\n";
   myfile << "Element Z = \t"<< data->getAtomicNumber() << "\n";
   myfile << "\tEnergy" << std::setw(20)

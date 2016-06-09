@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SoftElasticElectroatomicReaction_def.hpp
+//! \file   MonteCarlo_MomentPreservingElectroatomicReaction_def.hpp
 //! \author Luke Kersting
 //! \brief  The single scattering elastic electroatomic reaction class def.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
@@ -17,11 +17,11 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename InterpPolicy, bool processed_cross_section>
-SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::SoftElasticElectroatomicReaction(
+MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::MomentPreservingElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const SoftElasticElectronScatteringDistribution>&
+       const Teuchos::RCP<const MomentPreservingElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
@@ -48,28 +48,28 @@ SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::SoftElas
 /*! \details This does not include photons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
-ElectroatomicReactionType SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+ElectroatomicReactionType MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return SOFT_ELASTIC_ELECTROATOMIC_REACTION;
+  return MOMENT_PRESERVING_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
+void MomentPreservingElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     ElectronState& electron, 
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -86,8 +86,8 @@ void SoftElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::rea
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_SoftElasticElectroatomicReaction_def.hpp
+// end MonteCarlo_MomentPreservingElectroatomicReaction_def.hpp
 //---------------------------------------------------------------------------//

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_SoftElasticElectronDataContainer.hpp
+//! \file   Data_MomentPreservingElectronDataContainer.hpp
 //! \author Luke Kersting
-//! \brief  The native soft elastic electron data container class decl.
+//! \brief  The native moment preserving electron data container class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_SOFT_ELASTIC_ELECTRON_DATA_CONTAINER_HPP
-#define DATA_SOFT_ELASTIC_ELECTRON_DATA_CONTAINER_HPP
+#ifndef DATA_MOMENT_PRESERVING_ELECTRON_DATA_CONTAINER_HPP
+#define DATA_MOMENT_PRESERVING_ELECTRON_DATA_CONTAINER_HPP
 
 // Std Lib Includes
 #include <vector>
@@ -25,22 +25,22 @@
 
 namespace Data{
 
-/*! The soft elastic electron data container
+/*! The moment preserving electron data container
  * \details Linear-linear interpolation should be used for all data.
  */
-class SoftElasticElectronDataContainer : public Utility::StandardArchivableObject<SoftElasticElectronDataContainer,false>, public Utility::StandardSerializableObject<SoftElasticElectronDataContainer,false>
+class MomentPreservingElectronDataContainer : public Utility::StandardArchivableObject<MomentPreservingElectronDataContainer,false>, public Utility::StandardSerializableObject<MomentPreservingElectronDataContainer,false>
 {
 
 public:
 
   //! Constructor (from saved archive)
-  SoftElasticElectronDataContainer( 
+  MomentPreservingElectronDataContainer( 
 		  const std::string& archive_name,
                   const Utility::ArchivableObject::ArchiveType archive_type =
 		  Utility::ArchivableObject::XML_ARCHIVE );
 
   //! Destructor
-  virtual ~SoftElasticElectronDataContainer()
+  virtual ~MomentPreservingElectronDataContainer()
   { /* ... */ }
 
   //! Return the atomic number
@@ -55,29 +55,29 @@ public:
   //! Return the number of discrete angles for an angular energy bin
   unsigned getNumberOfDiscreteAngles( const unsigned angular_energy_bin ) const;
 
-  //! Return the soft elastic discrete angles for an angular energy bin
-  const std::vector<double>& getSoftElasticDiscreteAngles(
+  //! Return the moment preserving discrete angles for an angular energy bin
+  const std::vector<double>& getMomentPreservingDiscreteAngles(
 					       const unsigned angular_energy_bin ) const;
 
-  //! Return the soft elastic weights for an angular energy bin
-  const std::vector<double>& getSoftElasticWeights(
+  //! Return the moment preserving weights for an angular energy bin
+  const std::vector<double>& getMomentPreservingWeights(
 					       const unsigned angular_energy_bin ) const;
 /*
   //! Return the electron energy grid
   const std::vector<double>& getElectronEnergyGrid() const;
 
-  //! Return the Moment Preserving (MP) soft elastic electron cross section
+  //! Return the Moment Preserving (MP) moment preserving electron cross section
   const std::vector<double>& 
-  getMomentPreservingSoftElasticCrossSection() const;
+  getMomentPreservingMomentPreservingCrossSection() const;
 
-  //! Return the MP soft elastic cross section threshold energy bin index
+  //! Return the MP moment preserving cross section threshold energy bin index
   unsigned 
-  getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex() const;
+  getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const;
 */
 protected:
 
   //! Default constructor
-  SoftElasticElectronDataContainer()
+  MomentPreservingElectronDataContainer()
   { /* ... */ }
 
   //! Set the atomic number
@@ -95,25 +95,25 @@ protected:
              const unsigned angular_energy_bin,
              const unsigned number_of_discrete_angles );
 
-  //! Set the soft elastic discrete angles for an angular energy bin
-  void setSoftElasticDiscreteAngles(
+  //! Set the moment preserving discrete angles for an angular energy bin
+  void setMomentPreservingDiscreteAngles(
 		     const unsigned angular_energy_bin,
-		     const std::vector<double>& soft_elastic_discrete_angles );
+		     const std::vector<double>& moment_preserving_elastic_discrete_angles );
 
-  //! Set the soft elastic weights for an angular energy bin
-  void setSoftElasticWeights( 
+  //! Set the moment preserving weights for an angular energy bin
+  void setMomentPreservingWeights( 
 			 const unsigned angular_energy_bin,
-			 const std::vector<double>& soft_elastic_weights );
+			 const std::vector<double>& moment_preserving_elastic_weights );
   /*
   //! Set the electron energy grid
   void setElectronEnergyGrid( const std::vector<double>& energy_grid );
 
-  //! Set the soft elastic electron cross section using Moment Preserving (MP) theory
-  void setMomentPreservingSoftElasticCrossSection(
-			 const std::vector<double>& soft_elastic_cross_section );
+  //! Set the moment preserving electron cross section using Moment Preserving (MP) theory
+  void setMomentPreservingMomentPreservingCrossSection(
+			 const std::vector<double>& moment_preserving_elastic_cross_section );
 
-  //! Set the MP soft elastic cross section threshold energy bin index
-  void setMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(
+  //! Set the MP moment preserving cross section threshold energy bin index
+  void setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
 */
   
@@ -156,20 +156,20 @@ private:
   // The number of discrete angles for angular energy bin
   std::map<unsigned,unsigned> d_number_of_discrete_angles;
 
-  // The soft elastic discrete angles
-  std::map<unsigned,std::vector<double> > d_soft_elastic_discrete_angles;
+  // The moment preserving discrete angles
+  std::map<unsigned,std::vector<double> > d_moment_preserving_elastic_discrete_angles;
 
-  // The soft elastic weights
-  std::map<unsigned,std::vector<double> > d_soft_elastic_weights;
+  // The moment preserving weights
+  std::map<unsigned,std::vector<double> > d_moment_preserving_elastic_weights;
 /*
   // The electron energy grid (MeV)
   std::vector<double> d_electron_energy_grid;
 
-  // The Moment Preserving soft elastic electron cross section (b)
-  std::vector<double> d_moment_preserving_soft_elastic_cross_section;
+  // The Moment Preserving moment preserving electron cross section (b)
+  std::vector<double> d_moment_preserving_moment_preserving_elastic_cross_section;
 
-  // The Moment Preserving soft elastic electron cross section threshold energy index
-  unsigned d_moment_preserving_soft_elastic_cross_section_threshold_index;
+  // The Moment Preserving moment preserving electron cross section threshold energy index
+  unsigned d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index;
 */
 };
 
@@ -179,13 +179,13 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Data_SoftElasticElectronDataContainer_def.hpp"
+#include "Data_MomentPreservingElectronDataContainer_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_SOFT_ELASTIC_ELECTRON_DATA_CONTAINER_HPP
+#endif // end DATA_MOMENT_PRESERVING_ELECTRON_DATA_CONTAINER_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_SoftElasticElectronDataContainer.hpp
+// end Data_MomentPreservingElectronDataContainer.hpp
 //---------------------------------------------------------------------------//
 

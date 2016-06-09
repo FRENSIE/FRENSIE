@@ -1,19 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_SoftElasticElectronDataGenerator.cpp
+//! \file   DataGen_MomentPreservingElectronDataGenerator.cpp
 //! \author Luke Kersting
-//! \brief  The soft elastic electron scattering data generator base class def.
+//! \brief  The moment preserving electron scattering data generator base class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "DataGen_SoftElasticElectronDataGenerator.hpp"
+#include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace DataGen{
 
 // Constructor
-SoftElasticElectronDataGenerator::SoftElasticElectronDataGenerator(
+MomentPreservingElectronDataGenerator::MomentPreservingElectronDataGenerator(
 						 const unsigned atomic_number )
   : d_atomic_number( atomic_number )
 {
@@ -22,15 +22,15 @@ SoftElasticElectronDataGenerator::SoftElasticElectronDataGenerator(
 }
 
 // Set the atomic number
-void SoftElasticElectronDataGenerator::setAtomicNumber( 
-			   Data::SoftElasticElectronVolatileDataContainer&
+void MomentPreservingElectronDataGenerator::setAtomicNumber( 
+			   Data::MomentPreservingElectronVolatileDataContainer&
 			   data_container ) const
 {
   data_container.setAtomicNumber( d_atomic_number ); 
 }
 
 // Get the atomic number
-unsigned SoftElasticElectronDataGenerator::getAtomicNumber() const
+unsigned MomentPreservingElectronDataGenerator::getAtomicNumber() const
 {
   return d_atomic_number;
 }
@@ -39,5 +39,5 @@ unsigned SoftElasticElectronDataGenerator::getAtomicNumber() const
 } // end DataGen
 
 //---------------------------------------------------------------------------//
-// end DataGen_SoftElasticElectronDataGenerator.cpp
+// end DataGen_MomentPreservingElectronDataGenerator.cpp
 //---------------------------------------------------------------------------//

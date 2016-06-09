@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardSoftElasticElectronDataGenerator.hpp
+//! \file   DataGen_StandardMomentPreservingElectronDataGenerator.hpp
 //! \author Luke Kersting
-//! \brief  The standard soft elastic electron data generator class decl.
+//! \brief  The standard moment preserving electron data generator class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_STANDARD_SOFT_ELASTIC_ELECTRON_DATA_GENERATOR_HPP
-#define DATA_GEN_STANDARD_SOFT_ELASTIC_ELECTRON_DATA_GENERATOR_HPP
+#ifndef DATA_GEN_STANDARD_MOMENT_PRESERVING_ELECTRON_DATA_GENERATOR_HPP
+#define DATA_GEN_STANDARD_MOMENT_PRESERVING_ELECTRON_DATA_GENERATOR_HPP
 
 // Std Lib Includes
 #include <utility>
@@ -17,7 +17,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "DataGen_SoftElasticElectronDataGenerator.hpp"
+#include "DataGen_MomentPreservingElectronDataGenerator.hpp"
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -25,13 +25,13 @@
 namespace DataGen{
 
 //! The standard electron-electron-relaxation data generator class
-class StandardSoftElasticElectronDataGenerator : public SoftElasticElectronDataGenerator
+class StandardMomentPreservingElectronDataGenerator : public MomentPreservingElectronDataGenerator
 {
 
 public:
 
   //! Constructor
-  StandardSoftElasticElectronDataGenerator( 
+  StandardMomentPreservingElectronDataGenerator( 
     const unsigned atomic_number,
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
@@ -39,19 +39,19 @@ public:
     const double cutoff_angle_cosine );
 
   //! Destructor
-  ~StandardSoftElasticElectronDataGenerator()
+  ~StandardMomentPreservingElectronDataGenerator()
   { /* ... */ }
 
-  //! Populate the soft elastic data container
-  void populateSoftElasticDataContainer(
-    Data::SoftElasticElectronVolatileDataContainer& data_container,
+  //! Populate the moment preserving data container
+  void populateMomentPreservingDataContainer(
+    Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const;
 
 protected:
 
-  // Set the soft elastic electron data
-  void setSoftElasticElectronData(
-    Data::SoftElasticElectronVolatileDataContainer& data_container,
+  // Set the moment preserving electron data
+  void setMomentPreservingElectronData(
+    Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const;
 
   // Generate elastic discrete angle cosines and weights
@@ -73,15 +73,15 @@ private:
   // The max electron energy
   double d_max_electron_energy;
 
-  // The cutoff angle cosine between soft and hard elastic collisions
+  // The cutoff angle cosine between moment preserving and hard elastic collisions
   double d_cutoff_angle_cosine;
 };
 
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_STANDARD_SOFT_ELASTIC_ELECTRON_DATA_GENERATOR_HPP
+#endif // end DATA_GEN_STANDARD_MOMENT_PRESERVING_ELECTRON_DATA_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardSoftElasticElectronDataGenerator.hpp
+// end DataGen_StandardMomentPreservingElectronDataGenerator.hpp
 //---------------------------------------------------------------------------//

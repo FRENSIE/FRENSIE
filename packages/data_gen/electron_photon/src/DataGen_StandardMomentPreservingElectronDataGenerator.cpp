@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardSoftElasticElectronDataGenerator.cpp
+//! \file   DataGen_StandardMomentPreservingElectronDataGenerator.cpp
 //! \author Luke Kersting
-//! \brief  The standard soft elastic electron data generator class def.
+//! \brief  The standard moment preserving electron data generator class def.
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,7 +11,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardSoftElasticElectronDataGenerator.hpp"
+#include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -20,13 +20,13 @@
 namespace DataGen{
 
 // Constructor
-StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerator( 
+StandardMomentPreservingElectronDataGenerator::StandardMomentPreservingElectronDataGenerator( 
     const unsigned atomic_number,
     const Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer>& native_eedl_data,
     const double min_electron_energy,
     const double max_electron_energy,
     const double cutoff_angle_cosine )
-  : SoftElasticElectronDataGenerator( atomic_number ),
+  : MomentPreservingElectronDataGenerator( atomic_number ),
     d_native_eedl_data( native_eedl_data ),
     d_min_electron_energy( min_electron_energy ),
     d_max_electron_energy( max_electron_energy ),
@@ -42,22 +42,22 @@ StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerat
   testPrecondition( min_electron_energy < max_electron_energy );
 }
 
-// Populate the soft elastic electron data container
-void StandardSoftElasticElectronDataGenerator::populateSoftElasticDataContainer(
-    Data::SoftElasticElectronVolatileDataContainer& data_container,
+// Populate the moment preserving electron data container
+void StandardMomentPreservingElectronDataGenerator::populateMomentPreservingDataContainer(
+    Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const
 {
   // Set the atomic number
   this->setAtomicNumber( data_container );
 
-  // Set the soft elastic electron data
-  std::cout << "Setting the soft elastic electron data: " << std::endl;
-  this->setSoftElasticElectronData( data_container, number_of_discrete_angles );
+  // Set the moment preserving electron data
+  std::cout << "Setting the moment preserving electron data: " << std::endl;
+  this->setMomentPreservingElectronData( data_container, number_of_discrete_angles );
 }
 
-// Set the soft elastic electron data
-void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData( 
-    Data::SoftElasticElectronVolatileDataContainer& data_container,
+// Set the moment preserving electron data
+void StandardMomentPreservingElectronDataGenerator::setMomentPreservingElectronData( 
+    Data::MomentPreservingElectronVolatileDataContainer& data_container,
     const int& number_of_discrete_angles ) const
 {
   // Set cutoff angle cosine
@@ -88,13 +88,13 @@ void StandardSoftElasticElectronDataGenerator::setSoftElasticElectronData(
         weights );
 
     data_container.setNumberOfDiscreteAngles( i, discrete_angles.size() );
-    data_container.setSoftElasticDiscreteAngles( i, discrete_angles );
-    data_container.setSoftElasticWeights( i, weights );
+    data_container.setMomentPreservingDiscreteAngles( i, discrete_angles );
+    data_container.setMomentPreservingWeights( i, weights );
   }
 }
 
 // Generate elastic discrete angle cosines and weights
-void StandardSoftElasticElectronDataGenerator::evaluateDisceteAnglesAndWeights(
+void StandardMomentPreservingElectronDataGenerator::evaluateDisceteAnglesAndWeights(
     const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_discrete_angles,
@@ -124,5 +124,5 @@ void StandardSoftElasticElectronDataGenerator::evaluateDisceteAnglesAndWeights(
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end DataGen_StandardSoftElasticElectronDataGenerator.cpp
+// end DataGen_StandardMomentPreservingElectronDataGenerator.cpp
 //---------------------------------------------------------------------------//

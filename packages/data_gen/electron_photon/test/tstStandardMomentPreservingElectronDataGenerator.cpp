@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardSoftElasticElectronDataGenerator.cpp
+//! \file   tstStandardMomentPreservingElectronDataGenerator.cpp
 //! \author Luke Kersting
-//! \brief  Standard soft elastic electron data generator unit tests
+//! \brief  Standard moment preserving electron data generator unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -22,8 +22,8 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardSoftElasticElectronDataGenerator.hpp"
-#include "Data_SoftElasticElectronVolatileDataContainer.hpp"
+#include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
+#include "Data_MomentPreservingElectronVolatileDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -32,7 +32,7 @@
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> 
   native_h_data, native_pb_data, native_al_data;
-Teuchos::RCP<const DataGen::StandardSoftElasticElectronDataGenerator>
+Teuchos::RCP<const DataGen::StandardMomentPreservingElectronDataGenerator>
   data_generator_h, data_generator_pb, data_generator_al;
 
 int number_of_discrete_angles = 3;
@@ -41,12 +41,12 @@ int number_of_discrete_angles = 3;
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
-                   populateSoftElasticDataContainer_h )
+TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+                   populateMomentPreservingDataContainer_h )
 {
-  Data::SoftElasticElectronVolatileDataContainer data_container;
+  Data::MomentPreservingElectronVolatileDataContainer data_container;
 
-  data_generator_h->populateSoftElasticDataContainer( data_container, 3 );
+  data_generator_h->populateMomentPreservingDataContainer( data_container, 3 );
 
   std::vector<double> angular_grid = 
     data_container.getElasticAngularEnergyGrid();
@@ -70,23 +70,23 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   TEST_EQUALITY_CONST( angular_grid[15], 1.0e+5 );
   TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(), 
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(), 
                        number_of_discrete_angles+1 );
 
-  data_container.exportData( "test_h_soft.xml",
+  data_container.exportData( "test_h_moment_preserving.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
-                   populateSoftElasticDataContainer_pb )
+TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+                   populateMomentPreservingDataContainer_pb )
 {
-  Data::SoftElasticElectronVolatileDataContainer data_container;
+  Data::MomentPreservingElectronVolatileDataContainer data_container;
 
-  data_generator_pb->populateSoftElasticDataContainer( data_container, 3 );
+  data_generator_pb->populateMomentPreservingDataContainer( data_container, 3 );
 
   std::vector<double> angular_grid = 
     data_container.getElasticAngularEnergyGrid();
@@ -108,23 +108,23 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
   TEST_EQUALITY_CONST( angular_grid[13], 1.0e+5 );
   TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(), 
                        number_of_discrete_angles+1 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(), 
                        number_of_discrete_angles+1 );
 		       
-  data_container.exportData( "test_pb_soft.xml",
+  data_container.exportData( "test_pb_moment_preserving.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 */
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
-TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
-                   populateSoftElasticDataContainer_al )
+TEUCHOS_UNIT_TEST( StandardMomentPreservingElectronDataGenerator,
+                   populateMomentPreservingDataContainer_al )
 {
-  Data::SoftElasticElectronVolatileDataContainer data_container;
+  Data::MomentPreservingElectronVolatileDataContainer data_container;
 
-  data_generator_al->populateSoftElasticDataContainer( data_container, 1 );
+  data_generator_al->populateMomentPreservingDataContainer( data_container, 1 );
 
   std::vector<double> angular_grid = 
     data_container.getElasticAngularEnergyGrid();
@@ -149,12 +149,12 @@ TEUCHOS_UNIT_TEST( StandardSoftElasticElectronDataGenerator,
 
   TEST_EQUALITY_CONST( data_container.getNumberOfDiscreteAngles( 1 ),
                        2 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticDiscreteAngles(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingDiscreteAngles(1).size(), 
                        2 );
-  TEST_EQUALITY_CONST( data_container.getSoftElasticWeights(1).size(), 
+  TEST_EQUALITY_CONST( data_container.getMomentPreservingWeights(1).size(), 
                        2 );
 		       
-  data_container.exportData( "test_al_soft.xml",
+  data_container.exportData( "test_al_moment_preserving.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
@@ -196,7 +196,7 @@ int main( int argc, char** argv )
 						     test_h_native_file_name ) );
 
     data_generator_h.reset( 
-		   new DataGen::StandardSoftElasticElectronDataGenerator(
+		   new DataGen::StandardMomentPreservingElectronDataGenerator(
 				     native_h_data->getAtomicNumber(),
 				     native_h_data,
 				     0.00001,
@@ -210,7 +210,7 @@ int main( int argc, char** argv )
 						     test_pb_native_file_name ) );
 
     data_generator_pb.reset( 
-		   new DataGen::StandardSoftElasticElectronDataGenerator(
+		   new DataGen::StandardMomentPreservingElectronDataGenerator(
 				     native_pb_data->getAtomicNumber(),
 				     native_pb_data,
 				     0.00001,
@@ -224,7 +224,7 @@ int main( int argc, char** argv )
 						     test_al_native_file_name ) );
 
     data_generator_al.reset( 
-		   new DataGen::StandardSoftElasticElectronDataGenerator(
+		   new DataGen::StandardMomentPreservingElectronDataGenerator(
 				     native_al_data->getAtomicNumber(),
 				     native_al_data,
 				     0.00001,
@@ -248,5 +248,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstStandardSoftElasticElectronDataGenerator.cpp
+// end tstStandardMomentPreservingElectronDataGenerator.cpp
 //---------------------------------------------------------------------------//

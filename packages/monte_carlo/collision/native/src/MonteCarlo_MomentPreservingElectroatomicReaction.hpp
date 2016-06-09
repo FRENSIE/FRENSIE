@@ -1,41 +1,41 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SoftElasticElectroatomicReaction.hpp
+//! \file   MonteCarlo_MomentPreservingElectroatomicReaction.hpp
 //! \author Luke Kersting
 //! \brief  The single scattering elastic electroatomic reaction class decl.
 //! 
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
-#include "MonteCarlo_SoftElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_MomentPreservingElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The soft elastic electroatomic reaction class
+//! The moment preserving elastic electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = false>
-class SoftElasticElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class MomentPreservingElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
 public:
 
   //! Constructor
-  SoftElasticElectroatomicReaction( 
+  MomentPreservingElectroatomicReaction( 
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-          const Teuchos::RCP<const SoftElasticElectronScatteringDistribution>&
+          const Teuchos::RCP<const MomentPreservingElectronScatteringDistribution>&
             scattering_distribution );
 
 
   //! Destructor
-  ~SoftElasticElectroatomicReaction()
+  ~MomentPreservingElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -55,13 +55,9 @@ public:
 private:
 
 
-  // The soft_elastic scattering distribution
-  Teuchos::RCP<const SoftElasticElectronScatteringDistribution> 
+  // The moment preserving elastic scattering distribution
+  Teuchos::RCP<const MomentPreservingElectronScatteringDistribution> 
     d_scattering_distribution;
-/*
-  // The soft_elastic scattering distribution
-  SoftElasticElectronScatteringDistribution d_scattering_distribution;
-*/
 };
 
 } // end MonteCarlo namespace
@@ -70,12 +66,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_SoftElasticElectroatomicReaction_def.hpp"
+#include "MonteCarlo_MomentPreservingElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_SOFT_ELASTIC_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_MOMENT_PRESERVING_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_SoftElasticElectroatomicReaction.hpp
+// end MonteCarlo_MomentPreservingElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//

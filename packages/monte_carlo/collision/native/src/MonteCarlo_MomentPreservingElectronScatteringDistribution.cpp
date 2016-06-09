@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_SoftElasticElectronScatteringDistribution.cpp
+//! \file   MonteCarlo_MomentPreservingElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  The soft electron elastic scattering distribution definition
+//! \brief  The moment preserving electron elastic scattering distribution definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,14 +13,14 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SoftElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_MomentPreservingElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-SoftElasticElectronScatteringDistribution::SoftElasticElectronScatteringDistribution(
+MomentPreservingElectronScatteringDistribution::MomentPreservingElectronScatteringDistribution(
     const int atomic_number,
     const double mu_cutoff,
     const ElasticDistribution& discrete_scattering_distribution )
@@ -31,7 +31,7 @@ SoftElasticElectronScatteringDistribution::SoftElasticElectronScatteringDistribu
 }
 
 // Sample an outgoing energy and direction from the distribution
-void SoftElasticElectronScatteringDistribution::sample( 
+void MomentPreservingElectronScatteringDistribution::sample( 
                const double incoming_energy,
                double& outgoing_energy,
                double& scattering_angle_cosine ) const
@@ -48,7 +48,7 @@ void SoftElasticElectronScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void SoftElasticElectronScatteringDistribution::sampleAndRecordTrials( 
+void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrials( 
                 const double incoming_energy,
                 double& outgoing_energy,
                 double& scattering_angle_cosine,
@@ -64,7 +64,7 @@ void SoftElasticElectronScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the electron
-void SoftElasticElectronScatteringDistribution::scatterElectron( 
+void MomentPreservingElectronScatteringDistribution::scatterElectron( 
                 ElectronState& electron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction ) const
@@ -86,7 +86,7 @@ void SoftElasticElectronScatteringDistribution::scatterElectron(
 }
                         
 // Randomly scatter the adjoint electron
-void SoftElasticElectronScatteringDistribution::scatterAdjointElectron( 
+void MomentPreservingElectronScatteringDistribution::scatterAdjointElectron( 
                 AdjointElectronState& adjoint_electron,
                 ParticleBank& bank,
                 Data::SubshellType& shell_of_interaction ) const
@@ -108,7 +108,7 @@ void SoftElasticElectronScatteringDistribution::scatterAdjointElectron(
 }
 
 // Sample an outgoing direction from the distribution
-void SoftElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
+void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
                 const double incoming_energy,
                 double& scattering_angle_cosine,
                 unsigned& trials ) const

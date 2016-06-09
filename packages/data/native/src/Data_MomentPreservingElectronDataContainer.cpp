@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_SoftElasticElectronDataContainer.cpp
+//! \file   Data_MomentPreservingElectronDataContainer.cpp
 //! \author Luke Kersting
-//! \brief  The native soft elastic electron data container class def.
+//! \brief  The native moment preserving electron data container class def.
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,14 +21,14 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 // FRENSIE Includes
-#include "Data_SoftElasticElectronDataContainer.hpp"
+#include "Data_MomentPreservingElectronDataContainer.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Data{
 
 // Constructor (from saved archive)
-SoftElasticElectronDataContainer::SoftElasticElectronDataContainer( 
+MomentPreservingElectronDataContainer::MomentPreservingElectronDataContainer( 
 		    const std::string& archive_name,
 		    const Utility::ArchivableObject::ArchiveType archive_type )
 {
@@ -37,26 +37,26 @@ SoftElasticElectronDataContainer::SoftElasticElectronDataContainer(
 }
 
 // Return the atomic number
-unsigned SoftElasticElectronDataContainer::getAtomicNumber() const
+unsigned MomentPreservingElectronDataContainer::getAtomicNumber() const
 {
   return d_atomic_number;
 }
 
 // Return the elastic cutoff angle cosine
-double SoftElasticElectronDataContainer::getCutoffAngleCosine() const
+double MomentPreservingElectronDataContainer::getCutoffAngleCosine() const
 {
   return d_cutoff_angle_cosine;
 }
 
 // Return the elastic angular energy grid
 const std::vector<double>& 
-SoftElasticElectronDataContainer::getElasticAngularEnergyGrid() const
+MomentPreservingElectronDataContainer::getElasticAngularEnergyGrid() const
 {
   return d_angular_energy_grid;
 }
 
 // Return the number of discrete angles for an angular energy bin
-unsigned SoftElasticElectronDataContainer::getNumberOfDiscreteAngles( 
+unsigned MomentPreservingElectronDataContainer::getNumberOfDiscreteAngles( 
                             const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
@@ -66,53 +66,53 @@ unsigned SoftElasticElectronDataContainer::getNumberOfDiscreteAngles(
   return d_number_of_discrete_angles.find( angular_energy_bin )->second;
 }
 
-// Return the soft elastic discrete angles for an angular energy bin
+// Return the moment preserving discrete angles for an angular energy bin
 const std::vector<double>& 
-SoftElasticElectronDataContainer::getSoftElasticDiscreteAngles(
+MomentPreservingElectronDataContainer::getMomentPreservingDiscreteAngles(
 					        const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
 
-  return d_soft_elastic_discrete_angles.find( angular_energy_bin )->second;
+  return d_moment_preserving_elastic_discrete_angles.find( angular_energy_bin )->second;
 }
 
-// Return the soft elastic weights for an angular energy bin
+// Return the moment preserving weights for an angular energy bin
 const std::vector<double>& 
-SoftElasticElectronDataContainer::getSoftElasticWeights(
+MomentPreservingElectronDataContainer::getMomentPreservingWeights(
 					        const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
 
-  return d_soft_elastic_weights.find( angular_energy_bin )->second;
+  return d_moment_preserving_elastic_weights.find( angular_energy_bin )->second;
 }
 /*
 // Return the electron energy grid
 const std::vector<double>& 
-SoftElasticElectronDataContainer::getElectronEnergyGrid() const
+MomentPreservingElectronDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
 }
 
-// Return the Moment Preserving (MP) soft elastic electron cross section
+// Return the Moment Preserving (MP) moment preserving electron cross section
 const std::vector<double>& 
-SoftElasticElectronDataContainer::getMomentPreservingSoftElasticCrossSection() const
+MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSection() const
 {
-  return d_moment_preserving_soft_elastic_cross_section;
+  return d_moment_preserving_moment_preserving_elastic_cross_section;
 }
 
-// Return the MP soft elastic cross section threshold energy bin index
+// Return the MP moment preserving cross section threshold energy bin index
 unsigned
-SoftElasticElectronDataContainer::getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex() const
+MomentPreservingElectronDataContainer::getMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex() const
 {
-  return d_moment_preserving_soft_elastic_cross_section_threshold_index;
+  return d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index;
 }
 */
 // Set the atomic number
-void SoftElasticElectronDataContainer::setAtomicNumber( 
+void MomentPreservingElectronDataContainer::setAtomicNumber( 
 						 const unsigned atomic_number )
 {
   // Make sure the atomic number is valid
@@ -123,7 +123,7 @@ void SoftElasticElectronDataContainer::setAtomicNumber(
 }
 
 // Set the elastic cutoff angle cosine
-void SoftElasticElectronDataContainer::setCutoffAngleCosine( 
+void MomentPreservingElectronDataContainer::setCutoffAngleCosine( 
                          const double cutoff_angle_cosine )
 {
   // Make sure the elastic cutoff angle cosine is valid
@@ -134,7 +134,7 @@ void SoftElasticElectronDataContainer::setCutoffAngleCosine(
 }
 
 // Set the elastic angular energy grid
-void SoftElasticElectronDataContainer::setElasticAngularEnergyGrid( 
+void MomentPreservingElectronDataContainer::setElasticAngularEnergyGrid( 
 				       const std::vector<double>& angular_energy_grid )
 {
   // Make sure the angular energy grid is valid
@@ -152,7 +152,7 @@ void SoftElasticElectronDataContainer::setElasticAngularEnergyGrid(
 }
 
 // Set the number of discrete angles for an angular energy bin
-void SoftElasticElectronDataContainer::setNumberOfDiscreteAngles( 
+void MomentPreservingElectronDataContainer::setNumberOfDiscreteAngles( 
              const unsigned angular_energy_bin,
              const unsigned number_of_discrete_angles )
 {
@@ -165,67 +165,67 @@ void SoftElasticElectronDataContainer::setNumberOfDiscreteAngles(
   d_number_of_discrete_angles[angular_energy_bin] = number_of_discrete_angles;
 }
 
-// Set the soft elastic discrete angles for an angular energy bin
-void SoftElasticElectronDataContainer::setSoftElasticDiscreteAngles(
+// Set the moment preserving discrete angles for an angular energy bin
+void MomentPreservingElectronDataContainer::setMomentPreservingDiscreteAngles(
 		     const unsigned angular_energy_bin,
-		     const std::vector<double>& soft_elastic_discrete_angles )
+		     const std::vector<double>& moment_preserving_elastic_discrete_angles )
 {/*
 std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
 std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
-std::cout << "# of angles =\t" << soft_elastic_discrete_angles.size() << std::endl;
-std::cout << "angle 1 =\t" << soft_elastic_discrete_angles[0] << std::endl;
-std::cout << "angle 2 =\t" << soft_elastic_discrete_angles[1] << std::endl;
+std::cout << "# of angles =\t" << moment_preserving_elastic_discrete_angles.size() << std::endl;
+std::cout << "angle 1 =\t" << moment_preserving_elastic_discrete_angles[0] << std::endl;
+std::cout << "angle 2 =\t" << moment_preserving_elastic_discrete_angles[1] << std::endl;
 */
   // Make sure the angular_energy_bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
-  // Make sure the soft elastic discrete angles are valid
-  testPrecondition( soft_elastic_discrete_angles.size() ==
+  // Make sure the moment preserving discrete angles are valid
+  testPrecondition( moment_preserving_elastic_discrete_angles.size() ==
                d_number_of_discrete_angles.find( angular_energy_bin )->second );
-  testPrecondition( std::find_if( soft_elastic_discrete_angles.begin(),
-                                  soft_elastic_discrete_angles.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
                                   isValueLessThanMinusOne ) ==
-                    soft_elastic_discrete_angles.end() );
-  testPrecondition( std::find_if( soft_elastic_discrete_angles.begin(),
-                                  soft_elastic_discrete_angles.end(),
+                    moment_preserving_elastic_discrete_angles.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_discrete_angles.begin(),
+                                  moment_preserving_elastic_discrete_angles.end(),
                                   isValueGreaterThanOne ) ==
-                    soft_elastic_discrete_angles.end() );
+                    moment_preserving_elastic_discrete_angles.end() );
 
-  d_soft_elastic_discrete_angles[angular_energy_bin] = 
-        soft_elastic_discrete_angles;
+  d_moment_preserving_elastic_discrete_angles[angular_energy_bin] = 
+        moment_preserving_elastic_discrete_angles;
 }
 
-// Set the soft elastic weights for an angular energy bin
-void SoftElasticElectronDataContainer::setSoftElasticWeights( 
+// Set the moment preserving weights for an angular energy bin
+void MomentPreservingElectronDataContainer::setMomentPreservingWeights( 
 			 const unsigned angular_energy_bin,
-			 const std::vector<double>& soft_elastic_weights )
+			 const std::vector<double>& moment_preserving_elastic_weights )
 {/*
 std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
 std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
-std::cout << "# of weights =\t" << soft_elastic_weights.size() << std::endl;
-std::cout << std::setprecision(20) << "weight 1 =\t" << soft_elastic_weights[0] << std::endl;
-std::cout << std::setprecision(20) << "weight 2 =\t" << soft_elastic_weights[1] << std::endl;*/
+std::cout << "# of weights =\t" << moment_preserving_elastic_weights.size() << std::endl;
+std::cout << std::setprecision(20) << "weight 1 =\t" << moment_preserving_elastic_weights[0] << std::endl;
+std::cout << std::setprecision(20) << "weight 2 =\t" << moment_preserving_elastic_weights[1] << std::endl;*/
 
   // Make sure the angular_energy_bin is valid
   testPrecondition( angular_energy_bin >= 0 );
   testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
   // Make sure the weight is valid
-  testPrecondition( soft_elastic_weights.size() ==
+  testPrecondition( moment_preserving_elastic_weights.size() ==
                d_number_of_discrete_angles.find( angular_energy_bin )->second );
-  testPrecondition( std::find_if( soft_elastic_weights.begin(),
-                                  soft_elastic_weights.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
                                   isValueLessThanZero ) ==
-                    soft_elastic_weights.end() );
-  testPrecondition( std::find_if( soft_elastic_weights.begin(),
-                                  soft_elastic_weights.end(),
+                    moment_preserving_elastic_weights.end() );
+  testPrecondition( std::find_if( moment_preserving_elastic_weights.begin(),
+                                  moment_preserving_elastic_weights.end(),
                                   isValueGreaterThanOne ) ==
-                    soft_elastic_weights.end() );
+                    moment_preserving_elastic_weights.end() );
   
-  d_soft_elastic_weights[angular_energy_bin] = soft_elastic_weights;
+  d_moment_preserving_elastic_weights[angular_energy_bin] = moment_preserving_elastic_weights;
 }
 /*
 // Set the electron energy grid
-void SoftElasticElectronDataContainer::setElectronEnergyGrid( 
+void MomentPreservingElectronDataContainer::setElectronEnergyGrid( 
 				       const std::vector<double>& energy_grid )
 {
   // Make sure the energy grid is valid
@@ -237,56 +237,56 @@ void SoftElasticElectronDataContainer::setElectronEnergyGrid(
   d_electron_energy_grid = energy_grid;
 }
 
-// Set the soft elastic electron cross section using Moment Preserving (MP) theory
-void SoftElasticElectronDataContainer::setMomentPreservingSoftElasticCrossSection(
-			 const std::vector<double>& soft_elastic_cross_section )
+// Set the moment preserving electron cross section using Moment Preserving (MP) theory
+void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSection(
+			 const std::vector<double>& moment_preserving_elastic_cross_section )
 {
-  // Make sure the soft elastic cross section is valid
-  testPrecondition( soft_elastic_cross_section.size() <= 
+  // Make sure the moment preserving cross section is valid
+  testPrecondition( moment_preserving_elastic_cross_section.size() <= 
                     d_electron_energy_grid.size() );
-  testPrecondition( std::find_if( soft_elastic_cross_section.begin(),
-                                  soft_elastic_cross_section.end(),
+  testPrecondition( std::find_if( moment_preserving_elastic_cross_section.begin(),
+                                  moment_preserving_elastic_cross_section.end(),
                                   isValueLessThanOrEqualToZero ) ==
-                    soft_elastic_cross_section.end() );
+                    moment_preserving_elastic_cross_section.end() );
   
-  d_moment_preserving_soft_elastic_cross_section = soft_elastic_cross_section;
+  d_moment_preserving_moment_preserving_elastic_cross_section = moment_preserving_elastic_cross_section;
 }
 
-// Set the MP soft elastic cross section threshold energy bin index
-void SoftElasticElectronDataContainer::setMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(
+// Set the MP moment preserving cross section threshold energy bin index
+void MomentPreservingElectronDataContainer::setMomentPreservingMomentPreservingCrossSectionThresholdEnergyIndex(
 						        const unsigned index )
 {
   // Make sure the threshold index is valid
   testPrecondition( 
-        d_moment_preserving_soft_elastic_cross_section.size() + index ==
+        d_moment_preserving_moment_preserving_elastic_cross_section.size() + index ==
         d_electron_energy_grid.size() );
   
- d_moment_preserving_soft_elastic_cross_section_threshold_index= index;
+ d_moment_preserving_moment_preserving_elastic_cross_section_threshold_index= index;
 }
 */
 // Test if a value is less than or equal to zero
-bool SoftElasticElectronDataContainer::isValueLessThanOrEqualToZero( 
+bool MomentPreservingElectronDataContainer::isValueLessThanOrEqualToZero( 
 							   const double value )
 {
   return value <= 0.0;
 }
 
 // Test if a value is less than zero
-bool SoftElasticElectronDataContainer::isValueLessThanZero( 
+bool MomentPreservingElectronDataContainer::isValueLessThanZero( 
 							   const double value )
 {
   return value < 0.0;
 }
 
 // Test if a value is greater than one
-bool SoftElasticElectronDataContainer::isValueGreaterThanOne( 
+bool MomentPreservingElectronDataContainer::isValueGreaterThanOne( 
 							   const double value )
 {
   return value > 1.0;
 }
 
 // Test if a value is less than the angle cosine cutoff
-bool SoftElasticElectronDataContainer::isValueLessThanMinusOne( 
+bool MomentPreservingElectronDataContainer::isValueLessThanMinusOne( 
 							   const double value )
 {
   return value < -1.0;
@@ -296,5 +296,5 @@ bool SoftElasticElectronDataContainer::isValueLessThanMinusOne(
 } // end Data namespace
 
 //---------------------------------------------------------------------------//
-// end Data_SoftElasticElectronDataContainer.cpp
+// end Data_MomentPreservingElectronDataContainer.cpp
 //---------------------------------------------------------------------------//
