@@ -57,5 +57,6 @@ c Job Control
 c --------------------
 c run in neutron only mode
 mode n
-c run for 1000 histories
-nps 1000
+c run for 1000000 histories
+nps 100
+f4:n 10
