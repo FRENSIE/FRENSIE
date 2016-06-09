@@ -77,9 +77,11 @@ int main( int argc, char** argv )
   std::string test_native_al_file_name;
 
 
+  mp_data_clp.setDocString( "Moment Preserving AL Test Data Generator\n" );
   mp_data_clp.setOption( "test_native_al_file",
 		                 &test_native_al_file_name,
-		                 "Test Native Al file name" );
+		                 "Test Native Al file name",
+                         true );
 
   mp_data_clp.throwExceptions( false );
 
