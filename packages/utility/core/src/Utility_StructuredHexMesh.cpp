@@ -20,7 +20,7 @@
 namespace Utility{
 // take care of when distance is very small
 //initialize static member data
-const double StructuredHexMesh::s_tol = 1e-6;
+const double StructuredHexMesh::s_tol = 1e-10;
 
 //!Constructor
 StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_grid_points,
@@ -170,21 +170,24 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
   }
   
   //check special case of a point being caught in the boundary region but traveling away from mesh. This takes care of when the point was born in boundary zone but traveling away *and* when the particle entered mesh in the boundary region but never actually entered mesh
-  if(boundaryRegionSpecialCase( current_point, direction ) )
+  if(boundaryRegionSpecialCase( current_point, end_point, direction ) )
   {
+    std::cout << std::endl;
+    std::cout << "BOUNDARY REGION SPECIAL CASE TRUE" << std::endl;
     return contribution_array;
   }
 
   //find the planes that the particle will interact with (since point has either moved or these were never found if inside mesh) and set indices up for interaction planes and hex_index planes
   interaction_plane_array = findInteractionPlanes( current_point,
                                                    direction );
-                                                   
+
+
   setMemberIndices( current_point,
                     direction,
                     interaction_plane_array );
-                    
+
+  //set the direction that the hex cells will move through
   int incrementer[3];
-  
   for(unsigned i = 0; i < 3; ++i)
   {
   
@@ -251,8 +254,12 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
       }
   
     }
-    
+    // increase iteration_length by distance
     iteration_length += distance_to_intersection.second;
+    //push up current point to new intersection point
+    current_point[x_dim] += distance_to_intersection.second*direction[x_dim];
+    current_point[y_dim] += distance_to_intersection.second*direction[y_dim];
+    current_point[z_dim] += distance_to_intersection.second*direction[z_dim];
   }
 
   return contribution_array;
@@ -290,57 +297,158 @@ void StructuredHexMesh::setMemberIndices( const double point[3],
   //if the hex plane isn't the same as the interaction plane, find the hex plane
   if(!wasMemberPlaneSet[x_dim])
   {
-    d_hex_plane_indices[x_dim] = Search::binaryLowerBoundIndex( d_x_planes.begin(),
-                                                                d_x_planes.end(),
-                                                                point[x_dim] );
+    //take care of boundary region case
+    if( d_x_planes.front() - s_tol < point[x_dim] && point[x_dim] < d_x_planes.front() )
+    {
+      d_hex_plane_indices[x_dim] = 0;
+    }
+    else if( d_x_planes.back() < point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol )
+    {
+      d_hex_plane_indices[x_dim] = d_x_planes.size() - 1;
+    }
+    //somewhere inside the mesh
+    else
+    {
+      //take care of case when poitn is exactly on the upper boundary
+      if(point[x_dim] == d_x_planes.back())
+      {
+        d_hex_plane_indices[x_dim] = d_x_planes.size() - 2;
+      }
+      else
+      {
+        d_hex_plane_indices[x_dim] = Search::binaryLowerBoundIndex( d_x_planes.begin(),
+                                                                    d_x_planes.end(),
+                                                                    point[x_dim] );
+      }
+    }
   }
   if(!wasMemberPlaneSet[y_dim] )
   {
-    d_hex_plane_indices[y_dim] = Search::binaryLowerBoundIndex( d_y_planes.begin(),
-                                                                d_y_planes.end(),
-                                                                point[y_dim] );  
+    if( d_y_planes.front() - s_tol < point[y_dim] && point[y_dim] < d_y_planes.front() )
+    {
+      d_hex_plane_indices[y_dim] = 0;
+    }
+    else if( d_y_planes.back() < point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol )
+    {
+      d_hex_plane_indices[y_dim] = d_y_planes.size() - 1;
+    }
+    else
+    {
+      if(point[y_dim] == d_y_planes.back())
+      {
+        d_hex_plane_indices[y_dim] = d_y_planes.size() - 2;
+      }
+      else
+      {
+        d_hex_plane_indices[y_dim] = Search::binaryLowerBoundIndex( d_y_planes.begin(),
+                                                                    d_y_planes.end(),
+                                                                    point[y_dim] );
+      }
+    }
   }
   if(!wasMemberPlaneSet[z_dim] )
   {
-    d_hex_plane_indices[z_dim] = Search::binaryLowerBoundIndex( d_z_planes.begin(),
-                                                                d_z_planes.end(),
-                                                                point[z_dim] );  
+    if( d_z_planes.front() - s_tol < point[z_dim] && point[z_dim] < d_z_planes.front() )
+    {
+      d_hex_plane_indices[z_dim] = 0;
+    }
+    else if( d_z_planes.back() < point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol )
+    {
+      d_hex_plane_indices[z_dim] = d_z_planes.size() - 1;
+    }
+    else
+    {
+      if(point[z_dim] == d_z_planes.back())
+      {
+        d_hex_plane_indices[z_dim] = d_z_planes.size() - 2;
+      }
+      else
+      {
+        d_hex_plane_indices[z_dim] = Search::binaryLowerBoundIndex( d_z_planes.begin(),
+                                                                    d_z_planes.end(),
+                                                                    point[z_dim] );
+      }
+    }
   }
 
 }
 
-/*Deals with a special case of the point being in the boundary region but traveling away from the mesh.
+/*Deals with a special case of the particle being in the boundary region but traveling away from the mesh
+  and the particle born in the boundary region and staying in that boundary region.
   If it does, it should just return true which will result in a return of an empty contribution array */
-bool StructuredHexMesh::boundaryRegionSpecialCase( const double point[3],
-                                const double direction[3] )
+bool StructuredHexMesh::boundaryRegionSpecialCase( const double start_point[3],
+                                                   const double end_point[3],
+                                                   const double direction[3] )
 {
   bool isSpecialCase = false;
   //test boundary regions in x dimension
-  if( d_x_planes.back() <= point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol && direction[x_dim] >= 0 )
+  if( d_x_planes.back() <= start_point[x_dim] && start_point[x_dim] < d_x_planes.back() + s_tol )
   {
-    isSpecialCase = true;
+    if( direction[x_dim] >= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_x_planes.back() <= end_point[x_dim] && end_point[x_dim] < d_x_planes.back() + s_tol)
+    {
+      isSpecialCase = true;
+    }
   }
-  else if(d_x_planes.front() - s_tol < point[x_dim] && point[x_dim] <= d_x_planes.front() && direction[x_dim] <= 0)
+  else if(d_x_planes.front() - s_tol < start_point[x_dim] && start_point[x_dim] <= d_x_planes.front() )
   {
-    isSpecialCase = true;
+    if( direction[x_dim] <= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_x_planes.front() - s_tol < end_point[x_dim] && end_point[x_dim] <= d_x_planes.front() )
+    {
+      isSpecialCase = true;
+    }
   }
   //test boundary regions in y dimension
-  if( d_y_planes.back() <= point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol && direction[y_dim] >= 0 )
+  if( d_y_planes.back() <= start_point[y_dim] && start_point[y_dim] < d_y_planes.back() + s_tol )
   {
-    isSpecialCase = true;
+    if( direction[y_dim] >= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_y_planes.back() <= end_point[y_dim] && end_point[y_dim] < d_y_planes.back() + s_tol)
+    {
+      isSpecialCase = true;
+    }
   }
-  else if(d_y_planes.front() - s_tol < point[y_dim] && point[y_dim] <= d_y_planes.front() && direction[y_dim] <= 0)
+  else if(d_y_planes.front() - s_tol < start_point[y_dim] && start_point[y_dim] <= d_y_planes.front() )
   {
-    isSpecialCase = true;
+    if( direction[y_dim] <= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_y_planes.front() - s_tol < end_point[y_dim] && end_point[y_dim] <= d_y_planes.front() )
+    {
+      isSpecialCase = true;
+    }
   }
   //test boundary regions in z dimension
-  if( d_z_planes.back() <= point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol && direction[z_dim] >= 0 )
+  if( d_z_planes.back() <= start_point[z_dim] && start_point[z_dim] < d_z_planes.back() + s_tol )
   {
-    isSpecialCase = true;
+    if( direction[z_dim] >= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_z_planes.back() <= end_point[z_dim] && end_point[z_dim] < d_z_planes.back() + s_tol)
+    {
+      isSpecialCase = true;
+    }
   }
-  else if(d_z_planes.front() - s_tol < point[z_dim] && point[z_dim] <= d_z_planes.front() && direction[z_dim] <= 0)
+  else if(d_z_planes.front() - s_tol < start_point[z_dim] && start_point[z_dim] <= d_z_planes.front() )
   {
-    isSpecialCase = true;
+    if( direction[z_dim] <= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( d_z_planes.front() - s_tol < end_point[z_dim] && end_point[z_dim] <= d_z_planes.front() )
+    {
+      isSpecialCase = true;
+    }
   }
 
   return isSpecialCase;
@@ -388,7 +496,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
   Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_planes;
 //X DIMENSION SEARCH
 
-  if(std::fabs(direction[x_dim]) > 1e-10)
+  if(std::fabs(direction[x_dim]) > s_tol)
   {
     /*check if the point is above the x dimension upper bounding plane and the 
       relevant direction component is negative */
@@ -400,7 +508,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(x_interaction_plane);
     }
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_x_planes.back() <= point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol)
+    else if( d_x_planes.back() <= point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol && direction[x_dim] < 0)
     {
       std::pair<planeDimension,plane_index> x_interaction_plane = 
         std::make_pair(x_dim, d_x_planes.size()-2);
@@ -417,7 +525,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(x_interaction_plane);
     }
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_x_planes.front() >= point[x_dim] && point[x_dim] > d_x_planes.front() - s_tol)
+    else if( d_x_planes.front() >= point[x_dim] && point[x_dim] > d_x_planes.front() - s_tol && direction[x_dim] > 0)
     {
       std::pair<planeDimension,plane_index> x_interaction_plane = 
         std::make_pair(x_dim, 1);
@@ -453,7 +561,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
   
   
 //Y DIMENSION SEARCH
-  if(std::fabs(direction[y_dim]) > 1e-10)
+  if(std::fabs(direction[y_dim]) > s_tol)
   {
     /*check if the point is above the y dimension upper bounding plane and the 
       relevant direction component is negative */
@@ -465,7 +573,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(y_interaction_plane);
     }
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_y_planes.back() <= point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol)
+    else if( d_y_planes.back() <= point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol && direction[y_dim] < 0)
     {
       std::pair<planeDimension,plane_index> y_interaction_plane = 
         std::make_pair(y_dim, d_y_planes.size()-2);
@@ -482,7 +590,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(y_interaction_plane);
     }
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_y_planes.front() >= point[y_dim] && point[y_dim] > d_y_planes.front() - s_tol)
+    else if( d_y_planes.front() >= point[y_dim] && point[y_dim] > d_y_planes.front() - s_tol && direction[y_dim] > 0)
     {
       std::pair<planeDimension,plane_index> y_interaction_plane = 
         std::make_pair(y_dim, 1);
@@ -519,7 +627,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
 
 
 //Z DIMENSION SEARCH
-  if(std::fabs(direction[z_dim]) > 1e-10 )
+  if(std::fabs(direction[z_dim]) > s_tol )
   {
     /*check if the point is above the z dimension upper bounding plane and the 
       relevant direction component is negative */
@@ -531,7 +639,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(z_interaction_plane);
     }
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_z_planes.back() <= point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol)
+    else if( d_z_planes.back() <= point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol && direction[z_dim] < 0)
     {
       std::pair<planeDimension,plane_index> z_interaction_plane = 
         std::make_pair(z_dim, d_z_planes.size()-2);
@@ -548,7 +656,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       interaction_planes.push_back(z_interaction_plane);
     }
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_z_planes.front() >= point[z_dim] && point[z_dim] > d_z_planes.front() - s_tol)
+    else if( d_z_planes.front() >= point[z_dim] && point[z_dim] > d_z_planes.front() - s_tol && direction[z_dim] > 0)
     {
       std::pair<planeDimension,plane_index> z_interaction_plane = 
         std::make_pair(z_dim, 1);

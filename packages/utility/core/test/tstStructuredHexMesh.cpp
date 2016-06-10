@@ -72,13 +72,13 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, is_point_in_mesh)
   
   //points not inside mesh but inside boundary region (should still return true)
   //points on upper dimension boundaries
-  double point5[3] {1.0 + 1e-6, 0.5, 0.5};
-  double point6[3] {0.5, 1.0 + 1e-6, 0.5};
-  double point7[3] {0.5, 0.5, 1.0 + 1e-6};
+  double point5[3] {1.0 + 1e-10, 0.5, 0.5};
+  double point6[3] {0.5, 1.0 + 1e-10, 0.5};
+  double point7[3] {0.5, 0.5, 1.0 + 1e-10};
   //points on lower dimension boundaries
-  double point8[3] {-1e-6, 0.5, 0.5};
-  double point9[3] {0.5, -1e-6, 0.5};
-  double point10[3] {0.5, 0.5, -1e-6};
+  double point8[3] {-1e-10, 0.5, 0.5};
+  double point9[3] {0.5, -1e-10, 0.5};
+  double point10[3] {0.5, 0.5, -1e-10};
 
   TEST_ASSERT( hex_mesh->isPointInMesh(point5) );
   TEST_ASSERT( hex_mesh->isPointInMesh(point6) );
@@ -369,4 +369,369 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_end
   TEST_ASSERT(ray_length - 1e-10 <= contribution2[0].second + contribution2[1].second &&
     contribution2[0].second + contribution2[1].second <= ray_length + 1e-10);
 
+  //test multiple plane crossings
+  start_point[0] = 0.7;
+  start_point[1] = 0.6;
+  start_point[2] = 0.8;
+ 
+  end_point[0] = 0.36;
+  end_point[1] = 0.2;
+  end_point[2] = 0.81;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution3 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_ASSERT(contribution3.size() == 3);
+  TEST_ASSERT(contribution3[0].first == 7);
+  TEST_ASSERT(contribution3[2].first == 4);
+  
+  double sum_of_segments = contribution3[0].second + contribution3[1].second + contribution3[2].second;
+  std::cout << std::endl;
+  for( unsigned i = 0; i < contribution3.size(); ++i)
+  {
+  
+    std::cout << "HEX INDEX: " << contribution3[i].first << "...... SEGMENT_LENGTH: " << contribution3[i].second << std::endl;
+  
+  }
+  
+  TEST_ASSERT(ray_length - 1e-10 <= sum_of_segments &&
+    sum_of_segments <= ray_length + 1e-10);
 }
+
+//---------------------------------------------------------------------------//
+// third test: Particle starts in mesh and exits mesh
+//---------------------------------------------------------------------------//
+
+TEUCHOS_UNIT_TEST(StructuredHexMesh, starts_in_mesh_and_exits_mesh)
+{
+
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
+    
+  //particle starts in first cell and exits in the negative direction  
+  start_point[0] = 0.25;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = -0.25;
+  end_point[1] = 0.25;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_ASSERT(contribution1.size() == 1);
+  TEST_ASSERT(contribution1[0].first == 0);
+  TEST_ASSERT(contribution1[0].second == 0.25);
+
+  //particle starts in another cell and crosses multiple planes before exiting  
+  start_point[0] = 0.268;
+  start_point[1] = 0.138;
+  start_point[2] = 0.922;
+ 
+  end_point[0] = 1.3;
+  end_point[1] = 0.9;
+  end_point[2] = -1.2;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution2 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+  std::cout << std::endl;
+  std::cout << "EXIT MESH CONTRIBUTION SIZE: " << contribution1.size() << std::endl;
+  for( unsigned i = 0; i < contribution2.size(); ++i)
+  {
+  
+    std::cout << "HEX INDEX: " << contribution2[i].first << "...... SEGMENT_LENGTH: " << contribution2[i].second << std::endl;
+  
+  }
+
+}
+
+//---------------------------------------------------------------------------//
+// testing cases of where the particle starts outside of the mesh and enters the mesh
+// simple cases of particle entering mesh
+//---------------------------------------------------------------------------//
+
+TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_mesh)
+{
+
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
+    
+  //particle starts outside mesh and enters first cell
+  start_point[0] = -0.25;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.25;
+  end_point[1] = 0.25;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_ASSERT(contribution1.size() == 1);
+  TEST_ASSERT(contribution1[0].first == 0);
+  TEST_ASSERT(contribution1[0].second == 0.25);
+
+  //particle starts outside mesh,crosses multiple planes inside mesh, and dies inside mesh
+  start_point[0] = -0.25;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.83;
+  end_point[1] = 0.73;
+  end_point[2] = 0.52;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution2 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+  std::cout << std::endl;
+  std::cout << contribution2.size() << std::endl;
+
+  for( unsigned i = 0; i < contribution2.size(); ++i)
+  {
+  
+    std::cout << "HEX INDEX: " << contribution2[i].first << "...... SEGMENT_LENGTH: " << contribution2[i].second << std::endl;
+  
+  }
+
+  //particle starts outside mesh, and returns interaction planes that are outside mesh before actual interaction plane
+  start_point[0] = -0.25;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.01;
+  end_point[1] = 0.99;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution3 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+  std::cout << std::endl;
+  std::cout << contribution3.size() << std::endl;
+
+  for( unsigned i = 0; i < contribution3.size(); ++i)
+  {
+  
+    std::cout << "HEX INDEX: " << contribution3[i].first << "...... SEGMENT_LENGTH: " << contribution3[i].second << std::endl;
+  
+  }
+  
+  //particle starts outside mesh, enters mesh, and then exits mesh
+  start_point[0] = 1.2;
+  start_point[1] = 1.3;
+  start_point[2] = 1.1;
+ 
+  end_point[0] = -0.2;
+  end_point[1] = -3;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution4 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+  std::cout << std::endl;
+  std::cout << contribution4.size() << std::endl;
+
+  for( unsigned i = 0; i < contribution4.size(); ++i)
+  {
+  
+    std::cout << "HEX INDEX: " << contribution4[i].first << "...... SEGMENT_LENGTH: " << contribution4[i].second << std::endl;
+  
+  }
+
+}
+
+//---------------------------------------------------------------------------//
+// boundary region cases
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
+{
+
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
+
+  //particle starts in boundary region and travels away from mesh on negative side
+  start_point[0] = -1e-11;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = -0.25;
+  end_point[1] = 0.25;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution1.size(), 0);
+
+  //particle starts in boundary region and travels away from mesh on negative side
+  start_point[0] = 1+1e-11;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 2;
+  end_point[1] = 0.25;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution2 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution2.size(), 0);
+
+  //particle starts in boundary region and dies in boundary region
+  start_point[0] = 1+1e-11;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 1+1e-11;
+  end_point[1] = 0.75;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution3 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution3.size(), 0);
+
+  //particle starts in boundary region and dies in boundary region going towards boundary region
+  start_point[0] = 1+1e-11;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 1+1e-12;
+  end_point[1] = 0.75;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution4 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution4.size(), 0);
+
+}
+
+
