@@ -51,8 +51,10 @@ void StandardMomentPreservingElectronDataGenerator::populateMomentPreservingData
   this->setAtomicNumber( data_container );
 
   // Set the moment preserving electron data
-  std::cout << "Setting the moment preserving electron data: " << std::endl;
+  std::cout << "Setting the moment preserving electron data...";
+  std::cout.flush();
   this->setMomentPreservingElectronData( data_container, number_of_discrete_angles );
+  std::cout << "done." << std::endl;
 }
 
 // Set the moment preserving electron data

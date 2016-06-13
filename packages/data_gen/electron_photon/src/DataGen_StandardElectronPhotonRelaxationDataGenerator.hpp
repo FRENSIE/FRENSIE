@@ -21,6 +21,7 @@
 #include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
+#include "Data_MomentPreservingElectronDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -32,12 +33,26 @@ class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelax
 
 public:
 
-  //! Constructor
+  //! Constructor 
   StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<const Data::ENDLDataContainer>&
-            endl_data_container,
+       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+	   const double min_photon_energy,
+	   const double max_photon_energy,
+       const double min_electron_energy,
+       const double max_electron_energy,
+	   const double occupation_number_evaluation_tolerance,
+	   const double subshell_incoherent_evaluation_tolerance,
+	   const double grid_convergence_tol = 0.001,
+	   const double grid_absolute_diff_tol = 1e-13,
+	   const double grid_distance_tol = 1e-13 );
+
+  //! Constructor with moment preserving data
+  StandardElectronPhotonRelaxationDataGenerator(
+	   const unsigned atomic_number,
+	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
        const double min_electron_energy,
@@ -57,6 +72,12 @@ public:
   //! Populate the electron-photon-relaxation data container
   void populateEPRDataContainer(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  //! Repopulate the electron moment preserving data
+  static void repopulateMomentPreservingData(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const double cutoff_angle_cosine = 0.9,
+    const unsigned number_of_moment_preserving_angles = 1 );
 
 protected:
 
@@ -112,20 +133,24 @@ private:
 			   std::vector<double>& half_momentum_grid,
 			   std::vector<double>& half_profile ) const;
 
-  // Set the screened rutherford data
-  void setScreenedRutherfordData(
-    const Teuchos::RCP<const Utility::OneDDistribution>&
-        cutoff_elastic_cross_section,
-    const Teuchos::RCP<const Utility::OneDDistribution>&
-        total_elastic_cross_section,
-    const std::vector<double>& elastic_energy_grid,
-    const std::map<double,std::vector<double> >& elastic_pdf,
+  // Set the electron cross section union energy grid
+  void setElectronCrossSectionsData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
+//  // Set the screened rutherford data
+//  void setScreenedRutherfordData(
+//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//        cutoff_elastic_cross_section,
+//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//        total_elastic_cross_section,
+//    const std::vector<double>& elastic_energy_grid,
+//    const std::map<double,std::vector<double> >& elastic_pdf,
+//    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
   // Set the screened rutherford data
-  void setMomentPreservingData(
+  static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
-    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
@@ -200,11 +225,12 @@ private:
     std::vector<double>& elastic_pdf ) const;
 
   // Generate elastic discrete angle cosines and weights
-  void evaluateDisceteAnglesAndWeights(
+  static void evaluateDisceteAnglesAndWeights(
     const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
+    const int& number_of_moment_preserving_angles,
     std::vector<double>& discrete_angles,
-    std::vector<double>& weights ) const;
+    std::vector<double>& weights );
 
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
@@ -213,8 +239,10 @@ private:
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
   // The ENDL data
-  Teuchos::RCP<const Data::ENDLDataContainer>
-    d_endl_data_container;
+  Teuchos::RCP<const Data::ENDLDataContainer> d_endl_data_container;
+
+  // The Native data
+  Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer> d_native_epr_data;
 
   // The min photon energy
   double d_min_photon_energy;

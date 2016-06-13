@@ -1097,9 +1097,32 @@ int main( int argc, char** argv )
 						     test_native_al_file_name ) );
 
 
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    al_data->getCutoffElasticCrossSection().begin(),
+    al_data->getCutoffElasticCrossSection().end() );
+
+  Teuchos::ArrayRCP<double> rutherford_cross_section;
+  rutherford_cross_section.assign(
+    al_data->getScreenedRutherfordElasticCrossSection().begin(),
+    al_data->getScreenedRutherfordElasticCrossSection().end() );
+
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign( al_data->getElectronEnergyGrid().begin(),
+                      al_data->getElectronEnergyGrid().end() );
+
   // Create the moment evaluator
   al_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
-                                    *al_data ) );
+        al_data->getCutoffElasticAngles(),
+        al_data->getCutoffElasticPDF(),
+        al_data->getElasticAngularEnergyGrid(),
+        energy_grid,
+        cutoff_cross_section,
+        rutherford_cross_section,
+        al_data->getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+        al_data->getAtomicNumber() ) );
+
 
   // Create the test moment evaluator
   test_al_evaluator.reset( new TestElasticElectronMomentsEvaluator(

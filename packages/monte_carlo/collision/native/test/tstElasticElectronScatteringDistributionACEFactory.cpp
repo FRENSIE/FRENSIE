@@ -31,115 +31,19 @@ Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   ace_cutoff_elastic_distribution;
 
-Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-  ace_sr_elastic_distribution;
-
 //---------------------------------------------------------------------------//
 // Tests
-//---------------------------------------------------------------------------//
-// Check that the angular grid can be returned
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
-                   getAngularGrid )
-{
-
-  double cutoff_angle_cosine = -1.0;
-  Teuchos::Array<double> angular_cosine_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
-                                                *xss_data_extractor,
-                                                0,
-                                                cutoff_angle_cosine );
-  // Test
-  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 3 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.front(), -1.0 );
-  TEST_EQUALITY_CONST( angular_cosine_grid[1], 0.999999 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
-
-  angular_cosine_grid.clear();
-
-  cutoff_angle_cosine = 0.9;
-  angular_cosine_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
-                                                *xss_data_extractor,
-                                                0,
-                                                cutoff_angle_cosine );
-  // Test
-  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 3 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.front(), 0.9 );
-  TEST_EQUALITY_CONST( angular_cosine_grid[1], 0.999999 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
-
-  angular_cosine_grid.clear();
-
-  cutoff_angle_cosine = -1.0;
-  angular_cosine_grid =
-    MonteCarlo::ElasticElectronScatteringDistributionACEFactory::getAngularGrid(
-                                                *xss_data_extractor,
-                                                13,
-                                                cutoff_angle_cosine );
-  // Test
-  TEST_EQUALITY_CONST( angular_cosine_grid.size(), 85 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.front(), -1.0 );
-  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 1.0 );
-  angular_cosine_grid.pop_back();
-  TEST_EQUALITY_CONST( angular_cosine_grid.back(), 0.999999 );
-
-}
-/*
-//---------------------------------------------------------------------------//
-// Check that sampleAndRecordTrialsImpl can be evaluated
-TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
-                   sampleAndRecordTrialsImpl )
-{
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
-        ace_cutoff_elastic_distribution,
-        ace_sr_elastic_distribution,
-        *xss_data_extractor );
-
-  // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // sample mu = 0.9874366113907
-  fake_stream[1] = 0.5; // sample mu = 9.99999500000093
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  double incoming_energy = 1.0e-3;
-  double scattering_angle_cosine;
-  unsigned trials = 10;
-
-  // sampleAndRecordTrialsImpl from cutoff distribution
-  ace_cutoff_elastic_distribution->sampleAndRecordTrialsImpl(
-                                                incoming_energy,
-                                                scattering_angle_cosine,
-                                                trials );
-
-  // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 11 );
-
-  // sampleAndRecordTrialsImpl from screened Rutherford distribution
-  ace_sr_elastic_distribution->sampleAndRecordTrialsImpl(
-                                                incoming_energy,
-                                                scattering_angle_cosine,
-                                                trials );
-
-  // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 12 );
-}
-*/
 //---------------------------------------------------------------------------//
 // Check sample can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                    sample )
 {
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistributions(
+  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
                                                 ace_cutoff_elastic_distribution,
-                                                ace_sr_elastic_distribution,
                                                 *xss_data_extractor );
   // Set fake random number stream
-  std::vector<double> fake_stream( 2 );
+  std::vector<double> fake_stream( 1 );
   fake_stream[0] = 0.5; // sample mu = 0.9874366113907
-  fake_stream[1] = 0.5; // sample mu = 9.99999500000093E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -154,18 +58,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-
-  scattering_angle_cosine = 0;
-  outgoing_energy = 0;
-
-  // sampleAndRecordTrialsImpl screened rutherford
-  ace_sr_elastic_distribution->sample( incoming_energy,
-                                       outgoing_energy,
-                                       scattering_angle_cosine );
-
-  // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -177,10 +69,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                                                 ace_cutoff_elastic_distribution,
                                                 *xss_data_extractor );
 
-  MonteCarlo::ElasticElectronScatteringDistributionACEFactory::createScreenedRutherfordElasticDistribution(
-                                                ace_sr_elastic_distribution,
-                                                ace_cutoff_elastic_distribution,
-                                                *xss_data_extractor );
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5; // sample mu = 0.9874366113907
@@ -203,21 +91,6 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
-
-
-  scattering_angle_cosine = 0;
-  outgoing_energy = 0;
-
-  // sampleAndRecordTrialsImpl screened rutherford
-  ace_sr_elastic_distribution->sampleAndRecordTrials(
-                                          incoming_energy,
-                                          outgoing_energy,
-                                          scattering_angle_cosine,
-                                          trials );
-  // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999500000093E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
-  TEST_EQUALITY_CONST( trials, 12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -19,6 +19,7 @@
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -47,7 +48,20 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine = 0.999999 );
+    const double cutoff_angle_cosine = 0.999999 );
+
+  //! Constructor
+  ElasticElectronMomentsEvaluator(
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
+    const std::vector<double>& angular_energy_grid,
+    const Teuchos::ArrayRCP<double>& electron_energy_grid,
+    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
+    const Teuchos::ArrayRCP<double>& rutherford_cross_section,
+    const unsigned& cutoff_cross_section_thrshold_index,
+    const unsigned& rutherford_cross_section_thrshold_index,
+    const unsigned& atomic_number,
+    const double cutoff_angle_cosine = 0.999999 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
@@ -150,11 +164,8 @@ private:
   Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     d_cutoff_distribution;
 
-  // The raw ace electron data extractor
-  Data::ElectronPhotonRelaxationDataContainer d_data_container;
-
-  // The change in angle cosine cutoff between hard and soft scattering
-  double d_cutoff_delta_angle_cosine;
+  // The map of the cutoff angles
+  std::map<double,std::vector<double> > d_cutoff_elastic_angles;
 
   // The angle cosine cutoff between hard and soft scattering
   double d_cutoff_angle_cosine;

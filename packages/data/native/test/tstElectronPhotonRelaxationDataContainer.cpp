@@ -699,13 +699,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   angles[2] = 0.90;
 
   double energy = 1.0;
-  std::map<double, std::vector<double> > angles_map;
+  std::map<double, std::vector<double> > angles_map, map;
 
   angles_map[energy] = angles;
 
   epr_data_container.setCutoffElasticAngles( angles_map );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticAngles(1.0),
+  map = epr_data_container.getCutoffElasticAngles();
+
+  TEST_COMPARE_ARRAYS( map.find(1.0)->second,
                        angles );
 }
 
@@ -720,13 +722,15 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   pdf[2] = 0.7;
 
   double energy = 1.0;
-  std::map<double, std::vector<double> > pdf_map;
+  std::map<double, std::vector<double> > pdf_map, map;
 
   pdf_map[energy] = pdf;
 
   epr_data_container.setCutoffElasticPDF( pdf_map );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getCutoffElasticPDF(1.0),
+  map = epr_data_container.getCutoffElasticPDF();
+
+  TEST_COMPARE_ARRAYS( map.find(1.0)->second,
                        pdf );
 }
 
@@ -1274,7 +1278,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   export_importData_ascii )
+                   export_importData_ascii )
 {
   const std::string test_ascii_file_name( "test_epr_data_container.txt" );
 
@@ -1486,7 +1490,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   export_importData_xml )
+                   export_importData_xml )
 {
   const std::string test_xml_file_name( "test_epr_data_container.xml" );
 

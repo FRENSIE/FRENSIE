@@ -18,7 +18,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardMomentPreservingDataGenerator.hpp"
+#include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -38,6 +38,7 @@ int main( int argc, char** argv )
   std::string cross_section_directory, cross_section_alias;
   double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
   double cutoff_angle_cosine = 0.9;
+  int number_of_moment_preserving_angles = 1;
   bool modify_cs_xml_file = false;
 
   mp_data_generator_clp.setDocString( "Moment Preserving Electron Native Data File"
@@ -60,6 +61,9 @@ int main( int argc, char** argv )
   mp_data_generator_clp.setOption( "cutoff_angle_cosine",
 			       &cutoff_angle_cosine,
 			       "Cutoff angle cosine for moment preserving elastic data" );
+  mp_data_generator_clp.setOption( "number_of_moment_preserving_angles",
+			       &number_of_moment_preserving_angles,
+			       "Number of discrete moment preserving angles" );
   mp_data_generator_clp.setOption( "modify_cs_xml_file",
 			       "do_not_modify_cs_xml_file",
 			       &modify_cs_xml_file,
@@ -89,7 +93,7 @@ int main( int argc, char** argv )
   int data_file_start_line, atomic_number;
   double atomic_weight;
 
-  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
@@ -103,10 +107,12 @@ int main( int argc, char** argv )
   if( data_file_type == "Native" )
   {
     Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> native_data_container(
-        new Data::ElectronPhotonRelaxationDataContainer( data_file_path );
+        new Data::ElectronPhotonRelaxationDataContainer( data_file_path ) );
+
+    atomic_number = native_data_container->getAtomicNumber();
 
     mp_data_generator.reset(
-	    new const DataGen::StandardElectronPhotonRelaxationDataGenerator(
+	    new const DataGen::StandardMomentPreservingElectronDataGenerator(
 					    atomic_number,
 					    native_data_container,
 					    min_electron_energy,
@@ -124,7 +130,7 @@ int main( int argc, char** argv )
 
   mp_data_generator->populateMomentPreservingDataContainer(
                             data_container,
-                            number_of_discrete_angles );
+                            number_of_moment_preserving_angles );
 
   std::ostringstream oss;
   oss << "moment_preserving_" << atomic_number << "_native.xml";
@@ -139,7 +145,9 @@ int main( int argc, char** argv )
     new_file_name += oss.str();
 
     std::string new_cross_section_alias( cross_section_alias );
-    new_cross_section_alias += "-MomentPreserving";
+
+    std::size_t pos = new_cross_section_alias.find("-Native");
+    new_cross_section_alias.replace(pos, std::string::npos,"-MomentPreserving");
 
     Teuchos::ParameterList& old_table_info =
       cross_sections_table_info->sublist( cross_section_alias );
@@ -147,20 +155,27 @@ int main( int argc, char** argv )
     Teuchos::ParameterList& new_table_info =
       cross_sections_table_info->sublist( new_cross_section_alias );
 
-    new_table_info.setParameters( old_table_info );
+    double atomic_weight_ratio = 
+        old_table_info.get( MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop, 0.0 );
 
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::moment_preserving_electroatomic_file_path_prop,
+	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
 	    oss.str() );
     new_table_info.set(
-	    MonteCarlo::CrossSectionsXMLProperties::moment_preserving_electroatomic_file_type_prop,
-	    MonteCarlo::CrossSectionsXMLProperties::native_file );
+	    MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
+	    MonteCarlo::CrossSectionsXMLProperties::moment_preserving_file );
     new_table_info.set(
-      MonteCarlo::CrossSectionsXMLProperties::moment_preserving_electroatomic_file_start_line_prop,
+      MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
       -1 );
     new_table_info.set(
-	   MonteCarlo::CrossSectionsXMLProperties::moment_preserving_electroatomic_table_name_prop,
+	   MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
 	   "" );
+    new_table_info.set(
+	   MonteCarlo::CrossSectionsXMLProperties::atomic_number_prop,
+	   atomic_number );
+    new_table_info.set(
+	   MonteCarlo::CrossSectionsXMLProperties::atomic_weight_ratio_prop,
+	   atomic_weight_ratio );
 
     Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
 					  cross_sections_xml_file );

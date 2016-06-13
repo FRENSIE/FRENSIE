@@ -25,8 +25,6 @@ class ElasticElectronScatteringDistributionNativeFactory
 
 public:
 
-  typedef ScreenedRutherfordElasticElectronScatteringDistribution::ParameterArray
-            ParameterArray;
   typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
             ElasticDistribution;
 
@@ -37,14 +35,26 @@ public:
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double cutoff_upper_cutoff_angle_cosine = 0.999999 );
+    const double& cutoff_upper_cutoff_angle_cosine = 0.999999 );
+
+  //! Create a elastic distributions ( both Cutoff and Screened Rutherford )
+  static void createHardElasticDistributions(
+	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+        cutoff_elastic_distribution,
+	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+        screened_rutherford_elastic_distribution,
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
+    const std::vector<double>& angular_energy_grid,
+    const unsigned& atomic_number,
+    const double& upper_cutoff_angle_cosine = 0.999999 );
 
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine = 0.999999 );
+    const double& upper_cutoff_angle_cosine = 0.999999 );
 
   //! Create a screened Rutherford elastic distribution
   static void createScreenedRutherfordElasticDistribution(
@@ -54,27 +64,31 @@ public:
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data );
 
-  //! Return angle cosine grid for given grid energy bin
+  //! Return angle cosine grid for the given cutoff angle and grid energy bin
   static std::vector<double> getAngularGrid(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double energy,
-    const double cutoff_angle_cosine );
+    const double& energy,
+    const double& cutoff_angle_cosine );
+
+  //! Return angle cosine grid for the given cutoff angle
+  static std::vector<double> getAngularGrid(
+    const std::vector<double>& raw_cutoff_elastic_angles,
+    const double& cutoff_angle_cosine );
 
 protected:
 
   //! Create the elastic scattering function
   static void createScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::vector<double> angular_energy_grid,
+        const std::vector<double>& angular_energy_grid,
         ElasticDistribution& scattering_function );
 
-/*
-  //! Create the screened Rutherford parameter array
-  static void createScreenedRutherfordParameterArray(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const std::vector<double> angular_energy_grid,
-        ParameterArray& screened_rutherford_parameters );
-*/
+  //! Create the elastic scattering function
+  static void createScatteringFunction(
+    const std::map<double,std::vector<double> >& cutoff_elastic_angles,
+    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
+    const std::vector<double>& angular_energy_grid,
+        ElasticDistribution& scattering_function );
 };
 
 } // end MonteCarlo namespace

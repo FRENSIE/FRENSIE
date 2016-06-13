@@ -52,6 +52,7 @@ public:
   static const std::string ace_file;
   static const std::string endl_file;
   static const std::string native_file;
+  static const std::string moment_preserving_file;
 
   //! Extract the table info from the photoatom table info parameter list
   static void extractInfoFromPhotoatomTableInfoParameterList(

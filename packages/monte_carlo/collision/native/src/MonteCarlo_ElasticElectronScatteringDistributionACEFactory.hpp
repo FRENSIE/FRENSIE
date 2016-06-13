@@ -28,35 +28,12 @@ public:
   typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
             ElasticDistribution;
 
-  //! Create a elastic distributions ( both Cutoff and Screened Rutherford )
-  static void createCutoffElasticDistributions(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine = 0.999999 );
-
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine = 0.999999 );
-
-  //! Create a screened Rutherford elastic distribution
-  static void createScreenedRutherfordElasticDistribution(
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
-	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	const Data::XSSEPRDataExtractor& raw_electroatom_data );
-
-  //! Return angle cosine grid for given grid energy bin
-  static Teuchos::Array<double> getAngularGrid(
-    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const unsigned energy_bin,
-    const double cutoff_angle_cosine );
 
 protected:
 

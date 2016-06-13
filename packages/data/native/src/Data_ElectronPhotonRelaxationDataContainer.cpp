@@ -447,6 +447,20 @@ ElectronPhotonRelaxationDataContainer::getElasticAngularEnergyGrid() const
   return d_angular_energy_grid;
 }
 
+// Return the elastic angles map
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles() const
+{
+  return d_cutoff_elastic_angles;
+}
+
+// Return the elastic pdf map
+const std::map<double,std::vector<double> >&
+ElectronPhotonRelaxationDataContainer::getCutoffElasticPDF() const
+{
+  return d_cutoff_elastic_pdf;
+}
+
 // Return the elastic angles for an incoming energy
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getCutoffElasticAngles(
@@ -800,7 +814,7 @@ void ElectronPhotonRelaxationDataContainer::setSubshellIncoherentEvaluationToler
 void ElectronPhotonRelaxationDataContainer::setCutoffAngleCosine(
                          const double cutoff_angle_cosine )
 {
-  // Make sure the elastic cutoff angle is valid
+  // Make sure the elastic cutoff angle cosine is valid
   testPrecondition( cutoff_angle_cosine <= 1.0 );
   testPrecondition( cutoff_angle_cosine > -1.0 );
 

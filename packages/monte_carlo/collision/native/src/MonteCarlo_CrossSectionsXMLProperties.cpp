@@ -72,6 +72,7 @@ const std::string CrossSectionsXMLProperties::temperature_prop =
 const std::string CrossSectionsXMLProperties::ace_file = "ACE";
 const std::string CrossSectionsXMLProperties::endl_file = "ENDL";
 const std::string CrossSectionsXMLProperties::native_file = "Native";
+const std::string CrossSectionsXMLProperties::moment_preserving_file = "MomentPreserving";
 
 // Extract the table info from the photoatom table info parameter list
 void
