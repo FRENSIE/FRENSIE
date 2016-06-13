@@ -134,7 +134,7 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
                                     interaction_plane_array );
 
     //find out if any of these intersections enter mesh
-    double push_distance;
+    double* push_distance = NULL;
     bool does_point_hit_mesh = false;
     for(unsigned i = 0; i < distance_array.size(); ++i)
     {
@@ -146,25 +146,29 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
       
       if(isPointInMesh(test_point))
       {
-        push_distance = distance_array[i].second;
         does_point_hit_mesh = true;
-        break;
+        
+        if(!push_distance || *push_distance > distance_array[i].second)
+        {
+          push_distance = &distance_array[i].second;
+        }
+
       }
     
     }
     
     //check if intersection distance is greater than particle track length or if particle never hits mesh
-    if( !does_point_hit_mesh || push_distance >= track_length)
+    if( !does_point_hit_mesh || *push_distance >= track_length)
     {
       return contribution_array;
     }
     //otherwise, push the point up to the mesh and increase iteration_length by push_distance
     else
     {
-      current_point[x_dim] += push_distance*direction[x_dim];
-      current_point[y_dim] += push_distance*direction[y_dim];
-      current_point[z_dim] += push_distance*direction[z_dim];
-      iteration_length = push_distance;
+      current_point[x_dim] += (*push_distance)*direction[x_dim];
+      current_point[y_dim] += (*push_distance)*direction[y_dim];
+      current_point[z_dim] += (*push_distance)*direction[z_dim];
+      iteration_length = *push_distance;
     }
   
   }
@@ -172,8 +176,6 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
   //check special case of a point being caught in the boundary region but traveling away from mesh. This takes care of when the point was born in boundary zone but traveling away *and* when the particle entered mesh in the boundary region but never actually entered mesh
   if(boundaryRegionSpecialCase( current_point, end_point, direction ) )
   {
-    std::cout << std::endl;
-    std::cout << "BOUNDARY REGION SPECIAL CASE TRUE" << std::endl;
     return contribution_array;
   }
 

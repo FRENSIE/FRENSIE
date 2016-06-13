@@ -296,7 +296,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, track_length_in_one_cell)
 
   TEST_ASSERT(contribution1.size() == 1);
   TEST_ASSERT(contribution1[0].first == 0);
-  TEST_ASSERT(contribution1[0].second < ray_length + 1e-10 && contribution1[0].second > ray_length - 1e-10 );  
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.339116499156263, 1e-10);  
 
 }
 
@@ -336,8 +336,8 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_end
   TEST_ASSERT(contribution1.size() == 2);
   TEST_ASSERT(contribution1[0].first == 0);
   TEST_ASSERT(contribution1[1].first == 1);
-  TEST_ASSERT(ray_length - 1e-10 <= contribution1[0].second + contribution1[1].second &&
-    contribution1[0].second + contribution1[1].second <= ray_length + 1e-10);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.419523539268061, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.104880884817015, 1e-10);
     
   //one extra check with different plane dimension crossing to make sure any of the planes work
   start_point[0] = 0.7;
@@ -366,9 +366,9 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_end
   TEST_ASSERT(contribution2.size() == 2);
   TEST_ASSERT(contribution2[0].first == 7);
   TEST_ASSERT(contribution2[1].first == 3);
-  TEST_ASSERT(ray_length - 1e-10 <= contribution2[0].second + contribution2[1].second &&
-    contribution2[0].second + contribution2[1].second <= ray_length + 1e-10);
-
+  TEST_FLOATING_EQUALITY(contribution2[0].second, 0.303009696269043, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution2[1].second, 0.252508080224203, 1e-10);
+  
   //test multiple plane crossings
   start_point[0] = 0.7;
   start_point[1] = 0.6;
@@ -394,20 +394,16 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_end
                                  direction );
 
   TEST_ASSERT(contribution3.size() == 3);
-  TEST_ASSERT(contribution3[0].first == 7);
-  TEST_ASSERT(contribution3[2].first == 4);
+  TEST_EQUALITY(contribution3[0].first, 7);
+  TEST_EQUALITY(contribution3[1].first, 5);
+  TEST_EQUALITY(contribution3[2].first, 4);
+  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.131267855928251, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution3[1].second, 0.177597687432339, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution3[2].second, 0.216205880352413, 1e-10);
   
   double sum_of_segments = contribution3[0].second + contribution3[1].second + contribution3[2].second;
-  std::cout << std::endl;
-  for( unsigned i = 0; i < contribution3.size(); ++i)
-  {
   
-    std::cout << "HEX INDEX: " << contribution3[i].first << "...... SEGMENT_LENGTH: " << contribution3[i].second << std::endl;
-  
-  }
-  
-  TEST_ASSERT(ray_length - 1e-10 <= sum_of_segments &&
-    sum_of_segments <= ray_length + 1e-10);
+  TEST_FLOATING_EQUALITY(sum_of_segments, ray_length, 1e-10);
 }
 
 //---------------------------------------------------------------------------//
@@ -470,14 +466,14 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, starts_in_mesh_and_exits_mesh)
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
-  std::cout << std::endl;
-  std::cout << "EXIT MESH CONTRIBUTION SIZE: " << contribution1.size() << std::endl;
-  for( unsigned i = 0; i < contribution2.size(); ++i)
-  {
   
-    std::cout << "HEX INDEX: " << contribution2[i].first << "...... SEGMENT_LENGTH: " << contribution2[i].second << std::endl;
-  
-  }
+  TEST_EQUALITY( contribution2.size(), 3);
+  TEST_EQUALITY( contribution2[0].first, 4);
+  TEST_EQUALITY( contribution2[1].first, 0);
+  TEST_EQUALITY( contribution2[2].first, 1);
+  TEST_FLOATING_EQUALITY( contribution2[0].second, 0.493120998659465, 1e-10);
+  TEST_FLOATING_EQUALITY( contribution2[1].second, 0.064314616453253, 1e-10);
+  TEST_FLOATING_EQUALITY( contribution2[2].second, 0.519951969636160, 1e-10);
 
 }
 
@@ -542,15 +538,19 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_me
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
-  std::cout << std::endl;
-  std::cout << contribution2.size() << std::endl;
 
-  for( unsigned i = 0; i < contribution2.size(); ++i)
-  {
+  TEST_EQUALITY(contribution2.size(), 4);
+  TEST_EQUALITY(contribution2[0].first, 0);
+  TEST_EQUALITY(contribution2[1].first, 2);
+  TEST_EQUALITY(contribution2[2].first, 3);
+  TEST_EQUALITY(contribution2[3].first, 7);
   
-    std::cout << "HEX INDEX: " << contribution2[i].first << "...... SEGMENT_LENGTH: " << contribution2[i].second << std::endl;
+  TEST_FLOATING_EQUALITY(contribution2[0].second, 0.350784676235707, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution2[1].second, 0.210470805741424, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution2[2].second, 0.280627740988566, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution2[3].second, 0.089800877116341, 1e-10);
+
   
-  }
 
   //particle starts outside mesh, and returns interaction planes that are outside mesh before actual interaction plane
   start_point[0] = -0.25;
@@ -575,15 +575,10 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_me
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
-  std::cout << std::endl;
-  std::cout << contribution3.size() << std::endl;
 
-  for( unsigned i = 0; i < contribution3.size(); ++i)
-  {
-  
-    std::cout << "HEX INDEX: " << contribution3[i].first << "...... SEGMENT_LENGTH: " << contribution3[i].second << std::endl;
-  
-  }
+  TEST_EQUALITY(contribution3.size(), 1);
+  TEST_EQUALITY(contribution3[0].first, 2);
+  TEST_FLOATING_EQUALITY(contribution3[0].second, 0.030167187001735, 1e-10);
   
   //particle starts outside mesh, enters mesh, and then exits mesh
   start_point[0] = 1.2;
@@ -608,27 +603,27 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_me
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
-  std::cout << std::endl;
-  std::cout << contribution4.size() << std::endl;
-
-  for( unsigned i = 0; i < contribution4.size(); ++i)
-  {
   
-    std::cout << "HEX INDEX: " << contribution4[i].first << "...... SEGMENT_LENGTH: " << contribution4[i].second << std::endl;
-  
-  }
+  TEST_EQUALITY(contribution4.size(), 2);
+  TEST_EQUALITY(contribution4[0].first, 7);
+  TEST_EQUALITY(contribution4[1].first, 5);
+  TEST_FLOATING_EQUALITY(contribution4[0].second, 0.198729768889349, 1e-10);
+  TEST_FLOATING_EQUALITY(contribution4[1].second, 0.535041685471324, 1e-10);
 
 }
 
 //---------------------------------------------------------------------------//
 // boundary region cases
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
+
+//---------------------------------------------------------------------------//
+// particle starts in boundary region and travels away from mesh on negative side
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travles_away_from_mesh_negative)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
 
-  //particle starts in boundary region and travels away from mesh on negative side
   start_point[0] = -1e-11;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
@@ -653,8 +648,14 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
                                  direction );
 
   TEST_EQUALITY(contribution1.size(), 0);
+}
 
-  //particle starts in boundary region and travels away from mesh on negative side
+//---------------------------------------------------------------------------//
+// particle starts in boundary region and travels away from mesh on positive side
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travels_away_from_mesh_positive)
+{
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-11;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
@@ -673,14 +674,20 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned,double>> contribution2 =
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
 
-  TEST_EQUALITY(contribution2.size(), 0);
+  TEST_EQUALITY(contribution1.size(), 0);
+}
 
-  //particle starts in boundary region and dies in boundary region
+//---------------------------------------------------------------------------//
+// particle starts in boundary region and dies in boundary region
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in_mesh)
+{
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-11;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
@@ -699,12 +706,12 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
-  Teuchos::Array<std::pair<unsigned,double>> contribution3 =
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
 
-  TEST_EQUALITY(contribution3.size(), 0);
+  TEST_EQUALITY(contribution1.size(), 0);
 
   //particle starts in boundary region and dies in boundary region going towards boundary region
   start_point[0] = 1+1e-11;
@@ -725,13 +732,149 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region)
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
  
+  Teuchos::Array<std::pair<unsigned,double>> contribution2 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution2.size(), 0);
+  
+  //same as last but on other side for y dimension
+  start_point[0] = 0.25;
+  start_point[1] = -1e-11;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.75;
+  end_point[1] = -5e-10;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution3 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution3.size(), 0);
+  
+  //test particle starting in boundary region and stopping at hex face
+  start_point[0] = 0.25;
+  start_point[1] = -1e-11;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.75;
+  end_point[1] = 0;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
   Teuchos::Array<std::pair<unsigned,double>> contribution4 =
     hex_mesh->computeTrackLengths( start_point,
                                  end_point,
                                  direction );
 
   TEST_EQUALITY(contribution4.size(), 0);
+}
+
+//---------------------------------------------------------------------------//
+// particle starts in boundary region and dies inside mesh
+//---------------------------------------------------------------------------//
+
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_enters_mesh)
+{
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
+
+  start_point[0] = 1+1e-11;
+  start_point[1] = 0.25;
+  start_point[2] = 0.25;
+ 
+  end_point[0] = 0.5;
+  end_point[1] = 0.75;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution1.size(), 2);
+  TEST_EQUALITY(contribution1[0].first, 1);
+  TEST_EQUALITY(contribution1[1].first, 3);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.353553390596809, 1e-12);
+  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.353553390596809, 1e-12);
+
 
 }
 
+//---------------------------------------------------------------------------//
+// Test the ability for the function computeTrackLengths to find the correct entry
+// point that a particle enters a mesh at. Specifically test the other dimensions 
+// under specific conditions where multiple intersection points are inside mesh
+// but a dimension after the first one in order of x,y,z is the true intersection point
+//---------------------------------------------------------------------------//
 
+TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_enters_mesh_dimension_test)
+{
+
+  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
+
+  start_point[0] = 0.25;
+  start_point[1] = 0.25;
+  start_point[2] = -1e-9;
+ 
+  end_point[0] = 0.6;
+  end_point[1] = 0.25;
+  end_point[2] = 0.25;
+ 
+  ray[0] = end_point[0] - start_point[0];
+  ray[1] = end_point[1] - start_point[1];
+  ray[2] = end_point[2] - start_point[2];
+ 
+  ray_length = Utility::vectorMagnitude(ray);
+ 
+  direction[0] = ray[0] / ray_length;
+  direction[1] = ray[1] / ray_length;
+  direction[2] = ray[2] / ray_length;
+ 
+  Teuchos::Array<std::pair<unsigned,double>> contribution1 =
+    hex_mesh->computeTrackLengths( start_point,
+                                 end_point,
+                                 direction );
+
+  TEST_EQUALITY(contribution1.size(), 2);
+  TEST_EQUALITY(contribution1[0].first, 0);
+  TEST_EQUALITY(contribution1[1].first, 1);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.307225901089085,1e-10);
+  TEST_FLOATING_EQUALITY(contribution1[1].second,  0.122890361123820 ,1e-10);
+  TEST_FLOATING_EQUALITY(ray_length - 1.720465048851618e-09, contribution1[0].second
+    + contribution1[1].second, 1e-10);
+  
+  
+
+}
