@@ -44,7 +44,7 @@ double ScreenedRutherfordElasticElectronScatteringDistribution::s_screening_para
       ScreenedRutherfordElasticElectronScatteringDistribution::s_fine_structure_const_squared/
       ( 2.0*0.885*0.885 );
 
-// Constructor without tabulated energy paramters
+// Constructor
 ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number )

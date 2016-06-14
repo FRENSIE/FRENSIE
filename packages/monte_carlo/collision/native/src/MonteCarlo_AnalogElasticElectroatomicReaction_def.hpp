@@ -184,7 +184,7 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   testPrecondition( d_incoming_energy_grid[bin_index+1] >=
 		    InterpPolicy::processIndepVar( energy ) );
 
-  // Get the cross section ratio for the cutoff angle
+  // Get the cross section ratio for the cutoff angle cosine
   double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 

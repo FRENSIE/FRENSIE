@@ -43,8 +43,7 @@ public:
   //! Constructor
   AnalogElasticElectronScatteringDistribution(
         const ElasticDistribution& elastic_scattering_distribution,
-        const double lower_cutoff_angle = 1.0e-6,
-        const bool angle_is_used_as_independent_variable = true );
+        const double upper_cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   virtual ~AnalogElasticElectronScatteringDistribution()
@@ -52,23 +51,23 @@ public:
 
   //! Evaluate the distribution
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluate( const unsigned incoming_energy_bin,
-                   const double scattering_angle ) const;
+                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the PDF
   double evaluate( const double incoming_energy,
-                   const double scattering_angle ) const;
+                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const unsigned incoming_energy_bin,
-                      const double scattering_angle ) const;
+                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
-                      const double scattering_angle ) const;
+                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the cross section ratio for the cutoff angle
   double evaluateCutoffCrossSectionRatio( const double incoming_energy ) const;
@@ -108,11 +107,8 @@ public:
 
 private:
 
-  // The scattering angle above which the analog distribution is used
-  double d_lower_cutoff_angle;
-
-  // Independent parameter flag: false = angle cosine, true = angle (in units of pi)
-  bool d_angle_is_used_as_independent_variable;
+  // The scattering angle cosine below which the analog distribution is used
+  double d_upper_cutoff_angle_cosine;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;

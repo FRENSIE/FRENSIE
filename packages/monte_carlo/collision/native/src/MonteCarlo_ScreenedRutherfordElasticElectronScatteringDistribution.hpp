@@ -46,7 +46,7 @@ public:
   typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
-  //! Constructor from table data
+  //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
     const int atomic_number );

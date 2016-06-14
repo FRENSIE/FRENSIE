@@ -35,7 +35,7 @@ Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistr
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;
 unsigned elastic_threshold_index;
-double lower_cutoff_angle;
+double upper_cutoff_angle_cosine;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -110,13 +110,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction, getCrossSection_ace )
 TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction,
                    getCrossSection_cutoff_ace )
 {
-  double cutoff_angle = 0.1;
+  double cutoff_angle_cosine = 0.9;
   // Create the reaction
   elastic_scattering_distribution.reset(
 	      new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                cutoff_angle,
-                false ) );
+                cutoff_angle_cosine ) );
 
   test_elastic_reaction.reset(
 	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
@@ -125,21 +124,21 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectroatomicReaction,
                 elastic_threshold_index,
                 elastic_scattering_distribution ) );
 
-  // cross section ratio for cutoff angle
-  double ratio = 9.500004750002380E-01;
+  // cross section ratio for cutoff angle cosine
+  double ratio = 9.5E-01;
 
   double cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
 
-  ratio = 2.439897074955E-01;
+  ratio = 2.439675590438E-01;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
 
-  ratio = 1.410821289154E-05;
+  ratio = 2.498503240773E-06;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E+05 );
 
@@ -259,13 +258,12 @@ int main( int argc, char** argv )
   // Get the atomic number
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  lower_cutoff_angle = 1.0e-6;
+  upper_cutoff_angle_cosine = 1.0;
 
   elastic_scattering_distribution.reset(
 	      new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 elastic_scattering_function,
-                lower_cutoff_angle,
-                false ) );
+                upper_cutoff_angle_cosine ) );
 
   // Create the reaction
   ace_elastic_reaction.reset(

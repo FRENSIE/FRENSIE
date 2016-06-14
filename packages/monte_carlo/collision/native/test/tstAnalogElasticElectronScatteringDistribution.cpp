@@ -31,7 +31,7 @@ Teuchos::RCP<MonteCarlo::AnalogElasticElectronScatteringDistribution>
 Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   elastic_scattering_distribution;
 
-double angle_cutoff = 1.0e-6;
+double angle_cosine_cutoff = 0.999999;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
-  double scattering_angle = 1.0; // angle cosine = 0.0
+  double angle_cosine = 0.0
 
   // Calculate the pdf
   double pdf_value =
@@ -53,7 +53,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
 
 
-  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluate( energy,
                                         scattering_angle );
@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E+05;
 
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluate( energy,
                                         scattering_angle );
@@ -74,7 +74,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Set energy in MeV and angle cosine
   unsigned energy_bin = 1;
-  scattering_angle = 1.0; // angle cosine = 0.0;
+  angle_cosine = 0.0;
 
   // Calculate the pdf
   pdf_value =
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
 
 
-  scattering_angle = 0.02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluate( energy_bin,
                                         scattering_angle );
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 
   energy_bin = 13;
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluate( energy_bin,
                                         scattering_angle );
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
-  double scattering_angle = 1.0; // angle cosine = 0.0
+  double angle_cosine = 0.0
 
   // Calculate the pdf
   double pdf_value =
@@ -122,7 +122,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
 
 
-  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluatePDF( energy,
                                            scattering_angle );
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E+05;
 
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluatePDF( energy,
                                            scattering_angle );
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Set energy in MeV and angle cosine
   unsigned energy_bin = 1;
-  scattering_angle = 1.0; // angle cosine = 0.0;
+  angle_cosine = 0.0;
 
   // Calculate the pdf
   pdf_value =
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
 
 
-  scattering_angle = 0.02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluatePDF( energy_bin,
                                            scattering_angle );
@@ -164,7 +164,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
 
   energy_bin = 13;
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   pdf_value =
     ace_elastic_distribution->evaluatePDF( energy_bin,
                                            scattering_angle );
@@ -181,7 +181,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
-  double scattering_angle = 1.0; // angle cosine = 0.0
+  double angle_cosine = 0.0
 
   // Calculate the cdf
   double cdf_value =
@@ -192,7 +192,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02, 1e-12 );
 
 
-  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   cdf_value =
     ace_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle );
@@ -203,7 +203,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E+05;
 
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   cdf_value =
     ace_elastic_distribution->evaluateCDF( energy,
                                            scattering_angle );
@@ -219,15 +219,14 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
-  double scattering_angle = 1.0; // angle cosine = 0.0
+  double angle_cosine = 0.0
   double max_cdf = 9.9990922382800E-01;
 
   // Create the distribution
   test_elastic_distribution.reset(
 		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
 						    elastic_scattering_distribution,
-                            scattering_angle,
-                            false ) );
+                            scattering_angle ) );
 
   // Calculate the cdf
   double cdf_value =
@@ -237,13 +236,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02/max_cdf, 1e-12 );
 
 
-  scattering_angle = .02; // angle cosine = 9.800000000000E-01;
+  angle_cosine = 9.800000000000E-01;
   // Create the distribution
   test_elastic_distribution.reset(
 		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
 						    elastic_scattering_distribution,
-                            scattering_angle,
-                            false ) );
+                            scattering_angle ) );
 
   cdf_value =
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
@@ -254,13 +252,12 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
   // Test with a different energy
   energy = 1.00E+05;
 
-  scattering_angle = angle_cutoff; // angle cosine = 9.999990000000E-01;
+  angle_cosine = 9.999990000000E-01;
   // Create the distribution
   test_elastic_distribution.reset(
 		new MonteCarlo::AnalogElasticElectronScatteringDistribution(
 						    elastic_scattering_distribution,
-                            scattering_angle,
-                            false ) );
+                            scattering_angle ) );
   cdf_value =
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -378,7 +375,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the angle can be evaluated
+// Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                    ScatterElectron )
 {
@@ -407,7 +404,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the angle can be evaluated
+// Check that the angle cosine can be evaluated
 TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                    ScatterAdjointElectron )
 {
@@ -517,8 +514,7 @@ int main( int argc, char** argv )
   ace_elastic_distribution.reset(
         new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 elastic_scattering_distribution,
-                angle_cutoff,
-                false ) );
+                angle_cosine_cutoff ) );
 
   // Clear setup data
   ace_file_handler.reset();

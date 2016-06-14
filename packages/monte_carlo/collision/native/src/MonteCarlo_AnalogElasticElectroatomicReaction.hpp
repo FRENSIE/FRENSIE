@@ -70,7 +70,6 @@ public:
 
 private:
 
-
   // The analog_elastic scattering distribution
   Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>
     d_scattering_distribution;

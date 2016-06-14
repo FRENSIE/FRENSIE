@@ -111,6 +111,12 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine || cutoff_angle_cosine == 1.0 );
 
+  // Make sure the arrays are valid
+  testPrecondition( !rutherford_distribution.is_null() );
+  testPrecondition( !cutoff_distribution.is_null() );
+  testPrecondition( !rutherford_reaction.is_null() );
+  testPrecondition( !cutoff_reaction.is_null() );
+  testPrecondition( !cutoff_elastic_angles.empty() );
 }
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
