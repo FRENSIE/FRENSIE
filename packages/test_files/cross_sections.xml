@@ -1,16 +1,15 @@
-<ParameterList name="cross sections">
-  
-  <ParameterList name="alias map">
-    <Parameter name="1001" type="string" value="H-1_293.6K"/>
-    <Parameter name="Light-Hydrogen" type="string" value="H-1_293.6K"/>
-    <Parameter name="8016" type="string" value="O-16_293.6K"/>
-    <Parameter name="82208" type="string" value="Pb-208_293.6K"/>
-    <Parameter name="92238" type="string" value="U-238_293.6K"/>
-    <Parameter name="Depleted-Uranium" type="string" value="U-238_293.6K"/>
-    <Parameter name="8000" type="string" value="O"/>
-    <Parameter name="8" type="string" value="O"/>
-    <Parameter name="82000" type="string" value="Pb"/>
-    <Parameter name="82" type="string" value="Pb"/>
+<ParameterList name="ANONYMOUS">
+  <ParameterList id="10" name="alias map">
+    <Parameter docString="" id="0" isDefault="false" isUsed="true" name="1001" type="string" value="H-1_293.6K"/>
+    <Parameter docString="" id="1" isDefault="false" isUsed="true" name="Light-Hydrogen" type="string" value="H-1_293.6K"/>
+    <Parameter docString="" id="2" isDefault="false" isUsed="true" name="8016" type="string" value="O-16_293.6K"/>
+    <Parameter docString="" id="3" isDefault="false" isUsed="true" name="82208" type="string" value="Pb-208_293.6K"/>
+    <Parameter docString="" id="4" isDefault="false" isUsed="true" name="92238" type="string" value="U-238_293.6K"/>
+    <Parameter docString="" id="5" isDefault="false" isUsed="true" name="Depleted-Uranium" type="string" value="U-238_293.6K"/>
+    <Parameter docString="" id="6" isDefault="false" isUsed="true" name="8000" type="string" value="O"/>
+    <Parameter docString="" id="7" isDefault="false" isUsed="true" name="8" type="string" value="O"/>
+    <Parameter docString="" id="8" isDefault="false" isUsed="true" name="82000" type="string" value="Pb"/>
+    <Parameter docString="" id="9" isDefault="false" isUsed="true" name="82" type="string" value="Pb"/>
   </ParameterList>
 
   <!-- Neutron-photon-electron transport data -->
@@ -181,7 +180,7 @@
     <Parameter name="photoatomic_file_type" type="string" value="Native"/>
     <Parameter name="photoatomic_file_start_line" type="int" value="-1"/>
     <Parameter name="photoatomic_table_name" type="string" value=""/>
-    <Parameter name="electroatomic_file_path" type="string" value="ace/test_pb_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_path" type="string" value="native/test_pb_epr_ace_file.txt"/>
     <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
     <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
     <Parameter name="electroatomic_table_name" type="string" value="82000.12p"/>
@@ -201,5 +200,6 @@
     <Parameter name="atomic_number" type="int" value="92"/>
     <Parameter name="atomic_weight_ratio" type="double" value="235.984000"/>
   </ParameterList>
-
+  <Validators/>
 </ParameterList>
+

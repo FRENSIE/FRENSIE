@@ -23,9 +23,9 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 		   const Teuchos::RCP<const CoherentScatteringDistribution>&
 		   scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -53,10 +53,10 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
       const Teuchos::RCP<const CoherentScatteringDistribution>&
       scattering_distribution )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
-                                                      incoming_energy_grid,
-						      cross_section,
-                                                      threshold_energy_index,
-						      grid_searcher ),
+        incoming_energy_grid,
+        cross_section,
+        threshold_energy_index,
+        grid_searcher ),
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -86,6 +86,15 @@ unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getN
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */ 
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -98,7 +107,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton( photon, 
 					    bank, 
@@ -107,7 +116,7 @@ void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
   photon.incrementCollisionNumber();
 
   // No subshell vacancies are created by this reaction
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace

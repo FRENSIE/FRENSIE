@@ -116,7 +116,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 void KleinNishinaPhotonScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy, scattering_angle_cosine;
 
@@ -124,7 +124,7 @@ void KleinNishinaPhotonScatteringDistribution::scatterPhoton(
 		outgoing_energy,
 		scattering_angle_cosine );
 
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   photon.setEnergy( outgoing_energy );
 

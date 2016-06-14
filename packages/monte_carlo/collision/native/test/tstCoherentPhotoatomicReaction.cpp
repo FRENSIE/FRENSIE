@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_coherent_reaction->react( photon, bank, shell_of_interaction );
 
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, react_ace )
   TEST_ASSERT( photon.getZDirection() < 1.0 );
   TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_ASSERT( bank.isEmpty() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

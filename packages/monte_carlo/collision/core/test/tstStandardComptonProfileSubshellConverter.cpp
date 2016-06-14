@@ -33,12 +33,12 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 1 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_THROW( converter->convertSubshellToIndex( L1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 
 	      std::logic_error );				    
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::L1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -48,12 +48,12 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 2 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_THROW( converter->convertSubshellToIndex( L1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 
 	      std::logic_error );		
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::L1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -63,14 +63,14 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 3 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_THROW( converter->convertSubshellToIndex( L2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::L2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -80,14 +80,14 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 4 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_THROW( converter->convertSubshellToIndex( L2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::L2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -97,18 +97,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 5 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -118,18 +118,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 6 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -139,18 +139,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 7 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -160,18 +160,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 8 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -181,18 +181,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 9 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -202,18 +202,18 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 10 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_THROW( converter->convertSubshellToIndex( M1_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -223,20 +223,20 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 11 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_THROW( converter->convertSubshellToIndex( M2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -246,20 +246,20 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 12 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_THROW( converter->convertSubshellToIndex( M2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -269,24 +269,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 13 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -296,24 +296,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 14 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );	
   
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -323,24 +323,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 15 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -350,24 +350,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 16 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -377,24 +377,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 17 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );
   
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -404,24 +404,24 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 18 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -431,29 +431,29 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 19 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 5u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 5u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -463,29 +463,29 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 20 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 5u );
-  TEST_THROW( converter->convertSubshellToIndex( M4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 5u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 
 	      std::logic_error );	
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -495,30 +495,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 21 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -528,30 +528,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 22 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -561,30 +561,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 23 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -594,30 +594,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 24 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -627,30 +627,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 25 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -660,30 +660,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 26 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -693,30 +693,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 27 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -726,30 +726,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 28 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -759,30 +759,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 29 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -792,30 +792,30 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 30 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_THROW( converter->convertSubshellToIndex( N2_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -825,34 +825,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 31 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 7u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 7u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -862,34 +862,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 32 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 7u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 7u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -899,34 +899,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 33 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 7u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 7u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -936,34 +936,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 34 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 7u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 7u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -973,34 +973,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 35 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 7u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 7u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1010,34 +1010,34 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 36 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );	
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1047,39 +1047,39 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 37 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 12u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 12u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1089,39 +1089,39 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 38 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 12u );
-  TEST_THROW( converter->convertSubshellToIndex( N4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 12u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 
 	      std::logic_error );	
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1131,43 +1131,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 39 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 13u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 13u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1177,43 +1177,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 40 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 13u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 13u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1223,43 +1223,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 41 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 13u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 13u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1269,43 +1269,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 42 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1315,43 +1315,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 43 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1361,43 +1361,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 44 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1407,43 +1407,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 45 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1453,44 +1453,44 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 46 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_THROW( converter->convertSubshellToIndex( O1_SUBSHELL ),
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O1_SUBSHELL ),
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1500,43 +1500,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 47 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1546,43 +1546,43 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 48 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1592,47 +1592,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 49 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 15u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 15u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1642,47 +1642,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 50 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 15u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 15u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1692,47 +1692,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 51 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1742,47 +1742,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 52 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1792,47 +1792,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 53 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1842,47 +1842,47 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 54 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1892,52 +1892,52 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 55 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 17u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 17u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -1947,52 +1947,52 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 56 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 17u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 17u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2002,56 +2002,56 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 57 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 18u );
-  TEST_THROW( converter->convertSubshellToIndex( N6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 18u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2061,53 +2061,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 58 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2117,53 +2117,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 59 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 18u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 18u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2173,53 +2173,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 60 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 18u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 18u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2229,53 +2229,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 61 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 18u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 18u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2285,53 +2285,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 62 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 18u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 18u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2341,53 +2341,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 63 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2397,57 +2397,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 64 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2457,53 +2457,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 65 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2513,53 +2513,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 66 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2569,53 +2569,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 67 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2625,53 +2625,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 68 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2681,53 +2681,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 69 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2737,53 +2737,53 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 70 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 19u );
-  TEST_THROW( converter->convertSubshellToIndex( O4_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 19u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2793,57 +2793,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 71 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2853,57 +2853,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 72 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2913,57 +2913,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 73 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -2973,57 +2973,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 74 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3033,57 +3033,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 75 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3093,57 +3093,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 76 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3153,55 +3153,55 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 77 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P1_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P1_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3211,57 +3211,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 78 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3271,57 +3271,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 79 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
   
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3331,57 +3331,57 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 80 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3391,61 +3391,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 81 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 22u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 22u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3455,61 +3455,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 82 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 22u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 22u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3519,61 +3519,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 83 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3583,61 +3583,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 84 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3647,61 +3647,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 85 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3711,61 +3711,61 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 86 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3775,66 +3775,66 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 87 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 24u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 24u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
   
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3844,66 +3844,66 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 88 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 24u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 24u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3913,70 +3913,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 89 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 25u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 25u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -3986,70 +3986,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 90 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 25u );
-  TEST_THROW( converter->convertSubshellToIndex( O6_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 25u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4059,74 +4059,74 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 91 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4136,74 +4136,74 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 92 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4213,74 +4213,74 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 93 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4290,70 +4290,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 94 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 25u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 25u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4363,70 +4363,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 95 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4436,74 +4436,74 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 96 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 26u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 26u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 27u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 26u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 26u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 27u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4513,74 +4513,74 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 97 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P4_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P5_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P5_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P6_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P6_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P5_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P5_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4590,70 +4590,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 98 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4663,70 +4663,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 99 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -4736,70 +4736,70 @@ TEUCHOS_UNIT_TEST( StandardComptonProfileSubshellConverter,
 {
   ComptonProfileSubshellConverterFactory::createConverter( converter, 100 );
 
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( K_SUBSHELL ), 0u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L1_SUBSHELL ), 1u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L2_SUBSHELL ), 2u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( L3_SUBSHELL ), 3u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M1_SUBSHELL ), 4u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M2_SUBSHELL ), 5u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M3_SUBSHELL ), 6u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M4_SUBSHELL ), 7u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( M5_SUBSHELL ), 8u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N1_SUBSHELL ), 9u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N2_SUBSHELL ), 10u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N3_SUBSHELL ), 11u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N4_SUBSHELL ), 12u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N5_SUBSHELL ), 13u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N6_SUBSHELL ), 14u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( N7_SUBSHELL ), 15u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O1_SUBSHELL ), 16u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O2_SUBSHELL ), 17u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O3_SUBSHELL ), 18u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O4_SUBSHELL ), 19u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O5_SUBSHELL ), 20u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O6_SUBSHELL ), 21u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( O7_SUBSHELL ), 22u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P1_SUBSHELL ), 23u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P2_SUBSHELL ), 24u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( P3_SUBSHELL ), 25u );
-  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Q1_SUBSHELL ), 26u );
-  TEST_THROW( converter->convertSubshellToIndex( O8_SUBSHELL ), 
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::K_SUBSHELL ), 0u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L1_SUBSHELL ), 1u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L2_SUBSHELL ), 2u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::L3_SUBSHELL ), 3u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M1_SUBSHELL ), 4u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M2_SUBSHELL ), 5u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M3_SUBSHELL ), 6u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M4_SUBSHELL ), 7u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::M5_SUBSHELL ), 8u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N1_SUBSHELL ), 9u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N2_SUBSHELL ), 10u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N3_SUBSHELL ), 11u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N4_SUBSHELL ), 12u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N5_SUBSHELL ), 13u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N6_SUBSHELL ), 14u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::N7_SUBSHELL ), 15u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O1_SUBSHELL ), 16u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O2_SUBSHELL ), 17u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O3_SUBSHELL ), 18u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O4_SUBSHELL ), 19u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O5_SUBSHELL ), 20u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O6_SUBSHELL ), 21u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::O7_SUBSHELL ), 22u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P1_SUBSHELL ), 23u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P2_SUBSHELL ), 24u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::P3_SUBSHELL ), 25u );
+  TEST_EQUALITY_CONST( converter->convertSubshellToIndex( Data::Q1_SUBSHELL ), 26u );
+  TEST_THROW( converter->convertSubshellToIndex( Data::O8_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( P4_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::P4_SUBSHELL ), 
 	      std::logic_error );
-  TEST_THROW( converter->convertSubshellToIndex( Q2_SUBSHELL ), 
+  TEST_THROW( converter->convertSubshellToIndex( Data::Q2_SUBSHELL ), 
 	      std::logic_error );
 
-  TEST_ASSERT( converter->isSubshellValid( K_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( L3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( M5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( N7_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O3_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O5_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O6_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( O7_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( O8_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P1_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P2_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( P3_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( P4_SUBSHELL ) );
-  TEST_ASSERT( converter->isSubshellValid( Q1_SUBSHELL ) );
-  TEST_ASSERT( !converter->isSubshellValid( Q2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::K_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::L3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::M5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::N7_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O3_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O5_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O6_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::O7_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::O8_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P1_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P2_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::P3_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::P4_SUBSHELL ) );
+  TEST_ASSERT( converter->isSubshellValid( Data::Q1_SUBSHELL ) );
+  TEST_ASSERT( !converter->isSubshellValid( Data::Q2_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -34,7 +34,7 @@ public:
   { /* ... */ }
   
   //! Convert a subshell enum to an compton profile subshell index
-  unsigned convertSubshellToIndex( const SubshellType subshell ) const;
+  unsigned convertSubshellToIndex( const Data::SubshellType subshell ) const;
 };
 
 //! Compton profile traits struct
@@ -42,7 +42,7 @@ template<unsigned Z>
 struct ComptonProfileTraits
 {
   //! Convert a subshell enum to a compton profile index
-  static unsigned convertToIndex( const SubshellType subshell )
+  static unsigned convertToIndex( const Data::SubshellType subshell )
   {
     THROW_EXCEPTION( std::logic_error, 
 		     "Error: Z (" << Z << ") is invalid!" )

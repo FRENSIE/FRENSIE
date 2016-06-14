@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
 
@@ -23,7 +23,7 @@ public:
 
   //! Constructor
   SubshellDopplerBroadenedPhotonEnergyDistribution(
-		                       const SubshellType interaction_subshell,
+		                       const Data::SubshellType interaction_subshell,
                                        const double subshell_occupancy,
                                        const double subshell_binding_energy );
 
@@ -35,7 +35,7 @@ public:
   bool isComplete() const;
 
   //! Return the subshell
-  SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const;
   
   //! Return the number of electrons in the subshell
   double getSubshellOccupancy() const;
@@ -46,7 +46,7 @@ public:
 private:
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;
+  Data::SubshellType d_interaction_subshell;
 
   // The number of electrons in the subshell
   double d_subshell_occupancy;
@@ -56,7 +56,7 @@ private:
 };
 
 // Return the subshell
-inline SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshell() const
+inline Data::SubshellType SubshellDopplerBroadenedPhotonEnergyDistribution::getSubshell() const
 {
   return d_interaction_subshell;
 }

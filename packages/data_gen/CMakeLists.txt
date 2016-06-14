@@ -7,3 +7,6 @@ INCLUDE_DIRECTORIES(electron_photon/src)
 
 ADD_SUBDIRECTORY(free_gas_sab)
 INCLUDE_DIRECTORIES(free_gas_sab/src)
+
+ADD_SUBDIRECTORY(endl)
+INCLUDE_DIRECTORIES(endl/src)

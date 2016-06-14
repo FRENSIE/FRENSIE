@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
 
 namespace MonteCarlo{
@@ -31,7 +31,7 @@ public:
 
   //! Constructor
   StandardSubshellDopplerBroadenedPhotonEnergyDistribution(
-              const SubshellType interaction_subshell,
+              const Data::SubshellType interaction_subshell,
               const double subshell_occupancy,
               const double subshell_binding_energy,
               const std::shared_ptr<const ComptonProfile>& d_compton_profile );
@@ -59,20 +59,20 @@ public:
   void sample( const double incoming_energy,
 	       const double scattering_angle_cosine,
 	       double& outgoing_energy,
-	       SubshellType& shell_of_interaction ) const;
+	       Data::SubshellType& shell_of_interaction ) const;
 
   //! Sample an outgoing energy and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
 			      const double scattering_angle_cosine,
 			      double& outgoing_energy,
-			      SubshellType& shell_of_interaction,
+			      Data::SubshellType& shell_of_interaction,
 			      unsigned& trials ) const;
 
   //! Sample an electron momentum projection and record the number of trials
   void sampleMomentumAndRecordTrials( const double incoming_energy,
                                       const double scattering_angle_cosine,
                                       double& electron_momentum_projection,
-                                      SubshellType& shell_of_interaction,
+                                      Data::SubshellType& shell_of_interaction,
                                       unsigned& trials ) const;
 
 private:

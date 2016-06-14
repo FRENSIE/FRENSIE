@@ -25,15 +25,24 @@ class ElectroionizationSubshellElectroatomicReaction : public ElectroionizationE
 
 public:
 
+  //! Basic Constructor
+  ElectroionizationSubshellElectroatomicReaction( 
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Data::SubshellType interaction_subshell,
+    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution );
+
   //! Constructor
   ElectroionizationSubshellElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-      const SubshellType interaction_subshell,
-      const double binding_energy,   
-      const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
-      electroionization_subshell_scattering_distribution );
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Data::SubshellType interaction_subshell,
+    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_subshell_distribution );
 
 
   //! Destructor
@@ -43,7 +52,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
@@ -51,15 +60,13 @@ public:
   //! Get the interaction subshell (non-standard interface)
   unsigned getSubshell() const;
 
-
 private:
-
-  // The electroionization subshell scattering distribution
-  ElectroionizationSubshellElectronScatteringDistribution
-    d_scattering_distribution;
+  // The electroionization distribution
+  Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+    d_electroionization_subshell_distribution;
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;
+  Data::SubshellType d_interaction_subshell;
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;

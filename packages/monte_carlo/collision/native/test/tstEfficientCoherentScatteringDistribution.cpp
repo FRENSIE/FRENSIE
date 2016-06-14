@@ -177,7 +177,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   photon.setEnergy( 4.95936772145E-03 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -198,7 +198,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 4.95936772145E-03, 1e-15  );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.125019990362325473, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -212,7 +212,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   adjoint_photon.setEnergy( 4.95936772145E-03 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -237,7 +237,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 
 			  -0.125019990362325473, 
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

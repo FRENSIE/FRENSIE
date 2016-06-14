@@ -4,7 +4,10 @@ ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace
 
 ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator tstStandardElectronPhotonRelaxationDataGenerator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
-ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p")
+ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_eedl_endl_file.txt" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_eedl_endl_file.txt")
+
+ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_h_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_endl_1_native.xml" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p" --test_c_endl_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_endl_6_native.xml")
+
 
 ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
   tstAdjointIncoherentCrossSectionHelpers.cpp
@@ -22,3 +25,4 @@ ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
 #   tstStandardAdjointIncoherentGridGenerator.cpp)
 # TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
 # ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+

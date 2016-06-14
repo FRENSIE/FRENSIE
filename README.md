@@ -244,7 +244,7 @@ are described.
 7. move to the build directory (e.g. software/trilinos/build)
 8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory 
 9. change the variables in the script to reflect the desired system paths
-10. run `./trilinos.sh` to configure trilinos
+10. run `./trilinos-basic.sh` to configure trilinos
 11. run `make -j n`
 12. run `make test`
 13. run `make install`

@@ -11,7 +11,7 @@ SET(SUBPACKAGE_LIB_NAME data_gen_electron_photon)
 
 # Create the subpackage library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${DATA_GEN_ELECTRON_PHOTON_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} monte_carlo_collision_native data_native data_ace)
+TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} monte_carlo_collision_native data_native data_ace data_endl)
 
 INSTALL(TARGETS ${SUBPACKAGE_LIB_NAME}
   DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)

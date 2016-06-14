@@ -15,7 +15,7 @@
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -27,19 +27,28 @@ const double StandardElectronPhotonRelaxationDataGenerator::s_threshold_energy_n
 
 // Constructor
 StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationDataGenerator( 
-	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-	   const double min_photon_energy,
-	   const double max_photon_energy,
-	   const double occupation_number_evaluation_tolerance,
-	   const double subshell_incoherent_evaluation_tolerance,
-	   const double grid_convergence_tol,
-	   const double grid_absolute_diff_tol,
-	   const double grid_distance_tol )
+        const unsigned atomic_number,
+        const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+        const Teuchos::RCP<const Data::ENDLDataContainer>&
+            endl_data_container,
+        const double min_photon_energy,
+        const double max_photon_energy,
+        const double min_electron_energy,
+        const double max_electron_energy,
+        const double cutoff_angle_cosine,
+        const double occupation_number_evaluation_tolerance,
+        const double subshell_incoherent_evaluation_tolerance,
+        const double grid_convergence_tol,
+        const double grid_absolute_diff_tol,
+        const double grid_distance_tol )
   : ElectronPhotonRelaxationDataGenerator( atomic_number ),
     d_ace_epr_data( ace_epr_data ),
+    d_endl_data_container( endl_data_container ),
     d_min_photon_energy( min_photon_energy ),
     d_max_photon_energy( max_photon_energy ),
+    d_min_electron_energy( min_electron_energy ),
+    d_max_electron_energy( max_electron_energy ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
     d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
     d_grid_convergence_tol( grid_convergence_tol ),
@@ -53,6 +62,14 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
   // Make sure the photon energy limits are valid
   testPrecondition( min_photon_energy > 0.0 );
   testPrecondition( min_photon_energy < max_photon_energy );
+  // Make sure the electron energy limits are valid
+  testPrecondition( min_electron_energy > 0.0 );
+  testPrecondition( min_electron_energy < max_electron_energy );
+  // Make sure the cutoff angle is valid
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
+
+  
 }
 
 // Populate the electron-photon-relaxation data container
@@ -60,8 +77,21 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
 			   Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const
 {
+  // Set the table data
   // Set the atomic number
   this->setAtomicNumber( data_container );
+  data_container.setMinPhotonEnergy( d_min_photon_energy );
+  data_container.setMaxPhotonEnergy( d_max_photon_energy );
+  data_container.setMinElectronEnergy( d_min_electron_energy );
+  data_container.setMaxElectronEnergy( d_max_electron_energy );
+  data_container.setCutoffAngleCosine( d_cutoff_angle_cosine );
+  data_container.setOccupationNumberEvaluationTolerance(
+    d_occupation_number_evaluation_tolerance );
+  data_container.setSubshellIncoherentEvaluationTolerance(
+    d_subshell_incoherent_evaluation_tolerance );
+  data_container.setGridConvergenceTolerance( d_grid_convergence_tol );
+  data_container.setGridAbsoluteDifferenceTolerance( d_grid_absolute_diff_tol );
+  data_container.setGridDistanceTolerance( d_grid_distance_tol );
 
   // Set the relaxation data
   std::cout << "Setting the relaxation data...";
@@ -97,7 +127,10 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   this->setPhotonData( data_container );
 
   // Set the electron data
+  std::cout << "Setting the electron data: " << std::endl;
   this->setElectronData( data_container );
+  std::cout << "done." << std::endl;
+
 }
 
 // Set the relaxation data
@@ -711,6 +744,414 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   std::cout << "done." << std::endl;
 }
 
+
+// Process EEDL file
+/*! \details This function uses the Data::ENDLDataContainer to read the
+ * native EEDL data file.
+ */
+void StandardElectronPhotonRelaxationDataGenerator::setElectronData( 
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{ 
+  // cross sections in the file
+  Teuchos::RCP<const Utility::OneDDistribution>  
+        bremsstrahlung_cross_section, atomic_excitation_cross_section,
+        cutoff_elastic_cross_section, total_elastic_cross_section;
+
+  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >
+        electroionization_cross_section;
+
+  // Initialize union energy grid
+  std::list<double> union_energy_grid;
+  union_energy_grid.push_back( d_min_electron_energy );
+  union_energy_grid.push_back( d_max_electron_energy );
+
+//---------------------------------------------------------------------------//
+// Set Elastic Data
+//---------------------------------------------------------------------------//
+
+  // Get cutoff elastic cross section to union energy grid
+  std::vector<double> raw_energy_grid = 
+    d_endl_data_container->getElasticEnergyGrid();
+ 
+  this->extractElectronCrossSection<Utility::LogLog>( 
+    raw_energy_grid,
+    d_endl_data_container->getCutoffElasticCrossSection(),
+    cutoff_elastic_cross_section );
+
+  // merge raw energy grid with the union energy grid
+  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+
+
+  // Get total elastic cross section (same energy grid as cutoff)
+  this->extractElectronCrossSection<Utility::LogLog>( 
+    raw_energy_grid,
+    d_endl_data_container->getTotalElasticCrossSection(),
+    total_elastic_cross_section );
+
+
+  // Set elastic angular distribution
+  std::map<double,std::vector<double> > elastic_pdf, elastic_angle;
+
+  std::vector<double> elastic_energy_grid =
+    d_endl_data_container->getCutoffElasticAngularEnergyGrid();
+
+  data_container.setElasticAngularEnergyGrid( elastic_energy_grid );
+
+  /* ENDL gives the angular distribution in terms of the change in angle cosine 
+   * (delta_angle_cosine = 1 - angle_cosine). For the native format it needs to 
+   * be in terms of angle_cosine. This for loop flips the distribution and
+   * changes the variables to angle_cosine.
+   */
+  std::vector<double>::iterator energy = elastic_energy_grid.begin(); 
+  for ( energy; energy != elastic_energy_grid.end(); energy++ )
+  {
+    calculateElasticAngleCosine(
+        d_endl_data_container->getCutoffElasticAnglesAtEnergy( *energy ),
+        d_endl_data_container->getCutoffElasticPDFAtEnergy( *energy ),
+        elastic_angle[*energy],
+        elastic_pdf[*energy] );
+  }
+
+  data_container.setCutoffElasticPDF( elastic_pdf );
+  data_container.setCutoffElasticAngles( elastic_angle );
+
+  // Set the screened Rutherford cross section data
+  setScreenedRutherfordData( cutoff_elastic_cross_section, 
+                             total_elastic_cross_section,
+                             elastic_energy_grid, 
+                             elastic_pdf,
+                             data_container );
+
+//---------------------------------------------------------------------------//
+// Set Electroionization Data
+//---------------------------------------------------------------------------//
+
+  std::set<unsigned>::iterator shell = data_container.getSubshells().begin();
+
+  // Loop through electroionization data for every subshell
+  for ( shell; shell != data_container.getSubshells().end(); shell++ )
+  {
+    Teuchos::RCP<const Utility::OneDDistribution> subshell_cross_section;
+
+    raw_energy_grid =
+        d_endl_data_container->getElectroionizationCrossSectionEnergyGrid( *shell );
+
+    this->extractElectronCrossSection<Utility::LinLin>( 
+        raw_energy_grid,
+        d_endl_data_container->getElectroionizationCrossSection( *shell ),
+        subshell_cross_section );
+
+    // merge raw energy grid with the union energy grid
+    mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+
+    electroionization_cross_section.push_back( 
+        std::make_pair( *shell, subshell_cross_section ) );
+
+    data_container.setElectroionizationEnergyGrid( 
+        *shell,
+        d_endl_data_container->getElectroionizationRecoilEnergyGrid( *shell ) );
+
+    data_container.setElectroionizationRecoilEnergy( 
+        *shell,
+        d_endl_data_container->getElectroionizationRecoilEnergy( *shell ) );
+
+    data_container.setElectroionizationRecoilPDF( 
+        *shell,
+        d_endl_data_container->getElectroionizationRecoilPDF( *shell ) );
+  }
+
+//---------------------------------------------------------------------------//
+// Set Bremsstrahlung Data
+//---------------------------------------------------------------------------//
+
+  raw_energy_grid = 
+    d_endl_data_container->getBremsstrahlungCrossSectionEnergyGrid();
+
+  this->extractElectronCrossSection<Utility::LinLin>( 
+        raw_energy_grid,
+        d_endl_data_container->getBremsstrahlungCrossSection(),
+        bremsstrahlung_cross_section );
+
+  // merge raw energy grid with the union energy grid
+  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+
+  data_container.setBremsstrahlungEnergyGrid(
+    d_endl_data_container->getBremsstrahlungPhotonEnergyGrid() );
+
+  data_container.setBremsstrahlungPhotonEnergy(
+    d_endl_data_container->getBremsstrahlungPhotonEnergy() );
+
+  data_container.setBremsstrahlungPhotonPDF(
+    d_endl_data_container->getBremsstrahlungPhotonPDF() );
+
+
+//---------------------------------------------------------------------------//
+// Set Atomic Excitation Data
+//---------------------------------------------------------------------------//
+
+  raw_energy_grid = d_endl_data_container->getAtomicExcitationEnergyGrid();
+
+  this->extractElectronCrossSection<Utility::LinLin>( 
+    raw_energy_grid,
+    d_endl_data_container->getAtomicExcitationCrossSection(),
+    atomic_excitation_cross_section );
+
+  // merge raw energy grid with the union energy grid
+  mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
+
+  // Set atomic excitation energy loss
+  data_container.setAtomicExcitationEnergyGrid( raw_energy_grid );
+  data_container.setAtomicExcitationEnergyLoss( 
+    d_endl_data_container->getAtomicExcitationEnergyLoss() );
+
+//---------------------------------------------------------------------------//
+// Create union energy grid and calculate cross sections
+//---------------------------------------------------------------------------//
+
+  // Create the union energy grid
+  std::cout << " Creating union energy grid";
+  std::cout.flush();
+
+
+  Utility::GridGenerator<Utility::LinLin> 
+    union_energy_grid_generator( d_grid_convergence_tol,
+                                 d_grid_absolute_diff_tol,
+                                 d_grid_distance_tol );
+  
+  // Calculate the union energy grid
+  boost::function<double (double pz)> grid_function = 
+    boost::bind( &Utility::OneDDistribution::evaluate,
+                 boost::cref( *cutoff_elastic_cross_section ),
+                 _1 );
+
+  union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                               grid_function );
+
+  std::cout << ".";
+  std::cout.flush(); 
+  
+  grid_function = boost::bind( 
+        &Utility::OneDDistribution::evaluate,
+        boost::cref( *total_elastic_cross_section ),
+        _1 );
+  
+  union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                               grid_function );
+  std::cout << ".";
+  std::cout.flush(); 
+
+  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+			                   boost::cref( *bremsstrahlung_cross_section ),
+			                   _1 );
+  
+  union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                               grid_function );
+  std::cout << ".";
+  std::cout.flush();
+
+  grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
+			                   boost::cref( *atomic_excitation_cross_section ),
+			                   _1 );
+
+  union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                               grid_function );
+  std::cout << ".";
+  std::cout.flush(); 
+
+  for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
+  {
+    grid_function = boost::bind( 
+		   &Utility::OneDDistribution::evaluate,
+		   boost::cref( *electroionization_cross_section[i].second ),
+		   _1 );
+
+  union_energy_grid_generator.generateInPlace( union_energy_grid,
+                                               grid_function );
+    std::cout << ".";
+    std::cout.flush();
+  }
+
+  std::cout << "done." << std::endl;
+
+  // Set the union energy grid
+  std::vector<double> energy_grid;
+  energy_grid.assign( union_energy_grid.begin(),
+                      union_energy_grid.end() );
+  
+  data_container.setElectronEnergyGrid( energy_grid );
+
+
+  // Create and set the cross sections
+  std::vector<double> cross_section;
+  unsigned threshold;
+
+  {
+  // Set Elastic cross section data
+  std::vector<double> cutoff_cross_section, total_cross_section;
+
+  std::cout << " Setting the cutoff elastic cross section...";
+  std::cout.flush();
+  this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
+                                             cutoff_elastic_cross_section,
+                                             cutoff_cross_section,
+                                             threshold );
+  data_container.setCutoffElasticCrossSection( cutoff_cross_section );
+  data_container.setCutoffElasticCrossSectionThresholdEnergyIndex( threshold ); 
+  std::cout << "done." << std::endl;
+
+
+  std::cout << " Setting the screened Rutherford elastic cross section...";
+  std::cout.flush();
+  this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
+                                             total_elastic_cross_section,
+                                             total_cross_section,
+                                             threshold );
+
+  std::vector<double> raw_cross_section( total_cross_section.size() );
+  for ( int i = 0; i < total_cross_section.size(); ++i )
+  {
+    raw_cross_section[i] = total_cross_section[i] - cutoff_cross_section[i];
+
+    double relative_difference = raw_cross_section[i]/total_cross_section[i];
+    
+    // Check for roundoff error and reduce to zero if needed
+    if ( relative_difference < 1.0e-6 )
+    {
+      raw_cross_section[i] = 0.0;
+ 
+      // Update threshold index
+      threshold = i+1;
+    } 
+  }
+
+  std::vector<double>::iterator start = raw_cross_section.begin();
+  std::advance( start, threshold );
+
+  cross_section.assign( start, raw_cross_section.end() );
+
+  data_container.setScreenedRutherfordElasticCrossSection( cross_section );
+  data_container.setScreenedRutherfordElasticCrossSectionThresholdEnergyIndex( 
+    threshold ); 
+  std::cout << "done." << std::endl;
+  }
+
+
+  std::cout << " Setting the bremsstrahlung cross section...";
+  std::cout.flush();
+  this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
+                                             bremsstrahlung_cross_section,
+                                             cross_section,
+                                             threshold );
+
+  data_container.setBremsstrahlungCrossSection( cross_section );
+  data_container.setBremsstrahlungCrossSectionThresholdEnergyIndex( threshold ); 
+  std::cout << "done." << std::endl;
+
+
+  std::cout << " Setting the atomic excitation cross section...";
+  std::cout.flush();
+  this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
+                                             atomic_excitation_cross_section,
+                                             cross_section,
+                                             threshold );
+
+  data_container.setAtomicExcitationCrossSection( cross_section );
+  data_container.setAtomicExcitationCrossSectionThresholdEnergyIndex( 
+                    threshold ); 
+  std::cout << "done." << std::endl;
+  
+
+  for( unsigned i = 0; i < electroionization_cross_section.size(); ++i )
+  {
+    std::cout << " Setting subshell " 
+	      << electroionization_cross_section[i].first 
+	      << " electroionization cross section...";
+    std::cout.flush();
+    this->createCrossSectionOnUnionEnergyGrid( 
+				   union_energy_grid,
+				   electroionization_cross_section[i].second,
+				   cross_section,
+				   threshold );
+
+    data_container.setElectroionizationCrossSection( 
+				    electroionization_cross_section[i].first,
+				    cross_section );
+    data_container.setElectroionizationCrossSectionThresholdEnergyIndex(
+				    electroionization_cross_section[i].first,
+				    threshold );
+    std::cout << "done." << std::endl;
+  }
+}
+
+
+// Set the screened rutherford data
+void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData( 
+    const Teuchos::RCP<const Utility::OneDDistribution>& 
+        cutoff_elastic_cross_section, 
+    const Teuchos::RCP<const Utility::OneDDistribution>& 
+        total_elastic_cross_section,
+    const std::vector<double>& elastic_energy_grid,
+    const std::map<double,std::vector<double> >& elastic_pdf,
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
+{
+  // Calculate Moliere's screening constant and the screened rutherford normalization constant
+  std::vector<double> moliere_screening_constant, 
+                      screened_rutherford_normalization_constant;
+  
+  // iterate through all angular energy bins
+  for ( int i = 0; i < elastic_energy_grid.size(); ++i )
+  {
+    // get the angular energy bin
+    double energy = elastic_energy_grid[i];
+
+    // get the screened rutherford cross section
+    double sr_cross_section = 
+        ( total_elastic_cross_section->evaluate( energy ) -
+        cutoff_elastic_cross_section->evaluate( energy ) );
+
+    double delta_cutoff_angle_cosine = ( 1.0 - d_cutoff_angle_cosine );
+
+    if ( sr_cross_section == 0.0 )
+    {
+    /* in order to not calculate negative the screened Rutherford cross section
+     * must be greater than ( cutoff_pdf*(1.0 - cutoff_angle_cosine ). It should also be small
+     * enough to give a negligable contribution to the overall cross section.
+     * This can be accomplished by setting eta slightly greater then ( 1.0 - cutoff
+     * angle cosine ).
+     */
+    // get the pdf value at the cutoff angle cosine for the given energy
+    double cutoff_pdf = elastic_pdf.find( energy )->second.back(); 
+
+    // calculate Moliere's screening constant
+    moliere_screening_constant.push_back( 1.01*delta_cutoff_angle_cosine );
+
+    // calculate the screened rutherford normalization constant
+    screened_rutherford_normalization_constant.push_back( cutoff_pdf*
+        ( 2.01*delta_cutoff_angle_cosine )*( 2.01*delta_cutoff_angle_cosine ) );
+    }
+    else
+    {
+    // get the pdf value at the cutoff angle for the given energy
+    double cutoff_pdf = elastic_pdf.find( energy )->second.back(); 
+
+    // calculate Moliere's screening constant
+    moliere_screening_constant.push_back( delta_cutoff_angle_cosine/( 
+        sr_cross_section/( delta_cutoff_angle_cosine*cutoff_pdf ) - 1.0 ) );
+
+    // calculate the screened rutherford normalization constant
+    screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
+        ( delta_cutoff_angle_cosine + moliere_screening_constant.back() )* 
+        ( delta_cutoff_angle_cosine + moliere_screening_constant.back() ) ) );
+    }
+  }
+  // Set Moliere's screening constant
+  data_container.setMoliereScreeningConstant( moliere_screening_constant );
+
+  // Set the screened rutherford normalization constant
+  data_container.setScreenedRutherfordNormalizationConstant( 
+    screened_rutherford_normalization_constant );  
+}
+
 // Extract the half Compton profile from the ACE table
 void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile( 
 				      const unsigned subshell,
@@ -732,7 +1173,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 						     this->getAtomicNumber() );
   
   unsigned compton_subshell_index = converter->convertSubshellToIndex(
-			      MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+			      Data::convertENDFDesignatorToSubshellEnum( 
 								  subshell ) );
     
   unsigned profile_index = lswd_block[compton_subshell_index];
@@ -822,7 +1263,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
 							  occupation_number ) );
 
     evaluators[i].second.reset( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
-		   MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell ),
+		   Data::convertENDFDesignatorToSubshellEnum( subshell ),
 		   data_container.getSubshellOccupancy( subshell ),
 		   data_container.getSubshellBindingEnergy( subshell ),
 		   occupation_number_dist ) );
@@ -873,6 +1314,30 @@ void StandardElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyG
 
   // Sort the union energy grid
   union_energy_grid.sort();
+}
+
+
+// Merge a secondary energy grid with the electron union energy grid
+void StandardElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid( 
+     const std::vector<double>& energy_grid,
+     std::list<double>& union_energy_grid ) const
+{
+  // Assign the new grid to the union grid
+  union_energy_grid.insert( union_energy_grid.begin(),
+                            energy_grid.begin(), 
+                            energy_grid.end() );
+
+  // Sort the union energy grid
+  union_energy_grid.sort();
+
+  // Remove all energies less than the min
+  while ( *union_energy_grid.begin() < d_min_electron_energy )
+  {
+      union_energy_grid.pop_front();
+  }
+
+  // Make sure the union energy grid values are unique
+  union_energy_grid.unique();
 }
 
 // Create the cross section on the union energy grid
@@ -1116,12 +1581,26 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalC
   data_container.setImpulseApproxTotalCrossSection( cross_section );
 }
 
-// Set the electron data
-void StandardElectronPhotonRelaxationDataGenerator::setElectronData( 
-			   Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const
+// Calculate the elastic anglular distribution for the angle cosine
+void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
+    const std::vector<double>& raw_elastic_angle,
+    const std::vector<double>& raw_elastic_pdf,
+    std::vector<double>& elastic_angle,
+    std::vector<double>& elastic_pdf ) const
 {
+  int size = raw_elastic_angle.size();
+  int r_bin = size - 1;
 
+  elastic_angle.resize( size );
+  elastic_pdf.resize( size );
+
+  for ( int bin = 0; bin < size; bin++ )
+  {
+    elastic_pdf[r_bin] = raw_elastic_pdf[bin];
+    long double angle_cosine = 1.0L - raw_elastic_angle[bin];
+    elastic_angle[r_bin] = angle_cosine;
+    r_bin--;
+  }
 }
 
 } // end DataGen namespace

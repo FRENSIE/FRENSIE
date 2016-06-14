@@ -96,6 +96,14 @@ unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_sect
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( 
+						    const double energy ) const
+{
+    return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -108,7 +116,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     PhotonState& photon, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
 
@@ -117,7 +125,7 @@ void SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>
 
 // Get the interaction subshell (non-standard interface)
 template<typename InterpPolicy, bool processed_cross_section>
-inline SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshell() const
+inline Data::SubshellType SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshell() const
 {
   return d_scattering_distribution->getSubshell();
 }

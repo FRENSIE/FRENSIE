@@ -46,13 +46,16 @@ public:
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
   void react( PhotonState& photon, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
