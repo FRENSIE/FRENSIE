@@ -201,13 +201,11 @@ private:
 
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the total impulse approx. incoherent cross section
   void calculateImpulseApproxTotalIncoherentCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the Waller-Hartree total cross section
   void calculateWallerHartreeTotalCrossSection(
@@ -224,13 +222,28 @@ private:
     std::vector<double>& elastic_angle,
     std::vector<double>& elastic_pdf ) const;
 
-  // Generate elastic discrete angle cosines and weights
+  // Generate elastic moment preserving discrete angle cosines and weights
   static void evaluateDisceteAnglesAndWeights(
     const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
     std::vector<double>& discrete_angles,
-    std::vector<double>& weights );
+    std::vector<double>& weights,
+    double& cross_section_reduction );
+
+  // Generate elastic moment preserving cross section
+  static void evaluateMomentPreservingCrossSection(
+    const Teuchos::ArrayRCP<double>& electron_energy_grid,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+        rutherford_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+        cutoff_reaction,
+    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
+    const double cutoff_angle_cosine,
+    const unsigned cutoff_cross_section_threshold_energy_index,
+    std::vector<double>& moment_preserving_cross_section );
 
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;

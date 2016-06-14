@@ -14,10 +14,10 @@
 #include "Utility_LegendrePolynomial.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 
@@ -93,54 +93,24 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 // Constructor (with volatile data container)
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-    const std::vector<double>& angular_energy_grid,
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& rutherford_cross_section,
-    const unsigned& cutoff_cross_section_thrshold_index,
-    const unsigned& rutherford_cross_section_thrshold_index,
-    const unsigned& atomic_number,
+    const Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+        rutherford_distribution,
+    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& rutherford_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& cutoff_reaction,
     const double cutoff_angle_cosine )
   : d_cutoff_elastic_angles( cutoff_elastic_angles ),
+    d_rutherford_distribution( rutherford_distribution ),
+    d_cutoff_distribution( cutoff_distribution ),
+    d_rutherford_reaction( rutherford_reaction ),
+    d_cutoff_reaction( cutoff_reaction ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
   testPrecondition( cutoff_angle_cosine >= -1.0 );
   testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine || cutoff_angle_cosine == 1.0 );
 
-  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-    d_cutoff_distribution,
-    d_rutherford_distribution,
-    cutoff_elastic_angles,
-    cutoff_elastic_pdf,
-    angular_energy_grid,
-    atomic_number,
-    s_rutherford_cutoff_angle_cosine );
-
-  // Construct the hash-based grid searcher for this atom
-  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
-     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
-						     electron_energy_grid,
-						     100u ) );
-
-  d_rutherford_reaction.reset(
-	new MonteCarlo::ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
-        electron_energy_grid,
-        rutherford_cross_section,
-        rutherford_cross_section_thrshold_index,
-        grid_searcher,
-        d_rutherford_distribution,
-        s_rutherford_cutoff_angle_cosine ) );
-
-  d_cutoff_reaction.reset(
-	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
-        electron_energy_grid,
-        cutoff_cross_section,
-        cutoff_cross_section_thrshold_index,
-        grid_searcher,
-        d_cutoff_distribution ) );
 }
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
@@ -529,24 +499,28 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
   Utility::long_float eta = Utility::long_float(
     d_rutherford_distribution->evaluateMoliereScreeningConstant( energy ) );
 
-  /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to
-   *! calculate the moments of the screened Rutherford peak. For larger eta the
-   *! moments will be calculated by numerical integration.
-   */
-  if ( eta <= 2.0e-2 )
-  {
-    evaluateScreenedRutherfordPDFMomentByRecursion(
-      rutherford_moment,
-      eta,
-      n);
-  }
-  else
-  {
-    evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
-      rutherford_moment,
-      energy,
-      n);
-  }
+//  /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to
+//   *! calculate the moments of the screened Rutherford peak. For larger eta the
+//   *! moments will be calculated by numerical integration.
+//   */
+//  if ( eta <= 2.0e-2 )
+//  {
+//    evaluateScreenedRutherfordPDFMomentByRecursion(
+//      rutherford_moment,
+//      eta,
+//      n);
+//  }
+//  else
+//  {
+//    evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
+//      rutherford_moment,
+//      energy,
+//      n);
+//  }
+  evaluateScreenedRutherfordPDFMomentByRecursion(
+    rutherford_moment,
+    eta,
+    n);
 }
 
 // Evaluate the nth cross section moment of the screened Rutherford peak distribution

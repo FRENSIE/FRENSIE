@@ -16,11 +16,15 @@
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 
 namespace DataGen{
 
@@ -197,13 +201,13 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   data_container.setNumberOfMomentPreservingAngles( 
     number_of_moment_preserving_angles );
 
-  std::vector<double> elastic_energy_grid(
+  std::vector<double> agular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
 
   std::cout << std::endl << "Setting the moment preserving electron data...";
   std::cout.flush();
   StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData( 
-    elastic_energy_grid, 
+    agular_energy_grid, 
     data_container );
   std::cout << "done." << std::endl;
 }
@@ -845,18 +849,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   // Set elastic angular distribution
   std::map<double,std::vector<double> > elastic_pdf, elastic_angle;
 
-  std::vector<double> elastic_energy_grid(
+  std::vector<double> agular_energy_grid(
     d_endl_data_container->getCutoffElasticAngularEnergyGrid() );
 
-  data_container.setElasticAngularEnergyGrid( elastic_energy_grid );
+  data_container.setElasticAngularEnergyGrid( agular_energy_grid );
 
   /* ENDL gives the angular distribution in terms of the change in angle cosine
    * (delta_angle_cosine = 1 - angle_cosine). For the native format it needs to
    * be in terms of angle_cosine. This for loop flips the distribution and
    * changes the variables to angle_cosine.
    */
-  std::vector<double>::iterator energy = elastic_energy_grid.begin();
-  for ( energy; energy != elastic_energy_grid.end(); energy++ )
+  std::vector<double>::iterator energy = agular_energy_grid.begin();
+  for ( energy; energy != agular_energy_grid.end(); energy++ )
   {
     calculateElasticAngleCosine(
         d_endl_data_container->getCutoffElasticAnglesAtEnergy( *energy ),
@@ -878,7 +882,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 //    setScreenedRutherfordData( 
 //        d_endl_data_container->getCutoffElasticCrossSection(),
 //        d_endl_data_container->getTotalElasticCrossSection(),
-//        elastic_energy_grid,
+//        agular_energy_grid,
 //        elastic_pdf,
 //        data_container );
 //    std::cout << "done." << std::endl;
@@ -908,7 +912,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
     std::cout.flush();
     // Set the moment preserving data
     StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
-        elastic_energy_grid,
+        agular_energy_grid,
         data_container );
     std::cout << "done." << std::endl;
   }
@@ -1253,7 +1257,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 //        cutoff_elastic_cross_section,
 //    const Teuchos::RCP<const Utility::OneDDistribution>&
 //        total_elastic_cross_section,
-//    const std::vector<double>& elastic_energy_grid,
+//    const std::vector<double>& agular_energy_grid,
 //    const std::map<double,std::vector<double> >& elastic_pdf,
 //    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 //{
@@ -1262,57 +1266,121 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
 // Set the screened rutherford data
 void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
-    const std::vector<double>& elastic_energy_grid,
+    const std::vector<double>& agular_energy_grid,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
-  std::vector<double> discrete_angles, weights;
+  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
+  Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+        rutherford_distribution;
+  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution;
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
+    cutoff_distribution,
+    rutherford_distribution,
+    data_container.getCutoffElasticAngles(),
+    data_container.getCutoffElasticPDF(),
+    agular_energy_grid,
+    data_container.getAtomicNumber(),
+    0.999999 );
 
+  // Construct the hash-based grid searcher for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
                       data_container.getElectronEnergyGrid().end() );
 
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+						     energy_grid,
+						     100u ) );
+
+  // Construct the screened Rutherford reaction
+  Teuchos::ArrayRCP<double> rutherford_cross_section;
+  rutherford_cross_section.assign(
+    data_container.getScreenedRutherfordElasticCrossSection().begin(),
+    data_container.getScreenedRutherfordElasticCrossSection().end() );
+
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> rutherford_reaction(
+	new MonteCarlo::ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
+        energy_grid,
+        rutherford_cross_section,
+        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+        grid_searcher,
+        rutherford_distribution,
+        0.999999 ) );
+
+  // Construct the cutoff reaction
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     data_container.getCutoffElasticCrossSection().begin(),
     data_container.getCutoffElasticCrossSection().end() );
 
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
-    data_container.getScreenedRutherfordElasticCrossSection().begin(),
-    data_container.getScreenedRutherfordElasticCrossSection().end() );
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> cutoff_reaction(
+	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
+        energy_grid,
+        cutoff_cross_section,
+        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        grid_searcher,
+        cutoff_distribution ) );
 
   // Create the moment evaluator of the elastic scattering distribution
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
         data_container.getCutoffElasticAngles(),
-        data_container.getCutoffElasticPDF(),
-        elastic_energy_grid,
-        energy_grid,
-        cutoff_cross_section,
-        rutherford_cross_section,
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        data_container.getAtomicNumber(),
+        rutherford_distribution,
+        cutoff_distribution,
+        rutherford_reaction,
+        cutoff_reaction,
         data_container.getCutoffAngleCosine() ) );
 
+  // Moment preserving discrete angles and weights
+  std::vector<double> discrete_angles, weights;
+
+  // weights for a discrete angle cosine = 1
+  std::vector<double> cross_section_reduction( agular_energy_grid.size() );
+
   // iterate through all angular energy bins
-  for ( unsigned i = 0; i < elastic_energy_grid.size(); i++ )
+  for ( unsigned i = 0; i < agular_energy_grid.size(); i++ )
   {
     StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
         moments_evaluator,
-        elastic_energy_grid[i],
+        agular_energy_grid[i],
         data_container.getNumberOfMomentPreservingAngles(),
         discrete_angles,
-        weights );
+        weights,
+        cross_section_reduction[i] );
 
     data_container.setMomentPreservingElasticDiscreteAngles(
-        elastic_energy_grid[i],
+        agular_energy_grid[i],
         discrete_angles );
     data_container.setMomentPreservingElasticWeights(
-        elastic_energy_grid[i],
+        agular_energy_grid[i],
         weights );
   }
+
+  // Generate a cross section reduction distribution
+  Teuchos::RCP<const Utility::OneDDistribution> reduction_distribution(
+    new Utility::TabularDistribution<Utility::LinLin>(
+        agular_energy_grid,
+        cross_section_reduction ) );
+
+  // Calculate the moment preserving cross section
+  std::vector<double> moment_preserving_cross_section;
+  StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
+        energy_grid,
+        cutoff_reaction,
+        rutherford_reaction,
+        cutoff_distribution,
+        reduction_distribution,
+        data_container.getCutoffAngleCosine(),
+        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        moment_preserving_cross_section );
+
+  data_container.setMomentPreservingCrossSection(
+    moment_preserving_cross_section );
+
+  data_container.setMomentPreservingCrossSectionThresholdEnergyIndex(
+    data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() );
 }
 
 // Extract the half Compton profile from the ACE table
@@ -1766,19 +1834,20 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
   }
 }
 
-// Generate elastic discrete angle cosines and weights
+// Generate elastic moment preserving discrete angle cosines and weights
 void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
     const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
     std::vector<double>& discrete_angles,
-    std::vector<double>& weights )
+    std::vector<double>& weights,
+    double& cross_section_reduction )
 {
   std::vector<Utility::long_float> legendre_moments;
   double precision = 1e-13;
   int n = ( number_of_moment_preserving_angles+1 )*2 -2;
 
-  // Get the discrete angles and weights
+  // Get the elastic moments
   moments_evaluator->evaluateElasticMoment( legendre_moments,
                                             energy,
                                             n,
@@ -1791,6 +1860,62 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeig
   radau_quadrature->getRadauNodesAndWeights( discrete_angles,
                                              weights,
                                              number_of_moment_preserving_angles+1 );
+
+  // Set the cross_section_reduction to the weight for angle cosine = 1 
+  cross_section_reduction = weights.back();
+
+  // Eliminate the forward discrete angle (mu = 1)
+  discrete_angles.pop_back();
+  weights.pop_back();
+
+  // Renormalize weights
+  double sum_of_weights = 0.0;
+  for( int i = 0; i < weights.size(); i++ )
+  {
+    sum_of_weights += weights[i];
+  }
+  for( int i = 0; i < weights.size(); i++ )
+  {
+    weights[i] /= sum_of_weights;
+  }
+}
+
+// Generate elastic moment preserving cross section
+void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
+    const Teuchos::ArrayRCP<double>& electron_energy_grid,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+        rutherford_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+        cutoff_reaction,
+    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
+    const double cutoff_angle_cosine,
+    const unsigned cutoff_cross_section_threshold_energy_index,
+    std::vector<double>& moment_preserving_cross_section )
+{
+  moment_preserving_cross_section.resize( electron_energy_grid.size() );
+
+  unsigned begin = cutoff_cross_section_threshold_energy_index;
+
+  for( unsigned i = begin; i < electron_energy_grid.size(); i++ )
+  {
+    double cutoff_cdf = cutoff_distribution->evaluateCDF(
+        electron_energy_grid[i],
+        cutoff_angle_cosine );
+
+    double cross_section_reduction =
+        reduction_distribution->evaluate( electron_energy_grid[i] );
+
+    double rutherford_cross_section =
+        rutherford_reaction->getCrossSection( electron_energy_grid[i] );
+
+    double cutoff_cross_section =
+        cutoff_reaction->getCrossSection( electron_energy_grid[i] );
+
+    moment_preserving_cross_section[i] = cross_section_reduction*
+        (rutherford_cross_section + cutoff_cdf*cutoff_cross_section);
+  }
 }
 
 

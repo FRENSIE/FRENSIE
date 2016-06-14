@@ -53,14 +53,12 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
-    const std::vector<double>& angular_energy_grid,
-    const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::ArrayRCP<double>& cutoff_cross_section,
-    const Teuchos::ArrayRCP<double>& rutherford_cross_section,
-    const unsigned& cutoff_cross_section_thrshold_index,
-    const unsigned& rutherford_cross_section_thrshold_index,
-    const unsigned& atomic_number,
+    const Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+        rutherford_distribution,
+    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+        cutoff_distribution,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& rutherford_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& cutoff_reaction,
     const double cutoff_angle_cosine = 0.999999 );
 
   //! Destructor
