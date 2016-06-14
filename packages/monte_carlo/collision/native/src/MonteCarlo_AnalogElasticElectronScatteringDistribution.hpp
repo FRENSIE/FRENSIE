@@ -17,7 +17,6 @@
 #include <boost/bind.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -38,7 +37,7 @@ public:
 
   //! Typedef for the  elastic distribution
   typedef Teuchos::Array<Utility::Pair< double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+            Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
   //! Constructor

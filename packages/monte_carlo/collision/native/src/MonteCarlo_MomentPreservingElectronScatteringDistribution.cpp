@@ -9,9 +9,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_MomentPreservingElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
@@ -22,12 +19,16 @@ namespace MonteCarlo{
 // Constructor
 MomentPreservingElectronScatteringDistribution::MomentPreservingElectronScatteringDistribution(
     const int atomic_number,
-    const double mu_cutoff,
+    const double cutoff_angle_cosine,
     const ElasticDistribution& discrete_scattering_distribution )
-  : d_discrete_scattering_distribution( discrete_scattering_distribution )
+  : d_discrete_scattering_distribution( discrete_scattering_distribution ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the array is valid
   testPrecondition( d_discrete_scattering_distribution.size() > 0 );
+  // Make sure the cutoff angle cosine is valid
+  testPostcondition( cutoff_angle_cosine >= -1.0 );
+  testPostcondition( cutoff_angle_cosine < 1.0 );
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -124,7 +125,7 @@ void MomentPreservingElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                 d_discrete_scattering_distribution );
 
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine >= d_cutoff_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 

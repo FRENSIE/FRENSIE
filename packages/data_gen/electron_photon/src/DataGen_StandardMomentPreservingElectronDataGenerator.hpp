@@ -14,7 +14,6 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "DataGen_MomentPreservingElectronDataGenerator.hpp"

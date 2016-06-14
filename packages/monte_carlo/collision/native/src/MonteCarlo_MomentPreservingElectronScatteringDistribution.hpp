@@ -44,7 +44,7 @@ public:
   //! Constructor
   MomentPreservingElectronScatteringDistribution(
                  const int atomic_number,
-                 const double mu_cutoff,
+                 const double cutoff_angle_cosine,
                  const ElasticDistribution& discrete_scattering_distribution );
 
   //! Destructor
@@ -85,6 +85,9 @@ private:
 
   // elastic discrete scattering distribution
   ElasticDistribution d_discrete_scattering_distribution;
+
+  // The cutoff angle cosine
+  double d_cutoff_angle_cosine;
 };
 
 } // end MonteCarlo namespace
