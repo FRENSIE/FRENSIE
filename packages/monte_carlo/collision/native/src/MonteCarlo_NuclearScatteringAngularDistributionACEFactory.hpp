@@ -38,14 +38,14 @@ public:
   static void createIsotropicDistribution(
 	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
 
+  // The default (isotropic) angle cosine distribution
+  static Teuchos::RCP<Utility::TabularOneDDistribution> 
+  isotropic_angle_cosine_dist;
+
 private:
 
   //! Constructor
   NuclearScatteringAngularDistributionACEFactory();
-
-  // The default (isotropic) angle cosine distribution
-  static Teuchos::RCP<Utility::TabularOneDDistribution> 
-  isotropic_angle_cosine_dist;
 };
 
 } // end MonteCarlo namespace

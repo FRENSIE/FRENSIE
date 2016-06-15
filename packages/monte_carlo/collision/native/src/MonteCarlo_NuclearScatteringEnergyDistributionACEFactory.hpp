@@ -57,6 +57,13 @@ public:
 		const unsigned reaction,
 		const bool is_cm_distribution,
                   Teuchos::RCP<ScatteringDistributionBaseType>& distribution );
+                  
+  //! Determine the coupled energy-angle distribution
+  static unsigned determineCoupledDistribution(
+    const double atomic_weight_ratio,
+		const Teuchos::ArrayView<const double>& dlw_block_array,
+		const unsigned dlw_block_array_start_index,
+		const std::string& table_name );
 
 private:
 
