@@ -28,8 +28,8 @@ namespace MonteCarlo{
 // Create the ACE law 44 coupled energy-angle distribution
 template<typename ScatteringDistributionBaseType>
 void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
-                    const double atomic_weight_ratio,
-	            const Teuchos::ArrayView<const double>& dlw_block_array,
+        const double atomic_weight_ratio,
+	      const Teuchos::ArrayView<const double>& dlw_block_array,
 		    const unsigned dlw_block_array_start_index,
 		    const std::string& table_name,
 		    const unsigned reaction,
@@ -55,7 +55,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 		      "Error: MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
-
+  
   // Verify that it is law 44
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 44,
 		      std::runtime_error,
@@ -304,31 +304,31 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
       if( angular_data_loc != 0 )
       {
         // Interpolation flag -> 0 = histogram ... 1 = lin-lin
-        int angle_interpolation_flag = dlw_block_array[ angular_data_loc ];
+        int angle_interpolation_flag = dlw_block_array[ angular_data_loc - 1 ];
         
         // Number of angles in the distribution
-        int number_of_angles = dlw_block_array[ angular_data_loc + 1 ];
+        int number_of_angles = dlw_block_array[ angular_data_loc ];
         
         Teuchos::ArrayView<const double> cosines = dlw_block_array(
-          angular_data_loc + 2, number_of_angles );
+          angular_data_loc + 1, number_of_angles );
           
         Teuchos::ArrayView<const double> angle_pdf;
         
-        if( angle_interpolation_flag == 0 ) // Histogram 
+        if( angle_interpolation_flag == 1 ) // Histogram 
         {
           // Get the correct angle_pdf based on interpolation scheme 
           angle_pdf = dlw_block_array(
-            angular_data_loc + 3 + number_of_angles, number_of_angles - 1 );
+            angular_data_loc + 2 + number_of_angles, number_of_angles - 1 );
           
           // Construct the angular distribution
           cosine_arrays[j].reset( 
             new Utility::HistogramDistribution( cosines, angle_pdf ) );
         }
-        else if( angle_interpolation_flag == 1 ) // Lin-lin
+        else if( angle_interpolation_flag == 2 ) // Lin-lin
         {
           // Get the correct angle_pdf based on interpolation scheme 
           angle_pdf = dlw_block_array(
-            angular_data_loc + 3 + number_of_angles, number_of_angles );
+            angular_data_loc + 2 + number_of_angles, number_of_angles );
           
           // Construct the angular distribution
           cosine_arrays[j].reset( 
