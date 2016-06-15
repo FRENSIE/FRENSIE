@@ -19,8 +19,6 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
-#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "DataGen_StandardMomentPreservingElectronDataGenerator.hpp"
 

@@ -32,8 +32,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-            scattering_distribution,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+            scattering_distribution );
 
   //! Constructor
   ScreenedRutherfordElasticElectroatomicReaction(
@@ -42,8 +41,7 @@ public:
     const unsigned threshold_energy_index,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-            scattering_distribution,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+            scattering_distribution );
 
 
   //! Destructor
@@ -70,9 +68,6 @@ private:
   // The screened rutherford_elastic scattering distribution
   Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>
     d_scattering_distribution;
-
-  // The lower cutoff angle cosine above which screened rutherford is used
-  double d_lower_cutoff_angle_cosine;
 };
 
 } // end MonteCarlo namespace

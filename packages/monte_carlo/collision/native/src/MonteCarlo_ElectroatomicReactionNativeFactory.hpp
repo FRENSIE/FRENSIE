@@ -32,7 +32,7 @@ public:
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double upper_cutoff_angle_cosine = 0.999999 );
+        const double cutoff_angle_cosine = 1.0 );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   static void createScreenedRutherfordElasticReaction(
@@ -40,7 +40,7 @@ public:
         const Teuchos::ArrayRCP<const double>& energy_grid,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
         Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double upper_cutoff_angle_cosine = 0.999999 );
+        const double cutoff_angle_cosine = 1.0 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(

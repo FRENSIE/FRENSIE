@@ -704,7 +704,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   std::vector<double> fake_electron_stream( 3 );
   fake_electron_stream[0] = 0.5; // select the pb atom
   fake_electron_stream[1] = 0.36; // select the elastic reaction
-  fake_electron_stream[2] = 0.5; // sample mu = 9.874339332031E-01
+  fake_electron_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_electron_stream );
 
@@ -713,7 +713,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   //! \todo Double check the distribution type (Histogram)
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(),
-			  9.874339332031E-01,
+			  0.9874366113907,
 			  1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -829,7 +829,7 @@ int main( int argc, char** argv )
                                                        atom_fractions,
                                                        atom_names ) );
 
-    double upper_cutoff_angle_cosine = 0.999999;
+    double upper_cutoff_angle_cosine = 1.0;
     unsigned hash_grid_bins = 1000;
 
     // Create the electroatom factory

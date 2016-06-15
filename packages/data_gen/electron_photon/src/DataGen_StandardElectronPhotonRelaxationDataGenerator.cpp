@@ -1305,8 +1305,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
         rutherford_cross_section,
         data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         grid_searcher,
-        rutherford_distribution,
-        0.999999 ) );
+        rutherford_distribution ) );
 
   // Construct the cutoff reaction
   Teuchos::ArrayRCP<double> cutoff_cross_section;

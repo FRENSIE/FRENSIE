@@ -35,7 +35,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double upper_cutoff_angle_cosine )
+            const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -49,7 +49,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     distribution,
     raw_electroatom_data,
-    upper_cutoff_angle_cosine );
+    cutoff_angle_cosine );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -76,7 +76,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 			const Teuchos::ArrayRCP<const double>& energy_grid,
             const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
 			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double lower_cutoff_angle_cosine )
+            const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
@@ -91,7 +91,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     cutoff_distribution,
     raw_electroatom_data,
-    lower_cutoff_angle_cosine );
+    cutoff_angle_cosine );
 
 
   // Create the screened Rutherford elastic scattering distribution
@@ -120,8 +120,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 						  elastic_cross_section,
 						  threshold_energy_index,
                           grid_searcher,
-						  distribution,
-                          lower_cutoff_angle_cosine ) );
+						  distribution ) );
 }
 
 // Create an atomic excitation electroatomic reaction

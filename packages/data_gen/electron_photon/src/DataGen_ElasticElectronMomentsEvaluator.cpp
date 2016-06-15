@@ -72,8 +72,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
         rutherford_cross_section,
         data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         grid_searcher,
-        d_rutherford_distribution,
-        s_rutherford_cutoff_angle_cosine ) );
+        d_rutherford_distribution ) );
 
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;

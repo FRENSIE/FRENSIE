@@ -35,7 +35,7 @@ double atomic_weight;
 Teuchos::RCP<MonteCarlo::Electroatom> atom;
 MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 unsigned hash_grid_bins = 100;
-double cutoff_angle_cosine = 0.999999;
+double cutoff_angle_cosine = 1.0;
 
 //---------------------------------------------------------------------------//
 // Tests.

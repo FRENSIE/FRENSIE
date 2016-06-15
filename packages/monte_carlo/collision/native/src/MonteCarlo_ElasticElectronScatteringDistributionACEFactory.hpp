@@ -13,7 +13,6 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
@@ -33,7 +32,7 @@ public:
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-    const double upper_cutoff_angle_cosine = 0.999999 );
+    const double upper_cutoff_angle_cosine = 1.0 );
 
 protected:
 

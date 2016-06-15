@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 	MonteCarlo::TWOBS_DISTRIBUTION );
   TEST_EQUALITY_CONST(
 	MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-	0.999999 );
+	1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -135,7 +135,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, setElasticCutoffAngleCosine )
 {
   TEST_EQUALITY(
         MonteCarlo::SimulationElectronProperties::getElasticCutoffAngleCosine(),
-        0.999999 );
+        1.0 );
 
   MonteCarlo::SimulationElectronProperties::setElasticCutoffAngleCosine( 0.9 );
 

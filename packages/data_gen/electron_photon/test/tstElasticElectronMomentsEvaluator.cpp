@@ -1137,8 +1137,7 @@ int main( int argc, char** argv )
         rutherford_cross_section,
         al_data->getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         grid_searcher,
-        rutherford_distribution,
-        0.999999 ) );
+        rutherford_distribution ) );
 
   // Construct the cutoff reaction
   Teuchos::ArrayRCP<double> cutoff_cross_section;

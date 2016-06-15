@@ -54,8 +54,7 @@ Teuchos::RCP<TestCutoffElasticElectronScatteringDistribution>
 Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   elastic_scattering_distribution;
 
-double delta_mu_cutoff = 1.0e-6;
-double angle_cosine_cutoff = 0.999999;
+double angle_cosine_cutoff = 1.0;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -243,45 +242,56 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
 {
   // Set energy in MeV and angle cosine
   double energy = 1.0e-3;
-  double scattering_angle_cosine = 0.0; // delta_mu = 1.0;
-  double max_cdf = 9.9990922382800E-01;
+  double cutoff_angle_cosine = 0.0; // delta_mu = 1.0;
 
   // Create the distribution
   test_elastic_distribution.reset(
 	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
 		elastic_scattering_distribution,
-		scattering_angle_cosine ) );
+		cutoff_angle_cosine ) );
 
   // Calculate the cdf
   double cdf_value =
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   // Test 1 energy 1
-  TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02/max_cdf, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 9.663705658970E-02, 1e-12 );
 
 
-  scattering_angle_cosine = 9.800000000000E-01; // delta_mu = .02;
+  cutoff_angle_cosine = 9.800000000000E-01; // delta_mu = .02;
   // Create the distribution
   test_elastic_distribution.reset(
 	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
 		elastic_scattering_distribution,
-		scattering_angle_cosine ) );
+		cutoff_angle_cosine ) );
 
   cdf_value =
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
   // Test 2
-  TEST_FLOATING_EQUALITY( cdf_value, 4.211953219580E-01/max_cdf, 1e-12 );
+  TEST_FLOATING_EQUALITY( cdf_value, 4.211953219580E-01, 1e-12 );
 
   // Test with a different energy
   energy = 1.00E+05;
 
-  scattering_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
+  cutoff_angle_cosine = angle_cosine_cutoff; // delta_mu = delta_mu_cutoff;
   // Create the distribution
   test_elastic_distribution.reset(
 	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
 		elastic_scattering_distribution,
-		scattering_angle_cosine ) );
+		cutoff_angle_cosine ) );
+  cdf_value =
+    test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( cdf_value, 5.512132182210E-01, 1e-15 );
+
+  cutoff_angle_cosine = 1.0; // delta_mu = 2.0;
+  // Create the distribution
+  test_elastic_distribution.reset(
+	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
+		elastic_scattering_distribution,
+		cutoff_angle_cosine ) );
   cdf_value =
     test_elastic_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -336,7 +346,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
                                                 trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }
 
@@ -364,7 +374,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
@@ -394,7 +404,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
@@ -418,12 +428,43 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
 
   // Analytically scatter electron
   ace_elastic_distribution->scatterElectron( electron,
-                                                   bank,
-                                                   shell_of_interaction );
+                                             bank,
+                                             shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angle cosine can be evaluated
+TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
+                   ScatterAdjointElectron )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample mu = 0.9874366113907
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  Data::SubshellType shell_of_interaction;
+
+  MonteCarlo::AdjointElectronState adjoint_electron( 0 );
+  adjoint_electron.setEnergy( 1.0e-3 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter electron
+  ace_elastic_distribution->scatterAdjointElectron( adjoint_electron,
+                                                    bank,
+                                                    shell_of_interaction );
+
+  // Test
+  TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
+                          0.9874366113907,
+                          1e-12 );
+  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 

@@ -48,7 +48,7 @@ public:
   //! Constructor
   ElasticElectronMomentsEvaluator(
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double cutoff_angle_cosine = 0.999999 );
+    const double cutoff_angle_cosine = 1.0 );
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
@@ -59,7 +59,7 @@ public:
         cutoff_distribution,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& rutherford_reaction,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& cutoff_reaction,
-    const double cutoff_angle_cosine = 0.999999 );
+    const double cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()

@@ -35,7 +35,7 @@ public:
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double& cutoff_upper_cutoff_angle_cosine = 0.999999 );
+    const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a elastic distributions ( both Cutoff and Screened Rutherford )
   static void createHardElasticDistributions(
@@ -47,14 +47,14 @@ public:
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned& atomic_number,
-    const double& upper_cutoff_angle_cosine = 0.999999 );
+    const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
 	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-    const double& upper_cutoff_angle_cosine = 0.999999 );
+    const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a screened Rutherford elastic distribution
   static void createScreenedRutherfordElasticDistribution(

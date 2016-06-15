@@ -56,7 +56,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                                            scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 
@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionACEFactory,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 }

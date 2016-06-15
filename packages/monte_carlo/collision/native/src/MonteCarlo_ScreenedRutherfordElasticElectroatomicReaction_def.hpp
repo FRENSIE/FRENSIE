@@ -22,20 +22,15 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-         scattering_distribution,
-       const double lower_cutoff_angle_cosine )
+         scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index ),
-    d_scattering_distribution( scattering_distribution ),
-    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine )
+    d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
-  // Make sure the cutoff angle cosine is valid
-  testPrecondition( lower_cutoff_angle_cosine <= 1.0 );
-  testPrecondition( lower_cutoff_angle_cosine > -1.0 );
 }
 
 // Constructor
@@ -46,21 +41,16 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const unsigned threshold_energy_index,
        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
        const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-         scattering_distribution,
-       const double lower_cutoff_angle_cosine )
+         scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
                                                     cross_section,
                                                     threshold_energy_index,
                                                     grid_searcher ),
-    d_scattering_distribution( scattering_distribution ),
-    d_lower_cutoff_angle_cosine( lower_cutoff_angle_cosine )
+    d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
   testPrecondition( !scattering_distribution.is_null() );
-  // Make sure the cutoff angle cosine is valid
-  testPrecondition( lower_cutoff_angle_cosine <= 1.0 );
-  testPrecondition( lower_cutoff_angle_cosine > -1.0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

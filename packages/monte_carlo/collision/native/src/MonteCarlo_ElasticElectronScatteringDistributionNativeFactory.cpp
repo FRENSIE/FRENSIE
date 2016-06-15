@@ -21,7 +21,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
 	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& upper_cutoff_angle_cosine )
+    const double& cutoff_angle_cosine )
 {
   // Get the energy grid
   std::vector<double> angular_energy_grid =
@@ -41,7 +41,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                upper_cutoff_angle_cosine ) );
+                cutoff_angle_cosine ) );
 
   // Get the atomic number
   const int atomic_number = data_container.getAtomicNumber();
@@ -67,7 +67,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned& atomic_number,
-    const double& upper_cutoff_angle_cosine )
+    const double& cutoff_angle_cosine )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.back() > 0 );
@@ -77,8 +77,8 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
 
   Data::testPreconditionValuesGreaterThanZero( angular_energy_grid );
   // Make sure the upper cutoff angle cosine is valid
-  testPrecondition( upper_cutoff_angle_cosine <= 1.0 );
-  testPrecondition( upper_cutoff_angle_cosine > -1.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
+  testPrecondition( cutoff_angle_cosine > -1.0 );
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
   testPrecondition( atomic_number <= 100 );
@@ -98,7 +98,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   cutoff_elastic_distribution.reset(
         new CutoffElasticElectronScatteringDistribution(
                 scattering_function,
-                upper_cutoff_angle_cosine ) );
+                cutoff_angle_cosine ) );
 
   // Create the screened Rutherford distribution
   screened_rutherford_elastic_distribution.reset(

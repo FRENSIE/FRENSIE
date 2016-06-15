@@ -52,7 +52,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
         cross_sections_xml_directory,
@@ -242,7 +242,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -491,7 +491,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
         cross_sections_xml_directory,
@@ -681,7 +681,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::TWOBS_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
         cross_sections_xml_directory,
@@ -903,7 +903,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ace_ionization_subsh
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -1105,7 +1105,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -1328,7 +1328,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
         cross_sections_xml_directory,

@@ -24,12 +24,14 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The cutoff scattering distribution base class
-class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDistribution
+class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+            public AdjointElectronScatteringDistribution
 {
 
 public:
@@ -42,7 +44,7 @@ public:
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double upper_cutoff_angle_cosine = 0.999999 );
+        const double upper_cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
@@ -90,6 +92,11 @@ public:
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
 
+  //! Randomly scatter the adjoint electron
+  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
+                               ParticleBank& bank,
+                               Data::SubshellType& shell_of_interaction ) const;
+
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -101,9 +108,6 @@ private:
 
   // The cutoff scattering angle cosine (mu) below which the cutoff distribution is used
   double d_upper_cutoff_angle_cosine;
-
-  // The cutoff change in scattering angle cosine (delta mu) above which the cutoff distribution is used
-  double d_lower_cutoff_delta_mu;
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
   ElasticDistribution d_elastic_scattering_distribution;

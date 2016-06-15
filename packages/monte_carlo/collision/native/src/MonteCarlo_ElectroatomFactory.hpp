@@ -43,7 +43,7 @@ public:
     const BremsstrahlungAngularDistributionType
         photon_distribution_function,
     const bool use_atomic_relaxation_data,
-    const double cutoff_angle_cosine = 0.999999,
+    const double cutoff_angle_cosine = 1.0,
     std::ostream* os_message = &std::cout );
 
   //! Destructor
@@ -70,7 +70,7 @@ private:
               const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine = 0.999999 );
+              const double cutoff_angle_cosine = 1.0 );
 
   // Create a electroatom from a Native table
   void createElectroatomFromNativeTable(
@@ -83,7 +83,7 @@ private:
               const BremsstrahlungAngularDistributionType
                 photon_distribution_function,
               const bool use_atomic_relaxation_data,
-              const double cutoff_angle_cosine = 0.999999 );
+              const double cutoff_angle_cosine = 1.0 );
 
   // The electroatom map
   std::unordered_map<std::string,Teuchos::RCP<Electroatom> >

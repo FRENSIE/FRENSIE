@@ -209,14 +209,14 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideAnalogue )
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 0.5; // sample mu = 9.874339332031E-01
+  fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideAnalogue( electron, bank );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -237,14 +237,14 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 0.5; // sample mu = 9.874339332031E-01
+  fake_stream[2] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideSurvivalBias( electron, bank );
 
   TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.874339332031E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getWeight(), 1.0, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -291,7 +291,7 @@ int main( int argc, char** argv )
 				new MonteCarlo::AtomicRelaxationModelFactory );
 
 
-    double upper_cutoff_angle_cosine = 0.999999;
+    double upper_cutoff_angle_cosine = 1.0;
     unsigned hash_grid_bins = 100;
 
     MonteCarlo::ElectroatomFactory factory( test_cross_sections_xml_directory,

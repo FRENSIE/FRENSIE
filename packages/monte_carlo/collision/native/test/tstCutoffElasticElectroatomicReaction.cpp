@@ -125,20 +125,20 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectroatomicReaction,
                 elastic_scattering_distribution ) );
 
   // cross section ratio for cutoff angle
-  double ratio = 9.500004750002380E-01;
+  double ratio = 9.5E-01;
 
   double cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09*ratio, 1e-12 );
 
-  ratio = 2.439897074955E-01;
+  ratio = 2.439675590438E-01;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08*ratio, 1e-12 );
 
-  ratio = 1.410821289154E-05;
+  ratio = 7.776633431294E-06;
   cross_section =
     test_elastic_reaction->getCrossSection( 1.0E+05 );
 
@@ -258,7 +258,7 @@ int main( int argc, char** argv )
   // Get the atomic number
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  upper_cutoff_angle_cosine = 0.999999;
+  upper_cutoff_angle_cosine = 1.0;
 
   elastic_scattering_distribution.reset(
 	      new MonteCarlo::CutoffElasticElectronScatteringDistribution(
