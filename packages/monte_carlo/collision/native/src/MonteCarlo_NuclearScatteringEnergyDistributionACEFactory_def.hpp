@@ -345,7 +345,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
       }
       else // Otherwise do isotropic scattering
       {
-        cosine_arrays[j] = NuclearScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist;
+        cosine_arrays[j] = NuclearScatteringAngularDistributionACEFactory::getIsotropicDistribution();
       }
     }
 

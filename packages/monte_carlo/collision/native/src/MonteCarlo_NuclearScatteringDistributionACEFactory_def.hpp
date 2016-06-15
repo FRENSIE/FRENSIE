@@ -295,6 +295,12 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
 	              d_reaction_cm_scattering.find( reaction_type )->second,
        	        distribution );
     }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: The coupled angle-energy "
+        "distribution ace law " << acelaw << " was found. Currently ace laws"
+        " 44 and 61 are the only supported coupled angle-energy laws." );
+    }
   }
 }
 

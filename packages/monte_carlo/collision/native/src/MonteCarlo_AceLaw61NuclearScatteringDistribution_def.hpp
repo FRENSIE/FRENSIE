@@ -67,9 +67,6 @@ void AceLaw61NuclearScatteringDistribution<IncomingParticleType,
   double sys_scattering_angle_cosine = d_angle_distributions[incoming_bin_index]->sampleCoupledAngle(
     outgoing_bin_index,
     energy_prime );
-    
-  double random_num = 
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
   
   // convert the outgoing energy from this system to the lab system
   double outgoing_energy = 
