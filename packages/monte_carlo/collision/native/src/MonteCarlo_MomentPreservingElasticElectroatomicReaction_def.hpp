@@ -15,7 +15,7 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 MomentPreservingElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::MomentPreservingElasticElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -42,6 +42,39 @@ MomentPreservingElasticElectroatomicReaction<InterpPolicy,processed_cross_sectio
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( !discrete_scattering_distribution.is_null() );
+}
+
+// Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+MomentPreservingElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::MomentPreservingElasticElectroatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+         discrete_scattering_distribution )
+  : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
+                                                    incoming_energy_grid,
+                                                    cross_section,
+                                                    threshold_energy_index,
+                                                    grid_searcher ),
+    d_discrete_scattering_distribution( discrete_scattering_distribution )
+{
+  // Make sure the incoming energy grid is valid
+  testPrecondition( incoming_energy_grid.size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						incoming_energy_grid.begin(),
+						incoming_energy_grid.end() ) );
+  // Make sure the cross section is valid
+  testPrecondition( cross_section.size() > 0 );
+  testPrecondition( cross_section.size() ==
+		    incoming_energy_grid.size() - threshold_energy_index );
+  // Make sure the threshold energy is valid
+  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure scattering distribution is valid
+  testPrecondition( !discrete_scattering_distribution.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

@@ -28,19 +28,27 @@ public:
 
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double cutoff_angle_cosine = 1.0 );
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    const double cutoff_angle_cosine = 1.0 );
 
   //! Create a screened Rutherford elastic scattering electroatomic reaction
   static void createScreenedRutherfordElasticReaction(
-        const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-        const Teuchos::ArrayRCP<const double>& energy_grid,
-        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-        const double cutoff_angle_cosine = 1.0 );
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    const double cutoff_angle_cosine = 1.0 );
+
+  //! Create the moment preserving elastic scattering electroatomic reaction
+  static void createMomentPreservingElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    const double cutoff_angle_cosine = 0.9 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
@@ -67,7 +75,7 @@ public:
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
-        Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
+    Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
 private:
 

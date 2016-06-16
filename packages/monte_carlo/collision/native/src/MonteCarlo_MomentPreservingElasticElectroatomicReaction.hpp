@@ -25,7 +25,7 @@ class MomentPreservingElasticElectroatomicReaction : public StandardElectroatomi
 
 public:
 
-  //! Constructor
+  //! BasicConstructor
   MomentPreservingElasticElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
@@ -33,6 +33,14 @@ public:
     const Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
         discrete_scattering_distribution );
 
+  //! Constructor
+  MomentPreservingElasticElectroatomicReaction(
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+        discrete_scattering_distribution );
 
   //! Destructor
   ~MomentPreservingElasticElectroatomicReaction()

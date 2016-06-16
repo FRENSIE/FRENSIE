@@ -109,6 +109,43 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that an moment preserving elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+		           createMomentPreservingElasticReaction )
+{
+  MonteCarlo::ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.00000e-5;
+  double cross_section =
+    reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.765600964132140E+08, 1e-12 );
+
+  energy = 4.00000e-4;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.044301161244950E+08, 1e-12 );
+
+  energy = 1.00000e+5;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.084945182072920E+01, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Check that an atomic excitation reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 		   createAtomicExcitationReaction )

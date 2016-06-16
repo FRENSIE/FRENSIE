@@ -13,6 +13,7 @@
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
@@ -116,6 +117,48 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
   elastic_reaction.reset(
 	new ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
+						  energy_grid,
+						  elastic_cross_section,
+						  threshold_energy_index,
+                          grid_searcher,
+						  distribution ) );
+}
+
+// Create the moment preserving elastic scattering electroatomic reaction
+void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+            const double cutoff_angle_cosine )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+
+  // Create the moment preserving elastic scattering distribution
+  Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>
+    distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+    distribution,
+    raw_electroatom_data );
+
+  // Moment preserving elastic cross section
+  Teuchos::ArrayRCP<double> elastic_cross_section;
+  elastic_cross_section.assign(
+    raw_electroatom_data.getMomentPreservingCrossSection().begin(),
+	raw_electroatom_data.getMomentPreservingCrossSection().end() );
+
+  // Moment preserving elastic cross section threshold energy bin index
+  unsigned threshold_energy_index =
+    raw_electroatom_data.getMomentPreservingCrossSectionThresholdEnergyIndex();
+
+
+  elastic_reaction.reset(
+	new MomentPreservingElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
