@@ -25,15 +25,15 @@ namespace MonteCarlo{
 // Constructor
 CutoffElasticElectronScatteringDistribution::CutoffElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_scattering_distribution,
-    const double upper_cutoff_angle_cosine )
+    const double cutoff_angle_cosine )
   : d_elastic_scattering_distribution( elastic_scattering_distribution ),
-    d_upper_cutoff_angle_cosine( upper_cutoff_angle_cosine )
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the array is valid
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
-  // Make sure the upper_cutoff_angle_cosine is valid
-  testPrecondition( upper_cutoff_angle_cosine >= -1.0 );
-  testPrecondition( upper_cutoff_angle_cosine <= 1.0 );
+  // Make sure the cutoff_angle_cosine is valid
+  testPrecondition( cutoff_angle_cosine >= -1.0 );
+  testPrecondition( cutoff_angle_cosine <= 1.0 );
 }
 
 // Evaluate the distribution
@@ -137,7 +137,7 @@ double CutoffElasticElectronScatteringDistribution::evaluateCutoffCrossSectionRa
    * Note: the cutoff cdf represents the unormalized ratio of the distribution within
    * the cutoff value
    */
-  double cutoff_cdf = evaluateCDF( incoming_energy, d_upper_cutoff_angle_cosine );
+  double cutoff_cdf = evaluateCDF( incoming_energy, d_cutoff_angle_cosine );
 
   // Make sure the cdf values are valid
   testPostcondition( max_cdf >= cutoff_cdf );
@@ -254,7 +254,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // evaluate the cdf value at the upper cutoff angle cosine
   double upper_cutoff_cdf =
-            evaluateCDF( incoming_energy, d_upper_cutoff_angle_cosine );
+            evaluateCDF( incoming_energy, d_cutoff_angle_cosine );
 
   // scale the random number to only sample below the upper cutoff angle cosine
   scaled_random_number = upper_cutoff_cdf*
@@ -269,7 +269,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= d_upper_cutoff_angle_cosine );
+  testPostcondition( scattering_angle_cosine <= d_cutoff_angle_cosine );
 }
 
 } // end MonteCarlo namespace

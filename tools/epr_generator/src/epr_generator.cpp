@@ -159,7 +159,7 @@ int main( int argc, char** argv )
     else
     {
       std::cerr << "Error: Photoatomic file type "
-	      << data_file_type << "is not supported!";
+	      << data_file_type << " is not supported!";
     }
   }
   else
@@ -212,7 +212,7 @@ int main( int argc, char** argv )
     else
     {
     std::cerr << "Error: Photoatomic file type "
-	      << data_file_type << "is not supported!";
+	      << data_file_type << " is not supported!";
     }
 
     // Create the new data container

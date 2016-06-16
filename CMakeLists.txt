@@ -243,22 +243,22 @@ ADD_SUBDIRECTORY(doc)
 ##---------------------------------------------------------------------------##
 # run `make test-fast` to run all tests except for the facemc tests
 ADD_CUSTOM_TARGET(test-fast
-  COMMAND ctest -E Facemc --no-labels-summary
+  COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ADD_CUSTOM_TARGET(test-fast4
-  COMMAND ctest -E Facemc -LE no_threads -j4 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  COMMAND ctest -E Facemc -LE no_threads -j4
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ADD_CUSTOM_TARGET(test-fast8
-  COMMAND ctest -E Facemc -LE no_threads -j8 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  COMMAND ctest -E Facemc -LE no_threads -j8
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 ADD_CUSTOM_TARGET(test-fast12
-  COMMAND ctest -E Facemc -LE no_threads -j12 --no-labels-summary
-  COMMAND ctest -E Facemc -L no_threads --no-labels-summary
+  COMMAND ctest -E Facemc -LE no_threads -j12
+  COMMAND ctest -E Facemc -L no_threads
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 
 # run `make test-facemc` to run only the facemc tests

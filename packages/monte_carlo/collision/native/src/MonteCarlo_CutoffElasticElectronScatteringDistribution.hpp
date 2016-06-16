@@ -44,15 +44,11 @@ public:
   //! Constructor
   CutoffElasticElectronScatteringDistribution(
         const ElasticDistribution& cutoff_elastic_scattering_distribution,
-        const double upper_cutoff_angle_cosine = 1.0 );
+        const double cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   virtual ~CutoffElasticElectronScatteringDistribution()
   { /* ... */ }
-
-  //! Evaluate the distribution
-  double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
 
   //! Evaluate the distribution
   double evaluate( const unsigned incoming_energy_bin,
@@ -64,6 +60,10 @@ public:
 
   //! Evaluate the PDF
   double evaluatePDF( const unsigned incoming_energy_bin,
+                      const double scattering_angle_cosine ) const;
+
+  //! Evaluate the distribution
+  double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
   //! Evaluate the CDF
@@ -107,7 +107,7 @@ protected:
 private:
 
   // The cutoff scattering angle cosine (mu) below which the cutoff distribution is used
-  double d_upper_cutoff_angle_cosine;
+  double d_cutoff_angle_cosine;
 
   // cutoff elastic scattering distribution (no screened Rutherford data)
   ElasticDistribution d_elastic_scattering_distribution;

@@ -458,7 +458,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   std::vector<double> scaled_recoil_momentum;
 
   scaled_recoil_momentum.assign( raw_recoil_momentum.begin(),
-				 raw_recoil_momentum.end() );
+                                 raw_recoil_momentum.end() );
 
   // Convert from inverse Angstroms to inverse cm
   for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
