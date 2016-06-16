@@ -10,7 +10,7 @@ c Cell 10 is the volume of iron portland concrete that is doing the shielding
 c Cell 20 is a void
 20  0  200 -201 202 -203 204 -205 #10       IMP:n=1
 c Cell 30 is the graveyard 
-30  0  #20 #10                              IMP:n=1
+30  0  #20 #10                              IMP:n=0
 c
 c
 c ----------------------------------------------------------------------------c
@@ -77,16 +77,20 @@ c --------------------
 c run in neutron only mode
 mode n
 c run for 100 histories
-nps 10000
+nps 1000000000
 c Surface current on front surface
 f11:n 100
+c11  0.99 1
 c
 c Surface current on back surface
 f21:n 101
+c21  0.99 1
 c
 c Track length flux tally
-FMESH4:n  ORIGIN=-15 -150 -150
-          EMESH=1e-6 7ilog 10    EINTS=0 1r
-          IMESH=30          IINTS=1
-          JMESH=300         JINTS=1
-          KMESH=300         KINTS=1
+c FMESH4:n  ORIGIN=-15 -150 -150
+c          EMESH=1e-6 99ilog 2.45    EINTS=0 98 7r 
+c          IMESH=30          IINTS=1
+c          JMESH=300         JINTS=1
+c          KMESH=300         KINTS=1
+F4:n  10
+E4 1e-6 98ilog 2.45
