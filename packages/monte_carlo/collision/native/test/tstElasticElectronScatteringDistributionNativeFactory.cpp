@@ -27,9 +27,10 @@
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   native_cutoff_elastic_distribution;
-
 Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
   native_sr_elastic_distribution;
+Teuchos::RCP< const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+  native_mp_elastic_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -130,21 +131,28 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
         native_sr_elastic_distribution,
         *data_container );
 
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+        native_mp_elastic_distribution,
+        *data_container,
+        0.9 );
+
   // Set fake random number stream
-  std::vector<double> fake_stream( 4 );
-  // Tabular
-  fake_stream[0] = 0.5; // sample angle = 1.249161208881750E-02
+  std::vector<double> fake_stream( 5 );
+  // Cutoff
+  fake_stream[0] = 0.5; // sample angle cosine = 1.249161208881750E-02
   // Screened Rutherford
   fake_stream[1] = 0.0; // sample angle cosine = 1.0
-  fake_stream[2] = 0.5; // sample angle = 0.9999995
-  fake_stream[3] = 1.0 - 1.0e-15; // sample angle = 0.999999
+  fake_stream[2] = 0.5; // sample angle cosine = 0.9999995
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
+  // Moment preserving
+  fake_stream[4] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double incoming_energy = 1.0e-3;
   double scattering_angle_cosine, outgoing_energy;
 
-  // sampleAndRecordTrialsImpl cutoff
+  // sample cutoff
   native_cutoff_elastic_distribution->sample( incoming_energy,
                                               outgoing_energy,
                                               scattering_angle_cosine );
@@ -159,7 +167,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   outgoing_energy = 0.0;
   scattering_angle_cosine = 0.0;
 
-  // sampleAndRecordTrialsImpl screened rutherford
+  // sample screened rutherford
   native_sr_elastic_distribution->sample( incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine );
@@ -168,7 +176,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
-  // sampleAndRecordTrialsImpl screened rutherford
+  // sample screened rutherford
   native_sr_elastic_distribution->sample( incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine );
@@ -177,13 +185,22 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9999995000000930, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
-  // sampleAndRecordTrialsImpl screened rutherford
+  // sample screened rutherford
   native_sr_elastic_distribution->sample( incoming_energy,
                                           outgoing_energy,
                                           scattering_angle_cosine );
 
   // Test
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sample( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23978505045084053e-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 
 
@@ -273,15 +290,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
                 native_cutoff_elastic_distribution,
                 *data_container );
 
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
+        native_mp_elastic_distribution,
+        *data_container,
+        0.9 );
+
   // Set fake random number stream
-  std::vector<double> fake_stream( 4 );
-  // Tabular
-  fake_stream[0] = 0.5; // sample angle = 1.249161208881750E-02
+  std::vector<double> fake_stream( 5 );
+  // Cutoff
+  fake_stream[0] = 0.5; // sample angle cosine = 1.249161208881750E-02
   // Screened Rutherford
   fake_stream[1] = 0.0; // sample angle cosine = 1.0
-  fake_stream[2] = 0.5; // sample angle = 0.9999995
-  fake_stream[3] = 1.0 - 1.0e-15; // sample angle = 0.999999
-
+  fake_stream[2] = 0.5; // sample angle cosine = 0.9999995
+  fake_stream[3] = 1.0 - 1.0e-15; // sample angle cosine = 0.999999
+  // Moment preserving
+  fake_stream[4] = 1.44375258484736535e-01; // sample mu = 9.23978505045084053e-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -340,6 +363,17 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0-1.0e-6, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
   TEST_EQUALITY_CONST( trials, 14 );
+
+  // sample moment preserving
+  native_mp_elastic_distribution->sampleAndRecordTrials( incoming_energy,
+                                          outgoing_energy,
+                                          scattering_angle_cosine,
+                                          trials );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.23978505045084053e-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 15 );
 }
 
 //---------------------------------------------------------------------------//

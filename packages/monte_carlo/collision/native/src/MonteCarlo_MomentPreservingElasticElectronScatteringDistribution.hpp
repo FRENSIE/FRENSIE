@@ -40,11 +40,11 @@ public:
   //! Typedef for the elastic discrete distribution
   typedef Teuchos::Array<Utility::Pair< double,
 		       Teuchos::RCP<const Utility::DiscreteDistribution> > >
-  ElasticDistribution;
+  DiscreteElasticDistribution;
 
   //! Constructor
   MomentPreservingElasticElectronScatteringDistribution(
-        const ElasticDistribution& discrete_scattering_distribution,
+        const DiscreteElasticDistribution& discrete_scattering_distribution,
         const double cutoff_angle_cosine );
 
   //! Destructor
@@ -104,7 +104,7 @@ protected:
 private:
 
   // elastic discrete scattering distribution
-  ElasticDistribution d_discrete_scattering_distribution;
+  DiscreteElasticDistribution d_discrete_scattering_distribution;
 
   // The cutoff angle cosine
   double d_cutoff_angle_cosine;

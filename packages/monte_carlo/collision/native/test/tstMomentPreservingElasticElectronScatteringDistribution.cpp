@@ -29,7 +29,7 @@ class TestMomentPreservingElasticElectronScatteringDistribution : public MonteCa
 {
 public:
   TestMomentPreservingElasticElectronScatteringDistribution(
-        const ElasticDistribution& discrete_scattering_distribution,
+        const DiscreteElasticDistribution& discrete_scattering_distribution,
         const double cutoff_angle_cosine )
     : MonteCarlo::MomentPreservingElasticElectronScatteringDistribution(
         discrete_scattering_distribution,
@@ -436,7 +436,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
 
   double scattering_angle_cosine, outgoing_energy;
 
-  // sampleAndRecordTrialsImpl from distribution
+  // sample from distribution
   discrete_elastic_distribution->sample( electron.getEnergy(),
                                           outgoing_energy,
                                           scattering_angle_cosine );
@@ -464,7 +464,7 @@ TEUCHOS_UNIT_TEST( MomentPreservingElasticElectronScatteringDistribution,
   double scattering_angle_cosine, outgoing_energy;
   unsigned trials = 10;
 
-  // sampleAndRecordTrialsImpl from distribution
+  // sampleAndRecordTrials from distribution
   discrete_elastic_distribution->sampleAndRecordTrials(
                                           electron.getEnergy(),
                                           outgoing_energy,
@@ -567,7 +567,7 @@ int main( int argc, char** argv )
   Data::ElectronPhotonRelaxationDataContainer data_container =
     Data::ElectronPhotonRelaxationDataContainer( test_native_file_name );
 
-  // Get the energy grid
+  // Get the angular energy grid
   std::vector<double> angular_energy_grid =
     data_container.getElasticAngularEnergyGrid();
 
@@ -575,7 +575,7 @@ int main( int argc, char** argv )
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  MonteCarlo::MomentPreservingElasticElectronScatteringDistribution::ElasticDistribution
+  MonteCarlo::MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
     scattering_function(size);
 
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )

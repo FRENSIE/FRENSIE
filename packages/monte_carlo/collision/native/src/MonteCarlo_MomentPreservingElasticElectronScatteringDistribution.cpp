@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Constructor
 MomentPreservingElasticElectronScatteringDistribution::MomentPreservingElasticElectronScatteringDistribution(
-    const ElasticDistribution& discrete_scattering_distribution,
+    const DiscreteElasticDistribution& discrete_scattering_distribution,
     const double cutoff_angle_cosine )
   : d_discrete_scattering_distribution( discrete_scattering_distribution ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
@@ -41,7 +41,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the distribution at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelated<ElasticDistribution>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelated<DiscreteElasticDistribution>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_discrete_scattering_distribution );
@@ -75,7 +75,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the PDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<ElasticDistribution>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<DiscreteElasticDistribution>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_discrete_scattering_distribution );
@@ -109,7 +109,7 @@ double MomentPreservingElasticElectronScatteringDistribution::evaluateCDF(
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // evaluate the CDF at the incoming energy and scattering_angle_cosine
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<ElasticDistribution>(
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<DiscreteElasticDistribution>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_discrete_scattering_distribution );

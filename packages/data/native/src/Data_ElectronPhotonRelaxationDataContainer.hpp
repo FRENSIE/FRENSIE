@@ -252,6 +252,14 @@ public:
   //! Return if there is moment preserving data
   bool hasMomentPreservingData() const;
 
+  //! Return the moment preserving elastic discrete angles
+  const std::map<double,std::vector<double> >
+    getMomentPreservingElasticDiscreteAngles() const;
+
+  //! Return the moment preserving elastic weights
+  const std::map<double,std::vector<double> >
+    getMomentPreservingElasticWeights() const;
+
   //! Return the moment preserving elastic discrete angles for an incoming energy
   const std::vector<double>& getMomentPreservingElasticDiscreteAngles(
 					       const double incoming_energy ) const;

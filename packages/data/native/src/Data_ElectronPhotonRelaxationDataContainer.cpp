@@ -511,6 +511,20 @@ bool ElectronPhotonRelaxationDataContainer::hasMomentPreservingData() const
   return d_moment_preserving_elastic_discrete_angles.size() > 0;
 }
 
+// Return the moment preserving elastic discrete angles
+const std::map<double,std::vector<double> >
+ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles() const
+{
+  return d_moment_preserving_elastic_discrete_angles;
+}
+
+// Return the moment preserving elastic weights
+const std::map<double,std::vector<double> >
+ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticWeights() const
+{
+  return d_moment_preserving_elastic_weights;
+}
+
 // Return the moment preserving elastic discrete angles for an incoming energy
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getMomentPreservingElasticDiscreteAngles(

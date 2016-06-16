@@ -165,7 +165,7 @@ int main( int argc, char** argv )
     int size = angular_energy_grid.size();
 
     // Create the scattering function
-    MonteCarlo::MomentPreservingElasticElectronScatteringDistribution::ElasticDistribution
+    MonteCarlo::MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
         scattering_function(size);
 
     for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
