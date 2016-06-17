@@ -637,13 +637,13 @@ SET_PROPERTY(TEST ElectroatomicReactionNativeFactory_test PROPERTY LABELS monte_
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
-ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST ElectroatomCore_test PROPERTY LABELS monte_carlo_collision_native electron)
 
 ADD_EXECUTABLE(tstElectroatom
   tstElectroatom.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatom monte_carlo_collision_native)
-ADD_TEST(Electroatom_test tstElectroatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(Electroatom_test tstElectroatom --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
 SET_PROPERTY(TEST Electroatom_test PROPERTY LABELS monte_carlo_collision_native electron)
 
 ADD_EXECUTABLE(tstElectroatomACEFactory

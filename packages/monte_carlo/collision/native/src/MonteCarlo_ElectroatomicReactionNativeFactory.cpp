@@ -189,7 +189,6 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
   unsigned threshold_energy_index =
     raw_electroatom_data.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
-
   // Create the energy loss distribution
   Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>
     energy_loss_distribution;

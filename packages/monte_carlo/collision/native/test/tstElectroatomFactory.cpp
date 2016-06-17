@@ -242,7 +242,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   // Set the bremsstrahlung photon angular distribution function
   function = MonteCarlo::DIPOLE_DISTRIBUTION;
 
-  double cutoff_angle_cosine = 1.0;
+  double cutoff_angle_cosine = 0.999999;
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
@@ -275,25 +275,23 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
     atom->getTotalCrossSection( energy );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.629060119800000E+09,
+                          2.9056202162132148743E+09,
                           1e-12 );
-
 
   energy = 2.00E-01;
   cross_section =
     atom->getTotalCrossSection( energy );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.252314241820250E+07,
+                          3.6673598161189995706E+07,
                           1e-12 );
-
 
   energy = 1.00E+05;
   cross_section =
     atom->getTotalCrossSection( energy );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          4.957013047900000E+06,
+                          2.8454339856569212861E+06,
                           1e-12 );
 
   // Test that the absorption cross section can be returned
@@ -430,7 +428,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
             MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.1116099116949E+06,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -438,7 +436,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
             MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.088440E+06,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -447,6 +445,31 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
 
   TEST_FLOATING_EQUALITY( cross_section,
                           0.0,
+                          1e-12 );
+
+  // Test that the moment preserving elastic cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+            1.000E+05,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          30.849451820729267837,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            1.995260E+01,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          1051052.4156789169647,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            6.309570E+00,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2567045.7924357140437,
                           1e-12 );
 
   // Reset the electroatom factory
@@ -888,6 +911,31 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_2BS_brem )
                           0.0,
                           1e-12 );
 
+  // Test that the moment preserving elastic cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+            1.000E+05,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            1.995260E+01,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            6.309570E+00,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
   // Reset the electroatom factory
   electroatom_factory.reset();
 }
@@ -1307,6 +1355,31 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_ionization_su
   cross_section = atom->getReactionCrossSection(
             6.309570E+00,
             MonteCarlo::SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
+  // Test that the moment preserving elastic cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+            1.000E+05,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            1.995260E+01,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          0.0,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+            6.309570E+00,
+            MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
                           0.0,

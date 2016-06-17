@@ -28,12 +28,9 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   std::vector<double> energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
-  // Get size of the distribution
-  int size = energy_grid.size();
-
   // Create the scattering function
   BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-         energy_loss_function( size );
+         energy_loss_function( energy_grid.size() );
 
   BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
@@ -55,12 +52,9 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
   std::vector<double> energy_grid =
         raw_electroatom_data.getBremsstrahlungEnergyGrid();
 
-  // Get size of the distribution
-  int size = energy_grid.size();
-
   // Create the scattering function
   BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-        energy_loss_function( size );
+        energy_loss_function( energy_grid.size() );
 
   BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLossFunction(
         raw_electroatom_data,
