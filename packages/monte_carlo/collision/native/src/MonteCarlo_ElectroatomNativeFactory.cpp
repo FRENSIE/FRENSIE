@@ -67,12 +67,26 @@ void ElectroatomNativeFactory::createElectroatomCore(
   }
 
   // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
-  if ( cutoff_angle_cosine >= 0.999999 )
+  if ( cutoff_angle_cosine > 0.999999 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
+					   raw_electroatom_data,
+					   energy_grid,
+					   grid_searcher,
+					   reaction_pointer,
+                       cutoff_angle_cosine );
+  }
+
+  // Create the moment preserving elastic scattering reaction (if turned on)
+  if ( cutoff_angle_cosine < 1.0 )
+  {
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+      scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
+
+    ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
 					   grid_searcher,
