@@ -94,10 +94,12 @@ ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
 SET_PROPERTY(TEST StandardEntityEstimator_test PROPERTY LABELS monte_carlo_estimator_native)
 
 IF(${FRENSIE_ENABLE_OPENMP})
-  ADD_TEST(SharedParallelStandardEntityEstimator_2_test 
+  ADD_TEST(SharedParallelStandardEntityEstimator_2_test
     tstStandardEntityEstimator --threads=2)
   ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
     tstStandardEntityEstimator --threads=4)
+  SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_2_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
+  SET_PROPERTY(TEST SharedParallelStandardEntityEstimator_4_test PROPERTY LABELS monte_carlo_estimator_native openmp no_threads)
 ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
@@ -207,6 +209,7 @@ ADD_EXECUTABLE(tstParticleTrackerHDF5FileHandler
   tstParticleTrackerHDF5FileHandler.cpp ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstParticleTrackerHDF5FileHandler monte_carlo_estimator_native)
 ADD_TEST(ParticleTrackerHDF5FileHandler_test tstParticleTrackerHDF5FileHandler)
+SET_PROPERTY(TEST ParticleTrackerHDF5FileHandler_test PROPERTY LABELS monte_carlo_estimator_native)
 
 ADD_EXECUTABLE(tstParticleTracker 
     tstParticleTracker.cpp)
