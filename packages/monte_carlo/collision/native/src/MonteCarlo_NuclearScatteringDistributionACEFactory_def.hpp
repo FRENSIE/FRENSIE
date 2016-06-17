@@ -266,14 +266,41 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
+    unsigned acelaw = 
+      NuclearScatteringEnergyDistributionACEFactory::determineCoupledDistribution(
               d_atomic_weight_ratio,
      	        d_reaction_energy_dist.find( reaction_type )->second,
      	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
-	            d_table_name,
-     	        reaction_type,
-	            d_reaction_cm_scattering.find( reaction_type )->second,
-     	        distribution );
+	            d_table_name );
+  
+    if( acelaw == 44 )
+    {
+      NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
+                d_atomic_weight_ratio,
+       	        d_reaction_energy_dist.find( reaction_type )->second,
+       	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
+	              d_table_name,
+       	        reaction_type,
+	              d_reaction_cm_scattering.find( reaction_type )->second,
+       	        distribution );
+    }
+    else if( acelaw == 61 )
+    {
+      NuclearScatteringEnergyDistributionACEFactory::createAceLaw61Distribution(
+                d_atomic_weight_ratio,
+       	        d_reaction_energy_dist.find( reaction_type )->second,
+       	        d_reaction_energy_dist_start_index.find( reaction_type )->second,
+	              d_table_name,
+       	        reaction_type,
+	              d_reaction_cm_scattering.find( reaction_type )->second,
+       	        distribution );
+    }
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error, "Error: The coupled angle-energy "
+        "distribution ace law " << acelaw << " was found. Currently ace laws"
+        " 44 and 61 are the only supported coupled angle-energy laws." );
+    }
   }
 }
 

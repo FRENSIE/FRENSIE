@@ -30,6 +30,16 @@
 
 namespace MonteCarlo{
 
+// Determine the coupled angle energy distribution
+unsigned NuclearScatteringEnergyDistributionACEFactory::determineCoupledDistribution(
+    const double atomic_weight_ratio,
+		const Teuchos::ArrayView<const double>& dlw_block_array,
+		const unsigned dlw_block_array_start_index,
+		const std::string& table_name )
+{
+  return dlw_block_array[1];
+}
+
 // Create the energy distribution
 void NuclearScatteringEnergyDistributionACEFactory::createDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
