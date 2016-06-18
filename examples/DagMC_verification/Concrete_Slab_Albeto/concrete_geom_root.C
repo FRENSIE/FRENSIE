@@ -1,8 +1,8 @@
-void sample01() 
+void concrete_geom_root() 
 {
     // Load the geometry library and initialize the geometry handler
     gSystem->Load("libGeom");
-    new TGeoManager( "sample01", "Simple geometry used for verification of FRENSIE results against MCNP." );
+    new TGeoManager( "concrete", "Simple geometry used for verification of FaceMC results against MCNP." );
 
 //---------------------------------------------------------------------------//
     // Material Definitions
@@ -10,9 +10,9 @@ void sample01()
     // TGeoMedium( "name", Index, TGeoMaterial )
 //---------------------------------------------------------------------------//
 
-    // Light Water ( rho = 0.995 g/cm^3 )
-    TGeoMaterial *H2O_mat = new TGeoMaterial( "mat_1", 1, 1, -0.995 );
-    TGeoMedium *H2O_med = new TGeoMedium( "med_1", 1, H2O_mat );
+    // Iron Portland Concrete ( rho = 5.90 g/cm^3 )
+    TGeoMaterial *concrete_mat = new TGeoMaterial( "mat_1", 1, 1, -5.90 );
+    TGeoMedium *concrete_med = new TGeoMedium( "med_1", 1, concrete_mat );
 
     // Void
     TGeoMaterial *void_mat = new TGeoMaterial( "void_mat", 0, 0, 0 );
@@ -27,16 +27,16 @@ void sample01()
     // MakeSphere( "name", TGeoMedium, Minimum_Radius, Maximum_Radius )
 //---------------------------------------------------------------------------//
 
-    // Light Water Sphere of radius 20cm
-    TGeoVolume *H2O_Sphere = gGeoManager->MakeSphere( "H2O_Sphere", H2O_med, 0.0, 20.0 );
-    H2O_Sphere->SetUniqueID(1);
+    // Iron Portlnd Concrete Slab with dimensions 30cm x 300cm x 300cm
+    TGeoVolume *concrete_Sphere = gGeoManager->MakeBox( "concrete_Sphere", concrete_med, 30., 300., 300.);
+    concrete_Sphere->SetUniqueID(1);
 
     // Void Cube of Side Height 50cm
-    TGeoVolume *void_geom = gGeoManager->MakeBox("void_geom", void_med, 25., 25., 25.);
+    TGeoVolume *void_geom = gGeoManager->MakeBox("void_geom", void_med, 50., 320., 320.);
     void_geom->SetUniqueID(2);
 
     // Graveyard Cube of Side Height 55cm
-    TGeoVolume *terminal_geom = gGeoManager->MakeBox("terminal_geom", terminal_med, 27.5, 27.5, 27.5);
+    TGeoVolume *terminal_geom = gGeoManager->MakeBox("terminal_geom", terminal_med, 100., 350., 350.);
     terminal_geom->SetUniqueID(3);
     gGeoManager->SetTopVolume( terminal_geom );
 
@@ -45,8 +45,8 @@ void sample01()
     // AddNode( Daughter_Node, Copy_Number )
 //---------------------------------------------------------------------------//
     
-    // Adding that the water sphere is a daughter of the void
-    void_geom->AddNode( H2O_Sphere, 1 );
+    // Adding that the concrete slab is a daughter of the void
+    void_geom->AddNode( concrete_Sphere, 1 );
 
     // Adding that the void is a daughter of the graveyard
     terminal_geom->AddNode( void_geom, 1 );
@@ -62,10 +62,9 @@ void sample01()
   // Uncomment to draw the geometry in an X-Window
   terminal_geom->Draw();
   
-  gGeoManager->Export("sample01.root");
+  gGeoManager->Export("concrete_geom.root");
 }  // end sample
 //---------------------------------------------------------------------------//
 // end sample01.C
 //---------------------------------------------------------------------------//
-
 

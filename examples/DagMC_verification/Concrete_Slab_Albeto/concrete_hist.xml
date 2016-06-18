@@ -1,0 +1,8 @@
+<ParameterList name="Properties">
+
+<ParameterList name="General Properties">
+  <Parameter name="Mode" type="string" value="Neutron"/>
+  <Parameter name="Histories" type="unsigned int" value="1000000000"/>
+</ParameterList>
+
+</ParameterList>

@@ -1,0 +1,10 @@
+<ParameterList name="Materials">
+
+<ParameterList name="concrete_Sphere">
+    <Parameter name="Id" type="unsigned int" value="1"/>
+    <Parameter name="Fractions" type="Array" value="{0.135585, 0.150644, 0.0017496285, 0.0002215, 0.0002438715, 0.005065, 0.0123754214, 0.0006266206, 0.000415958, 0.0006138292, 0.000004845, 2.71966E-05, 0.0396672878, 0.0002647459, 5.524065E-05, 0.0008535703, 7.651853E-05, 0.002638, 0.037634402, 0.5951454128, 0.014275118, 0.0018168332}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{H-1_293.6K_v8, O-16_293.6K_v8, Mg-24_293.6K_v8, Mg-25_293.6K_v8, Mg-26_293.6K_v8, Al-27_293.6K_v8, Si-28_293.6K_v8, Si-29_293.6K_v8, Si-30_293.6K_v8, S-32_293.6K_v8, S-33_293.6K_v8, S-34_293.6K_v8, Ca-40_293.6K_v8, Ca-42_293.6K_v8, Ca-43_293.6K_v8, Ca-44_293.6K_v8, Ca-48_293.6K_v8, Mn-55_293.6K_v8, Fe-54_293.6K_v8, Fe-56_293.6K_v8, Fe-57_293.6K_v8, Fe-58_293.6K_v8}"/>
+</ParameterList>
+
+</ParameterList>
+

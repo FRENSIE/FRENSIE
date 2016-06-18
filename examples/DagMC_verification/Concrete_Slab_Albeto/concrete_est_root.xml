@@ -1,0 +1,14 @@
+<ParameterList name="Estimators">
+
+    <ParameterList name="Cell Track Length Flux Estimator">
+        <Parameter name="Id" type="unsigned int" value="4"/>
+        <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+        <Parameter name="Particle Type" type="string" value="Neutron"/>
+        <Parameter name="Cells" type="Array" value="{1}"/>
+        <Parameter name="Output Mesh File Name" type="string" value="concrete_cell_flux.h5m"/>
+        <ParameterList name="Bins">
+            <Parameter name="Energy Bins" type="Array" value="{1e-6, 98l, 2.45}"/>
+        </ParameterList>
+    </ParameterList>
+
+</ParameterList>
