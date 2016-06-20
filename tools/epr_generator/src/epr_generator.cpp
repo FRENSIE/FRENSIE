@@ -45,7 +45,7 @@ int main( int argc, char** argv )
   double min_electron_energy = 0.00001, max_electron_energy = 100000.0;
   double occupation_number_evaluation_tol = 1e-3;
   double subshell_incoherent_evaluation_tol = 1e-3;
-  double cutoff_angle_cosine = 0.999999;
+  double cutoff_angle_cosine = 1.0;
   int number_of_moment_preserving_angles = 0;
   bool append_moment_preserving_data = false;
   double grid_convergence_tol = 0.001;
