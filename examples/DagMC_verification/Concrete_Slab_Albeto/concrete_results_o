@@ -1,0 +1,1087 @@
+          Code Name & Version = MCNP, 6.1.1b
+  
+     _/      _/        _/_/_/       _/      _/       _/_/_/         _/_/_/
+    _/_/  _/_/      _/             _/_/    _/       _/    _/     _/       
+   _/  _/  _/      _/             _/  _/  _/       _/_/_/       _/_/_/    
+  _/      _/      _/             _/    _/_/       _/           _/    _/   
+ _/      _/        _/_/_/       _/      _/       _/             _/_/      
+  
+  +---------------------------------------------------------------------+
+  | Copyright 2008. Los Alamos National Security, LLC.  All rights      |
+  | reserved.                                                           |
+  |   This material was produced under U.S. Government contract         |
+  | DE-AC52-06NA25396 for Los Alamos National Laboratory, which is      |
+  | operated by Los Alamos National Security, LLC, for the U.S.         |
+  | Department of Energy. The Government is granted for itself and      |
+  | others acting on its behalf a paid-up, nonexclusive, irrevocable    |
+  | worldwide license in this material to reproduce, prepare derivative |
+  | works, and perform publicly and display publicly. Beginning five    |
+  | (5) years after 2008, subject to additional five-year worldwide     |
+  | renewals, the Government is granted for itself and others acting on |
+  | its behalf a paid-up, nonexclusive, irrevocable worldwide license   |
+  | in this material to reproduce, prepare derivative works, distribute |
+  | copies to the public, perform publicly and display publicly, and to |
+  | permit others to do so. NEITHER THE UNITED STATES NOR THE UNITED    |
+  | STATES DEPARTMENT OF ENERGY, NOR LOS ALAMOS NATIONAL SECURITY, LLC, |
+  | NOR ANY OF THEIR EMPLOYEES, MAKES ANY WARRANTY, EXPRESS OR IMPLIED, |
+  | OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE ACCURACY,  |
+  | COMPLETENESS, OR USEFULNESS OF ANY INFORMATION, APPARATUS, PRODUCT, |
+  | OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT INFRINGE |
+  | PRIVATELY OWNED RIGHTS.                                             |
+  +---------------------------------------------------------------------+
+  
+1mcnp     version 6     ld=06/19/14                     06/18/16 23:48:29 
+ *************************************************************************                 probid =  06/18/16 23:48:29 
+ i=concrete.i n=concrete_results_ tasks 12                                       
+
+ 
+  warning.  Physics models disabled.
+         1-       Shielding analysis of a 300cm x 300cm x 30 cm slab of iron concrete             
+         2-       c                                                                               
+         3-       c                                                                               
+         4-       c -----------------------------------------------------------------------------c
+         5-       c Cell block-------------------------------------------------------------------c
+         6-       c -----------------------------------------------------------------------------c
+         7-       c                                                                               
+         8-       c Cell 10 is the volume of iron portland concrete that is doing the shielding   
+         9-       10  1  -5.90  100 -101 102 -103 104 -105    IMP:n=1                             
+        10-       c Cell 20 is a void                                                             
+        11-       20  0  200 -201 202 -203 204 -205 #10       IMP:n=1                             
+        12-       c Cell 30 is the graveyard                                                      
+        13-       30  0  #20 #10                              IMP:n=0                             
+        14-       c                                                                               
+        15-       c                                                                               
+        16-       c ----------------------------------------------------------------------------c 
+        17-       c MCNP necessary space--------------------------------------------------------c 
+        18-       c ----------------------------------------------------------------------------c 
+        19-                                                                                       
+        20-       c ----------------------------------------------------------------------------c 
+        21-       c Surface block---------------------------------------------------------------c 
+        22-       c ----------------------------------------------------------------------------c 
+        23-       c                                                                               
+        24-       c the 100 series define the inner cube made of iron portland concrete           
+        25-       c                                                                               
+        26-       100 PX -15                                                                      
+        27-       101 PX 15                                                                       
+        28-       102 PY -150                                                                     
+        29-       103 PY 150                                                                      
+        30-       104 PZ -150                                                                     
+        31-       105 PZ 150                                                                      
+        32-       c                                                                               
+        33-       c the 200 series define the middle cube filling a void                          
+        34-       c                                                                               
+        35-       200 PX -25                                                                      
+        36-       201 PX 25                                                                       
+        37-       202 PY -160                                                                     
+        38-       203 PY 160                                                                      
+        39-       204 PZ -160                                                                     
+        40-       205 PZ 160                                                                      
+        41-       c                                                                               
+        42-       c                                                                               
+        43-       c                                                                               
+        44-       c ----------------------------------------------------------------------------c 
+        45-       c MCNP necessary space--------------------------------------------------------c 
+        46-       c ----------------------------------------------------------------------------c 
+        47-                                                                                       
+        48-       c ----------------------------------------------------------------------------c 
+        49-       c Data block------------------------------------------------------------------c 
+        50-       c ----------------------------------------------------------------------------c 
+        51-       c                                                                               
+        52-       c                                                                               
+        53-       c Material Definition                                                           
+        54-       c                                                                               
+        55-       m1    1001.80c  0.135585                                                        
+        56-             8016.80c  0.150644                                                        
+        57-            12024.80c  0.0017496285  12025.80c  0.0002215  12026.80c  0.0002438715     
+        58-            13027.80c  0.005065                                                        
+        59-            14028.80c  0.0123754214  14029.80c  0.0006266206  14030.80c  0.000415958   
+        60-            16032.80c  0.0006138292  16033.80c  0.000004845  16034.80c  2.71966E-05    
+        61-            20040.80c  0.0396672878  20042.80c  0.0002647459  20043.80c  5.524065E-05  
+        62-            20044.80c  0.0008535703  20048.80c  7.651853E-05                           
+        63-            25055.80c  0.002638                                                        
+        64-            26054.80c  0.037634402  26056.80c  0.5951454128  26057.80c  0.014275118    
+        65-            26058.80c  0.0018168332                                                    
+        66-       c                                                                               
+        67-       c                                                                               
+        68-       c --------------------                                                          
+        69-       c Source                                                                        
+        70-       c --------------------                                                          
+        71-       c monodirectional, monoenergetic 2.45 MeV point source located                  
+        72-       c just before the the edge of the shield                                        
+        73-       SDEF  ERG=2.45 POS=-20 0 0 DIR=1 VEC=1 0 0                                      
+        74-       c --------------------                                                          
+        75-       c Job Control                                                                   
+        76-       c --------------------                                                          
+        77-       c run in neutron only mode                                                      
+        78-       mode n                                                                          
+        79-       c run for 100 histories                                                         
+        80-       nps 1000000000                                                                  
+        81-       c Surface current on front surface                                              
+        82-       f11:n 100                                                                       
+        83-       c11  0.99 1                                                                     
+        84-       c                                                                               
+        85-       c Surface current on back surface                                               
+        86-       f21:n 101                                                                       
+        87-       c21  0.99 1                                                                     
+        88-       c                                                                               
+        89-       c Track length flux tally                                                       
+        90-       c FMESH4:n  ORIGIN=-15 -150 -150                                                
+        91-       c          EMESH=1e-6 99ilog 2.45    EINTS=0 98 7r                              
+        92-       c          IMESH=30          IINTS=1                                            
+        93-       c          JMESH=300         JINTS=1                                            
+        94-       c          KMESH=300         KINTS=1                                            
+        95-       F4:n  10                                                                        
+        96-       E4 1e-6 98ilog 2.45                                                             
+ 
+  comment.  total nubar used if fissionable isotopes are present.
+1cells                                                                                                  print table 60
+
+                               atom        gram                                            neutron                                     
+              cell      mat   density     density     volume       mass            pieces importance                                   
+
+        1       10        1  8.63292E-02 5.90000E+00 2.70000E+06 1.59300E+07           0  1.0000E+00                                   
+        2       20        0  0.00000E+00 0.00000E+00 2.42000E+06 0.00000E+00           0  1.0000E+00                                   
+        3       30        0  0.00000E+00 0.00000E+00 0.00000E+00 0.00000E+00           0  0.0000E+00                                   
+
+ total                                               5.12000E+06 1.59300E+07
+
+    minimum source weight = 1.0000E+00    maximum source weight = 1.0000E+00
+
+ ***************************************************
+ * Random Number Generator  =                    1 *
+ * Random Number Seed       =       19073486328125 *
+ * Random Number Multiplier =       19073486328125 *
+ * Random Number Adder      =                    0 *
+ * Random Number Bits Used  =                   48 *
+ * Random Number Stride     =               152917 *
+ ***************************************************
+
+ 
+  comment.  threading will be used when possible in portions of mcnp6.
+ 
+  comment.  threading will be used for n/p/e table physics.
+ 
+  comment.  threading will generally not be used for model physics.
+
+          1 warning message so far.
+1cross-section tables                                                                                   print table 100
+     XSDIR used: /home/software/mcnpdata/xsdir_mcnp6.1
+
+     table    length
+
+                        tables from file xdata/endf71x/H/1001.710nc                                      
+
+   1001.80c    3652  H1 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)          mat 125      12/17/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+                     particle-production data for deuterons being expunged from   1001.80c          
+
+                        tables from file xdata/endf71x/O/8016.710nc                                      
+
+   8016.80c  171194  O16 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)         mat 825      12/13/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from   8016.80c          
+                     particle-production data for deuterons being expunged from   8016.80c          
+                     particle-production data for tritons   being expunged from   8016.80c          
+                     particle-production data for alphas    being expunged from   8016.80c          
+
+                        tables from file xdata/endf71x/Mg/12024.710nc                                    
+
+  12024.80c   26011  Mg24 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1225      12/16/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/Mg/12025.710nc                                    
+
+  12025.80c   23242  Mg25 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1228      12/16/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/Mg/12026.710nc                                    
+
+  12026.80c   21673  Mg26 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1231      12/16/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/Al/13027.710nc                                    
+
+  13027.80c   85936  Al27 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1325      12/22/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  13027.80c          
+                     particle-production data for deuterons being expunged from  13027.80c          
+                     particle-production data for tritons   being expunged from  13027.80c          
+                     particle-production data for alphas    being expunged from  13027.80c          
+
+                        tables from file xdata/endf71x/Si/14028.710nc                                    
+
+  14028.80c  105939  Si28 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1425      12/14/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  14028.80c          
+                     particle-production data for deuterons being expunged from  14028.80c          
+                     particle-production data for tritons   being expunged from  14028.80c          
+                     particle-production data for alphas    being expunged from  14028.80c          
+
+                        tables from file xdata/endf71x/Si/14029.710nc                                    
+
+  14029.80c   97840  Si29 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1428      12/14/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  14029.80c          
+                     particle-production data for deuterons being expunged from  14029.80c          
+                     particle-production data for tritons   being expunged from  14029.80c          
+                     particle-production data for alphas    being expunged from  14029.80c          
+
+                        tables from file xdata/endf71x/Si/14030.710nc                                    
+
+  14030.80c   91121  Si30 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat1431      12/16/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  14030.80c          
+                     particle-production data for deuterons being expunged from  14030.80c          
+                     particle-production data for tritons   being expunged from  14030.80c          
+                     particle-production data for alphas    being expunged from  14030.80c          
+
+                        tables from file xdata/endf71x/S/16032.710nc                                     
+
+  16032.80c   55655  S32 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)         mat1625      12/14/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/S/16033.710nc                                     
+
+  16033.80c   21361  S33 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)         mat1628      12/14/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/S/16034.710nc                                     
+
+  16034.80c   19493  S34 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)         mat1631      12/14/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+
+                        tables from file xdata/endf71x/Ca/20040.710nc                                    
+
+  20040.80c  104854  Ca40 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2025      12/21/12
+                     Energy range:   1.00000E-11  to  2.00000E+02 MeV.
+                     particle-production data for protons   being expunged from  20040.80c          
+                     particle-production data for deuterons being expunged from  20040.80c          
+                     particle-production data for tritons   being expunged from  20040.80c          
+                     particle-production data for helions   being expunged from  20040.80c          
+                     particle-production data for alphas    being expunged from  20040.80c          
+
+                        tables from file xdata/endf71x/Ca/20042.710nc                                    
+
+  20042.80c  110887  Ca42 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2031      12/21/12
+                     Energy range:   1.00000E-11  to  2.00000E+02 MeV.
+                     particle-production data for protons   being expunged from  20042.80c          
+                     particle-production data for deuterons being expunged from  20042.80c          
+                     particle-production data for tritons   being expunged from  20042.80c          
+                     particle-production data for helions   being expunged from  20042.80c          
+                     particle-production data for alphas    being expunged from  20042.80c          
+
+                        tables from file xdata/endf71x/Ca/20043.710nc                                    
+
+  20043.80c  112382  Ca43 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2034      12/21/12
+                     Energy range:   1.00000E-11  to  2.00000E+02 MeV.
+                     particle-production data for protons   being expunged from  20043.80c          
+                     particle-production data for deuterons being expunged from  20043.80c          
+                     particle-production data for tritons   being expunged from  20043.80c          
+                     particle-production data for helions   being expunged from  20043.80c          
+                     particle-production data for alphas    being expunged from  20043.80c          
+
+                        tables from file xdata/endf71x/Ca/20044.710nc                                    
+
+  20044.80c   85122  Ca44 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2037      12/21/12
+                     Energy range:   1.00000E-11  to  2.00000E+02 MeV.
+                     particle-production data for protons   being expunged from  20044.80c          
+                     particle-production data for deuterons being expunged from  20044.80c          
+                     particle-production data for tritons   being expunged from  20044.80c          
+                     particle-production data for helions   being expunged from  20044.80c          
+                     particle-production data for alphas    being expunged from  20044.80c          
+
+                        tables from file xdata/endf71x/Ca/20048.710nc                                    
+
+  20048.80c   63453  Ca48 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2049      12/21/12
+                     Energy range:   1.00000E-11  to  2.00000E+02 MeV.
+                     particle-production data for protons   being expunged from  20048.80c          
+                     particle-production data for deuterons being expunged from  20048.80c          
+                     particle-production data for tritons   being expunged from  20048.80c          
+                     particle-production data for helions   being expunged from  20048.80c          
+                     particle-production data for alphas    being expunged from  20048.80c          
+
+                        tables from file xdata/endf71x/Mn/25055.710nc                                    
+
+  25055.80c  393441  Mn55 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2525      12/18/12
+                     Energy range:   1.00000E-11  to  6.00000E+01 MeV.
+                     particle-production data for protons   being expunged from  25055.80c          
+                     particle-production data for deuterons being expunged from  25055.80c          
+                     particle-production data for tritons   being expunged from  25055.80c          
+                     particle-production data for helions   being expunged from  25055.80c          
+                     particle-production data for alphas    being expunged from  25055.80c          
+                     probability tables used from 1.2500E-01 to 1.0000E+00 mev.
+
+                        tables from file xdata/endf71x/Fe/26054.710nc                                    
+
+  26054.80c  154298  Fe54 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2625      12/22/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  26054.80c          
+                     particle-production data for deuterons being expunged from  26054.80c          
+                     particle-production data for tritons   being expunged from  26054.80c          
+                     particle-production data for alphas    being expunged from  26054.80c          
+
+                        tables from file xdata/endf71x/Fe/26056.710nc                                    
+
+  26056.80c  249351  Fe56 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2631      12/22/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  26056.80c          
+                     particle-production data for deuterons being expunged from  26056.80c          
+                     particle-production data for tritons   being expunged from  26056.80c          
+                     particle-production data for alphas    being expunged from  26056.80c          
+
+                        tables from file xdata/endf71x/Fe/26057.710nc                                    
+
+  26057.80c  157298  Fe57 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2634      12/22/12
+                     Energy range:   1.00000E-11  to  1.50000E+02 MeV.
+                     particle-production data for protons   being expunged from  26057.80c          
+                     particle-production data for deuterons being expunged from  26057.80c          
+                     particle-production data for tritons   being expunged from  26057.80c          
+                     particle-production data for alphas    being expunged from  26057.80c          
+
+                        tables from file xdata/endf71x/Fe/26058.710nc                                    
+
+  26058.80c   91225  Fe58 ENDF71x (jlconlin)  Ref. see jlconlin (ref 09/10/2012  10:00:53)        mat2637      12/22/12
+                     Energy range:   1.00000E-11  to  2.00000E+01 MeV.
+                     particle-production data for protons   being expunged from  26058.80c          
+                     particle-production data for alphas    being expunged from  26058.80c          
+
+  total     2245428
+
+1particles and energy limits                                                                            print table 101
+
+                         particle      maximum       smallest      largest       always        always
+                         cutoff        particle      table         table         use table     use model
+   particle type         energy        energy        maximum       maximum       below         above
+
+    1  n    neutron     0.0000E+00    1.0000E+36    2.0000E+01    2.0000E+02    1.0000E+36    1.0000E+36
+ 
+  comment.  setting up hash-based fast table search for xsec tables
+
+ ------------------------------------------------------------------------------------------
+ =====> Set up arrays for hash-based fast table search for xsec data
+
+    number of hash bins   =     8192
+    max hash table energy =  1.00000E-11
+    min hash table energy =  2.00000E+02
+
+           nuclide      ne      emin        emax     ave_bins  min_bins  max_bins
+            1001.80c     590 1.00000E-11 2.00000E+01       1.1       1.0       2.0
+            8016.80c    2917 1.00000E-11 1.50000E+02       1.4       1.0      31.0
+           12024.80c    2665 1.00000E-11 2.00000E+01       1.3       1.0     208.0
+           12025.80c    1688 1.00000E-11 2.00000E+01       1.2       1.0      91.0
+           12026.80c    1235 1.00000E-11 2.00000E+01       1.2       1.0      97.0
+           13027.80c    5563 1.00000E-11 1.50000E+02       1.7       1.0      89.0
+           14028.80c    8236 1.00000E-11 1.50000E+02       2.0       1.0     116.0
+           14029.80c    5034 1.00000E-11 1.50000E+02       1.6       1.0     100.0
+           14030.80c    6235 1.00000E-11 1.50000E+02       1.8       1.0     100.0
+           16032.80c    9795 1.00000E-11 2.00000E+01       2.2       1.0     119.0
+           16033.80c    2093 1.00000E-11 2.00000E+01       1.3       1.0      70.0
+           16034.80c    1752 1.00000E-11 2.00000E+01       1.2       1.0      68.0
+           20040.80c    9591 1.00000E-11 2.00000E+02       2.2       1.0     140.0
+           20042.80c    8173 1.00000E-11 2.00000E+02       2.0       1.0     139.0
+           20043.80c    6348 1.00000E-11 2.00000E+02       1.8       1.0     103.0
+           20044.80c    5236 1.00000E-11 2.00000E+02       1.6       1.0     142.0
+           20048.80c    1578 1.00000E-11 2.00000E+02       1.2       1.0      88.0
+           25055.80c   13802 1.00000E-11 6.00000E+01       2.7       1.0     134.0
+           26054.80c   21487 1.00000E-11 1.50000E+02       3.6       1.0     219.0
+           26056.80c   30280 1.00000E-11 1.50000E+02       4.7       1.0     215.0
+           26057.80c   15925 1.00000E-11 1.50000E+02       2.9       1.0     176.0
+           26058.80c   12025 1.00000E-11 2.00000E+01       2.5       1.0     165.0
+
+ ------------------------------------------------------------------------------------------
+
+
+ ***********************************************************************************************************************
+
+ dump no.    1 on file concrete_results_r     nps =           0     coll =              0     ctm =        0.00   nrn = 
+                0
+
+          1 warning message so far.
+ warning.  tally not scored beyond last energy bin.                    
+ nps =    13549318     nrn =                   6 tal =    4     erg = 2.4500E+00      
+
+ ***********************************************************************************************************************
+
+ dump no.    2 on file concrete_results_r     nps =    31786485     coll =     1007143962     ctm =      720.21   nrn = 
+      12308966894
+
+ ***********************************************************************************************************************
+
+ dump no.    3 on file concrete_results_r     nps =    63640640     coll =     2016762955     ctm =     1440.39   nrn = 
+      24647938830
+
+ ***********************************************************************************************************************
+
+ dump no.    4 on file concrete_results_r     nps =    95598965     coll =     3029483294     ctm =     2160.64   nrn = 
+      37024681814
+
+ ***********************************************************************************************************************
+
+ dump no.    5 on file concrete_results_r     nps =   127580322     coll =     4042660368     ctm =     2880.87   nrn = 
+      49406601510
+
+ ***********************************************************************************************************************
+
+ dump no.    6 on file concrete_results_r     nps =   159588182     coll =     5056655298     ctm =     3601.02   nrn = 
+      61799164369
+
+ ***********************************************************************************************************************
+
+ dump no.    7 on file concrete_results_r     nps =   191558204     coll =     6069903260     ctm =     4321.22   nrn = 
+      74182225673
+
+ ***********************************************************************************************************************
+
+ dump no.    8 on file concrete_results_r     nps =   223540208     coll =     7083292322     ctm =     5041.44   nrn = 
+      86566932377
+
+ ***********************************************************************************************************************
+
+ dump no.    9 on file concrete_results_r     nps =   255487457     coll =     8095332772     ctm =     5761.63   nrn = 
+      98935128480
+
+ ***********************************************************************************************************************
+
+ dump no.   10 on file concrete_results_r     nps =   287419648     coll =     9107057419     ctm =     6481.78   nrn = 
+     111299874884
+
+ ***********************************************************************************************************************
+
+ dump no.   11 on file concrete_results_r     nps =   319348144     coll =    10118729727     ctm =     7201.98   nrn = 
+     123664032610
+
+ ***********************************************************************************************************************
+
+ dump no.   12 on file concrete_results_r     nps =   351319871     coll =    11131441159     ctm =     7922.16   nrn = 
+     136040457271
+
+ ***********************************************************************************************************************
+
+ dump no.   13 on file concrete_results_r     nps =   383298619     coll =    12144797662     ctm =     8642.34   nrn = 
+     148425482485
+
+ ***********************************************************************************************************************
+
+ dump no.   14 on file concrete_results_r     nps =   415250763     coll =    13157189836     ctm =     9362.52   nrn = 
+     160798742810
+
+ ***********************************************************************************************************************
+
+ dump no.   15 on file concrete_results_r     nps =   447189605     coll =    14168984017     ctm =    10082.75   nrn = 
+     173164262801
+
+ ***********************************************************************************************************************
+
+ dump no.   16 on file concrete_results_r     nps =   463888611     coll =    14698208129     ctm =    10803.40   nrn = 
+     179632443625
+
+ ***********************************************************************************************************************
+
+ dump no.   17 on file concrete_results_r     nps =   475477026     coll =    15065337868     ctm =    11523.77   nrn = 
+     184119245320
+
+ ***********************************************************************************************************************
+
+ dump no.   18 on file concrete_results_r     nps =   486766641     coll =    15423026059     ctm =    12244.14   nrn = 
+     188490351391
+
+ ***********************************************************************************************************************
+
+ dump no.   19 on file concrete_results_r     nps =   498113497     coll =    15782651860     ctm =    12964.62   nrn = 
+     192885905294
+
+ ***********************************************************************************************************************
+
+ dump no.   20 on file concrete_results_r     nps =   509823026     coll =    16153671061     ctm =    13685.23   nrn = 
+     197420372563
+
+ ***********************************************************************************************************************
+
+ dump no.   21 on file concrete_results_r     nps =   521264316     coll =    16516128838     ctm =    14405.63   nrn = 
+     201850000026
+
+ ***********************************************************************************************************************
+
+ dump no.   22 on file concrete_results_r     nps =   537402220     coll =    17027481046     ctm =    15125.86   nrn = 
+     208099807417
+
+ ***********************************************************************************************************************
+
+ dump no.   23 on file concrete_results_r     nps =   549969013     coll =    17425746194     ctm =    15846.45   nrn = 
+     212966985263
+
+ ***********************************************************************************************************************
+
+ dump no.   24 on file concrete_results_r     nps =   561600911     coll =    17794397480     ctm =    16566.99   nrn = 
+     217472452612
+
+ ***********************************************************************************************************************
+
+ dump no.   25 on file concrete_results_r     nps =   573254374     coll =    18163483342     ctm =    17287.45   nrn = 
+     221982813832
+
+ ***********************************************************************************************************************
+
+ dump no.   26 on file concrete_results_r     nps =   585009505     coll =    18535878395     ctm =    18007.78   nrn = 
+     226533638019
+
+ ***********************************************************************************************************************
+
+ dump no.   27 on file concrete_results_r     nps =   596937134     coll =    18913904344     ctm =    18728.29   nrn = 
+     231153894925
+
+ ***********************************************************************************************************************
+
+ dump no.   28 on file concrete_results_r     nps =   608437019     coll =    19278344702     ctm =    19448.60   nrn = 
+     235608281503
+
+ ***********************************************************************************************************************
+
+ dump no.   29 on file concrete_results_r     nps =   620917425     coll =    19673704791     ctm =    20168.84   nrn = 
+     240440070520
+
+ ***********************************************************************************************************************
+
+ dump no.   30 on file concrete_results_r     nps =   632361601     coll =    20036159087     ctm =    20889.17   nrn = 
+     244869274586
+
+ ***********************************************************************************************************************
+
+ dump no.   31 on file concrete_results_r     nps =   643981426     coll =    20404269909     ctm =    21609.41   nrn = 
+     249367751574
+
+ ***********************************************************************************************************************
+
+ dump no.   32 on file concrete_results_r     nps =   655534084     coll =    20770248779     ctm =    22329.72   nrn = 
+     253840457648
+
+ ***********************************************************************************************************************
+
+ dump no.   33 on file concrete_results_r     nps =   666916126     coll =    21130918065     ctm =    23050.07   nrn = 
+     258248248358
+
+ ***********************************************************************************************************************
+
+ dump no.   34 on file concrete_results_r     nps =   678393413     coll =    21494685129     ctm =    23770.39   nrn = 
+     262694335708
+
+ ***********************************************************************************************************************
+
+ dump no.   35 on file concrete_results_r     nps =   690500074     coll =    21878326536     ctm =    24490.77   nrn = 
+     267382642374
+
+ ***********************************************************************************************************************
+
+ dump no.   36 on file concrete_results_r     nps =   704287044     coll =    22315395739     ctm =    25211.39   nrn = 
+     272724535436
+
+ ***********************************************************************************************************************
+
+ dump no.   37 on file concrete_results_r     nps =   720374958     coll =    22825392699     ctm =    25931.61   nrn = 
+     278957775848
+
+ ***********************************************************************************************************************
+
+ dump no.   38 on file concrete_results_r     nps =   733604694     coll =    23244424757     ctm =    26651.87   nrn = 
+     284078759412
+
+ ***********************************************************************************************************************
+
+ dump no.   39 on file concrete_results_r     nps =   746608720     coll =    23656585832     ctm =    27372.10   nrn = 
+     289115702566
+
+ ***********************************************************************************************************************
+
+ dump no.   40 on file concrete_results_r     nps =   759648434     coll =    24069917520     ctm =    28092.46   nrn = 
+     294167130535
+
+ ***********************************************************************************************************************
+
+ dump no.   41 on file concrete_results_r     nps =   772647264     coll =    24481891285     ctm =    28812.72   nrn = 
+     299201834220
+
+ ***********************************************************************************************************************
+
+ dump no.   42 on file concrete_results_r     nps =   785971231     coll =    24903772018     ctm =    29532.93   nrn = 
+     304356971001
+
+ ***********************************************************************************************************************
+
+ dump no.   43 on file concrete_results_r     nps =   799148900     coll =    25321347055     ctm =    30253.28   nrn = 
+     309460527970
+
+ ***********************************************************************************************************************
+
+ dump no.   44 on file concrete_results_r     nps =   812248163     coll =    25736124850     ctm =    30973.51   nrn = 
+     314529488173
+
+ ***********************************************************************************************************************
+
+ dump no.   45 on file concrete_results_r     nps =   825403670     coll =    26152995088     ctm =    31693.81   nrn = 
+     319624313493
+
+ ***********************************************************************************************************************
+
+ dump no.   46 on file concrete_results_r     nps =   838490258     coll =    26567563496     ctm =    32414.11   nrn = 
+     324690687829
+
+ ***********************************************************************************************************************
+
+ dump no.   47 on file concrete_results_r     nps =   851580598     coll =    26982273030     ctm =    33134.49   nrn = 
+     329759234543
+
+ ***********************************************************************************************************************
+
+ dump no.   48 on file concrete_results_r     nps =   864629738     coll =    27395690921     ctm =    33854.90   nrn = 
+     334811873676
+
+ ***********************************************************************************************************************
+
+ dump no.   49 on file concrete_results_r     nps =   877645755     coll =    27808279403     ctm =    34575.10   nrn = 
+     339854227329
+
+ ***********************************************************************************************************************
+
+ dump no.   50 on file concrete_results_r     nps =   890555023     coll =    28217254117     ctm =    35295.38   nrn = 
+     344852322523
+
+ ***********************************************************************************************************************
+
+ dump no.   51 on file concrete_results_r     nps =   903569154     coll =    28629420601     ctm =    36015.61   nrn = 
+     349889298285
+
+ ***********************************************************************************************************************
+
+ dump no.   52 on file concrete_results_r     nps =   916586034     coll =    29041812865     ctm =    36735.84   nrn = 
+     354929237643
+
+ ***********************************************************************************************************************
+
+ dump no.   53 on file concrete_results_r     nps =   929651027     coll =    29455695794     ctm =    37456.12   nrn = 
+     359987310981
+
+ ***********************************************************************************************************************
+
+ dump no.   54 on file concrete_results_r     nps =   942671981     coll =    29868343423     ctm =    38176.58   nrn = 
+     365030315611
+
+ ***********************************************************************************************************************
+
+ dump no.   55 on file concrete_results_r     nps =   971480768     coll =    30780651549     ctm =    38896.65   nrn = 
+     376179888667
+1problem summary                                                                                                           
+
+      run terminated when  1000000000  particle histories were done.
++                                                                                                    06/19/16 05:55:37 
+      Shielding analysis of a 300cm x 300cm x 30 cm slab of iron concrete                  probid =  06/18/16 23:48:29 
+
+ neutron creation    tracks      weight        energy            neutron loss        tracks      weight        energy
+                                 (per source particle)                                           (per source particle)
+
+ source          1000000000    1.0000E+00    2.4500E+00          escape           646395726    6.2237E-01    5.8944E-01
+ nucl. interaction        0    0.            0.                  energy cutoff            0    0.            0.        
+ particle decay           0    0.            0.                  time cutoff              0    0.            0.        
+ weight window            0    0.            0.                  weight window            0    0.            0.        
+ cell importance          0    0.            0.                  cell importance          0    0.            0.        
+ weight cutoff            0    7.7105E-02    1.1276E-06          weight cutoff    353604274    7.7100E-02    1.1121E-06
+ e or t importance        0    0.            0.                  e or t importance        0    0.            0.        
+ dxtran                   0    0.            0.                  dxtran                   0    0.            0.        
+ forced collisions        0    0.            0.                  forced collisions        0    0.            0.        
+ exp. transform           0    0.            0.                  exp. transform           0    0.            0.        
+ upscattering             0    0.            2.3913E-08          downscattering           0    0.            1.8426E+00
+ photonuclear             0    0.            0.                  capture                  0    3.7764E-01    1.7980E-02
+ (n,xn)                   0    0.            0.                  loss to (n,xn)           0    0.            0.        
+ prompt fission           0    0.            0.                  loss to fission          0    0.            0.        
+ delayed fission          0    0.            0.                  nucl. interaction        0    0.            0.        
+ prompt photofis          0    0.            0.                  particle decay           0    0.            0.        
+ tabular boundary         0    0.            0.                  tabular boundary         0    0.            0.        
+ tabular sampling         0    0.            0.                  elastic scatter          0    0.            0.        
+     total       1000000000    1.0771E+00    2.4500E+00              total       1000000000    1.0771E+00    2.4500E+00
+
+   number of neutrons banked                       0        average time of (shakes)              cutoffs
+   neutron tracks per source particle     1.0000E+00          escape            2.1197E+02          tco   1.0000E+33
+   neutron collisions per source particle 3.1684E+01          capture           2.7105E+03          eco   0.0000E+00
+   total neutron collisions              -2147483648          capture or escape 1.1555E+03          wc1  -5.0000E-01
+   net multiplication              1.0000E+00 0.0000          any termination   1.4797E+03          wc2  -2.5000E-01
+
+ computer time so far in this run 39539.11 minutes            maximum number ever in bank         0
+ computer time in mcrun           39538.96 minutes            bank overflows to backup file       0
+ source particles per minute            2.5292E+04
+ random numbers generated             387220325222            most random numbers used was        3731 in history   404845564
+ 
+  warning.  random number period exceeded.  decrease stride.
+
+ range of sampled source weights = 1.0000E+00 to 1.0000E+00
+
+ number of histories processed by each thread
+    83598189    83263738    83585012    83103389    83597040    83469204    83135328    83331272    83270628    83102936
+    83260096    83283168
+1neutron  activity in each cell                                                                         print table 126
+
+                       tracks     population   collisions   collisions     number        flux        average      average
+              cell    entering                               * weight     weighted     weighted   track weight   track mfp
+                                                          (per history)    energy       energy     (relative)      (cm)
+
+        1       10  1000000000   1000000000  31684038137    2.6821E+01   2.3000E-03   7.7132E-01   9.1610E-01   2.8902E+00
+        2       20  1646395726   1000000000            0    0.0000E+00   1.5623E-02   1.4260E+00   9.7536E-01   0.0000E+00
+
+           total    2646395726   2000000000  31684038137    2.6821E+01
+
+1tally        4        nps =  1000000000
+           tally type 4    track length estimate of particle flux.      units   1/cm**2        
+           particle(s): neutrons 
+
+           volumes 
+                   cell:      10                                                                                   
+                         2.70000E+06
+ 
+ cell  10                                                                                                                              
+      energy   
+    1.0000E-06   1.42080E-06 0.0000
+    1.1602E-06   6.11851E-08 0.0001
+    1.3461E-06   6.21291E-08 0.0001
+    1.5617E-06   6.30600E-08 0.0001
+    1.8120E-06   6.39372E-08 0.0001
+    2.1023E-06   6.47757E-08 0.0001
+    2.4391E-06   6.56524E-08 0.0001
+    2.8298E-06   6.64747E-08 0.0001
+    3.2832E-06   6.72585E-08 0.0001
+    3.8092E-06   6.80171E-08 0.0001
+    4.4195E-06   6.87596E-08 0.0001
+    5.1275E-06   6.94732E-08 0.0001
+    5.9490E-06   7.01501E-08 0.0001
+    6.9021E-06   7.07873E-08 0.0001
+    8.0079E-06   7.13506E-08 0.0001
+    9.2909E-06   7.19582E-08 0.0001
+    1.0779E-05   7.32804E-08 0.0001
+    1.2506E-05   7.32107E-08 0.0001
+    1.4510E-05   7.37732E-08 0.0001
+    1.6835E-05   7.43141E-08 0.0001
+    1.9532E-05   7.48481E-08 0.0001
+    2.2661E-05   7.53412E-08 0.0001
+    2.6291E-05   7.58272E-08 0.0001
+    3.0504E-05   7.62890E-08 0.0001
+    3.5391E-05   7.67555E-08 0.0001
+    4.1061E-05   7.72181E-08 0.0001
+    4.7639E-05   7.76467E-08 0.0001
+    5.5271E-05   7.80853E-08 0.0001
+    6.4126E-05   7.85002E-08 0.0001
+    7.4400E-05   7.89034E-08 0.0001
+    8.6320E-05   7.93069E-08 0.0001
+    1.0015E-04   7.97080E-08 0.0001
+    1.1619E-04   8.00988E-08 0.0001
+    1.3481E-04   8.04824E-08 0.0001
+    1.5641E-04   8.09160E-08 0.0001
+    1.8147E-04   8.14059E-08 0.0001
+    2.1054E-04   8.21507E-08 0.0001
+    2.4427E-04   8.34879E-08 0.0001
+    2.8340E-04   8.63811E-08 0.0001
+    3.2881E-04   8.88890E-08 0.0001
+    3.8149E-04   6.62536E-08 0.0001
+    4.4261E-04   8.20979E-08 0.0001
+    5.1352E-04   8.37581E-08 0.0001
+    5.9579E-04   8.44062E-08 0.0001
+    6.9124E-04   8.49068E-08 0.0001
+    8.0199E-04   8.53986E-08 0.0001
+    9.3047E-04   8.58542E-08 0.0001
+    1.0795E-03   8.63031E-08 0.0001
+    1.2525E-03   8.10233E-08 0.0001
+    1.4532E-03   8.88601E-08 0.0001
+    1.6860E-03   8.96703E-08 0.0001
+    1.9561E-03   9.18670E-08 0.0001
+    2.2695E-03   9.35116E-08 0.0001
+    2.6331E-03   8.50065E-08 0.0001
+    3.0549E-03   9.03900E-08 0.0001
+    3.5444E-03   9.48486E-08 0.0001
+    4.1122E-03   9.33726E-08 0.0001
+    4.7710E-03   9.61168E-08 0.0001
+    5.5354E-03   1.07519E-07 0.0001
+    6.4222E-03   1.08971E-07 0.0001
+    7.4511E-03   1.09784E-07 0.0001
+    8.6449E-03   6.47454E-08 0.0001
+    1.0030E-02   8.54220E-08 0.0001
+    1.1637E-02   9.59470E-08 0.0001
+    1.3501E-02   1.00623E-07 0.0001
+    1.5664E-02   1.02533E-07 0.0001
+    1.8174E-02   1.04757E-07 0.0001
+    2.1085E-02   1.10361E-07 0.0001
+    2.4463E-02   1.23036E-07 0.0001
+    2.8383E-02   1.75952E-07 0.0001
+    3.2930E-02   6.97199E-08 0.0001
+    3.8206E-02   1.05187E-07 0.0001
+    4.4327E-02   1.17870E-07 0.0001
+    5.1428E-02   1.35267E-07 0.0001
+    5.9668E-02   1.25224E-07 0.0001
+    6.9227E-02   1.43256E-07 0.0001
+    8.0318E-02   1.62530E-07 0.0001
+    9.3186E-02   1.52227E-07 0.0001
+    1.0812E-01   1.55935E-07 0.0001
+    1.2544E-01   1.84706E-07 0.0001
+    1.4553E-01   2.09482E-07 0.0001
+    1.6885E-01   2.05777E-07 0.0001
+    1.9590E-01   2.24640E-07 0.0001
+    2.2729E-01   2.20114E-07 0.0001
+    2.6370E-01   2.61039E-07 0.0001
+    3.0595E-01   3.16925E-07 0.0001
+    3.5496E-01   3.58042E-07 0.0001
+    4.1183E-01   2.86230E-07 0.0001
+    4.7781E-01   2.84557E-07 0.0001
+    5.5436E-01   4.16430E-07 0.0001
+    6.4318E-01   5.61239E-07 0.0001
+    7.4623E-01   4.74958E-07 0.0001
+    8.6578E-01   3.76100E-07 0.0001
+    1.0045E+00   3.63732E-07 0.0001
+    1.1654E+00   4.23526E-07 0.0001
+    1.3521E+00   6.38249E-07 0.0001
+    1.5688E+00   1.15692E-06 0.0001
+    1.8201E+00   3.26300E-07 0.0001
+    2.1117E+00   3.16241E-07 0.0001
+    2.4500E+00   3.62221E-06 0.0000
+      total      1.95605E-05 0.0000
+
+
+ ===================================================================================================================================
+
+           results of 10 statistical checks for the estimated answer for the tally fluctuation chart (tfc) bin of tally        4
+
+ tfc bin     --mean--      ---------relative error---------      ----variance of the variance----      --figure of merit--     -pdf-
+ behavior    behavior      value   decrease   decrease rate      value   decrease   decrease rate       value     behavior     slope
+
+ desired      random       <0.10      yes      1/sqrt(nps)       <0.10      yes        1/nps           constant    random      >3.00
+ observed     random        0.00      yes          yes            0.00      yes         yes            constant    random      10.00
+ passed?        yes          yes      yes          yes             yes      yes         yes               yes        yes         yes
+
+ ===================================================================================================================================
+
+
+ this tally meets the statistical criteria used to form confidence intervals: check the tally fluctuation chart to verify.
+ the results in other bins associated with this tally may not meet these statistical criteria.
+
+ ----- estimated confidence intervals:  -----
+
+ estimated asymmetric confidence interval(1,2,3 sigma): 1.9561E-05 to 1.9561E-05; 1.9561E-05 to 1.9561E-05; 1.9561E-05 to 1.9561E-05
+ estimated  symmetric confidence interval(1,2,3 sigma): 1.9561E-05 to 1.9561E-05; 1.9561E-05 to 1.9561E-05; 1.9561E-05 to 1.9561E-05
+
+1analysis of the results in the tally fluctuation chart bin (tfc) for tally        4 with nps =  1000000000  print table 160
+
+
+ normed average tally per history  = 1.95605E-05          unnormed average tally per history  = 5.28134E+01
+ estimated tally relative error    = 0.0000               estimated variance of the variance  = 0.0000
+ relative error from zero tallies  = 0.0000               relative error from nonzero scores  = 0.0000
+
+ number of nonzero history tallies =  1000000000          efficiency for the nonzero tallies  = 1.0000
+ history number of largest  tally  =   657333812          largest  unnormalized history tally = 3.31354E+02
+ (largest  tally)/(average tally)  = 6.27405E+00          (largest  tally)/(avg nonzero tally)= 6.27405E+00
+
+ (confidence interval shift)/mean  = 0.0000               shifted confidence interval center  = 1.95605E-05
+
+
+ if the largest  history score sampled so far were to occur on the next history, the tfc bin quantities would change as follows:
+
+      estimated quantities           value at nps           value at nps+1           value(nps+1)/value(nps)-1.
+
+      mean                            1.95605E-05             1.95605E-05                     0.000000
+      relative error                  0.00000E+00             0.00000E+00                     0.000000
+      variance of the variance        0.00000E+00             0.00000E+00                     0.000000
+      shifted center                  1.95605E-05             1.95605E-05                     0.000000
+      figure of merit                 1.00000E+30             1.00000E+30                     0.000000
+
+ the estimated slope of the 198 largest  tallies starting at  2.80316E+02 appears to be decreasing at least exponentially.
+ the large score tail of the empirical history score probability density function appears to have no unsampled regions.
+
+ relative error is 0! fom and f(x) signal-to-noise ratio are both undefined. histories/minute = 2.529E+04
+
+1tally       11        nps =  1000000000
+           tally type 1    number of particles crossing a surface.                             
+           particle(s): neutrons 
+ 
+ surface  100                                                                                                                          
+ angle  bin:  -1.          to  9.90000E-01 mu                                                                                          
+                 5.34570E-01 0.0000
+ 
+ surface  100                                                                                                                          
+ angle  bin:   9.90000E-01 to  1.00000E+00 mu                                                                                          
+                 1.00000E+00 0.0000
+
+
+ ===================================================================================================================================
+
+           results of 10 statistical checks for the estimated answer for the tally fluctuation chart (tfc) bin of tally       11
+
+ tfc bin     --mean--      ---------relative error---------      ----variance of the variance----      --figure of merit--     -pdf-
+ behavior    behavior      value   decrease   decrease rate      value   decrease   decrease rate       value     behavior     slope
+
+ desired      random       <0.10      yes      1/sqrt(nps)       <0.10      yes        1/nps           constant    random      >3.00
+ observed    constant       0.00      yes          yes            0.00      yes         yes            constant    random      10.00
+ passed?        yes          yes      yes          yes             yes      yes         yes               yes        yes         yes
+
+ ===================================================================================================================================
+
+
+ this tally meets the statistical criteria used to form confidence intervals: check the tally fluctuation chart to verify.
+ the results in other bins associated with this tally may not meet these statistical criteria.
+
+ ----- estimated confidence intervals:  -----
+
+ estimated asymmetric confidence interval(1,2,3 sigma): 1.0000E+00 to 1.0000E+00; 1.0000E+00 to 1.0000E+00; 1.0000E+00 to 1.0000E+00
+ estimated  symmetric confidence interval(1,2,3 sigma): 1.0000E+00 to 1.0000E+00; 1.0000E+00 to 1.0000E+00; 1.0000E+00 to 1.0000E+00
+
+1analysis of the results in the tally fluctuation chart bin (tfc) for tally       11 with nps =  1000000000  print table 160
+
+
+ normed average tally per history  = 1.00000E+00          unnormed average tally per history  = 1.00000E+00
+ estimated tally relative error    = 0.0000               estimated variance of the variance  = 0.0000
+ relative error from zero tallies  = 0.0000               relative error from nonzero scores  = 0.0000
+
+ number of nonzero history tallies =  1000000000          efficiency for the nonzero tallies  = 1.0000
+ history number of largest  tally  =           6          largest  unnormalized history tally = 1.00000E+00
+ (largest  tally)/(average tally)  = 1.00000E+00          (largest  tally)/(avg nonzero tally)= 1.00000E+00
+
+ (confidence interval shift)/mean  = 0.0000               shifted confidence interval center  = 1.00000E+00
+
+
+ if the largest  history score sampled so far were to occur on the next history, the tfc bin quantities would change as follows:
+
+      estimated quantities           value at nps           value at nps+1           value(nps+1)/value(nps)-1.
+
+      mean                            1.00000E+00             1.00000E+00                     0.000000
+      relative error                  0.00000E+00             0.00000E+00                     0.000000
+      variance of the variance        0.00000E+00             0.00000E+00                     0.000000
+      shifted center                  1.00000E+00             1.00000E+00                     0.000000
+      figure of merit                 1.00000E+30             1.00000E+30                     0.000000
+
+ the 100 largest  history tallies appear to have a  maximum value of about 1.00000E+00
+ the large score tail of the empirical history score probability density function appears to have no unsampled regions.
+
+ relative error is 0! fom and f(x) signal-to-noise ratio are both undefined. histories/minute = 2.529E+04
+
+1tally       21        nps =  1000000000
+           tally type 1    number of particles crossing a surface.                             
+           particle(s): neutrons 
+ 
+ surface  101                                                                                                                          
+ angle  bin:  -1.          to  9.90000E-01 mu                                                                                          
+                 8.49904E-02 0.0001
+ 
+ surface  101                                                                                                                          
+ angle  bin:   9.90000E-01 to  1.00000E+00 mu                                                                                          
+                 2.80771E-03 0.0006
+
+
+ ===================================================================================================================================
+
+           results of 10 statistical checks for the estimated answer for the tally fluctuation chart (tfc) bin of tally       21
+
+ tfc bin     --mean--      ---------relative error---------      ----variance of the variance----      --figure of merit--     -pdf-
+ behavior    behavior      value   decrease   decrease rate      value   decrease   decrease rate       value     behavior     slope
+
+ desired      random       <0.10      yes      1/sqrt(nps)       <0.10      yes        1/nps           constant    random      >3.00
+ observed     random        0.00      yes          yes            0.00      yes         yes            decrease    random      10.00
+ passed?        yes          yes      yes          yes             yes      yes         yes                no        yes         yes
+
+ ===================================================================================================================================
+
+
+ warning.  the tally in the tally fluctuation chart bin did not pass  1 of the 10 statistical checks.
+
+1analysis of the results in the tally fluctuation chart bin (tfc) for tally       21 with nps =  1000000000  print table 160
+
+
+ normed average tally per history  = 2.80771E-03          unnormed average tally per history  = 2.80771E-03
+ estimated tally relative error    = 0.0006               estimated variance of the variance  = 0.0000
+ relative error from zero tallies  = 0.0006               relative error from nonzero scores  = 0.0001
+
+ number of nonzero history tallies =     2980954          efficiency for the nonzero tallies  = 0.0030
+ history number of largest  tally  =        5645          largest  unnormalized history tally = 1.00000E+00
+ (largest  tally)/(average tally)  = 3.56162E+02          (largest  tally)/(avg nonzero tally)= 1.06170E+00
+
+ (confidence interval shift)/mean  = 0.0000               shifted confidence interval center  = 2.80771E-03
+
+
+ if the largest  history score sampled so far were to occur on the next history, the tfc bin quantities would change as follows:
+
+      estimated quantities           value at nps           value at nps+1           value(nps+1)/value(nps)-1.
+
+      mean                            2.80771E-03             2.80771E-03                     0.000000
+      relative error                  5.84686E-04             5.84686E-04                     0.000000
+      variance of the variance        3.48612E-07             3.48612E-07                     0.000000
+      shifted center                  2.80771E-03             2.80771E-03                     0.000000
+      figure of merit                 7.39825E+01             7.39825E+01                     0.000000
+
+ the 100 largest  history tallies appear to have a  maximum value of about 1.00000E+00
+ the large score tail of the empirical history score probability density function appears to have no unsampled regions.
+
+ fom = (histories/minute)*(f(x) signal-to-noise ratio)**2 = (2.529E+04)*( 5.409E-02)**2 = (2.529E+04)*(2.925E-03) = 7.398E+01
+
+1unnormed tally density for tally       21          nonzero tally mean(m) = 9.419E-01   nps =  1000000000  print table 161
+
+ abscissa              ordinate   log plot of tally probability density function in tally fluctuation chart bin(d=decade,slope=10.0)
+  tally  number num den log den:d--------------------------------d---------------------------------d--------------------------------
+ 2.51-01    731 1.41-05  -4.849 *                                |                                 |                                
+ 3.16-01  35728 5.49-04  -3.260 *********************************|*********************            |                                
+ 3.98-01  39431 4.82-04  -3.317 *********************************|*******************              |                                
+ 5.01-01  52570 5.10-04  -3.292 *********************************|********************             |                                
+ 6.31-01  41144 3.17-04  -3.499 *********************************|*************                    |                                
+ 7.94-01  75342 4.61-04  -3.336 *********************************|*******************              |                                
+ 1.00+00 2.3+06 1.14-02  -1.944 mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm|mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm|mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+ 1.26+00 398339 1.54-03  -2.813 *********************************|*********************************|**                              
+  total 2980954 2.98-03         d--------------------------------d---------------------------------d--------------------------------
+
+1    some tally scores were not made for various reasons:
+
+                                  beyond last bin     not in
+                   tally       user  segment   mult   angle   energy   time             
+                      4          0       0       0       0       9       0
+
+1status of the statistical checks used to form confidence intervals for the mean for each tally bin
+
+
+ tally   result of statistical checks for the tfc bin (the first check not passed is listed) and error magnitude check for all bins
+
+        4   passed the 10 statistical checks for the tally fluctuation chart bin result               
+         passed all bin error check:   101 tally bins all have relative errors less than 0.10 with no zero bins
+
+       11   passed the 10 statistical checks for the tally fluctuation chart bin result               
+         passed all bin error check:     2 tally bins all have relative errors less than 0.10 with no zero bins
+
+       21   missed  1 of 10 tfc bin checks: the figure of merit does not appear to be a constant for the last half of the problem     
+         passed all bin error check:     2 tally bins all have relative errors less than 0.10 with no zero bins
+
+
+ the 10 statistical checks are only for the tally fluctuation chart bin and do not apply to other tally bins.
+
+ warning.       1 of the     3 tally fluctuation chart bins did not pass all 10 statistical checks.
+1tally fluctuation charts                              
+
+                            tally        4                          tally       11                          tally       21
+          nps      mean     error   vov  slope    fom      mean     error   vov  slope    fom      mean     error   vov  slope    fom
+     65536000   1.9562E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8100E-03 0.0023 0.0000 10.0     129
+    131072000   1.9562E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8088E-03 0.0016 0.0000 10.0     130
+    196608000   1.9562E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8078E-03 0.0013 0.0000 10.0     130
+    262144000   1.9562E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8086E-03 0.0011 0.0000 10.0     130
+    327680000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8092E-03 0.0010 0.0000 10.0     130
+    393216000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8093E-03 0.0009 0.0000 10.0     130
+    458752000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8091E-03 0.0009 0.0000 10.0     128
+    524288000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8101E-03 0.0008 0.0000 10.0     105
+    589824000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8103E-03 0.0008 0.0000 10.0      94
+    655360000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8096E-03 0.0007 0.0000 10.0      86
+    720896000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8090E-03 0.0007 0.0000 10.0      81
+    786432000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8080E-03 0.0007 0.0000 10.0      78
+    851968000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8077E-03 0.0006 0.0000 10.0      75
+    917504000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8084E-03 0.0006 0.0000 10.0      73
+    983040000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8080E-03 0.0006 0.0000 10.0      73
+   1000000000   1.9561E-05 0.0000 0.0000 10.0 1.0E+30   1.0000E+00 0.0000 0.0000 10.0 1.0E+30   2.8077E-03 0.0006 0.0000 10.0      74
+
+ ***********************************************************************************************************************
+
+ dump no.   56 on file concrete_results_r     nps =  1000000000     coll =    31684040626     ctm =    39538.96   nrn = 
+     387220325222
+
+         5 warning messages so far.
+
+
+ run terminated when  1000000000  particle histories were done.
+
+ computer time =39539.11 minutes
+
+ mcnp     version 6     06/19/14                     06/19/16 05:55:37                     probid =  06/18/16 23:48:29 
