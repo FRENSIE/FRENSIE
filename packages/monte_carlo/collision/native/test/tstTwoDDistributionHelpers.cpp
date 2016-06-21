@@ -118,6 +118,27 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelatedWith
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be correlated sampled with a random number
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelatedInSubrange )
+{
+  double sampled_variable;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample between the middle and first distribution
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sampled_variable =
+    MonteCarlo::sampleTwoDDistributionCorrelatedInSubrange(
+        0.005,
+        twod_distribution,
+        1 );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, -6.0/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled with a random number using independent sampling
 TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionIndependent )
 {

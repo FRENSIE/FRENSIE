@@ -84,6 +84,35 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
     return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
 }
 
+template<typename DependentTwoDDistribution>
+double sampleTwoDDistributionCorrelatedInSubrange(
+    const double independent_variable,
+    const DependentTwoDDistribution& dependent_distribution,
+    const double max_indep_var )
+{
+  typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
+                                                     upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+                                dependent_distribution,
+                                lower_bin_boundary,
+                                upper_bin_boundary,
+                                interpolation_fraction );
+
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return correlatedSampleInSubrange( upper_bin_boundary->second,
+                                       lower_bin_boundary->second,
+                                       interpolation_fraction,
+                                       max_indep_var );
+  }
+  else
+  {
+    return upper_bin_boundary->second->sampleInSubrange( max_indep_var );
+  }
+}
+
 
 // Sample a two dimensional ditribution
 /*! \details This function is designed for lin-lin unit base interpolation

@@ -250,22 +250,12 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   // Increment the number of trials
   ++trials;
 
-  double scaled_random_number;
-
-  // evaluate the cdf value at the upper cutoff angle cosine
-  double upper_cutoff_cdf =
-            evaluateCDF( incoming_energy, d_cutoff_angle_cosine );
-
-  // scale the random number to only sample below the upper cutoff angle cosine
-  scaled_random_number = upper_cutoff_cdf*
-        Utility::RandomNumberGenerator::getRandomNumber<double>();
-
   // sample the scattering angle cosine
   scattering_angle_cosine =
-        sampleTwoDDistributionCorrelatedWithRandomNumber<ElasticDistribution>(
+        sampleTwoDDistributionCorrelatedInSubrange<ElasticDistribution>(
             incoming_energy,
             d_elastic_scattering_distribution,
-            scaled_random_number );
+            d_cutoff_angle_cosine );
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );

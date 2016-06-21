@@ -18,11 +18,6 @@
 
 namespace MonteCarlo{
 
-//! Typedef for the two dimensional distribution
-typedef Teuchos::Array<Utility::Pair<double,
-                       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    TwoDDistribution;
-
 //! Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
@@ -44,13 +39,14 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution,
     const double random_number );
-/*
-//! Sample a two dimensional distribution with a random number using correlated sampling
-double sampleTwoDDistributionCorrelatedWithRandomNumber(
+
+//! Sample a two dimensional distribution in a subrange using correlated sampling
+template<typename DependentTwoDDistribution>
+double sampleTwoDDistributionCorrelatedInSubrange(
     const double independent_variable,
-    const TwoDDistribution& dependent_distribution,
-    const double random_number );
-*/
+    const DependentTwoDDistribution& dependent_distribution,
+	const double max_indep_var );
+
 //! Sample a two dimensional distribution using independent sampling
 template<typename DependentTwoDDistribution>
 double sampleTwoDDistributionIndependent(
@@ -77,25 +73,7 @@ double evaluateTwoDDistributionCorrelatedCDF(
     const double independent_variable,
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
-/*
-//! Evaluate a correlated value from a two dimensional distribution
-double evaluateTwoDDistributionCorrelated(
-    const double independent_variable,
-    const double dependent_variable,
-    const TwoDDistribution& dependent_distribution );
 
-//! Evaluate a correlated PDF from a two dimensional distribution
-double evaluateTwoDDistributionCorrelatedPDF(
-    const double independent_variable,
-    const double dependent_variable,
-    const TwoDDistribution& dependent_distribution );
-
-//! Evaluate a correlated CDF from a two dimensional distribution
-double evaluateTwoDDistributionCorrelatedCDF(
-    const double independent_variable,
-    const double dependent_variable,
-    const TwoDDistribution& dependent_distribution );
-*/
 //! Sample an upper and lower distribution using a common random variable
 template<typename DependentDistribution>
 double correlatedSample(
@@ -111,16 +89,7 @@ double correlatedSampleWithRandomNumber(
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
 	const double interpolation_fraction,
 	const double random_number );
-/*
-//! Sample an upper and lower distribution using a common given random variable
-double correlatedSampleWithRandomNumber(
-            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-		    const double interpolation_fraction,
-		    const double random_number );
-*/
+
 //! Sample an upper and lower distribution using a common random variable in a subrange
 template<typename DependentDistribution>
 double correlatedSampleInSubrange(
@@ -152,14 +121,7 @@ double evaluateCorrelatedCDF(
 	const Teuchos::RCP<const DependentDistribution>& lower_distribution,
 	const double interpolation_fraction,
 	const double independent_value );
-/*
-//! Evaluate a correlated value
-double evaluateCorrelated(
-   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
-   const double interpolation_fraction,
-   const double independent_value );
-*/
+
 //! Sample from either the lower or upper distribution depending on interp frac
 template<typename DependentDistribution>
 double independentSample(
