@@ -23,8 +23,8 @@ c ----------------------------------------------------------------------------c
 c
 c the 100 series define the inner cube made of iron portland concrete
 c
-100 PX -15
-101 PX 15
+100 PX -7.5
+101 PX 7.5
 102 PY -150
 103 PY 150
 104 PZ -150
@@ -77,7 +77,7 @@ c --------------------
 c run in neutron only mode
 mode n
 c run for 100 histories
-nps 1000000000
+nps 10000000
 c Surface current on front surface
 f11:n 100
 c11  0.99 1
@@ -86,11 +86,5 @@ c Surface current on back surface
 f21:n 101
 c21  0.99 1
 c
-c Track length flux tally
-c FMESH4:n  ORIGIN=-15 -150 -150
-c          EMESH=1e-6 99ilog 2.45    EINTS=0 98 7r 
-c          IMESH=30          IINTS=1
-c          JMESH=300         JINTS=1
-c          KMESH=300         KINTS=1
 F4:n  10
 E4 1e-6 98ilog 2.45

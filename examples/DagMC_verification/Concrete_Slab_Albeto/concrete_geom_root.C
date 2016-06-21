@@ -28,7 +28,7 @@ void concrete_geom_root()
 //---------------------------------------------------------------------------//
 
     // Iron Portlnd Concrete Slab with dimensions 30cm x 300cm x 300cm
-    TGeoVolume *concrete_Sphere = gGeoManager->MakeBox( "concrete_Sphere", concrete_med, 30., 300., 300.);
+    TGeoVolume *concrete_Sphere = gGeoManager->MakeBox( "concrete_Sphere", concrete_med, 15., 300., 300.);
     concrete_Sphere->SetUniqueID(1);
 
     // Void Cube of Side Height 50cm
