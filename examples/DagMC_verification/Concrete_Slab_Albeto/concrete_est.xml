@@ -2,9 +2,9 @@
 
     <ParameterList name="Cell Track Length Flux Estimator">
         <Parameter name="Id" type="unsigned int" value="4"/>
-        <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+        <!--Parameter name="Type" type="string" value="Cell Track-Length Flux"/-->
         <Parameter name="Particle Type" type="string" value="Neutron"/>
-        <Parameter name="Cells" type="Array" value="{1}"/>
+        <!--Parameter name="Cells" type="Array" value="{1}"/-->
         <Parameter name="Output Mesh File Name" type="string" value="concrete_cell_flux.h5m"/>
         <ParameterList name="Bins">
             <Parameter name="Energy Bins" type="Array" value="{1e-6, 98l, 2.45}"/>
@@ -13,24 +13,14 @@
 
     <ParameterList name="Surface Current Estimator">    
         <Parameter name="Id" type="unsigned int" value="11"/>
-        <Parameter name="Type" type="string" value="surface.current"/>
+        <!--Parameter name="Type" type="string" value="surface.current"/-->
         <Parameter name="Particle Type" type="string" value="Neutron"/>
-        <Parameter name="Surfaces" type="Array" value="{4}"/>
+        <!--Parameter name="Surfaces" type="Array" value="{4, 6}"/-->
         <Parameter name="Output Mesh File Name" type="string" value="concrete_current_front.h5m"/>
         <ParameterList name="Bins">
             <Parameter name="Cosine Bins" type="Array" value="{-1.0, 0.99, 1.0}"/>
         </ParameterList>
     </ParameterList>
 
-    <ParameterList name="Surface Current Estimator">    
-        <Parameter name="Id" type="unsigned int" value="21"/>
-        <Parameter name="Type" type="string" value="surface.current"/>
-        <Parameter name="Particle Type" type="string" value="Neutron"/>
-        <Parameter name="Surfaces" type="Array" value="{6}"/>
-        <Parameter name="Output Mesh File Name" type="string" value="concrete_current_back.h5m"/>
-        <ParameterList name="Bins">
-            <Parameter name="Cosine Bins" type="Array" value="{-1.0, 0.99, 1.0}"/>
-        </ParameterList>
-    </ParameterList>
 
 </ParameterList>
