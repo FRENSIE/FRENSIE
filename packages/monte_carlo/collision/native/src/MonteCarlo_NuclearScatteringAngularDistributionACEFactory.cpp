@@ -165,6 +165,13 @@ void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution
 	   new NuclearScatteringAngularDistribution( angular_distribution ) );
 }
 
+// Return the isotropic angular distribution
+Teuchos::RCP<Utility::TabularOneDDistribution> 
+  NuclearScatteringAngularDistributionACEFactory::getIsotropicDistribution()
+{
+  return isotropic_angle_cosine_dist;
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
