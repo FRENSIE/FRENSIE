@@ -2,7 +2,7 @@
 
     <ParameterList name="Cell Track Length Flux Estimator">
         <Parameter name="Id" type="unsigned int" value="4"/>
-        <Parameter name="Type" type="string" value="cell.tl.flux"/>
+        <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
         <Parameter name="Particle Type" type="string" value="Neutron"/>
         <Parameter name="Cells" type="Array" value="{1}"/>
         <ParameterList name="Bins">
@@ -12,7 +12,7 @@
 
     <ParameterList name="Surface Current Estimator">    
         <Parameter name="Id" type="unsigned int" value="11"/>
-        <Parameter name="Type" type="string" value="surface.current"/>
+        <Parameter name="Type" type="string" value="Surface Current"/>
         <Parameter name="Particle Type" type="string" value="Neutron"/>
         <Parameter name="Surfaces" type="Array" value="{4, 6}"/>
         <ParameterList name="Bins">
