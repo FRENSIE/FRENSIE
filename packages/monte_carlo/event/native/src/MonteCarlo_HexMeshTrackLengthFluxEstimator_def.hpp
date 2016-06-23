@@ -20,6 +20,7 @@
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_MOABException.hpp"
 
 namespace MonteCarlo{
 
@@ -31,7 +32,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   const Teuchos::Array<double>& y_planes,
   const Teuchos::Array<double>& z_planes,
   const std::string output_mesh_file_name)
-: StandardEntityEstimator<unsigned long>( id, multiplier )
+: StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>( id, multiplier )
 
 {
   //Test for 2 dimension grid points - input logical statement into precondition. Will tell coder what precondition failed when being used
@@ -130,7 +131,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                     const bool process_data ) const
 {
   // Export data in FRENSIE formatting for data manipulation
-  StandardEntityEstimator<moab::EntityHandle>::exportData( hdf5_file,
+  StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>::exportData( hdf5_file,
                                                            process_data );
 
   // Set the estimator as a mesh estimator

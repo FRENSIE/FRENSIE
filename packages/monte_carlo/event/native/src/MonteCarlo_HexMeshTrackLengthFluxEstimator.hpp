@@ -34,7 +34,7 @@
 namespace MonteCarlo{
 
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
-class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>,
+class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>,
   public ParticleSubtrackEndingGlobalEventObserver
 {
 
@@ -51,9 +51,9 @@ public:
   HexMeshTrackLengthFluxEstimator(
 		     const Estimator::idType id,
 		     const double multiplier,
-		     const Teuchos::Array<double>& x_grid_points,
-         const Teuchos::Array<double>& y_grid_points,
-         const Teuchos::Array<double>& z_grid_points,
+		     const Teuchos::Array<double>& x_planes,
+         const Teuchos::Array<double>& y_planes,
+         const Teuchos::Array<double>& z_planes,
 		     const std::string output_mesh_file_name = "hexmesh.vtk" );
 
   //! Destructor
@@ -81,8 +81,6 @@ public:
   void printSummary( std::ostream& os ) const;
 
 private:
-
-  typedef double volume;
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(

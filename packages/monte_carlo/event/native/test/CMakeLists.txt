@@ -160,10 +160,10 @@ IF(${FRENSIE_ENABLE_OPENMP})
     tstCellTrackLengthFluxEstimator --threads=4)
 ENDIF()
 
-#ADD_EXECUTABLE(tstHexMeshTrackLengthFluxEstimator
-#  tstHexMeshTrackLengthFluxEstimator.cpp)
-#TARGET_LINK_LIBRARIES(tstHexMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
-#ADD_TEST(HexMeshTrackLengthFluxEstimator_test tstHexMeshTrackLengthFluxEstimator)
+ADD_EXECUTABLE(tstHexMeshTrackLengthFluxEstimator
+  tstHexMeshTrackLengthFluxEstimator.cpp)
+TARGET_LINK_LIBRARIES(tstHexMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
+ADD_TEST(HexMeshTrackLengthFluxEstimator_test tstHexMeshTrackLengthFluxEstimator)
 
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
   tstTetMeshTrackLengthFluxEstimator.cpp)
