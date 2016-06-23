@@ -48,6 +48,12 @@ ADD_EXECUTABLE(tstInterpolationPolicy
 TARGET_LINK_LIBRARIES(tstInterpolationPolicy utility_core)
 ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
 
+ADD_EXECUTABLE(tstStandardInterpolator
+  tstStandardInterpolator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardInterpolator utility_core)
+ADD_TEST(StandardInterpolator_test tstStandardInterpolator)
+
 ADD_EXECUTABLE(tstLinLinLinTwoDInterpolationPolicy
   tstLinLinLinTwoDInterpolationPolicy.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

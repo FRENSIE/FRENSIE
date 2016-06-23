@@ -13,11 +13,11 @@ namespace Utility{
 
 // Initialize static member data
 template<typename InterpPolicy, typename IndependentUnit, typename DependentUnit, typename T>
-std::shared_ptr<const UnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T> > StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::s_instance;
+std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::s_instance;
 
 // Get an instance of the interpolator
 template<typename InterpPolicy, typename IndependentUnit, typename DependentUnit, typename T>
-std::shared_ptr<const UnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T> >
+std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> >
 StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::getInstance()
 {
   if( !s_instance )
@@ -131,7 +131,7 @@ T StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::i
 {
   return InterpPolicy::interpolateAndProcess( processed_indep_var_0,
                                               processed_indep_var,
-                                              processed_dep_var,
+                                              processed_dep_var_0,
                                               processed_slope );
 }
   
