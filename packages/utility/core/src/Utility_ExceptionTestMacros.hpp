@@ -26,9 +26,9 @@
  const bool throw_exception = (throw_exception_test);			\
  if( throw_exception ){							\
    std::ostringstream detailed_msg;					\
-   detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n"		\
+   detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"       \
        << "Throw test that evaluated to true: "#throw_exception_test	\
-       << "\n\n" << msg;						\
+       << "\n" << msg;						\
    const std::string &detailed_msg_str = detailed_msg.str();		\
    throw Exception(detailed_msg_str);					\
  }									\
@@ -43,9 +43,9 @@
 #define THROW_EXCEPTION( Exception, msg ) \
 {					  \
  std::ostringstream detailed_msg;	  \
- detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n" \
- << msg;						\
- throw Exception(detailed_msg.str());			\
+ detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"  \
+              << msg;                                            \
+ throw Exception(detailed_msg.str());                            \
 }
 
 #endif // end UTILITY_EXCEPTION_TEST_MACROS_HPP

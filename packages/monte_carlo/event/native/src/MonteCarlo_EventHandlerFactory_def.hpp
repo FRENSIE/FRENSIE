@@ -85,8 +85,14 @@ EventHandlerFactory<GeometryHandler>::createHandler(
       // Invalid observer
       else
       {
+        std::string observer_type( "Unknown" );
+
+        if( observer_rep.isParameter( "Type" ) )
+          observer_type = observer_rep.get<std::string>( "Type" );
+        
         THROW_EXCEPTION( InvalidObserverRepresentation,
                          "Error: observer " << observer_rep.name() <<
+                         " with type " << observer_type <<
                          " is not supported!" );
       }
     }
