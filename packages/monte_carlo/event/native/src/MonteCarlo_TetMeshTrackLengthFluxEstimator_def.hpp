@@ -848,7 +848,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
     	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahdedral mesh flux estimator " << this->getId()
+     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
     	      << " will be ignored."
     	      << std::endl;
   }
@@ -856,7 +856,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
     	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahdedral mesh flux estimator " << this->getId()
+     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
     	      << " will be ignored."
     	      << std::endl;
   }

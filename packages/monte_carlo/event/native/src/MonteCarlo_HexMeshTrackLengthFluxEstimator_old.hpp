@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp
-//! \author Philip Britt
+//! \author Luke Kersting, Philip Britt
 //! \brief  Hex mesh flux estimator class declaration.
 //!
 //---------------------------------------------------------------------------//
@@ -9,9 +9,9 @@
 #ifndef MONTE_CARLO_HEX_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 #define MONTE_CARLO_HEX_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
-// std includes
-#include <memory>
+// Std Lib Includes
 #include <string>
+#include <memory>
 
 // Boost Includes
 #include <boost/mpl/vector.hpp>
@@ -19,8 +19,11 @@
 #include <boost/unordered_set.hpp>
 #include <boost/scoped_ptr.hpp>
 
-// Trillinos includes
-#include <Teuchos_Array.hpp>
+// Moab Includes
+#include <moab/Interface.hpp>
+#include <moab/AdaptiveKDTree.hpp>
+
+// Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -29,10 +32,14 @@
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
-#include "Utility_StructuredHexMesh.hpp"
 
 namespace MonteCarlo{
 
+/*! The hex-mesh track length flux estimator class
+ * \details This class is based off of the TrackLengthMeshTally written by
+ * Kerry Dunn (UW-Madison CNERG group). The DAGMC repo that contains her
+ * class can be found at https://github.com/svalinn/DAGMC.
+ */
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
 class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>,
   public ParticleSubtrackEndingGlobalEventObserver
@@ -47,13 +54,21 @@ public:
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
   EventTags;
 
+  //! Constructor - implement later
+  HexMeshTrackLengthFluxEstimator(
+		     const Estimator::idType id,
+		     const double multiplier,
+		     const std::string input_mesh_file_name,
+		     const std::string output_mesh_file_name = "hexmesh.vtk"
+                     ); 
+
   //! Constructor - implement now
   HexMeshTrackLengthFluxEstimator(
 		     const Estimator::idType id,
 		     const double multiplier,
 		     const Teuchos::Array<double>& x_grid_points,
-         const Teuchos::Array<double>& y_grid_points,
-         const Teuchos::Array<double>& z_grid_points,
+                     const Teuchos::Array<double>& y_grid_points,
+                     const Teuchos::Array<double>& z_grid_points,
 		     const std::string output_mesh_file_name = "hexmesh.vtk" );
 
   //! Destructor
@@ -75,25 +90,56 @@ public:
 
   //! Export the estimator data
   void exportData( const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
-		               const bool process_data ) const;
+		   const bool process_data ) const;
 
   //! Print the estimator data
   void printSummary( std::ostream& os ) const;
 
-private:
+  //! Get all hex elements
+  const moab::Range getAllHexElements() const;
 
-  typedef double volume;
+  //! Test if a point is in the mesh
+  bool isPointInMesh( const double point[3] );
+
+  //! Determine which hex the point is in
+  moab::EntityHandle whichHexIsPointIn( const double point[3] );
+
+private:
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+
+  // The tolerance used for geometric tests
+  static const double s_tol;
+
+  // The moab instance that stores all mesh data
+  Teuchos::RCP<moab::Interface> d_moab_interface;
+
+  // Tool that allows for checking intersection
+
+  //Teuchos::RCP<moab::OrientedBoxTreeTool> d_moab_box_tree_tool;
+
+  // tree root set
+  //moab::EntityHandle d_box_root_set;
+
+  // The hex meshset
+  moab::EntityHandle d_hex_meshset;
+
+  // The kd-tree for finding point in tet
+  boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
+
+  // The root of the kd-tree
+  moab::EntityHandle d_kd_tree_root;
+
+  // The map of hex ids and reference vertices - probably for barycentric transform matrices and not used here.
+  //boost::unordered_map<moab::EntityHandle, moab::CartVect>;
+  //d_hex_reference_vertices;
   
   // The output mesh file name
-  std::string d_output_mesh_file_name;
-  
-  // hex mesh object
-  std::shared_ptr<Utility::StructuredHexMesh> d_hex_mesh;
+  std::string d_output_mesh_name;
 
+  
 };
   
 } // end MonteCarlo namespace

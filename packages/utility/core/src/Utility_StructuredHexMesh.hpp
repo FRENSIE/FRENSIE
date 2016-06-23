@@ -12,6 +12,9 @@
 // Std Lib Includes
 #include <utility>
 
+// boost includes
+#include <boost/unordered_map.hpp>
+
 // Trillinos Includes
 #include <Teuchos_Array.hpp>
 
@@ -21,7 +24,10 @@ class StructuredHexMesh
 {
 
 public:
+  typedef unsigned long hex_index;
+  typedef double hex_volume;
   
+    
   //! Constructor
   StructuredHexMesh( const Teuchos::Array<double>& x_grid_points,
                      const Teuchos::Array<double>& y_grid_points,
@@ -31,17 +37,21 @@ public:
   ~StructuredHexMesh()
   { /* ... */ }
 
+  //returns the volumes of the hex elements for the estimator class
+  boost::unordered_map<hex_index, hex_volume> calculateVolumes();
+
   //returns a bool that says whether or not a point is in the mesh
   bool isPointInMesh( const double point[3] );
   
   //returns the index of the hex that contains a given point
-  unsigned whichHexIsPointIn( const double point[3] );
+  hex_index whichHexIsPointIn( const double point[3] );
   
   //! returns partial track lengths along a given line segment
-  Teuchos::Array<std::pair<unsigned,double>> computeTrackLengths( 
+  Teuchos::Array<std::pair<hex_index,double>> computeTrackLengths( 
                               const double start_point[3],
                               const double end_point[3],
-                              const double direction[3] );
+                              const double direction[3],
+                              const double track_length );
 
   // plane location member data
   Teuchos::Array<double> d_x_planes;
@@ -50,6 +60,8 @@ public:
   
   // indices of the planes that are used to form the index for the hex element a particle is in
   unsigned d_hex_plane_indices[3];
+  
+
   
 private:
 
@@ -87,12 +99,12 @@ private:
   std::pair<planeDimension,double> findIntersectionPoint( const Teuchos::Array<std::pair<planeDimension,double>>& distances);
   
   //form the index out of the x,y, and z lower hex plane bounding indices
-  unsigned findIndex( const unsigned x_index,
+  hex_index findIndex( const unsigned x_index,
                       const unsigned y_index,
                       const unsigned z_index );
   
   //overload function for ease
-  unsigned findIndex( const unsigned indices[3] );
+  hex_index findIndex( const unsigned indices[3] );
                             
 };
 

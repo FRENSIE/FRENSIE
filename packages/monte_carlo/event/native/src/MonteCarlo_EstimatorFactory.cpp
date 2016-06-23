@@ -1208,62 +1208,62 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                                                      "Output Mesh File Name" );
 
   // Get the X grid points
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "X Grid Points" ),
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "X planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
-                      " does not have the x grid points specified! " );
+                      " does not have the x planes specified! " );
 
   Utility::ArrayString array_string = 
     estimator_rep.get<Utility::ArrayString>( "X Grid Points" );
 
-  Teuchos::Array<double> x_grid_points;
+  Teuchos::Array<double> x_planes;
 
   try{
-      x_grid_points = array_string.getConcreteArray<double>();
+      x_planes = array_string.getConcreteArray<double>();
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
-                              "Error: the x grid points requested for"
+                              "Error: the x planes requested for"
                               " estimator " << id << 
                               " are not valid!" );
 
-  // Get the Y grid points
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Y Grid Points" ),
+  // Get the Y planes
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Y planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
-                      " does not have the y grid points specified! " );
+                      " does not have the y planes specified! " );
 
     array_string = 
-    estimator_rep.get<Utility::ArrayString>( "Y Grid Points" );
+    estimator_rep.get<Utility::ArrayString>( "Y planes" );
 
-  Teuchos::Array<double> y_grid_points;
+  Teuchos::Array<double> y_planes;
 
   try{
-      y_grid_points = array_string.getConcreteArray<double>();
+      y_planes = array_string.getConcreteArray<double>();
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
-                              "Error: the y grid points requested for"
+                              "Error: the y planes requested for"
                               " estimator " << id << 
                               " are not valid!" );
 
-  // Get the Z grid points
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Z Grid Points" ),
+  // Get the Z planes
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Z planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
-                      " does not have the Z grid points specified! " );
+                      " does not have the Z planes specified! " );
 
   array_string = 
-    estimator_rep.get<Utility::ArrayString>( "Z Grid Points" );
+    estimator_rep.get<Utility::ArrayString>( "Z planes" );
 
-  Teuchos::Array<double> z_grid_points;
+  Teuchos::Array<double> z_planes;
 
   try{
-      z_grid_points = array_string.getConcreteArray<double>();
+      z_planes = array_string.getConcreteArray<double>();
   }
   EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
                               InvalidEstimatorRepresentation,
-                              "Error: the Z grid points requested for"
+                              "Error: the Z planes requested for"
                               " estimator " << id << 
                               " are not valid!" );
 
@@ -1272,9 +1272,9 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
     estimator.reset( new HexMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier>(
                                                      id,
                                                      multiplier,
-                                                     x_grid_points,
-                                                     y_grid_points,
-                                                     z_grid_points,
+                                                     x_planes,
+                                                     y_planes,
+                                                     z_planes,
                                                      output_mesh_file_name ) );
   }
   else
@@ -1282,9 +1282,9 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
     estimator.reset( new HexMeshTrackLengthFluxEstimator<WeightMultiplier>(
                                                      id,
                                                      multiplier,
-                                                     x_grid_points,
-                                                     y_grid_points,
-                                                     z_grid_points,
+                                                     x_planes,
+                                                     y_planes,
+                                                     z_planes,
                                                      output_mesh_file_name ) );
   }
 

@@ -13,7 +13,6 @@
 
 // FRENSIE Includes
 #include "Utility_StructuredHexMesh.hpp"
-#include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
@@ -23,14 +22,40 @@ namespace Utility{
 const double StructuredHexMesh::s_tol = 1e-10;
 
 //!Constructor
-StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_grid_points,
-                                      const Teuchos::Array<double>& y_grid_points,
-                                      const Teuchos::Array<double>& z_grid_points)
+StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
+                                      const Teuchos::Array<double>& y_planes,
+                                      const Teuchos::Array<double>& z_planes)
 {
   //assign the given grid points to member data
-  d_x_planes.assign(x_grid_points.begin(),x_grid_points.end());
-  d_y_planes.assign(y_grid_points.begin(),y_grid_points.end());
-  d_z_planes.assign(z_grid_points.begin(),z_grid_points.end());
+  d_x_planes.assign(x_planes.begin(),x_planes.end());
+  d_y_planes.assign(y_planes.begin(),y_planes.end());
+  d_z_planes.assign(z_planes.begin(),z_planes.end());
+
+}
+
+boost::unordered_map<StructuredHexMesh::hex_index,
+                     StructuredHexMesh::hex_volume>
+                     StructuredHexMesh::calculateVolumes()
+{
+
+  boost::unordered_map<hex_index, hex_volume> hex_volumes;
+  for(plane_index k = 0; k < d_z_planes.size() - 1; ++k)
+  {
+    for(plane_index j = 0; j < d_y_planes.size() - 1; ++j)
+    {
+      for(plane_index i = 0; i < d_x_planes.size() - 1; ++i)
+      {
+      
+        hex_volumes[ findIndex(i, j, k) ] = 
+          (d_x_planes[i + 1] - d_x_planes[i])*
+          (d_y_planes[j + 1] - d_y_planes[j])*
+          (d_z_planes[k + 1] - d_z_planes[k]);
+          
+      }
+    }
+  }
+  
+  return hex_volumes;
 
 }
 
@@ -54,7 +79,7 @@ bool StructuredHexMesh::isPointInMesh( const double point[3] )
 
 //find the index of the hex that a point is in
 
-unsigned StructuredHexMesh::whichHexIsPointIn( const double point[3] )
+StructuredHexMesh::hex_index StructuredHexMesh::whichHexIsPointIn( const double point[3] )
 {
 
   unsigned x_index = Search::binaryLowerBoundIndex( d_x_planes.begin(),
@@ -91,13 +116,14 @@ unsigned StructuredHexMesh::whichHexIsPointIn( const double point[3] )
 
 /*!compute track lengths for a given ray and which hex they correspond to. Return
   teuchos array of pairs*/
-Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLengths( 
+Teuchos::Array<std::pair<StructuredHexMesh::hex_index,double>> StructuredHexMesh::computeTrackLengths( 
                                             const double start_point[3],
                                             const double end_point[3],
-                                            const double direction[3] )
+                                            const double direction[3],
+                                            const double track_length )
 {
   //initialize variables
-  Teuchos::Array<std::pair<unsigned,double>> contribution_array;
+  Teuchos::Array<std::pair<hex_index,double>> contribution_array;
   
   double current_point[3] { start_point[0], start_point[1], start_point[2] };
   
@@ -105,9 +131,6 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
   
   Teuchos::Array<std::pair<planeDimension,double>> distance_array;
   
-  double track_length = vectorMagnitude( start_point[x_dim] - end_point[x_dim],
-                                         start_point[y_dim] - end_point[y_dim],
-                                         start_point[z_dim] - end_point[z_dim] );
   double iteration_length = 0;
   
   std::pair<planeDimension, double> distance_to_intersection;
@@ -146,8 +169,13 @@ Teuchos::Array<std::pair<unsigned,double>> StructuredHexMesh::computeTrackLength
       
       if(isPointInMesh(test_point))
       {
+        //set this boolean to true for use in determining whether the particle entered the mesh later
         does_point_hit_mesh = true;
         
+        //figure out whether push_distance exists yet. If not, then set the push_distance
+        // to the recently found distance to the intersection point. If it does exist
+        // and is smaller than previously found push_distances, then set it equal
+        // to the newly found distance
         if(!push_distance || *push_distance > distance_array[i].second)
         {
           push_distance = &distance_array[i].second;
@@ -725,7 +753,6 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,double>> StructuredHe
     std::pair<planeDimension, double> distance_pair = std::make_pair(planeSet[i].first, distance);
     distances.push_back(distance_pair);  
     
-  
   }
   
   return distances;
@@ -754,21 +781,21 @@ std::pair<StructuredHexMesh::planeDimension,double> StructuredHexMesh::findInter
 
 }
 
-unsigned StructuredHexMesh::findIndex( const unsigned x_index,
+StructuredHexMesh::hex_index StructuredHexMesh::findIndex( const unsigned x_index,
                                        const unsigned y_index,
                                        const unsigned z_index )
 {
   unsigned x_dimension = d_x_planes.size()-1;
   unsigned y_dimension = d_y_planes.size()-1;
-  unsigned hex_index = x_index +
-                       y_index * x_dimension +
-                       z_index * x_dimension * y_dimension;
+  unsigned long hex_index = x_index +
+                            y_index * x_dimension +
+                            z_index * x_dimension * y_dimension;
 
   return hex_index;
 
 }
 
-unsigned StructuredHexMesh::findIndex( const unsigned indices[3] )
+StructuredHexMesh::hex_index StructuredHexMesh::findIndex( const unsigned indices[3] )
 {
   return findIndex( indices[x_dim], indices[y_dim], indices[z_dim] );
 }
