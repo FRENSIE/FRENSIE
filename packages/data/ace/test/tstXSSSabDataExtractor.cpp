@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( XSSSabDataExtractor, extractITIEBlock_inelastic_only )
   Teuchos::ArrayView<const double> itie_block = 
     xss_data_extractor_inelastic_only->extractITIEBlock();
   
-  TEST_EQUALITY_CONST( itie_block.size(), 116*2+1 );
+  TEST_EQUALITY_CONST( itie_block.size(), 116*4+1 );
   TEST_EQUALITY_CONST( itie_block.front(), 116 );
   TEST_EQUALITY_CONST( itie_block.back(), 2.05498256000e+01 );
 }

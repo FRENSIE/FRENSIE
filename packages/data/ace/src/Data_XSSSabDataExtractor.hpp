@@ -85,6 +85,12 @@ public:
   //! Extract the inelastic cross section from the XSS array
   Teuchos::ArrayView<const double> extractInelasticCrossSection() const;
 
+  //! Extract the inelastic distribution locations from the XSS array
+  Teuchos::ArrayView<const double> extractInelasticDistributionLocations() const;
+  
+  //! Extract the number of outgoing energies list from the XSS array
+  Teuchos::ArrayView<const double> extractNumberOfOutgoingEnergies() const;
+
   //! Extract the ITCE block from the XSS array
   Teuchos::ArrayView<const double> extractITCEBlock() const;
 
@@ -113,9 +119,15 @@ private:
 
   // The ITIE block (cached for quick access to data in this block)
   Teuchos::ArrayView<const double> d_itie_block;
+  
+  // The ITXE block (cached for quick access to data in this block)
+  Teuchos::ArrayView<const double> d_itxe_block;
 
   // The ITCE block (cached for quick access to data in this block)
   Teuchos::ArrayView<const double> d_itce_block;
+  
+  // The ITCA block (cached for quick access to data in this block)
+  Teuchos::ArrayView<const double> d_itca_block;
 };
 
 } // end MonteCarlo namespace
