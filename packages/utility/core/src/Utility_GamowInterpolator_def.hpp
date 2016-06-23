@@ -29,6 +29,20 @@ GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::getExothermicInstan
   return s_exothermic_instance;
 }
 
+// Constructor
+template<typename IndependentUnit, typename DependentUnit, typename T>
+GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::GamowUnitAwareInterpolator(
+                                               const IndepQuantity& threshold )
+  : d_threshold( threshold )
+{
+  // T must be a floating point type
+  testStaticPrecondition( (IQT::is_floating_point::value) );
+  testStaticPrecondition( (DQT::is_floating_point::value) );
+  // Make sure the threshold is valid
+  testPrecondition( !IQT::isnaninf( threshold ) );
+  testPrecondition( this->isIndepVarInValidRange( threshold ) );
+}
+
 // Test if the independent value is in a valid range
 template<typename IndependentUnit, typename DependentUnit, typename T>
 bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isIndepVarInValidRange(
@@ -37,7 +51,7 @@ bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isIndepVarInVa
   // Make sure the indep var is valid
   testPrecondition( !IQT::isnaninf( indep_var ) );
 
-  return indep_var > IQT::zero();
+  return indep_var >= d_threshold;
 }
 
 // Test if the dependent value is in a valid range
@@ -48,7 +62,7 @@ bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isDepVarInVali
   // Make sure the dep var is valid
   testPrecondition( !DQT::isnaninf( dep_var ) );
 
-  return indep_var > DQT::zero();
+  return dep_var > DQT::zero();
 }
 
 // Process the independent value
@@ -56,7 +70,7 @@ template<typename IndependentUnit, typename DependentUnit, typename T>
 T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::processIndepVar(
                                          const IndepQuantity& indep_var ) const
 {
-  return getRawQuantity( indep_var );
+  return getRawQuantity( indep_var ) - getRawQuantity( d_threshold );
 }
 
 // Process the dependent value
@@ -71,7 +85,7 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::processDepVar(
 template<typename IndependentUnit, typename DependentUnit, typename T>
 auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::recoverProcessedIndepVar( const T processed_indep_var ) const -> IndepQuantity
 {
-  return IQT::initializeQuantity( processed_indep_var );
+  return IQT::initializeQuantity( processed_indep_var ) + d_threshold;
 }
 
 // Recover the processed dependent value
@@ -90,10 +104,44 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolate(
                              const DepQuantity dep_var_0,
                              const DepQuantity dep_var_1 ) const -> DepQuantity
 {
-  
+  // Make sure the independent variables are valid
+  testPrecondition( !IQT::isnaninf( indep_var_0 ) );
+  testPrecondition( !IQT::isnaninf( indep_var_1 ) );
+  testPrecondition( !IQT::isnaninf( indep_var ) );
+  testPrecondition( this->isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( this->isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( this->isIndepVarInValidRange( indep_var ) );
+  testPrecondition( indep_var_0 < indep_var_1 );
+  testPrecondition( indep_var >= indep_var_0 );
+  testPrecondition( indep_var <= indep_var_1 );
+  // Make sure the dependent variables are valid
+  testPrecondition( !DQT::isnaninf( dep_var_0 ) );
+  testPrecondition( !DQT::isnaninf( dep_var_1 ) );
+  testPrecondition( this->isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( this->isDepVarInValidRange( dep_var_1 ) );
+
+  // Calculate the processed indep variables (indep-threshold)
+  const T processed_indep_var_0 = this->processIndepVar( indep_var_0 );
+  const T processed_indep_var_1 = this->processIndepVar( indep_var_1 );
+  const T processed_indep_var = this->processIndepVar( indep_var );
+
+  // Calculate the B value (we will ignore the units here)
+  const T b_value = log((dep_var_1*indep_var_1)/(dep_var_0*indep_var_0))/
+    (1/sqrt(processed_indep_var_0) - 1/sqrt(processed_indep_var_1));
+
+  // Calculate the A/indep_var value
+  const DepQuantity a_value = dep_var_0*
+    exp(b_value/sqrt(procesed_indep_var_0))*(indep_var_0/indep_var);
+
+  // Calculate the interpolated value
+  return a_value*exp(-b_value/sqrt(processed_indep_var));
 }
 
 // Interpolate between two processed points
+/*! \details The processed slope is the "B" value (see the section of the
+ * ENDF manual on Interpolation Types and find the definition of the "B" value
+ * for the Gamow interpolation scheme.)
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProcessed(
                                   const T processed_indep_var_0,
@@ -101,7 +149,30 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePro
                                   const T processed_dep_var_0,
                                   const T processed_slope) const -> DepQuantity
 {
+  // Make sure the processed independent variables are valid
+  testPrecondition( !QT::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !QT::isnaninf( processed_indep_var ) );
+  testPrecondition( processed_indep_var_0 >= 0.0 );
+  testPrecondition( processed_indep_var_0 <= processed_indep_var );
+  // Make sure the processed dependent variable is valid
+  testPrecondition( !QT::isnaninf( processed_dep_var_0 ) );
+  testPrecondition( processed_dep_var_0 > 0.0 );
+  // Make sure that the slope is valid
+  testPrecondition( !QT::isnaninf( processed_slope ) );
+
+  // Recover the processed indep variables
+  IndepQuantity indep_var_0 =
+    this->recoverProcessedIndepVar( processed_indep_var_0 );
   
+  IndepQuantity indep_var =
+    this->recoverProcessedIndepVar( processed_indep_var );
+
+  // Calculate the A/indep_var value
+  const DepQuantity a_value = DQT::initializeQuantity( processed_dep_var_0 )*
+    exp(processed_slope/sqrt(processed_indep_var_0))*(indep_var_0/indep_var);
+
+  // Calculate the interpolated value
+  return a_value*exp(-b_value/sqrt(processed_indep_var));
 }
 
 // Interpolate between two points and return the processed valu
@@ -113,7 +184,11 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAndPro
                                             const DepQuantity dep_var_0,
                                             const DepQuantity dep_var_1 ) const
 {
-  
+  return getRawQuantity( this->interpolate( indep_var_0,
+                                            indep_var_1,
+                                            indep_var,
+                                            dep_var_0,
+                                            dep_var_1 ) );
 }
 
 // Interpolate between two processed points and return the processed value
@@ -124,7 +199,10 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProces
                                                  const T processed_dep_var_0,
                                                  const T processed_slope) const
 {
-  
+  return getRawQuantity( this->interpolateProcessed( processed_indep_var_0,
+                                                     processed_indep_var,
+                                                     processed_dep_var_0,
+                                                     processed_slope ) );
 }
   
 } // end Utility namespace

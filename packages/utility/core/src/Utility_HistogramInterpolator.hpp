@@ -36,6 +36,9 @@ protected:
   //! The dependent quantity traits
   typedef QuantityTraits<DepQuantity> DQT;
 
+  //! The raw quantity traits
+  typedef QuantityTraits<T> QT;
+
 public:
 
   //! Get an instance of the interpolator
@@ -92,8 +95,7 @@ public:
 private:
 
   // Constructor
-  HistogramUnitAwareInterpolator()
-  { /* ... */ }
+  HistogramUnitAwareInterpolator();
 
   // The interpolator instance
   static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_instance;

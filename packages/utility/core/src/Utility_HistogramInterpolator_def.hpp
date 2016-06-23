@@ -29,6 +29,15 @@ HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::getInstance()
   return s_instance;
 }
 
+// Constructor
+template<typename IndependentUnit, typename DependentUnit, typename T>
+HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::HistogramUnitAwareInterpolator()
+{
+  // T must be a floating point type
+  testStaticPrecondition( (IQT::is_floating_point::value) );
+  testStaticPrecondition( (DQT::is_floating_point::value) );
+}
+
 // Test if the independent value is in a valid range
 template<typename IndependentUnit, typename DependentUnit, typename T>
 bool HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isIndepVarInValidRange(
@@ -90,6 +99,17 @@ auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolat
                              const DepQuantity dep_var_0,
                              const DepQuantity dep_var_1 ) const -> DepQuantity
 {
+  // Make sure the independent variables are valid
+  testPrecondition( !IQT::isnaninf( indep_var_0 ) );
+  testPrecondition( !IQT::isnaninf( indep_var_1 ) );
+  testPrecondition( !IQT::isnaninf( indep_var ) );
+  testPrecondition( indep_var_0 < indep_var_1 );
+  testPrecondition( indep_var >= indep_var_0 );
+  testPrecondition( indep_var <= indep_var_1 );
+  // Make sure the dependent variables are valid
+  testPrecondition( !DQT::isnaninf( dep_var_0 ) );
+  testPrecondition( !DQT::isnaninf( dep_var_1 ) );
+  
   return dep_var_0;
 }
 
@@ -101,6 +121,15 @@ auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolat
                                   const T processed_dep_var_0,
                                   const T processed_slope) const -> DepQuantity
 {
+  // Make sure the processed independent variables are valid
+  testPrecondition( !QT::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !QT::isnaninf( processed_indep_var ) );
+  testPrecondition( processed_indep_var_0 <= processed_indep_var );
+  // Make sure the processed dependent variable is valid
+  testPrecondition( !QT::isnaninf( processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !QT::isnaninf( processed_slope ) );
+  
   return DQT::initializeQuantity( processed_dep_var_0 );
 }
 
@@ -128,7 +157,16 @@ T HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePr
                                                  const T processed_dep_var_0,
                                                  const T processed_slope) const
 {
-  return return processed_dep_var_0;
+  // Make sure the processed independent variables are valid
+  testPrecondition( !QT::isnaninf( processed_indep_var_0 ) );
+  testPrecondition( !QT::isnaninf( processed_indep_var ) );
+  testPrecondition( processed_indep_var_0 <= processed_indep_var );
+  // Make sure the processed dependent variable is valid
+  testPrecondition( !QT::isnaninf( processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !QT::isnaninf( processed_slope ) );
+  
+  return processed_dep_var_0;
 }
   
 } // end Utility namespace
