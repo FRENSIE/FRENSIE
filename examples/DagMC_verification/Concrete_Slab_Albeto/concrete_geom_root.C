@@ -24,12 +24,12 @@ void concrete_geom_root()
 
 //---------------------------------------------------------------------------//
     // Volume Definition Form:
-    // MakeSphere( "name", TGeoMedium, Minimum_Radius, Maximum_Radius )
+    // MakeBox( "name", TGeoMedium, x-width, y-width, z-width )
 //---------------------------------------------------------------------------//
 
-    // Iron Portlnd Concrete Slab with dimensions 30cm x 300cm x 300cm
-    TGeoVolume *concrete_Sphere = gGeoManager->MakeBox( "concrete_Sphere", concrete_med, 15., 300., 300.);
-    concrete_Sphere->SetUniqueID(1);
+    // Iron Portlnd Concrete Slab with dimensions 15cm x 300cm x 300cm
+    TGeoVolume *concrete_box = gGeoManager->MakeBox( "concrete_box", concrete_med, 15., 300., 300.);
+    concrete_box->SetUniqueID(1);
 
     // Void Cube of Side Height 50cm
     TGeoVolume *void_geom = gGeoManager->MakeBox("void_geom", void_med, 50., 320., 320.);
@@ -46,7 +46,7 @@ void concrete_geom_root()
 //---------------------------------------------------------------------------//
     
     // Adding that the concrete slab is a daughter of the void
-    void_geom->AddNode( concrete_Sphere, 1 );
+    void_geom->AddNode( concrete_box, 1 );
 
     // Adding that the void is a daughter of the graveyard
     terminal_geom->AddNode( void_geom, 1 );
