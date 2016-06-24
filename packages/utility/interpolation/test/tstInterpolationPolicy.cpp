@@ -21,6 +21,14 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LinLin, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LinLin::getInterpolationType(),
+                       Utility::LINLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the validity of an independent variable can be tested
 TEUCHOS_UNIT_TEST( LinLin, isIndepVarInValidRange )
 {
@@ -214,6 +222,14 @@ TEUCHOS_UNIT_TEST( LinLin, interpolateAndProcess_processed )
 					      processed_slope );
 
   TEST_EQUALITY_CONST( y, 10.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LogLin, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LogLin::getInterpolationType(),
+                       Utility::LOGLIN_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -412,6 +428,14 @@ TEUCHOS_UNIT_TEST( LogLin, interpolateAndProcess_processed )
 						  processed_slope );
 
   TEST_FLOATING_EQUALITY( log_y, log( 10.0 ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LinLog, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LinLog::getInterpolationType(),
+                       Utility::LINLOG_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -614,6 +638,14 @@ TEUCHOS_UNIT_TEST( LinLog, interpolateAndProcess_processed )
 					      processed_slope );
 
   TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that interpolation type can be returned
+TEUCHOS_UNIT_TEST( LogLog, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LogLog::getInterpolationType(),
+                       Utility::LOGLOG_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//

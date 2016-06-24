@@ -10,6 +10,7 @@
 #define UTILITY_INTERPOLATOR_HPP
 
 // FRENSIE Includes
+#include "Utility_InterpolationType.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 
@@ -53,6 +54,9 @@ public:
   //! Destructor
   virtual ~UnitAwareInterpolator()
   { /* ... */ }
+
+  //! Get the interpolation type
+  virtual InterpolationType getInterpolationType() const = 0;
 
   //! Test if the independent value is in a valid range
   virtual bool isIndepVarInValidRange(

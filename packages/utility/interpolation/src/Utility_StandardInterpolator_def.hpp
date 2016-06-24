@@ -26,6 +26,13 @@ StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::get
   return s_instance;
 }
 
+// Get the interpolation type
+template<typename InterpPolicy, typename IndependentUnit, typename DependentUnit, typename T>
+InterpolationType StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::getInterpolationType() const
+{
+  return InterpPolicy::getInterpolationType();
+}
+
 // Test if the independent value is in a valid range
 template<typename InterpPolicy, typename IndependentUnit, typename DependentUnit, typename T>
 bool StandardUnitAwareInterpolator<InterpPolicy,IndependentUnit,DependentUnit,T>::isIndepVarInValidRange(

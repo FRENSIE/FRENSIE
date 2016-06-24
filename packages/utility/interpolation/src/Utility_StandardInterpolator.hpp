@@ -1,25 +1,29 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GamowInterpolator.hpp
+//! \file   Utility_StandardInterpolator.hpp
 //! \author Alex Robinson
-//! \brief  The Gamow charged-particle penetrability interpolator declaration
+//! \brief  The standard interpolator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GAMOW_INTERPOLATOR_HPP
-#define UTILITY_GAMOW_INTERPOLATOR_HPP
+#ifndef UTILITY_STANDARD_INTERPOLATOR_HPP
+#define UTILITY_STANDARD_INTERPOLATOR_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // FRENSIE Includes
 #include "Utility_Interpolator.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace Utility{
 
-//! The Gamow charged-particle penetrability interpolator class
-template<typename IndependentUnit, typename DependentUnit, typename T=double>
-class GamowUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
+//! The standard interpolator class
+template<typename InterpPolicy,
+         typename IndependentUnit,
+         typename DependentUnit,
+         typename T=double>
+class StandardUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
 {
 
 protected:
@@ -38,15 +42,15 @@ protected:
 
 public:
 
-  //! Get an instance of the exothermic interpolator (threshold=0.0)
-  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > getExothermicInstance();
-
-  //! Constructor
-  GamowUnitAwareInterpolator( const IndepQuantity& threshold );
+  //! Get an instance of the interpolator
+  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > getInstance();
 
   //! Destructor
-  ~GamowUnitAwareInterpolator()
+  ~StandardUnitAwareInterpolator()
   { /* ... */ }
+
+  //! Get the interpolation type
+  InterpolationType getInterpolationType() const;
 
   //! Test if the independent value is in a valid range
   bool isIndepVarInValidRange( const IndepQuantity& indep_var ) const;
@@ -94,29 +98,29 @@ public:
 
 private:
 
-  // The exothermic interpolator instance
-  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_exothermic_instance;
+  // Constructor
+  StandardUnitAwareInterpolator()
+  { /* ... */ }
 
-  // The threshold
-  IndepQuantity d_threshold;
+  // The interpolator instance
+  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_instance;
 };
 
-//! The Gamow charged-particle penetrability interpolator class (unit-agnostic)
-template<typename T> using GamowInterpolator =
-  GamowUnitAwareInterpolator<void,void,T>;
+//! The standard interpolator (unit-agnostic)
+template<typename InterpPolicy, typename T> using StandardInterpolator = StandardUnitAwareInterpolator<InterpPolicy,void,void,T>;
   
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// Template Includes
+// Template includes
 //---------------------------------------------------------------------------//
 
-#inclucde "Utility_GamowInterpolator_def.hpp"
+#include "Utility_StandardInterpolator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GAMOW_INTERPOLATOR_HPP
+#endif // end UTILITY_STANDARD_INTERPOLATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GamowInterpolator.hpp
+// end Utility_StandardInterpolator.hpp
 //---------------------------------------------------------------------------//

@@ -10,6 +10,7 @@
 #define UTILITY_INTERPOLATION_POLICY_HPP
 
 // FRENSIE Includes
+#include "Utility_InterpolationType.hpp"
 #include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
@@ -37,6 +38,9 @@ struct LogLog
 
   //! Dependent variable processing tag
   typedef LogDepVarProcessingTag DepVarProcessingTag;
+
+  //! Get the interpolation type
+  static InterpolationType getInterpolationType();
   
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
@@ -110,6 +114,9 @@ struct LogLin
 
   //! Dependent variable processing tag
   typedef LogDepVarProcessingTag DepVarProcessingTag;
+
+  //! Get the interpolation type
+  static InterpolationType getInterpolationType();
   
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
@@ -183,6 +190,9 @@ struct LinLog
 
   //! Dependent variable processing tag
   typedef LinDepVarProcessingTag DepVarProcessingTag;
+
+  //! Get the interpolation type
+  static InterpolationType getInterpolationType();
   
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
@@ -256,6 +266,9 @@ struct LinLin
 
   //! Dependent variable processing tag
   typedef LinDepVarProcessingTag DepVarProcessingTag;
+
+  //! Get the interpolation type
+  static InterpolationType getInterpolationType();
   
   //! Interpolate between two points
   template<typename IndepType, typename DepType>

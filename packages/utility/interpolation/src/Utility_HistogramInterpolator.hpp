@@ -1,29 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_StandardInterpolator.hpp
+//! \file   Utility_HistogramInterpolator.hpp
 //! \author Alex Robinson
-//! \brief  The standard interpolator declaration
+//! \brief  The histogram interpolator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_STANDARD_INTERPOLATOR_HPP
-#define UTILITY_STANDARD_INTERPOLATOR_HPP
+#ifndef UTILITY_HISTOGRAM_INTERPOLATOR_HPP
+#define UTILITY_HISTOGRAM_INTERPOLATOR_HPP
 
 // Std Lib Includes
 #include <memory>
 
 // FRENSIE Includes
 #include "Utility_Interpolator.hpp"
-#include "Utility_InterpolationPolicy.hpp"
 
 namespace Utility{
 
-//! The standard interpolator class
-template<typename InterpPolicy,
-         typename IndependentUnit,
-         typename DependentUnit,
-         typename T=double>
-class StandardUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
+//! The histogram interpolator class
+template<typename IndependentUnit, typename DependentUnit, typename T=double>
+class HistogramUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
 {
 
 protected:
@@ -40,14 +36,20 @@ protected:
   //! The dependent quantity traits
   typedef QuantityTraits<DepQuantity> DQT;
 
+  //! The raw quantity traits
+  typedef QuantityTraits<T> QT;
+
 public:
 
   //! Get an instance of the interpolator
   static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > getInstance();
 
   //! Destructor
-  ~StandardUnitAwareInterpolator()
+  ~HistogramUnitAwareInterpolator()
   { /* ... */ }
+
+  //! Get the interpolation type
+  InterpolationType getInterpolationType() const;
 
   //! Test if the independent value is in a valid range
   bool isIndepVarInValidRange( const IndepQuantity& indep_var ) const;
@@ -96,28 +98,28 @@ public:
 private:
 
   // Constructor
-  StandardUnitAwareInterpolator()
-  { /* ... */ }
+  HistogramUnitAwareInterpolator();
 
   // The interpolator instance
   static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_instance;
 };
 
-//! The standard interpolator (unit-agnostic)
-template<typename InterpPolicy, typename T> using StandardInterpolator = StandardUnitAwareInterpolator<InterpPolicy,void,void,T>;
+//! The histogram interpolator (unit-agnostic)
+template<typename T> using HistogramInterpolator =
+  HistogramUnitAwareInterpolator<void,void,T>;
   
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// Template includes
+// Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_StandardInterpolator_def.hpp"
+#include "Utility_HistogramInterpolator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_STANDARD_INTERPOLATOR_HPP
+#endif // end UTILITY_HISTOGRAM_INTERPOLATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_StandardInterpolator.hpp
+// end Utility_HistogramInterpolator.hpp
 //---------------------------------------------------------------------------//

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramInterpolator.hpp
+//! \file   Utility_GamowInterpolator.hpp
 //! \author Alex Robinson
-//! \brief  The histogram interpolator declaration
+//! \brief  The Gamow charged-particle penetrability interpolator declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_INTERPOLATOR_HPP
-#define UTILITY_HISTOGRAM_INTERPOLATOR_HPP
+#ifndef UTILITY_GAMOW_INTERPOLATOR_HPP
+#define UTILITY_GAMOW_INTERPOLATOR_HPP
 
 // Std Lib Includes
 #include <memory>
@@ -17,9 +17,9 @@
 
 namespace Utility{
 
-//! The histogram interpolator class
+//! The Gamow charged-particle penetrability interpolator class
 template<typename IndependentUnit, typename DependentUnit, typename T=double>
-class HistogramUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
+class GamowUnitAwareInterpolator : public UnitAwareInterpolator<IndependentUnit,DependentUnit,T>
 {
 
 protected:
@@ -36,17 +36,20 @@ protected:
   //! The dependent quantity traits
   typedef QuantityTraits<DepQuantity> DQT;
 
-  //! The raw quantity traits
-  typedef QuantityTraits<T> QT;
-
 public:
 
-  //! Get an instance of the interpolator
-  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > getInstance();
+  //! Get an instance of the exothermic interpolator (threshold=0.0)
+  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > getExothermicInstance();
+
+  //! Constructor
+  GamowUnitAwareInterpolator( const IndepQuantity& threshold );
 
   //! Destructor
-  ~HistogramUnitAwareInterpolator()
+  ~GamowUnitAwareInterpolator()
   { /* ... */ }
+
+  //! Get the interpolation type
+  InterpolationType getInterpolationType() const;
 
   //! Test if the independent value is in a valid range
   bool isIndepVarInValidRange( const IndepQuantity& indep_var ) const;
@@ -94,16 +97,16 @@ public:
 
 private:
 
-  // Constructor
-  HistogramUnitAwareInterpolator();
+  // The exothermic interpolator instance
+  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_exothermic_instance;
 
-  // The interpolator instance
-  static std::shared_ptr<const UnitAwareInterpolator<IndependentUnit,DependentUnit,T> > s_instance;
+  // The threshold
+  IndepQuantity d_threshold;
 };
 
-//! The histogram interpolator (unit-agnostic)
-template<typename T> using HistogramInterpolator =
-  HistogramUnitAwareInterpolator<void,void,T>;
+//! The Gamow charged-particle penetrability interpolator class (unit-agnostic)
+template<typename T> using GamowInterpolator =
+  GamowUnitAwareInterpolator<void,void,T>;
   
 } // end Utility namespace
 
@@ -111,12 +114,12 @@ template<typename T> using HistogramInterpolator =
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Utility_HistogramInterpolator_def.hpp"
+#inclucde "Utility_GamowInterpolator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_HISTOGRAM_INTERPOLATOR_HPP
+#endif // end UTILITY_GAMOW_INTERPOLATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramInterpolator.hpp
+// end Utility_GamowInterpolator.hpp
 //---------------------------------------------------------------------------//
