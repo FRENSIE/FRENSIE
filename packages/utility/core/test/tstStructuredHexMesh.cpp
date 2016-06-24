@@ -49,9 +49,26 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, construct_mesh)
                                                                 y_planes,
                                                                 z_planes ) ) );
 
-  std::cout << hex_mesh->d_x_planes << std::endl;
-  std::cout << hex_mesh->d_y_planes << std::endl;
-  std::cout << hex_mesh->d_z_planes << std::endl;
+  TEST_EQUALITY( x_planes.size(), hex_mesh->getNumberOfXPlanes() );
+  for(unsigned i = 0; i < x_planes.size(); ++i)
+  {
+    TEST_FLOATING_EQUALITY( hex_mesh->getXPlaneLocation(i), x_planes[i], 1e-12 );
+  }
+
+  TEST_EQUALITY( y_planes.size(), hex_mesh->getNumberOfYPlanes() );
+  for(unsigned i = 0; i < y_planes.size(); ++i)
+  {
+    TEST_FLOATING_EQUALITY( hex_mesh->getYPlaneLocation(i), y_planes[i], 1e-12 );
+  }
+
+  TEST_EQUALITY( z_planes.size(), hex_mesh->getNumberOfZPlanes() );
+  for(unsigned i = 0; i < z_planes.size(); ++i)
+  {
+    TEST_FLOATING_EQUALITY( hex_mesh->getZPlaneLocation(i), z_planes[i], 1e-12 );
+  }
+  
+  TEST_EQUALITY( (z_planes.size()-1) * (y_planes.size()-1) * (x_planes.size()-1),
+                 std::distance( hex_mesh->getStartHexIDIterator(), hex_mesh->getEndHexIDIterator() ) );
 
 }
 

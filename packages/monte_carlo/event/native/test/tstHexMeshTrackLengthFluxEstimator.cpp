@@ -36,22 +36,22 @@ std::shared_ptr<MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMu
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
 {
   // Set up a basic mesh
-  Teuchos::Array<double> x_grid_points, y_grid_points, z_grid_points;
-  x_grid_points.push_back(0);
-  x_grid_points.push_back(1);
-  x_grid_points.push_back(2);
-  y_grid_points.push_back(0);
-  y_grid_points.push_back(1);
-  y_grid_points.push_back(2);
-  z_grid_points.push_back(0);
-  z_grid_points.push_back(1);
-  z_grid_points.push_back(2);
+  Teuchos::Array<double> x_planes, y_planes, z_planes;
+  x_planes.push_back(0);
+  x_planes.push_back(1);
+  x_planes.push_back(2);
+  y_planes.push_back(0);
+  y_planes.push_back(1);
+  y_planes.push_back(2);
+  z_planes.push_back(0);
+  z_planes.push_back(1);
+  z_planes.push_back(2);
 
-  TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(0, 2, x_grid_points, y_grid_points, z_grid_points ) ) );
+  TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(0, 2, x_planes, y_planes, z_planes ) ) );
 
 }
 
-TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
+/*TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
 {
 
   // Set the particle types
@@ -110,11 +110,9 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   // Create an estimator hdf5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
-  // Get the hex entity handles for use in data retrieval
-  const moab::Range all_hex_elements = hex_estimator->getAllHexElements();
-
   // Retrieve the raw bin data for each hex
-  moab::Range::const_iterator hex = all_hex_elements.begin();
+  Utility::StructuredHexMesh::HexIDIterator hex = 
+    hex_estimator->d_hex_begin;
 
   Teuchos::Array<Utility::Pair<double,double> >
     raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
@@ -207,9 +205,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
                                         1e-12 );
 
   ++hex;
-
-  //
-}
+}*/
 
 //---------------------------------------------------------------------------//
 // Custom Main

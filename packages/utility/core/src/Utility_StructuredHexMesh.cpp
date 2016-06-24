@@ -6,8 +6,6 @@
 //! 
 //---------------------------------------------------------------------------//
 
-#include <iostream>
-
 //std includes
 #include <math.h>
 
@@ -21,29 +19,66 @@ namespace Utility{
 //initialize static member data
 const double StructuredHexMesh::s_tol = 1e-10;
 
-//!Constructor
+//! Constructor
 StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
                                       const Teuchos::Array<double>& y_planes,
                                       const Teuchos::Array<double>& z_planes)
 {
-  //assign the given grid points to member data
+
+  //Test for at least 2 planes
+  testPrecondition(x_planes.size()>=2);
+  testPrecondition(y_planes.size()>=2);
+  testPrecondition(z_planes.size()>=2);
+  
+  //make sure that the planes are in increasing sequential order
+
+  for(unsigned i = 0; i < x_planes.size()-1; ++i)
+  {
+    testPrecondition( x_planes[i] < x_planes[i+1] );
+  }
+
+  for(unsigned i = 0; i < y_planes.size()-1; ++i)
+  {
+    testPrecondition( y_planes[i] < y_planes[i+1] );
+  }
+
+  for(unsigned i = 0; i < z_planes.size()-1; ++i)
+  {
+    testPrecondition( z_planes[i] < z_planes[i+1] );
+  }
+  
+  //assign the given planes to member data
   d_x_planes.assign(x_planes.begin(),x_planes.end());
   d_y_planes.assign(y_planes.begin(),y_planes.end());
   d_z_planes.assign(z_planes.begin(),z_planes.end());
+  
+  //form the list of hex element indices
+  for( unsigned k = 0; k < d_z_planes.size()-1; ++k )
+  {
+    for( unsigned j = 0; j < d_y_planes.size()-1; ++j )
+    {
+      for( unsigned i = 0; i < d_x_planes.size()-1; ++i )
+      {
+      
+        d_hex_elements.push_back( findIndex( i, j, k) );
+      
+      }
+    }
+  }
 
 }
 
-boost::unordered_map<StructuredHexMesh::hex_index,
-                     StructuredHexMesh::hex_volume>
+boost::unordered_map<StructuredHexMesh::HexIndex,
+                     StructuredHexMesh::HexVolume>
                      StructuredHexMesh::calculateVolumes()
 {
 
-  boost::unordered_map<hex_index, hex_volume> hex_volumes;
-  for(plane_index k = 0; k < d_z_planes.size() - 1; ++k)
+  boost::unordered_map<HexIndex, HexVolume> hex_volumes;
+  for(PlaneIndex k = 0; k < d_z_planes.size() - 1; ++k)
   {
-    for(plane_index j = 0; j < d_y_planes.size() - 1; ++j)
+    for(PlaneIndex j = 0; j < d_y_planes.size() - 1; ++j)
     {
-      for(plane_index i = 0; i < d_x_planes.size() - 1; ++i)
+      for(PlaneIndex i = 0; i < d_x_planes.size() - 1; ++i)
       {
       
         hex_volumes[ findIndex(i, j, k) ] = 
@@ -79,7 +114,7 @@ bool StructuredHexMesh::isPointInMesh( const double point[3] )
 
 //find the index of the hex that a point is in
 
-StructuredHexMesh::hex_index StructuredHexMesh::whichHexIsPointIn( const double point[3] )
+StructuredHexMesh::HexIndex StructuredHexMesh::whichHexIsPointIn( const double point[3] )
 {
 
   unsigned x_index = Search::binaryLowerBoundIndex( d_x_planes.begin(),
@@ -116,18 +151,18 @@ StructuredHexMesh::hex_index StructuredHexMesh::whichHexIsPointIn( const double 
 
 /*!compute track lengths for a given ray and which hex they correspond to. Return
   teuchos array of pairs*/
-Teuchos::Array<std::pair<StructuredHexMesh::hex_index,double>> StructuredHexMesh::computeTrackLengths( 
+Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh::computeTrackLengths( 
                                             const double start_point[3],
                                             const double end_point[3],
                                             const double direction[3],
                                             const double track_length )
 {
   //initialize variables
-  Teuchos::Array<std::pair<hex_index,double>> contribution_array;
+  Teuchos::Array<std::pair<HexIndex,double>> contribution_array;
   
   double current_point[3] { start_point[0], start_point[1], start_point[2] };
   
-  Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_plane_array;
+  Teuchos::Array<std::pair<planeDimension,PlaneIndex>> interaction_plane_array;
   
   Teuchos::Array<std::pair<planeDimension,double>> distance_array;
   
@@ -207,7 +242,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::hex_index,double>> StructuredHexMesh
     return contribution_array;
   }
 
-  //find the planes that the particle will interact with (since point has either moved or these were never found if inside mesh) and set indices up for interaction planes and hex_index planes
+  //find the planes that the particle will interact with (since point has either moved or these were never found if inside mesh) and set indices up for interaction planes and HexIndex planes
   interaction_plane_array = findInteractionPlanes( current_point,
                                                    direction );
 
@@ -295,12 +330,86 @@ Teuchos::Array<std::pair<StructuredHexMesh::hex_index,double>> StructuredHexMesh
   return contribution_array;
 }
 
+//get the start iterator of the hex element list
+/*! \details returns the iterator that points to the first element in the list containing
+ *           all of the hex ID elements */
+StructuredHexMesh::HexIDIterator StructuredHexMesh::getStartHexIDIterator()
+{
+
+  return d_hex_elements.begin(); 
+  
+}
+
+//get the end iterator of the hex element list
+/*! \details returns the iterator that points to one beyond the last element in the list containing
+ *           all of the hex ID elements */
+StructuredHexMesh::HexIDIterator StructuredHexMesh::getEndHexIDIterator()
+{
+
+  return d_hex_elements.end();
+
+}
+
+//get the number of planes on the X axis
+unsigned StructuredHexMesh::getNumberOfXPlanes()
+{
+
+  return d_x_planes.size();
+
+}
+
+//get the number of planes on the Y axis
+unsigned StructuredHexMesh::getNumberOfYPlanes()
+{
+
+  return d_y_planes.size();
+
+}
+
+//get the number of planes on the Z axis
+unsigned StructuredHexMesh::getNumberOfZPlanes()
+{
+
+  return d_z_planes.size();
+
+}
+
+//get the location of a specific plane on the x axis
+double StructuredHexMesh::getXPlaneLocation( PlaneIndex i)
+{
+  //make sure plane index is valid
+  testPrecondition( i < d_x_planes.size() && i >= 0);
+  
+  return d_x_planes[i];
+
+}
+
+//get the location of a specific plane on the y axis
+double StructuredHexMesh::getYPlaneLocation( PlaneIndex i)
+{
+  //make sure plane index is valid
+  testPrecondition( i < d_y_planes.size() && i >= 0);
+  
+  return d_y_planes[i];
+
+}
+
+//get the location of a specific plane on the y axis
+double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)
+{
+  //make sure plane index is valid
+  testPrecondition( i < d_z_planes.size() && i >= 0);
+  
+  return d_z_planes[i];
+
+}
+
 //begin private functions
 
 //set the member indices for a particle traveling through the mesh
 void StructuredHexMesh::setMemberIndices( const double point[3],
                                           const double direction[3],
-                                          const Teuchos::Array<std::pair<planeDimension,plane_index>>& interaction_planes )
+                                          const Teuchos::Array<std::pair<planeDimension,PlaneIndex>>& interaction_planes )
 {
   /*first try to avoid a binary search. If the direction is negative for a given interaction plane,
     just use the interaction plane index as the member index*/
@@ -486,7 +595,7 @@ bool StructuredHexMesh::boundaryRegionSpecialCase( const double start_point[3],
 
 //return whether or not the particle exited the mesh
 bool StructuredHexMesh::didParticleExitMesh( planeDimension intersection_dimension,
-                                             Teuchos::Array<std::pair<planeDimension, plane_index>> interaction_planes)
+                                             Teuchos::Array<std::pair<planeDimension, PlaneIndex>> interaction_planes)
 {
   bool particleExitedMesh = false;
   
@@ -519,11 +628,11 @@ bool StructuredHexMesh::didParticleExitMesh( planeDimension intersection_dimensi
   return particleExitedMesh;
 }
 //find the planes that a particle will interact with
-Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::plane_index>> StructuredHexMesh::findInteractionPlanes( 
+Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::PlaneIndex>> StructuredHexMesh::findInteractionPlanes( 
                                                           const double point[3],
                                                           const double direction[3] )
 {
-  Teuchos::Array<std::pair<planeDimension,plane_index>> interaction_planes;
+  Teuchos::Array<std::pair<planeDimension,PlaneIndex>> interaction_planes;
 //X DIMENSION SEARCH
 
   if(std::fabs(direction[x_dim]) > s_tol)
@@ -532,7 +641,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is negative */
     if( point[x_dim] >= d_x_planes.back() + s_tol && direction[x_dim] < 0 )
     {
-      std::pair<planeDimension,plane_index> x_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> x_interaction_plane = 
         std::make_pair(x_dim, d_x_planes.size()-1);
     
       interaction_planes.push_back(x_interaction_plane);
@@ -540,7 +649,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_x_planes.back() <= point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol && direction[x_dim] < 0)
     {
-      std::pair<planeDimension,plane_index> x_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> x_interaction_plane = 
         std::make_pair(x_dim, d_x_planes.size()-2);
     
       interaction_planes.push_back(x_interaction_plane);    
@@ -549,7 +658,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is positive */
     else if( point[x_dim] <= d_x_planes.front() - s_tol && direction[x_dim] > 0 )
     {
-      std::pair<planeDimension,plane_index> x_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> x_interaction_plane = 
         std::make_pair(x_dim, 0);
     
       interaction_planes.push_back(x_interaction_plane);
@@ -557,7 +666,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_x_planes.front() >= point[x_dim] && point[x_dim] > d_x_planes.front() - s_tol && direction[x_dim] > 0)
     {
-      std::pair<planeDimension,plane_index> x_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> x_interaction_plane = 
         std::make_pair(x_dim, 1);
     
       interaction_planes.push_back(x_interaction_plane);    
@@ -567,21 +676,21 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     {
       if(direction[x_dim] > 0)
       {
-        plane_index x_plane_index =
+        PlaneIndex x_plane_index =
           Search::binaryUpperBoundIndex( d_x_planes.begin(),
                                          d_x_planes.end(),
                                          point[x_dim] );
-        std::pair<planeDimension,plane_index> x_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> x_interaction_plane =
           std::make_pair(x_dim, x_plane_index);
         interaction_planes.push_back(x_interaction_plane);
       }
       else if( direction[x_dim] < 0)
       {
-        plane_index x_plane_index =
+        PlaneIndex x_plane_index =
           Search::binaryLowerBoundIndex( d_x_planes.begin(),
                                          d_x_planes.end(),
                                          point[x_dim] );
-        std::pair<planeDimension,plane_index> x_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> x_interaction_plane =
           std::make_pair(x_dim, x_plane_index);
       
         interaction_planes.push_back(x_interaction_plane);
@@ -597,7 +706,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is negative */
     if( point[y_dim] >= d_y_planes.back() + s_tol && direction[y_dim] < 0 )
     {
-      std::pair<planeDimension,plane_index> y_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> y_interaction_plane = 
         std::make_pair(y_dim, d_y_planes.size()-1);
     
       interaction_planes.push_back(y_interaction_plane);
@@ -605,7 +714,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_y_planes.back() <= point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol && direction[y_dim] < 0)
     {
-      std::pair<planeDimension,plane_index> y_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> y_interaction_plane = 
         std::make_pair(y_dim, d_y_planes.size()-2);
     
       interaction_planes.push_back(y_interaction_plane);    
@@ -614,7 +723,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is positive */
     else if( point[y_dim] <= d_y_planes.front() - s_tol && direction[y_dim] > 0 )
     {
-      std::pair<planeDimension,plane_index> y_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> y_interaction_plane = 
         std::make_pair(y_dim, 0);
       
       interaction_planes.push_back(y_interaction_plane);
@@ -622,7 +731,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_y_planes.front() >= point[y_dim] && point[y_dim] > d_y_planes.front() - s_tol && direction[y_dim] > 0)
     {
-      std::pair<planeDimension,plane_index> y_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> y_interaction_plane = 
         std::make_pair(y_dim, 1);
       
       interaction_planes.push_back(y_interaction_plane);    
@@ -632,22 +741,22 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     {
       if(direction[y_dim] > 0)
       {
-        plane_index y_plane_index =
+        PlaneIndex y_plane_index =
           Search::binaryUpperBoundIndex( d_y_planes.begin(),
                                          d_y_planes.end(),
                                          point[y_dim] );
-        std::pair<planeDimension,plane_index> y_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> y_interaction_plane =
           std::make_pair(y_dim, y_plane_index);
         interaction_planes.push_back(y_interaction_plane);
       
       }
       else if( direction[y_dim] < 0)
       {
-        plane_index y_plane_index =
+        PlaneIndex y_plane_index =
           Search::binaryLowerBoundIndex( d_y_planes.begin(),
                                          d_y_planes.end(),
                                          point[y_dim] );
-        std::pair<planeDimension,plane_index> y_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> y_interaction_plane =
           std::make_pair(y_dim, y_plane_index);
       
         interaction_planes.push_back(y_interaction_plane);
@@ -663,7 +772,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is negative */
     if( point[z_dim] >= d_z_planes.back() + s_tol && direction[z_dim] < 0 )
     {
-      std::pair<planeDimension,plane_index> z_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> z_interaction_plane = 
         std::make_pair(z_dim, d_z_planes.size()-1);
     
       interaction_planes.push_back(z_interaction_plane);
@@ -671,7 +780,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_z_planes.back() <= point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol && direction[z_dim] < 0)
     {
-      std::pair<planeDimension,plane_index> z_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> z_interaction_plane = 
         std::make_pair(z_dim, d_z_planes.size()-2);
     
       interaction_planes.push_back(z_interaction_plane);    
@@ -680,7 +789,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
       relevant direction component is positive */
     else if( point[z_dim] <= d_z_planes.front() - s_tol && direction[z_dim] > 0 )
     {
-      std::pair<planeDimension,plane_index> z_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> z_interaction_plane = 
         std::make_pair(z_dim, 0);
     
       interaction_planes.push_back(z_interaction_plane);
@@ -688,7 +797,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
     else if( d_z_planes.front() >= point[z_dim] && point[z_dim] > d_z_planes.front() - s_tol && direction[z_dim] > 0)
     {
-      std::pair<planeDimension,plane_index> z_interaction_plane = 
+      std::pair<planeDimension,PlaneIndex> z_interaction_plane = 
         std::make_pair(z_dim, 1);
     
       interaction_planes.push_back(z_interaction_plane);    
@@ -698,22 +807,22 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
     {
       if(direction[z_dim] > 0)
       {
-        plane_index z_plane_index =
+        PlaneIndex z_plane_index =
           Search::binaryUpperBoundIndex( d_z_planes.begin(),
                                          d_z_planes.end(),
                                          point[z_dim] );
-        std::pair<planeDimension,plane_index> z_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> z_interaction_plane =
           std::make_pair(z_dim, z_plane_index);
         interaction_planes.push_back(z_interaction_plane);
       
       }
       else if( direction[z_dim] < 0)
       {
-        plane_index z_plane_index =
+        PlaneIndex z_plane_index =
           Search::binaryLowerBoundIndex( d_z_planes.begin(),
                                          d_z_planes.end(),
                                          point[z_dim] );
-        std::pair<planeDimension,plane_index> z_interaction_plane =
+        std::pair<planeDimension,PlaneIndex> z_interaction_plane =
           std::make_pair(z_dim, z_plane_index);
       
         interaction_planes.push_back(z_interaction_plane);
@@ -729,7 +838,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,StructuredHexMesh::pl
 Teuchos::Array<std::pair<StructuredHexMesh::planeDimension,double>> StructuredHexMesh::findDistances( 
                                     const double point[3],
                                     const double direction[3],
-                                    const Teuchos::Array<std::pair<planeDimension,plane_index>>& planeSet)
+                                    const Teuchos::Array<std::pair<planeDimension,PlaneIndex>>& planeSet)
 {
 
   Teuchos::Array<std::pair<planeDimension,double>> distances;
@@ -781,9 +890,9 @@ std::pair<StructuredHexMesh::planeDimension,double> StructuredHexMesh::findInter
 
 }
 
-StructuredHexMesh::hex_index StructuredHexMesh::findIndex( const unsigned x_index,
-                                       const unsigned y_index,
-                                       const unsigned z_index )
+StructuredHexMesh::HexIndex StructuredHexMesh::findIndex( const unsigned x_index,
+                                                           const unsigned y_index,
+                                                           const unsigned z_index )
 {
   unsigned x_dimension = d_x_planes.size()-1;
   unsigned y_dimension = d_y_planes.size()-1;
@@ -795,7 +904,7 @@ StructuredHexMesh::hex_index StructuredHexMesh::findIndex( const unsigned x_inde
 
 }
 
-StructuredHexMesh::hex_index StructuredHexMesh::findIndex( const unsigned indices[3] )
+StructuredHexMesh::HexIndex StructuredHexMesh::findIndex( const unsigned indices[3] )
 {
   return findIndex( indices[x_dim], indices[y_dim], indices[z_dim] );
 }

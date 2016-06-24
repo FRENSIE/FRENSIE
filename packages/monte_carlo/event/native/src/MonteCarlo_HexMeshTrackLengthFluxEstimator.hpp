@@ -34,7 +34,7 @@
 namespace MonteCarlo{
 
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
-class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>,
+class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>,
   public ParticleSubtrackEndingGlobalEventObserver
 {
 
@@ -79,6 +79,12 @@ public:
 
   //! Print the estimator data
   void printSummary( std::ostream& os ) const;
+
+  //! starting iterator over the hex mesh elements
+  Utility::StructuredHexMesh::HexIDIterator d_hex_begin;
+  
+  //! ending iterator for the hex mesh elements
+  Utility::StructuredHexMesh::HexIDIterator d_hex_end;
 
 private:
 

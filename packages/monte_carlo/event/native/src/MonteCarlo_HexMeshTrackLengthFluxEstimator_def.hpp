@@ -32,23 +32,18 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   const Teuchos::Array<double>& y_planes,
   const Teuchos::Array<double>& z_planes,
   const std::string output_mesh_file_name)
-: StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>( id, multiplier )
-
+: StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>( id, multiplier ),
+  d_hex_mesh( new Utility::StructuredHexMesh( x_planes, y_planes, z_planes) ),
+  d_hex_begin( d_hex_mesh->getStartHexIDIterator() ),
+  d_hex_end( d_hex_mesh->getEndHexIDIterator() ),
+  d_output_mesh_file_name( output_mesh_file_name )
 {
-  //Test for 2 dimension grid points - input logical statement into precondition. Will tell coder what precondition failed when being used
-  testPrecondition(x_planes.size()>=2);
-  testPrecondition(y_planes.size()>=2);
-  testPrecondition(z_planes.size()>=2);
   
-  d_hex_mesh.reset( new Utility::StructuredHexMesh( x_planes, y_planes, z_planes) );
-  
-  boost::unordered_map<Utility::StructuredHexMesh::hex_index,
-                       Utility::StructuredHexMesh::hex_volume> hex_volumes = 
+  boost::unordered_map<Utility::StructuredHexMesh::HexIndex,
+                       Utility::StructuredHexMesh::HexVolume> hex_volumes = 
                        d_hex_mesh->calculateVolumes();
 
   this->assignEntities( hex_volumes );
-
-  d_output_mesh_file_name = output_mesh_file_name;
 
 
 }
@@ -85,9 +80,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 {
 
   //make sure end point isn't the same as start point
-  testPrecondition( start_point[0] == end_point[0] &&
-                    start_point[1] == end_point[1] &&
-                    start_point[2] == end_point[2] );
+  testPrecondition( start_point[0] != end_point[0] &&
+                    start_point[1] != end_point[1] &&
+                    start_point[2] != end_point[2] );
 
   double ray[3] {end_point[0] - start_point[0],
                  end_point[1] - start_point[1],
@@ -105,7 +100,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {        
     
-    Teuchos::Array<std::pair<Utility::StructuredHexMesh::hex_index, double>> contribution_array =
+    Teuchos::Array<std::pair<Utility::StructuredHexMesh::HexIndex, double>> contribution_array =
       d_hex_mesh->computeTrackLengths( start_point,
                                        end_point,
                                        direction,
@@ -131,7 +126,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                     const bool process_data ) const
 {
   // Export data in FRENSIE formatting for data manipulation
-  StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>::exportData( hdf5_file,
+  StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::exportData( hdf5_file,
                                                            process_data );
 
   // Set the estimator as a mesh estimator
@@ -165,9 +160,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     }
 
     //transform planes of mesh into moab useable interleaved coordinates;
-    std::vector<double>::size_type x_coordinates_size = d_hex_mesh->d_x_planes.size();
-    std::vector<double>::size_type y_coordinates_size = d_hex_mesh->d_y_planes.size();
-    std::vector<double>::size_type z_coordinates_size = d_hex_mesh->d_z_planes.size();
+    std::vector<double>::size_type x_coordinates_size = d_hex_mesh->getNumberOfXPlanes();
+    std::vector<double>::size_type y_coordinates_size = d_hex_mesh->getNumberOfYPlanes();
+    std::vector<double>::size_type z_coordinates_size = d_hex_mesh->getNumberOfZPlanes();
 
     //make an array called coordinates that MOAB can use to construct a structured hex mesh
     unsigned size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
@@ -176,9 +171,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     for(unsigned i = 0; i < size_of_coordinates; i = i + 3)
     {
   
-      coordinates[i] = d_hex_mesh->d_x_planes[i/3];
-      coordinates[i+1] = d_hex_mesh->d_y_planes[i/3];
-      coordinates[i+2] = d_hex_mesh->d_z_planes[i/3];
+      coordinates[i] = d_hex_mesh->getXPlaneLocation(i/3);
+      coordinates[i+1] = d_hex_mesh->getYPlaneLocation(i/3);
+      coordinates[i+2] = d_hex_mesh->getZPlaneLocation(i/3);
   
     }
 
@@ -433,9 +428,9 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
   //figure out how many hex elements there are
   
-  unsigned long hex_elements = (d_hex_mesh->d_x_planes.size()-1)*
-                               (d_hex_mesh->d_y_planes.size()-1)*
-                               (d_hex_mesh->d_z_planes.size()-1);
+  unsigned long hex_elements = (d_hex_mesh->getNumberOfXPlanes()-1)*
+                               (d_hex_mesh->getNumberOfYPlanes()-1)*
+                               (d_hex_mesh->getNumberOfZPlanes()-1);
 
   for( unsigned long i = 0; i < hex_elements; ++i )
   {
@@ -531,7 +526,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
   }
   else
   {
-    StandardEntityEstimator<Utility::StructuredHexMesh::hex_index>::assignBinBoundaries( 
+    StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::assignBinBoundaries( 
 							      bin_boundaries );
   }
 
