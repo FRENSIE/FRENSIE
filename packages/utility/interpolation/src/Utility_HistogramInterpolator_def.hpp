@@ -98,6 +98,10 @@ auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::recoverPro
 }
 
 // Interpolate between two points
+/*! \details Only point 0 will be used, even if the independent variable is
+ * exactly equal to indep_var_1. If this interpolator is used with a binary
+ * search algorithm, this special case should never arise.
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolate(
                              const IndepQuantity indep_var_0,
@@ -121,6 +125,10 @@ auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolat
 }
 
 // Interpolate between two processed points
+/*! \details Only point 0 will be used, even if the independent variable is
+ * exactly equal to indep_var_1. If this interpolator is used with a binary
+ * search algorithm, this special case should never arise.
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProcessed(
                                   const T processed_indep_var_0,
@@ -136,11 +144,15 @@ auto HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolat
   testPrecondition( !QT::isnaninf( processed_dep_var_0 ) );
   // Make sure that the slope is valid
   testPrecondition( !QT::isnaninf( processed_slope ) );
-  
+
   return DQT::initializeQuantity( processed_dep_var_0 );
 }
 
-// Interpolate between two points and return the processed valu
+// Interpolate between two points and return the processed value
+/*! \details Only point 0 will be used, even if the independent variable is
+ * exactly equal to indep_var_1. If this interpolator is used with a binary
+ * search algorithm, this special case should never arise.
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 T HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAndProcess(
                                             const IndepQuantity indep_var_0,
@@ -157,6 +169,10 @@ T HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAn
 }
 
 // Interpolate between two processed points and return the processed value
+/*! \details Only point 0 will be used, even if the independent variable is
+ * exactly equal to indep_var_1. If this interpolator is used with a binary
+ * search algorithm, this special case should never arise.
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 T HistogramUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProcessedAndProcess(
                                                  const T processed_indep_var_0,

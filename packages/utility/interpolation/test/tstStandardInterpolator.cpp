@@ -34,15 +34,6 @@ using Utility::Units::barn;
 using Utility::Units::barns;
 
 //---------------------------------------------------------------------------//
-// Testing variables
-//---------------------------------------------------------------------------//
-
-typedef quantity<MegaElectronVolt> EnergyQuantity;
-typedef quantity<Barn> BarnQuantity;
-typedef Utility::QuantityTraits<EnergyQuantity> EnergyQT;
-typedef Utility::QuantityTraits<BarnQuantity> BarnQT;
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an instance of the interpolator can be retrieved
