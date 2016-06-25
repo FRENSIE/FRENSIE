@@ -1,3 +1,9 @@
+ADD_EXECUTABLE(tstInterpolationType 
+  tstInterpolationType.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInterpolationType utility_interp)
+ADD_TEST(InterpolationType_test tstInterpolationType)
+
 ADD_EXECUTABLE(tstInterpolationPolicy 
   tstInterpolationPolicy.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

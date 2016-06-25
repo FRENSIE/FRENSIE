@@ -13,10 +13,10 @@
 namespace Utility{
 
 // Convert an unsigned int to an InterpolationType
-InterpolationType convertUnsignedToInterpolationType(
-                                                   const unsigned interp_type )
+InterpolationType convertENDFInterpolationTypeToInterpolationType(
+                                              const unsigned endf_interp_type )
 {
-  switch( interp_type )
+  switch( endf_interp_type )
   {
   case 1u: return HISTOGRAM_INTERPOLATION;
   case 2u: return LINLIN_INTERPOLATION;
@@ -26,7 +26,7 @@ InterpolationType convertUnsignedToInterpolationType(
   case 6u: return GAMOW_INTERPOLATION;
   default:
     THROW_EXCEPTION( std::runtime_error,
-                     "Error: ENDF interpolation type " << interp_type <<
+                     "Error: ENDF interpolation type " << endf_interp_type <<
                      " is not supported." );
   }
 }

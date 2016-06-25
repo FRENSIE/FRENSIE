@@ -27,9 +27,9 @@ enum InterpolationType{
   GAMOW_INTERPOLATION = 6
 };
 
-//! Convert an unsigned int to an InterpolationType
-InterpolationType convertUnsignedToInterpolationType(
-                                                  const unsigned interp_type );
+//! Convert an ENDF interpolation value to an InterpolationType
+InterpolationType convertENDFInterpolationTypeToInterpolationType(
+                                             const unsigned endf_interp_type );
 
 //! Convert the InterpolationType to a string
 std::string convertInterpolationTypeToString( const InterpolationType type );
