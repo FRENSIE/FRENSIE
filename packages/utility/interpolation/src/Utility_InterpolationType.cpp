@@ -10,8 +10,6 @@
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
-#define INTERPOLATION_STRING( type ) #type
-
 namespace Utility{
 
 // Convert an unsigned int to an InterpolationType
@@ -39,17 +37,17 @@ std::string convertInterpolationTypeToString( const InterpolationType type )
   switch( type )
   {
   case HISTOGRAM_INTERPOLATION:
-    return INTERPOLATION_STRING( HISTOGRAM_INTERPOLATION );
+    return "Histogram";
   case LINLIN_INTERPOLATION:
-    return INTERPOLATION_STRING( LINLIN_INTERPOLATION );
+    return "Lin-Lin";
   case LINLOG_INTERPOLATION:
-    return INTERPOLATION_STRING( LINLOG_INTERPOLATION );
+    return "Lin-Log";
   case LOGLIN_INTERPOLATION:
-    return INTERPOLATION_STRING( LOGLIN_INTERPOLATION );
+    return "Log-Lin";
   case LOGLOG_INTERPOLATION:
-    return INTERPOLATION_STRING( LOGLOG_INTERPOLATION );
+    return "Log-Log";
   case GAMOW_INTERPOLATION:
-    return INTERPOLATION_STRING( GAMOW_INTERPOLATION );
+    return "Gamow";
   default:
     THROW_EXCEPTION( std::logic_error,
                      "Error: InterpolationType " << (unsigned)type <<

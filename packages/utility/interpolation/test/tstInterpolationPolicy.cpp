@@ -675,7 +675,7 @@ TEUCHOS_UNIT_TEST( LogLog, isDepVarInValidRange )
 }
  
 //---------------------------------------------------------------------------//
-// Check an independent variable can be processed
+// Check that an independent variable can be processed
 TEUCHOS_UNIT_TEST( LogLog, processIndepVar )
 {
   UTILITY_TEST_FLOATING_EQUALITY( 0.0, 
