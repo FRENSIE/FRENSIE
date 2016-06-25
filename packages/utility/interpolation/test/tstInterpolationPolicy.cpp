@@ -257,7 +257,7 @@ TEUCHOS_UNIT_TEST( LogLin, isDepVarInValidRange )
 }
  
 //---------------------------------------------------------------------------//
-// Check an independent variable can be processed
+// Check that an independent variable can be processed
 TEUCHOS_UNIT_TEST( LogLin, processIndepVar )
 {
   TEST_EQUALITY_CONST( -1.0, Utility::LogLin::processIndepVar( -1.0 ) );

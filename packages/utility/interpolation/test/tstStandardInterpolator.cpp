@@ -571,5 +571,238 @@ TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LinLin,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, getInterpolationType )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  TEST_EQUALITY_CONST( interpolator->getInterpolationType(),
+                       Utility::LOGLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, getInterpolationType )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  TEST_EQUALITY_CONST( interpolator->getInterpolationType(),
+                       Utility::LOGLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the validity of an independent variable can be tested
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, isIndepVarInValidRange )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  TEST_ASSERT( interpolator->isIndepVarInValidRange(
+                                       -std::numeric_limits<double>::max() ) );
+  TEST_ASSERT( interpolator->isIndepVarInValidRange( 0.0 ) );
+  TEST_ASSERT( interpolator->isIndepVarInValidRange(
+                                        std::numeric_limits<double>::max() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the validity of an independent variable can be tested
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin,
+                   isIndepVarInValidRange )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  TEST_ASSERT( interpolator->isIndepVarInValidRange(
+                                   -std::numeric_limits<double>::max()*MeV ) );
+  TEST_ASSERT( interpolator->isIndepVarInValidRange( 0.0*MeV ) );
+  TEST_ASSERT( interpolator->isIndepVarInValidRange(
+                                    std::numeric_limits<double>::max()*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the validity of a dependent variable can be tested
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, isDepVarInValidRange )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  TEST_ASSERT( !interpolator->isDepVarInValidRange(
+                                       -std::numeric_limits<double>::max() ) );
+  TEST_ASSERT( !interpolator->isDepVarInValidRange( 0.0 ) );
+  TEST_ASSERT( interpolator->isDepVarInValidRange(
+                                        std::numeric_limits<double>::min() ) );
+  TEST_ASSERT( interpolator->isDepVarInValidRange(
+                                        std::numeric_limits<double>::max() ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the validity of a dependent variable can be tested
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, isDepVarInValidRange )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  TEST_ASSERT( !interpolator->isDepVarInValidRange(
+                                 -std::numeric_limits<double>::max()*barns ) );
+  TEST_ASSERT( !interpolator->isDepVarInValidRange( 0.0*barn ) );
+  TEST_ASSERT( interpolator->isDepVarInValidRange(
+                                  std::numeric_limits<double>::min()*barns ) );
+  TEST_ASSERT( interpolator->isDepVarInValidRange(
+                                  std::numeric_limits<double>::max()*barns ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an independent variable can be processed
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, processIndepVar )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+  
+  TEST_EQUALITY_CONST( -1.0, interpolator->processIndepVar( -1.0 ) );
+  TEST_EQUALITY_CONST( 0.0, interpolator->processIndepVar( 0.0 ) );
+  TEST_EQUALITY_CONST( 1.0, interpolator->processIndepVar( 1.0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an independent variable can be processed
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, processIndepVar )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  TEST_EQUALITY_CONST( -1.0, interpolator->processIndepVar( -1.0*MeV ) );
+  TEST_EQUALITY_CONST( 0.0, interpolator->processIndepVar( 0.0*MeV ) );
+  TEST_EQUALITY_CONST( 1.0, interpolator->processIndepVar( 1.0*MeV ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a dependent variable can be processed
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, processDepVar )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+                              0.0, interpolator->processDepVar( 1.0 ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a dependent variable can be processed
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, processDepVar )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+                         0.0, interpolator->processDepVar( 1.0*barn ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a processed independent variable can be recovered
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, recoverProcessedIndepVar )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  TEST_EQUALITY_CONST( -1.0, interpolator->recoverProcessedIndepVar( -1.0 ) );
+  TEST_EQUALITY_CONST( 0.0, interpolator->recoverProcessedIndepVar( 0.0 ) );
+  TEST_EQUALITY_CONST( 1.0, interpolator->recoverProcessedIndepVar( 1.0 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a processed independent variable can be recovered
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin,
+                   recoverProcessedIndepVar )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  TEST_EQUALITY_CONST(
+                    -1.0*MeV, interpolator->recoverProcessedIndepVar( -1.0 ) );
+  TEST_EQUALITY_CONST( 0.0*MeV, interpolator->recoverProcessedIndepVar( 0.0 ));
+  TEST_EQUALITY_CONST( 1.0*MeV, interpolator->recoverProcessedIndepVar( 1.0 ));
+}
+
+//---------------------------------------------------------------------------//
+// Check that a processed dependent variable can be recovered
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, recoverProcessedDepVar )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  TEST_FLOATING_EQUALITY(
+                     1.0, interpolator->recoverProcessedDepVar( 0.0 ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a processed dependent variable can be recovered
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin,
+                   recoverProcessedDepVar )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  UTILITY_TEST_FLOATING_EQUALITY(
+                1.0*barn, interpolator->recoverProcessedDepVar( 0.0 ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that log-lin interpolation between two points can be done
+TEUCHOS_UNIT_TEST( StandardInterpolator_LogLin, interpolate )
+{
+  std::shared_ptr<const Utility::Interpolator<double> > interpolator =
+    Utility::StandardInterpolator<Utility::LogLin,double>::getInstance();
+
+  double x0 = 0.0, x1 = 1.0, x = 0.5;
+  double y0 = 0.1, y1 = 10.0;
+  
+  double y = interpolator->interpolate( x0, x1, x, y0, y1 );
+  
+  TEST_FLOATING_EQUALITY( y, 1.0, 1e-15 );
+  
+  x = 0.0;
+
+  y = interpolator->interpolate( x0, x1, x, y0, y1 );
+
+  TEST_FLOATING_EQUALITY( y, 0.1, 1e-15 );
+
+  x = 1.0;
+
+  y = interpolator->interpolate( x0, x1, x, y0, y1 );
+
+  TEST_FLOATING_EQUALITY( y, 10.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that log-lin interpolation between two points can be done
+TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLin, interpolate )
+{
+  std::shared_ptr<const Utility::UnitAwareInterpolator<MegaElectronVolt,Barn,double> > interpolator =
+    Utility::StandardUnitAwareInterpolator<Utility::LogLin,MegaElectronVolt,Barn,double>::getInstance();
+
+  quantity<MegaElectronVolt,double> e0 = 0.0*MeV, e1 = 1.0*MeV, e = 0.5*MeV;
+  quantity<Barn,double> cs0 = 0.1*barn, cs1 = 10.0*barns;
+
+  quantity<Barn,double> cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( cs, 1.0*barn, 1e-15 );
+
+  e = 0.0*MeV;
+
+  cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cs, 0.1*barn, 1e-15 );
+
+  e = 1.0*MeV;
+
+  cs = interpolator->interpolate( e0, e1, e, cs0, cs1 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( cs, 10.0*barn, 1e-15 );
+}
+                   
+
+//---------------------------------------------------------------------------//
 // end tstStandardInterpolator.cpp
 //---------------------------------------------------------------------------//
