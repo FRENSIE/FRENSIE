@@ -1648,7 +1648,7 @@ TEUCHOS_UNIT_TEST( StandardInterpolator_LogLog, recoverProcessedDepVar )
 }
 
 //---------------------------------------------------------------------------//
-// Check that a processed dependent variable can be recoverd
+// Check that a processed dependent variable can be recovered
 TEUCHOS_UNIT_TEST( StandardUnitAwareInterpolator_LogLog,
                    recoverProcessedDepVar )
 {

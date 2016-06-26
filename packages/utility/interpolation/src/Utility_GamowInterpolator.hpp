@@ -36,6 +36,9 @@ protected:
   //! The dependent quantity traits
   typedef QuantityTraits<DepQuantity> DQT;
 
+  //! The raw quantity traits
+  typedef QuantityTraits<T> QT;
+
 public:
 
   //! Get an instance of the exothermic interpolator (threshold=0.0)
@@ -80,7 +83,7 @@ public:
   DepQuantity interpolateProcessed( const T processed_indep_var_0,
                                     const T processed_indep_var,
                                     const T processed_dep_var_0,
-                                    const T processed_slope) const;
+                                    const T b_value ) const;
 
   //! Interpolate between two points and return the processed value
   T interpolateAndProcess( const IndepQuantity indep_var_0,
@@ -93,7 +96,7 @@ public:
   T interpolateProcessedAndProcess( const T processed_indep_var_0,
                                     const T processed_indep_var,
                                     const T processed_dep_var_0,
-                                    const T processed_slope) const;
+                                    const T b_value ) const;
 
 private:
 
@@ -114,7 +117,7 @@ template<typename T> using GamowInterpolator =
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#inclucde "Utility_GamowInterpolator_def.hpp"
+#include "Utility_GamowInterpolator_def.hpp"
 
 //---------------------------------------------------------------------------//
 

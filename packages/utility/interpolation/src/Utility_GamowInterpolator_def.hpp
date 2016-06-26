@@ -40,7 +40,14 @@ GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::GamowUnitAwareInter
   testStaticPrecondition( (DQT::is_floating_point::value) );
   // Make sure the threshold is valid
   testPrecondition( !IQT::isnaninf( threshold ) );
-  testPrecondition( this->isIndepVarInValidRange( threshold ) );
+  testPrecondition( threshold >= IQT::zero() );
+}
+
+// Get the interpolation type
+template<typename IndependentUnit, typename DependentUnit, typename T>
+InterpolationType GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::getInterpolationType() const
+{
+  return GAMOW_INTERPOLATION;
 }
 
 // Test if the independent value is in a valid range
@@ -51,14 +58,7 @@ bool GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::isIndepVarInVa
   // Make sure the indep var is valid
   testPrecondition( !IQT::isnaninf( indep_var ) );
 
-  return indep_var >= d_threshold;
-}
-
-// Get the interpolation type
-template<typename IndependentUnit, typename DependentUnit, typename T>
-InterpolationType GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::getInterpolationType() const
-{
-  return GAMOW_INTERPOLATION;
+  return indep_var > d_threshold;
 }
 
 // Test if the dependent value is in a valid range
@@ -138,23 +138,22 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolate(
 
   // Calculate the A/indep_var value
   const DepQuantity a_value = dep_var_0*
-    exp(b_value/sqrt(procesed_indep_var_0))*(indep_var_0/indep_var);
+    exp(b_value/sqrt(processed_indep_var_0))*(indep_var_0/indep_var);
 
   // Calculate the interpolated value
   return a_value*exp(-b_value/sqrt(processed_indep_var));
 }
 
 // Interpolate between two processed points
-/*! \details The processed slope is the "B" value (see the section of the
- * ENDF manual on Interpolation Types and find the definition of the "B" value
- * for the Gamow interpolation scheme.)
+/*! \details See the section of the ENDF manual on Interpolation Types and 
+ * find the definition of the "B" value for the Gamow interpolation scheme.
  */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProcessed(
                                   const T processed_indep_var_0,
                                   const T processed_indep_var,
                                   const T processed_dep_var_0,
-                                  const T processed_slope) const -> DepQuantity
+                                  const T b_value ) const -> DepQuantity
 {
   // Make sure the processed independent variables are valid
   testPrecondition( !QT::isnaninf( processed_indep_var_0 ) );
@@ -165,7 +164,7 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePro
   testPrecondition( !QT::isnaninf( processed_dep_var_0 ) );
   testPrecondition( processed_dep_var_0 > 0.0 );
   // Make sure that the slope is valid
-  testPrecondition( !QT::isnaninf( processed_slope ) );
+  testPrecondition( !QT::isnaninf( b_value ) );
 
   // Recover the processed indep variables
   IndepQuantity indep_var_0 =
@@ -176,7 +175,7 @@ auto GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolatePro
 
   // Calculate the A/indep_var value
   const DepQuantity a_value = DQT::initializeQuantity( processed_dep_var_0 )*
-    exp(processed_slope/sqrt(processed_indep_var_0))*(indep_var_0/indep_var);
+    exp(b_value/sqrt(processed_indep_var_0))*(indep_var_0/indep_var);
 
   // Calculate the interpolated value
   return a_value*exp(-b_value/sqrt(processed_indep_var));
@@ -199,17 +198,20 @@ T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateAndPro
 }
 
 // Interpolate between two processed points and return the processed value
+/*! \details See the section of the ENDF manual on Interpolation Types and 
+ * find the definition of the "B" value for the Gamow interpolation scheme.
+ */
 template<typename IndependentUnit, typename DependentUnit, typename T>
 T GamowUnitAwareInterpolator<IndependentUnit,DependentUnit,T>::interpolateProcessedAndProcess(
                                                  const T processed_indep_var_0,
                                                  const T processed_indep_var,
                                                  const T processed_dep_var_0,
-                                                 const T processed_slope) const
+                                                 const T b_value ) const
 {
   return getRawQuantity( this->interpolateProcessed( processed_indep_var_0,
                                                      processed_indep_var,
                                                      processed_dep_var_0,
-                                                     processed_slope ) );
+                                                     b_value ) );
 }
   
 } // end Utility namespace

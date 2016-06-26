@@ -22,6 +22,12 @@ ADD_EXECUTABLE(tstHistogramInterpolator
 TARGET_LINK_LIBRARIES(tstHistogramInterpolator utility_interp)
 ADD_TEST(HistogramInterpolator_test tstHistogramInterpolator)
 
+ADD_EXECUTABLE(tstGamowInterpolator
+  tstGamowInterpolator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGamowInterpolator utility_interp)
+ADD_TEST(GamowInterpolator_test tstGamowInterpolator)
+
 ADD_EXECUTABLE(tstLinLinLinTwoDInterpolationPolicy
   tstLinLinLinTwoDInterpolationPolicy.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
