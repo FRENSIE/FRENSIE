@@ -31,7 +31,7 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 	const Teuchos::Array<double>& x_planes,
   const Teuchos::Array<double>& y_planes,
   const Teuchos::Array<double>& z_planes,
-  const std::string output_mesh_file_name)
+  const std::string output_mesh_file_name )
 : StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>( id, multiplier ),
   d_hex_mesh( new Utility::StructuredHexMesh( x_planes, y_planes, z_planes) ),
   d_hex_begin( d_hex_mesh->getStartHexIDIterator() ),
