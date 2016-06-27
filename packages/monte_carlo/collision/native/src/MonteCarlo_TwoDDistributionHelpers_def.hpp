@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 
 // Find the lower and upper bin boundary
-template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
     const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
@@ -44,12 +44,14 @@ void findLowerAndUpperBinBoundary(
 							upper_bin_boundary,
 							independent_variable );
     upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
+    
+    if ( lower_bin_boundary->first != independent_variable )
+      ++upper_bin_boundary;
   }
 }
 
 // Find the lower and upper bin boundary
-template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
     const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
@@ -91,7 +93,7 @@ double sampleTwoDDistributionCorrelatedWithRandomNumber(
   typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
                                                      upper_bin_boundary;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution, InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,
@@ -122,7 +124,7 @@ double sampleTwoDDistributionCorrelatedInSubrange(
   typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
                                                      upper_bin_boundary;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution, InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,
@@ -170,7 +172,7 @@ double sampleTwoDDistributionIndependent(
                                                      upper_bin_boundary;
   double interpolation_fraction;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution,InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,
@@ -199,7 +201,7 @@ double evaluateTwoDDistributionCorrelated(
   typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
                                                      upper_bin_boundary;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution,InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,
@@ -229,7 +231,7 @@ double evaluateTwoDDistributionCorrelatedPDF(
   typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
                                                      upper_bin_boundary;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution, InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,
@@ -259,7 +261,7 @@ double evaluateTwoDDistributionCorrelatedCDF(
   typename DependentTwoDDistribution::const_iterator lower_bin_boundary,
                                                      upper_bin_boundary;
 
-  findLowerAndUpperBinBoundary<DependentTwoDDistribution, InterpolationPolicy>(
+  findLowerAndUpperBinBoundary<DependentTwoDDistribution>(
         independent_variable,
         dependent_distribution,
         lower_bin_boundary,

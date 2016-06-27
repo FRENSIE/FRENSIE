@@ -38,7 +38,7 @@ public:
   ~TestScreenedRutherfordElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  // Allow public access to the CutoffElasticElectronScatteringDistribution protected member functions
+  // Allow public access to the screened Rutherford scattering distribution protected member functions
   using MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl;
   using MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant;
 };

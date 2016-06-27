@@ -23,8 +23,7 @@ TwoDDistribution;
 
 
 //! Find the lower and upper bin boundary
-template<typename DependentTwoDDistribution,
-         typename InterpolationPolicy = Utility::LinLin>
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
 	const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
@@ -33,8 +32,7 @@ void findLowerAndUpperBinBoundary(
 	double& interpolation_fraction );
 
 //! Find the lower and upper bin boundary
-template<typename DependentTwoDDistribution,
-         typename InterpolationPolicy = Utility::LinLin>
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
 	const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
