@@ -28,15 +28,15 @@ void concrete_geom_root()
 //---------------------------------------------------------------------------//
 
     // Iron Portlnd Concrete Slab with dimensions 15cm x 300cm x 300cm
-    TGeoVolume *concrete_box = gGeoManager->MakeBox( "concrete_box", concrete_med, 15., 300., 300.);
+    TGeoVolume *concrete_box = gGeoManager->MakeBox( "concrete_box", concrete_med, 7.5, 150., 150.);
     concrete_box->SetUniqueID(1);
 
     // Void Cube of Side Height 50cm
-    TGeoVolume *void_geom = gGeoManager->MakeBox("void_geom", void_med, 50., 320., 320.);
+    TGeoVolume *void_geom = gGeoManager->MakeBox("void_geom", void_med, 25., 160., 160.);
     void_geom->SetUniqueID(2);
 
     // Graveyard Cube of Side Height 55cm
-    TGeoVolume *terminal_geom = gGeoManager->MakeBox("terminal_geom", terminal_med, 100., 350., 350.);
+    TGeoVolume *terminal_geom = gGeoManager->MakeBox("terminal_geom", terminal_med, 50., 175., 175.);
     terminal_geom->SetUniqueID(3);
     gGeoManager->SetTopVolume( terminal_geom );
 
