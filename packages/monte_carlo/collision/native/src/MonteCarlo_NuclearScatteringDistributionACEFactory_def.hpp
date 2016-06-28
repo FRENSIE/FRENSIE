@@ -186,7 +186,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   // Make sure the reaction type has a scattering distribution (mult > 0)
   testPrecondition( this->doesReactionHaveScatteringDistribution( 
 							     reaction_type ) );
-  
+ 
   // Create an angular distribution if scattering law 44 is not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {

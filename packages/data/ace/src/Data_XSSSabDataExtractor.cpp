@@ -33,21 +33,24 @@ XSSSabDataExtractor::XSSSabDataExtractor(
   
   // Adjust the indices in the JXS array so that they correspond to a C-array
   for( unsigned i = 0; i < d_jxs.size(); ++i )
-    d_jxs[i] -= 1;
+    if( d_jxs[i] != 0 )
+    {
+      d_jxs[i] -= 1;
+    }
   
   // Extract and cache the ITIE block
   d_itie_block = d_xss( d_jxs[0], (int)d_xss[d_jxs[0]]*4 + 1 );
   
   // Find appropriate data for ITXE block
-  int last_position = d_xss[ (int)d_xss[d_jxs[0]]*4 ];
-  int last_energies = d_xss[ (int)d_xss[d_jxs[0]]*3 ];
-  int number_angles = d_jxs[2];
-  int distance      = last_position*last_energies*(number_angles + 2) - 
-                        (int)d_xss[d_jxs[0]]*4 + 1;
-  
+  int last_energies = d_xss[ (int)d_xss[d_jxs[0]]*4 ];
+  int last_position = d_xss[ (int)d_xss[d_jxs[0]]*3 ];
+  int number_angles = d_nxs[2];
+  int distance      = last_position + last_energies*(number_angles + 2) - 
+                        ((int)d_xss[d_jxs[0]]*4 + 1);
+
   // Extract and cache the ITXE block                     
   d_itxe_block = d_xss( (int)d_xss[d_jxs[0]]*4 + 1, distance );
-  
+
   // Extract and cache the ITCE block
   if( d_jxs[3] != 0 )
   {
@@ -75,7 +78,7 @@ SabInelasticMode XSSSabDataExtractor::getInelasticScatteringMode() const
 
 // Return if elastic scattering cross section data is present
 /*! \details Elastic scattering cross section data is only present if 
- * jxs[3] != -1
+ * jxs[3] != 0
  */
 bool XSSSabDataExtractor::hasElasticScatteringCrossSectionData() const
 {
@@ -84,7 +87,7 @@ bool XSSSabDataExtractor::hasElasticScatteringCrossSectionData() const
 
 // Return if elastic scattering angular distribution is present
 /*! \details Elastic scattering cross section data is only present if
- * jxs[3] != -1 and nxs[5] != -1
+ * jxs[3] != 0 and nxs[5] != -1
  */ 
 bool XSSSabDataExtractor::hasElasticScatteringAngularDistributionData() const
 {

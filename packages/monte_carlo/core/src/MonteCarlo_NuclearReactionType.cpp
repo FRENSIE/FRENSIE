@@ -435,6 +435,11 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 889u: return N__2N_EXCITED_STATE_14_REACTION;
   case 890u: return N__2N_EXCITED_STATE_15_REACTION;
   case 891u: return N__2N_CONTINUUM_REACTION;
+  
+  // S(alpha,beta) reactions -> Non-ENDF numbering
+  case 1002u: return SALPHABETA_N__N_ELASTIC_REACTION;
+  case 1004u: return SALPHABETA_N__N_INELASTIC_REACTION;
+  
   default:
     THROW_EXCEPTION( std::runtime_error,
 		     "Error: ENDF reaction (MT #) " << reaction <<
