@@ -60,8 +60,24 @@ public:
   double getCrossSection( const double energy,
                           const unsigned bin_index ) const;
 
+  //! Return the cross section at the given energy
+  double getCrossSection( 
+            const double energy,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+  //! Return the threshold energy
+  double getThresholdEnergy( const unsigned threshold_energy_index ) const;
 
 protected:
 
@@ -116,8 +132,24 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
   double getCrossSection( const double energy,
 			  const unsigned bin_index ) const;
 
+  //! Return the cross section at the given energy
+  double getCrossSection( 
+            const double energy,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+  //! Return the threshold energy
+  double getThresholdEnergy( const unsigned threshold_energy_index ) const;
 
 protected:
 

@@ -155,35 +155,10 @@ template<typename InterpPolicy>
 double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 						    const double energy ) const
 {
-  // Make sure the energy is valid
-  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
-
-  double cross_section;
-
-  if( energy >= this->getThresholdEnergy() )
-  {
-    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
-
-    unsigned cs_index = energy_index - d_threshold_energy_index;
-
-    double processed_slope =
-      (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
-      (d_incoming_energy_grid[energy_index+1]-
-       d_incoming_energy_grid[energy_index]);
-
-    cross_section =
-      InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
-				 InterpPolicy::processIndepVar( energy ),
-				 d_cross_section[cs_index],
-				 processed_slope );
-  }
-  else
-    cross_section = 0.0;
-
-  // Make sure the cross section is valid
-  testPostcondition( cross_section >= 0.0 );
-
-  return cross_section;
+  return this->StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+                energy,
+                d_cross_section,
+                d_threshold_energy_index  );
 }
 
 // Return the cross section at the given energy
@@ -191,31 +166,82 @@ template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 						    const double energy ) const
 {
+  return this->StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+                energy,
+                d_cross_section,
+                d_threshold_energy_index  );
+}
+
+// Return the cross section at the given energy
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+        const double energy,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const unsigned threshold_energy_index  ) const
+{
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
-  double cross_section;
+  double cross_section_value;
 
-  if( energy >= this->getThresholdEnergy() )
+  if( energy >= this->getThresholdEnergy( threshold_energy_index ) )
   {
     unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
 
-    unsigned cs_index = energy_index - d_threshold_energy_index;
+    unsigned cs_index = energy_index - threshold_energy_index;
 
-    cross_section =
+    double processed_slope =
+      (cross_section[cs_index+1]-cross_section[cs_index])/
+      (d_incoming_energy_grid[energy_index+1]-
+       d_incoming_energy_grid[energy_index]);
+
+    cross_section_value =
+      InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
+				 InterpPolicy::processIndepVar( energy ),
+				 cross_section[cs_index],
+				 processed_slope );
+  }
+  else
+    cross_section_value = 0.0;
+
+  // Make sure the cross section is valid
+  testPostcondition( cross_section_value >= 0.0 );
+
+  return cross_section_value;
+}
+
+// Return the cross section at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+        const double energy,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const unsigned threshold_energy_index  ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+
+  double cross_section_value;
+
+  if( energy >= this->getThresholdEnergy( threshold_energy_index ) )
+  {
+    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+
+    unsigned cs_index = energy_index - threshold_energy_index;
+
+    cross_section_value =
       InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
 				 d_incoming_energy_grid[energy_index+1],
 				 energy,
-				 d_cross_section[cs_index],
-				 d_cross_section[cs_index+1] );
+				 cross_section[cs_index],
+				 cross_section[cs_index+1] );
   }
-  else if( energy < this->getThresholdEnergy() )
-    cross_section = 0.0;
+  else if( energy < this->getThresholdEnergy( threshold_energy_index ) )
+    cross_section_value = 0.0;
 
   // Make sure the cross section is valid
-  testPostcondition( cross_section >= 0.0 );
+  testPostcondition( cross_section_value >= 0.0 );
 
-  return cross_section;
+  return cross_section_value;
 }
 
 // Return the cross section at the given energy (efficient)
@@ -224,18 +250,46 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 				const double energy,
                 const unsigned bin_index ) const
 {
+  return this->StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+                    energy,
+                    bin_index,
+                    d_cross_section,
+                    d_threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+				const double energy,
+                const unsigned bin_index ) const
+{
+  return this->StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+                    energy,
+                    bin_index,
+                    d_cross_section,
+                    d_threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+				const double energy,
+                const unsigned bin_index,
+                const Teuchos::ArrayRCP<const double>& cross_section,
+                const unsigned threshold_energy_index  ) const
+{
   // Make sure the bin index is valid
   testPrecondition( d_incoming_energy_grid[bin_index] <=
 		    InterpPolicy::processIndepVar( energy ) );
   testPrecondition( d_incoming_energy_grid[bin_index+1] >=
 		    InterpPolicy::processIndepVar( energy ) );
 
-  if( bin_index >= d_threshold_energy_index )
+  if( bin_index >= threshold_energy_index )
   {
-    unsigned cs_index = bin_index - d_threshold_energy_index;
+    unsigned cs_index = bin_index - threshold_energy_index;
 
     double processed_slope =
-      (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
+      (cross_section[cs_index+1]-cross_section[cs_index])/
       (d_incoming_energy_grid[bin_index+1]-
        d_incoming_energy_grid[bin_index]);
 
@@ -243,7 +297,7 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 
     return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
 				      processed_energy,
-				      d_cross_section[cs_index],
+				      cross_section[cs_index],
 				      processed_slope );
   }
   else
@@ -254,21 +308,23 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 				const double energy,
-                const unsigned bin_index ) const
+                const unsigned bin_index,
+                const Teuchos::ArrayRCP<const double>& cross_section,
+                const unsigned threshold_energy_index  ) const
 {
   // Make sure the bin index is valid
   testPrecondition( d_incoming_energy_grid[bin_index] <= energy );
   testPrecondition( d_incoming_energy_grid[bin_index+1] >= energy );
 
-  if( bin_index >= d_threshold_energy_index )
+  if( bin_index >= threshold_energy_index )
   {
-    unsigned cs_index = bin_index - d_threshold_energy_index;
+    unsigned cs_index = bin_index - threshold_energy_index;
 
     return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
 				      d_incoming_energy_grid[bin_index+1],
 				      energy,
-				      d_cross_section[cs_index],
-				      d_cross_section[cs_index+1] );
+				      cross_section[cs_index],
+				      cross_section[cs_index+1] );
   }
   else
     return 0.0;
@@ -287,6 +343,23 @@ template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
+}
+
+// Return the threshold energy
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getThresholdEnergy(
+    const unsigned threshold_energy_index ) const
+{
+  return InterpPolicy::recoverProcessedIndepVar(
+			    d_incoming_energy_grid[threshold_energy_index] );
+}
+
+// Return the threshold energy
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy(
+    const unsigned threshold_energy_index ) const
+{
+  return d_incoming_energy_grid[threshold_energy_index];
 }
 
 // Return the head of the energy grid
