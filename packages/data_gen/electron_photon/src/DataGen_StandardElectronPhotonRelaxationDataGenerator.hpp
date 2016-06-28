@@ -234,15 +234,13 @@ private:
   // Generate elastic moment preserving cross section
   static void evaluateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
-        rutherford_reaction,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
-        cutoff_reaction,
-    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
+    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
+        analog_reaction,
+    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution,
     const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    const unsigned cutoff_cross_section_threshold_energy_index,
+    const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section );
 
   // The threshold energy nudge factor

@@ -17,8 +17,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "Data_SubshellType.hpp"
 #include "Utility_GridGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -1269,19 +1268,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     const std::vector<double>& agular_energy_grid,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
-  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
-  Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        rutherford_distribution;
-  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution;
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-    cutoff_distribution,
-    rutherford_distribution,
+  // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
+  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution;
+
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    analog_distribution,
     data_container.getCutoffElasticAngles(),
     data_container.getCutoffElasticPDF(),
     agular_energy_grid,
-    data_container.getAtomicNumber(),
-    0.999999 );
+    data_container.getAtomicNumber() );
 
   // Construct the hash-based grid searcher for this atom
   Teuchos::ArrayRCP<double> energy_grid;
@@ -1293,43 +1289,36 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
 						     energy_grid,
 						     100u ) );
 
-  // Construct the screened Rutherford reaction
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
-    data_container.getScreenedRutherfordElasticCrossSection().begin(),
-    data_container.getScreenedRutherfordElasticCrossSection().end() );
-
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> rutherford_reaction(
-	new MonteCarlo::ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
-        energy_grid,
-        rutherford_cross_section,
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        grid_searcher,
-        rutherford_distribution ) );
-
   // Construct the cutoff reaction
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     data_container.getCutoffElasticCrossSection().begin(),
     data_container.getCutoffElasticCrossSection().end() );
 
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> cutoff_reaction(
-	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
-        energy_grid,
-        cutoff_cross_section,
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
-        grid_searcher,
-        cutoff_distribution ) );
+  // Construct the screened Rutherford reaction
+  Teuchos::ArrayRCP<double> rutherford_cross_section;
+  rutherford_cross_section.assign(
+    data_container.getScreenedRutherfordElasticCrossSection().begin(),
+    data_container.getScreenedRutherfordElasticCrossSection().end() );
+
+  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>> 
+    analog_reaction(
+    	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
+            energy_grid,
+            cutoff_cross_section,
+            rutherford_cross_section,
+            data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+            data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
+            grid_searcher,
+            analog_distribution ) );
 
   // Create the moment evaluator of the elastic scattering distribution
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
         data_container.getCutoffElasticAngles(),
-        rutherford_distribution,
-        cutoff_distribution,
-        rutherford_reaction,
-        cutoff_reaction,
+        analog_distribution,
+        analog_reaction,
         data_container.getCutoffAngleCosine() ) );
 
   // Moment preserving discrete angles and weights
@@ -1367,9 +1356,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::vector<double> moment_preserving_cross_section;
   StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
         energy_grid,
-        cutoff_reaction,
-        rutherford_reaction,
-        cutoff_distribution,
+        analog_reaction,
+        analog_distribution,
         reduction_distribution,
         data_container.getCutoffAngleCosine(),
         data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
@@ -1860,46 +1848,42 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeig
                                              weights,
                                              number_of_moment_preserving_angles+1 );
 
-  // Set the cross_section_reduction to the weight for angle cosine = 1 
-  cross_section_reduction = weights.back();
-
   // Eliminate the forward discrete angle (mu = 1)
   discrete_angles.pop_back();
   weights.pop_back();
 
-  // Renormalize weights
-  double sum_of_weights = 0.0;
+  // Renormalize weights and set the cross_section_reduction to the sum of the weights 
+  cross_section_reduction = 0.0;
   for( int i = 0; i < weights.size(); i++ )
   {
-    sum_of_weights += weights[i];
+    cross_section_reduction += weights[i];
   }
+
   for( int i = 0; i < weights.size(); i++ )
   {
-    weights[i] /= sum_of_weights;
+    weights[i] /= cross_section_reduction;
   }
 }
 
 // Generate elastic moment preserving cross section
 void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCrossSection(
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
-        rutherford_reaction,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
-        cutoff_reaction,
-    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
+    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>>
+        analog_reaction,
+    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution,
     const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
-    const unsigned cutoff_cross_section_threshold_energy_index,
+    const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section )
 {
   moment_preserving_cross_section.resize( electron_energy_grid.size() );
 
-  unsigned begin = cutoff_cross_section_threshold_energy_index;
+  unsigned begin = threshold_energy_index;
 
   for( unsigned i = begin; i < electron_energy_grid.size(); i++ )
   {
-    double cutoff_cdf = cutoff_distribution->evaluateCDF(
+    double cutoff_cdf = analog_distribution->evaluateCDF(
         electron_energy_grid[i],
         cutoff_angle_cosine );
 
@@ -1907,13 +1891,14 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
         reduction_distribution->evaluate( electron_energy_grid[i] );
 
     double rutherford_cross_section =
-        rutherford_reaction->getCrossSection( electron_energy_grid[i] );
+        analog_reaction->getScreenedRutherfordCrossSection(
+            electron_energy_grid[i] );
 
     double cutoff_cross_section =
-        cutoff_reaction->getCrossSection( electron_energy_grid[i] );
+        analog_reaction->getCutoffCrossSection( electron_energy_grid[i] );
 
     moment_preserving_cross_section[i] = cross_section_reduction*
-        (rutherford_cross_section + cutoff_cdf*cutoff_cross_section);
+        (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);
   }
 }
 

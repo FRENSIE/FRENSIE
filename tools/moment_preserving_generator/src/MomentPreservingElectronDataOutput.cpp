@@ -56,10 +56,8 @@ Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> evaluator;
 Teuchos::RCP<TestElasticElectronMomentsEvaluator> test_evaluator;
 Teuchos::RCP<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
-Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-    rutherford_distribution;
-Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-    cutoff_distribution;
+Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    analog_distribution;
 
 //---------------------------------------------------------------------------//
 // main function
@@ -100,12 +98,10 @@ int main( int argc, char** argv )
 						     test_native_al_file_name ) );
 
 
-  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-    cutoff_distribution,
-    rutherford_distribution,
-    *data,
-    0.999999 );
+  // Create the analog elastic distributions (combined Cutoff and Screened Rutherford)
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    analog_distribution,
+    *data );
 
   // Create the moment evaluator
   evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
@@ -241,7 +237,7 @@ int main( int argc, char** argv )
 
   // Calcuate Moliere's modified screening constant (eta)
   eta[i] =
-    rutherford_distribution->evaluateMoliereScreeningConstant( angular_energy_grid[i] );
+    analog_distribution->evaluateMoliereScreeningConstant( angular_energy_grid[i] );
 
   // Evaluate the 1st and 2nd moment
   test_evaluator->evaluateScreenedRutherfordPDFMomentByRecursion(

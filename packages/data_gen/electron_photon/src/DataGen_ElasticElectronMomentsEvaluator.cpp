@@ -18,8 +18,6 @@
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
-#include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 
 namespace DataGen{
 
@@ -47,12 +45,10 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   energy_grid.assign( data_container.getElectronEnergyGrid().begin(),
                       data_container.getElectronEnergyGrid().end() );
 
-  // Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-    d_cutoff_distribution,
-    d_rutherford_distribution,
-    data_container,
-    s_rutherford_cutoff_angle_cosine );
+  // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    d_analog_distribution,
+    data_container );
 
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
@@ -60,50 +56,40 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 						     energy_grid,
 						     100u ) );
 
-  // Screened Rutherford elastic cross section
-  Teuchos::ArrayRCP<double> rutherford_cross_section;
-  rutherford_cross_section.assign(
-    data_container.getScreenedRutherfordElasticCrossSection().begin(),
-	data_container.getScreenedRutherfordElasticCrossSection().end() );
-
-  d_rutherford_reaction.reset(
-	new MonteCarlo::ScreenedRutherfordElasticElectroatomicReaction<Utility::LinLin>(
-        energy_grid,
-        rutherford_cross_section,
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
-        grid_searcher,
-        d_rutherford_distribution ) );
-
   // Cutoff elastic cross section
   Teuchos::ArrayRCP<double> cutoff_cross_section;
   cutoff_cross_section.assign(
     data_container.getCutoffElasticCrossSection().begin(),
 	data_container.getCutoffElasticCrossSection().end() );
 
-  d_cutoff_reaction.reset(
-	new MonteCarlo::CutoffElasticElectroatomicReaction<Utility::LinLin>(
+  // Screened Rutherford elastic cross section
+  Teuchos::ArrayRCP<double> rutherford_cross_section;
+  rutherford_cross_section.assign(
+    data_container.getScreenedRutherfordElasticCrossSection().begin(),
+	data_container.getScreenedRutherfordElasticCrossSection().end() );
+
+  d_analog_reaction.reset(
+	new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
         energy_grid,
         cutoff_cross_section,
+        rutherford_cross_section,
         data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
         grid_searcher,
-        d_cutoff_distribution ) );
+        d_analog_distribution ) );
 }
 
-// Constructor (with volatile data container)
+// Constructor (without data container)
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        rutherford_distribution,
-    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& rutherford_reaction,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& cutoff_reaction,
+    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution,
+    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
+        analog_reaction,
     const double cutoff_angle_cosine )
   : d_cutoff_elastic_angles( cutoff_elastic_angles ),
-    d_rutherford_distribution( rutherford_distribution ),
-    d_cutoff_distribution( cutoff_distribution ),
-    d_rutherford_reaction( rutherford_reaction ),
-    d_cutoff_reaction( cutoff_reaction ),
+    d_analog_distribution( analog_distribution ),
+    d_analog_reaction( analog_reaction ),
     d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
@@ -111,34 +97,9 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine || cutoff_angle_cosine == 1.0 );
 
   // Make sure the arrays are valid
-  testPrecondition( !rutherford_distribution.is_null() );
-  testPrecondition( !cutoff_distribution.is_null() );
-  testPrecondition( !rutherford_reaction.is_null() );
-  testPrecondition( !cutoff_reaction.is_null() );
+  testPrecondition( !analog_distribution.is_null() );
+  testPrecondition( !analog_reaction.is_null() );
   testPrecondition( !cutoff_elastic_angles.empty() );
-}
-
-// Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy,
-                                    const int polynomial_order ) const
-{
-  // Make sure the energy and angle cosine are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= s_rutherford_cutoff_angle_cosine );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value =
-            d_rutherford_distribution->evaluate( incoming_energy,
-                                                 scattering_angle_cosine );
-
-  // Evaluate the Legendre Polynomial at the given angle and order
-  double legendre_value =
-    Utility::getLegendrePolynomial( scattering_angle_cosine, polynomial_order );
-
-  return pdf_value*legendre_value;
 }
 
 // Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
@@ -156,9 +117,10 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford(
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value =
-            d_rutherford_distribution->evaluate( incoming_energy,
-                                                 scattering_angle_cosine,
-                                                 eta );
+            d_analog_distribution->evaluateScreenedRutherfordPDF(
+                    incoming_energy,
+                    scattering_angle_cosine,
+                    eta );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =
@@ -176,12 +138,12 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= s_rutherford_cutoff_angle_cosine );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value =
-            d_cutoff_distribution->evaluatePDF( incoming_energy,
-                                             scattering_angle_cosine );
+            d_analog_distribution->evaluatePDF( incoming_energy,
+                                                scattering_angle_cosine );
 
   // Evaluate the Legendre Polynomial at the given angle and order
   double legendre_value =
@@ -267,7 +229,7 @@ void ElasticElectronMomentsEvaluator::evaluateCutoffMoment(
 
   // Get the cutoff cross section
   Utility::long_float cutoff_cross_section =
-        d_cutoff_reaction->getCrossSection( energy );
+        d_analog_reaction->getCutoffCrossSection( energy );
 
   cutoff_moment *= cutoff_cross_section;
 }
@@ -382,53 +344,52 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMomentByNumer
             const double& energy,
             const int& n ) const
 {
-  // Make sure the energy and order are valid
+  // Make sure the energy, anfgular grid and order are valid
   testPrecondition( energy > 0.0 );
   testPrecondition( n >= 0 );
-
-  // screened Rutherford cutoff angle cosine
-  Utility::long_float mu = Utility::long_float(999999)/1000000;
 
   Utility::GaussKronrodIntegrator<Utility::long_float>
     integrator( 1e-13, 0.0, 1000, true ); // integrator( 1e-13 );
 
-  Utility::long_float abs_error, moment_n, moment_zero;
+  Utility::long_float abs_error, moment_zero;
 
-  // Create boost rapper function for the screened Rutherford peak
-  boost::function<double (double x)> wrapper =
-        boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
+  // Create boost rapper function for the analog elastic differential cross section
+  boost::function<double (double x)> distribution_wrapper =
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
                          boost::cref( *this ),
                          _1,
                          energy,
                          0 );
 
+  rutherford_moment = Utility::long_float(0);
+
+  abs_error = Utility::long_float(0);
   integrator.integrateAdaptively<61>(
-					wrapper,
-                    mu,
-					Utility::long_float(1),
-					moment_zero,
-					abs_error );
+            distribution_wrapper,
+            Utility::long_float(999999)/1000000,
+            Utility::long_float(1),
+            moment_zero,
+            abs_error );
 
-  moment_n = moment_zero;
-
-  if ( n > 0 )
-  {
-    // Create boost rapper function for the screened Rutherford peak
-    wrapper =
-        boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedRutherford,
+  // Create boost rapper function for the analog elastic differential cross section
+  distribution_wrapper =
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
                          boost::cref( *this ),
                          _1,
                          energy,
                          n );
 
-    integrator.integrateAdaptively<61>(
-					wrapper,
-                    mu,
-					Utility::long_float(1),
-					moment_n,
-					abs_error );
-  }
-  rutherford_moment = moment_n/moment_zero;
+  rutherford_moment = Utility::long_float(0);
+
+  abs_error = Utility::long_float(0);
+  integrator.integrateAdaptively<61>(
+            distribution_wrapper,
+            Utility::long_float(999999)/1000000,
+            Utility::long_float(1),
+            rutherford_moment,
+            abs_error );
+
+  rutherford_moment /= moment_zero;
 }
 
 /* Evaluate the nth PDF moment of the screened Rutherford peak distribution
@@ -502,26 +463,13 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordPDFMoment(
 
   // Calcuate Moliere's modified screening constant (eta)
   Utility::long_float eta = Utility::long_float(
-    d_rutherford_distribution->evaluateMoliereScreeningConstant( energy ) );
+    d_analog_distribution->evaluateMoliereScreeningConstant( energy ) );
 
-//  /*!  \details If eta is small ( << 1 ) a recursion relationship can be used to
-//   *! calculate the moments of the screened Rutherford peak. For larger eta the
-//   *! moments will be calculated by numerical integration.
-//   */
-//  if ( eta <= 2.0e-2 )
-//  {
-//    evaluateScreenedRutherfordPDFMomentByRecursion(
-//      rutherford_moment,
-//      eta,
-//      n);
-//  }
-//  else
-//  {
-//    evaluateScreenedRutherfordPDFMomentByNumericalIntegration(
-//      rutherford_moment,
-//      energy,
-//      n);
-//  }
+  /*! \details The recursion relationship has been able to calculated the
+      Rutherford moment faster and more accurately than numerical integration.
+      Numerical integration has been left in in case there is an exception
+      which the recursion relationship cannot calcuate.
+   */
   evaluateScreenedRutherfordPDFMomentByRecursion(
     rutherford_moment,
     eta,
@@ -541,7 +489,8 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   // Get the moments of the PDF
   evaluateScreenedRutherfordPDFMoment( rutherford_moment, energy, n);
 
-  rutherford_moment *= d_rutherford_reaction->getCrossSection( energy );
+  rutherford_moment *=
+    d_analog_reaction->getScreenedRutherfordCrossSection( energy );
 }
 
 } // end DataGen namespace

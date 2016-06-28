@@ -381,6 +381,18 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( discrete_weights.back(), 1.0 );
   TEST_EQUALITY_CONST( discrete_weights.size(), 1 );
 
+  threshold =
+    data_container.getMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  TEST_EQUALITY_CONST( threshold, 0 );
+
+  cross_section =
+    data_container.getMomentPreservingCrossSection();
+
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240909636E+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.2931601408114005462e-07, 1e-15 );
+  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+
   // Check the electroionization data
   threshold =
     data_container.getElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -782,8 +794,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_EQUALITY_CONST( cross_section.front(), 3.05415565648981519e+07 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 0.10472409550127616262, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.2217606103336416185e+07, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 4.6405644799051960388e-07, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
 
   threshold =
@@ -2160,8 +2172,8 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   std::vector<double> cross_section =
     data_container.getMomentPreservingCrossSection();
 
-  TEST_EQUALITY_CONST( cross_section.front(), 3.4036276974612629414e+08 );
-  TEST_FLOATING_EQUALITY( cross_section.back(), 1.1690805753516231302, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.front(), 1.3615606801711243391e+08, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section.back(), 1.5258885009562140901e-05, 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
 
   threshold =

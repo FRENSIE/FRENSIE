@@ -253,7 +253,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   unsigned atomic_number = data_container->getAtomicNumber();
 
   
-  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistributions(
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
         native_analog_elastic_distribution,
         cutoff_elastic_angles,
         cutoff_elastic_pdf,

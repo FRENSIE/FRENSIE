@@ -19,13 +19,13 @@
 
 // FRENSIE Includes
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
-#include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_SloanRadauQuadrature.hpp"
-#include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 
 
 namespace DataGen{
@@ -41,6 +41,10 @@ public:
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
+  //! Typedef for the cutoff elastic distribution
+  typedef MonteCarlo::AnalogElasticElectronScatteringDistribution::CutoffDistribution
+    CutoffDistribution;
+
   //! Typedef for the elastic distribution
   typedef Utility::GaussKronrodIntegrator<Utility::long_float>
   Integrator;
@@ -50,26 +54,18 @@ public:
     const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double cutoff_angle_cosine = 1.0 );
 
-  //! Constructor
+  //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-        rutherford_distribution,
-    const Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-        cutoff_distribution,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& rutherford_reaction,
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& cutoff_reaction,
+    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution,
+    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
+        analog_reaction,
     const double cutoff_angle_cosine = 1.0 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
-
-  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
-  double evaluateLegendreExpandedRutherford(
-            const double scattering_angle_cosine,
-            const double incoming_energy,
-            const int polynomial_order = 0 ) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
   double evaluateLegendreExpandedRutherford(
@@ -148,19 +144,13 @@ protected:
 
 private:
 
-  // The cutoff reaction
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_cutoff_reaction;
+  // The analog reaction
+  Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
+    d_analog_reaction;
 
-  // The screened Rutherford reaction
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_rutherford_reaction;
-
-  // The cutoff distribution
-  Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
-    d_rutherford_distribution;
-
-  // The screened Rutherford distribution
-  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
-    d_cutoff_distribution;
+  // The analog distribution
+  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    d_analog_distribution;
 
   // The map of the cutoff angles
   std::map<double,std::vector<double> > d_cutoff_elastic_angles;
