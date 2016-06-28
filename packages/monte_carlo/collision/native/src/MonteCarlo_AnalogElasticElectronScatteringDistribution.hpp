@@ -79,8 +79,6 @@ public:
   //! Evaluate Moliere's atomic screening constant at the given electron energy
   double evaluateMoliereScreeningConstant( const double energy ) const;
 
-protected:
-
   //! Evaluate the distribution
   double evaluateScreenedRutherford(
             const double incoming_energy,
@@ -98,6 +96,8 @@ protected:
             const double incoming_energy,
             const double scattering_angle_cosine,
             const double eta ) const;
+
+protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleIndependent(

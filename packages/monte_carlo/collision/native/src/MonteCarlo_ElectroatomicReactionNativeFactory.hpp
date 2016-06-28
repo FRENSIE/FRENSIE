@@ -26,6 +26,13 @@ class ElectroatomicReactionNativeFactory
 
 public:
 
+  //! Create an analog elastic scattering electroatomic reaction
+  static void createAnalogElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction );
+
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,

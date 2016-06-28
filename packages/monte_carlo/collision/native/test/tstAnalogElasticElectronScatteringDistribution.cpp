@@ -538,8 +538,10 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                    sampleAndRecordTrialsImpl )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 9.99999997769196E-01
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 1.0e-3; // sample mu =  0.99999771799414149953
+  fake_stream[1] = 0.5; // sample mu = 0.99999999776919568095
+  fake_stream[2] = 1.0 - 1e-15; // sample mu = 1.0
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -557,8 +559,28 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                     trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999997769196E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999771799414149953E-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
+
+  // sampleAndRecordTrialsImpl from distribution
+  test_elastic_distribution->sampleAndRecordTrialsImpl(
+                                    electron.getEnergy(),
+                                    scattering_angle_cosine,
+                                    trials );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 12 );
+
+  // sampleAndRecordTrialsImpl from distribution
+  test_elastic_distribution->sampleAndRecordTrialsImpl(
+                                    electron.getEnergy(),
+                                    scattering_angle_cosine,
+                                    trials );
+
+  // Test
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 13 );
 }
 
 //---------------------------------------------------------------------------//
@@ -600,7 +622,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 9.99999997769196E-01
+  fake_stream[0] = 0.5; // sample mu = 9.9999999775901926569E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -616,7 +638,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                           scattering_angle_cosine );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999997769196E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
 }
 
@@ -627,7 +649,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 9.99999997769196E-01
+  fake_stream[0] = 0.5; // sample mu = 9.9999999775901926569E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -646,7 +668,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                           trials );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.99999997769196E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.9999999775901926569E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 6.625E+01, 1e-12 );
 }
 
@@ -657,7 +679,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 9.99999997769196E-01
+  fake_stream[0] = 0.5; // sample mu = 9.9999999775901926569E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -674,7 +696,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.99999997769196E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.9999999775901926569E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 6.625E+01, 1e-12 );
 
 }
@@ -686,7 +708,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.5; // sample mu = 9.99999997769196E-01
+  fake_stream[0] = 0.5; // sample mu = 9.9999999775901926569E-01
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -705,7 +727,7 @@ TEUCHOS_UNIT_TEST( AnalogElasticElectronScatteringDistribution,
 
   // Test
   TEST_FLOATING_EQUALITY( adjoint_electron.getZDirection(),
-                          9.99999997769196E-01,
+                          9.9999999775901926569E-01,
                           1e-12 );
   TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), 6.625E+01, 1e-12 );
 }

@@ -14,14 +14,11 @@
 
 namespace MonteCarlo{
 
-// Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
-void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
-	const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine )
+// Create the analog elastic distributions ( combined Cutoff and Screened Rutherford )
+void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& data_container )
 {
   // Get the energy grid
   std::vector<double> angular_energy_grid =
@@ -31,43 +28,34 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  ElasticDistribution scattering_function(size);
+  CutoffDistribution scattering_function(size);
   ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
 	data_container,
 	angular_energy_grid,
 	scattering_function );
 
-  // Create cutoff distribution
-  cutoff_elastic_distribution.reset(
-        new CutoffElasticElectronScatteringDistribution(
-                scattering_function,
-                cutoff_angle_cosine ) );
-
   // Get the atomic number
   const int atomic_number = data_container.getAtomicNumber();
 
-  // Create the screened Rutherford distribution
-  screened_rutherford_elastic_distribution.reset(
-        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                cutoff_elastic_distribution,
+  // Create analog distribution
+  analog_elastic_distribution.reset(
+        new AnalogElasticElectronScatteringDistribution(
+                scattering_function,
                 atomic_number ) );
 }
 
-// Create the hard elastic distributions ( both Cutoff and Screened Rutherford )
+// Create the analog elastic distributions ( combined Cutoff and Screened Rutherford )
 /*! \details This function has been overloaded so it can be called without using
  *  the native data container. This functionality is neccessary for generating
  *  native moment preserving data without first creating native data files.
  */
-void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistributions(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
+void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
-    const unsigned& atomic_number,
-    const double& cutoff_angle_cosine )
+    const unsigned& atomic_number )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.back() > 0 );
@@ -76,9 +64,6 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
 			                              angular_energy_grid.end() ) );
 
   Data::testPreconditionValuesGreaterThanZero( angular_energy_grid );
-  // Make sure the upper cutoff angle cosine is valid
-  testPrecondition( cutoff_angle_cosine <= 1.0 );
-  testPrecondition( cutoff_angle_cosine > -1.0 );
   // Make sure the atomic number is valid
   testPrecondition( atomic_number > 0 );
   testPrecondition( atomic_number <= 100 );
@@ -87,23 +72,17 @@ void ElasticElectronScatteringDistributionNativeFactory::createHardElasticDistri
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  ElasticDistribution scattering_function(size);
+  CutoffDistribution scattering_function(size);
   ElasticElectronScatteringDistributionNativeFactory::createScatteringFunction(
         cutoff_elastic_angles,
         cutoff_elastic_pdf,
         angular_energy_grid,
 		scattering_function );
 
-  // Create cutoff distribution
-  cutoff_elastic_distribution.reset(
-        new CutoffElasticElectronScatteringDistribution(
+  // Create analog distribution
+  analog_elastic_distribution.reset(
+        new AnalogElasticElectronScatteringDistribution(
                 scattering_function,
-                cutoff_angle_cosine ) );
-
-  // Create the screened Rutherford distribution
-  screened_rutherford_elastic_distribution.reset(
-        new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
-                cutoff_elastic_distribution,
                 atomic_number ) );
 }
 
@@ -122,7 +101,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
   int size = angular_energy_grid.size();
 
   // Create the scattering function
-  ElasticDistribution scattering_function(size);
+  CutoffDistribution scattering_function(size);
 
   ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
 		data_container,
@@ -236,7 +215,7 @@ std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngul
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& data_container,
         const std::vector<double>& angular_energy_grid,
-        ElasticDistribution& scattering_function )
+        CutoffDistribution& scattering_function )
 {
   std::map<double,std::vector<double> > 
     angles( data_container.getCutoffElasticAngles() );
@@ -260,7 +239,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScatteringFunctio
         const std::map<double,std::vector<double> >& cutoff_elastic_angles,
         const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
         const std::vector<double>& angular_energy_grid,
-        ElasticDistribution& scattering_function )
+        CutoffDistribution& scattering_function )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.back() > 0 );

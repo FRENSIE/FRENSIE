@@ -53,35 +53,20 @@ void ElectroatomNativeFactory::createElectroatomCore(
 						     energy_grid,
 						     hash_grid_bins ) );
 
-  // Create the cutoff elastic scattering reaction
+  // Create the analog elastic scattering reaction (no moment preserving elastic scattering)
+  if ( cutoff_angle_cosine == 1.0 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[ANALOG_ELASTIC_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+    ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
 					   grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle_cosine );
+					   reaction_pointer );
   }
-
-  // Create the screened rutherford elastic scattering reaction (if cutoff is within range)
-  if ( cutoff_angle_cosine > 0.999999 )
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer =
-      scattering_reactions[SCREENED_RUTHERFORD_ELASTIC_ELECTROATOMIC_REACTION];
-
-    ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle_cosine );
-  }
-
-  // Create the moment preserving elastic scattering reaction (if turned on)
-  if ( cutoff_angle_cosine < 1.0 )
+  // Create the moment preserving elastic scattering reaction (no analog elastic scattering)
+  else if ( cutoff_angle_cosine == -1.0 )
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
@@ -92,6 +77,32 @@ void ElectroatomNativeFactory::createElectroatomCore(
 					   grid_searcher,
 					   reaction_pointer,
                        cutoff_angle_cosine );
+  }
+  // Create the hybrid elastic scattering reaction (if cutoff is within range)
+  else
+  {
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+
+      ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+					   raw_electroatom_data,
+					   energy_grid,
+					   grid_searcher,
+					   reaction_pointer,
+                       cutoff_angle_cosine );
+    }
+    {
+      Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
+
+      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
+					   raw_electroatom_data,
+					   energy_grid,
+					   grid_searcher,
+					   reaction_pointer,
+                       cutoff_angle_cosine );
+    }
   }
 
   // Create the bremsstrahlung scattering reaction

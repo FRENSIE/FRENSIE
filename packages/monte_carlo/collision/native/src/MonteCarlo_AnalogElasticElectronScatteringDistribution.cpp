@@ -389,11 +389,14 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
   // Get maximum CDF at the bin energy
   double max_cdf = evaluateScreenedRutherfordCDF( energy, 1.0, eta );
   // Get a random number scaled to the max cdf
-  double scaled_random_number =
-            max_cdf*Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double random_number =
+            Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  if ( scaled_random_number > 1.0 ) // Sample screened Rutherford
+  if ( max_cdf*random_number > 1.0 ) // Sample screened Rutherford
   {
+    // scale the random number to the screened Ruthered cdf
+    double scaled_random_number = ( max_cdf - 1.0 )*random_number;
+
     // Get the pdf value at s_cutoff_mu for the bin energy
     double cutoff_pdf = distribution_bin->second->evaluatePDF( s_cutoff_mu );
 
@@ -410,9 +413,9 @@ void AnalogElasticElectronScatteringDistribution::sampleIndependent(
   }
   else // Sample Cutoff
   {
-    // calculate the cutoff distribution  scattering angle
+    // calculate the cutoff distribution scattering angle
     scattering_angle_cosine =
-      distribution_bin->second->sampleWithRandomNumber( scaled_random_number );
+      distribution_bin->second->sampleWithRandomNumber( max_cdf*random_number );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine <= s_cutoff_mu );

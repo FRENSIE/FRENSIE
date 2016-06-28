@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
@@ -26,32 +27,26 @@ class ElasticElectronScatteringDistributionNativeFactory
 
 public:
 
-  typedef CutoffElasticElectronScatteringDistribution::ElasticDistribution
-            ElasticDistribution;
+  typedef AnalogElasticElectronScatteringDistribution::CutoffDistribution
+            CutoffDistribution;
 
   typedef MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
             DiscreteElasticDistribution;
 
-  //! Create the elastic distributions ( both Cutoff and Screened Rutherford )
-  static void createHardElasticDistributions(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
-	const Data::ElectronPhotonRelaxationDataContainer& data_container,
-    const double& cutoff_angle_cosine = 1.0 );
+  //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
+  static void createAnalogElasticDistribution(
+	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
+	const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
-  //! Create the elastic distributions ( both Cutoff and Screened Rutherford )
-  static void createHardElasticDistributions(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
-        cutoff_elastic_distribution,
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
-        screened_rutherford_elastic_distribution,
+  //! Create the elastic distributions ( combined Cutoff and Screened Rutherford )
+  static void createAnalogElasticDistribution(
+	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+        analog_elastic_distribution,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
-    const unsigned& atomic_number,
-    const double& cutoff_angle_cosine = 1.0 );
+    const unsigned& atomic_number );
 
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
@@ -92,7 +87,7 @@ protected:
   static void createCutoffScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double>& angular_energy_grid,
-        ElasticDistribution& scattering_function );
+        CutoffDistribution& scattering_function );
 
   //! Create the moment preserving elastic scattering function
   static void createMomentPreservingScatteringFunction(
@@ -105,7 +100,7 @@ protected:
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
-    ElasticDistribution& scattering_function );
+    CutoffDistribution& scattering_function );
 };
 
 } // end MonteCarlo namespace

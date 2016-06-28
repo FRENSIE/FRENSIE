@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
@@ -29,6 +30,57 @@
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Create the analog elastic scattering electroatomic reactions
+void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+			const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+			const Teuchos::ArrayRCP<const double>& energy_grid,
+            const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+
+  // Create the analog elastic scattering distribution
+  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
+    distribution,
+    raw_electroatom_data );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
+	raw_electroatom_data.getCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  unsigned cutoff_threshold_energy_index =
+    raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Screened Rutherford elastic cross section
+  Teuchos::ArrayRCP<double> sr_cross_section;
+  sr_cross_section.assign(
+    raw_electroatom_data.getScreenedRutherfordElasticCrossSection().begin(),
+	raw_electroatom_data.getScreenedRutherfordElasticCrossSection().end() );
+
+  // Screened Rutherford elastic cross section threshold energy bin index
+  unsigned sr_threshold_energy_index =
+    raw_electroatom_data.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
+
+  elastic_reaction.reset(
+	new AnalogElasticElectroatomicReaction<Utility::LinLin>(
+						  energy_grid,
+						  cutoff_cross_section,
+						  sr_cross_section,
+						  cutoff_threshold_energy_index,
+						  sr_threshold_energy_index,
+                          grid_searcher,
+						  distribution ) );
+}
 
 // Create the cutoff elastic scattering electroatomic reactions
 void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(

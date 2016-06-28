@@ -35,6 +35,43 @@ Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that an analog elastic reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
+		           createAnalogElasticReaction )
+{
+  MonteCarlo::ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
+                *data_container,
+                energy_grid,
+                grid_searcher,
+                reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::ANALOG_ELASTIC_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+
+  // Test that the stored cross section is correct
+  double energy = 1.00000e-5;
+  double cross_section =
+    reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000e+9 + 0.0, 1e-12 );
+
+  energy = 4.00000e-4;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e+8 + 0.0, 1e-12 );
+
+  energy = 1.00000e+5;
+  cross_section = reaction->getCrossSection( energy );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.83051e-2 + 2.1116099116949E+06, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Check that an cutoff elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionNativeFactory,
 		           createCutoffElasticReaction )

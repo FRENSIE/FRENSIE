@@ -126,7 +126,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
   // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
 
-  // Get the cross section ratio for the cutoff angle
+  // Get the cross section ratio for the cutoff angle cosine
   double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
@@ -148,7 +148,7 @@ double CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
     const double energy,
     const unsigned bin_index ) const
 {
-  // Get the cross section ratio for the cutoff angle
+  // Get the cross section ratio for the cutoff angle cosine
   double cross_section_ratio =
     d_scattering_distribution->evaluateCutoffCrossSectionRatio( energy );
 
