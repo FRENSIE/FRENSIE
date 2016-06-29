@@ -6,6 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
+#include <iostream>
+
 // moab includes
 #include "moab/Core.hpp"
 #include "moab/ScdInterface.hpp"
@@ -34,8 +36,6 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   const std::string output_mesh_file_name )
 : StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>( id, multiplier ),
   d_hex_mesh( new Utility::StructuredHexMesh( x_planes, y_planes, z_planes) ),
-  d_hex_begin( d_hex_mesh->getStartHexIDIterator() ),
-  d_hex_end( d_hex_mesh->getEndHexIDIterator() ),
   d_output_mesh_file_name( output_mesh_file_name )
 {
   
@@ -45,7 +45,8 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
   this->assignEntities( hex_volumes );
 
-
+  d_hex_begin = d_hex_mesh->getStartHexIDIterator();
+  d_hex_end = d_hex_mesh->getEndHexIDIterator();
 }
 
 template<typename ContributionMultiplierPolicy>
@@ -80,8 +81,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 {
 
   //make sure end point isn't the same as start point
-  testPrecondition( start_point[0] != end_point[0] &&
-                    start_point[1] != end_point[1] &&
+  testPrecondition( start_point[0] != end_point[0] ||
+                    start_point[1] != end_point[1] ||
                     start_point[2] != end_point[2] );
 
   double ray[3] {end_point[0] - start_point[0],
@@ -125,6 +126,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const bool process_data ) const
 {
+
   // Export data in FRENSIE formatting for data manipulation
   StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::exportData( hdf5_file,
                                                            process_data );
@@ -166,32 +168,38 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
 
     //make an array called coordinates that MOAB can use to construct a structured hex mesh
     unsigned size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
-    double coordinates[size_of_coordinates];
-  
-    for(unsigned i = 0; i < size_of_coordinates; i = i + 3)
-    {
-  
-      coordinates[i] = d_hex_mesh->getXPlaneLocation(i/3);
-      coordinates[i+1] = d_hex_mesh->getYPlaneLocation(i/3);
-      coordinates[i+2] = d_hex_mesh->getZPlaneLocation(i/3);
-  
-    }
+    double coordinates [size_of_coordinates*3];
+    
 
-    unsigned number_of_coordinates = size_of_coordinates/3;
+    
+    unsigned l = 0;
+    for( unsigned i = 0; i < x_coordinates_size; ++i)
+    {
+      for( unsigned j = 0; j < y_coordinates_size; ++j)
+      {
+        for( unsigned k = 0; k < z_coordinates_size; ++k)
+        {
+          coordinates[l] = d_hex_mesh->getXPlaneLocation(i);
+          coordinates[l + 1] = d_hex_mesh->getYPlaneLocation(j);
+          coordinates[l + 2] = d_hex_mesh->getZPlaneLocation(k);
+          l = l + 3;
+        }
+      }
+    }
 
     //set up the actual box
     std::unique_ptr<moab::ScdBox> box;
     {
       // Allow moab to create a new heap allocated object
       moab::ScdBox* raw_scdbox;
-      
+
       //create the box filled with the coordinates
       rval = scdiface->construct_box( moab::HomCoord( 0, 0, 0),
                                       moab::HomCoord( x_coordinates_size - 1,
                                                       y_coordinates_size - 1,
                                                       z_coordinates_size - 1 ),
                                       coordinates,
-                                      number_of_coordinates,
+                                      size_of_coordinates*3,
                                       raw_scdbox );
       
       TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
@@ -201,213 +209,50 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       //Tell the smart pointer to own the new raw pointer
       box.reset( raw_scdbox);
     }
+    std::cout << std::endl;
+    for(unsigned i = 0; i < size_of_coordinates*3; i = i + 3)
+    {
     
-    //get the hex_elements
-    moab::Range hex_elements;
+      std::cout << "COORDINATE: " << coordinates[i] << " " << coordinates[i + 1] << " " << coordinates[i + 2] << std::endl;
     
-    std::vector<moab::Tag> mean_tag( this->getNumberOfBins()*
-                                     this->getNumberOfResponseFunctions()+
-                                     this->getNumberOfResponseFunctions() ),
-                           relative_error_tag( mean_tag.size() ),
-                           vov_tag( this->getNumberOfResponseFunctions() ),
-                           fom_tag( vov_tag.size() );
-
-    rval = moab_interface->get_entities_by_dimension(0, 3, hex_elements);
+    }
+    
+    moab::HomCoord size = box->box_size();
+    std::cout << "SIZE: " << size[0] << size[1] << size[2] << std::endl;
+    
+    const double* x_coordinates;
+    const double* y_coordinates;
+    const double* z_coordinates;
+    
+    rval = box->get_coordinate_arrays(x_coordinates , y_coordinates , z_coordinates );
     TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] );
 
-    //process moments
-    for( moab::Range::const_iterator hex = hex_elements.begin();
-         hex != hex_elements.end();
-         ++hex)
+    /*for(unsigned i = 0; i < 3; ++i)
     {
-    
-      const double hex_volume = this->getEntityNormConstant( *hex );
-      
-      const Estimator::TwoEstimatorMomentsArray& hex_bin_data =
-        this->getEntityBinData( *hex );
-      
-      std::string mean_tag_prefix = "mean: ";
-      std::string relative_error_tag_prefix = "relative_error: ";
-      std::string vov_tag_prefix = "vov: ";
-      std::string fom_tag_prefix = "fom: ";
-      
-      for( unsigned i = 0; i < hex_bin_data.size(); ++i )
+      for(unsigned j = 0; j < 3; ++j)
       {
-      
-        double mean, relative_error;
-        
-        this->processMoments( hex_bin_data[i],
-                              hex_volume,
-                              mean,
-                              relative_error );
-        
-        std::string bin_name = this->getBinName(i);
-        std::string mean_tag_name = mean_tag_prefix + bin_name;
-        std::string relative_error_tag_name = relative_error_tag_prefix + bin_name;
-        
-        //Assign mean tag data
-        rval = moab_interface->tag_get_handle( mean_tag_name.c_str(),
-                                               1,
-                                               moab::MB_TYPE_DOUBLE,
-                                               mean_tag[i],
-                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT);
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        rval = moab_interface->tag_set_data( mean_tag[i],
-                                             &(*hex),
-                                             1,
-                                             &mean );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        //Assign error tag data
-        rval = moab_interface->tag_get_handle( relative_error_tag_name.c_str(),
-                                               1,
-                                               moab::MB_TYPE_DOUBLE,
-                                               mean_tag[i],
-                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT);
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        rval = moab_interface->tag_set_data( relative_error_tag[i],
-                                             &(*hex),
-                                             1,
-                                             &mean );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-      
+        for(unsigned k = 0; k < 3; ++k)
+        {
+          std::cout << "VERTEX: " << x_coordinates[i] << " " << y_coordinates[j] << " " << z_coordinates[k] << std::endl;
+        }
       }
-      
-      //Assign total bin data for each entity
-      std::string total_tag_prefix = "total_";
-      std::string total_mean_tag_name = total_tag_prefix + "mean";
-      std::string total_relative_error_tag_name = total_tag_prefix + "relative_error";
-      std::string total_vov_tag_name = total_tag_prefix + "vov";
-      std::string total_fom_tag_name = total_tag_prefix + "fom";
-      
-      const Estimator::FourEstimatorMomentsArray& total_hex_data = 
-        this->getEntityTotalData( *hex );
-      
-      for(unsigned i = 0; i < total_hex_data.size(); ++i)
-      {
-      
-        double mean, relative_error, vov, fom;
-        
-        this->processMoments( total_hex_data[i],
-                              hex_volume,
-                              mean,
-                              relative_error,
-                              vov,
-                              fom );
-        
-        unsigned tag_index = this->getNumberOfBins() + i;
-        
-        // Assign total mean tag data
-        
-        rval = moab_interface->tag_get_handle( total_mean_tag_name.c_str(),
-                                                 1,
-                                                 moab::MB_TYPE_DOUBLE,
-                                                 mean_tag[tag_index],
-                                                 moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );   
-        
-        rval = moab_interface->tag_set_data( mean_tag[tag_index],
-                                             &(*hex),
-                                             1,
-                                             &mean );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        //Assign total relative error tag data
-        rval = moab_interface->tag_get_handle( total_relative_error_tag_name.c_str(),
-                                                 1,
-                                                 moab::MB_TYPE_DOUBLE,
-                                                 relative_error_tag[tag_index],
-                                                 moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );   
-        
-        rval = moab_interface->tag_set_data( relative_error_tag[tag_index],
-                                             &(*hex),
-                                             1,
-                                             &relative_error );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        //Assign total vov tag data
-        rval = moab_interface->tag_get_handle( total_vov_tag_name.c_str(),
-                                                 1,
-                                                 moab::MB_TYPE_DOUBLE,
-                                                 vov_tag[tag_index],
-                                                 moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );   
-        
-        rval = moab_interface->tag_set_data( vov_tag[tag_index],
-                                             &(*hex),
-                                             1,
-                                             &vov );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-
-        //Assign total fom tag data
-        rval = moab_interface->tag_get_handle( total_vov_tag_name.c_str(),
-                                                 1,
-                                                 moab::MB_TYPE_DOUBLE,
-                                                 fom_tag[tag_index],
-                                                 moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );   
-        
-        rval = moab_interface->tag_set_data( fom_tag[tag_index],
-                                             &(*hex),
-                                             1,
-                                             &fom );
-        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[rval] );
-      }
-    
+    }*/
+    for(unsigned i = 0; i < 3; ++i)
+    {
+      std::cout << "X COORDINATES: " << x_coordinates[i] << std::endl;
     }
     
-    //Export mesh
-    std::vector<moab::Tag> output_tags = mean_tag;
-  
-    output_tags.insert( output_tags.end(),
-                        relative_error_tag.begin(),
-                        relative_error_tag.end() );
-    output_tags.insert( output_tags.end(),
-                        vov_tag.begin(),
-                        vov_tag.end() );
-    output_tags.insert( output_tags.end(),
-                        fom_tag.begin(),
-                        fom_tag.end() );
-
-    rval = moab_interface->write_file( d_output_mesh_file_name.c_str(),
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       1,
-                                       &(output_tags[0]),
-                                       output_tags.size() );
-    TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
-                        Utility::MOABException,
-                        moab::ErrorCodeStr[rval] );    
+    for(unsigned j = 0; j < 3; ++j)
+    {
+      std::cout << "Y COORDINATES: " << y_coordinates[j] << std::endl;
+    }
+    
+    for(unsigned k = 0; k < 3; ++k)
+    {
+      std::cout << "Z COORDINATES: " << z_coordinates[k] << std::endl;
+    }
     
   }
 }

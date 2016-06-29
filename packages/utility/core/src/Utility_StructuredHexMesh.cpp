@@ -6,6 +6,7 @@
 //! 
 //---------------------------------------------------------------------------//
 
+
 //std includes
 #include <math.h>
 
@@ -65,7 +66,6 @@ StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,
       }
     }
   }
-
 }
 
 boost::unordered_map<StructuredHexMesh::HexIndex,
