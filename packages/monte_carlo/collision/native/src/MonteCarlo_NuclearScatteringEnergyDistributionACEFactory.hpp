@@ -73,10 +73,12 @@ public:
     
   //! Create the S(alpha,beta) coupled energy-angle elastic distribution
   static void createSAlphaBetaElasticDistribution( 
+    const double atomic_weight_ratio,
     const Teuchos::ArrayView<const double>& incoming_energies,
     const Teuchos::ArrayView<const double>& itce_block_array,
-    const double number_energies = 0,
-    const Tuechos::ArrayView<const double>& itca_block_array = NULL,
+    const double number_energies,
+    const Teuchos::ArrayView<const double>& itca_block_array,
+    const bool is_cm_distribution,
     Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution ); 
                   
   //! Determine the coupled energy-angle distribution
