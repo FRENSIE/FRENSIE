@@ -267,20 +267,14 @@ int main( int argc, char** argv )
         data_container.getScreenedRutherfordElasticCrossSection().begin(),
         data_container.getScreenedRutherfordElasticCrossSection().end() );
 
-    unsigned cutoff_threshold_index(
-        data_container.getCutoffElasticCrossSectionThresholdEnergyIndex() );
-
-    unsigned sr_threshold_index(
-        data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex() );
-
     // Create the reaction
     analog_elastic_reaction.reset(
       new MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>(
                 energy_grid,
                 cutoff_cross_section,
                 sr_cross_section,
-                cutoff_threshold_index,
-                sr_threshold_index,
+                data_container.getCutoffElasticCrossSectionThresholdEnergyIndex(),
+                data_container.getScreenedRutherfordElasticCrossSectionThresholdEnergyIndex(),
                 analog_elastic_distribution ) );
   }
 

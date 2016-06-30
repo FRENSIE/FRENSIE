@@ -682,7 +682,7 @@ Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          3.084945182072920E+01,
+                          2.203770304996720E-03,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -690,7 +690,7 @@ Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.051052415678910E+06,
+                          1.237767561961470E+04,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -698,7 +698,7 @@ Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.567045792435710E+06,
+                          1.191705501578560E+05,
                           1e-12 );
 
   // Test that there is no total electroionization

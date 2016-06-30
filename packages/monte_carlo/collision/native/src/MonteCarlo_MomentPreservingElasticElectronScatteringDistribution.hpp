@@ -12,10 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
@@ -91,8 +87,6 @@ public:
   void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
                                Data::SubshellType& shell_of_interaction ) const;
-
-
 
 protected:
 

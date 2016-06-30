@@ -16,11 +16,18 @@
 
 namespace MonteCarlo{
 
-//! Typedef for the  bremsstrahlung distribution 
+//! Typedef for a 2-D distribution 
 typedef Teuchos::Array<Utility::Pair<double, 
                        Teuchos::RCP<const Utility::TabularOneDDistribution> > > 
 TwoDDistribution; 
 
+//! Find the lower and upper bin boundary
+template<typename DependentTwoDDistribution>
+void findLowerAndUpperBinIndex(
+    const double independent_variable,
+	const DependentTwoDDistribution& dependent_distribution,
+    unsigned& lower_bin_index,
+    unsigned& upper_bin_index );
 
 //! Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
@@ -68,6 +75,32 @@ template<typename DependentTwoDDistribution,
 double sampleTwoDDistributionIndependent(
     const double independent_variable,
     const DependentTwoDDistribution& dependent_distribution );
+
+//! Sample continuously across multiple two dimensional distribution bins
+template<typename DependentTwoDDistributionA, typename DependentTwoDDistributionB>
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_bin,
+    const double& cross_section_a,
+    const double& cross_section_b,
+    const double& random_number,
+    double& scattering_angle_cosine );
+
+//! Sample continuously across multiple two dimensional distribution using correlated sampling
+template<typename DependentTwoDDistributionA,
+         typename DependentTwoDDistributionB,
+         typename InterpolationPolicy >
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_lower_bin,
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_upper_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_lower_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_upper_bin,
+    const double& lower_cross_section_a,
+    const double& upper_cross_section_a,
+    const double& lower_cross_section_b,
+    const double& upper_cross_section_b,
+    const double& independent_variable,
+    double& scattering_angle_cosine );
 
 //! Evaluate a correlated value from a two dimensional distribution
 template<typename DependentTwoDDistribution,

@@ -17,6 +17,43 @@ namespace MonteCarlo{
 
 // Find the lower and upper bin boundary
 template<typename DependentTwoDDistribution>
+void findLowerAndUpperBinIndex(
+    const double independent_variable,
+	const DependentTwoDDistribution& dependent_distribution,
+    unsigned& lower_bin_index,
+    unsigned& upper_bin_index )
+{
+  if( independent_variable < dependent_distribution.front().first )
+  {
+    lower_bin_index = 0;
+    upper_bin_index = lower_bin_index;
+  }
+  else if( independent_variable >= dependent_distribution.back().first )
+  {
+    lower_bin_index = dependent_distribution.size();
+    --lower_bin_index;
+    upper_bin_index = lower_bin_index;
+  }
+  else
+  {
+    typename DependentTwoDDistribution::const_iterator
+        lower_bin_boundary, upper_bin_boundary;
+    lower_bin_boundary = dependent_distribution.begin();
+    upper_bin_boundary = dependent_distribution.end();
+
+    lower_bin_index = Utility::Search::binaryLowerBoundIndex<Utility::FIRST>(
+							lower_bin_boundary,
+							upper_bin_boundary,
+							independent_variable );
+    upper_bin_index = lower_bin_index;
+    
+    if ( dependent_distribution[lower_bin_index].first != independent_variable )
+      ++upper_bin_index;
+  }
+}
+
+// Find the lower and upper bin boundary
+template<typename DependentTwoDDistribution>
 void findLowerAndUpperBinBoundary(
     const double independent_variable,
 	const DependentTwoDDistribution& dependent_distribution,
@@ -190,7 +227,89 @@ double sampleTwoDDistributionIndependent(
     return lower_bin_boundary->second->sample();
 }
 
+//! Sample continuously across multiple two dimensional distribution bins
+template<typename DependentTwoDDistributionA, typename DependentTwoDDistributionB >
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_bin,
+    const double& cross_section_a,
+    const double& cross_section_b,
+    const double& random_number,
+    double& scattering_angle_cosine )
+{
+  // Get the total cross section
+  double total_cross_section =
+     cross_section_a + cross_section_b;
 
+  // Scale the random number
+  double scaled_random_number = total_cross_section*random_number;
+
+  if ( scaled_random_number < cross_section_a )
+  {
+    scaled_random_number /= cross_section_a;
+
+    scattering_angle_cosine =
+        distribution_a_bin->second->sampleWithRandomNumber(
+            scaled_random_number );
+  }
+  else
+  {
+    scaled_random_number =
+        ( scaled_random_number - cross_section_a )/cross_section_b;
+
+    scattering_angle_cosine =
+        distribution_b_bin->second->sampleWithRandomNumber(
+            scaled_random_number );
+  }
+}
+
+//! Sample continuously across multiple two dimensional distribution using correlated sampling
+template<typename DependentTwoDDistributionA,
+         typename DependentTwoDDistributionB,
+         typename InterpolationPolicy >
+double sampleContinuouslyAcrossDistributions(
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_lower_bin,
+    const typename DependentTwoDDistributionA::const_iterator& distribution_a_upper_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_lower_bin,
+    const typename DependentTwoDDistributionB::const_iterator& distribution_b_upper_bin,
+    const double& lower_cross_section_a,
+    const double& upper_cross_section_a,
+    const double& lower_cross_section_b,
+    const double& upper_cross_section_b,
+    const double& independent_variable,
+    double& scattering_angle_cosine )
+{
+  double lower_angle_cosine, upper_angle_cosine;
+
+  double random_number =
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  // sample lower bins
+  sampleContinuouslyAcrossDistributions<DependentTwoDDistributionA, DependentTwoDDistributionB >(
+    distribution_a_lower_bin,
+    distribution_b_lower_bin,
+    lower_cross_section_a,
+    lower_cross_section_b,
+    random_number,
+    lower_angle_cosine );
+
+  // sample upper bins
+  sampleContinuouslyAcrossDistributions<DependentTwoDDistributionA, DependentTwoDDistributionB >(
+    distribution_a_upper_bin,
+    distribution_b_upper_bin,
+    upper_cross_section_a,
+    upper_cross_section_b,
+    random_number,
+    upper_angle_cosine );
+
+    return InterpolationPolicy::interpolate(
+            distribution_a_lower_bin->first,
+            distribution_a_upper_bin->first,
+            independent_variable,
+            lower_angle_cosine,
+            upper_angle_cosine );
+
+}
 // Evaluate a correlated value from a two dimensional distribution
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>
 double evaluateTwoDDistributionCorrelated(
