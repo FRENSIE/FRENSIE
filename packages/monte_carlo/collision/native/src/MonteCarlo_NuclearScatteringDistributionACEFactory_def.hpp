@@ -187,7 +187,7 @@ void NuclearScatteringDistributionACEFactory<IncomingParticleType,
   testPrecondition( this->doesReactionHaveScatteringDistribution( 
 							     reaction_type ) );
  
-  // Create an angular distribution if scattering law 44 is not used
+  // Create an angular distribution if scattering laws 44/61/67 are not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
     Teuchos::RCP<NuclearScatteringAngularDistribution> angular_distribution;

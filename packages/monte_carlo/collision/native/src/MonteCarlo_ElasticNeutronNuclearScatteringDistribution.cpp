@@ -24,7 +24,7 @@ namespace MonteCarlo{
 ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
 		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
-		     angular_scattering_distribution )
+		       angular_scattering_distribution )
   : NuclearScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
@@ -41,7 +41,7 @@ ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDist
  * target-at-rest frame as recommended in the MCNP manual.
  */ 
 void ElasticNeutronNuclearScatteringDistribution::scatterParticle( 
-				        const NeutronState& incoming_neutron,
+				  const NeutronState& incoming_neutron,
 					NeutronState& outgoing_neutron,
 					const double temperature ) const
 {
@@ -169,7 +169,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
 					      const ParticleState& neutron,
 					      const double temperature,
-				              double target_velocity[3] ) const
+				        double target_velocity[3] ) const
 {
   // Check if the energy is above the free gas thermal treatment threshold
   double target_speed, mu_target;

@@ -19,7 +19,7 @@ void NuclearScatteringDistributionACEFactoryHelper<NeutronState,NeutronState>::c
 		      const std::string ace_table_name,
 		      const bool defined_in_cm_system,
 		      const double atomic_weight_ratio,
-                      const Teuchos::RCP<NuclearScatteringAngularDistribution>&
+          const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		      angular_distribution )
 {
   TEST_FOR_EXCEPTION( !defined_in_cm_system,
