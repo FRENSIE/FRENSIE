@@ -444,7 +444,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
   
   // Initialize the energy distribution array
   AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
-    energy_distribution( incoming_energies ); 
+    energy_distribution( num_incoming_energies ); 
     
   // Construct equiprobable distribution
   Teuchos::Array<double> equiprobable_pdf;
@@ -455,7 +455,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
 
   // Initialize the Angle distribution array
   typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
-    angle_distribution( incoming_energies );
+    angle_distribution( num_incoming_energies );
     
   for( int i = 0; i < num_incoming_energies; ++i )
   {
@@ -522,15 +522,17 @@ void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaInelasticDis
   }   
 }
 
-// Create the S(alpha,beta) coupled energy-angle elastic distribution
-void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaElasticDistribution( 
-    const double atomic_weight_ratio,
-    const Teuchos::ArrayView<const double>& incoming_energies,
-    const Teuchos::ArrayView<const double>& itce_block_array,
-    const double number_energies,
-    const Teuchos::ArrayView<const double>& itca_block_array,
-    const bool is_cm_distribution,
-    Teuchos::RCP<NuclearScatteringEnergyDistribution>& distribution )
+// Create the S(alpha,beta) coupled energy-angle inelastic distribution
+template<typename ScatteringDistributionBaseType>
+void NuclearScatteringEnergyDistributionACEFactory::createSAlphaBetaElasticDistribution(
+  const double atomic_weight_ratio,
+  const Teuchos::ArrayView<const double>& incoming_energies,
+  const Teuchos::ArrayView<const double>& itce_block_array,
+	const Teuchos::ArrayView<const double>& itca_block_array,
+	const std::string& table_name,
+	const unsigned reaction,
+	const bool is_cm_distribution,
+  Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
 {
   typedef AceLaw61NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
 						typename ScatteringDistributionBaseType::OutgoingParticleState,
@@ -547,11 +549,11 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaElasticDist
   
   // Initialize the energy distribution array
   AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
-    energy_distribution( incoming_energies ); 
+    energy_distribution( num_incoming_energies ); 
 
   // Initialize the Angle distribution array
   typename AceLaw61NuclearScatteringDistributionCM::AngleDistributions 
-    angle_distribution( incoming_energies );
+    angle_distribution( num_incoming_energies );
     
   // Get the outgoing energies
   int num_outgoing_energies = itce_block_array[0];
@@ -568,32 +570,31 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaElasticDist
   // Construct the distributions
   for( int i = 0; i < num_incoming_energies; ++i )
   {
-    energy_distribution.first[i] = incoming_energies[i];
+    energy_distribution[i].first = incoming_energies[i];
     
     // Array of angular distributions
 	  Teuchos::Array< Teuchos::RCP<Utility::OneDDistribution> > 
-	    cosine_arrays( num_energies );
+	    cosine_arrays( num_outgoing_energies );
 	    
 	  int location = 0;
-    
-    for( int j = 0; j < num_energies; ++j )
+    // Construct equiprobable energy sampling distribution
+    Teuchos::Array<double> equiprobable_angle_pdf;
+    for( int eq = 0; eq < 20; ++eq )
     {
-      if( itca_block_array != NULL )
-      {       
-        // Grab the outgoing equiprobable cosines
-        Teuchos::Array<double> cosines = itca_block_array( location, 20 );
-        
-        location += 20;
+      equiprobable_angle_pdf.push_back( 1.0 );
+    }
+    
+    
+    for( int j = 0; j < num_outgoing_energies; ++j )
+    { 
+      // Grab the outgoing equiprobable cosines
+      Teuchos::Array<double> cosines = itca_block_array( location, 20 );
+      
+      location += 20;
 
-        // Construct the equiprobable angular distribution
-        cosine_arrays[j].reset( 
-          new Utility::DiscreteDistribution( cosines, equiprobable_pdf ) );
-      }
-      else
-      {
-        cosine_arrays[j] = 
-          NuclearScatteringAngularDistributionACEFactory::getIsotropicDistribution();
-      }
+      // Construct the equiprobable angular distribution
+      cosine_arrays[j].reset( 
+        new Utility::DiscreteDistribution( cosines, equiprobable_angle_pdf ) );
     }
     
   energy_distribution[i].second.reset( 
@@ -627,8 +628,9 @@ void NuclearScatteringAngularDistributionACEFactory::createSAlphaBetaElasticDist
 						       atomic_weight_ratio,
 						       energy_out_distribution,
 						       angle_distribution ) );
-  }      
+  }     
 }
+
 
 } // end MonteCarlo namespace
 

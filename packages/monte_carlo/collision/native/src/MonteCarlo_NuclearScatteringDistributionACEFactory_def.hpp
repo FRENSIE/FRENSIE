@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_NuclearScatteringDistributionACEFactory_def.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Nuclear scattering distribution factor base class template defs.
 //!
 //---------------------------------------------------------------------------//
