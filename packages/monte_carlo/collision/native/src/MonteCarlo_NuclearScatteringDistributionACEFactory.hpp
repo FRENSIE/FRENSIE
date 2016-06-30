@@ -129,8 +129,6 @@ protected:
   const boost::unordered_map<unsigned,unsigned>& 
   getReactionEnergyDistStartIndex() const;
 
-private:
-
   // Initialize the reaction type ordering map
   void initializeReactionOrderingMap( 
 			   const Teuchos::ArrayView<const double>& mtr_block,

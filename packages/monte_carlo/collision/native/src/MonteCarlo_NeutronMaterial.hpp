@@ -19,7 +19,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Nuclide.hpp"
-#include "MonteCarlo_SAlphaBeta.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
