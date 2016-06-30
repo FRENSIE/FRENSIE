@@ -14,6 +14,7 @@
 
 // std includes
 #include <utility>
+#include <iterator>
 
 // FRENSIE Includes
 #include "MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp"
@@ -173,11 +174,11 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
 
     
     unsigned l = 0;
-    for( unsigned i = 0; i < x_coordinates_size; ++i)
+    for( unsigned k = 0; k < z_coordinates_size; ++k)
     {
       for( unsigned j = 0; j < y_coordinates_size; ++j)
       {
-        for( unsigned k = 0; k < z_coordinates_size; ++k)
+        for( unsigned i = 0; i < x_coordinates_size; ++i)
         {
           coordinates[l] = d_hex_mesh->getXPlaneLocation(i);
           coordinates[l + 1] = d_hex_mesh->getYPlaneLocation(j);
@@ -209,51 +210,202 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       //Tell the smart pointer to own the new raw pointer
       box.reset( raw_scdbox);
     }
-    std::cout << std::endl;
-    for(unsigned i = 0; i < size_of_coordinates*3; i = i + 3)
+    scdiface.release();
+    
+    std::vector<moab::Tag> mean_tag( this->getNumberOfBins()*
+                                     this->getNumberOfResponseFunctions() +
+                                     this->getNumberOfResponseFunctions() ),
+                           relative_error_tag( mean_tag.size() ),
+                           vov_tag( this->getNumberOfResponseFunctions() ),
+                           fom_tag( vov_tag.size() );
+    // Process moments    
+    Utility::StructuredHexMesh::HexIDIterator hex;
+    unsigned hex_parameter_indices[3];
+    for( hex = d_hex_begin; hex != d_hex_end; ++hex)
     {
+      // convert from hex index to moab entity handle
+      moabHexIndexDeconstructor( *hex, hex_parameter_indices);
+      moab::EntityHandle moab_hex = box->get_element( hex_parameter_indices[0],
+                                                      hex_parameter_indices[1],
+                                                      hex_parameter_indices[2] ); 
+
+      const double hex_volume = this->getEntityNormConstant( *hex );
+      
+      const Estimator::TwoEstimatorMomentsArray& hex_bin_data = 
+        this->getEntityBinData( *hex );
+
+	    std::string mean_tag_prefix = "mean: ";
+      std::string relative_error_tag_prefix = "relative_error: ";	
+      std::string vov_tag_prefix = "vov: ";
+      std::string fom_tag_prefix = "fom: ";
+      
+      for( unsigned i = 0; i < hex_bin_data.size(); ++i)
+      {
+
+        double mean, relative_error;
+        
+        this->processMoments( hex_bin_data[i],
+                              hex_volume,
+                              mean,
+                              relative_error);
+    	  std::string bin_name = this->getBinName( i );
+    	  std::string mean_tag_name = mean_tag_prefix + bin_name;
+    	  std::string relative_error_tag_name = relative_error_tag_prefix +
+    	    bin_name;
+
+        // Assign mean tag data
+        rval = moab_interface->tag_get_handle( mean_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               mean_tag[i],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+                                                        
+        rval = moab_interface->tag_set_data( mean_tag[i],
+                                             &moab_hex,
+                                             1,
+                                             &mean );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+       
+    	  // Assign error tag data
+        rval = moab_interface->tag_get_handle( relative_error_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               relative_error_tag[i],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+                                                        
+        rval = moab_interface->tag_set_data( relative_error_tag[i],
+                                             &moab_hex,
+                                             1,
+                                             &relative_error );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+      }
     
-      std::cout << "COORDINATE: " << coordinates[i] << " " << coordinates[i + 1] << " " << coordinates[i + 2] << std::endl;
-    
+      // Assign total bin data for each entity
+      std::string total_tag_prefix = "total_";
+      std::string total_mean_tag_name = total_tag_prefix + "mean";
+      std::string total_relative_error_tag_name = total_tag_prefix +
+                                                          "relative_error";
+      std::string total_vov_tag_name = total_tag_prefix + "vov";
+      std::string total_fom_tag_name = total_tag_prefix + "fom";
+      
+      const Estimator::FourEstimatorMomentsArray& total_hex_data = 
+        this->getEntityTotalData( *hex );
+      
+      for( unsigned i = 0; i < total_hex_data.size(); ++ i)
+      {
+        double mean, relative_error, vov, fom;
+        this->processMoments( total_hex_data[i],
+                              hex_volume,
+                              mean,
+                              relative_error,
+                              vov,
+                              fom);
+
+        unsigned tag_index = this->getNumberOfBins() + i;
+        
+        // Assign total mean tag data
+        rval = moab_interface->tag_get_handle( total_mean_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               mean_tag[tag_index],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        rval = moab_interface->tag_set_data( mean_tag[tag_index],
+                                             &moab_hex,
+                                             1,
+                                             &mean );
+                                             
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        // Assign total relative error tag data
+        rval = moab_interface->tag_get_handle( total_relative_error_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               relative_error_tag[tag_index],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+                                               
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        rval = moab_interface->tag_set_data( relative_error_tag[tag_index],
+                                             &moab_hex,
+                                             1,
+                                             &relative_error );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        // Assign total vov tag data
+        rval = moab_interface->tag_get_handle( total_vov_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               vov_tag[tag_index],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+                                               
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        rval = moab_interface->tag_set_data( vov_tag[tag_index],
+                                             &moab_hex,
+                                             1,
+                                             &vov );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        // Assign total fom tag data
+        rval = moab_interface->tag_get_handle( total_fom_tag_name.c_str(),
+                                               1,
+                                               moab::MB_TYPE_DOUBLE,
+                                               fom_tag[tag_index],
+                                               moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+                                               
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+
+        rval = moab_interface->tag_set_data( fom_tag[tag_index],
+                                             &moab_hex,
+                                             1,
+                                             &fom );
+        TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
+                            Utility::MOABException,
+                            moab::ErrorCodeStr[rval] );
+      }
     }
-    
-    moab::HomCoord size = box->box_size();
-    std::cout << "SIZE: " << size[0] << size[1] << size[2] << std::endl;
-    
-    const double* x_coordinates;
-    const double* y_coordinates;
-    const double* z_coordinates;
-    
-    rval = box->get_coordinate_arrays(x_coordinates , y_coordinates , z_coordinates );
+    // Export the mesh
+    std::vector<moab::Tag> output_tags = mean_tag;
+      
+    output_tags.insert( output_tags.end(),
+                        relative_error_tag.begin(),
+                        relative_error_tag.end() );
+    output_tags.insert( output_tags.end(),
+                        vov_tag.begin(),
+                        vov_tag.end() );
+    output_tags.insert( output_tags.end(),
+                        fom_tag.begin(),
+                        fom_tag.end() ); 
+    rval = moab_interface->write_file( d_output_mesh_file_name.c_str() );
     TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[rval] );
-
-    /*for(unsigned i = 0; i < 3; ++i)
-    {
-      for(unsigned j = 0; j < 3; ++j)
-      {
-        for(unsigned k = 0; k < 3; ++k)
-        {
-          std::cout << "VERTEX: " << x_coordinates[i] << " " << y_coordinates[j] << " " << z_coordinates[k] << std::endl;
-        }
-      }
-    }*/
-    for(unsigned i = 0; i < 3; ++i)
-    {
-      std::cout << "X COORDINATES: " << x_coordinates[i] << std::endl;
-    }
-    
-    for(unsigned j = 0; j < 3; ++j)
-    {
-      std::cout << "Y COORDINATES: " << y_coordinates[j] << std::endl;
-    }
-    
-    for(unsigned k = 0; k < 3; ++k)
-    {
-      std::cout << "Z COORDINATES: " << z_coordinates[k] << std::endl;
-    }
-    
   }
 }
 
@@ -374,6 +526,25 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
     StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::assignBinBoundaries( 
 							      bin_boundaries );
   }
+
+}
+
+//convert a hex index back into a set of x, y, and z indices for moab to use
+template<typename ContributionMultiplierPolicy>
+void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::moabHexIndexDeconstructor(
+  const Utility::StructuredHexMesh::HexIndex h, unsigned hex_parameter_indices[3] ) const
+{
+
+  testPrecondition( h >= 0 &&
+                    h < std::distance(d_hex_begin, d_hex_end) );
+
+  unsigned x_dim = (d_hex_mesh->getNumberOfXPlanes() - 1);
+  unsigned y_dim = (d_hex_mesh->getNumberOfYPlanes() - 1);
+  
+  hex_parameter_indices[2] = h/(x_dim*y_dim);
+  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_dim * y_dim) / x_dim;
+  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_dim
+    - hex_parameter_indices[2] * x_dim * y_dim;
 
 }
 

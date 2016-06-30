@@ -24,6 +24,7 @@
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
+#include "Utility_StructuredHexMesh.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -37,15 +38,16 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
 {
   // Set up a basic mesh
   Teuchos::Array<double> x_planes, y_planes, z_planes;
-  x_planes.push_back(1.0);
-  x_planes.push_back(2.0);
-  x_planes.push_back(3.0);
-  y_planes.push_back(4.0);
-  y_planes.push_back(5.0);
-  y_planes.push_back(6.0);
-  z_planes.push_back(7.0);
-  z_planes.push_back(8.0);
-  z_planes.push_back(9.0);
+  x_planes.push_back(0);
+  x_planes.push_back(1);
+  x_planes.push_back(2);
+  y_planes.push_back(0);
+  y_planes.push_back(1);
+  y_planes.push_back(2);
+  z_planes.push_back(0);
+  z_planes.push_back(1);
+  z_planes.push_back(2);
+  z_planes.push_back(3);
 
   TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(0, 2, x_planes, y_planes, z_planes ) ) );
 
@@ -118,7 +120,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
     raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
   raw_bin_data_copy;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -129,7 +131,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -140,7 +142,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -151,7 +153,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -162,7 +164,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -173,7 +175,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -184,7 +186,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
@@ -195,7 +197,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
   out << *hex;
