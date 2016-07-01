@@ -1404,7 +1404,7 @@
 
  * <ParameterList name="Surface Current Estimator">
  *  <Parameter name="Id" type="unsigned int" value="5"/>
- *  <Parameter name="Type" type="string" value="surface.current"/>
+ *  <Parameter name="Type" type="string" value="Surface Current"/>
  *  <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  <Parameter name="Multiplier" type="double" value="2.0"/>
  *  <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
