@@ -380,7 +380,7 @@ int main( int argc, char** argv )
   }
 
   // Create the subshell distribution from the function
-  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     first_subshell_distribution;
 
     first_subshell_distribution.reset(
@@ -467,7 +467,7 @@ int main( int argc, char** argv )
   }
 
   // Create the subshell distribution from the function
-  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     last_subshell_distribution;
 
   last_subshell_distribution.reset(

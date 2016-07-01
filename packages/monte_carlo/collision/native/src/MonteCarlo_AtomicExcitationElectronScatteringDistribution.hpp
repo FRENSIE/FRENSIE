@@ -9,10 +9,6 @@
 #ifndef MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ATOMIC_EXCITATION_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -26,7 +22,7 @@ class AtomicExcitationElectronScatteringDistribution : public ElectronScattering
 public:
 
   //! Typedef for the atomic excitation distribution
-  typedef Teuchos::RCP<const Utility::OneDDistribution> AtomicDistribution;
+  typedef std::shared_ptr<const Utility::OneDDistribution> AtomicDistribution;
 
   //! Constructor
   AtomicExcitationElectronScatteringDistribution(

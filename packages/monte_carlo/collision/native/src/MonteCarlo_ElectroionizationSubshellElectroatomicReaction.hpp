@@ -31,7 +31,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
   //! Constructor
@@ -41,7 +41,7 @@ public:
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution );
 
 
@@ -62,7 +62,7 @@ public:
 
 private:
   // The electroionization distribution
-  Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+  std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
     d_electroionization_subshell_distribution;
 
   // The interaction subshell

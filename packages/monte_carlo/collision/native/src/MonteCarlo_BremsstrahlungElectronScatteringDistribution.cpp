@@ -6,15 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <limits>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -44,7 +37,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 // Constructor with detailed tabular photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
@@ -54,7 +47,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
-  testPrecondition( !d_angular_distribution.is_null() );
+  testPrecondition( d_angular_distribution.use_count() > 0 );
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = boost::bind<double>(

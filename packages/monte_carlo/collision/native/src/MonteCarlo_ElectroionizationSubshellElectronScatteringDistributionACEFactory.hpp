@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -31,7 +28,7 @@ public:
         const unsigned number_of_tables,
         const double binding_energy,
 	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution );
 
 protected:

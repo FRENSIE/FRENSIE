@@ -12,10 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -34,8 +30,8 @@ class MomentPreservingElasticElectronScatteringDistribution : public ElectronSca
 public:
 
   //! Typedef for the elastic discrete distribution
-  typedef Teuchos::Array<Utility::Pair< double,
-		       Teuchos::RCP<const Utility::DiscreteDistribution> > >
+  typedef std::vector<Utility::Pair< double,
+		       std::shared_ptr<const Utility::DiscreteDistribution> > >
   DiscreteElasticDistribution;
 
   //! Constructor

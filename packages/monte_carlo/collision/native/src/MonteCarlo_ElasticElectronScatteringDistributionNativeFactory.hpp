@@ -16,8 +16,10 @@
 #include "MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
+#include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -30,42 +32,56 @@ public:
   typedef AnalogElasticElectronScatteringDistribution::CutoffDistribution
             CutoffDistribution;
 
+  typedef HybridElasticElectronScatteringDistribution::DiscreteDistribution
+            DiscreteDistribution;
+
   typedef MomentPreservingElasticElectronScatteringDistribution::DiscreteElasticDistribution
             DiscreteElasticDistribution;
 
   //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
   static void createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+	std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
-  //! Create the elastic distributions ( combined Cutoff and Screened Rutherford )
+  //! Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
   static void createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+	std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
     const std::vector<double>& angular_energy_grid,
     const unsigned& atomic_number );
 
+  //! Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+  static void createHybridElasticDistribution(
+	std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+        hybrid_elastic_distribution,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double> energy_grid,
+    const Teuchos::ArrayRCP<double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+	const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double& cutoff_angle_cosine );
+
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine = 1.0 );
 
   //! Create a screened Rutherford elastic distribution
   static void createScreenedRutherfordElasticDistribution(
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+	std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container );
 
   //! Create a moment preserving elastic distribution
   static void createMomentPreservingElasticDistribution(
-	Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+	std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine = 0.9 );
@@ -94,6 +110,18 @@ protected:
         const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
         const std::vector<double>& angular_energy_grid,
         DiscreteElasticDistribution& scattering_function );
+
+  //! Create the hybrid elastic scattering functions and cross section ratio
+  static void createHybridScatteringFunction(
+        const Data::ElectronPhotonRelaxationDataContainer& data_container,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::ArrayRCP<double> energy_grid,
+        const Teuchos::ArrayRCP<double> cutoff_cross_section,
+        const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+        const std::vector<double>& angular_energy_grid,
+        const double cutoff_angle_cosine,
+        CutoffDistribution& cutoff_function,
+        DiscreteDistribution& moment_preserving_function );
 
   //! Create the cutoff elastic scattering function
   static void createScatteringFunction(

@@ -21,7 +21,7 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -30,7 +30,7 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -40,7 +40,7 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -50,7 +50,7 @@ ScreenedRutherfordElasticElectroatomicReaction<InterpPolicy,processed_cross_sect
     d_scattering_distribution( scattering_distribution )
 {
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

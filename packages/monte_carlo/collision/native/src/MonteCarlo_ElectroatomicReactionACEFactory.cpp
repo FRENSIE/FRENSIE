@@ -44,7 +44,7 @@ void ElectroatomicReactionACEFactory::createCutoffElasticReaction(
 						      energy_grid.end() ) );
 
   // Create the elastic scattering distribution
-  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> distribution;
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
                                                  distribution,
@@ -100,7 +100,7 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
                            threshold_energy_index );
 
   // Create the energy loss distribution
-  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>
+  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>
     energy_loss_distribution;
 
   AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcitationDistribution(
@@ -239,7 +239,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
                            threshold_energy_index );
 
     // The electroionization subshell distribution
-    Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
       electroionization_subshell_distribution;
 
     // Create the electroionization subshell distribution
@@ -295,7 +295,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 			bremsstrahlung_cross_section,
 			threshold_energy_index );
 
-  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>
+  std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
         bremsstrahlung_distribution;
 
   if( photon_distribution_function = DIPOLE_DISTRIBUTION )

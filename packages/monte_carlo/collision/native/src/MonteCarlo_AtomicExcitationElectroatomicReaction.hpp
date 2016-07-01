@@ -31,7 +31,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+    const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution );
 
   //! Constructor
@@ -40,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+    const std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
             energy_loss_distribution );
 
   //! Destructor
@@ -64,7 +64,7 @@ public:
 private:
 
   // The atomic excitation energy loss distribution
-  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>
+  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>
     d_energy_loss_distribution;
 };
 

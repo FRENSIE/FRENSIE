@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
    distribution;
 
 //---------------------------------------------------------------------------//

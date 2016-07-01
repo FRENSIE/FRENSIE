@@ -394,7 +394,7 @@ int main( int argc, char** argv )
       new Utility::TabularDistribution<Utility::LinLin>( ae_energy_grid,
                                                          energy_loss ) );
 
-    Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
                       ae_energy_loss_distribution;
 
     ae_energy_loss_distribution.reset(
@@ -434,7 +434,7 @@ int main( int argc, char** argv )
     b_angular_distribution_values[1] =  0.5;
     b_angular_distribution_values[2] =  1.0;
 
-    Teuchos::RCP<const Utility::OneDDistribution> b_angular_distribution(
+    std::shared_ptr<const Utility::OneDDistribution> b_angular_distribution(
 	  		    new Utility::TabularDistribution<Utility::LinLin>(
 						b_energy_bins,
 						b_angular_distribution_values ) );
@@ -474,7 +474,7 @@ int main( int argc, char** argv )
            true ) );
     }
 
-	Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+	std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution;
 
     b_scattering_distribution.reset(
@@ -547,7 +547,7 @@ int main( int argc, char** argv )
                 data_container.getAtomicExcitationEnergyGrid(),
                 data_container.getAtomicExcitationEnergyLoss() ) );
 
-    Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
         ae_energy_loss_distribution(
             new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
                       ae_energy_loss_function ) );
@@ -594,7 +594,7 @@ int main( int argc, char** argv )
                                                                pdf ) );
   }
 
-	Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+	std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         b_scattering_distribution(
             new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
                 b_energy_loss_function,

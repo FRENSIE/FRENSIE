@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
@@ -20,7 +19,7 @@ namespace MonteCarlo{
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcitationDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+			  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
 			    energy_loss_distribution )
 {
   // Create the energy loss function

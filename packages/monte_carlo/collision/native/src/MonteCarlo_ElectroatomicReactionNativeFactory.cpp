@@ -45,7 +45,7 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
                                                       energy_grid.end() ) );
 
   // Create the analog elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution> distribution;
+  std::shared_ptr<const AnalogElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
     distribution,
@@ -97,7 +97,7 @@ void ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
                                                       energy_grid.end() ) );
 
   // Create the cutoff elastic scattering distribution
-  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution> distribution;
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution> distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
     distribution,
@@ -138,7 +138,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
                                                       energy_grid.end() ) );
 
   // Create the cutoff elastic scattering distribution
-  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     cutoff_distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
@@ -148,7 +148,7 @@ void ElectroatomicReactionNativeFactory::createScreenedRutherfordElasticReaction
 
 
   // Create the screened Rutherford elastic scattering distribution
-  Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
     distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
@@ -191,7 +191,7 @@ void ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
                                                       energy_grid.end() ) );
 
   // Create the moment preserving elastic scattering distribution
-  Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>
+  std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     distribution;
 
   ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
@@ -242,7 +242,7 @@ void ElectroatomicReactionNativeFactory::createAtomicExcitationReaction(
     raw_electroatom_data.getAtomicExcitationCrossSectionThresholdEnergyIndex();
 
   // Create the energy loss distribution
-  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>
+  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>
     energy_loss_distribution;
 
   AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
@@ -294,7 +294,7 @@ void ElectroatomicReactionNativeFactory::createSubshellElectroionizationReaction
         *shell );
 
     // The electroionization subshell distribution
-    Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+    std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>
       electroionization_subshell_distribution;
 
     // Create the electroionization subshell distribution
@@ -348,7 +348,7 @@ void ElectroatomicReactionNativeFactory::createBremsstrahlungReaction(
     raw_electroatom_data.getBremsstrahlungCrossSectionThresholdEnergyIndex();
 
   // Create bremsstrahlung scattering distribution
-  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>
+  std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     bremsstrahlung_distribution;
 
   if( photon_distribution_function = DIPOLE_DISTRIBUTION )

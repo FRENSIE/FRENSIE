@@ -27,7 +27,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
@@ -43,7 +43,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
-  testPrecondition( !electroionization_subshell_distribution.is_null() );
+  testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 }
 
 
@@ -55,7 +55,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
             incoming_energy_grid,
@@ -73,7 +73,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
-  testPrecondition( !electroionization_subshell_distribution.is_null() );
+  testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 }
 
 // Simulate the reaction

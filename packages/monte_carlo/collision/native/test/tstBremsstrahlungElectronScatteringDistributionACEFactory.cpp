@@ -28,16 +28,16 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_distribution;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   tabular_distribution;
 
-Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   twobs_distribution;
 
-Teuchos::RCP<Utility::OneDDistribution> angular_distribution;
+std::shared_ptr<Utility::OneDDistribution> angular_distribution;
 
 double upper_cutoff_energy, lower_cutoff_energy;
 

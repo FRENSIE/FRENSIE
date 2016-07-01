@@ -47,10 +47,10 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
   native_pb_elastic_distribution, native_al_elastic_distribution;
 
-Teuchos::RCP<TestScreenedRutherfordElasticElectronScatteringDistribution>
+std::shared_ptr<TestScreenedRutherfordElasticElectronScatteringDistribution>
   test_native_pb_elastic_distribution, test_native_al_elastic_distribution;
 
 double mu_cutoff = 1.0;
@@ -538,7 +538,7 @@ int main( int argc, char** argv )
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
-  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
   // Create cutoff distribution
@@ -593,7 +593,7 @@ int main( int argc, char** argv )
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
-  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
   // Create cutoff distribution

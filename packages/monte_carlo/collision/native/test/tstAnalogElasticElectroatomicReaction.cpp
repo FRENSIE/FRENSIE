@@ -22,7 +22,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -246,7 +246,7 @@ int main( int argc, char** argv )
     double atomic_number = data_container.getAtomicNumber();
 
     // Create cutoff distribution
-    Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_elastic_distribution(
             new MonteCarlo::AnalogElasticElectronScatteringDistribution(
                 scattering_function,

@@ -9,20 +9,17 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <limits>
-
 // Boost Includes
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -36,9 +33,7 @@ class BremsstrahlungElectronScatteringDistribution : public ElectronScatteringDi
 public:
 
   //! Typedef for the bremsstrahlung distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  BremsstrahlungDistribution;
+  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
@@ -47,7 +42,7 @@ public:
   //! Constructor with detailed tabular photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+    const std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy );
 
@@ -114,7 +109,7 @@ private:
   BremsstrahlungDistribution d_bremsstrahlung_scattering_distribution;
 
   // bremsstrahlung angular distribution of generated photons
-  Teuchos::RCP<Utility::OneDDistribution> d_angular_distribution;
+  std::shared_ptr<Utility::OneDDistribution> d_angular_distribution;
 
   // Sample the outgoing photon angle from a tabular distribution
   double SampleTabularAngle(  const double incoming_electron_energy,

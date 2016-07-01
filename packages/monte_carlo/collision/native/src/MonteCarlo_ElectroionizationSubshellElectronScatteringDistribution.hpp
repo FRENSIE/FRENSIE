@@ -9,18 +9,14 @@
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <limits>
-
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -34,9 +30,7 @@ class ElectroionizationSubshellElectronScatteringDistribution : public ElectronS
 public:
 
   //! Typedef for the  electroionization subshell distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  ElectroionizationSubshellDistribution;
+  typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
 
   //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(

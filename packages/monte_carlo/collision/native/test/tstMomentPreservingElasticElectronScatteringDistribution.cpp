@@ -47,11 +47,11 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
   discrete_elastic_distribution;
-Teuchos::RCP<TestMomentPreservingElasticElectronScatteringDistribution>
+std::shared_ptr<TestMomentPreservingElasticElectronScatteringDistribution>
   test_discrete_elastic_distribution;
-Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
   scattering_distribution;
 
 double angle_cosine_cutoff = 0.9;

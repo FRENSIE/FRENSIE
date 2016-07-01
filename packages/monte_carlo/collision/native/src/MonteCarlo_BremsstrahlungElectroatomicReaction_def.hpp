@@ -21,7 +21,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
@@ -41,7 +41,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
-  testPrecondition( !bremsstrahlung_distribution.is_null() );
+  testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -51,7 +51,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+       const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                 incoming_energy_grid,
@@ -72,7 +72,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
-  testPrecondition( !bremsstrahlung_distribution.is_null() );
+  testPrecondition( bremsstrahlung_distribution.use_count() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

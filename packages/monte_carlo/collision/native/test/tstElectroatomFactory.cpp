@@ -273,7 +273,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   double energy = 1.00E-05;
   double cross_section =
     atom->getTotalCrossSection( energy );
-
+std::cout << std::setprecision(20) << "cross_section = " << cross_section << std::endl;
   TEST_FLOATING_EQUALITY( cross_section,
                           2.9056202162132148743E+09,
                           1e-12 );
@@ -281,7 +281,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   energy = 2.00E-01;
   cross_section =
     atom->getTotalCrossSection( energy );
-
+std::cout << std::setprecision(20) << "cross_section = " << cross_section << std::endl;
   TEST_FLOATING_EQUALITY( cross_section,
                           3.6673598161189995706E+07,
                           1e-12 );
@@ -289,7 +289,7 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_native_basic )
   energy = 1.00E+05;
   cross_section =
     atom->getTotalCrossSection( energy );
-
+std::cout << std::setprecision(20) << "cross_section = " << cross_section << std::endl;
   TEST_FLOATING_EQUALITY( cross_section,
                           2.8454339856569212861E+06,
                           1e-12 );

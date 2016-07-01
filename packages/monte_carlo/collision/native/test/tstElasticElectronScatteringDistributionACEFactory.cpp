@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   ace_cutoff_elastic_distribution;
 
 //---------------------------------------------------------------------------//

@@ -32,7 +32,7 @@ public:
 	  const Teuchos::ArrayRCP<const double>& screened_rutherford_cross_section,
 	  const unsigned cutoff_threshold_energy_index,
 	  const unsigned screened_rutherford_threshold_energy_index,
-      const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
             scattering_distribution );
 
   //! Constructor
@@ -43,7 +43,7 @@ public:
 	  const unsigned cutoff_threshold_energy_index,
 	  const unsigned screened_rutherford_threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
             scattering_distribution );
 
 
@@ -98,7 +98,7 @@ public:
 private:
 
   // The analog elastic scattering distribution
-  Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const AnalogElasticElectronScatteringDistribution>
     d_scattering_distribution;
 
   // The cutoff cross section values evaluated on the incoming energy grid

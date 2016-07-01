@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Create a cutoff elastic distribution
 void ElasticElectronScatteringDistributionACEFactory::createCutoffElasticDistribution(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine )

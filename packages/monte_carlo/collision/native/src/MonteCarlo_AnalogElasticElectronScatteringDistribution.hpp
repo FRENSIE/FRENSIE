@@ -9,14 +9,10 @@
 #ifndef MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ANALOG_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -31,8 +27,7 @@ class AnalogElasticElectronScatteringDistribution : public ElectronScatteringDis
 public:
 
   //! Typedef for the elastic cutoff distribution
-  typedef std::vector<Utility::Pair< double, Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    CutoffDistribution;
+  typedef MonteCarlo::TwoDDistribution CutoffDistribution;
 
   //! Constructor
   AnalogElasticElectronScatteringDistribution(

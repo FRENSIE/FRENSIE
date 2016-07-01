@@ -14,9 +14,9 @@
 
 namespace MonteCarlo{
 
-// Create the analog elastic distributions ( combined Cutoff and Screened Rutherford )
+// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+	std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container )
 {
@@ -44,13 +44,13 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
                 atomic_number ) );
 }
 
-// Create the analog elastic distributions ( combined Cutoff and Screened Rutherford )
+// Create the analog elastic distribution ( combined Cutoff and Screened Rutherford )
 /*! \details This function has been overloaded so it can be called without using
  *  the native data container. This functionality is neccessary for generating
  *  native moment preserving data without first creating native data files.
  */
 void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
-	Teuchos::RCP<const AnalogElasticElectronScatteringDistribution>&
+	std::shared_ptr<const AnalogElasticElectronScatteringDistribution>&
         analog_elastic_distribution,
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
     const std::map<double,std::vector<double> >& cutoff_elastic_pdf,
@@ -86,9 +86,49 @@ void ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDist
                 atomic_number ) );
 }
 
+// Create the hybrid elastic distribution ( combined Cutoff and Moment Preserving )
+void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+	std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
+        hybrid_elastic_distribution,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<double> energy_grid,
+    const Teuchos::ArrayRCP<double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+	const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const double& cutoff_angle_cosine )
+{
+  // Get the energy grid
+  std::vector<double> angular_energy_grid =
+    data_container.getElasticAngularEnergyGrid();
+
+  // Get size of paramters
+  int size = angular_energy_grid.size();
+
+  // Create the hybrid scattering functions and cross section ratio
+  CutoffDistribution cutoff_function(size);
+  DiscreteDistribution moment_preserving_function(size);
+  ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+        data_container,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        moment_preserving_cross_section,
+        angular_energy_grid,
+        cutoff_angle_cosine,
+        cutoff_function,
+        moment_preserving_function );
+
+  // Create hybrid distribution
+  hybrid_elastic_distribution.reset(
+        new HybridElasticElectronScatteringDistribution(
+                cutoff_function,
+                moment_preserving_function,
+                cutoff_angle_cosine ) );
+}
+
 // Create a cutoff elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine )
@@ -114,12 +154,11 @@ void ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDist
                 cutoff_angle_cosine ) );
 }
 
-
 // Create a screened Rutherford elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfordElasticDistribution(
-	Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+	std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
         screened_rutherford_elastic_distribution,
-	const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container )
 {
@@ -135,7 +174,7 @@ void ElasticElectronScatteringDistributionNativeFactory::createScreenedRutherfor
 
 //! Create a moment preserving elastic distribution
 void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingElasticDistribution(
-	Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+	std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         moment_preserving_elastic_distribution,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine )
@@ -288,6 +327,83 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingS
 
     scattering_function[n].second.reset(
 	  new const Utility::DiscreteDistribution( angles, pdf ) );
+  }
+}
+
+// Create the hybrid elastic scattering functions and cross section ratio
+void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
+        const Data::ElectronPhotonRelaxationDataContainer& data_container,
+        const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+        const Teuchos::ArrayRCP<double> energy_grid,
+        const Teuchos::ArrayRCP<double> cutoff_cross_section,
+        const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+        const std::vector<double>& angular_energy_grid,
+        const double cutoff_angle_cosine,
+        CutoffDistribution& cutoff_function,
+        DiscreteDistribution& moment_preserving_function )
+{
+  for( unsigned n = 0; n < angular_energy_grid.size(); ++n )
+  {
+    // Create the cutoff elastic scattering function
+    cutoff_function[n].first = angular_energy_grid[n];
+
+    // Get the cutoff elastic scattering angles at the energy
+    Teuchos::Array<double> angles(
+        data_container.getCutoffElasticAngles( angular_energy_grid[n] ) );
+
+    // Get the cutoff elastic scatering pdf at the energy
+    Teuchos::Array<double> pdf(
+        data_container.getCutoffElasticPDF( angular_energy_grid[n] ) );
+
+    cutoff_function[n].second.reset(
+      new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
+
+
+    // Create the moment preserving discrete elastic scattering function
+    moment_preserving_function[n].first = angular_energy_grid[n];
+
+    // Get the moment preserving elastic scattering angle cosines at the energy
+    std::vector<double> discrete_angles(
+        data_container.getMomentPreservingElasticDiscreteAngles(
+            angular_energy_grid[n] ) );
+
+    // Get the cutoff elastic scatering pdf at the energy
+    std::vector<double> weights(
+        data_container.getMomentPreservingElasticWeights(
+            angular_energy_grid[n] ) );
+
+    moment_preserving_function[n].second.reset(
+	  new const Utility::DiscreteDistribution(
+        discrete_angles,
+        weights ) );
+
+    unsigned energy_index =
+        grid_searcher->findLowerBinIndex( angular_energy_grid[n] );
+
+    // Get the moment preserving cross section at the given energy
+    double mp_cross_section_i =
+        Utility::LinLin::interpolate(
+            energy_grid[energy_index],
+            energy_grid[energy_index+1],
+            angular_energy_grid[n],
+            moment_preserving_cross_section[energy_index],
+            moment_preserving_cross_section[energy_index+1] );
+
+    // Get the cutoff cross section at the given energy
+    double cutoff_cross_section_i =
+        Utility::LinLin::interpolate(
+            energy_grid[energy_index],
+            energy_grid[energy_index+1],
+            angular_energy_grid[n],
+            cutoff_cross_section[energy_index],
+            cutoff_cross_section[energy_index+1] );
+
+    // Get the cutoff cdf value at the angle cosine cutoff
+    double cutoff_cdf =
+        cutoff_function[n].second->evaluateCDF( cutoff_angle_cosine );
+
+    // Get the ratio of the cutoff cross section to the moment preserving cross section
+    moment_preserving_function[n].third = cutoff_cross_section_i*cutoff_cdf/mp_cross_section_i;
   }
 }
 

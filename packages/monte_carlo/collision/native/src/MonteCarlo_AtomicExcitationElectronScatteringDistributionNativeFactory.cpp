@@ -6,10 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistributionNativeFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -20,7 +16,7 @@ namespace MonteCarlo{
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionNativeFactory::createAtomicExcitationDistribution(
 			  const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-			  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+			  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
 			    energy_loss_distribution )
 {
   // Create the energy loss function

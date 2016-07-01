@@ -24,7 +24,7 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const unsigned number_of_tables,
         const double binding_energy,
 	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution )
 {
   // Subshell distribution

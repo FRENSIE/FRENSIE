@@ -13,14 +13,13 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-//#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
 
 //! The atomic excitation scattering distribution factory class that uses ACE data
-class AtomicExcitationElectronScatteringDistributionACEFactory //: public AtomicExcitationElectronScatteringDistributionFactory
+class AtomicExcitationElectronScatteringDistributionACEFactory
 {
 
 public:
@@ -28,7 +27,7 @@ public:
   //! Create a basic atomic excitation distribution
   static void createAtomicExcitationDistribution(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+			std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
 			  energy_loss_distribution );
 
 protected:

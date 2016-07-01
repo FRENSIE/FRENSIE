@@ -31,7 +31,7 @@
 
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
     mp_elastic_reaction;
-Teuchos::RCP<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
     discrete_elastic_distribution;
 double cutoff_angle_cosine = 0.9;
 

@@ -19,7 +19,7 @@
 #include "MonteCarlo_HybridElasticElectronScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
 
@@ -30,7 +30,7 @@ class TestHybridElasticElectronScatteringDistribution : public MonteCarlo::Hybri
 {
 public:
   TestHybridElasticElectronScatteringDistribution(
-        const TwoDDistribution& cutoff_scattering_distribution,
+        const CutoffDistribution& cutoff_scattering_distribution,
         const DiscreteDistribution& discrete_scattering_distribution,
         const double cutoff_angle_cosine )
     : MonteCarlo::HybridElasticElectronScatteringDistribution(
@@ -50,11 +50,11 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::HybridElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::HybridElasticElectronScatteringDistribution>
   hybrid_elastic_distribution;
-Teuchos::RCP<TestHybridElasticElectronScatteringDistribution>
+std::shared_ptr<TestHybridElasticElectronScatteringDistribution>
   test_hybrid_elastic_distribution;
-Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
   scattering_distribution;
 
 double angle_cosine_cutoff = 0.9;
@@ -328,7 +328,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                                                 scattering_angle_cosine,
                                                 trials );
 
-  // Test
+  // Test 1
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.7, 1e-12 );
   TEST_EQUALITY_CONST( trials, 11 );
 
@@ -338,7 +338,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                                                 scattering_angle_cosine,
                                                 trials );
 
-  // Test
+  // Test 2
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9, 1e-12 );
   TEST_EQUALITY_CONST( trials, 12 );
 
@@ -348,7 +348,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                                                 scattering_angle_cosine,
                                                 trials );
 
-  // Test
+  // Test 3
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.237831271699E-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 13 );
 
@@ -358,7 +358,7 @@ TEUCHOS_UNIT_TEST( HybridElasticElectronScatteringDistribution,
                                                 scattering_angle_cosine,
                                                 trials );
 
-  // Test
+  // Test 4
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.817731638374E-01, 1e-12 );
   TEST_EQUALITY_CONST( trials, 14 );
 }
@@ -546,7 +546,7 @@ int main( int argc, char** argv )
   MonteCarlo::HybridElasticElectronScatteringDistribution::DiscreteDistribution
     discrete_scattering_function(size);
 
-  MonteCarlo::HybridElasticElectronScatteringDistribution::TwoDDistribution
+  MonteCarlo::HybridElasticElectronScatteringDistribution::CutoffDistribution
     cutoff_scattering_function(size);
 
   for( unsigned n = 0; n < angular_energy_grid.size(); ++n )

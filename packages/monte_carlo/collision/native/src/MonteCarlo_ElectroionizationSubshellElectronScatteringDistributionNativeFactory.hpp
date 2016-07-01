@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_ELECTRIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 //#include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
@@ -30,7 +27,7 @@ public:
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
-	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution );
 
 //protected:

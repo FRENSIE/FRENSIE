@@ -6,11 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <limits>
-
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -25,7 +21,7 @@ AtomicExcitationElectronScatteringDistribution::AtomicExcitationElectronScatteri
     : d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the array is valid
-  testPrecondition( !d_energy_loss_distribution.is_null() );
+  testPrecondition( d_energy_loss_distribution.use_count() > 0 );
 }
 
 // Sample an outgoing energy and direction from the distribution

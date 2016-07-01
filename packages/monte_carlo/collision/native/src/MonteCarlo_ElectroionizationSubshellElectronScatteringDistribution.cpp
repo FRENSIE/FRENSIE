@@ -6,16 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <limits>
-#include <algorithm>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistribution.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_KinematicHelpers.hpp"
@@ -60,7 +52,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEn
   unsigned grid_point = d_electroionization_subshell_scattering_distribution.size();
 
   MonteCarlo::TwoDDistribution::const_iterator
-                                        highest_energy_bin, lowest_energy_bin;
+    highest_energy_bin, lowest_energy_bin;
 
   lowest_energy_bin = d_electroionization_subshell_scattering_distribution.begin();
   highest_energy_bin = d_electroionization_subshell_scattering_distribution.end();

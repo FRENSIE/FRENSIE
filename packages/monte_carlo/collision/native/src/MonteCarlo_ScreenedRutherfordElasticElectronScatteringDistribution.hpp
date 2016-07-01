@@ -38,12 +38,7 @@ class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronS
 
 public:
 
-  //! Typedef for the array of energy dependent screened rutherford paramters
-  //! (first = energy, second = Moliere screening constant,
-  //!  third = normalization constant
-  typedef Teuchos::Array<Utility::Trip<double,double,double> > ParameterArray;
-
-  typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
+  typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
             ElasticDistribution;
 
   //! Constructor
@@ -144,9 +139,6 @@ private:
 
   // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;
-
-  // Screened Rutherford energy depended paramters: Moliere's screening constant and normalization constant
-  ParameterArray d_screened_rutherford_parameters;
 };
 
 } // end MonteCarlo namespace

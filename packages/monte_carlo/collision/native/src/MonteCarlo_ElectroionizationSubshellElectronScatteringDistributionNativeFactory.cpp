@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
@@ -22,7 +21,7 @@ void ElectroionizationSubshellElectronScatteringDistributionNativeFactory::creat
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroionization_data,
     const unsigned subshell,
     const double binding_energy,
-	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution )
 {
   // Get the energies for which knock-on sampling tables are given

@@ -187,7 +187,7 @@ int main( int argc, char** argv )
     }
 
     // Create cutoff distribution
-    Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution(
             new MonteCarlo::CutoffElasticElectronScatteringDistribution(
                 scattering_function,
@@ -195,7 +195,7 @@ int main( int argc, char** argv )
 
     double atomic_number = data_container.getAtomicNumber();
 
-    Teuchos::RCP<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+    std::shared_ptr<const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
         rutherford_elastic_distribution(
             new MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution(
                 cutoff_elastic_distribution,

@@ -24,16 +24,17 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
-Teuchos::RCP< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> data_container;
+std::shared_ptr< const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   native_cutoff_elastic_distribution;
-Teuchos::RCP< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
+std::shared_ptr< const MonteCarlo::ScreenedRutherfordElasticElectronScatteringDistribution>
   native_sr_elastic_distribution;
-Teuchos::RCP< const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
+std::shared_ptr< const MonteCarlo::MomentPreservingElasticElectronScatteringDistribution>
   native_mp_elastic_distribution;
-Teuchos::RCP< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+std::shared_ptr< const MonteCarlo::AnalogElasticElectronScatteringDistribution>
   native_analog_elastic_distribution;
-
+std::shared_ptr< const MonteCarlo::HybridElasticElectronScatteringDistribution>
+  native_hybrid_elastic_distribution;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -306,6 +307,94 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
 
   // Test 4
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+}
+
+
+//---------------------------------------------------------------------------//
+// Check that the hybrid distribution can be created
+TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
+                   createHybridElasticDistribution )
+{
+  double cutoff_angle_cosine = 0.9;
+
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.assign(
+    data_container->getElectronEnergyGrid().begin(),
+    data_container->getElectronEnergyGrid().end() );
+
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(   
+    new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+		     energy_grid,
+		     energy_grid[0],
+		     energy_grid[energy_grid.size()-1],
+		     100 ) );
+
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    data_container->getCutoffElasticCrossSection().begin(),
+    data_container->getCutoffElasticCrossSection().end() );
+
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    data_container->getMomentPreservingCrossSection().begin(),
+    data_container->getMomentPreservingCrossSection().end() );
+
+  
+  MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+        native_hybrid_elastic_distribution,
+        grid_searcher,
+        energy_grid,
+        cutoff_cross_section,
+        mp_cross_section,
+        *data_container,
+        cutoff_angle_cosine );
+
+  // Set fake random number stream
+  std::vector<double> fake_stream( 4 );
+  fake_stream[0] = 2.23821564049245E-01; // sample mu = 0.57 (cutoff)
+  fake_stream[1] = 3.60131793351356E-01; // sample mu = 0.9 (cutoff)
+  fake_stream[2] = 0.4; // sample mu = 9.239785050451E-01 (discrete)
+  fake_stream[3] = 0.453; // sample mu = 9.817110812843E-01 (discrete)
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double incoming_energy = 1.0e-3;
+  double scattering_angle_cosine, outgoing_energy;
+
+  native_hybrid_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test 1
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.57, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // sample from distribution
+  native_hybrid_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.9, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // sample from distribution
+  native_hybrid_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test 3
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.239785050451E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
+
+  // sample from distribution
+  native_hybrid_elastic_distribution->sample( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine );
+
+  // Test 4
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 9.817110812843E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.0e-3, 1e-12 );
 }
 

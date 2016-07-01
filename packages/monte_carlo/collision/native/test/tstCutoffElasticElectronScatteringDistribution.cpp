@@ -50,11 +50,11 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution>
   ace_elastic_distribution, native_elastic_distribution;
-Teuchos::RCP<TestCutoffElasticElectronScatteringDistribution>
+std::shared_ptr<TestCutoffElasticElectronScatteringDistribution>
   test_ace_elastic_distribution, test_native_elastic_distribution;
-Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
   ace_scattering_distribution, native_scattering_distribution;
 
 double angle_cosine_cutoff = 1.0;
@@ -494,7 +494,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   double cutoff_angle_cosine = 0.0; // delta_mu = 1.0;
 
   // Create the distribution
-  Teuchos::RCP<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
+  std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
     elastic_distribution(
     	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
 		native_scattering_distribution,
@@ -559,7 +559,7 @@ TEUCHOS_UNIT_TEST( CutoffElasticElectronScatteringDistribution,
   double cutoff_angle_cosine = 0.0; // delta_mu = 1.0;
 
   // Create the distribution
-  Teuchos::RCP<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
+  std::shared_ptr<MonteCarlo::CutoffElasticElectronScatteringDistribution> 
     elastic_distribution(
     	new MonteCarlo::CutoffElasticElectronScatteringDistribution(
 		ace_scattering_distribution,
@@ -1075,7 +1075,7 @@ int main( int argc, char** argv )
 	  new const Utility::TabularDistribution<Utility::LinLin>( angles, pdf ) );
   }
 
-  Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
         cutoff_elastic_distribution;
 
   // Create cutoff distribution

@@ -30,7 +30,7 @@ public:
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-      const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             scattering_distribution );
 
   //! Constructor
@@ -39,7 +39,7 @@ public:
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+      const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
             scattering_distribution );
 
 
@@ -72,7 +72,7 @@ private:
 
 
   // The cutoff_elastic scattering distribution
-  Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
     d_scattering_distribution;
 };
 

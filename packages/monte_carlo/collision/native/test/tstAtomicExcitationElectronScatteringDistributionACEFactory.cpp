@@ -26,7 +26,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
    distribution;
 
 //---------------------------------------------------------------------------//

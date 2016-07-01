@@ -12,14 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
@@ -37,8 +29,8 @@ class CutoffElasticElectronScatteringDistribution : public ElectronScatteringDis
 public:
 
   //! Typedef for the  elastic distribution
-  typedef Teuchos::Array<Utility::Pair< double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  typedef std::vector<Utility::Pair< double,
+		       std::shared_ptr<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
   //! Constructor

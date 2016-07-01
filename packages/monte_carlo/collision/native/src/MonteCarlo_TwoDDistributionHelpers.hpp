@@ -17,8 +17,8 @@
 namespace MonteCarlo{
 
 //! Typedef for a 2-D distribution 
-typedef Teuchos::Array<Utility::Pair<double, 
-                       Teuchos::RCP<const Utility::TabularOneDDistribution> > > 
+typedef std::vector<Utility::Pair<double, 
+                       std::shared_ptr<const Utility::TabularOneDDistribution> > > 
 TwoDDistribution; 
 
 //! Find the lower and upper bin boundary

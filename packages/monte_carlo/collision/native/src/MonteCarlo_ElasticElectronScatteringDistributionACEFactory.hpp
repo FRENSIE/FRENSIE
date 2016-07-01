@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 #define MONTE_CARLO_ELASTIC_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -29,7 +26,7 @@ public:
 
   //! Create a cutoff elastic distribution
   static void createCutoffElasticDistribution(
-	Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+	std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
         cutoff_elastic_distribution,
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
     const double upper_cutoff_angle_cosine = 1.0 );

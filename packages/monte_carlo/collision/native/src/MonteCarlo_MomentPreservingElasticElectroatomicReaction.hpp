@@ -30,7 +30,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         discrete_scattering_distribution );
 
   //! Constructor
@@ -39,7 +39,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>&
         discrete_scattering_distribution );
 
   //! Destructor
@@ -64,7 +64,7 @@ private:
 
 
   // The moment preserving elastic scattering distribution
-  Teuchos::RCP<const MomentPreservingElasticElectronScatteringDistribution>
+  std::shared_ptr<const MomentPreservingElasticElectronScatteringDistribution>
     d_discrete_scattering_distribution;
 };
 

@@ -20,6 +20,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
+#include "Utility_TabularDistribution.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -52,10 +53,10 @@ public:
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AnalogElasticElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::AnalogElasticElectronScatteringDistribution>
   elastic_distribution;
 
-Teuchos::RCP<TestAnalogElasticElectronScatteringDistribution>
+std::shared_ptr<TestAnalogElasticElectronScatteringDistribution>
   test_elastic_distribution;
 
 double mu_cutoff = 1.0;

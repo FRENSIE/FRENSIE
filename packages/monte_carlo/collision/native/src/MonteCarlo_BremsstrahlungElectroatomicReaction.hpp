@@ -31,7 +31,7 @@ public:
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+      const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution );
 
   //! Constructor
@@ -40,7 +40,7 @@ public:
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-      const Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+      const std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
               bremsstrahlung_distribution );
 
   //! Destructor
@@ -64,7 +64,7 @@ public:
 private:
 
   // The bremsstrahlung scattering distribution
-  Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>
+  std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>
     d_bremsstrahlung_distribution;
 };
 

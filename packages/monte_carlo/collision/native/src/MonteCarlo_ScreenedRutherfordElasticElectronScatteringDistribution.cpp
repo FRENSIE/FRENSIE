@@ -54,7 +54,7 @@ ScreenedRutherfordElasticElectronScatteringDistribution::ScreenedRutherfordElast
                               d_atomic_number*d_atomic_number )
 {
   // Make sure the array is valid
-  testPrecondition( !d_elastic_cutoff_distribution.is_null() );
+  testPrecondition( d_elastic_cutoff_distribution.use_count() > 0 );
   // Make sure the atomic number is valid
   testPrecondition( d_atomic_number > 0 );
   testPrecondition( d_atomic_number <= 100u );

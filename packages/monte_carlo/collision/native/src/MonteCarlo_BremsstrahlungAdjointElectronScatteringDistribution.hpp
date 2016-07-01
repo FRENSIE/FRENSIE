@@ -9,14 +9,9 @@
 #ifndef MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ArrayRCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace MonteCarlo{
 
@@ -27,9 +22,7 @@ class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectr
 public:
 
   //! Typedef for the adjoint bremsstrahlung distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  BremsstrahlungDistribution;
+  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
   //! Constructor
   BremsstrahlungAdjointElectronScatteringDistribution(

@@ -28,7 +28,7 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
   ace_electroionization_distribution;
 
 //---------------------------------------------------------------------------//

@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
@@ -21,7 +20,7 @@ namespace MonteCarlo{
 // Create a simple dipole bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		scattering_distribution )
 {
   // Get the energy grid for bremsstrahlung energy distributions
@@ -44,7 +43,7 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrah
 // Create a detailed 2BS bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionNativeFactory::createBremsstrahlungDistribution(
 	const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		scattering_distribution,
     const int atomic_number )
 {

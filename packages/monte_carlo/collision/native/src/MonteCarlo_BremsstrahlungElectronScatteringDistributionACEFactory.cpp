@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
@@ -21,7 +20,7 @@ namespace MonteCarlo{
 // Create a simple dipole bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 			  scattering_distribution )
 {
   // Get the number of tables
@@ -42,9 +41,9 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 // Create a detailed tabular bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 			          scattering_distribution,
-        Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+        std::shared_ptr<Utility::OneDDistribution>& angular_distribution,
         const double lower_cutoff_energy,
         const double upper_cutoff_energy )
 {
@@ -69,7 +68,7 @@ void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlun
 // Create a detailed 2BS bremsstrahlung distribution
 void BremsstrahlungElectronScatteringDistributionACEFactory::createBremsstrahlungDistribution(
 	const Data::XSSEPRDataExtractor& raw_electroatom_data,
-	Teuchos::RCP<const BremsstrahlungElectronScatteringDistribution>&
+	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
 		                  scattering_distribution,
     const int atomic_number )
 {

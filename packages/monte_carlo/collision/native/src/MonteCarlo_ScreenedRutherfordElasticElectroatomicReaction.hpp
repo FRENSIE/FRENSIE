@@ -31,7 +31,7 @@ public:
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
-    const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution );
 
   //! Constructor
@@ -40,7 +40,7 @@ public:
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>&
+    const std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>&
             scattering_distribution );
 
 
@@ -66,7 +66,7 @@ private:
 
 
   // The screened rutherford_elastic scattering distribution
-  Teuchos::RCP<const ScreenedRutherfordElasticElectronScatteringDistribution>
+  std::shared_ptr<const ScreenedRutherfordElasticElectronScatteringDistribution>
     d_scattering_distribution;
 };
 

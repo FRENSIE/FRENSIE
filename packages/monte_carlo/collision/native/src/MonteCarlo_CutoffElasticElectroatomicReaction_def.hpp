@@ -21,7 +21,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -41,7 +41,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
 }
 
 // Constructor
@@ -51,7 +51,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       const Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>&
+       const std::shared_ptr<const CutoffElasticElectronScatteringDistribution>&
          scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                     incoming_energy_grid,
@@ -72,7 +72,7 @@ CutoffElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Cutoff
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
-  testPrecondition( !scattering_distribution.is_null() );
+  testPrecondition( scattering_distribution.use_count() > 0 );
   // Make sure the grid searcher is valid
   testPrecondition( !grid_searcher.is_null() );
 }

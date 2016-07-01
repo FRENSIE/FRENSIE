@@ -29,13 +29,13 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   dipole_bremsstrahlung_distribution;
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   tabular_bremsstrahlung_distribution;
 
-Teuchos::RCP<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+std::shared_ptr<MonteCarlo::BremsstrahlungElectronScatteringDistribution>
   twobs_bremsstrahlung_distribution;
 
 //---------------------------------------------------------------------------//
@@ -682,7 +682,7 @@ int main( int argc, char** argv )
   angular_distribution_values[1] =  0.9;
   angular_distribution_values[2] =  1.0;
 
-  Teuchos::RCP<Utility::OneDDistribution> angular_distribution(
+  std::shared_ptr<Utility::OneDDistribution> angular_distribution(
 			    new Utility::TabularDistribution<Utility::LinLin>(
 						energy_bins,
 						angular_distribution_values ) );

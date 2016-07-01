@@ -28,9 +28,9 @@
 
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
     ace_elastic_reaction, test_elastic_reaction;
-Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
-Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+std::vector<Utility::Pair<double,std::shared_ptr<const Utility::TabularOneDDistribution> > >
     elastic_scattering_function;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::ArrayRCP<double> elastic_cross_section;

@@ -308,7 +308,7 @@ int main( int argc, char** argv )
   angular_distribution_values[1] =  0.5;
   angular_distribution_values[2] =  1.0;
 
-  Teuchos::RCP<Utility::OneDDistribution> angular_distribution(
+  std::shared_ptr<Utility::OneDDistribution> angular_distribution(
 			    new Utility::TabularDistribution<Utility::LinLin>(
 						energy_bins,
 						angular_distribution_values ) );
@@ -351,7 +351,7 @@ int main( int argc, char** argv )
   double lower_cutoff_energy = 0.001;
   double upper_cutoff_energy = 1000;
 
-  Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
         dipole_scattering_distribution, tabular_scattering_distribution,
         twobs_scattering_distribution;
 

@@ -26,7 +26,7 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_excitation_reaction;
+std::shared_ptr<MonteCarlo::ElectroatomicReaction> ace_excitation_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -188,13 +188,13 @@ int main( int argc, char** argv )
   Teuchos::Array<double> excitation_energy_loss(excit_block(size,size));
 
   // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> energy_loss_function;
+  std::shared_ptr<Utility::OneDDistribution> energy_loss_function;
 
   energy_loss_function.reset(
   new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
 		                                     excitation_energy_loss ) );
 
-  Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
                       excitation_energy_loss_distribution;
 
   excitation_energy_loss_distribution.reset(

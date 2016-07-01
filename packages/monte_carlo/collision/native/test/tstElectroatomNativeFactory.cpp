@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
         true,
         new_cutoff_angle_cosine );
 
-Teuchos::RCP<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
