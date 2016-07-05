@@ -53,10 +53,10 @@ public:
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data;
-Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> evaluator;
-Teuchos::RCP<TestElasticElectronMomentsEvaluator> test_evaluator;
-Teuchos::RCP<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
-Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> evaluator;
+std::shared_ptr<TestElasticElectronMomentsEvaluator> test_evaluator;
+std::shared_ptr<const DataGen::StandardMomentPreservingElectronDataGenerator> data_generator;
+std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     analog_distribution;
 
 //---------------------------------------------------------------------------//
@@ -168,7 +168,7 @@ int main( int argc, char** argv )
         2 );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
 
   std::vector<double> discrete_angles, weights;
@@ -208,7 +208,7 @@ int main( int argc, char** argv )
         2 );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
 
   std::vector<double> discrete_angles, weights;
@@ -251,7 +251,7 @@ int main( int argc, char** argv )
         2 );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
 
   std::vector<double> discrete_angles, weights;
@@ -292,7 +292,7 @@ int main( int argc, char** argv )
         2 );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( moments ) );
 
   std::vector<double> discrete_angles, weights;

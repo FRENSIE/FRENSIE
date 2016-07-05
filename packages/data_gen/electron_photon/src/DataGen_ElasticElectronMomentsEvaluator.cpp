@@ -15,7 +15,6 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_StandardHashBasedGridSearcher.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_ElasticElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 
@@ -82,7 +81,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
 // Constructor (without data container)
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
     const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
         analog_reaction,
@@ -97,7 +96,7 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   testPrecondition( cutoff_angle_cosine <= s_rutherford_cutoff_angle_cosine || cutoff_angle_cosine == 1.0 );
 
   // Make sure the arrays are valid
-  testPrecondition( !analog_distribution.is_null() );
+  testPrecondition( analog_distribution.use_count() > 0 );
   testPrecondition( !analog_reaction.is_null() );
   testPrecondition( !cutoff_elastic_angles.empty() );
 }

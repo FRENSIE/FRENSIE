@@ -18,7 +18,6 @@
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace DataGen{
 
@@ -27,7 +26,7 @@ AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationS
     const double& binding_energy,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>&
                                      electroionization_subshell_reaction,
-    const Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
                                      knock_on_distribution )
   : d_binding_energy( binding_energy ),
     d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
@@ -35,8 +34,7 @@ AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationS
 {
   // Make sure the data is valid
   testPrecondition( !d_electroionization_subshell_reaction.is_null() );
-  testPrecondition( !d_knock_on_distribution.is_null() );
- // testPrecondition( d_knock_on_distribution.size() > 0 );
+  testPrecondition( d_knock_on_distribution.use_count() > 0 );
 }
 
 // Evaluate the differential adjoint electroionization subshell cross section (dc/dx)

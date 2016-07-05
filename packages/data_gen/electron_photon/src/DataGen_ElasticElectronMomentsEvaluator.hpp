@@ -26,6 +26,7 @@
 #include "Utility_SloanRadauQuadrature.hpp"
 #include "MonteCarlo_AnalogElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 
 namespace DataGen{
@@ -37,9 +38,7 @@ class ElasticElectronMomentsEvaluator
 public:
 
   //! Typedef for the elastic distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  ElasticDistribution;
+  typedef MonteCarlo::TwoDDistribution ElasticDistribution;
 
   //! Typedef for the cutoff elastic distribution
   typedef MonteCarlo::AnalogElasticElectronScatteringDistribution::CutoffDistribution
@@ -57,7 +56,7 @@ public:
   //! Constructor (without data container)
   ElasticElectronMomentsEvaluator(
     const std::map<double,std::vector<double> >& cutoff_elastic_angles,
-    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
     const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >&
         analog_reaction,
@@ -149,7 +148,7 @@ private:
     d_analog_reaction;
 
   // The analog distribution
-  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     d_analog_distribution;
 
   // The map of the cutoff angles

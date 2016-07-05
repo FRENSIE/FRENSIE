@@ -577,7 +577,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			   data_container ) const
 {
   // Extract the heating numbers
-  Teuchos::RCP<const Utility::OneDDistribution> heating_numbers;
+  std::shared_ptr<const Utility::OneDDistribution> heating_numbers;
 
   this->extractCrossSection<Utility::LinLog>(
 				     d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -585,7 +585,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 				     heating_numbers );
 
   // Extract the Waller-Hartree incoherent cross section
-  Teuchos::RCP<const Utility::OneDDistribution> waller_hartree_incoherent_cs;
+  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_incoherent_cs;
 
   this->extractCrossSection<Utility::LogLog>(
 			       d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -593,7 +593,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			       waller_hartree_incoherent_cs );
 
   // Extract the Waller-Hartree coherent cross section
-  Teuchos::RCP<const Utility::OneDDistribution> waller_hartree_coherent_cs;
+  std::shared_ptr<const Utility::OneDDistribution> waller_hartree_coherent_cs;
 
   this->extractCrossSection<Utility::LogLog>(
 				 d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -601,7 +601,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 				 waller_hartree_coherent_cs );
 
   // Extract the pair production cross section
-  Teuchos::RCP<const Utility::OneDDistribution> pair_production_cs;
+  std::shared_ptr<const Utility::OneDDistribution> pair_production_cs;
 
   this->extractCrossSection<Utility::LogLog>(
 			   d_ace_epr_data->extractPhotonEnergyGrid(),
@@ -609,7 +609,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 			   pair_production_cs );
 
   // Extract the subshell photoelectric effect cross sections
-  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >
+  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
     subshell_photoelectric_effect_css;
 
   this->extractSubshellPhotoelectricCrossSections(
@@ -981,12 +981,12 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
   // cross sections in the file
-  Teuchos::RCP<const Utility::OneDDistribution>
+  std::shared_ptr<const Utility::OneDDistribution>
         bremsstrahlung_cross_section, atomic_excitation_cross_section,
         cutoff_elastic_cross_section, total_elastic_cross_section;
 
-  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >
-        electroionization_cross_section;
+  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >
+    electroionization_cross_section;
 
   // Initialize union energy grid
   std::list<double> union_energy_grid;
@@ -1000,20 +1000,20 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   std::vector<double> raw_energy_grid =
     d_endl_data_container->getElasticEnergyGrid();
 
-  this->extractElectronCrossSection<Utility::LogLog>(
+  cutoff_elastic_cross_section.reset(
+    new Utility::TabularDistribution<Utility::LogLog>(
     raw_energy_grid,
-    d_endl_data_container->getCutoffElasticCrossSection(),
-    cutoff_elastic_cross_section );
+    d_endl_data_container->getCutoffElasticCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
   mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
 
 
   // Get total elastic cross section (same energy grid as cutoff)
-  this->extractElectronCrossSection<Utility::LogLog>(
+  total_elastic_cross_section.reset(
+    new Utility::TabularDistribution<Utility::LogLog>(
     raw_energy_grid,
-    d_endl_data_container->getTotalElasticCrossSection(),
-    total_elastic_cross_section );
+    d_endl_data_container->getTotalElasticCrossSection() ) );
 
 //---------------------------------------------------------------------------//
 // Get Electroionization Data Cross Section Data
@@ -1024,15 +1024,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   // Loop through electroionization data for every subshell
   for ( shell; shell != data_container.getSubshells().end(); shell++ )
   {
-    Teuchos::RCP<const Utility::OneDDistribution> subshell_cross_section;
+    std::shared_ptr<const Utility::OneDDistribution> subshell_cross_section;
 
     raw_energy_grid =
         d_endl_data_container->getElectroionizationCrossSectionEnergyGrid( *shell );
 
-    this->extractElectronCrossSection<Utility::LinLin>(
-        raw_energy_grid,
-        d_endl_data_container->getElectroionizationCrossSection( *shell ),
-        subshell_cross_section );
+    subshell_cross_section.reset(
+      new Utility::TabularDistribution<Utility::LinLin>(
+      raw_energy_grid,
+      d_endl_data_container->getElectroionizationCrossSection( *shell ) ) );
 
     // merge raw energy grid with the union energy grid
     mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
@@ -1048,10 +1048,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
   raw_energy_grid =
     d_endl_data_container->getBremsstrahlungCrossSectionEnergyGrid();
 
-  this->extractElectronCrossSection<Utility::LinLin>(
-        raw_energy_grid,
-        d_endl_data_container->getBremsstrahlungCrossSection(),
-        bremsstrahlung_cross_section );
+  bremsstrahlung_cross_section.reset(
+    new Utility::TabularDistribution<Utility::LinLin>(
+    raw_energy_grid,
+    d_endl_data_container->getBremsstrahlungCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
   mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
@@ -1063,10 +1063,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
   raw_energy_grid = d_endl_data_container->getAtomicExcitationEnergyGrid();
 
-  this->extractElectronCrossSection<Utility::LinLin>(
+  atomic_excitation_cross_section.reset(
+    new Utility::TabularDistribution<Utility::LinLin>(
     raw_energy_grid,
-    d_endl_data_container->getAtomicExcitationCrossSection(),
-    atomic_excitation_cross_section );
+    d_endl_data_container->getAtomicExcitationCrossSection() ) );
 
   // merge raw energy grid with the union energy grid
   mergeElectronUnionEnergyGrid( raw_energy_grid, union_energy_grid );
@@ -1252,9 +1252,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 
 //// Set the screened rutherford data
 //void StandardElectronPhotonRelaxationDataGenerator::setScreenedRutherfordData(
-//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//    const std::shared_ptr<const Utility::OneDDistribution>&
 //        cutoff_elastic_cross_section,
-//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//    const std::shared_ptr<const Utility::OneDDistribution>&
 //        total_elastic_cross_section,
 //    const std::vector<double>& agular_energy_grid,
 //    const std::map<double,std::vector<double> >& elastic_pdf,
@@ -1269,7 +1269,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
-  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(
@@ -1313,7 +1313,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
             analog_distribution ) );
 
   // Create the moment evaluator of the elastic scattering distribution
-  Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
+  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> moments_evaluator;
   moments_evaluator.reset(
     new DataGen::ElasticElectronMomentsEvaluator(
         data_container.getCutoffElasticAngles(),
@@ -1347,7 +1347,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   }
 
   // Generate a cross section reduction distribution
-  Teuchos::RCP<const Utility::OneDDistribution> reduction_distribution(
+  std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
     new Utility::TabularDistribution<Utility::LinLin>(
         agular_energy_grid,
         cross_section_reduction ) );
@@ -1427,7 +1427,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 
 // Extract the subshell photoelectric effect cross section
 void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricCrossSections(
-	  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const
+	  std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >& cross_sections ) const
 {
   Teuchos::ArrayView<const double> subshell_ordering =
     d_ace_epr_data->extractSubshellENDFDesignators();
@@ -1561,7 +1561,7 @@ void StandardElectronPhotonRelaxationDataGenerator::mergeElectronUnionEnergyGrid
 // Create the cross section on the union energy grid
 void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const Teuchos::RCP<const Utility::OneDDistribution>& original_cross_section,
+   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const
 {
@@ -1823,7 +1823,7 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateElasticAngleCosine(
 
 // Generate elastic moment preserving discrete angle cosines and weights
 void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
-    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
     std::vector<double>& discrete_angles,
@@ -1841,7 +1841,7 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeig
                                             precision );
 
   // Use radau quadrature to find the discrete angles and weights from the moments
-  Teuchos::RCP<Utility::SloanRadauQuadrature> radau_quadrature(
+  std::shared_ptr<Utility::SloanRadauQuadrature> radau_quadrature(
       new Utility::SloanRadauQuadrature( legendre_moments ) );
 
   radau_quadrature->getRadauNodesAndWeights( discrete_angles,
@@ -1870,9 +1870,9 @@ void StandardElectronPhotonRelaxationDataGenerator::evaluateMomentPreservingCros
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
     const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin>>
         analog_reaction,
-    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
-    const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
     const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section )

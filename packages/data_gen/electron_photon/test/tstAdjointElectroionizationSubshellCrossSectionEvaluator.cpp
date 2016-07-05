@@ -30,7 +30,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>
+std::shared_ptr<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>
   adjoint_h_cs;
 
 //---------------------------------------------------------------------------//
@@ -169,12 +169,12 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
 
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -269,7 +269,7 @@ int main( int argc, char** argv )
 	subshell_distribution );
 
   // The electroionization subshell distribution
-  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     electroionization_subshell_distribution;
 
   electroionization_subshell_distribution.reset(
@@ -280,7 +280,7 @@ int main( int argc, char** argv )
     // Create the electroionization subshell distribution
 
   // The electroionization subshell distribution
-  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
     electroionization_subshell_distribution;
  MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
         subshell_info,

@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <limits>
-
 // Boost Includes
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -18,13 +15,12 @@
 #include "Utility_GaussKronrodIntegrator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace DataGen{
 
 // Constructor
 AdjointBremsstrahlungCrossSectionEvaluator::AdjointBremsstrahlungCrossSectionEvaluator(
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
     const BremsstrahlungDistribution& energy_loss_distribution )
   : d_bremsstrahlung_reaction( bremsstrahlung_reaction ),
     d_energy_loss_distribution( energy_loss_distribution )

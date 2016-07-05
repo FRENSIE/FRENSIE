@@ -19,7 +19,7 @@ template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
 	   Teuchos::ArrayView<const double> raw_energy_grid,
 	   Teuchos::ArrayView<const double> raw_cross_section,
-	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
+	   std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const
 {
   // Find the first non-zero cross section value
   Teuchos::ArrayView<const double>::iterator start =
@@ -58,14 +58,11 @@ template<typename InterpPolicy>
 void StandardElectronPhotonRelaxationDataGenerator::extractElectronCrossSection(
        const std::vector<double>& raw_energy_grid,
        const std::vector<double>& raw_cross_section,
-	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
+	   std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const
 {
-  Teuchos::Array<double> processed_cross_section( raw_cross_section );
-  Teuchos::Array<double> energy_grid( raw_energy_grid );
-
   cross_section.reset( new Utility::TabularDistribution<InterpPolicy>(
-						   energy_grid,
-						   processed_cross_section ) );
+						   raw_energy_grid,
+						   raw_cross_section ) );
 }
 
 } // end DataGen namespace

@@ -28,7 +28,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
+std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
   adjoint_h_cs;
 
 //---------------------------------------------------------------------------//
@@ -121,12 +121,12 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
 
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+  std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
 				new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -183,10 +183,8 @@ int main( int argc, char** argv )
          true ) );
   }
 
-  Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
-    b_scattering_distribution;
-
-    b_scattering_distribution.reset(
+  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+    b_scattering_distribution(
         new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
             energy_loss_distribution ) );
 

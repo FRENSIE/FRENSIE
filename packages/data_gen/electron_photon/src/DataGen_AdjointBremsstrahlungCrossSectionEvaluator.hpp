@@ -9,23 +9,12 @@
 #ifndef DATA_GEN_ADJOINT_BREMSSTRAHLUNG_CROSS_SECTION_EVALUATOR_HPP
 #define DATA_GEN_ADJOINT_BREMSSTRAHLUNG_CROSS_SECTION_EVALUATOR_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-/*
-// Std Lib Includes
-#include <limits>
-
-// Boost Includes
-#include <boost/distribution.hpp>
-#include <boost/bind.hpp>
-*/
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 
@@ -38,13 +27,11 @@ class AdjointBremsstrahlungCrossSectionEvaluator
 public:
 
   //! Typedef for the bremsstrahlung distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  BremsstrahlungDistribution;
+  typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
     const BremsstrahlungDistribution& energy_loss_distribution );
 
   //! Destructor

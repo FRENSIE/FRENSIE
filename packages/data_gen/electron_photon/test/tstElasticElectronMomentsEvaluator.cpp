@@ -49,11 +49,11 @@ public:
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> pb_data, al_data;
-Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>
+std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer> pb_data, al_data;
+std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>
   pb_evaluator, al_evaluator;
 
-Teuchos::RCP<TestElasticElectronMomentsEvaluator>
+std::shared_ptr<TestElasticElectronMomentsEvaluator>
   test_al_evaluator;
 
 //---------------------------------------------------------------------------//
@@ -1019,7 +1019,7 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double energy = 1.0e-5;
   double tol = 1e-10;
 
-  Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> full_evaluator;
+  std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator> full_evaluator;
 
   full_evaluator.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *pb_data,
@@ -1091,7 +1091,7 @@ int main( int argc, char** argv )
 						     test_native_al_file_name ) );
 
   // Create the analog elastic distributions (combined Cutoff and Screened Rutherford)
-  Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
     analog_distribution;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createAnalogElasticDistribution(

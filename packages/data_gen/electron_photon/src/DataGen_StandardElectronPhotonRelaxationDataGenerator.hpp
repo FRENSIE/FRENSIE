@@ -139,9 +139,9 @@ private:
 
 //  // Set the screened rutherford data
 //  void setScreenedRutherfordData(
-//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//    const std::shared_ptr<const Utility::OneDDistribution>&
 //        cutoff_elastic_cross_section,
-//    const Teuchos::RCP<const Utility::OneDDistribution>&
+//    const std::shared_ptr<const Utility::OneDDistribution>&
 //        total_elastic_cross_section,
 //    const std::vector<double>& elastic_energy_grid,
 //    const std::map<double,std::vector<double> >& elastic_pdf,
@@ -157,17 +157,17 @@ private:
   void extractCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
-	  Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
+	  std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract electron cross sections
   template<typename InterpPolicy>
   void extractElectronCrossSection(
         const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
-        Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
+        std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
-  void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const;
+  void extractSubshellPhotoelectricCrossSections( std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >& cross_sections ) const;
 
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -182,7 +182,7 @@ private:
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const Teuchos::RCP<const Utility::OneDDistribution>& original_cross_section,
+   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
@@ -224,7 +224,7 @@ private:
 
   // Generate elastic moment preserving discrete angle cosines and weights
   static void evaluateDisceteAnglesAndWeights(
-    const Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
     const double& energy,
     const int& number_of_moment_preserving_angles,
     std::vector<double>& discrete_angles,
@@ -236,9 +236,9 @@ private:
     const Teuchos::ArrayRCP<double>& electron_energy_grid,
     const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
         analog_reaction,
-    const Teuchos::RCP<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution,
-    const Teuchos::RCP<const Utility::OneDDistribution>& reduction_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
     const double cutoff_angle_cosine,
     const unsigned threshold_energy_index,
     std::vector<double>& moment_preserving_cross_section );
