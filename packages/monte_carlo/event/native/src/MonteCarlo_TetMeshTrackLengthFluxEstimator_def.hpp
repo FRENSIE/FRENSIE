@@ -316,11 +316,14 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	  if( partial_track_length > 0.0 )
 	  {	
             EstimatorParticleStateWrapper particle_state_wrapper( particle );
+
+            double contribution = partial_track_length*
+              ContributionMultiplierPolicy::multiplier( particle );
             
 	    // Add partial history contribution
 	    addPartialHistoryContribution( tet,
 					   particle_state_wrapper,
-					   partial_track_length );
+					   contribution );
 	  }
 	}
       }
@@ -338,10 +341,13 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	if( tet != 0 )
         {
           EstimatorParticleStateWrapper particle_state_wrapper( particle );
+
+          double contribution = track_length*
+              ContributionMultiplierPolicy::multiplier( particle );
           
 	  addPartialHistoryContribution( tet, 
                                          particle_state_wrapper, 
-                                         track_length );
+                                         contribution );
         }
       }
       // case 2: track entirely misses mesh - do nothing
