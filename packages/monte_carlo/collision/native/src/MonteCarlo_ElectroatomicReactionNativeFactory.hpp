@@ -33,6 +33,14 @@ public:
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
     Teuchos::RCP<ElectroatomicReaction>& elastic_reaction );
 
+  //! Create a hybrid elastic scattering electroatomic reaction
+  static void createHybridElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    const double cutoff_angle_cosine = 0.9 );
+
   //! Create an cutoff elastic scattering electroatomic reaction
   static void createCutoffElasticReaction(
     const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,

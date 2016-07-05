@@ -81,28 +81,16 @@ void ElectroatomNativeFactory::createElectroatomCore(
   // Create the hybrid elastic scattering reaction (if cutoff is within range)
   else
   {
-    {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[CUTOFF_ELASTIC_ELECTROATOMIC_REACTION];
+    Electroatom::ReactionMap::mapped_type& reaction_pointer =
+        scattering_reactions[HYBRID_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createCutoffElasticReaction(
+    ElectroatomicReactionNativeFactory::createHybridElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
 					   grid_searcher,
 					   reaction_pointer,
                        cutoff_angle_cosine );
-    }
-    {
-      Electroatom::ReactionMap::mapped_type& reaction_pointer =
-        scattering_reactions[MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION];
 
-      ElectroatomicReactionNativeFactory::createMomentPreservingElasticReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   grid_searcher,
-					   reaction_pointer,
-                       cutoff_angle_cosine );
-    }
   }
 
   // Create the bremsstrahlung scattering reaction

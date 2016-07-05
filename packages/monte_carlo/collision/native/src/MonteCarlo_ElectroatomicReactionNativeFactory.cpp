@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_AnalogElasticElectroatomicReaction.hpp"
+#include "MonteCarlo_HybridElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_CutoffElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_ScreenedRutherfordElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_MomentPreservingElasticElectroatomicReaction.hpp"
@@ -80,6 +81,65 @@ void ElectroatomicReactionNativeFactory::createAnalogElasticReaction(
 						  sr_threshold_energy_index,
                           grid_searcher,
 						  distribution ) );
+}
+
+// Create a hybrid elastic scattering electroatomic reaction
+void ElectroatomicReactionNativeFactory::createHybridElasticReaction(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+    const double cutoff_angle_cosine )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.getElectronEnergyGrid().size() ==
+                    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+                                                      energy_grid.end() ) );
+
+  // Cutoff elastic cross section
+  Teuchos::ArrayRCP<double> cutoff_cross_section;
+  cutoff_cross_section.assign(
+    raw_electroatom_data.getCutoffElasticCrossSection().begin(),
+	raw_electroatom_data.getCutoffElasticCrossSection().end() );
+
+  // Cutoff elastic cross section threshold energy bin index
+  unsigned cutoff_threshold_energy_index =
+    raw_electroatom_data.getCutoffElasticCrossSectionThresholdEnergyIndex();
+
+  // Moment preserving elastic cross section
+  Teuchos::ArrayRCP<double> mp_cross_section;
+  mp_cross_section.assign(
+    raw_electroatom_data.getMomentPreservingCrossSection().begin(),
+	raw_electroatom_data.getMomentPreservingCrossSection().end() );
+
+  // Moment preserving elastic cross section threshold energy bin index
+  unsigned mp_threshold_energy_index =
+    raw_electroatom_data.getMomentPreservingCrossSectionThresholdEnergyIndex();
+
+  // Create the hybrid elastic scattering distribution
+  std::shared_ptr<const HybridElasticElectronScatteringDistribution> distribution;
+
+  ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDistribution(
+    distribution,
+    grid_searcher,
+    energy_grid,
+    cutoff_cross_section,
+    mp_cross_section,
+    raw_electroatom_data,
+    cutoff_angle_cosine );
+
+  // Create the hybrid elastic reaction
+  elastic_reaction.reset(
+	new HybridElasticElectroatomicReaction<Utility::LinLin>(
+            energy_grid,
+            cutoff_cross_section,
+            cutoff_threshold_energy_index,
+            grid_searcher,
+            mp_cross_section,
+            mp_threshold_energy_index,
+            cutoff_angle_cosine,
+            distribution ) );
 }
 
 // Create the cutoff elastic scattering electroatomic reactions

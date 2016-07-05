@@ -91,9 +91,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createHybridElasticDist
 	std::shared_ptr<const HybridElasticElectronScatteringDistribution>&
         hybrid_elastic_distribution,
     const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<double> energy_grid,
-    const Teuchos::ArrayRCP<double> cutoff_cross_section,
-    const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+    const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine )
 {
@@ -334,9 +334,9 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingS
 void ElasticElectronScatteringDistributionNativeFactory::createHybridScatteringFunction(
         const Data::ElectronPhotonRelaxationDataContainer& data_container,
         const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-        const Teuchos::ArrayRCP<double> energy_grid,
-        const Teuchos::ArrayRCP<double> cutoff_cross_section,
-        const Teuchos::ArrayRCP<double> moment_preserving_cross_section,
+        const Teuchos::ArrayRCP<const double> energy_grid,
+        const Teuchos::ArrayRCP<const double> cutoff_cross_section,
+        const Teuchos::ArrayRCP<const double> moment_preserving_cross_section,
         const std::vector<double>& angular_energy_grid,
         const double cutoff_angle_cosine,
         CutoffDistribution& cutoff_function,

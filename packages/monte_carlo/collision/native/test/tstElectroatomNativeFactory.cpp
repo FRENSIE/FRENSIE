@@ -512,7 +512,7 @@ TEUCHOS_UNIT_TEST( ElectroatomNativeFactory, createElectroatom_cutoff )
         true,
         new_cutoff_angle_cosine );
 
-std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
+  std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
     cutoff_elastic_distribution;
 
   MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::createCutoffElasticDistribution(
@@ -528,10 +528,9 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
   // Test that the total cross section can be returned
   double energy = 1.000000000000E-05;
   double cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-05 );
+    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
   double inelastic = 1.398201198000000E+08;
-  double elastic = 2.489240000000000E+09*cross_section_ratio +
-                   2.765600964132140E+08;
+  double elastic = 2.48924E+09*cross_section_ratio + 1.106329441558590E+08;
 
   double cross_section =
     atom->getTotalCrossSection( energy );
@@ -542,10 +541,9 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
 
   energy = 2.000000000000E-01;
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 2.0E-01 );
+    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
   inelastic = 6.411260911064270E+06;
-  elastic = 1.611188150713820E+07*cross_section_ratio +
-            1.415045574298740E+07;
+  elastic = 1.611188150713820E+07*cross_section_ratio + 1.950992057434620E+06;
 
   cross_section =
     atom->getTotalCrossSection( energy );
@@ -557,10 +555,9 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
 
   energy = 1.000000000000E+05;
   cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.0E+05 );
+    cutoff_elastic_distribution->evaluateCDF( energy, new_cutoff_angle_cosine );
   inelastic = 2.845403047900000E+06;
-  elastic = 8.83051E-02*cross_section_ratio +
-            3.084945182072920E+01;
+  elastic = 8.83051E-02*cross_section_ratio + 2.203770304996720E-03;
 
   cross_section =
     atom->getTotalCrossSection( energy );
@@ -629,38 +626,75 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
 
   TEST_FLOATING_EQUALITY( cross_section, 4.869800E+03, 1e-12 );
 
-  // Test that the cutoff elastic cross section can be returned
+  // Test that the hybrid elastic cross section can be returned
+  cross_section = atom->getReactionCrossSection(
+                    1.00E+05,
+                    MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+
+  cross_section_ratio =
+    cutoff_elastic_distribution->evaluateCDF( 1.E+05, new_cutoff_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          8.830509999999990E-02*cross_section_ratio + 2.203770304996720E-03,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+                    1.00E-03,
+                    MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+
+  cross_section_ratio =
+    cutoff_elastic_distribution->evaluateCDF( 1.E-03, new_cutoff_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.902810E+08*cross_section_ratio + 1.258401377405710E+08,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+                    1.995260E-04,
+                    MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+
+  cross_section_ratio =
+    cutoff_elastic_distribution->evaluateCDF( 1.99526E-04, new_cutoff_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          6.130900E+08*cross_section_ratio + 3.085062847704200E+08,
+                          1e-12 );
+
+  cross_section = atom->getReactionCrossSection(
+                    1.000000000000E-05,
+                    MonteCarlo::HYBRID_ELASTIC_ELECTROATOMIC_REACTION );
+
+  cross_section_ratio =
+    cutoff_elastic_distribution->evaluateCDF( 1.E-05, new_cutoff_angle_cosine );
+
+  TEST_FLOATING_EQUALITY( cross_section,
+                          2.489240E+09*cross_section_ratio + 1.106329441558590E+08,
+                          1e-12 );
+
+  // Test that there is no cutoff elastic cross section
   cross_section = atom->getReactionCrossSection(
                     1.00E-03,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
-  cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-03 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.902810E+08*cross_section_ratio,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     1.995260E-04,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
-  cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.99526E-04 );
-
   TEST_FLOATING_EQUALITY( cross_section,
-                          6.130900E+08*cross_section_ratio,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
                     1.000000000000E-05,
                     MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
-  cross_section_ratio =
-    cutoff_elastic_distribution->evaluateCutoffCrossSectionRatio( 1.00E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.489240E+09*cross_section_ratio,
+                          0.0,
                           1e-12 );
 
   // Test that there is no screened Rutherford reaction
@@ -676,13 +710,13 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
 
-  // Test that the moment preserving elastic cross section can be returned
+  // Test that there is no moment preserving elastic cross section
   cross_section = atom->getReactionCrossSection(
             1.000E+05,
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          2.203770304996720E-03,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -690,7 +724,7 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.237767561961470E+04,
+                          0.0,
                           1e-12 );
 
   cross_section = atom->getReactionCrossSection(
@@ -698,7 +732,7 @@ std::shared_ptr<const MonteCarlo::CutoffElasticElectronScatteringDistribution>
             MonteCarlo::MOMENT_PRESERVING_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section,
-                          1.191705501578560E+05,
+                          0.0,
                           1e-12 );
 
   // Test that there is no total electroionization
