@@ -107,7 +107,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                        end_point,
                                        direction,
                                        track_length );
-
+    std::cout << "CONTRIBUTION ARRAY SIZE: " << contribution_array.size() << std::endl;
     if( contribution_array.size() > 0 )
     {
       EstimatorParticleStateWrapper particle_state_wrapper( particle );    

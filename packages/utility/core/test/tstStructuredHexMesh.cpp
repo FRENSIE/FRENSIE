@@ -938,7 +938,5 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_enters_mesh_dimension_test)
   TEST_FLOATING_EQUALITY(contribution1[1].second,  0.122890361123820 ,1e-10);
   TEST_FLOATING_EQUALITY(ray_length - 1.720465048851618e-09, contribution1[0].second
     + contribution1[1].second, 1e-10);
-  
-  
 
 }

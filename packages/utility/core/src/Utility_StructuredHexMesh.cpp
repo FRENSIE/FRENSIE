@@ -6,7 +6,6 @@
 //! 
 //---------------------------------------------------------------------------//
 
-
 //std includes
 #include <math.h>
 
@@ -172,6 +171,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   
   
   bool pointInMesh = isPointInMesh(current_point);
+
   //test if point starts in mesh. If not, figure out if it interacts with mesh
   if( !pointInMesh )
   {
@@ -246,7 +246,6 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   interaction_plane_array = findInteractionPlanes( current_point,
                                                    direction );
 
-
   setMemberIndices( current_point,
                     direction,
                     interaction_plane_array );
@@ -276,17 +275,17 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
 
     //pick out the distance at which particle will enter a new hex element
     distance_to_intersection = findIntersectionPoint( distance_array );
-    
+
     //check if the distance is greater than the remaining track length left
     bool isTrackLengthExhausted = false;
     if( track_length - iteration_length - s_tol < distance_to_intersection.second )
     {
-    
+
       distance_to_intersection.second = track_length - iteration_length;
       isTrackLengthExhausted = true;
-    
+
     }
-    
+
 
     //figure out what hex cell this is in
     unsigned hex_index = findIndex(d_hex_plane_indices);
@@ -295,7 +294,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
     contribution.first = hex_index;
     contribution.second = distance_to_intersection.second;
     contribution_array.push_back(contribution);
-    
+
 
     //check if the interaction plane was a bounding plane or if the earlier case of particle exhausting track length occurred. If so, exit loop;
     bool particleExitedMesh = didParticleExitMesh( distance_to_intersection.first,
@@ -598,30 +597,32 @@ bool StructuredHexMesh::didParticleExitMesh( planeDimension intersection_dimensi
                                              Teuchos::Array<std::pair<planeDimension, PlaneIndex>> interaction_planes)
 {
   bool particleExitedMesh = false;
-  
   //check each interaction plane to see if it's the one that was intersected and also whether or not it's a bounding plane
   for(unsigned i = 0; i < interaction_planes.size(); ++i)
   {
     if(interaction_planes[i].first == intersection_dimension)
     {
-      if(interaction_planes[i].second == d_x_planes.size() - 1 || interaction_planes[i].second == 0)
+      if(intersection_dimension == 0)
       {
-        particleExitedMesh = true;
-      } 
-    }
-    else if(interaction_planes[i].first == intersection_dimension)
-    {
-      if(interaction_planes[i].second == d_y_planes.size() - 1 || interaction_planes[i].second == 0)
+        if(interaction_planes[i].second == d_x_planes.size() - 1 || interaction_planes[i].second == 0)
+        {
+          particleExitedMesh = true;
+        } 
+      }
+      else if(intersection_dimension == 1)
       {
-        particleExitedMesh = true;
-      } 
-    }
-    else if(interaction_planes[i].first == intersection_dimension)
-    {
-      if(interaction_planes[i].second == d_z_planes.size() - 1 || interaction_planes[i].second == 0)
+        if(interaction_planes[i].second == d_y_planes.size() - 1 || interaction_planes[i].second == 0)
+        {
+          particleExitedMesh = true;
+        }       
+      }
+      else if(intersection_dimension == 2)
       {
-        particleExitedMesh = true;
-      } 
+        if(interaction_planes[i].second == d_z_planes.size() - 1 || interaction_planes[i].second == 0)
+        {
+          particleExitedMesh = true;
+        }       
+      }
     }
   }
   
