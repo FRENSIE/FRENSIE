@@ -359,7 +359,7 @@ void AnalogElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
 
     // Interpolate
-    scattering_angle_cosine = Utility::LogLog::interpolate(
+    scattering_angle_cosine = Utility::LinLog::interpolate(
                                 lower_bin->first,
                                 upper_bin->first,
                                 incoming_energy,

@@ -32,12 +32,12 @@ AdjointBremsstrahlungCrossSectionEvaluator::AdjointBremsstrahlungCrossSectionEva
 
 // Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
 double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSection(
-	  const double incoming_energy,
-          const double outgoing_energy ) const
+    const double incoming_energy,
+    const double outgoing_energy ) const
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( outgoing_energy > 0.0 );
+  testPrecondition( outgoing_energy >= incoming_energy );
 
   // Evaluate the forward cross section at the incoming energy
   double forward_cs = d_bremsstrahlung_reaction->getCrossSection( incoming_energy );
@@ -53,8 +53,8 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSect
 
 // Return the cross section value at a given energy
 double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
-                               const double energy,
-			       const double precision ) const
+    const double energy,
+    const double precision ) const
 {
   // Make sure the energies are valid
   testPrecondition( energy > 0.0 );

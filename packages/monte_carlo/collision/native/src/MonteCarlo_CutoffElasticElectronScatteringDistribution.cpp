@@ -249,7 +249,7 @@ void CutoffElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   // sample the scattering angle cosine
   scattering_angle_cosine =
-        sampleTwoDDistributionCorrelatedInSubrange<ElasticDistribution>(
+        sampleTwoDDistributionCorrelatedInSubrange<ElasticDistribution, Utility::LinLog>(
             incoming_energy,
             d_elastic_scattering_distribution,
             d_cutoff_angle_cosine );

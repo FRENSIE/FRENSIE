@@ -238,7 +238,7 @@ void HybridElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
 
   if ( lower_bin_index != upper_bin_index )
   {
-    scattering_angle_cosine = Utility::LogLog::interpolate(
+    scattering_angle_cosine = Utility::LinLog::interpolate(
         d_elastic_cutoff_distribution[lower_bin_index].first,
         d_elastic_cutoff_distribution[upper_bin_index].first,
         incoming_energy,
