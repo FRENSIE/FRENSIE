@@ -47,10 +47,8 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
   z_planes.push_back(0);
   z_planes.push_back(1);
   z_planes.push_back(2);
-  z_planes.push_back(3);
 
   TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(0, 2, x_planes, y_planes, z_planes, "test.vtk" ) ) );
-
 }
 
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
@@ -123,7 +121,14 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
-  out << *hex;
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+                                        raw_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                                 0u, *hex, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
@@ -134,7 +139,14 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
-  out << *hex;
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+                                        raw_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                                 0u, *hex, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
@@ -145,7 +157,14 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
-  out << *hex;
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+                                        raw_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                                 0u, *hex, raw_bin_data_copy );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
@@ -156,8 +175,6 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
-  out << *hex;
-
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-12 );
@@ -167,43 +184,85 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
                                                  0u, *hex, raw_bin_data_copy );
 
-  out << *hex;
-
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
                                         raw_bin_data_copy,
                                         1e-12 );
 
-  ++hex;
+  // Retrieve the processed bin data for each hex
+  hex = hex_estimator->d_hex_begin;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
+  Teuchos::Array<Utility::Pair<double,double> >
+    processed_bin_data( 1, Utility::Pair<double,double>( 2.0, 0.0 ) ),
+  processed_bin_data_copy;
 
-  out << *hex;
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
                                         1e-12 );
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
 
-  out << *hex;
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
                                         1e-12 );
 
   ++hex;
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
 
-  out << *hex;
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
+                                        1e-12 );
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
+  ++hex;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
+                                        1e-12 );
+
+  ++hex;
+
+  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                                           0u, *hex, processed_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
+                                        processed_bin_data_copy,
                                         1e-12 );
 
   ++hex;

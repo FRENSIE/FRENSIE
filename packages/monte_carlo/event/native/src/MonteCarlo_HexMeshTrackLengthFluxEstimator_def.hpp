@@ -107,7 +107,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                        end_point,
                                        direction,
                                        track_length );
-    std::cout << "CONTRIBUTION ARRAY SIZE: " << contribution_array.size() << std::endl;
+    
     if( contribution_array.size() > 0 )
     {
       EstimatorParticleStateWrapper particle_state_wrapper( particle );    
@@ -233,8 +233,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       
       const Estimator::TwoEstimatorMomentsArray& hex_bin_data = 
         this->getEntityBinData( *hex );
-
-	    std::string mean_tag_prefix = "mean: ";
+      
+      std::string mean_tag_prefix = "mean: ";
       std::string relative_error_tag_prefix = "relative_error: ";	
       std::string vov_tag_prefix = "vov: ";
       std::string fom_tag_prefix = "fom: ";
@@ -270,8 +270,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
         TEST_FOR_EXCEPTION( rval != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[rval] );
-       
-    	  // Assign error tag data
+
+        // Assign error tag data
         rval = moab_interface->tag_get_handle( relative_error_tag_name.c_str(),
                                                1,
                                                moab::MB_TYPE_DOUBLE,
