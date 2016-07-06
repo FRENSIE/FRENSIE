@@ -500,6 +500,23 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
 }
 
+//getter functions for start and end hex element iterators of the mesh
+template<typename ContributionMultiplierPolicy>
+Utility::StructuredHexMesh::HexIDIterator HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getStartHex() const
+{
+
+  return d_hex_begin;
+
+}
+
+template<typename ContributionMultiplierPolicy>
+Utility::StructuredHexMesh::HexIDIterator HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getEndHex() const
+{
+
+  return d_hex_end;
+
+}
+
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )

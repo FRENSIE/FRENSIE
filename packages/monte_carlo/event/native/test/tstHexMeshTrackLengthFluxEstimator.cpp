@@ -73,6 +73,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
 
   double start_point_4[3] = { 1.5, 1.5, 0.0 };
   double end_point_4[3] = { 1.5, 1.5, 2.0 };
+  
 
   MonteCarlo::NeutronState particle( 0ull );
   particle.setWeight( 1.0 );
@@ -113,8 +114,7 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubt
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
 
   // Retrieve the raw bin data for each hex
-  Utility::StructuredHexMesh::HexIDIterator hex = 
-    hex_estimator->d_hex_begin;
+  Utility::StructuredHexMesh::HexIDIterator hex = hex_estimator->getStartHex();
 
   Teuchos::Array<Utility::Pair<double,double> >
     raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),

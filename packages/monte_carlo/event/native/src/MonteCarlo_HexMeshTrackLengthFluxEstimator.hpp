@@ -80,11 +80,9 @@ public:
   //! Print the estimator data
   void printSummary( std::ostream& os ) const;
 
-  //! starting iterator over the hex mesh elements
-  Utility::StructuredHexMesh::HexIDIterator d_hex_begin;
+  Utility::StructuredHexMesh::HexIDIterator getStartHex() const;
   
-  //! ending iterator for the hex mesh elements
-  Utility::StructuredHexMesh::HexIDIterator d_hex_end;
+  Utility::StructuredHexMesh::HexIDIterator getEndHex() const;
 
 private:
 
@@ -100,6 +98,11 @@ private:
   // hex mesh object
   std::shared_ptr<Utility::StructuredHexMesh> d_hex_mesh;
 
+  // starting iterator over the hex mesh elements
+  Utility::StructuredHexMesh::HexIDIterator d_hex_begin;
+  
+  // ending iterator for the hex mesh elements
+  Utility::StructuredHexMesh::HexIDIterator d_hex_end;
 };
   
 } // end MonteCarlo namespace
