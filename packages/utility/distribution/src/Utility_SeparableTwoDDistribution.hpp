@@ -31,52 +31,52 @@ class UnitAwareSeparableTwoDDistribution : public UnitAwareTwoDDistribution<Prim
   
 private:
 
-  // The base TwoDDistribution type
-  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type> BaseType;
+  // The parent type
+  typedef UnitAwareCompleteTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type> ParentType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
-  typedef QuantityTraits<typename BaseType::PrimaryIndepQuantity> PIQT;
+  typedef QuantityTraits<typename ParentType::PrimaryIndepQuantity> PIQT;
 
   // Typddef for QuantityTraits<SecondaryIndepQuantity>
-  typedef QuantityTraits<typename BaseType::SecondaryIndepQuantity> SIQT;
+  typedef QuantityTraits<typename ParentType::SecondaryIndepQuantity> SIQT;
 
   // Typedef for QuantityTraits<InversePrimaryIndepQuantity>
-  typedef QuantityTraits<typename BaseType::InversePrimaryIndepQuantity> IPIQT;
+  typedef QuantityTraits<typename ParentType::InversePrimaryIndepQuantity> IPIQT;
 
   // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
-  typedef QuantityTraits<typename BaseType::InverseSecondaryIndepQuantity> ISIQT;
+  typedef QuantityTraits<typename ParentType::InverseSecondaryIndepQuantity> ISIQT;
 
   // Typedef for QuantityTraits<InverseIndepQuantity>
-  typedef QuantityTraits<typename BaseType::InverseIndepQuantity> IIQT;
+  typedef QuantityTraits<typename ParentType::InverseIndepQuantity> IIQT;
 
   // Typedef for QuantityTraits<DepQuantity>
-  typedef QuantityTraits<typename BaseType::DepQuantity> DQT;
+  typedef QuantityTraits<typename ParentType::DepQuantity> DQT;
 
 public:
 
   //! The dependent unit type
-  typedef typename BaseType::DepUnit DepUnit;
+  typedef typename ParentType::DepUnit DepUnit;
 
   //! The primary independent quantity type
-  typedef typename BaseType::PrimaryIndepQuantity PrimaryIndepQuantity;
+  typedef typename ParentType::PrimaryIndepQuantity PrimaryIndepQuantity;
 
   //! The secondary independent quantity type
-  typedef typename BaseType::SecondaryIndepQuantity SecondaryIndepQuantity;
+  typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse primary independent quantity type
-  typedef typename BaseType::InversePrimaryIndepQuantity InversePrimaryIndepQuantity;
+  typedef typename ParentType::InversePrimaryIndepQuantity InversePrimaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename BaseType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
 
   //! The inverse independent quantity type
-  typedef typename BaseType::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename ParentType::InverseIndepQuantity InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename BaseType::DepQuantity DepQuantity;
+  typedef typename ParentType::DepQuantity DepQuantity;
 
   //! Constructor
   UnitAwareSeparableTwoDDistribution(
@@ -105,21 +105,19 @@ public:
   InverseSecondaryIndepQuantity evaluateSecondaryMarginalPDF(
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
 
-  //! Evaluate the primary conditional PDF
-  InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
-  //! Evaluate the secondary conditional PDF
-  InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value,
-                const SecondaryIndepQuantity secondary_indep_var_value ) const;
-
   //! Return a random sample from the primary marginal PDF
   PrimaryIndepQuantity samplePrimaryMarginal() const;
 
+  //! Return a random sample and record the number of trials
+  PrimaryIndepQuantity samplePrimaryMarginalAndRecordTrials(
+                                                      unsigned& trials ) const;
+
   //! Return a random sample from the secondary marginal PDF
   SecondarIndepQuantity sampleSecondaryMarginal() const;
+
+  //! Return a random sample and record the number of trials
+  SecondaryIndepQuantity sampleSecondaryMarginalAndRecordTrials(
+                                                      unsigned& trials ) const;
 
   //! Return a random sample from the primary conditional PDF
   PrimaryIndepQuantity samplePrimaryConditional(

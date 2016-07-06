@@ -78,34 +78,6 @@ InverseSecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndepend
   return d_secondary_distribution->evaluatePDF( secondary_indep_var_value );
 }
 
-// Evaluate the primary conditional PDF
-template<typename PrimaryIndependentUnit,
-         typename PrimaryDependentUnit,
-         typename SecondaryIndependentUnit,
-         typename SecondaryDependentUnit>
-InversePrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::evaluatePrimaryConditionalPDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->evaluateJointPDF( primary_indep_var_value,
-                                 secondary_indep_var_value )/
-    this->evaluateSecondaryMarginalPDF( secondary_indep_var_value );
-}
-
-// Evaluate the secondary conditional PDF
-template<typename PrimaryIndependentUnit,
-         typename PrimaryDependentUnit,
-         typename SecondaryIndependentUnit,
-         typename SecondaryDependentUnit>
-InverseSecondaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::evaluateSecondaryConditionalPDF(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
-{
-  return this->evaluateJointPDF( primary_indep_var_value,
-                                 secondary_indep_var_value )/
-    this->evaluatePrimaryMarginalPDF( primary_indep_var_value );
-}
-
 // Return a random sample from the primary marginal PDF
 template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
@@ -116,6 +88,16 @@ PrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,P
   return d_primary_distribution->sample();
 }
 
+// Return a random sample and record the number of trials
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+PrimaryIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::samplePrimaryMarginalAndRecordTrials( unsigned& trials ) const
+{
+  return d_primary_distribution->sampleAndRecordTrials( trials );
+}
+
 // Return a random sample from the secondary marginal PDF
 template<typename PrimaryIndependentUnit,
          typename PrimaryDependentUnit,
@@ -124,6 +106,16 @@ template<typename PrimaryIndependentUnit,
 SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal() const
 {
   return d_secondary_distribution->sample();
+}
+
+// Return a random sample and record the number of trials
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
+         typename SecondaryIndependentUnit,
+         typename SecondaryDependentUnit>
+SecondarIndepQuantity UnitAwareSeparableTwoDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit,SecondaryIndependentUnit,SecondaryDependentUnit>::sampleSecondaryMarginal( unsigned& trials ) const
+{
+  return d_secondary_distribution->sampleAndRecordTrails( trials );
 }
 
 // Return a random sample from the primary conditional PDF

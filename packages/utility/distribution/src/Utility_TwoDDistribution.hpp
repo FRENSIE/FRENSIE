@@ -65,14 +65,8 @@ public:
   //! The secondary independent quantity type
   typedef typename SecondaryIndepUnitTraits::template GetQuantityType<double>::type SecondaryIndepQuantity;
 
-  //! The inverse primary independent quantity type
-  typedef typename InversePrimaryIndepUnitTraits::template GetQuantityType<double>::type InversePrimaryIndepQuantity;
-
   //! The inverse secondary independent quantity type
   typedef typename InverseSecondaryIndepUnitTraits::template GetQuantityType<double>::type InverseSecondaryIndepQuantity;
-
-  //! The inverse independent quantity type
-  typedef typename InverseIndepUnitTraits::template GetQuantityType<double>::type InverseIndepQuantity;
 
   //! The dependent quantity type
   typedef typename DepUnitTraits::template GetQuantityType<double>::type DepQuantity;
@@ -90,62 +84,25 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Evaluate the joint PDF
-  virtual InverseIndepQuantity evaluateJointPDF(
+  //! Evaluate the secondary conditional PDF
+  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
 
-  //! Evaluate the primary marginal PDF
-  virtual InversePrimaryIndepQuantity evaluatePrimaryMarginalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value ) const = 0;
-
-  //! Evaluate the secondary marginal PDF
-  virtual InverseSecondaryIndepQuantity evaluateSecondaryMarginalPDF(
-            const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  //! Evaluate the primary conditional PDF
-  virtual InversePrimaryIndepQuantity evaluatePrimaryConditionalPDF(
-            const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  //! Evaluate the secondary conditional PDF
-  virtual InverseSecondaryIndepQuantity evaluateSecondaryConditionalPDF(
-                const PrimaryIndepQuantity primary_indep_var_value ) const = 0;
-
-  //! Return a random sample from the primary marginal PDF
-  virtual PrimaryIndepQuantity samplePrimaryMarginal() const = 0;
-
-  //! Return a random sample from the secondary marginal PDF
-  virtual SecondarIndepQuantity sampleSecondaryMarginal() const = 0;
-
-  //! Return a random sample from the primary conditional PDF
-  virtual PrimaryIndepQuantity samplePrimaryConditional(
-            const SecondaryIndepQuantity secondary_indep_var_value ) const = 0;
-
-  //! Return a random sample and record the number of trials
-  virtual PrimaryIndepQuantity samplePrimaryConditionalAndRecordTrials(
-                         const SecondaryIndepQuantity seconary_indep_var_value,
-                         unsigned& trials ) const = 0;
-
   //! Return a random sample from the secondary conditional PDF
   virtual SecondaryIndepQuantity sampleSecondaryConditional(
-                const PrimaryIndepQuantity primary_indep_var_value ) const = 0;
+                const PrimaryIndepQuantity primary_indep_var_value ) const;
 
   //! Return a random sample and record the number of trials
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const = 0;
+                            unsigned& trials ) const;
 
   //! Return the upper bound of the distribution primary independent variable
   virtual PrimaryIndepQuantity getUpperBoundOfPrimaryIndepVar() const = 0;
 
   //! Return the lower bound of the distribution primary independent variable
   virtual PrimaryIndepQuantity getLowerBoundOfPrimaryIndepVar() const = 0;
-
-  //! Return the upper bound of the distribution secondary independent variable
-  virtual SecondaryIndepQuantity getUpperBoundOfSecondaryIndepVar() const = 0;
-
-  //! Return the lower bound of the distribution secondary independent variable
-  virtual SecondaryIndepQuantity getLowerBoundOfSecondaryIndepVar() const = 0;
 
   //! Return the upper bound of the conditional distribution
   virtual SecondaryIndepQuantity getUpperBoundOfConditionalIndepVar(
@@ -163,9 +120,6 @@ public:
 
   //! Test if the distribution has the same primary bounds
   bool hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
-
-  //! Test if the distribution has the same bounds
-  bool hasSameBounds( const UnitAwareFullyContinuousTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
 };
 
 // Test if the distribution has the same primary bounds
@@ -187,27 +141,10 @@ inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
                                                                         
 }
 
-// Test if the distribution has the same bounds
-template<typename PrimaryIndependentUnit,
-         typename SecondaryIndependentUnit,
-         typename DependentUnit>
-inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
-{
-  return this->hasSamePrimaryBounds( distribution ) &&
-    Policy::relError(
-            getRawQuantity( this->getUpperBoundOfSecondaryIndepVar() ),
-            getRawQuantity( distribution.getUpperBoundOfSecondaryIndepVar() ) )
-    < 1e-9 &&
-    Policy::relError(
-            getRawQuantity( this->getLowerBoundOfSecondaryIndepVar() ),
-            getRawQuantity( distribution.getLowerBoundOfSecondaryIndepVar() ) )
-    < 1e-9;
-}
-
 /*! The two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
  */
-typedef UnitAwareTwoDDistribution<void,void> TwoDDistribution;
+typedef UnitAwareTwoDDistribution<void,void,void> TwoDDistribution;
   
 } // end Utility namespace
 
