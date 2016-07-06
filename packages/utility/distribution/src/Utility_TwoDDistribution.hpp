@@ -168,7 +168,7 @@ public:
   bool hasSameBounds( const UnitAwareFullyContinuousTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const;
 };
 
-// Test if the distribution is tabular
+// Test if the distribution has the same primary bounds
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
@@ -185,6 +185,23 @@ inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependen
     < 1e-9;
                                                                         
                                                                         
+}
+
+// Test if the distribution has the same bounds
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+inline bool UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::hasSamePrimaryBounds( const UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>& distribution ) const
+{
+  return this->hasSamePrimaryBounds( distribution ) &&
+    Policy::relError(
+            getRawQuantity( this->getUpperBoundOfSecondaryIndepVar() ),
+            getRawQuantity( distribution.getUpperBoundOfSecondaryIndepVar() ) )
+    < 1e-9 &&
+    Policy::relError(
+            getRawQuantity( this->getLowerBoundOfSecondaryIndepVar() ),
+            getRawQuantity( distribution.getLowerBoundOfSecondaryIndepVar() ) )
+    < 1e-9;
 }
 
 /*! The two-dimensional distribution (unit-agnostic)

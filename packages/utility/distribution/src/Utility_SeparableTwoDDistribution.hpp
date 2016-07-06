@@ -1,18 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_TabularTwoDDistribution.hpp
+//! \file   Utility_SeparableTwoDDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The tabular two-dimensional distribution class declaration
+//! \brief  The separable two-dimensional distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_TABULAR_TWO_D_DISTRIBUTION_HPP
-#define UTILITY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#ifndef UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <memory>
-#include <vector>
-#include <utility>
 
 // FRENSIE Includes
 #include "Utility_TwoDDistribution.hpp"
@@ -21,24 +19,20 @@
 
 namespace Utility{
 
-/*! The unit-aware tabular two-dimensional distribution
- * \details The interpolation specified will determine the 
- * Dependent-PrimaryIndepedent interpolation scheme that will be used. Note
- * that unit-base interpolation will always be used so providing secondary
- * distributions with different grid bounds is acceptable. 
+/*! The unit-aware separable two-dimensional distribution
  * \ingroup two_d_distributions
  */
-template<typename InterpolationPolicy,
-         typename PrimaryIndependentUnit,
+template<typename PrimaryIndependentUnit,
+         typename PrimaryDependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit>
-class UnitAwareTabularTwoDDistribution : public UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>
+         typename SecondaryDependentUnit>
+class UnitAwareSeparableTwoDDistribution : public UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type>
 {
-
+  
 private:
 
   // The base TwoDDistribution type
-  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> BaseType;
+  typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,typename UnitTraits<PrimaryDependentUnit>::template GetMultipliedUnitType<SecondaryDependentUnit>::type> BaseType;
 
   // Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -85,18 +79,12 @@ public:
   typedef typename BaseType::DepQuantity DepQuantity;
 
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > >& distribution );
-
-  //! Constructor
-  template<template<typename T, typename... Args> class ArrayA,
-           template<typename T, typename... Args> class ArrayB>
-  UnitAwareTabularTwoDDistribution(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions );
+  UnitAwareSeparableTwoDDistribution(
+       const std::shared_ptr<const UnitAwareOneDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit> >& primary_distribution,
+       const std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,SecondaryDependentUnit> >& secondary_distribution );
 
   //! Destructor
-  ~UnitAwareTabularTwoDDistribution()
+  ~UnitAwareTwoDDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -179,20 +167,22 @@ public:
 
 private:
 
-  // The distribution
-  std::vector<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > > d_distribution;
+  // The primary distribution
+  std::shared_ptr<const UnitAwareOneDDistribution<PrimaryIndependentUnit,PrimaryDependentUnit> > d_primary_distribution;
+
+  // The secondary distribution
+  std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,SecondaryDependentUnit> > d_secondary_distribution;
 };
 
-/*! The tabular two-dimensional distribution (unit-agnostic)
+/*! The separable two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
  */
-template<typename InterpolationPolicy> using TabularTwoDDistribution =
-  UnitAwareTabularTwoDDistribution<InterpolationPolicy,void,void,void>;
+typedef UnitAwareSeparableTwoDDistribution<void,void,void,void> SeparableTwoDDistribution;
   
 } // end Utility namespace
 
-#endif // end UTILITY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#endif // UTILITY_SEPARABLE_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_TabularTwoDimensionalDistribution.hpp
+// end Utility_SeparableTwoDDistribution.hpp
 //---------------------------------------------------------------------------//
