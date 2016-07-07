@@ -1,0 +1,10 @@
+ADD_EXECUTABLE(tstGridGenerator 
+  tstGridGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGridGenerator utility_interp)
+ADD_TEST(GridGenerator_test tstGridGenerator)
+
+ADD_EXECUTABLE(tstStandardHashBasedGridSearcher 
+  tstStandardHashBasedGridSearcher.cpp)
+TARGET_LINK_LIBRARIES(tstStandardHashBasedGridSearcher utility_interp)
+ADD_TEST(StandardHashBasedGridSearcher_test tstStandardHashBasedGridSearcher)

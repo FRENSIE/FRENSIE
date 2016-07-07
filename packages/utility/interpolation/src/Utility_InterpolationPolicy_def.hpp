@@ -23,6 +23,12 @@
 
 namespace Utility{
 
+// Get the interpolation type
+inline InterpolationType LogLog::getInterpolationType()
+{
+  return LOGLOG_INTERPOLATION;
+}
+
 // Interpolate between two points
 template<typename IndepType, typename DepType>
 inline DepType LogLog::interpolate( const IndepType indep_var_0,
@@ -199,6 +205,12 @@ inline const std::string LogLog::name()
   return "LogLog";
 }
 
+// Get the interpolation type
+inline InterpolationType LogLin::getInterpolationType()
+{
+  return LOGLIN_INTERPOLATION;
+}
+
 // Interpolate between two points
 template<typename IndepType, typename DepType>
 inline DepType LogLin::interpolate( const IndepType indep_var_0,
@@ -373,6 +385,12 @@ inline const std::string LogLin::name()
   return "LogLin";
 }
 
+// Get the interpolation type
+inline InterpolationType LinLog::getInterpolationType()
+{
+  return LINLOG_INTERPOLATION;
+}
+
 // Interpolate between two points
 template<typename IndepType, typename DepType>
 inline DepType LinLog::interpolate( const IndepType indep_var_0,
@@ -520,6 +538,12 @@ inline bool LinLog::isDepVarInValidRange( const T dep_var )
 inline const std::string LinLog::name()
 {
   return "LinLog";
+}
+
+// Get the interpolation type
+inline InterpolationType LinLin::getInterpolationType()
+{
+  return LINLIN_INTERPOLATION;
 }
 
 // Interpolate between two points

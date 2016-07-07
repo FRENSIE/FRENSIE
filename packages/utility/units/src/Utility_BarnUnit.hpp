@@ -21,6 +21,7 @@ namespace Units{
 typedef boost::units::make_scaled_unit<boost::units::cgs::area, boost::units::scale<10,boost::units::static_rational<-24> > >::type Barn;
 
 BOOST_UNITS_STATIC_CONSTANT( barn, Barn );
+BOOST_UNITS_STATIC_CONSTANT( barns, Barn );
 
 } // end Units namespace
 

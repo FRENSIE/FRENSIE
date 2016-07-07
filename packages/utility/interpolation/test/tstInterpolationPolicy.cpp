@@ -21,6 +21,14 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LinLin, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LinLin::getInterpolationType(),
+                       Utility::LINLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the validity of an independent variable can be tested
 TEUCHOS_UNIT_TEST( LinLin, isIndepVarInValidRange )
 {
@@ -217,6 +225,14 @@ TEUCHOS_UNIT_TEST( LinLin, interpolateAndProcess_processed )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LogLin, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LogLin::getInterpolationType(),
+                       Utility::LOGLIN_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the validity of an independent variable can be tested
 TEUCHOS_UNIT_TEST( LogLin, isIndepVarInValidRange )
 {
@@ -241,7 +257,7 @@ TEUCHOS_UNIT_TEST( LogLin, isDepVarInValidRange )
 }
  
 //---------------------------------------------------------------------------//
-// Check an independent variable can be processed
+// Check that an independent variable can be processed
 TEUCHOS_UNIT_TEST( LogLin, processIndepVar )
 {
   TEST_EQUALITY_CONST( -1.0, Utility::LogLin::processIndepVar( -1.0 ) );
@@ -412,6 +428,14 @@ TEUCHOS_UNIT_TEST( LogLin, interpolateAndProcess_processed )
 						  processed_slope );
 
   TEST_FLOATING_EQUALITY( log_y, log( 10.0 ), 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the interpolation type can be returned
+TEUCHOS_UNIT_TEST( LinLog, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LinLog::getInterpolationType(),
+                       Utility::LINLOG_INTERPOLATION );
 }
 
 //---------------------------------------------------------------------------//
@@ -617,6 +641,14 @@ TEUCHOS_UNIT_TEST( LinLog, interpolateAndProcess_processed )
 }
 
 //---------------------------------------------------------------------------//
+// Check that interpolation type can be returned
+TEUCHOS_UNIT_TEST( LogLog, getInterpolationType )
+{
+  TEST_EQUALITY_CONST( Utility::LogLog::getInterpolationType(),
+                       Utility::LOGLOG_INTERPOLATION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the validity of an independent variable can be tested
 TEUCHOS_UNIT_TEST( LogLog, isIndepVarInValidRange )
 {
@@ -643,7 +675,7 @@ TEUCHOS_UNIT_TEST( LogLog, isDepVarInValidRange )
 }
  
 //---------------------------------------------------------------------------//
-// Check an independent variable can be processed
+// Check that an independent variable can be processed
 TEUCHOS_UNIT_TEST( LogLog, processIndepVar )
 {
   UTILITY_TEST_FLOATING_EQUALITY( 0.0, 
