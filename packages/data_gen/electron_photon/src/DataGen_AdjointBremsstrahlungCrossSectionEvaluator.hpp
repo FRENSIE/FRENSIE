@@ -13,9 +13,10 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomicReaction.hpp"
+#include "MonteCarlo_StandardElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "Utility_OneDDistribution.hpp"
+//#include "Utility_TabularOneDDistribution.hpp"
 
 
 namespace DataGen{
@@ -31,7 +32,10 @@ public:
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
+    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
+    const Teuchos::ArrayRCP<const double>& electron_energy_grid,
+    const Teuchos::ArrayRCP<const double>& bremsstrahlung_cross_section,
+    const unsigned bremsstrahlung_threshold_energy_index,
     const BremsstrahlungDistribution& energy_loss_distribution );
 
   //! Destructor
@@ -40,19 +44,29 @@ public:
 
   //! Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
   double evaluateDifferentialCrossSection(
-	  const double incoming_energy,
-          const double outgoing_energy ) const;
+        const double incoming_energy,
+        const double outgoing_energy ) const;
 
   //! Return the cross section value at a given energy
-  double evaluateCrossSection( const double energy,
-			       const double precision = 1e-6 ) const;
+  double evaluateAdjointCrossSection(
+        const double energy,
+        const double precision = 1e-6 ) const;
 
 private:
 
-  // The forward reaction data
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_bremsstrahlung_reaction;
+  // The energy grid searcher
+  Teuchos::RCP<Utility::HashBasedGridSearcher> d_grid_searcher;
 
-  // The energy loss distribution
+  // The electron energy grid
+  Teuchos::ArrayRCP<const double> d_electron_energy_grid;
+
+  // The bremsstrahlung cross section
+  Teuchos::ArrayRCP<const double> d_bremsstrahlung_cross_section;
+
+  // The bremsstrahlung cross section threshold energy index
+  unsigned d_bremsstrahlung_threshold_energy_index;
+
+  // The bremsstrahlung energy loss distribution
   BremsstrahlungDistribution d_energy_loss_distribution;
 };
 

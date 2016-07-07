@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
@@ -72,16 +69,18 @@ void BremsstrahlungElectronScatteringDistributionNativeFactory::createEnergyLoss
     BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution&
         energy_loss_function )
 {
+  testPrecondition( energy_loss_function.size() == energy_grid.size() );
+
   for( unsigned n = 0; n < energy_grid.size(); ++n )
   {
     energy_loss_function[n].first = energy_grid[n];
 
     // Get the energy of the bremsstrahlung photon at the incoming energy
-    Teuchos::Array<double> photon_energy(
+    std::vector<double> photon_energy(
         raw_electroatom_data.getBremsstrahlungPhotonEnergy( energy_grid[n] ) );
 
     // Get the bremsstrahlung photon pdf at the incoming energy
-    Teuchos::Array<double> pdf(
+    std::vector<double> pdf(
         raw_electroatom_data.getBremsstrahlungPhotonPDF( energy_grid[n] ) );
 
     energy_loss_function[n].second.reset(

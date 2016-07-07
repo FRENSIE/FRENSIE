@@ -155,7 +155,7 @@ template<typename InterpPolicy>
 double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 						    const double energy ) const
 {
-  return this->StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+  return StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
                 energy,
                 d_cross_section,
                 d_threshold_energy_index  );
@@ -166,7 +166,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
 						    const double energy ) const
 {
-  return this->StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+  return StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
                 energy,
                 d_cross_section,
                 d_threshold_energy_index  );
@@ -179,24 +179,114 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
         const Teuchos::ArrayRCP<const double>& cross_section,
         const unsigned threshold_energy_index  ) const
 {
+  return StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+                energy,
+                d_grid_searcher,
+                d_incoming_energy_grid,
+                cross_section,
+                threshold_energy_index  );
+}
+
+// Return the cross section at the given energy
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+        const double energy,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const unsigned threshold_energy_index  ) const
+{
+  return StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+                energy,
+                d_grid_searcher,
+                d_incoming_energy_grid,
+                cross_section,
+                threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+				const double energy,
+                const unsigned bin_index ) const
+{
+  return StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+                    energy,
+                    bin_index,
+                    d_cross_section,
+                    d_threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+				const double energy,
+                const unsigned bin_index ) const
+{
+  return StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+                    energy,
+                    bin_index,
+                    d_cross_section,
+                    d_threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+				const double energy,
+                const unsigned bin_index,
+                const Teuchos::ArrayRCP<const double>& cross_section,
+                const unsigned threshold_energy_index  ) const
+{
+  return StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+                    energy,
+                    bin_index,
+                    cross_section,
+                    d_incoming_energy_grid,
+                    threshold_energy_index  );
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+				const double energy,
+                const unsigned bin_index,
+                const Teuchos::ArrayRCP<const double>& cross_section,
+                const unsigned threshold_energy_index  ) const
+{
+  return StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+                    energy,
+                    bin_index,
+                    cross_section,
+                    d_incoming_energy_grid,
+                    threshold_energy_index  );
+}
+
+// Return the cross section at the given energy
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index )
+{
   // Make sure the energy is valid
-  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+  testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );
 
   double cross_section_value;
 
-  if( energy >= this->getThresholdEnergy( threshold_energy_index ) )
+  if( energy >= incoming_energy_grid[threshold_energy_index] )
   {
-    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+    unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
 
     unsigned cs_index = energy_index - threshold_energy_index;
 
     double processed_slope =
       (cross_section[cs_index+1]-cross_section[cs_index])/
-      (d_incoming_energy_grid[energy_index+1]-
-       d_incoming_energy_grid[energy_index]);
+      (incoming_energy_grid[energy_index+1]-
+       incoming_energy_grid[energy_index]);
 
     cross_section_value =
-      InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
+      InterpPolicy::interpolate( incoming_energy_grid[energy_index],
 				 InterpPolicy::processIndepVar( energy ),
 				 cross_section[cs_index],
 				 processed_slope );
@@ -213,29 +303,31 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
-        const double energy,
-        const Teuchos::ArrayRCP<const double>& cross_section,
-        const unsigned threshold_energy_index  ) const
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index )
 {
   // Make sure the energy is valid
-  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+  testPrecondition( grid_searcher->isValueWithinGridBounds( energy ) );
 
   double cross_section_value;
 
-  if( energy >= this->getThresholdEnergy( threshold_energy_index ) )
+  if( energy >= incoming_energy_grid[threshold_energy_index] )
   {
-    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+    unsigned energy_index = grid_searcher->findLowerBinIndex( energy );
 
     unsigned cs_index = energy_index - threshold_energy_index;
 
     cross_section_value =
-      InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
-				 d_incoming_energy_grid[energy_index+1],
+      InterpPolicy::interpolate( incoming_energy_grid[energy_index],
+				 incoming_energy_grid[energy_index+1],
 				 energy,
 				 cross_section[cs_index],
 				 cross_section[cs_index+1] );
   }
-  else if( energy < this->getThresholdEnergy( threshold_energy_index ) )
+  else if( energy < incoming_energy_grid[threshold_energy_index] )
     cross_section_value = 0.0;
 
   // Make sure the cross section is valid
@@ -244,44 +336,20 @@ double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getC
   return cross_section_value;
 }
 
-// Return the cross section at the given energy (efficient)
-template<typename InterpPolicy>
-double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
-				const double energy,
-                const unsigned bin_index ) const
-{
-  return this->StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
-                    energy,
-                    bin_index,
-                    d_cross_section,
-                    d_threshold_energy_index  );
-}
-
-// Return the cross section at the given energy (efficient)
-template<typename InterpPolicy, bool processed_cross_section>
-double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
-				const double energy,
-                const unsigned bin_index ) const
-{
-  return this->StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
-                    energy,
-                    bin_index,
-                    d_cross_section,
-                    d_threshold_energy_index  );
-}
 
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy>
 double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
-				const double energy,
-                const unsigned bin_index,
-                const Teuchos::ArrayRCP<const double>& cross_section,
-                const unsigned threshold_energy_index  ) const
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const unsigned threshold_energy_index  )
 {
   // Make sure the bin index is valid
-  testPrecondition( d_incoming_energy_grid[bin_index] <=
+  testPrecondition( incoming_energy_grid[bin_index] <=
 		    InterpPolicy::processIndepVar( energy ) );
-  testPrecondition( d_incoming_energy_grid[bin_index+1] >=
+  testPrecondition( incoming_energy_grid[bin_index+1] >=
 		    InterpPolicy::processIndepVar( energy ) );
 
   if( bin_index >= threshold_energy_index )
@@ -290,12 +358,12 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 
     double processed_slope =
       (cross_section[cs_index+1]-cross_section[cs_index])/
-      (d_incoming_energy_grid[bin_index+1]-
-       d_incoming_energy_grid[bin_index]);
+      (incoming_energy_grid[bin_index+1]-
+       incoming_energy_grid[bin_index]);
 
     double processed_energy = InterpPolicy::processIndepVar( energy );
 
-    return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
+    return InterpPolicy::interpolate( incoming_energy_grid[bin_index],
 				      processed_energy,
 				      cross_section[cs_index],
 				      processed_slope );
@@ -307,21 +375,22 @@ double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection(
 // Return the cross section at the given energy (efficient)
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
-				const double energy,
-                const unsigned bin_index,
-                const Teuchos::ArrayRCP<const double>& cross_section,
-                const unsigned threshold_energy_index  ) const
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const unsigned threshold_energy_index  )
 {
   // Make sure the bin index is valid
-  testPrecondition( d_incoming_energy_grid[bin_index] <= energy );
-  testPrecondition( d_incoming_energy_grid[bin_index+1] >= energy );
+  testPrecondition( incoming_energy_grid[bin_index] <= energy );
+  testPrecondition( incoming_energy_grid[bin_index+1] >= energy );
 
   if( bin_index >= threshold_energy_index )
   {
     unsigned cs_index = bin_index - threshold_energy_index;
 
-    return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
-				      d_incoming_energy_grid[bin_index+1],
+    return InterpPolicy::interpolate( incoming_energy_grid[bin_index],
+				      incoming_energy_grid[bin_index+1],
 				      energy,
 				      cross_section[cs_index],
 				      cross_section[cs_index+1] );

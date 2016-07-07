@@ -823,10 +823,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 }
 
 
-// Process EEDL file
-/*! \details This function uses the Data::ENDLDataContainer to read the
- * native EEDL data file.
- */
+// Set the electron data
 void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 {
@@ -1173,6 +1170,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
                                              total_elastic_cross_section,
                                              total_cross_section,
                                              threshold );
+
+  data_container.setTotalElasticCrossSection( total_cross_section );
+  data_container.setTotalElasticCrossSectionThresholdEnergyIndex( threshold );
 
   std::vector<double> raw_cross_section( total_cross_section.size() );
   for ( int i = 0; i < total_cross_section.size(); ++i )

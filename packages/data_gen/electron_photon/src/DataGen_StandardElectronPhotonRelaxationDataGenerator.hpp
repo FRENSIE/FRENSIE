@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The standard electron-photon-relaxation data generator class decl.
 //!
 //---------------------------------------------------------------------------//
@@ -147,7 +147,7 @@ private:
 //    const std::map<double,std::vector<double> >& elastic_pdf,
 //    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
-  // Set the screened rutherford data
+  // Set the moment preserving data
   static void setMomentPreservingData(
     const std::vector<double>& elastic_energy_grid,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );

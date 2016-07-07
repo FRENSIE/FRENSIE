@@ -245,6 +245,18 @@
     <Parameter docString="" id="225" isDefault="false" isUsed="true" name="atomic_number" type="int" value="14"/>
     <Parameter docString="" id="226" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="2.78446999999999996e+01"/>
   </ParameterList>
+  <ParameterList id="238" name="C-Native">
+    <Parameter docString="" id="228" isDefault="false" isUsed="true" name="photoatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
+    <Parameter docString="" id="229" isDefault="false" isUsed="true" name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="230" isDefault="false" isUsed="true" name="photoatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="231" isDefault="false" isUsed="true" name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="232" isDefault="false" isUsed="true" name="electroatomic_file_path" type="string" value="native/test_epr_6_native.xml"/>
+    <Parameter docString="" id="233" isDefault="false" isUsed="true" name="electroatomic_file_type" type="string" value="Native"/>
+    <Parameter docString="" id="234" isDefault="false" isUsed="true" name="electroatomic_table_name" type="string" value=""/>
+    <Parameter docString="" id="235" isDefault="false" isUsed="true" name="electroatomic_file_start_line" type="int" value="-1"/>
+    <Parameter docString="" id="236" isDefault="false" isUsed="true" name="atomic_number" type="int" value="6"/>
+    <Parameter docString="" id="237" isDefault="false" isUsed="true" name="atomic_weight_ratio" type="double" value="1.19077999999999999e+01"/>
+  </ParameterList>
   <Validators/>
 </ParameterList>
 

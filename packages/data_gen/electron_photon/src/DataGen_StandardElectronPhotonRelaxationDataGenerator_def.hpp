@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The standard electron-photon-relaxation data generator template def
 //!
 //---------------------------------------------------------------------------//

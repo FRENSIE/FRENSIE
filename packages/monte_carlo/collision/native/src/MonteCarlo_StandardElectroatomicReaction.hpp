@@ -73,6 +73,22 @@ public:
             const Teuchos::ArrayRCP<const double>& cross_section,
             const unsigned threshold_energy_index ) const;
 
+  //! Return the cross section at the given energy
+  static double getCrossSection( 
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
+  //! Return the cross section at the given energy (efficient)
+  static double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
@@ -144,6 +160,22 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
             const unsigned bin_index,
             const Teuchos::ArrayRCP<const double>& cross_section,
             const unsigned threshold_energy_index ) const;
+
+  //! Return the cross section at the given energy
+  static double getCrossSection( 
+            const double energy,
+            const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
+
+  //! Return the cross section at the given energy (efficient)
+  static double getCrossSection(
+            const double energy,
+            const unsigned bin_index,
+            const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+            const Teuchos::ArrayRCP<const double>& cross_section,
+            const unsigned threshold_energy_index );
 
   //! Return the threshold energy
   double getThresholdEnergy() const;

@@ -10,7 +10,6 @@
 #define MONTE_CARLO_BREMSSTRAHLUNG_ELECTRON_SCATTERING_DISTRIBUTION_NATIVE_FACTORY_HPP
 
 // FRENSIE Includes
-//#include "MonteCarlo_BremsstrahlungElectronScatteringDistributionFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
@@ -34,8 +33,6 @@ public:
 	std::shared_ptr<const BremsstrahlungElectronScatteringDistribution>&
         scattering_distribution,
     const int atomic_number );
-
-protected:
 
   //! Create the energy loss function
   static void createEnergyLossFunction(

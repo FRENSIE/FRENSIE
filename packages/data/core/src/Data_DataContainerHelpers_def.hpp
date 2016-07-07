@@ -17,7 +17,7 @@ template<typename Array>
 inline void testPreconditionEnergyGrid(
     const Array& energy_grid )
 {
-  testPrecondition( energy_grid.back() > 1 );
+  testPrecondition( energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						                              energy_grid.end() ) );
   testPrecondition( energy_grid.front() > 0.0 );
