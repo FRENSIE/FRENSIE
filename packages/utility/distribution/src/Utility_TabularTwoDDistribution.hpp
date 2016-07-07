@@ -42,6 +42,9 @@ protected:
   //! The secondary distribution type
   typedef std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > PrimaryGridPointAndSecondaryDistPair;
 
+  //! The distribution type
+  typedef std::vector<PrimaryGridPointAndSecondaryDistPair> DistributionType;
+
   //! Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
 
@@ -98,15 +101,17 @@ public:
 
 private:
 
-  // The distribution type
-  typedef std::vector<PrimaryGridPointAndSecondaryDistPair> DistributionType;
-
   // Find the bin boundaries
-  void findBinBoundaries(
-            const PrimaryIndepQuantity independent_var_value,
-            PrimaryGridPointAndSecondaryDistPair& lower_bin_boundary,
-            PrimaryGridPointAndSecondaryDistPair& upper_bin_boundary,
-            double& interpolation_fraction ) const;
+  void findBinBoundaries( const PrimaryIndepQuantity primary_indep_var_value,
+                          DistributionType::const_iterator& lower_bin_boundary,
+                          DistributionType::const_iterator& upper_bin_boundary,
+                          double& interpolation_fraction ) const;
+
+  // Calculate the interpolation fraction
+  double calculateInterpolationFraction(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const DistributionType::const_iterator& lower_bin_boundary,
+            const DistributionType::const_iterator& upper_bin_boundary ) const;
 
   // The distribution
   DistributionType d_distribution;

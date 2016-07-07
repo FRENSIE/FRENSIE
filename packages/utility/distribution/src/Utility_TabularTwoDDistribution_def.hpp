@@ -93,49 +93,48 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-void UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::findBinBoundaries(
-             const PrimaryIndepQuantity independent_var_value,
-             PrimaryGridPointAndSecondaryDist& lower_bin_boundary,
-             PrimaryGridPointAndSecondaryDist& upper_bin_boundary,
-             double& interpolation_fraction ) const
+inline void UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::findBinBoundaries(
+                   const PrimaryIndepQuantity primary_independent_var_value,
+                   DistributionType::const_iterator& lower_bin_boundary,
+                   DistributionType::const_iterator& upper_bin_boundary ) const
 {
-  DistributionType::const_iterator lower_bin_boundary_it,
-    upper_bin_boundary_it;
-
-  // Set the default interpolation fraction
-  interpolation_fraction = 0.0;
-  
-  if( independent_var_value < dependent_distribution.front().first )
+  if( primary_independent_var_value < d_distribution.front().first )
   {
-    lower_bin_boundary_it = dependent_distribution.begin();
-    upper_bin_boundary_it = lower_bin_boundary_it;
+    lower_bin_boundary = d_distribution.begin();
+    upper_bin_boundary = lower_bin_boundary;
   }
-  else if( independent_var_value >= dependent_distribution.back().first )
+  else if( primary_independent_var_value >= d_distribution.back().first )
   {
-    lower_bin_boundary_it = dependent_distribution.end();
-    --lower_bin_boundary_it;
-    upper_bin_boundary_it = lower_bin_boundary_it;
+    lower_bin_boundary = d_distribution.end();
+    --lower_bin_boundary;
+    upper_bin_boundary = lower_bin_boundary;
   }
   else
   {
-    lower_bin_boundary_it = dependent_distribution.begin();
-    upper_bin_boundary_it = dependent_distribution.end();
+    lower_bin_boundary = d_distribution.begin();
+    upper_bin_boundary = d_distribution.end();
     
-    lower_bin_boundary_it = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-						       lower_bin_boundary_it,
-                                                       upper_bin_boundary_it,
-						       independent_var_value );
-    upper_bin_boundary_it = lower_bin_boundary_it;
-    ++upper_bin_boundary_it;
-
-    // Calculate the interpolation fraction
-    interpolation_fraction = 
-      (independent_var_value - lower_bin_boundary_it->first)/
-      (upper_bin_boundary_it->first - lower_bin_boundary_it->first);
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+					       lower_bin_boundary,
+                                               upper_bin_boundary,
+					       primary_independent_var_value );
+    upper_bin_boundary = lower_bin_boundary;
+    ++upper_bin_boundary;
   }
+}
 
-  lower_bin_boundary = *lower_bin_boundary_it;
-  upper_bin_boundary = *upper_bin_boundary_it;
+// Calculate the interpolation fraction
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit,
+         template<typename T, typename U> class BaseOneDDistribution>
+inline double UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::calculateInterpolationFraction(
+             const PrimaryIndepQuantity primary_indep_var_value,
+             const DistributionType::const_iterator& lower_bin_boundary,
+             const DistributionType::const_iterator& upper_bin_boundary ) const
+{
+  return (primary_independent_var_value - lower_bin_boundary->first)/
+    (upper_bin_boundary->first - lower_bin_boundary->first);
 }
   
 //---------------------------------------------------------------------------//

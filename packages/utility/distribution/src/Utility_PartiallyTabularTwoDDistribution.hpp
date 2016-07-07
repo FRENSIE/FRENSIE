@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_GeneralTabularTwoDDistribution.hpp
+//! \file   Utility_PartiallyTabularTwoDDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The general tabular two-dimensional distribution class declaration
+//! \brief  The partially tabular two-dimensional distribution class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GENERAL_TABULAR_TWO_D_DISTRIBUTION_HPP
-#define UTILITY_GENERAL_TABULAR_TWO_D_DISTRIBUTION_HPP
+#ifndef UTILITY_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "Utility_TabularTwoDDistribution.hpp"
@@ -15,19 +15,19 @@
 
 namespace Utility{
 
-/*! The unit-aware general tabular two-dimensional distribution
+/*! The unit-aware partially tabular two-dimensional distribution
  * \ingroup two_d_distribution
  */
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareGeneralTabularTwoDDistribution : public UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,UnitAwareOneDDistribution>
+class UnitAwarePartiallyTabularTwoDDistribution : public UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,UnitAwareOneDDistribution>
 {
 
 protected:
 
   //! The parent distribution type
-  typedef UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
+  typedef UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,UnitAwareOneDDistribution> ParentType;
 
   //! The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -63,30 +63,30 @@ public:
 
   //! Constructor
   template<template<typename T, typename... Args> class Array>
-  UnitAwareGeneralTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
+  UnitAwarePartiallyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareGeneralTabularTwoDDistribution(
+  UnitAwarePartiallyTabularTwoDDistribution(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions );
 
   //! Destructor
-  virtual ~UnitAwareGeneralTabularTwoDDistribution()
+  virtual ~UnitAwarePartiallyTabularTwoDDistribution()
   { /* ... */ }
 };
 
-/*! The general tabular two-dimensional distribution (unit-agnostic)
+/*! The partially tabular two-dimensional distribution (unit-agnostic)
  * \ingroup two_d_distributions
  */
-typedef UnitAwareGeneralTabularTwoDDistribution<void,void,void> GeneralTabularTwoDDistribution;
+typedef UnitAwarePartiallyTabularTwoDDistribution<void,void,void> PartiallyTabularTwoDDistribution;
   
 } // end Utility namespace
 
-#endif // end UTILITY_GENERAL_TABULAR_TWO_D_DISTRIBUTION_HPP
+#endif // end UTILITY_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_GeneralTabularTwoDDistribution.hpp
+// end Utility_PartiallyTabularTwoDDistribution.hpp
 //---------------------------------------------------------------------------//

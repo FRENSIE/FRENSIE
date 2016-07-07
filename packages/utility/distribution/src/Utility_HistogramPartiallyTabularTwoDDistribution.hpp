@@ -1,0 +1,70 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   Utility_HistogramPartiallyTabularTwoDDistribution.hpp
+//! \author Alex Robinson
+//! \brief  The histogram partially tabular two-dimensional dist. class decl.
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef UTILITY_HISTOGRAM_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_HISTOGRAM_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+
+// FRENSIE Includes
+#include "Utility_HistogramTabularTwoDDistributionHelpers.hpp"
+
+namespace Utility{
+
+/*! The unit-aware histogram partially tabular two-dimensional distribution
+ * \ingroup two_d_distributions
+ */
+template<typename PrimaryIndependentUnit,
+         typename SecondaryIndependentUnit,
+         typename DependentUnit>
+class UnitAwareHistogramPartiallyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>
+{
+public:
+  
+  //! The primary independent quantity type
+  typedef typename ParentType::PrimaryIndepQuantity PrimaryIndepQuantity;
+
+  //! The secondary independent quantity type
+  typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
+
+  //! The inverse secondary independent quantity type
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+
+  //! The dependent quantity type
+  typedef typename ParentType::DepQuantity DepQuantity;
+
+  //! Constructor
+  template<template<typename T, typename... Args> class Array>
+  UnitAwareHistogramPartiallyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > >& distribution )
+    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>( distribution )
+  { /* ... */ }
+
+  //! Constructor
+  template<template<typename T, typename... Args> class ArrayA,
+           template<typename T, typename... Args> class ArrayB>
+  UnitAwareHistogramPartiallyTabularTwoDDistribution(
+                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+                   const ArrayB<std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
+    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>( primary_indep_grid, secondary_distributions )
+  { /* ... */ }
+
+  //! Destructor
+  ~UnitAwareHistogramPartiallyTabularTwoDDistribution()
+  { /* ... */ }
+};
+
+/*! The histogram tabular two-dimensional distribution (unit-agnostic)
+ * \ingroup two_d_distributions
+ */
+typedef UnitAwareHistogramPartiallyTabularTwoDDistribution<void,void,void> HistogramPartiallyTabularTwoDDistribution;
+  
+} // end Utility namespace
+
+#endif // end UTILITY_HISTOGRAM_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+
+//---------------------------------------------------------------------------//
+// end Utility_HistogramPartiallyTabularTwoDDistribution.hpp
+//---------------------------------------------------------------------------//

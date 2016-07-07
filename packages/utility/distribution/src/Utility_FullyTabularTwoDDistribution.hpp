@@ -95,7 +95,7 @@ public:
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
-  virtual SecondaryIndepQuantity sampleWithRandomNumberInSubrange(
+  virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
         const double random_number,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 };
