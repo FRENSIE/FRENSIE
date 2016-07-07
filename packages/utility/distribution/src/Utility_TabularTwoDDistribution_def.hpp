@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -22,8 +23,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-template<template<typename T, typename... Args> class Array>
-UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::UnitAwareTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseDistributionType> >& distribution )
+UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::UnitAwareTabularTwoDDistribution( const DistributionType& distribution )
   : d_distribution( distribution.begin(), distribution.end() )
 {
   // Make sure the distribution is valid
@@ -38,10 +38,10 @@ template<typename PrimaryIndependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
 template<template<typename T, typename... Args> class ArrayA,
          template<typename T, typename... Args> class ArrayB>
-UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >:UnitAwareTabularTwoDDistribution(
-                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                    const ArrayB<std::shared_ptr<const BaseDistributionType> >&
-                    secondary_distributions )
+UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::UnitAwareTabularTwoDDistribution(
+                const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+                const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
+                secondary_distributions )
   : d_distribution( primary_indep_grid.size() )
 {
   // Make sure the independent grid is valid
@@ -63,7 +63,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-PrimaryIndepQuantity UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::getUpperBoundOfPrimaryIndepVar() const
+auto UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::getUpperBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
   return d_distribution.back().first;
 }
@@ -73,7 +73,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-PrimaryIndepQuantity UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::getLowerBoundOfPrimaryIndepVar() const
+auto UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::getLowerBoundOfPrimaryIndepVar() const -> PrimaryIndepQuantity
 {
   return d_distribution.front().first;
 }
@@ -83,7 +83,7 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-bool UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::isPrimaryDimensionTabular() const
+bool UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::isPrimaryDimensionTabular() const
 {
   return true;
 }
@@ -93,10 +93,10 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-inline void UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::findBinBoundaries(
-                   const PrimaryIndepQuantity primary_independent_var_value,
-                   DistributionType::const_iterator& lower_bin_boundary,
-                   DistributionType::const_iterator& upper_bin_boundary ) const
+inline void UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::findBinBoundaries(
+          const PrimaryIndepQuantity primary_independent_var_value,
+          typename DistributionType::const_iterator& lower_bin_boundary,
+          typename DistributionType::const_iterator& upper_bin_boundary ) const
 {
   if( primary_independent_var_value < d_distribution.front().first )
   {
@@ -128,14 +128,18 @@ template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          template<typename T, typename U> class BaseOneDDistribution>
-inline double UnitAwareTabularTwoDDistributioUn<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> >::calculateInterpolationFraction(
-             const PrimaryIndepQuantity primary_indep_var_value,
-             const DistributionType::const_iterator& lower_bin_boundary,
-             const DistributionType::const_iterator& upper_bin_boundary ) const
+inline double UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,BaseOneDDistribution>::calculateInterpolationFraction(
+    const PrimaryIndepQuantity primary_indep_var_value,
+    const typename DistributionType::const_iterator& lower_bin_boundary,
+    const typename DistributionType::const_iterator& upper_bin_boundary ) const
 {
-  return (primary_independent_var_value - lower_bin_boundary->first)/
+  return (primary_indep_var_value - lower_bin_boundary->first)/
     (upper_bin_boundary->first - lower_bin_boundary->first);
 }
+
+} // end Utility namespace
+
+#endif // end UTILITY_TABULAR_TWO_D_DISTRIBUTION_DEF_HPP 
   
 //---------------------------------------------------------------------------//
 // end Utility_TabularTwoDDistribution_def.hpp

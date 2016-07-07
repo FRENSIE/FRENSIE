@@ -52,14 +52,19 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareHistogramTabularTwoDDistributionImplBase( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
+  UnitAwareHistogramTabularTwoDDistributionImplBase(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
+  { /* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -67,7 +72,9 @@ public:
   UnitAwareHistogramTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions );
+                secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
+  { /* ... */ }
 
   //! Destructor
   virtual ~UnitAwareHistogramTabularTwoDDistributionImplBase()
@@ -107,7 +114,7 @@ public:
 //! The histogram tabular two-dimensional dist. impl. class (partially tabular)
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
 class UnitAwareHistogramTabularTwoDDistributionImpl : public UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
@@ -115,7 +122,7 @@ class UnitAwareHistogramTabularTwoDDistributionImpl : public UnitAwareHistogramT
 private:
 
   // The parent distribution type
-  typedef Distribution ParentType;
+  typedef UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -144,15 +151,18 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareHistogramTabularTwoDDistributionImpl( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution)
-    : UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwawreFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >( distribution )
+  UnitAwareHistogramTabularTwoDDistributionImpl(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
   { /* ... */ }
 
   //! Constructor
@@ -162,7 +172,7 @@ public:
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions )
-    : UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwawreFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >( distribution )
+    : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
   //! Destructor
@@ -176,18 +186,22 @@ public:
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
-                                           unsigned& sampled_bin_index ) const;
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-                                            const double random_number ) const;
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 };
@@ -198,6 +212,14 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 class UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> : public UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
+private:
+
+  // The parent distribution type
+  typedef UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+
+  // The base one-dimensional distribution type
+  typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
+  
 public:
 
   //! The primary independent quantity type
@@ -207,24 +229,28 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareHistogramTabularTwoDDistributionImpl( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > >& distribution )
-    : UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwawrePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >( distribution )
+  UnitAwareHistogramTabularTwoDDistributionImpl(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
   { /* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
   UnitAwareHistogramTabularTwoDDistributionImpl(
-                   const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                   const ArrayB<std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
-    : UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwawrePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >( primary_indep_grid, secondary_distributions )
+                const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
+                const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
+                secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
   
   //! Destructor
@@ -233,6 +259,14 @@ public:
 };
   
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_HistogramTabularTwoDDistributionHelpers_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
 

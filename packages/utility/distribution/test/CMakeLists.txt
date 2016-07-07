@@ -69,7 +69,17 @@ ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstOneDDistribution utility_dist)
-ADD_TEST(OneDDistribution_test tstOneDDistribution )
+ADD_TEST(OneDDistribution_test tstOneDDistribution)
+
+ADD_EXECUTABLE(tstHistogramPartiallyTabularTwoDDistribution
+  tstHistogramPartiallyTabularTwoDDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstHistogramPartiallyTabularTwoDDistribution utility_dist)
+ADD_TEST(HistogramPartiallyTabularTwoDDistribution_test tstHistogramPartiallyTabularTwoDDistribution)
+
+ADD_EXECUTABLE(tstHistogramFullyTabularTwoDDistribution
+  tstHistogramFullyTabularTwoDDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstHistogramFullyTabularTwoDDistribution utility_dist)
+ADD_TEST(HistogramFullyTabularTwoDDistribution_test tstHistogramFullyTabularTwoDDistribution)
 
 ADD_EXECUTABLE(tstCartesianSpatialDistribution 
   tstCartesianSpatialDistribution.cpp)

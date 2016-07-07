@@ -14,109 +14,95 @@
 
 namespace Utility{
 
-// Constructor
-template<typename Distribution>
-template<template<typename T, typename... Args> class Array>
-UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::UnitAwareHistogramTabularTwoDDistributionImplBase( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution )
-  : Distribution( distribution )
-{ /* ... */ }
-
-// Constructor
-template<typename Distribution>
-template<template<typename T, typename... Args> class ArrayA,
-         template<typename T, typename... Args> class ArrayB>
-UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::UnitAwareHistogramTabularTwoDDistributionImplBase(
-                const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
-                const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions )
-  : Distribution( primary_indep_grid, secondary_distributions )
-{ /* ... */ }
-
 // Evaluate the distribution
 template<typename Distribution>
-DepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
-                 const PrimaryIndepQuantity primary_indep_var_value,
-                 const SecondaryIndepQuantity secondary_indep_var_value ) const
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluate(
+  const PrimaryIndepQuantity primary_indep_var_value,
+  const SecondaryIndepQuantity secondary_indep_var_value ) const -> DepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  lower_bin_boundary->evaluate( secondary_indep_var_value );
+  lower_bin_boundary->second->evaluate( secondary_indep_var_value );
 }
 
 // Evaluate the secondary conditional PDF
 template<typename Distribution>
-InverseSecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::evaluateSecondaryConditionalPDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
+  -> InverseSecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->evaluatePDF( secondary_indep_var_value );
+  return lower_bin_boundary->second->evaluatePDF( secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF
 template<typename Distribution>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditional(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditional(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sample( primary_indep_var_value );
+  return lower_bin_boundary->second->sample();
 }
 
 // Return a random sample and record the number of trials
 template<typename Distribution>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::sampleSecondaryConditionalAndRecordTrials(
                             const PrimaryIndepQuantity primary_indep_var_value,
-                            unsigned& trials ) const
+                            unsigned& trials ) const -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sampleAndRecordTrials( trials );
+  return lower_bin_boundary->second->sampleAndRecordTrials( trials );
 }
 
 // Return the upper bound of the conditional distribution
 template<typename Distribution>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getUpperBoundOfConditionalIndepVar(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getUpperBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->getUpperBoundOfIndepVar();
+  return lower_bin_boundary->second->getUpperBoundOfIndepVar();
 }
 
 // Return the lower bound of the conditional distribution
 template<typename Distribution>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getLowerBoundOfConditionalIndepVar(
+auto UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::getLowerBoundOfConditionalIndepVar(
                      const PrimaryIndepQuantity primary_indep_var_value ) const
+  -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->getLowerBoundOfIndepVar();
+  return lower_bin_boundary->second->getLowerBoundOfIndepVar();
 }
 
 // Test if the distribution is continuous in the primary dimension
@@ -129,88 +115,94 @@ bool UnitAwareHistogramTabularTwoDDistributionImplBase<Distribution>::isPrimaryD
 // Evaluate the secondary conditional CDF
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
-double UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::evaluateSecondaryConditionalCDF(
+double UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::evaluateSecondaryConditionalCDF(
                  const PrimaryIndepQuantity primary_indep_var_value,
                  const SecondaryIndepQuantity secondary_indep_var_value ) const
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->evaluateCDF( primary_indep_var_value );
+  return lower_bin_boundary->second->evaluateCDF( secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF and the index
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalAndRecordBinIndex(
-                                            unsigned& sampled_bin_index ) const
+auto UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalAndRecordBinIndex(
+                  const PrimaryIndepQuantity primary_indep_var_value,
+                  unsigned& sampled_bin_index ) const -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sampleAndRecordBinIndex( sampled_bin_index );
+  return lower_bin_boundary->second->sampleAndRecordBinIndex( sampled_bin_index );
 }
 
 // Return a random sample from the secondary conditional PDF at the CDF val
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalWithRandomNumber(
-                                             const double random_number ) const
+auto UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalWithRandomNumber(
+                   const PrimaryIndepQuantity primary_indep_var_value,
+                   const double random_number ) const -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sampleWithRandomNumber( random_number );
+  return lower_bin_boundary->second->sampleWithRandomNumber( random_number );
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSecondaryConditionalInSubrange(
+auto UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
   
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sampleInSubrange( max_secondary_indep_var_value );
+  return lower_bin_boundary->second->sampleInSubrange( max_secondary_indep_var_value );
 }
 
 // Return a random sample from the secondary conditional PDF in the subrange
 template<typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
-         typename DependentUnit
+         typename DependentUnit,
          bool FullyTabular>
-SecondaryIndepQuantity UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit>::sampleSeconaryConditionalWithRandomNumberInSubrange(
+auto UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,FullyTabular>::sampleSecondaryConditionalWithRandomNumberInSubrange(
+             const PrimaryIndepQuantity primary_indep_var_value,
              const double random_number,
              const SecondaryIndepQuantity max_secondary_indep_var_value ) const
+  -> SecondaryIndepQuantity
 {
-  DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
+  typename DistributionType::const_iterator lower_bin_boundary, upper_bin_boundary;
  
   this->findBinBoundaries( primary_indep_var_value,
                            lower_bin_boundary,
                            upper_bin_boundary );
 
-  return lower_bin_boundary->sampleWithRandomNumberInSubrange(
+  return lower_bin_boundary->second->sampleWithRandomNumberInSubrange(
                                                random_number,
                                                max_secondary_indep_var_value );
 }

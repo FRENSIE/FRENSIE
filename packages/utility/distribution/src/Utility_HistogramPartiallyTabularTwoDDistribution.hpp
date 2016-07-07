@@ -22,6 +22,11 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 class UnitAwareHistogramPartiallyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>
 {
+private:
+
+  // The parent distribution type
+  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> ParentType;
+  
 public:
   
   //! The primary independent quantity type
@@ -31,15 +36,18 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareHistogramPartiallyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > >& distribution )
-    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>( distribution )
+  UnitAwareHistogramPartiallyTabularTwoDDistribution(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
   { /* ... */ }
 
   //! Constructor
@@ -48,7 +56,7 @@ public:
   UnitAwareHistogramPartiallyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
-    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>( primary_indep_grid, secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
   //! Destructor

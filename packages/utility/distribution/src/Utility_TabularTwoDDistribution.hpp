@@ -11,13 +11,15 @@
 
 // Std Lib Includes
 #include <memory>
-#include <vector>
-#include <utility>
+
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_TwoDDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_Tuple.hpp"
 
 namespace Utility{
 
@@ -35,15 +37,6 @@ protected:
 
   //! The parent distribution type
   typedef UnitAwareTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
-
-  //! The base one-dimensional distribution type
-  typedef BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> BaseOneDDistributionType;
-
-  //! The secondary distribution type
-  typedef std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > PrimaryGridPointAndSecondaryDistPair;
-
-  //! The distribution type
-  typedef std::vector<PrimaryGridPointAndSecondaryDistPair> DistributionType;
 
   //! Typedef for QuantityTraits<double>
   typedef QuantityTraits<double> QT;
@@ -69,14 +62,22 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The base one-dimensional distribution type
+  typedef BaseOneDDistribution<SecondaryIndependentUnit,DependentUnit> BaseOneDDistributionType;
+
+  //! The secondary distribution type
+  typedef Utility::Pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > PrimaryGridPointAndSecondaryDistPair;
+
+  //! The distribution type
+  typedef Teuchos::Array<PrimaryGridPointAndSecondaryDistPair> DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
+  UnitAwareTabularTwoDDistribution( const DistributionType& distribution );
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -99,25 +100,35 @@ public:
   //! Test if the distribution is tabular in the primary dimension
   bool isPrimaryDimensionTabular() const;
 
-private:
+protected:
 
   // Find the bin boundaries
-  void findBinBoundaries( const PrimaryIndepQuantity primary_indep_var_value,
-                          DistributionType::const_iterator& lower_bin_boundary,
-                          DistributionType::const_iterator& upper_bin_boundary,
-                          double& interpolation_fraction ) const;
+  void findBinBoundaries(
+         const PrimaryIndepQuantity primary_indep_var_value,
+         typename DistributionType::const_iterator& lower_bin_boundary,
+         typename DistributionType::const_iterator& upper_bin_boundary ) const;
 
   // Calculate the interpolation fraction
   double calculateInterpolationFraction(
-            const PrimaryIndepQuantity primary_indep_var_value,
-            const DistributionType::const_iterator& lower_bin_boundary,
-            const DistributionType::const_iterator& upper_bin_boundary ) const;
+   const PrimaryIndepQuantity primary_indep_var_value,
+   const typename DistributionType::const_iterator& lower_bin_boundary,
+   const typename DistributionType::const_iterator& upper_bin_boundary ) const;
+
+private:
 
   // The distribution
   DistributionType d_distribution;
 };
   
 } // end Utility namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_TabularTwoDDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_TABULAR_TWO_D_DISTRIBUTION_HPP
 

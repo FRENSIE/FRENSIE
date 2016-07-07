@@ -56,14 +56,19 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwarePartiallyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
+  UnitAwarePartiallyTabularTwoDDistribution(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
+  { /* .... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -71,7 +76,9 @@ public:
   UnitAwarePartiallyTabularTwoDDistribution(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions );
+                secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
+  { /* ... */ }
 
   //! Destructor
   virtual ~UnitAwarePartiallyTabularTwoDDistribution()

@@ -27,7 +27,7 @@ class UnitAwareFullyTabularTwoDDistribution : public UnitAwareTabularTwoDDistrib
 protected:
 
   //! The parent distribution type
-  typedef UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> ParentType;
+  typedef UnitAwareTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,UnitAwareTabularOneDDistribution> ParentType;
 
   //! The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -56,14 +56,18 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareFullyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const BaseOneDDistributionType> > >& distribution );
+  UnitAwareFullyTabularTwoDDistribution( const DistributionType& distribution )
+    : ParentType( distribution )
+  { /* ... */ }
 
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
@@ -71,7 +75,9 @@ public:
   UnitAwareFullyTabularTwoDDistribution(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions );
+                secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
+  { /* ... */ }
 
   //! Destructor
   virtual ~UnitAwareFullyTabularTwoDDistribution()
@@ -84,18 +90,22 @@ public:
 
   //! Return a random sample from the secondary conditional PDF and the index
   virtual SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
-                                       unsigned& sampled_bin_index ) const = 0;
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& sampled_bin_index ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF at the CDF val
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumber(
-                                        const double random_number ) const = 0;
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 
   //! Return a random sample from the secondary conditional PDF in the subrange
   virtual SecondaryIndepQuantity sampleSecondaryConditionalWithRandomNumberInSubrange(
+        const PrimaryIndepQuantity primary_indep_var_value,
         const double random_number,
         const SecondaryIndepQuantity max_secondary_indep_var_value ) const = 0;
 };

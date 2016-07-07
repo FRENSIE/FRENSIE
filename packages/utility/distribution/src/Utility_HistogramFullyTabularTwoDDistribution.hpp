@@ -10,7 +10,7 @@
 #define UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_HistogramFullyTabularTwoDDistribution.hpp"
+#include "Utility_HistogramTabularTwoDDistributionHelpers.hpp"
 
 namespace Utility{
 
@@ -22,6 +22,12 @@ template<typename PrimaryIndependentUnit,
          typename DependentUnit>
 class UnitAwareHistogramFullyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>
 {
+
+private:
+
+  // The parent distribution type
+  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true> ParentType;
+  
 public:
   
   //! The primary independent quantity type
@@ -31,15 +37,18 @@ public:
   typedef typename ParentType::SecondaryIndepQuantity SecondaryIndepQuantity;
 
   //! The inverse secondary independent quantity type
-  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity
+  typedef typename ParentType::InverseSecondaryIndepQuantity InverseSecondaryIndepQuantity;
 
   //! The dependent quantity type
   typedef typename ParentType::DepQuantity DepQuantity;
 
+  //! The distribution type
+  typedef typename ParentType::DistributionType DistributionType;
+
   //! Constructor
-  template<template<typename T, typename... Args> class Array>
-  UnitAwareHistogramFullyTabularTwoDDistribution( const Array<std::pair<PrimaryIndepQuantity,std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > > >& distribution )
-    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>( distribution )
+  UnitAwareHistogramFullyTabularTwoDDistribution(
+                                         const DistributionType& distribution )
+    : ParentType( distribution )
   { /* ... */ }
 
   //! Constructor
@@ -48,7 +57,7 @@ public:
   UnitAwareHistogramFullyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
-    : UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>( primary_indep_grid, secondary_distributions )
+    : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
   //! Destructor
