@@ -520,7 +520,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 // Chech that the upper bound of the distribution primary independent variable
 // can be returned
 TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
-                   getUpperBoundOfIndepVar )
+                   getUpperBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfPrimaryIndepVar(), 2.0 );
 }
@@ -529,7 +529,7 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
 // Chech that the upper bound of the unit-aware distribution primary
 // independent variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   getUpperBoundOfIndepVar )
+                   getUpperBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfPrimaryIndepVar(), 2.0*MeV );
 }
@@ -538,7 +538,7 @@ TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
 // Check that the lower bound of the distribution primary independent variable
 // can be returned
 TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
-                   getLowerBoundOfIndepVar )
+                   getLowerBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfPrimaryIndepVar(), 0.0 );
 }
@@ -547,7 +547,7 @@ TEUCHOS_UNIT_TEST( HistogramPartiallyTabularTwoDDistribution,
 // Check that the lower bound of the unit-aware distribution primary
 // independent variable can be returned
 TEUCHOS_UNIT_TEST( UnitAwareHistogramPartiallyTabularTwoDDistribution,
-                   getLowerBoundOfIndepVar )
+                   getLowerBoundOfPrimaryIndepVar )
 {
   TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfPrimaryIndepVar(), 0.0*MeV );
 }
