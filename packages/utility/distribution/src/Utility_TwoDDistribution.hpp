@@ -115,7 +115,7 @@ public:
   //! Test if the distribution is tabular in the primary dimension
   virtual bool isPrimaryDimensionTabular() const = 0;
 
-  //! Test if the distribution is condinuous in the primary dimension
+  //! Test if the distribution is continuous in the primary dimension
   virtual bool isPrimaryDimensionContinuous() const = 0;
 
   //! Test if the distribution has the same primary bounds
