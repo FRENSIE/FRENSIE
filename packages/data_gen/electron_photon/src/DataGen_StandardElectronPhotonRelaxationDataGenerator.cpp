@@ -200,13 +200,13 @@ void StandardElectronPhotonRelaxationDataGenerator::repopulateMomentPreservingDa
   data_container.setNumberOfMomentPreservingAngles( 
     number_of_moment_preserving_angles );
 
-  std::vector<double> agular_energy_grid(
+  std::vector<double> angular_energy_grid(
     data_container.getElasticAngularEnergyGrid() );
 
   std::cout << std::endl << "Setting the moment preserving electron data...";
   std::cout.flush();
   StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData( 
-    agular_energy_grid, 
+    angular_energy_grid, 
     data_container );
   std::cout << "done." << std::endl;
 }
@@ -845,18 +845,18 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
   // Set elastic angular distribution
   std::map<double,std::vector<double> > elastic_pdf, elastic_angle;
 
-  std::vector<double> agular_energy_grid(
+  std::vector<double> angular_energy_grid(
     d_endl_data_container->getCutoffElasticAngularEnergyGrid() );
 
-  data_container.setElasticAngularEnergyGrid( agular_energy_grid );
+  data_container.setElasticAngularEnergyGrid( angular_energy_grid );
 
   /* ENDL gives the angular distribution in terms of the change in angle cosine
    * (delta_angle_cosine = 1 - angle_cosine). For the native format it needs to
    * be in terms of angle_cosine. This for loop flips the distribution and
    * changes the variables to angle_cosine.
    */
-  std::vector<double>::iterator energy = agular_energy_grid.begin();
-  for ( energy; energy != agular_energy_grid.end(); energy++ )
+  std::vector<double>::iterator energy = angular_energy_grid.begin();
+  for ( energy; energy != angular_energy_grid.end(); energy++ )
   {
     calculateElasticAngleCosine(
         d_endl_data_container->getCutoffElasticAnglesAtEnergy( *energy ),
@@ -878,7 +878,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
 //    setScreenedRutherfordData( 
 //        d_endl_data_container->getCutoffElasticCrossSection(),
 //        d_endl_data_container->getTotalElasticCrossSection(),
-//        agular_energy_grid,
+//        angular_energy_grid,
 //        elastic_pdf,
 //        data_container );
 //    std::cout << "done." << std::endl;
@@ -908,7 +908,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronData(
     std::cout.flush();
     // Set the moment preserving data
     StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
-        agular_energy_grid,
+        angular_energy_grid,
         data_container );
     std::cout << "done." << std::endl;
   }
@@ -1256,16 +1256,16 @@ void StandardElectronPhotonRelaxationDataGenerator::setElectronCrossSectionsData
 //        cutoff_elastic_cross_section,
 //    const std::shared_ptr<const Utility::OneDDistribution>&
 //        total_elastic_cross_section,
-//    const std::vector<double>& agular_energy_grid,
+//    const std::vector<double>& angular_energy_grid,
 //    const std::map<double,std::vector<double> >& elastic_pdf,
 //    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const
 //{
 
 //}
 
-// Set the screened rutherford data
+// Set the moment preserving data
 void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
-    const std::vector<double>& agular_energy_grid,
+    const std::vector<double>& angular_energy_grid,
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
@@ -1276,7 +1276,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
     analog_distribution,
     data_container.getCutoffElasticAngles(),
     data_container.getCutoffElasticPDF(),
-    agular_energy_grid,
+    angular_energy_grid,
     data_container.getAtomicNumber() );
 
   // Construct the hash-based grid searcher for this atom
@@ -1325,31 +1325,31 @@ void StandardElectronPhotonRelaxationDataGenerator::setMomentPreservingData(
   std::vector<double> discrete_angles, weights;
 
   // weights for a discrete angle cosine = 1
-  std::vector<double> cross_section_reduction( agular_energy_grid.size() );
+  std::vector<double> cross_section_reduction( angular_energy_grid.size() );
 
   // iterate through all angular energy bins
-  for ( unsigned i = 0; i < agular_energy_grid.size(); i++ )
+  for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
     StandardElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
         moments_evaluator,
-        agular_energy_grid[i],
+        angular_energy_grid[i],
         data_container.getNumberOfMomentPreservingAngles(),
         discrete_angles,
         weights,
         cross_section_reduction[i] );
 
     data_container.setMomentPreservingElasticDiscreteAngles(
-        agular_energy_grid[i],
+        angular_energy_grid[i],
         discrete_angles );
     data_container.setMomentPreservingElasticWeights(
-        agular_energy_grid[i],
+        angular_energy_grid[i],
         weights );
   }
 
   // Generate a cross section reduction distribution
   std::shared_ptr<const Utility::OneDDistribution> reduction_distribution(
     new Utility::TabularDistribution<Utility::LinLin>(
-        agular_energy_grid,
+        angular_energy_grid,
         cross_section_reduction ) );
 
   // Calculate the moment preserving cross section

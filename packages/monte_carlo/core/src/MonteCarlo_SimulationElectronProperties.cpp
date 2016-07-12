@@ -20,7 +20,7 @@ double SimulationElectronProperties::min_electron_energy =
   SimulationElectronProperties::absolute_min_electron_energy;
 
 // The absolute max electron energy (MeV)
-const double SimulationElectronProperties::absolute_max_electron_energy = 20.0;
+const double SimulationElectronProperties::absolute_max_electron_energy = 1.0e5;
 
 // The max electron energy (MeV)
 double SimulationElectronProperties::max_electron_energy =

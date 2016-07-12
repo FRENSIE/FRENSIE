@@ -31,7 +31,7 @@
 
 std::shared_ptr<DataGen::AdjointBremsstrahlungCrossSectionEvaluator>
   adjoint_h_cs;
-
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -41,30 +41,30 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 {
 
   double diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 0.00001,
-                                                    0.000001 );
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.0e-5,
+                                                    9.9e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  5.432887601098890E+06,
+                                  5.574834333982640E+07,
                                   1e-12 );
 
   diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 0.005,
-                                                    0.0025 );
+    adjoint_h_cs->evaluateDifferentialCrossSection( 5.0e-3,
+                                                    5.0e-4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.081861861761940E+02,
+                                  2.763762632859210E+01,
                                   1e-12 );
 
   diff_cross_section =
-    adjoint_h_cs->evaluateDifferentialCrossSection( 100000.0,
-                                                    20000.0 );
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.0e5,
+                                                    6.0e4 );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-                                  1.322404823505140E-06,
+                                  5.641165944163830E-07,
                                   1e-12 );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Check that the hydrogen adjoint cross section can be evaluated
 TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
@@ -72,22 +72,54 @@ TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
 {
   double cross_section = adjoint_h_cs->evaluateAdjointCrossSection( 1.0e-5, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  370873512.13178122044,
+                                  4.3722060790400362862e1,
                                   1e-6 );
 
-
-  cross_section = adjoint_h_cs->evaluateAdjointCrossSection( 0.001, 1.0e-6 );
+  cross_section = adjoint_h_cs->evaluateAdjointCrossSection( 5.0e-4, 1.0e-6 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-                                  3639989.9591733468696,
+                                  2.7299876753191153256e1,
                                   1e-6 );
 
+  cross_section = adjoint_h_cs->evaluateAdjointCrossSection( 6.0e4, 1.0e-6 );
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+                                  0.9539521986214219984,
+                                  1e-6 );
 
   cross_section = adjoint_h_cs->evaluateAdjointCrossSection( 1.0e5, 1.0e-6 );
-  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				                  6.0910717890187364269e-05,
-  				                  1e-6 );
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint differential cross section can be evaluated
+TEUCHOS_UNIT_TEST( AdjointBremsstrahlungCrossSectionEvaluator,
+		   evaluateAdjointPDF_h )
+{
+
+  double diff_cross_section =
+    adjoint_h_cs->evaluateAdjointPDF( 5.0e-4,
+                                      5.0e-3,
+                                      1.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.763762632859210E+01/2.7299876753191153256e1,
+                                  1e-10 );
+
+  diff_cross_section =
+    adjoint_h_cs->evaluateAdjointPDF( 6.0e4,
+                                      1.0e5,
+                                      1.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  5.641165944163830E-07/0.9539521986214219984,
+                                  1e-10 );
+
+  diff_cross_section =
+    adjoint_h_cs->evaluateAdjointPDF( 1.0e5,
+                                      1.0e5,
+                                      1.0e-6 );
+
+  TEST_EQUALITY_CONST( diff_cross_section, 0.0 );
+}
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -168,9 +200,12 @@ int main( int argc, char** argv )
   DataGen::AdjointBremsstrahlungCrossSectionEvaluator::BremsstrahlungDistribution
     energy_loss_distribution( N );
 
+  std::vector<double> integration_points( N );
+
   for( unsigned n = 0; n < N; ++n )
   {
     energy_loss_distribution[n].first = electron_energy_grid[n];
+    integration_points[n] = electron_energy_grid[n];
 
     energy_loss_distribution[n].second.reset(
 	  new Utility::HistogramDistribution(
@@ -178,6 +213,11 @@ int main( int argc, char** argv )
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );
   }
+
+  std::shared_ptr<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+    bremsstrahlung_distribution(
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+            energy_loss_distribution ) );
 
   // Create the hash-based grid searcher
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
@@ -187,13 +227,19 @@ int main( int argc, char** argv )
         energy_grid[energy_grid.size()-1],
         energy_grid.size()/10+1 ) );
 
+  std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+    bremsstrahlung_reaction(
+        new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+            energy_grid,
+            bremsstrahlung_cross_section,
+            threshold_energy_index,
+            grid_searcher,
+            bremsstrahlung_distribution ) );
+
   // Initialize the hydrogen adjoint cross section evaluator
   adjoint_h_cs.reset( new DataGen::AdjointBremsstrahlungCrossSectionEvaluator(
-                    grid_searcher,
-                    energy_grid,
-                    bremsstrahlung_cross_section,
-                    threshold_energy_index,
-                    energy_loss_distribution ) );
+                    bremsstrahlung_reaction
+                    integration_points ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

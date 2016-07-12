@@ -68,6 +68,9 @@ public:
   //! Return the number of discrete moment preserving angles
   unsigned getNumberOfAdjointMomentPreservingAngles() const;
 
+  //! Return the adjoint bremsstrahlung evaluation tolerance
+  double getAdjointBremsstrahlungEvaluationTolerance() const;
+
   //! Return the union energy grid convergence tolerance
   double getGridConvergenceTolerance() const;
 
@@ -249,6 +252,10 @@ protected:
   //! Set the number of discrete moment preserving angles
   void setNumberOfAdjointMomentPreservingAngles(
     const unsigned number_of_adjoint_moment_preserving_angles );
+
+  //! Set the adjoint bremsstrahlung evaluation tolerance
+  void getAdjointBremsstrahlungEvaluationTolerance(
+    const double adjoint_bremsstrahlung_evaluation_tolerance );
 
   //! Set the union energy grid convergence tolerance
   void setGridConvergenceTolerance( const double grid_convergence_tol );

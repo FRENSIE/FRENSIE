@@ -13,6 +13,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -32,42 +33,40 @@ public:
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::RCP<Utility::HashBasedGridSearcher>& grid_searcher,
-    const Teuchos::ArrayRCP<const double>& electron_energy_grid,
-    const Teuchos::ArrayRCP<const double>& bremsstrahlung_cross_section,
-    const unsigned bremsstrahlung_threshold_energy_index,
-    const BremsstrahlungDistribution& energy_loss_distribution );
+    const std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >&
+        bremsstrahlung_reaction,
+    const std::vector<double>& integration_points );
 
   //! Destructor
   ~AdjointBremsstrahlungCrossSectionEvaluator()
   { /* ... */ }
 
-  //! Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
-  double evaluateDifferentialCrossSection(
-        const double incoming_energy,
-        const double outgoing_energy ) const;
+  //! Evaluate the adjoint PDF value
+  double evaluateAdjointPDF(
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
+        const double precision = 1e-6 ) const;
+
+  //! Evaluate the adjoint PDF value
+  double evaluateAdjointPDF(
+        const double adjoint_cross_section,
+        const double incoming_adjoint_energy,
+        const double outgoing_adjoint_energy,
+        const double precision ) const;
 
   //! Return the cross section value at a given energy
   double evaluateAdjointCrossSection(
-        const double energy,
+        const double adjoint_energy,
         const double precision = 1e-6 ) const;
 
 private:
 
-  // The energy grid searcher
-  Teuchos::RCP<Utility::HashBasedGridSearcher> d_grid_searcher;
+  // The forward bremsstrahlung reaction
+  std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+    d_bremsstrahlung_reaction;
 
-  // The electron energy grid
-  Teuchos::ArrayRCP<const double> d_electron_energy_grid;
-
-  // The bremsstrahlung cross section
-  Teuchos::ArrayRCP<const double> d_bremsstrahlung_cross_section;
-
-  // The bremsstrahlung cross section threshold energy index
-  unsigned d_bremsstrahlung_threshold_energy_index;
-
-  // The bremsstrahlung energy loss distribution
-  BremsstrahlungDistribution d_energy_loss_distribution;
+  // The energy used as integration points
+  std::vector<double> d_integration_points;
 };
 
 } // end DataGen namespace

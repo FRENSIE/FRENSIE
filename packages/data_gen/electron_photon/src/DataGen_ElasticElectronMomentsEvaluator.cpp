@@ -169,7 +169,8 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // resize array to the number of legendre moments wanted
   legendre_moments.resize(n+1);
 
-  Utility::GaussKronrodIntegrator<Utility::long_float> integrator( precision );
+  Utility::GaussKronrodIntegrator<Utility::long_float> 
+    integrator( precision, 0.0, 1000, true );
 
   // Calucuate the cutoff and Rutherford component of the Legendre moment
   Utility::long_float cutoff_moment,rutherford_moment;
@@ -180,10 +181,7 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // if the cutoff angle cosine is above 0.999999 only the moments of the screened Rutherford are needed
   if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
   {
-    angular_grid =
-        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-            d_cutoff_elastic_angles.find( energy )->second,
-            d_cutoff_angle_cosine );
+    this->getAngularIntegrationPoints( angular_grid, energy );
 
     evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
   }
@@ -491,6 +489,46 @@ void ElasticElectronMomentsEvaluator::evaluateScreenedRutherfordMoment(
   rutherford_moment *=
     d_analog_reaction->getScreenedRutherfordCrossSection( energy );
 }
+
+// Return the angular integration points
+void ElasticElectronMomentsEvaluator::getAngularIntegrationPoints(
+        std::vector<double>& angular_integration_points,
+        const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+
+  if( d_cutoff_elastic_angles.count( energy ) > 0 )
+  {
+    angular_integration_points =
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            d_cutoff_elastic_angles.find( energy )->second,
+            d_cutoff_angle_cosine );
+  }
+  else
+  {
+    std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
+    lower_bin = d_cutoff_elastic_angles.lower_bound( energy );
+    upper_bin = d_cutoff_elastic_angles.upper_bound( energy );
+
+    // Use the angular grid for the energy bin closes to the energy
+    if ( energy - lower_bin->first <= upper_bin->first - energy )
+    {
+      angular_integration_points =
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            lower_bin->second,
+            d_cutoff_angle_cosine );
+    }
+    else
+    {
+      angular_integration_points =
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            upper_bin->second,
+            d_cutoff_angle_cosine );
+    }
+  }
+}
+
 
 } // end DataGen namespace
 

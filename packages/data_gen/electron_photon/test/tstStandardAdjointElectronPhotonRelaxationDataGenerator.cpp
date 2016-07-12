@@ -23,8 +23,9 @@
 // FRENSIE Includes
 #include "DataGen_StandardAdjointElectronPhotonRelaxationDataGenerator.hpp"
 #include "Data_AdjointElectronPhotonRelaxationVolatileDataContainer.hpp"
-#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Data_ACEFileHandler.hpp"
 #include "Data_ENDLDataContainer.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -34,8 +35,8 @@
 std::shared_ptr<const DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator>
   data_generator_h, data_generator_c;
 
-std::shared_ptr<Data::ElectronPhotonRelaxationDataContainer>
-  h_native_forward_data, c_native_forward_data;
+std::shared_ptr<Data::XSSEPRDataExtractor>
+  h_xss_data_extractor, c_xss_data_extractor;
 
 std::shared_ptr<Data::ENDLDataContainer>
   h_endl_forward_data, c_endl_forward_data;
@@ -49,14 +50,16 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 {
     data_generator_h.reset(
         new DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator(
-                1,
-                h_native_forward_data,
+                h_xss_data_extractor->extractAtomicNumber(),
+                h_xss_data_extractor,
+                h_endl_forward_data,
                 0.001,
                 20.0,
                 1.0e-5,
-                1.0e-1,
+                1.0e+5,
                 0.9,
                 1,
+                0.001,
                 0.001,
                 1e-42,
                 1e-15 ) );
@@ -94,7 +97,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   std::vector<double> energy_grid = data_container.getAdjointElectronEnergyGrid();
   TEST_EQUALITY_CONST( energy_grid.front(), 1.0e-5 );
   TEST_EQUALITY_CONST( energy_grid.back(), 1.0e+5 );
-  TEST_EQUALITY_CONST( energy_grid.size(), 728 );
+  TEST_EQUALITY_CONST( energy_grid.size(), 809 );
 
   // Check the elastic data
   unsigned threshold =
@@ -107,21 +110,19 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( cross_section.front(), 2.74896e+8 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.31176e-5, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 809-threshold );
 
   threshold =
     data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
-  TEST_EQUALITY_CONST( threshold, 263 );
+  TEST_EQUALITY_CONST( threshold, 227 );
 
   cross_section =
     data_container.getAdjointScreenedRutherfordElasticCrossSection();
 
-//  TEST_EQUALITY_CONST( cross_section.front(), 2.5745520470700284932 );
-//! \todo double check what the front cross section should be
-  TEST_EQUALITY_CONST( cross_section.front(), 2.57455204707366647 );
+  TEST_EQUALITY_CONST( cross_section.front(), 3.60034169494247180 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.29871e+4-1.31176e-5 );
-  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 809-threshold );
 
   std::vector<double> angular_grid =
     data_container.getAdjointElasticAngularEnergyGrid();
@@ -198,7 +199,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   TEST_FLOATING_EQUALITY( cross_section.front(), 1.0308605152240909636E+07, 1e-15 );
   TEST_FLOATING_EQUALITY( cross_section.back(), 1.2931601408114005462e-07, 1e-15 );
-  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
+  TEST_EQUALITY_CONST( cross_section.size(), 809-threshold );
 
   // Check the bremsstrahlung data
   threshold =
@@ -209,16 +210,17 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   cross_section =
     data_container.getAdjointBremsstrahlungCrossSection();
 
-  TEST_EQUALITY_CONST( cross_section.front(),  2.97832e+1 );
-  TEST_EQUALITY_CONST( cross_section.back(), 9.90621e-1 );
-  TEST_EQUALITY_CONST( cross_section.size(), 728-threshold );
-
+  TEST_EQUALITY_CONST( cross_section.front(),  4.34999554761653968e+01 );
+  TEST_EQUALITY_CONST( cross_section.back(), 0.0 );
+  TEST_EQUALITY_CONST( cross_section.size(), 809-threshold );
+std::cout << std::setprecision(20) << "cross_section.front() = " << cross_section.front() << std::endl;
+std::cout << std::setprecision(20) << "cross_section.back() = " << cross_section.back() << std::endl;
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getAdjointBremsstrahlungEnergyGrid();
 
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.front(), 1.00000e-5 );
   TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.back(), 1.00000e+5 );
-  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 10 );
+  TEST_EQUALITY_CONST( bremsstrahlung_energy_grid.size(), 11 );
 
   std::vector<double> bremsstrahlung_photon_energy =
     data_container.getAdjointBremsstrahlungPhotonEnergy( 1.00000e-5 );
@@ -232,23 +234,23 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 
   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.front(), 1.00000e-7 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.back(), 1.00000e+5 );
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 111 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_energy.size(), 2 );
 
   std::vector<double> bremsstrahlung_photon_pdf =
     data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e-5 );
 
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 2.13940e+6 );
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 2.12245e+4 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 1.46394848379322817e+06 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(), 1.46824029287934536e+04 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 17 );
 
   bremsstrahlung_photon_pdf =
     data_container.getAdjointBremsstrahlungPhotonPDF( 1.00000e+5 );
 
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),  3.65591e+5 );
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.16344e-10 );
-  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 111 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(),  0.0 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  0.0 );
+  TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 2 );
 
-
+/*
   // Check the electroionization data
   threshold =
     data_container.getAdjointElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -327,9 +329,9 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_gain.size(), 170 );
 
   data_container.exportData( "test_h_epr.xml",
-			     Utility::ArchivableObject::XML_ARCHIVE );
+			     Utility::ArchivableObject::XML_ARCHIVE );*/
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
@@ -607,7 +609,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
-
+*//*
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
@@ -615,14 +617,16 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
 {
     data_generator_c.reset(
         new DataGen::StandardAdjointElectronPhotonRelaxationDataGenerator(
-                6,
-                c_native_forward_data,
+                c_xss_data_extractor->extractAtomicNumber(),
+                c_xss_data_extractor,
+                c_endl_forward_data,
                 0.001,
                 20.0,
                 1.0e-5,
                 1.0e-1,
                 1.0,
                 0,
+                0.001,
                 0.001,
                 1e-32,
                 1e-16) );
@@ -692,14 +696,14 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
     data_container.getAdjointScreenedRutherfordElasticCrossSectionThresholdEnergyIndex();
 
   TEST_EQUALITY_CONST( threshold, 276 );
-
+/*
   cross_section =
     data_container.getAdjointScreenedRutherfordElasticCrossSection();
 
   TEST_EQUALITY_CONST( cross_section.front(), 1.93634596180636436e+01 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.407220E+05-4.723090E-04 );
   TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
-
+*//*
   std::vector<double> angular_grid =
     data_container.getAdjointElasticAngularEnergyGrid();
 
@@ -747,7 +751,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( cross_section.front(), 6.031280E+02 );
   TEST_EQUALITY_CONST( cross_section.back(), 1.697150E+01 );
   TEST_EQUALITY_CONST( cross_section.size(), 723-threshold );
-
+/*
   std::vector<double> bremsstrahlung_energy_grid =
     data_container.getAdjointBremsstrahlungEnergyGrid();
 
@@ -782,7 +786,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.front(), 3.649330E+05 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.back(),  5.638520E-09 );
   TEST_EQUALITY_CONST( bremsstrahlung_photon_pdf.size(), 105 );
-
+/*
   // Check the electroionization data
   threshold =
     data_container.getAdjointElectroionizationCrossSectionThresholdEnergyIndex( 1u );
@@ -905,11 +909,11 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( atomic_excitation_energy_gain.front(), 9.232690E-06 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_gain.back(), 1.981540E-05 );
   TEST_EQUALITY_CONST( atomic_excitation_energy_gain.size(), 181 );
-
+*//*
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Check that a data container can be repopulated with moment preserving data
 TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
@@ -1242,30 +1246,37 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectronPhotonRelaxationDataGenerator,
   data_container.exportData( "test_c_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_h_native_file_name, test_c_native_file_name;
+  std::string test_h_ace_file_name, test_h_ace_table_name;
+  std::string test_c_ace_file_name, test_c_ace_table_name;
   std::string test_h_endl_file_name, test_c_endl_file_name;
 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_h_native_file",
-		 &test_h_native_file_name,
-		 "Test H Native file name" );
+  clp.setOption( "test_h_ace_file",
+		 &test_h_ace_file_name,
+		 "Test ACE file name" );
+  clp.setOption( "test_h_ace_table",
+		 &test_h_ace_table_name,
+		 "Test ACE table name" );
   clp.setOption( "test_h_endl_file",
 		 &test_h_endl_file_name,
-		 "Test H ENDL file name" );
+		 "Test ENDL file name" );
 
-  clp.setOption( "test_c_native_file",
-		 &test_c_native_file_name,
-		 "Test C NAtive file name" );
+  clp.setOption( "test_c_ace_file",
+		 &test_c_ace_file_name,
+		 "Test ACE file name" );
+  clp.setOption( "test_c_ace_table",
+		 &test_c_ace_table_name,
+		 "Test ACE table name" );
   clp.setOption( "test_c_endl_file",
 		 &test_c_endl_file_name,
-		 "Test C ENDL file name" );
+		 "Test ENDL file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -1279,19 +1290,31 @@ int main( int argc, char** argv )
   }
 
   {
-    // Create the endl data container for hydrogen
-    h_native_forward_data.reset(
-        new Data::ElectronPhotonRelaxationDataContainer(
-            test_h_native_file_name,
-            Utility::ArchivableObject::XML_ARCHIVE ) );
+    // Create the file handler and data extractor for hydrogen
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
+			       new Data::ACEFileHandler( test_h_ace_file_name,
+							 test_h_ace_table_name,
+							 1u ) );
+
+    h_xss_data_extractor.reset(
+				new Data::XSSEPRDataExtractor(
+				      ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray() ) );
   }
 
   {
-    // Create the endl data container for carbon
-    c_native_forward_data.reset(
-        new Data::ElectronPhotonRelaxationDataContainer(
-            test_c_native_file_name,
-            Utility::ArchivableObject::XML_ARCHIVE ) );
+    // Create the file handler and data extractor for carbon
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
+			       new Data::ACEFileHandler( test_c_ace_file_name,
+							 test_c_ace_table_name,
+							 1u ) );
+
+    c_xss_data_extractor.reset(
+				new Data::XSSEPRDataExtractor(
+				      ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray() ) );
   }
 
   {

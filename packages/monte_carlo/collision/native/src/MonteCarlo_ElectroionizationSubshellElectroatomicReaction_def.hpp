@@ -76,6 +76,37 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy )
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > 0.0 );
+
+  // Evaluate the forward cross section at the incoming energy
+  double forward_cs = this->getCrossSection( incoming_energy );
+
+  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
+  double knock_on_pdf =
+    d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
+                                                            outgoing_energy );
+
+  /* Calculate the energy of a knock on electron from a primary electron with
+     outgoing energy = outgoing_energy */
+  double knock_on_energy = incoming_energy - outgoing_energy -
+    d_electroionization_subshell_distribution->getBindingEnergy();
+
+  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
+  double primary_pdf =
+    d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
+                                                            knock_on_energy );
+
+  return forward_cs*( knock_on_pdf + primary_pdf );
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react(

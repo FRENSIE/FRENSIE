@@ -101,6 +101,28 @@ ElectroatomicReactionType BremsstrahlungElectroatomicReaction<InterpPolicy,proce
   return BREMSSTRAHLUNG_ELECTROATOMIC_REACTION;
 }
 
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy )
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy <= incoming_energy );
+
+  double outgoing_photon_energy = incoming_energy - outgoing_energy;
+
+  double cross_section = this->getCrossSection( incoming_energy );
+
+  // Evaluate the PDF at a given incoming and outgoing energy
+  double pdf =
+    d_bremsstrahlung_distribution->evaluatePDF( incoming_energy,
+                                                outgoing_photon_energy );
+
+  return cross_section*pdf;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::react(

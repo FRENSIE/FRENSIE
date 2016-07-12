@@ -143,6 +143,11 @@ protected:
 
 private:
 
+  // Return the angular integration points
+  void getAngularIntegrationPoints(
+        std::vector<double>& angular_integration_points,
+        const double energy ) const;
+ 
   // The analog reaction
   Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
     d_analog_reaction;

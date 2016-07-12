@@ -56,6 +56,11 @@ public:
   //! Return the reaction type
   ElectroatomicReactionType getReactionType() const;
 
+  //! Return the differential cross section
+  double getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy );
+
   //! Simulate the reaction
   void react( ElectronState& electron,
 	      ParticleBank& bank,

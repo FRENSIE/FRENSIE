@@ -44,13 +44,13 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
   testPrecondition( cutoff_cross_section.size() > 0 );
   testPrecondition( cutoff_cross_section.size() ==
     incoming_energy_grid.size() - cutoff_threshold_energy_index );
-  testPrecondition( screened_rutherford_cross_section.size() > 0 );
+  //testPrecondition( screened_rutherford_cross_section.size() > 0 );
   testPrecondition( screened_rutherford_cross_section.size() ==
     incoming_energy_grid.size() - screened_rutherford_threshold_energy_index );
   // Make sure the threshold energies are valid
   testPrecondition( cutoff_threshold_energy_index <
                     incoming_energy_grid.size() );
-  testPrecondition( screened_rutherford_threshold_energy_index <
+  testPrecondition( screened_rutherford_threshold_energy_index <=
                     incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
@@ -87,13 +87,13 @@ AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::Analog
   testPrecondition( cutoff_cross_section.size() > 0 );
   testPrecondition( cutoff_cross_section.size() ==
     incoming_energy_grid.size() - cutoff_threshold_energy_index );
-  testPrecondition( screened_rutherford_cross_section.size() > 0 );
+  //testPrecondition( screened_rutherford_cross_section.size() > 0 );
   testPrecondition( screened_rutherford_cross_section.size() ==
     incoming_energy_grid.size() - screened_rutherford_threshold_energy_index );
   // Make sure the threshold energies are valid
   testPrecondition( cutoff_threshold_energy_index <
                     incoming_energy_grid.size() );
-  testPrecondition( screened_rutherford_threshold_energy_index <
+  testPrecondition( screened_rutherford_threshold_energy_index <=
                     incoming_energy_grid.size() );
   // Make sure scattering distribution is valid
   testPrecondition( scattering_distribution.use_count() > 0 );
@@ -210,11 +210,16 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 {
   double cross_section;
 
-  cross_section =
-    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
-        energy,
-        d_screened_rutherford_cross_section,
-        d_screened_rutherford_threshold_energy_index );
+  if ( d_screened_rutherford_cross_section.size() > 0 )
+  {
+    cross_section =
+        StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+            energy,
+            d_screened_rutherford_cross_section,
+            d_screened_rutherford_threshold_energy_index );
+  }
+  else
+    cross_section = 0.0;
 
   return cross_section;
 }
@@ -226,12 +231,17 @@ double AnalogElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 {
   double cross_section;
 
-  cross_section =
-    StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
+  if ( d_screened_rutherford_cross_section.size() > 0 )
+  {
+    cross_section =
+      StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection(
         energy,
         bin_index,
         d_screened_rutherford_cross_section,
         d_screened_rutherford_threshold_energy_index );
+  }
+  else
+    cross_section = 0.0;
 
   return cross_section;
 }

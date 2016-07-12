@@ -1010,7 +1010,7 @@ void AdjointElectronPhotonRelaxationDataContainer::setAdjointBremsstrahlungCross
   // Make sure the bremsstrahlung cross section is valid
   testPrecondition( adjoint_bremsstrahlung_cross_section.size() <=
                     d_adjoint_electron_energy_grid.size() );
-  testPreconditionValuesGreaterThanZero( adjoint_bremsstrahlung_cross_section );
+  testPreconditionValuesGreaterThanOrEqualToZero( adjoint_bremsstrahlung_cross_section );
 
   d_adjoint_bremsstrahlung_cross_section = adjoint_bremsstrahlung_cross_section;
 }

@@ -2489,6 +2489,7 @@ int main( int argc, char** argv )
   }
 
   {
+    // Create the endl data container for carbon
     c_endl_data_container.reset(
         new Data::ENDLDataContainer(
             test_c_endl_file_name,
