@@ -9,6 +9,7 @@
 // Std Lib Includes
 #include <iostream>
 #include <memory>
+#include <vector>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -32,7 +33,7 @@
 std::shared_ptr<MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>> hex_estimator;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// Test formation of constructor
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
 {
@@ -51,221 +52,264 @@ TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, constructor )
   TEST_NOTHROW( hex_estimator.reset( new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(0, 2, x_planes, y_planes, z_planes, "test.vtk" ) ) );
 }
 
+//---------------------------------------------------------------------------//
+// Test data being formed in estimator
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( HexMeshTrackLengthFluxEstimator, updateFromGlobalParticleSubtrackEndingEvent)
 {
+  std::shared_ptr<MonteCarlo::Estimator> estimator_base;
+  //set planes and multiplier for mesh
+  double multiplier = 2;
+  std::vector<double> x_planes, y_planes, z_planes;
+  x_planes.push_back(-0.5);
+  x_planes.push_back(0);
+  x_planes.push_back(0.5);
 
-  // Set the particle types
-  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
-  particle_types[0] = MonteCarlo::NEUTRON;
+  y_planes.push_back(-0.5);
+  y_planes.push_back(0);
+  y_planes.push_back(0.5);
 
-  hex_estimator->setParticleTypes( particle_types );
+  z_planes.push_back(-0.5);
+  z_planes.push_back(0);
+  z_planes.push_back(0.5);
+  
+  {
+    hex_estimator.reset(
+      new MonteCarlo::HexMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
+                                            0, 
+                                            multiplier, 
+                                            x_planes, 
+                                            y_planes, 
+                                            z_planes, 
+                                            "test.vtk" ) );
 
-  double start_point_1[3] = { 0.5, 0.5, 0.0 };
-  double end_point_1[3] = { 0.5, 0.5, 2.0 };
+    // Set the particle types
+    Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+    particle_types[0] = MonteCarlo::NEUTRON;
+    hex_estimator->setParticleTypes( particle_types );
+     
+    estimator_base = hex_estimator;
+  }
 
-  double start_point_2[3] = { 0.5, 1.5, -1.0 };
-  double end_point_2[3] = { 0.5, 1.5, 2.0 };
-
-  double start_point_3[3] = { 1.5, 0.5, 0.0 };
-  double end_point_3[3] = { 1.5, 0.5, 3.0 };
-
-  double start_point_4[3] = { 1.5, 1.5, 0.0 };
-  double end_point_4[3] = { 1.5, 1.5, 2.0 };
+  
+  // Known contributions and values
+  double track_length = 0.25;
+  double volume = 0.125;
+  double num_hexes = 8.0;
+  
+  double start_point_1[3] = {-0.5, -0.125, -0.125};
+  double end_point_1[3] = {-0.25, -0.125, -0.125};
+  double direction_1[3] = {1, 0, 0};
+  
+  double start_point_2[3] = {0.5, -0.125, -0.125};
+  double end_point_2[3] = {0.25, -0.125, -0.125};
+  double direction_2[3] = {-1, 0, 0};
+  
+  double start_point_3[3] = {-0.25, 0.125, -0.25};
+  double end_point_3[3] = {-0.25, 0.125, 0.25};
+  double direction_3[3] = {0, 0, 1};
+  
+  double start_point_4[3] = {0.25, 0.125, 0.25};
+  double end_point_4[3] = {0.25, 0.125, -0.25};
+  double direction_4[3] = {0, 0, -1};
+  
+  double start_point_5[3] = {-0.25, -0.1, 0.25};
+  double end_point_5[3] = {-0.25, -0.35, 0.25};
+  double direction_5[3] = {0, -1, 0};
+  
+  double start_point_6[3] = {0.25, -0.35, 0.25};
+  double end_point_6[3] = {0.25, -0.1, 0.25};
+  double direction_6[3] = {0, 1, 0};
   
 
-  MonteCarlo::NeutronState particle( 0ull );
-  particle.setWeight( 1.0 );
-  particle.setEnergy( 14.0 );
-  particle.setDirection( 0, 0, 1 );
-
-  // Make sure the mesh estimator has no contributions yet
+  MonteCarlo::NeutronState particle( 0ull);
+  double weight = 0.5;
+  particle.setWeight(weight);
+  particle.setEnergy( 3.0 );
+  
   TEST_ASSERT( !hex_estimator->hasUncommittedHistoryContribution() );
+  
+  particle.setDirection( direction_1 );  
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point_1,
+                                                          end_point_1 );
 
-  // Update the mesh estimator
+  particle.setDirection( direction_2 );  
   hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                              start_point_1,
-                                                              end_point_1 );
-  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                              start_point_2,
-                                                              end_point_2 );
-  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                              start_point_3,
-                                                              end_point_3 );
-  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
-                                                              start_point_4,
-                                                              end_point_4 );
+                                                          start_point_2,
+                                                          end_point_2 );
 
-  // Commit the contributions to the mesh estimator
-  hex_estimator->commitHistoryContribution();
+  particle.setDirection( direction_3 );  
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point_3,
+                                                          end_point_3 );
 
+  particle.setDirection( direction_4 );  
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point_4,
+                                                          end_point_4 );
+
+  particle.setDirection( direction_5 );  
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point_5,
+                                                          end_point_5 );
+
+  particle.setDirection( direction_6 );  
+  hex_estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
+                                                          start_point_6,
+                                                          end_point_6 );
+
+  // Commit history contributions
+  estimator_base->commitHistoryContribution();
+  
   TEST_ASSERT( !hex_estimator->hasUncommittedHistoryContribution() );
-  MonteCarlo::Estimator::setNumberOfHistories(1.0);
-  MonteCarlo::Estimator::setEndTime(1.0);
+  
+  MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
+  MonteCarlo::Estimator::setEndTime( 1.0 );
+  
   // Initialize the HDF5 file
   std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_hex_mesh_track_length_flux_estimator.h5" );
 
-  hex_estimator->exportData( hdf5_file, true );
-
-  // Create an estimator hdf5 file handler
+  hex_estimator->exportData( hdf5_file, true);
+  
+  //create an estimator HDF5 file handler
   MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( hdf5_file );
+  
+  //get start and end iterators for hex elements
+  Utility::StructuredHexMesh::HexIDIterator start_hex = hex_estimator->getStartHex();
+  Utility::StructuredHexMesh::HexIDIterator end_hex = hex_estimator->getEndHex();
+  Utility::StructuredHexMesh::HexIDIterator hex;
 
-  // Retrieve the raw bin data for each hex
-  Utility::StructuredHexMesh::HexIDIterator hex = hex_estimator->getStartHex();
-
+  // Retrieve the raw bin data for each hex  
   Teuchos::Array<Utility::Pair<double,double> >
-    raw_bin_data( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
-  raw_bin_data_copy;
+      raw_bin_data( 1, Utility::Pair<double,double>( 
+                                   track_length*weight, 
+                                   track_length*track_length*weight*weight ) ),
+      raw_bin_data_copy;
+  
+  for(hex = start_hex; hex != end_hex; ++hex)
+  {
+    hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                             0u, *hex, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+                                          raw_bin_data_copy,
+                                          1e-12 );
+  }
 
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getRawEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                                 0u, *hex, raw_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
-                                        raw_bin_data_copy,
-                                        1e-12 );
-
-  // Retrieve the processed bin data for each hex
-  hex = hex_estimator->d_hex_begin;
-
+  // Retrieve the processed bin data for each hex  
   Teuchos::Array<Utility::Pair<double,double> >
-    processed_bin_data( 1, Utility::Pair<double,double>( 2.0, 0.0 ) ),
-  processed_bin_data_copy;
+    processed_bin_data( 1, Utility::Pair<double,double>(
+                                multiplier*track_length*weight/volume, 0.0 ) ),
+    processed_bin_data_copy;
+    
+  for(hex = start_hex; hex != end_hex; ++hex)
+  {
+    hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
+                              0u, *hex, processed_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data, 
+                                          processed_bin_data_copy,
+                                          1e-12 );
+  }
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
+  // Retrieve the raw total bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    raw_total_bin_data( 1, Utility::Pair<double,double>(
+                         num_hexes*track_length*weight,
+                         num_hexes*num_hexes*track_length*track_length*weight*weight ) ),
+    raw_total_bin_data_copy;
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
+    hdf5_file_handler.getRawEstimatorTotalBinData(
+                              0u, raw_total_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_bin_data, 
+                                          raw_total_bin_data_copy,
+                                          1e-12 );
+
+  // Retrieve the processed total bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    processed_total_bin_data( 1, Utility::Pair<double,double>(
+                         multiplier*num_hexes*track_length*weight,
+                         0.0 ) ),
+    processed_total_bin_data_copy;
+
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
+                              0u, processed_total_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_bin_data, 
+                                        processed_total_bin_data_copy,
                                         1e-12 );
 
-  ++hex;
+  // Retrieve the raw estimator total data for each entity
+  Utility::Quad<double,double,double,double>
+    raw_moments( track_length*weight,
+                 track_length*track_length*weight*weight,
+                 track_length*track_length*track_length*weight*weight*weight,
+                 track_length*track_length*track_length*track_length*weight*weight*weight*weight );
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
+    raw_total_data( 1, raw_moments ),
+    raw_total_data_copy;
 
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
+  for(hex = start_hex; hex != end_hex; ++hex)
+  {
+    hdf5_file_handler.getRawEstimatorEntityTotalData<Utility::StructuredHexMesh::HexIndex>(
+                              0u, *hex, raw_total_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+                                          raw_total_data_copy,
+                                          1e-12 );
+  }
+
+  // Retrieve the processed estimator total data for each entity
+  Utility::Quad<double,double,double,double>
+    processed_moments( multiplier*track_length*weight/volume,
+                       0.0,
+                       0.0,
+                       0.0 );
+                
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
+    processed_total_data( 1, processed_moments ),
+    processed_total_data_copy;
+
+  for(hex = start_hex; hex != end_hex; ++hex)
+  {
+    hdf5_file_handler.getProcessedEstimatorEntityTotalData<Utility::StructuredHexMesh::HexIndex>(
+                             0u, *hex, processed_total_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+                                          processed_total_data_copy,
+                                          1e-12 );
+  }
+
+  // Retrieve the raw estimator total data  
+  raw_total_data[0]( num_hexes*track_length*weight,
+                     num_hexes*num_hexes*track_length*track_length*weight*weight,
+                     num_hexes*num_hexes*num_hexes*track_length*track_length*track_length*weight*weight*weight,
+                     num_hexes*num_hexes*num_hexes*num_hexes*track_length*track_length*track_length*track_length*weight*weight*weight*weight );
+                
+  hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+                                        raw_total_data_copy,
                                         1e-12 );
 
-  ++hex;
+  // Retrieve the processed estimator total data
+  processed_total_data[0]( num_hexes*track_length*weight*multiplier,
+                           0.0,
+                           0.0,
+                           0.0 );
+                           
+  hdf5_file_handler.getProcessedEstimatorTotalData( 0u, 
+                                                processed_total_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_total_data, 
+                                        processed_total_data_copy,
+                                        1e-12 );   
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
-
-  hdf5_file_handler.getProcessedEstimatorEntityBinData<Utility::StructuredHexMesh::HexIndex>(
-                                           0u, *hex, processed_bin_data_copy );
-
-  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( processed_bin_data,
-                                        processed_bin_data_copy,
-                                        1e-12 );
-
-  ++hex;
 }
 
 //---------------------------------------------------------------------------//

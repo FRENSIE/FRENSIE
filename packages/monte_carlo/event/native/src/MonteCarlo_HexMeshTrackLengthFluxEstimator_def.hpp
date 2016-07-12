@@ -113,9 +113,12 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
       EstimatorParticleStateWrapper particle_state_wrapper( particle );    
       for(unsigned i = 0; i < contribution_array.size(); ++i)
       {
+        double weighted_contribution = contribution_array[i].second *
+          ContributionMultiplierPolicy::multiplier( particle );
+        
         addPartialHistoryContribution( contribution_array[i].first,
                                        particle_state_wrapper,
-                                       contribution_array[i].second );
+                                       weighted_contribution );
       }
     }
   }
@@ -224,7 +227,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     for( hex = d_hex_begin; hex != d_hex_end; ++hex)
     {
       // convert from hex index to moab entity handle
-      moabHexIndexDeconstructor( *hex, hex_parameter_indices);
+      d_hex_mesh->moabGetHexPlaneIndices( *hex, hex_parameter_indices);
       moab::EntityHandle moab_hex = box->get_element( hex_parameter_indices[0],
                                                       hex_parameter_indices[1],
                                                       hex_parameter_indices[2] ); 
@@ -543,25 +546,6 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
     StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>::assignBinBoundaries( 
 							      bin_boundaries );
   }
-
-}
-
-//convert a hex index back into a set of x, y, and z indices for moab to use
-template<typename ContributionMultiplierPolicy>
-void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::moabHexIndexDeconstructor(
-  const Utility::StructuredHexMesh::HexIndex h, unsigned hex_parameter_indices[3] ) const
-{
-
-  testPrecondition( h >= 0 &&
-                    h < std::distance(d_hex_begin, d_hex_end) );
-
-  unsigned x_dim = (d_hex_mesh->getNumberOfXPlanes() - 1);
-  unsigned y_dim = (d_hex_mesh->getNumberOfYPlanes() - 1);
-  
-  hex_parameter_indices[2] = h/(x_dim*y_dim);
-  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_dim * y_dim) / x_dim;
-  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_dim
-    - hex_parameter_indices[2] * x_dim * y_dim;
 
 }
 

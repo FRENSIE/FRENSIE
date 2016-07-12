@@ -90,8 +90,6 @@ private:
   void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
   
-  void moabHexIndexDeconstructor( const Utility::StructuredHexMesh::HexIndex h, unsigned hex_parameter_indices[3] ) const;
-  
   // The output mesh file name
   std::string d_output_mesh_file_name;
   

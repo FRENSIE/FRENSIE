@@ -402,6 +402,22 @@ double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)
   return d_z_planes[i];
 
 }
+//! return the individual plane indices from a hex index for moab to use
+void StructuredHexMesh::moabGetHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3])
+{
+
+  testPrecondition( h >= 0 &&
+                    h < d_hex_elements.size() );
+
+  unsigned x_dim = (d_x_planes.size() - 1);
+  unsigned y_dim = (d_y_planes.size() - 1);
+  
+  hex_parameter_indices[2] = h/(x_dim*y_dim);
+  hex_parameter_indices[1] = (h - hex_parameter_indices[2] * x_dim * y_dim) / x_dim;
+  hex_parameter_indices[0] = h - hex_parameter_indices[1] * x_dim
+    - hex_parameter_indices[2] * x_dim * y_dim;
+
+}
 
 //begin private functions
 

@@ -86,6 +86,9 @@ public:
   //! get the location of a specific plane on the z axis
   double getZPlaneLocation( PlaneIndex i);
   
+  //! deconstruct a hex index into indices of planes on each dimension
+  void moabGetHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3]);
+  
 private:
   //enumeration type converting dimensions to integers
   enum planeDimension{ x_dim = 0,
