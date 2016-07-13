@@ -17,7 +17,7 @@
 namespace Utility{
 // take care of when distance is very small
 //initialize static member data
-const double StructuredHexMesh::s_tol = 1e-10;
+const double StructuredHexMesh::s_tol = 1e-12;
 
 //! Constructor
 StructuredHexMesh::StructuredHexMesh( const Teuchos::Array<double>& x_planes,

@@ -8,6 +8,7 @@
 
 // std includes
 #include <iostream>
+#include <iomanip>
 #include <memory>
 #include <utility>
 
@@ -114,13 +115,13 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, is_point_in_mesh)
   
   //points not inside mesh but inside boundary region (should still return true)
   //points on upper dimension boundaries
-  double point5[3] {1.0 + 1e-10, 0.5, 0.5};
-  double point6[3] {0.5, 1.0 + 1e-10, 0.5};
-  double point7[3] {0.5, 0.5, 1.0 + 1e-10};
+  double point5[3] {1.0 + 1e-13, 0.5, 0.5};
+  double point6[3] {0.5, 1.0 + 1e-13, 0.5};
+  double point7[3] {0.5, 0.5, 1.0 + 1e-13};
   //points on lower dimension boundaries
-  double point8[3] {-1e-10, 0.5, 0.5};
-  double point9[3] {0.5, -1e-10, 0.5};
-  double point10[3] {0.5, 0.5, -1e-10};
+  double point8[3] {-1e-13, 0.5, 0.5};
+  double point9[3] {0.5, -1e-13, 0.5};
+  double point10[3] {0.5, 0.5, -1e-13};
 
   TEST_ASSERT( hex_mesh->isPointInMesh(point5) );
   TEST_ASSERT( hex_mesh->isPointInMesh(point6) );
@@ -680,7 +681,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travles_away_from_
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
 
-  start_point[0] = -1e-11;
+  start_point[0] = -1e-13;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
  
@@ -713,7 +714,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travles_away_from_
 TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travels_away_from_mesh_positive)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
-  start_point[0] = 1+1e-11;
+  start_point[0] = 1+1e-13;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
  
@@ -746,11 +747,11 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travels_away_from_
 TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
-  start_point[0] = 1+1e-11;
+  start_point[0] = 1+1e-13;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
  
-  end_point[0] = 1+1e-11;
+  end_point[0] = 1+1e-13;
   end_point[1] = 0.75;
   end_point[2] = 0.25;
  
@@ -773,11 +774,11 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in
   TEST_EQUALITY(contribution1.size(), 0);
 
   //particle starts in boundary region and dies in boundary region going towards boundary region
-  start_point[0] = 1+1e-11;
+  start_point[0] = 1+1e-13;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
  
-  end_point[0] = 1+1e-12;
+  end_point[0] = 1+1e-14;
   end_point[1] = 0.75;
   end_point[2] = 0.25;
  
@@ -801,7 +802,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in
   
   //same as last but on other side for y dimension
   start_point[0] = 0.25;
-  start_point[1] = -1e-11;
+  start_point[1] = -1e-13;
   start_point[2] = 0.25;
  
   end_point[0] = 0.75;
@@ -828,7 +829,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in
   
   //test particle starting in boundary region and stopping at hex face
   start_point[0] = 0.25;
-  start_point[1] = -1e-11;
+  start_point[1] = -1e-13;
   start_point[2] = 0.25;
  
   end_point[0] = 0.75;
@@ -862,7 +863,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_enters_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
 
-  start_point[0] = 1+1e-11;
+  start_point[0] = 1+5e-13;
   start_point[1] = 0.25;
   start_point[2] = 0.25;
  
@@ -889,8 +890,8 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_enters_mesh)
   TEST_EQUALITY(contribution1.size(), 2);
   TEST_EQUALITY(contribution1[0].first, 1);
   TEST_EQUALITY(contribution1[1].first, 3);
-  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.353553390596809, 1e-12);
-  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.353553390596809, 1e-12);
+  TEST_FLOATING_EQUALITY(contribution1[0].second, 0.35355339059345, 1e-12);
+  TEST_FLOATING_EQUALITY(contribution1[1].second, 0.35355339059345, 1e-12);
 
 
 }
@@ -940,3 +941,4 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_enters_mesh_dimension_test)
     + contribution1[1].second, 1e-10);
 
 }
+
