@@ -369,15 +369,17 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				  get<YIndepMember>( *start_indep_y_grid_1 ) );
   
   // Calculate the unit base independent variable
-  const T eta = calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
+  const T eta =
+    ZYInterpPolicy::calculateUnitBaseIndepVar( indep_var_y, y_x_min, Lx );
   
   // Calculate the y value on the first grid
-  T indep_var_y_0 = calculateGridIndepVar( 
-				    eta,
+  T indep_var_y_0 = ZYInterpPolicy::calculateIndepVar( 
+				    eta, 
 				    get<YIndepMember>( *start_indep_y_grid_0 ),
 				    L0 );
+  
   // Calculate the y value on the second grid
-  T indep_var_y_1 = calculateGridIndepVar(
+  T indep_var_y_1 = ZYInterpPolicy::calculateIndepVar(
 				    eta,
 				    get<YIndepMember>( *start_indep_y_grid_1 ),
 				    L1 );
@@ -587,94 +589,6 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,
 					 indep_var_x,
 					 grid_0_y_limit,
 					 grid_1_y_limit );
-}
-  
-// Calculate the unit base independent variable (eta)
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<typename T>
-inline T 
-TwoDInterpolationPolicyImpl<ZYInterpPolicy,
-			    ZXInterpPolicy>::calculateUnitBaseIndepVar( 
-				      const T indep_var_y,
-				      const T intermediate_indep_var_y_min,
-				      const T intermediate_grid_length )
-{
-  // Make sure the intermediate grid min indep var is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
-					      intermediate_indep_var_y_min ) );
-  testPrecondition( ZYInterpPolicy::isIndepVarInValidRange(
-					      intermediate_indep_var_y_min ) );
-  // Make sure the intermediate grid length is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
-						  intermediate_grid_length ) );
-  testPrecondition( intermediate_grid_length > 0.0 );
-  // Make sure the independent y variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_y ) );
-  testPrecondition( ZYInterpPolicy::isIndepVarInValidRange( indep_var_y ) );
-  testPrecondition( indep_var_y >= intermediate_indep_var_y_min ||
-		    Policy::relError( indep_var_y,
-				      intermediate_indep_var_y_min ) <= s_tol);
-  remember( double test_difference = 
-	    ZYInterpPolicy::processIndepVar(indep_var_y) -
-	    ZYInterpPolicy::processIndepVar(intermediate_indep_var_y_min) );
-  testPrecondition( test_difference <= intermediate_grid_length ||
-		    Policy::relError( test_difference, 
-				      intermediate_grid_length ) <= s_tol );
-  
-  T eta = (ZYInterpPolicy::processIndepVar(indep_var_y) - 
-	   ZYInterpPolicy::processIndepVar(intermediate_indep_var_y_min))/
-    intermediate_grid_length;
-
-  // Check for rounding errors
-  if( eta > 1.0 )
-  {
-    if( eta - 1.0 < s_tol )
-      eta = 1.0;
-  }
-  else if( eta < 0.0 )
-  {
-    if( eta > -s_tol )
-      eta = 0.0;
-  }
-  
-  // Make sure eta is valid
-  testPostcondition( eta >= 0.0 );
-  testPostcondition( eta <= 1.0 );
-
-  return eta;
-}
-
-// Calculate the independent y variable on a grid given eta
-template<typename ZYInterpPolicy, typename ZXInterpPolicy>
-template<typename T>
-inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
-				     ZXInterpPolicy>::calculateGridIndepVar( 
-						    const T eta,
-					            const T grid_indep_var_min,
-						    const T grid_length )
-{
-  // Make sure the eta value is valid
-  testPrecondition( eta >= 0.0 );
-  testPrecondition( eta <= 1.0 );
-  // Make sure the grid min indep var is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_indep_var_min ));
-  testPrecondition( ZYInterpPolicy::isIndepVarInValidRange( 
-							grid_indep_var_min ) );
-  // Make sure the grid length is valid
-  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_length ) );
-  testPrecondition( grid_length >= 0.0 );
-
-  double grid_indep_var = 
-    ZYInterpPolicy::recoverProcessedIndepVar( 
-	                ZYInterpPolicy::processIndepVar( grid_indep_var_min ) +
-			grid_length*eta );
-
-  // Check for rounding errors
-  if( grid_indep_var < grid_indep_var_min &&
-      Policy::relError( grid_indep_var, grid_indep_var_min ) <= s_tol )
-    grid_indep_var = grid_indep_var_min;
-
-  return grid_indep_var;
 }
 
 // Interpolate on the specified y grid
@@ -1073,17 +987,18 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 			get<YIndepMember>( *start_processed_indep_y_grid_1 ) );
   
   // Calculate the unit base independent variable
-  const T eta = calculateUnitBaseIndepVarProcessed( processed_indep_var_y, 
-						    processed_y_x_min, 
-						    Lx );
+  const T eta =
+    ZYInterpPolicy::calculateUnitBaseIndepVarProcessed( processed_indep_var_y, 
+                                                        processed_y_x_min, 
+                                                        Lx );
   
   // Calculate the y value on the first grid
-  T processed_indep_var_y_0 = calculateProcessedGridIndepVar( 
+  T processed_indep_var_y_0 = ZYInterpPolicy::calculateProcessedIndepVar( 
 			  eta,
 			  get<YIndepMember>( *start_processed_indep_y_grid_0 ),
 			  L0 );
   // Calculate the y value on the second grid
-  T processed_indep_var_y_1 = calculateProcessedGridIndepVar(
+  T processed_indep_var_y_1 = ZYInterpPolicy::calculateProcessedIndepVar(
 			  eta,
 			  get<YIndepMember>( *start_processed_indep_y_grid_1 ),
 			  L1 );

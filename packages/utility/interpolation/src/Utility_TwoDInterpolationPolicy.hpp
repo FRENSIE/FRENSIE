@@ -236,18 +236,6 @@ public:
 					   const T indep_var_x,
 					   const T grid_0_y_limit,
 					   const T grid_1_y_limit );
-
-  //! Calculate the unit base independent variable (eta)
-  template<typename T>
-  static T calculateUnitBaseIndepVar( const T indep_var_y,
-				      const T intermediate_indep_var_y_min,
-				      const T intermediate_grid_length );
-
-  //! Calculate the independent y variable on a grid given eta
-  template<typename T>
-  static T calculateGridIndepVar( const T eta,
-				  const T grid_indep_var_min,
-				  const T grid_length );
   
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
@@ -373,20 +361,6 @@ public:
 					    const T processed_indep_var_x,
 					    const T processed_grid_0_y_limit,
 					    const T processed_grid_1_y_limit );
-
-  //! Calculate the unit base independent variable (eta)
-  template<typename T>
-  static T calculateUnitBaseIndepVarProcessed( 
-			        const T processed_indep_var_y,
-				const T processed_intermediate_indep_var_y_min,
-				const T intermediate_grid_length );
-
-  //! Calculate the independent y variable on a grid given eta
-  template<typename T>
-  static T calculateProcessedGridIndepVar( 
-				  const T eta,
-				  const T processed_grid_indep_var_min,
-				  const T grid_length );
 
 private:
 

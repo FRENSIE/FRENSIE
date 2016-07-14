@@ -22,6 +22,10 @@
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Initialize the static member data
+template<typename ParentInterpolationType>
+const double InterpolationHelper<ParentInterpolationType>::s_tol = 1e-3;
   
 // Interpolate between two processed points
 template<typename ParentInterpolationType>
@@ -76,6 +80,151 @@ T InterpolationHelper<ParentInterpolationType>::interpolateAndProcess(
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0);
+}
+
+// Calculate the unit base independent variable (eta)
+template<typename ParentInterpolationType>
+template<typename IndepType>
+inline QuantityTraits<IndepType>::RawType
+InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVar(
+                                            const IndepType indep_var,
+                                            const IndepType indep_var_min,
+                                            const IndepType indep_grid_length )
+{
+  // Make sure the intermediate grid min indep var is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_min ) );
+  testPrecondition( ZYInterpPolicy::isIndepVarInValidRange( indep_var_min ) );
+  // Make sure the intermediate grid length is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_grid_length ) );
+  testPrecondition( indep_grid_length > 0.0 );
+  // Make sure the independent y variable is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( ZYInterpPolicy::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( indep_var >= indep_var_min ||
+		    Policy::relError( indep_var,
+				      indep_var_min ) <= s_tol);
+  remember( QuantityTraits<IndepType>::RawType test_difference = 
+	    ZYInterpPolicy::processIndepVar(indep_var) -
+	    ZYInterpPolicy::processIndepVar(indep_var_min) );
+  testPrecondition( test_difference <= indep_grid_length ||
+		    Policy::relError( test_difference, indep_grid_length )
+                    <= s_tol );
+
+  QuantityTraits<IndepType>::RawType eta =
+    (ParentInterpolationType::processIndepVar(indep_var) -
+     ParentInterpolationType::processIndepVar(indep_var_min))/
+    indep_grid_length;
+
+  return calculateUnitBaseIndepVarProcessed(
+                       ParentInterpolationType::processIndepVar(indep_var),
+                       ParentInterpolationType::processIndepVar(indep_var_min),
+                       indep_grid_length );
+}
+
+// Calculate the unit base independent variable (eta)
+template<typename ParentInterpolationType>
+template<typename IndepType>
+inline QuantityTraits<IndepType>::RawType
+InterpolationHelper<ParentInterpolationType>::calculateUnitBaseIndepVarProcessed(
+              const QuantityTraits<IndepType>::RawType processed_indep_var,
+              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
+              const IndepType indep_grid_length )
+{
+  // Make sure the intermediate grid min indep var is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
+                                                   processed_indep_var_min ) );
+  // Make sure the independent y variable is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(processed_indep_var) );
+  testPrecondition( processed_indep_var >= 
+		    processed_indep_var_min ||
+		    Policy::relError(processed_indep_var,
+				     processed_indep_var_min) <=
+		    s_tol );
+  remember( QuantityTraits<IndepType>::RawType test_difference =
+            processed_indep_var - processed_indep_var_min );
+  testPrecondition( test_difference <= indep_grid_length ||
+		    Policy::relError( test_difference, indep_grid_length ) <=
+                    s_tol );
+  // Make sure the intermediate grid length is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_grid_length ) );
+  testPrecondition( indep_grid_length > 0.0 );
+  
+  QuantityTraits<IndepType>::RawType eta =
+    (processed_indep_var - processed_indep_var_min)/indep_grid_length;
+
+  // Check for rounding errors
+  if( eta > 1.0 )
+  {
+    if( eta - 1.0 < s_tol )
+      eta = 1.0;
+  }
+  else if( eta < 0.0 )
+  {
+    if( eta > -s_tol )
+      eta = 0.0;
+  }
+  
+  // Make sure eta is valid
+  testPostcondition( eta >= 0.0 );
+  testPostcondition( eta <= 1.0 );
+
+  return eta;
+}
+
+// Calculate the independent variable (from eta)
+template<typename ParentInterpolationType>
+template<typename IndepType>
+inline IndepType
+calculateIndepVar( const QuantityTraits<IndepType>::RawType eta,
+                   const IndepType indep_var_min,
+                   const IndepType indep_grid_length )
+{
+  // Make sure the eta value is valid
+  testPrecondition( eta >= 0.0 );
+  testPrecondition( eta <= 1.0 );
+  // Make sure the grid min indep var is valid
+  testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_var_min ) );
+  testPrecondition( ParentDistributionType::isIndepVarInValidRange( indep_var_min ) );
+  // Make sure the grid length is valid
+  testPrecondition( !QuantityTraits<IndepType>::isnaninf( indep_grid_length ) );
+  testPrecondition( indep_grid_length >= QuantityTraits<IndepType>::zero() );
+
+  IndepType grid_indep_var = QuanityTraits<IndepType>::initializeQuantity(
+    ParentDistributionType::recoverProcessedIndepVar( 
+                     ParentDistributionType::processIndepVar( indep_var_min ) +
+                     getRawQuantity(indep_grid_length)*eta ) );
+
+  // Check for rounding errors
+  if( grid_indep_var < indep_var_min &&
+      Policy::relError( grid_indep_var, indep_var_min ) <= s_tol )
+    grid_indep_var = indep_var_min;
+
+  // Make sure the calculated independent variable is valid
+  testPostcondition( grid_indep_var >= indep_var_min );
+
+  return grid_indep_var;
+}
+
+// Calculate the processed independent variable (from eta)
+template<typename ParentInterpolationType>
+template<typename T>
+inline QuantityTraits<IndepType>::RawType
+calculateProcessedIndepVar(
+              const QuantityTraits<IndepType>::RawType eta,
+              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
+              const IndepType indep_grid_length )
+{
+  // Make sure the eta value is valid
+  testPrecondition( eta >= 0.0 );
+  testPrecondition( eta <= 1.0 );
+  // Make sure the grid min indep var is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+					           processed_indep_var_min ) );
+  // Make sure the grid length is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_grid_length ) );
+  testPrecondition( indep_grid_length >= QuantityTraits<IndepType>::zero() );
+  
+  return processed_indep_var_min + getRawQuantity(indep_grid_length)*eta;
 }
 
 // Get the interpolation type

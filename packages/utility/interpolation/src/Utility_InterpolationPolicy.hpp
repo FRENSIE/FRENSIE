@@ -49,27 +49,37 @@ struct InterpolationHelper
 
   //! Calculate the unit base independent variable (eta)
   template<typename IndepType>
-  static IndepType calculateUnitBaseIndepVar( const IndepType indep_var,
-                                              const IndepType indep_var_min,
-                                              const IndepType indep_grid_length );
+  static QuantityTraits<IndepType>::RawType
+  calculateUnitBaseIndepVar( const IndepType indep_var,
+                             const IndepType indep_var_min,
+                             const IndepType indep_grid_length );
 
   //! Calculate the unit base independent variable (eta)
-  template<typename T>
-  static T calculateUnitBaseIndepVarProcessed( const T processed_indep_var,
-                                               const T processed_indep_var_min,
-                                               const T indep_grid_length );
+  template<typename IndepType>
+  static QuantityTraits<IndepType>::RawType
+  calculateUnitBaseIndepVarProcessed(
+              const QuantityTraits<IndepType>::RawType processed_indep_var,
+              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
+              const IndepType indep_grid_length );
 
   //! Calculate the independent variable (from eta)
   template<typename IndepType>
-  static IndepType calculateIndepVar( const QuantityTraits<IndepType>::RawType eta,
-                                      const IndepType indep_var_min,
-                                      const IndepType indep_grid_length );
+  static IndepType calculateIndepVar(
+                                  const QuantityTraits<IndepType>::RawType eta,
+                                  const IndepType indep_var_min,
+                                  const IndepType indep_grid_length );
 
   //! Calculate the processed independent variable (from eta)
-  template<typename T>
-  static T calculateProcessedIndepVar( const T eta,
-                                       const T processed_indep_var_min,
-                                       const T grid_length );
+  template<typename IndepType>
+  static QuantityTraits<IndepType>::RawType calculateProcessedIndepVar(
+              const QuantityTraits<IndepType>::RawType eta,
+              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
+              const IndepType indep_grid_length );
+
+private:
+
+  // The tolerance used to eliminate some rounding issues
+  static double s_tol;
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
