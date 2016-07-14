@@ -89,7 +89,7 @@
   catch( const std::exception &exception )	\
   {						\
     std::ostringstream oss;			\
-    oss << " *** Caught std::exception Exception *** \n\n"; \
+    oss << " *** Caught Exception of Type std::exception *** \n\n"; \
     oss << "File: " << __FILE__ << "\n"; \
     oss << "Line: " << __LINE__ << "\n"; \
     Teuchos::OSTab scsi_tab(oss); \
@@ -106,7 +106,7 @@
   catch( const Exception &exception ) \
   {				      \
     std::ostringstream oss;	      \
-    oss << " *** Caught " << #Exception << " Exception *** \n\n";	\
+    oss << " *** Caught Exception of Type " << #Exception << " *** \n\n"; \
     oss << "File: " << __FILE__ << "\n";				\
     oss << "Line: " << __LINE__ << "\n";				\
     oss << msg << "\n";							\
@@ -127,11 +127,11 @@
 #define EXCEPTION_CATCH_RETHROW( Exception, msg ) \
 catch( const Exception &exception )				\
 {								\
-  std::ostringstream detailed_msg;				\
-  detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n"	\
-	       << msg << "\n"					\
-	       << exception.what() << "\n";			\
-  throw Exception(detailed_msg.str());				\
+  std::ostringstream detailed_msg;                                      \
+  detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"	\
+	       << msg << "\n"                                           \
+	       << exception.what() << "\n";                             \
+  throw Exception(detailed_msg.str());                                  \
 }
 
 /*! Catch macro for catching exceptions, adding error info, and rethrowing
@@ -146,7 +146,7 @@ catch( const Exception &exception )				\
 catch( const ExceptionIn &exception )					\
 {									\
   std::ostringstream detailed_msg;					\
-  detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n"		\
+  detailed_msg << "\n" << __FILE__ << ":" << __LINE__ << ":\n"          \
                << msg << "\n"						\
                << exception.what() << "\n";				\
   throw ExceptionOut(detailed_msg.str());				\
@@ -159,7 +159,7 @@ catch( const ExceptionIn &exception )					\
   catch( const Exception &exception ) \
   {				      \
     std::ostringstream oss;	      \
-    oss << " *** Caught " << #Exception << " Exception *** \n\n";	\
+    oss << " *** Caught Exception of Type " << #Exception << " *** \n\n"; \
     oss << "File: " << __FILE__ << "\n";				\
     oss << "Line: " << __LINE__ << "\n";				\
     oss << msg << "\n";							\

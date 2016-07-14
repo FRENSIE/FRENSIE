@@ -3,8 +3,8 @@ Installation {#installation}
 
 ## Dependencies 
 To promote rapid scientific software development and research, FRENSIE is built
-off of a large number of software libraries. The software that FRENSIE
-depends on is listed below.
+off of a large number of software libraries. The software libraries that FRENSIE
+depends on are listed below.
 
 1. [HDF5 1.8.13+](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/) - optional
@@ -244,7 +244,7 @@ are described.
 7. move to the build directory (e.g. software/trilinos/build)
 8. copy `FRENSIE/scripts/trilinos-basic.sh` into the build directory 
 9. change the variables in the script to reflect the desired system paths
-10. run `./trilinos.sh` to configure trilinos
+10. run `./trilinos-basic.sh` to configure trilinos
 11. run `make -j n`
 12. run `make test`
 13. run `make install`

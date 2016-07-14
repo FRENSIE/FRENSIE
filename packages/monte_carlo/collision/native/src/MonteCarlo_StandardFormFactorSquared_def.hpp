@@ -57,7 +57,7 @@ FormFactorSquared::SquaredArgumentQuantity StandardFormFactorSquared<StoredSqrAr
 template<typename StoredSqrArgUnit, template<typename> class SmartPointer>
 double StandardFormFactorSquared<StoredSqrArgUnit,SmartPointer>::getMaxValue() const
 {
-  d_raw_form_factor_squared->evaluate( d_raw_form_factor_squared->getLowerBoundOfIndepVar() );
+  return d_raw_form_factor_squared->evaluate( d_raw_form_factor_squared->getLowerBoundOfIndepVar() );
 }
 
 // Return the min form factor squared value

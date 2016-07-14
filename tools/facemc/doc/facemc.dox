@@ -1218,20 +1218,7 @@
  *           <Parameter name="Type" type="string" value="Cell Pulse Height"/>
  *           <Parameter name="Type" type="string" value="Tet Mesh Track-Length Flux"/>
  *           \endcode</li>
- *      </ul>
- *      If DAGMC is being used, the estimator type can also be specified in 
- *      CUBIT (except for the tet mesh estimator). The default type keywords 
- *      are the following:
- *      <ul>
- *       <li>surface.current (Surface Current),</li>
- *       <li>surface.flux (Surface Flux),</li>
- *       <li>cell.tl.flux (Cell Track-Length Flux),</li>
- *       <li>cell.c.flux (Cell Collision Flux),</li>
- *       <li>cell.pulse.height (Cell Pulse Height).</li>
- *      </ul>
- *      However, these keywords can be substituted with any alternative of your
- *      choosing (these alternatives must be specified in the 
- *      \ref geometry_xml_file "geometry xml file").</li>
+ *      </ul></li>
  *  <li>The third parameter element is the particle type parameter. This 
  *      parameter specifies which particles can contribute to the estimator. 
  *      Currently, the only valid particle types are: Neutron, Photon
@@ -1242,13 +1229,6 @@
  *           <Parameter name="Particle Type" type="string" value="Photon"/>
  *           <Parameter name="Particle Type" type="string" value="Electron"/>
  *           \endcode</li>
- *      </ul>
- *      If DAGMC is being used, the particle type can also be specified in 
- *      CUBIT using a corresponding shorthand:
- *      <ul>
- *       <li>n (Neutron)</li>
- *       <li>p (Photon)</li>
- *       <li>e (electron)</li>
  *      </ul></li>
  *
  *  <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fourth parameter
@@ -1404,7 +1384,7 @@
   
  * <ParameterList name="Surface Current Estimator">
  *  <Parameter name="Id" type="unsigned int" value="5"/>
- *  <Parameter name="Type" type="string" value="surface.current"/>
+ *  <Parameter name="Type" type="string" value="Surface Current"/>
  *  <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  <Parameter name="Multiplier" type="double" value="2.0"/>
  *  <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>

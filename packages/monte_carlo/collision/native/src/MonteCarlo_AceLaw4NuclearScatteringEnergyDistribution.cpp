@@ -57,7 +57,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
 
   // Check if energy is outside the grid
   if( energy >= d_energy_distribution.front().first and 
-      energy <= d_energy_distribution.back().first )
+      energy < d_energy_distribution.back().first )
   { 
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -153,7 +153,7 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   }
 
   return outgoing_energy;
-
+  
 }
 
 } // end MonteCarlo namespace
