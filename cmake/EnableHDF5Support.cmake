@@ -3,7 +3,9 @@
 # 1.) HDF5 - stores the HDF5 cpp wrapper library and the HDF5 core library
 MACRO(ENABLE_HDF5_SUPPORT)
 
-
+  IF(DEFINED HDF5_PREFIX)
+    SET(CMAKE_PREFIX_PATH ${HDF5_PREFIX} ${CMAKE_PREFIX_PATH})
+  ENDIF()
   # Find the HDF5 package available on this system
   FIND_PACKAGE(HDF5 1.8.11 REQUIRED COMPONENTS C CXX)
  
