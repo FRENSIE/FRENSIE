@@ -182,9 +182,17 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateTwoDDistributionCorrelatedPD
   double sampled_variable;
 
   sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
-                                                   energy,
-                                                   independent_value,
-                                                   twod_distribution );
+                        energy,
+                        independent_value,
+                        twod_distribution );
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-15  );
+
+  sampled_variable = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
+                        1u,
+                        energy,
+                        independent_value,
+                        twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 1.5/9.0, 1e-15  );
 }

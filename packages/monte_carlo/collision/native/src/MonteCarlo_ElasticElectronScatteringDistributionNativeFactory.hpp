@@ -86,9 +86,9 @@ public:
 	const Data::ElectronPhotonRelaxationDataContainer& data_container,
     const double& cutoff_angle_cosine = 0.9 );
 
-  //! Return angle cosine grid for the given cutoff angle and grid energy bin
+  //! Return angle cosine grid for the given cutoff angle
   static std::vector<double> getAngularGrid(
-    const Data::ElectronPhotonRelaxationDataContainer& raw_electroatom_data,
+    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
     const double& energy,
     const double& cutoff_angle_cosine );
 

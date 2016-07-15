@@ -181,7 +181,11 @@ void ElasticElectronMomentsEvaluator::evaluateElasticMoment(
   // if the cutoff angle cosine is above 0.999999 only the moments of the screened Rutherford are needed
   if ( d_cutoff_angle_cosine < s_rutherford_cutoff_angle_cosine )
   {
-    this->getAngularIntegrationPoints( angular_grid, energy );
+    angular_grid =
+        MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            d_cutoff_elastic_angles,
+            energy,
+            d_cutoff_angle_cosine );
 
     evaluateCutoffMoment( cutoff_zero, angular_grid, integrator, energy, 0 );
   }

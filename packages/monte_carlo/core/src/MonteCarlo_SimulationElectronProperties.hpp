@@ -56,7 +56,7 @@ public:
   static BremsstrahlungAngularDistributionType
           getBremsstrahlungAngularDistributionFunction();
 
-  //! Set the elastic cutoff angle cosine (mu = 0.999999 by default)
+  //! Set the elastic cutoff angle cosine (mu = 1.0 by default)
   static void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
 
   //! Return the elastic cutoff angle cosine
@@ -92,7 +92,7 @@ private:
   static BremsstrahlungAngularDistributionType
            bremsstrahlung_angular_distribution_function;
 
-  // The elastic cutoff angle cosine (mu = 0.999999 by default)
+  // The elastic cutoff angle cosine (mu = 1.0 by default)
   static double elastic_cutoff_angle_cosine;
 
   // The number of electron hash grid bins

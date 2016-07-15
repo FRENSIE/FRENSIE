@@ -62,13 +62,6 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
   double primary_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
                                                              knock_on_energy );
 
-/*
-  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
-  double primary_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF(
-                                     incoming_energy,
-                                     knock_on_energy,
-                                     d_knock_on_distribution );
-*/
   return forward_cs*( knock_on_pdf + primary_pdf );
 }
 

@@ -104,7 +104,18 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 {
 
   double pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF( 1.000000000000E-05,
+    twobs_bremsstrahlung_distribution->evaluatePDF(
+                            1.000000000000E-05,
+						    1.000000000000E-06  );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.819250066065520E+05,
+				  1e-12 );
+
+  pdf =
+    twobs_bremsstrahlung_distribution->evaluatePDF(
+                            0u,
+                            1.000000000000E-05,
 						    1.000000000000E-06  );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,
@@ -120,7 +131,18 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 				  1e-12 );
 
   pdf =
-    twobs_bremsstrahlung_distribution->evaluatePDF( 1.000000000000E+05,
+    twobs_bremsstrahlung_distribution->evaluatePDF(
+                            1.000000000000E+05,
+						    2.000000000000E+04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( pdf,
+				  1.363940131180460E-06,
+				  1e-12 );
+
+  pdf =
+    twobs_bremsstrahlung_distribution->evaluatePDF(
+                            8u,
+                            1.000000000000E+05,
 						    2.000000000000E+04 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pdf,

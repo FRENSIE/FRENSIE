@@ -35,6 +35,9 @@ public:
   //! Typedef for the bremsstrahlung distribution
   typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
 
+  //! Typedef for interpolation policy
+  typedef Utility::LinLog InterpolationPolicy;
+
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
@@ -68,6 +71,11 @@ public:
   double evaluate( const double incoming_energy,
                    const double scattering_angle ) const
   { /* ... */ }
+
+  //! Evaluate the PDF value for a given incoming and photon energy (efficient)
+  double evaluatePDF( const unsigned lower_bin_index,
+                      const double incoming_energy,
+                      const double photon_energy ) const;
 
   //! Evaluate the PDF value for a given incoming and photon energy
   double evaluatePDF( const double incoming_energy,

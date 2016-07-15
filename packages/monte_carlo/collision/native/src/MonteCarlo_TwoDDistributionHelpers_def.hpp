@@ -369,6 +369,31 @@ double evaluateTwoDDistributionCorrelatedPDF(
     return lower_bin_boundary->second->evaluatePDF( dependent_variable );
 }
 
+// Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution, typename InterpolationPolicy>
+double evaluateTwoDDistributionCorrelatedPDF(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution )
+{
+  // Make sure the lower_bin_index is valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index < dependent_distribution.size() );
+
+  if( dependent_distribution[lower_bin_index].first != independent_variable )
+  {
+    return InterpolationPolicy::interpolate(
+            dependent_distribution[lower_bin_index].first,
+            dependent_distribution[lower_bin_index+1].first,
+            independent_variable,
+            dependent_distribution[lower_bin_index].second->evaluatePDF( dependent_variable ),
+            dependent_distribution[lower_bin_index+1].second->evaluatePDF( dependent_variable ) );
+  }
+  else
+    return dependent_distribution[lower_bin_index].second->evaluatePDF( dependent_variable );
+}
+
 
 // Evaluate a correlated CDF from a two dimensional distribution
 template<typename DependentTwoDDistribution, typename InterpolationPolicy>

@@ -76,7 +76,7 @@ double AnalogElasticElectronScatteringDistribution::evaluate(
   else
   {
     // evaluate on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LogLog>(
+    return MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_cutoff_distribution );
@@ -99,7 +99,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherford(
   double delta_mu = 1.0 - scattering_angle_cosine;
 
   double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LogLog>(
+    MonteCarlo::evaluateTwoDDistributionCorrelated<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          s_cutoff_mu,
                          d_elastic_cutoff_distribution );
@@ -136,7 +136,7 @@ double AnalogElasticElectronScatteringDistribution::evaluatePDF(
   else
   {
     // evaluate PDF on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LogLog>(
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_cutoff_distribution );
@@ -159,7 +159,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordPD
   double delta_mu = 1.0 - scattering_angle_cosine;
 
   double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LogLog>(
+    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          s_cutoff_mu,
                          d_elastic_cutoff_distribution );
@@ -193,7 +193,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateCDF(
   else
   {
     // evaluate CDF on the cutoff distribution
-    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<CutoffDistribution, Utility::LogLog>(
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_cutoff_distribution );
@@ -216,7 +216,7 @@ double AnalogElasticElectronScatteringDistribution::evaluateScreenedRutherfordCD
   double delta_mu = 1.0 - scattering_angle_cosine;
 
   double cutoff_pdf =
-    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LogLog>(
+    MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<CutoffDistribution, Utility::LinLog>(
                          incoming_energy,
                          s_cutoff_mu,
                          d_elastic_cutoff_distribution );

@@ -124,6 +124,26 @@ double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgo
   return 0.0;
 }
 
+// Evaluate the PDF value for a given incoming and photon energy (efficient)
+double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
+                    const unsigned lower_bin_index,
+                    const double incoming_energy,
+                    const double photon_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( lower_bin_index >= 0 );
+  testPrecondition( lower_bin_index <
+                    d_bremsstrahlung_scattering_distribution.size() );
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution, InterpolationPolicy>(
+            lower_bin_index,
+            incoming_energy,
+            photon_energy ,
+            d_bremsstrahlung_scattering_distribution );
+}
+
 // Evaluate the PDF value for a given incoming and photon energy
 double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
                      const double incoming_energy,
@@ -133,10 +153,10 @@ double BremsstrahlungElectronScatteringDistribution::evaluatePDF(
   testPrecondition( incoming_energy > 0.0 );
   testPrecondition( photon_energy > 0.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution>(
-                         incoming_energy,
-                         photon_energy,
-                         d_bremsstrahlung_scattering_distribution );
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF<BremsstrahlungDistribution, InterpolationPolicy>(
+            incoming_energy,
+            photon_energy,
+            d_bremsstrahlung_scattering_distribution );
 }
 
 // Sample the photon energy and direction from the distribution

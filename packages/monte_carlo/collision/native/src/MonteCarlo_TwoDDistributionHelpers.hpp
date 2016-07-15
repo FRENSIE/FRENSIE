@@ -118,6 +118,15 @@ double evaluateTwoDDistributionCorrelatedPDF(
     const double dependent_variable,
     const DependentTwoDDistribution& dependent_distribution );
 
+//! Evaluate a correlated PDF from a two dimensional distribution
+template<typename DependentTwoDDistribution,
+         typename InterpolationPolicy = Utility::LinLin>
+double evaluateTwoDDistributionCorrelatedPDF(
+    const unsigned lower_bin_index,
+    const double independent_variable,
+    const double dependent_variable,
+    const DependentTwoDDistribution& dependent_distribution );
+
 //! Evaluate a correlated CDF from a two dimensional distribution
 template<typename DependentTwoDDistribution,
          typename InterpolationPolicy = Utility::LinLin>

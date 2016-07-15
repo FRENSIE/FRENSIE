@@ -53,6 +53,32 @@ struct X2Functor
   }
 };
 
+struct X2FunctorParameter
+{
+  double operator()( const double x, const double y ) const
+  {
+    if( y >= 0.0 && y <= 1.0 )
+      return y*y*x;
+    else
+      return 0.0;
+  }
+
+  static double getIntegratedValue()
+  {
+    return 1.0/3.0;
+  }
+
+  static double getLowerIntegratedValue()
+  {
+    return 1.0/24.0;
+  }
+
+  static double getUpperIntegratedValue()
+  {
+    return 7.0/24.0;
+  }
+};
+
 struct X2FunctorLong
 {
   long double operator()( const long double x ) const
@@ -111,6 +137,32 @@ struct X3Functor
   {
     if( x >= 0.0 && x <= 1.0 )
       return x*x*x;
+    else
+      return 0.0;
+  }
+
+  static double getIntegratedValue()
+  {
+    return 0.25;
+  }
+
+  static double getLowerIntegratedValue()
+  {
+    return 1.0/64.0;
+  }
+
+  static double getUpperIntegratedValue()
+  {
+    return 15.0/64.0;
+  }
+};
+
+struct X3FunctorParameter
+{
+  double operator()( const double x, const double y ) const
+  {
+    if( y >= 0.0 && y <= 1.0 )
+      return y*y*y*x;
     else
       return 0.0;
   }
@@ -235,6 +287,10 @@ public:
 #define UNIT_TEST_INSTANTIATION_3( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2FunctorBoost ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3FunctorBoost )
+
+#define UNIT_TEST_INSTANTIATION_4( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X2FunctorParameter ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, X3FunctorParameter )
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -1433,6 +1489,98 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
 }
 
 UNIT_TEST_INSTANTIATION_3( GaussKronrodIntegrator, integrateAdaptively_long_float );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1] adaptively
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodIntegrator,
+				   integrateAdaptively_parameter,
+				   Functor )
+{
+  Utility::GaussKronrodIntegrator<double> gk_integrator( 1e-12 );
+
+  double result, absolute_error, tol;
+
+  Functor functor_instance;
+
+  // Test the 15-point rule
+  gk_integrator.integrateAdaptively<15>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 21-point rule
+  gk_integrator.integrateAdaptively<21>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 31-point rule
+  gk_integrator.integrateAdaptively<31>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 41-point rule
+  gk_integrator.integrateAdaptively<41>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 51-point rule
+  gk_integrator.integrateAdaptively<51>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+
+
+  // Test the 61-point rule
+  gk_integrator.integrateAdaptively<61>( functor_instance,
+                  1.0,
+				  0.0,
+				  1.0,
+				  result,
+				  absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
+}
+
+UNIT_TEST_INSTANTIATION_4( GaussKronrodIntegrator, integrateAdaptively_parameter );
 
 //---------------------------------------------------------------------------//
 // Check that a function with integrable singularities can be integrated

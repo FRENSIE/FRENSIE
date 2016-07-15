@@ -9,16 +9,8 @@
 #ifndef DATA_GEN_ADJOINT_BREMSSTRAHLUNG_CROSS_SECTION_EVALUATOR_HPP
 #define DATA_GEN_ADJOINT_BREMSSTRAHLUNG_CROSS_SECTION_EVALUATOR_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
-#include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_OneDDistribution.hpp"
-//#include "Utility_TabularOneDDistribution.hpp"
-
 
 namespace DataGen{
 
@@ -30,6 +22,10 @@ public:
 
   //! Typedef for the bremsstrahlung distribution
   typedef MonteCarlo::TwoDDistribution BremsstrahlungDistribution;
+
+  //! Typedef for the bremsstrahlung distribution
+  typedef const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>
+    BremsstrahlungReaction;
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
@@ -62,7 +58,7 @@ public:
 private:
 
   // The forward bremsstrahlung reaction
-  std::shared_ptr<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
+  std::shared_ptr<const MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
     d_bremsstrahlung_reaction;
 
   // The energy used as integration points

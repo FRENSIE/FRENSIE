@@ -84,16 +84,15 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 			    T& result,
 			    T& absolute_error ) const;
 
-  //! Integrate the function with point rule
-  template<int Points, typename FunctorType = double, typename Functor>
-  void integrateWithPointRule(
-                Functor& integrand,
+  //! Integrate the function adaptively with BinQueue
+  template<int Points, typename FunctorType = double,
+                       typename ParameterType = double, typename Functor>
+  void integrateAdaptively( Functor& integrand,
+                ParameterType integrand_parameter,
 			    T lower_limit,
 			    T upper_limit,
 			    T& result,
-			    T& absolute_error,
-                T& result_abs,
-                T& result_asc ) const;
+			    T& absolute_error ) const;
 /*
   //! Integrate the function over a semi-infinite interval (+infinity)
   template<typename Functor>
@@ -131,6 +130,39 @@ typedef std::vector<ExtrpolatedBinTraits<T>> BinArray;
 			  T& result,
 			  T& absolute_error ) const;
 
+  //! Integrate a function with known integrable singularities adaptively
+  template<typename FunctorType = double, typename ParameterType = double, typename Functor>
+  void integrateAdaptivelyWynnEpsilon(
+			  Functor& integrand,
+              ParameterType integrand_parameter,
+			  const Teuchos::ArrayView<T>& points_of_interest,
+			  T& result,
+			  T& absolute_error ) const;
+
+  //! Integrate the function with point rule
+  template<int Points, typename FunctorType = double, typename Functor>
+  void integrateWithPointRule(
+                Functor& integrand,
+			    T lower_limit,
+			    T upper_limit,
+			    T& result,
+			    T& absolute_error,
+                T& result_abs,
+                T& result_asc ) const;
+
+  //! Integrate the function with point rule
+  template<int Points, typename FunctorType = double,
+                       typename ParameterType = double, typename Functor>
+  void integrateWithPointRule(
+                Functor& integrand,
+                ParameterType integrand_parameter,
+			    T lower_limit,
+			    T upper_limit,
+			    T& result,
+			    T& absolute_error,
+                T& result_abs,
+                T& result_asc ) const;
+
 protected:
 
   // Calculate the quadrature upper and lower integrand values at an abscissa
@@ -143,10 +175,32 @@ protected:
     T& integrand_value_lower,
     T& integrand_value_upper ) const;
 
+  // Calculate the quadrature upper and lower integrand values at an abscissa
+  template<typename FunctorType = double, typename ParameterType = double, typename Functor>
+  void calculateQuadratureIntegrandValuesAtAbscissa(
+    Functor& integrand,
+    ParameterType functor_parameter,
+    T abscissa,
+    T half_length,
+    T midpoint,
+    T& integrand_value_lower,
+    T& integrand_value_upper ) const;
+
   // Bisect and integrate the given bin interval
   template<int Points, typename FunctorType = double, typename Functor, typename Bin>
   void bisectAndIntegrateBinInterval(
     Functor& integrand,
+    const Bin& bin,
+    Bin& bin_1,
+    Bin& bin_2,
+    T& bin_1_asc,
+    T& bin_2_asc ) const;
+
+  // Bisect and integrate the given bin interval
+  template<int Points, typename FunctorType = double, typename ParameterType = double, typename Functor, typename Bin>
+  void bisectAndIntegrateBinInterval(
+    Functor& integrand,
+    ParameterType functor_parameter,
     const Bin& bin,
     Bin& bin_1,
     Bin& bin_2,

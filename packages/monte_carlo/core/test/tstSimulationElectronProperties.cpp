@@ -33,7 +33,7 @@ TEUCHOS_UNIT_TEST( SimulationElectronProperties, defaults )
 	20.0 );
   TEST_EQUALITY_CONST(
 	MonteCarlo::SimulationElectronProperties::getAbsoluteMaxElectronEnergy(),
-	20.0 );
+	1.0e5 );
   TEST_ASSERT(
 	MonteCarlo::SimulationElectronProperties::isAtomicRelaxationModeOn() );
   TEST_EQUALITY_CONST(

@@ -80,7 +80,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 template<typename InterpPolicy, bool processed_cross_section>
 double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
     const double incoming_energy,
-    const double outgoing_energy )
+    const double outgoing_energy ) const
 {
   // Make sure the energies are valid
   testPrecondition( incoming_energy > 0.0 );

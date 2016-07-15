@@ -47,9 +47,20 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   double energy = 1.0e-5;
   std::vector<double> angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-                                                *data_container,
-                                                energy,
-                                                cutoff_angle_cosine );
+                    data_container->getCutoffElasticAngles(),
+                    energy,
+                    cutoff_angle_cosine );
+  // Test
+  TEST_EQUALITY_CONST( angular_grid.size(), 2 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+
+  energy = 1.001e-5;
+  angular_grid =
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+                    data_container->getCutoffElasticAngles(),
+                    energy,
+                    cutoff_angle_cosine );
   // Test
   TEST_EQUALITY_CONST( angular_grid.size(), 2 );
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
@@ -58,11 +69,12 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   angular_grid.clear();
 
   cutoff_angle_cosine = 0.9;
+  energy = 1.0e-5;
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-                                                *data_container,
-                                                energy,
-                                                cutoff_angle_cosine );
+                    data_container->getCutoffElasticAngles(),
+                    energy,
+                    cutoff_angle_cosine );
   // Test
   TEST_EQUALITY_CONST( angular_grid.size(), 2 );
   TEST_EQUALITY_CONST( angular_grid.front(), 0.9 );
@@ -74,9 +86,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronScatteringDistributionNativeFactory,
   energy = 1.0e+5;
   angular_grid =
     MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-                                                *data_container,
-                                                energy,
-                                                cutoff_angle_cosine );
+                    data_container->getCutoffElasticAngles(),
+                    energy,
+                    cutoff_angle_cosine );
+  // Test
+  TEST_EQUALITY_CONST( angular_grid.size(), 90 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
+
+  cutoff_angle_cosine = -1.0;
+  energy = 9.0e+4;
+  angular_grid =
+    MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+                    data_container->getCutoffElasticAngles(),
+                    energy,
+                    cutoff_angle_cosine );
   // Test
   TEST_EQUALITY_CONST( angular_grid.size(), 90 );
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );

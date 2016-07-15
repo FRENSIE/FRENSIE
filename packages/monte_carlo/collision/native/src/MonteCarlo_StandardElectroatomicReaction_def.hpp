@@ -450,5 +450,5 @@ inline const double* StandardElectroatomicReaction<InterpPolicy,processed_cross_
 #endif // end MONTE_CARLO_STANDARD_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_StandardElectroatomicReaction.cpp
+// end MonteCarlo_StandardElectroatomicReaction_def.hpp
 //---------------------------------------------------------------------------//

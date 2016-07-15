@@ -165,7 +165,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::populateEPRDataContai
   std::cout << "done." << std::endl;
 
 }
-/*
+
 // Repopulate the electron moment preserving data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::repopulateAdjointMomentPreservingData(
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container,
@@ -186,7 +186,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::repopulateAdjointMome
     data_container );
   std::cout << "done." << std::endl;
 }
-*/
+
 // Set the relaxation data
 void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointRelaxationData(
 			   Data::AdjointElectronPhotonRelaxationVolatileDataContainer&
@@ -409,9 +409,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointElectronDat
   std::vector<double> energy_grid(
         union_energy_grid.begin(),
         union_energy_grid.end() );
-std::cout << std::endl << "energy_grid.size() = " << energy_grid.size() << std::endl;
-std::cout << std::endl << "first energy grid point = " << energy_grid[0] << std::endl;
-std::cout << std::endl << "last energy grid point = " << energy_grid[energy_grid.size()-1] << std::endl;
+
   data_container.setAdjointElectronEnergyGrid( energy_grid );
 
   // Create and set the cross sections
@@ -450,9 +448,9 @@ std::cout << std::endl << "last energy grid point = " << energy_grid[energy_grid
   std::vector<double> raw_cross_section( total_cross_section.size() );
   for ( int i = 0; i < total_cross_section.size(); ++i )
   {
-      raw_cross_section[i] = total_cross_section[i] - cutoff_cross_section[i];
+      raw_cross_section.at(i) = total_cross_section.at(i) - cutoff_cross_section.at(i);
 
-      double relative_difference = raw_cross_section[i]/total_cross_section[i];
+      double relative_difference = raw_cross_section.at(i)/total_cross_section.at(i);
 
       // Check for roundoff error and reduce to zero if needed
       if ( relative_difference < 1.0e-6 )
@@ -516,23 +514,119 @@ std::cout << std::endl << "last energy grid point = " << energy_grid[energy_grid
 
   std::vector<double> angular_energy_grid( start, end );
 
-  data_container.setAdjointElasticAngularEnergyGrid( angular_energy_grid );
-
   /* ENDL gives the angular distribution in terms of the change in angle cosine
    * (delta_angle_cosine = 1 - angle_cosine). For the native format it needs to
    * be in terms of angle_cosine. This for loop flips the distribution and
    * changes the variables to angle_cosine.
    */
-  std::vector<double>::iterator energy = angular_energy_grid.begin();
-  for ( energy; energy != angular_energy_grid.end(); energy++ )
+  for ( start; start != end; ++start )
   {
     calculateElasticAngleCosine(
-        d_forward_endl_data->getCutoffElasticAnglesAtEnergy( *energy ),
-        d_forward_endl_data->getCutoffElasticPDFAtEnergy( *energy ),
-        elastic_angle[*energy],
-        elastic_pdf[*energy] );
+        d_forward_endl_data->getCutoffElasticAnglesAtEnergy( *start ),
+        d_forward_endl_data->getCutoffElasticPDFAtEnergy( *start ),
+        elastic_angle[*start],
+        elastic_pdf[*start] );
   }
 
+  // Evlauate the scattering distribution for the min energy (if necessary) 
+  if( angular_energy_grid.front() != d_min_electron_energy )
+  {
+    // Create the distribution above and below the min energy for interpolation
+    Utility::TabularDistribution<Utility::LinLin> lower_distribution(
+        elastic_angle[angular_energy_grid[0] ],
+        elastic_pdf[angular_energy_grid[0] ] );
+
+    Utility::TabularDistribution<Utility::LinLin> upper_distribution(
+        elastic_angle[angular_energy_grid[1] ],
+        elastic_pdf[angular_energy_grid[1] ] );
+
+    // Get the angular scattering grid for the min energy
+    std::vector<double> min_angles =
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        d_forward_endl_data->getCutoffElasticAngles(),
+        d_min_electron_energy,
+        d_cutoff_angle_cosine );
+
+    // Get the pdf values for the min energy
+    std::vector<double> min_pdf( min_angles.size() );
+    for ( int i = 0; i < min_angles.size(); ++i )
+    {
+      min_pdf.at(i) = Utility::LinLog::interpolate(
+            angular_energy_grid[0],
+            angular_energy_grid[1],
+            d_min_electron_energy,
+            lower_distribution.evaluatePDF( min_angles.at(i) ),
+            upper_distribution.evaluatePDF( min_angles.at(i) ) );
+    }
+
+    // Set the distribution at the min energy
+    elastic_angle.emplace_hint(
+        elastic_angle.begin(),
+        d_min_electron_energy,
+        min_angles);
+
+    elastic_pdf.emplace_hint(
+        elastic_pdf.begin(),
+        d_min_electron_energy,
+        min_pdf);
+
+    // Erase the old front distribution
+    elastic_angle.erase( angular_energy_grid.front() );
+    elastic_pdf.erase( angular_energy_grid.front() );
+
+    angular_energy_grid.front() = d_min_electron_energy;
+  }
+
+  // Evlauate the scattering distribution for the max energy (if necessary) 
+  if( angular_energy_grid.back() != d_max_electron_energy )
+  {
+    // Create the distribution above and below the max energy for interpolation
+    Utility::TabularDistribution<Utility::LinLin> lower_distribution(
+        elastic_angle[angular_energy_grid[angular_energy_grid.size()-2] ],
+        elastic_pdf[angular_energy_grid[angular_energy_grid.size()-2] ] );
+
+    Utility::TabularDistribution<Utility::LinLin> upper_distribution(
+        elastic_angle[angular_energy_grid.back() ],
+        elastic_pdf[angular_energy_grid.back() ] );
+
+    // Get the angular scattering grid for the max energy
+    std::vector<double> max_angles =
+      MonteCarlo::ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+        d_forward_endl_data->getCutoffElasticAngles(),
+        d_max_electron_energy,
+        d_cutoff_angle_cosine );
+
+    // Get the pdf values for the max energy
+    std::vector<double> max_pdf( max_angles.size() );
+    for ( int i = 0; i < max_angles.size(); ++i )
+    {
+      max_pdf.at(i) = Utility::LinLog::interpolate(
+            angular_energy_grid.at(angular_energy_grid.size()-2),
+            angular_energy_grid.back(),
+            d_max_electron_energy,
+            lower_distribution.evaluatePDF( max_angles.at(i) ),
+            upper_distribution.evaluatePDF( max_angles.at(i) ) );
+    }
+
+    // Set the distribution at the max energy
+    elastic_angle.emplace_hint(
+        elastic_angle.end(),
+        d_max_electron_energy,
+        max_angles);
+
+    elastic_pdf.emplace_hint(
+        elastic_pdf.end(),
+        d_max_electron_energy,
+        max_pdf);
+
+    // Erase the back distribution
+    elastic_angle.erase( angular_energy_grid.front() );
+    elastic_pdf.erase( angular_energy_grid.front() );
+
+    angular_energy_grid.back() = d_max_electron_energy;
+  }
+
+  data_container.setAdjointElasticAngularEnergyGrid( angular_energy_grid );
   data_container.setAdjointCutoffElasticPDF( elastic_pdf );
   data_container.setAdjointCutoffElasticAngles( elastic_angle );
 
@@ -595,22 +689,22 @@ std::cout << std::endl << "last energy grid point = " << energy_grid[energy_grid
   for ( int i = 0; i < adjoint_bremsstrahlung_energy_grid.size()-1; i++ )
   {
     unsigned bin_index =
-      grid_searcher->findLowerBinIndex( adjoint_bremsstrahlung_energy_grid[i] );
+      grid_searcher->findLowerBinIndex( adjoint_bremsstrahlung_energy_grid.at(i) );
 
     std::vector<double> adjoint_bremsstrahlung_photon_energies;
 
     if ( d_forward_endl_data->getBremsstrahlungPhotonEnergy().count(
-            adjoint_bremsstrahlung_energy_grid[i] ) )
+            adjoint_bremsstrahlung_energy_grid.at(i) ) )
     {
       adjoint_bremsstrahlung_photon_energies =
         d_forward_endl_data->getBremsstrahlungPhotonEnergyAtEnergy(
-            adjoint_bremsstrahlung_energy_grid[i] );
+            adjoint_bremsstrahlung_energy_grid.at(i) );
 
       data_container.setAdjointBremsstrahlungPhotonEnergyAtIncomingEnergy(
-        adjoint_bremsstrahlung_energy_grid[i],
+        adjoint_bremsstrahlung_energy_grid.at(i),
         adjoint_bremsstrahlung_photon_energies );
     }
-    else if( adjoint_bremsstrahlung_energy_grid[i] == d_min_electron_energy )
+    else if( adjoint_bremsstrahlung_energy_grid.at(i) == d_min_electron_energy )
     {
       adjoint_bremsstrahlung_photon_energies =
         d_forward_endl_data->getBremsstrahlungPhotonEnergyAtEnergy(
@@ -622,14 +716,14 @@ std::cout << std::endl << "last energy grid point = " << energy_grid[energy_grid
     }
 
     this->evaluateAdjointBremsstrahlungPhotonDistribution(
-        adjoint_bremsstrahlung_energy_grid[i],
+        adjoint_bremsstrahlung_energy_grid.at(i),
         bin_index,
         data_container.getAdjointBremsstrahlungCrossSectionThresholdEnergyIndex(),
         adjoint_bremsstrahlung_cross_section,
         adjoint_electron_energy_grid,
         adjoint_bremsstrahlung_cs_evaluator,
         adjoint_bremsstrahlung_photon_energies,
-        adjoint_bremsstrahlung_pdf_map[adjoint_bremsstrahlung_energy_grid[i]] );
+        adjoint_bremsstrahlung_pdf_map[adjoint_bremsstrahlung_energy_grid.at(i)] );
   }
 
   // The PDF for the max incoming energy is always zero
@@ -699,6 +793,9 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointMomentPrese
     std::vector<double>& angular_energy_grid,
     Data::AdjointElectronPhotonRelaxationVolatileDataContainer& data_container )
 {
+  // Test that the angular energy grid is valid
+  testPrecondition( angular_energy_grid.size() > 0 );
+
   // Create the analog elastic distribution (combined Cutoff and Screened Rutherford)
   std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
         analog_distribution;
@@ -761,27 +858,22 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::setAdjointMomentPrese
   std::vector<double> cross_section_reduction(
     angular_energy_grid.size() );
 
-  // Make sure the angular energy grid is within the min and max energy
-  angular_energy_grid[0] = data_container.getMinElectronEnergy();
-  angular_energy_grid[angular_energy_grid.size()-1] =
-    data_container.getMaxElectronEnergy();
-
   // iterate through all angular energy bins
   for ( unsigned i = 0; i < angular_energy_grid.size(); i++ )
   {
     StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateDisceteAnglesAndWeights(
         moments_evaluator,
-        angular_energy_grid[i],
+        angular_energy_grid.at(i),
         data_container.getNumberOfAdjointMomentPreservingAngles(),
         discrete_angles,
         weights,
-        cross_section_reduction[i] );
+        cross_section_reduction.at(i) );
 
     data_container.setAdjointMomentPreservingElasticDiscreteAngles(
-        angular_energy_grid[i],
+        angular_energy_grid.at(i),
         discrete_angles );
     data_container.setAdjointMomentPreservingElasticWeights(
-        angular_energy_grid[i],
+        angular_energy_grid.at(i),
         weights );
   }
 
@@ -1006,12 +1098,12 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateDisceteAngles
   cross_section_reduction = 0.0;
   for( int i = 0; i < weights.size(); i++ )
   {
-    cross_section_reduction += weights[i];
+    cross_section_reduction += weights.at(i);
   }
 
   for( int i = 0; i < weights.size(); i++ )
   {
-    weights[i] /= cross_section_reduction;
+    weights.at(i) /= cross_section_reduction;
   }
 }
 
@@ -1047,7 +1139,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::evaluateAdjointMoment
     double cutoff_cross_section =
         analog_reaction->getCutoffCrossSection( electron_energy_grid[i] );
 
-    moment_preserving_cross_section[i] = cross_section_reduction*
+    moment_preserving_cross_section.at(i) = cross_section_reduction*
         (rutherford_cross_section + (1.0 - cutoff_cdf)*cutoff_cross_section);
   }
 }
@@ -1099,7 +1191,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   end_index -= start_index;
 
   // The adjoint bremsstrahlung energy grid for the energy gain function
-  std::vector<double> adjoint_bremsstrahlung_energy_grid( end_index+2 );
+  std::vector<double> adjoint_bremsstrahlung_energy_grid( end_index+1 );
 
   // Create the forward bremsstrahlung energy loss function
   MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
@@ -1152,9 +1244,7 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
   // Insert bin above d_max_electron_energy
   {
     energy_loss_function[n].first = forward_brem_energy_grid[start_index];
-    adjoint_bremsstrahlung_energy_grid[n] =
-      d_max_electron_energy - s_threshold_energy_nudge_factor;
-    adjoint_bremsstrahlung_energy_grid[n+1] = d_max_electron_energy;
+    adjoint_bremsstrahlung_energy_grid[n] = d_max_electron_energy;
 
     energy_loss_function[n].second.reset(
 	    new const Utility::TabularDistribution<Utility::LinLin>(
@@ -1175,6 +1265,16 @@ void StandardAdjointElectronPhotonRelaxationDataGenerator::createAdjointBremsstr
             0,
             grid_searcher,
             bremsstrahlung_distribution ) );
+
+  adjoint_bremsstrahlung_cs_evaluator.reset(
+    new DataGen::AdjointBremsstrahlungCrossSectionEvaluator(
+        bremsstrahlung_reaction,
+        adjoint_bremsstrahlung_energy_grid ) );
+
+    // Add nudge value
+    adjoint_bremsstrahlung_energy_grid.back() =
+      d_max_electron_energy - s_threshold_energy_nudge_factor;
+    adjoint_bremsstrahlung_energy_grid.push_back( d_max_electron_energy );
 
   // Set the adjoint bremsstrahlung energy grid
   data_container.setAdjointBremsstrahlungEnergyGrid(

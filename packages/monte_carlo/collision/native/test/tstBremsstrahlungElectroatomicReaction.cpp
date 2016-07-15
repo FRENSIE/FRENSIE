@@ -29,13 +29,13 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_dipole_bremsstrahlung_reaction;
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_tabular_bremsstrahlung_reaction;
 
-Teuchos::RCP<MonteCarlo::ElectroatomicReaction>
+Teuchos::RCP<MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin> >
   ace_twobs_bremsstrahlung_reaction;
 
 //---------------------------------------------------------------------------//
@@ -177,6 +177,155 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getCrossSection_ace )
     ace_dipole_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the differential cross section can be returned
+TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getDifferentialCrossSection_ace )
+{
+  // 2BS
+  double diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        0u,
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        3.16228E-01,
+        3.16115596E-01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  9.504071722591320E+05,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        8u,
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
+
+  // Tabular
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        0u,
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        3.16228E-01,
+        3.16115596E-01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  9.504071722591320E+05,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_tabular_bremsstrahlung_reaction->getDifferentialCrossSection(
+        8u,
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
+
+  // Dipole
+  diff_cross_section =
+    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
+        0u,
+        1.0e-5,
+        9.0e-6 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  8.859383971725880E+08,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
+        3.16228E-01,
+        3.16115596E-01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  9.504071722591320E+05,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
+
+  diff_cross_section =
+    ace_dipole_bremsstrahlung_reaction->getDifferentialCrossSection(
+        8u,
+        1.0e5,
+        8.0E4 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+                                  2.665370886148930E-03,
+                                  1e-12 );
 }
 
 //---------------------------------------------------------------------------//

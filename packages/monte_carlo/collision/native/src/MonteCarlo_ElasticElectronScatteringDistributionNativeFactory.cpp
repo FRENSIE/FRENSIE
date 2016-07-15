@@ -202,29 +202,37 @@ void ElasticElectronScatteringDistributionNativeFactory::createMomentPreservingE
 
 // Return angle cosine grid for given grid energy bin
 std::vector<double> ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
-    const Data::ElectronPhotonRelaxationDataContainer& data_container,
+    const std::map<double, std::vector<double> >& raw_cutoff_elastic_angles,
     const double& energy,
     const double& cutoff_angle_cosine )
 {
   // Get the angular grid
-  std::vector<double> raw_grid =
-    data_container.getCutoffElasticAngles( energy );
-
-  // Find the first angle cosine above the cutoff angle cosine
-  std::vector<double>::iterator start;
-  for ( start = raw_grid.begin(); start != raw_grid.end(); start++ )
+  std::vector<double> raw_grid;
+  if( raw_cutoff_elastic_angles.count( energy ) > 0 )
   {
-    if ( *start > cutoff_angle_cosine )
+    raw_grid = raw_cutoff_elastic_angles.at( energy );
+  }
+  else
+  {
+    std::map<double,std::vector<double>>::const_iterator lower_bin, upper_bin;
+    upper_bin = raw_cutoff_elastic_angles.upper_bound( energy );
+    lower_bin = upper_bin;
+    --lower_bin;
+
+    // Use the angular grid for the energy bin closes to the energy
+    if ( energy - lower_bin->first <= upper_bin->first - energy )
     {
-      break;
+      raw_grid = lower_bin->second;
+    }
+    else
+    {
+      raw_grid = upper_bin->second;
     }
   }
 
-  std::vector<double> grid( start, raw_grid.end() );
-
-   grid.insert( grid.begin(), cutoff_angle_cosine );
-
-  return grid;
+  return ElasticElectronScatteringDistributionNativeFactory::getAngularGrid(
+            raw_grid,
+            cutoff_angle_cosine );
 }
 
 // Return angle cosine grid for the given cutoff angle

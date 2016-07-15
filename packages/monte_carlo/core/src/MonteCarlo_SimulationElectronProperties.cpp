@@ -22,9 +22,8 @@ double SimulationElectronProperties::min_electron_energy =
 // The absolute max electron energy (MeV)
 const double SimulationElectronProperties::absolute_max_electron_energy = 1.0e5;
 
-// The max electron energy (MeV)
-double SimulationElectronProperties::max_electron_energy =
-  SimulationElectronProperties::absolute_max_electron_energy;
+// The max electron energy (MeV) (default 20.0)
+double SimulationElectronProperties::max_electron_energy = 20.0;
 
 // The atomic relaxation mode (true = on - default, false = off)
 bool SimulationElectronProperties::atomic_relaxation_mode_on = true;
@@ -73,7 +72,7 @@ void SimulationElectronProperties::setBremsstrahlungAngularDistributionFunction(
   SimulationElectronProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
-// Set the elastic cutoff angle cosine (mu = 0.999999 by default)
+// Set the elastic cutoff angle cosine (mu = 1.0 by default)
 void SimulationElectronProperties::setElasticCutoffAngleCosine(
                           const double cutoff_angle_cosine )
 {
