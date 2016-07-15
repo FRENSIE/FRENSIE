@@ -10,14 +10,4 @@
         </ParameterList>
     </ParameterList>
 
-    <ParameterList name="Cell Track Length Photon Flux Estimator">
-        <Parameter name="Id" type="unsigned int" value="14"/>
-        <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
-        <Parameter name="Particle Type" type="string" value="Photon"/>
-        <Parameter name="Cells" type="Array" value="{1}"/>
-        <ParameterList name="Bins">
-            <Parameter name="Energy Bins" type="Array" value="{1e-3, 99l, 10}"/>
-        </ParameterList>
-    </ParameterList>
-
 </ParameterList>

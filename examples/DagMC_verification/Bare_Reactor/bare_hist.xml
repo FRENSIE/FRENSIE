@@ -1,15 +1,8 @@
 <ParameterList name="Properties">
 
 <ParameterList name="General Properties">
-    <Parameter name="Histories" type="unsigned int" value="1000000"/>
-    <Parameter name="Mode" type="string" value="Neutron-Photon"/>
-</ParameterList>
-
-<ParameterList name="Photon Properties">
-    <Parameter name="Photon Atomic Relaxation" type="bool" value="true"/>
-    <Parameter name="Detailed Pair Production" type="bool" value="false"/>
-    <Parameter name="Photonuclear Interaction" type="bool" value="false"/>
-    <Parameter name="Kahn Sampling Cutoff Energy" type="double" value="100"/>
+    <Parameter name="Histories" type="unsigned int" value="10000000"/>
+    <Parameter name="Mode" type="string" value="Neutron"/>
 </ParameterList>
 
 </ParameterList>

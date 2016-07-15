@@ -56,16 +56,14 @@ c Job Control
 c --------------------
 c run in neutron only mode
 mode n p
-c Control the physics for the photons
-PHYS:P 100  1 0 0 1  $ Above 100 MeV treat as simple physics, Include
+c Control the physics for the photons: 
+c Above 100 MeV treat as simple physics, Include
 c Bremsstrahlung, include coherent scattering, don't use photonuclear 
 c interactions, no Doppler broadening. 
+PHYS:P 100  1 0 0 1 
 c 
 c run for 1000000 histories
-nps 1e8
+nps 1e7
 c Flux Tallies for the neutrons
 f4:n 10
 E4 1e-5 99ilog 4
-c Flux tallies for the photons
-f14:p 10
-E14 1e-3 99ilog 10
