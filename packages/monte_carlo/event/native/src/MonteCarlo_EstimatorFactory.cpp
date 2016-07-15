@@ -128,7 +128,7 @@ void EstimatorFactory::createAndRegisterEstimator(
   }
   EXCEPTION_CATCH_RETHROW_AS( std::exception,
                               InvalidEstimatorRepresentation,
-                              "Error: could not get the particle type for"
+                              "Error: could not get the particle type for "
                               "estimator " << estimator_id << "!" );
 
   // Get the estimator multiplier - optional

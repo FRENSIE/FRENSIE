@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root, createAndRegisterEstimator )
   }
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 3 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 8 );
 
   std::string estimator_file_name( "estimator_factory_root.h5" );
 
@@ -217,7 +217,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_Root,
   TEST_NOTHROW( estimator_factory->createAndRegisterCachedEstimators() );
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 3 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 8 );
 }
 
 //---------------------------------------------------------------------------//
