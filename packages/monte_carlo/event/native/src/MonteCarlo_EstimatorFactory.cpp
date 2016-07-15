@@ -1208,13 +1208,13 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                                                      "Output Mesh File Name" );
 
   // Get the X grid points
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "X planes" ),
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "X Planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
                       " does not have the x planes specified! " );
 
   Utility::ArrayString array_string = 
-    estimator_rep.get<Utility::ArrayString>( "X planes" );
+    estimator_rep.get<Utility::ArrayString>( "X Planes" );
 
   Teuchos::Array<double> x_planes;
 
@@ -1228,13 +1228,13 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                               " are not valid!" );
 
   // Get the Y planes
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Y planes" ),
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Y Planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
                       " does not have the y planes specified! " );
 
     array_string = 
-    estimator_rep.get<Utility::ArrayString>( "Y planes" );
+    estimator_rep.get<Utility::ArrayString>( "Y Planes" );
 
   Teuchos::Array<double> y_planes;
 
@@ -1248,13 +1248,13 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                               " are not valid!" );
 
   // Get the Z planes
-  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Z planes" ),
+  TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Z Planes" ),
                       InvalidEstimatorRepresentation,
                       "Error: mesh estimator " << id <<
                       " does not have the Z planes specified! " );
 
   array_string = 
-    estimator_rep.get<Utility::ArrayString>( "Z planes" );
+    estimator_rep.get<Utility::ArrayString>( "Z Planes" );
 
   Teuchos::Array<double> z_planes;
 
