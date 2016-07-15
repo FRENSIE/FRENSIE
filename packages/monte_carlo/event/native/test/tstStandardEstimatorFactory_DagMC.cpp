@@ -224,7 +224,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 2, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 36 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 37 );
 
   // Check that estimator 4 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 4 ) );
@@ -248,7 +248,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 4, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 4 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 3 );
 
   // Check that estimator 9 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 9 ) );
@@ -373,9 +373,8 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 12, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
 
   // Check that estimator 13 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 13 ) );
@@ -398,10 +397,9 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 13, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
-
+  
   // Check that estimator 14 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 14 ) );
   
@@ -424,10 +422,9 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 14, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
-
+  
   // Check that estimator 15 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 15 ) );
   
