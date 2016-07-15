@@ -1214,7 +1214,7 @@ void EstimatorFactory::createAndRegisterHexMeshTrackLengthFluxEstimator(
                       " does not have the x planes specified! " );
 
   Utility::ArrayString array_string = 
-    estimator_rep.get<Utility::ArrayString>( "X Grid Points" );
+    estimator_rep.get<Utility::ArrayString>( "X planes" );
 
   Teuchos::Array<double> x_planes;
 
