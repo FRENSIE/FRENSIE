@@ -23,7 +23,9 @@
 namespace MonteCarlo{
 
 // Initialize static member data
-const double StructuredHexMesh::s_tol = 1e-6;
+template<typename ContributionMultiplierPolicy>
+const double 
+TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::s_tol = 1e-6;
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
@@ -320,7 +322,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
             EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
             double tet_contribution =
-              partial_track_length*contribution_mult;
+              tet_track_length*contribution_mult;
             
 	    // Add partial history contribution
 	    this->addPartialHistoryContribution( tet,
@@ -859,18 +861,16 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
   if( bin_boundaries->getDimension() == COSINE_DIMENSION )
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-    	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
-    	      << " will be ignored."
-    	      << std::endl;
+    	      << " bins cannot be set for tet mesh track length flux "
+              << "estimators. The bins requested for estimator "
+              << this->getId() << " will be ignored." << std::endl;
   }
   else if( bin_boundaries->getDimension() == TIME_DIMENSION )
   {
     std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-    	      << " bins cannot be set for standard cell estimators. The bins "
-     	      << "requested for tetrahedral mesh flux estimator " << this->getId()
-    	      << " will be ignored."
-    	      << std::endl;
+    	      << " bins cannot be set for tet mesh track length flux "
+              << "estimators yet. The bins requested for estimator "
+              << this->getId() << " will be ignored." << std::endl;
   }
   else
   {

@@ -60,15 +60,6 @@ public:
 		     const std::string input_mesh_file_name,
 		     const std::string output_mesh_file_name = "tetmesh.h5m" );
 
-  //! Constructor
-  HexMeshTrackLengthFluxEstimator(
-		     const Estimator::idType id,
-		     const double multiplier,
-		     const Teuchos::Array<double> x_grid_points,
-                     const Teuchos::Array<double> y_grid_points,
-                     const Teuchos::Array<double> z_grid_points,
-		     const std::string output_mesh_file_name = "hexmesh.h5m" );
-
   //! Destructor
   ~TetMeshTrackLengthFluxEstimator()
   { /* ... */ }
