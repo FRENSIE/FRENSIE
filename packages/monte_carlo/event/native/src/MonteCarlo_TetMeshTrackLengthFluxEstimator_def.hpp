@@ -207,7 +207,21 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseF
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setParticleTypes( const Teuchos::Array<ParticleType>& particle_types )
 {
-  Estimator::setParticleTypes( particle_types );
+  if( particle_types.size() > 1 )
+  {
+    std::cerr << "Warning: Tet mesh estimators can only have one "
+	      << "particle type contribute. All but the first particle type "
+	      << "requested in estimator " << this->getId() 
+	      << " will be ignored."
+	      << std::endl;
+    
+    Teuchos::Array<ParticleType> valid_particle_types( 1 );
+    valid_particle_types[0] = particle_types.front();
+    
+    Estimator::setParticleTypes( valid_particle_types );
+  }
+  else
+    Estimator::setParticleTypes( particle_types );
 }
 
 // Add current history estimator contribution
