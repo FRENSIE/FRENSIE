@@ -25,6 +25,7 @@
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 /*! \defgroup one_d_distributions One-Dimensional Distributions
  */
@@ -139,6 +140,9 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBou
  * \ingroup one_d_distributions
  */
 typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareOneDDistribution<void,void> );
 
 //! The invalid distribution string name error
 class InvalidDistributionStringName : public std::logic_error

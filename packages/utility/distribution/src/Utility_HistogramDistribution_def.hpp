@@ -19,9 +19,13 @@
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareHistogramDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>

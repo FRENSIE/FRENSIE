@@ -11,16 +11,20 @@
 #define UTILITY_WATT_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_MaxwellFissionDistribution.hpp"
 
 namespace Utility{
 
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareWattDistribution<void,void> );
+  
 // Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The

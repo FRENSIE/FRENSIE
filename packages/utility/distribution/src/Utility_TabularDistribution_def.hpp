@@ -18,8 +18,15 @@
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LinLog,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLin,void,void> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareTabularDistribution<LogLog,void,void> );
 
 // Default constructor
 template<typename InterpolationPolicy, 

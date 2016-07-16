@@ -19,9 +19,13 @@
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareDiscreteDistribution<void,void> );
 
 // Default Constructor
 template<typename IndependentUnit,typename DependentUnit>
