@@ -49,37 +49,35 @@ struct InterpolationHelper
 
   //! Calculate the unit base independent variable (eta)
   template<typename IndepType>
-  static QuantityTraits<IndepType>::RawType
-  calculateUnitBaseIndepVar( const IndepType indep_var,
-                             const IndepType indep_var_min,
-                             const IndepType indep_grid_length );
+  static typename QuantityTraits<IndepType>::RawType
+  calculateUnitBaseIndepVar(
+         const IndepType indep_var,
+         const IndepType indep_var_min,
+         const typename QuantityTraits<IndepType>::RawType indep_grid_length );
 
   //! Calculate the unit base independent variable (eta)
-  template<typename IndepType>
-  static QuantityTraits<IndepType>::RawType
-  calculateUnitBaseIndepVarProcessed(
-              const QuantityTraits<IndepType>::RawType processed_indep_var,
-              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
-              const IndepType indep_grid_length );
+  template<typename T>
+  static T calculateUnitBaseIndepVarProcessed( const T processed_indep_var,
+                                               const T processed_indep_var_min,
+                                               const T indep_grid_length );
 
   //! Calculate the independent variable (from eta)
   template<typename IndepType>
   static IndepType calculateIndepVar(
-                                  const QuantityTraits<IndepType>::RawType eta,
-                                  const IndepType indep_var_min,
-                                  const IndepType indep_grid_length );
+         const typename QuantityTraits<IndepType>::RawType eta,
+         const IndepType indep_var_min,
+         const typename QuantityTraits<IndepType>::RawType indep_grid_length );
 
   //! Calculate the processed independent variable (from eta)
-  template<typename IndepType>
-  static QuantityTraits<IndepType>::RawType calculateProcessedIndepVar(
-              const QuantityTraits<IndepType>::RawType eta,
-              const QuantityTraits<IndepType>::RawType processed_indep_var_min,
-              const IndepType indep_grid_length );
+  template<typename T>
+  static T calculateProcessedIndepVar( const T eta,
+                                       const T processed_indep_var_min,
+                                       const T indep_grid_length );
 
 private:
 
   // The tolerance used to eliminate some rounding issues
-  static double s_tol;
+  static const double s_tol;
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-log 
@@ -96,6 +94,14 @@ struct LogLog : public InterpolationHelper<LogLog>
 
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
+
+  //! Force base class template methods to be visible
+  using InterpolationHelper<LogLog>::interpolate;
+  using InterpolationHelper<LogLog>::interpolateAndProcess;
+  using InterpolationHelper<LogLog>::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LogLog>::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LogLog>::calculateIndepVar;
+  using InterpolationHelper<LogLog>::calculateProcessedIndepVar;
 
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
@@ -159,6 +165,14 @@ struct LogLin : public InterpolationHelper<LogLin>
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
 
+  //! Force base class template methods to be visible
+  using InterpolationHelper<LogLin>::interpolate;
+  using InterpolationHelper<LogLin>::interpolateAndProcess;
+  using InterpolationHelper<LogLin>::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LogLin>::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LogLin>::calculateIndepVar;
+  using InterpolationHelper<LogLin>::calculateProcessedIndepVar;
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -221,6 +235,14 @@ struct LinLog : public InterpolationHelper<LinLog>
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
 
+  //! Force base class template methods to be visible
+  using InterpolationHelper<LinLog>::interpolate;
+  using InterpolationHelper<LinLog>::interpolateAndProcess;
+  using InterpolationHelper<LinLog>::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LinLog>::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LinLog>::calculateIndepVar;
+  using InterpolationHelper<LinLog>::calculateProcessedIndepVar;
+
   //! Interpolate between two points
   template<typename IndepType, typename DepType>
   static DepType interpolate( const IndepType indep_var_0,
@@ -282,6 +304,14 @@ struct LinLin : public InterpolationHelper<LinLin>
 
   //! Get the interpolation type
   static InterpolationType getInterpolationType();
+
+  //! Force base class template methods to be visible
+  using InterpolationHelper<LinLin>::interpolate;
+  using InterpolationHelper<LinLin>::interpolateAndProcess;
+  using InterpolationHelper<LinLin>::calculateUnitBaseIndepVar;
+  using InterpolationHelper<LinLin>::calculateUnitBaseIndepVarProcessed;
+  using InterpolationHelper<LinLin>::calculateIndepVar;
+  using InterpolationHelper<LinLin>::calculateProcessedIndepVar;
 
   //! Interpolate between two points
   template<typename IndepType, typename DepType>

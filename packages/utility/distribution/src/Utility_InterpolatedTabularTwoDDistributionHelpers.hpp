@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramTabularTwoDDistributionHelpers.hpp
+//! \file   Utility_InterpolatedTabularTwoDDistributionHelpers.hpp
 //! \author Alex Robinson
-//! \brief  The histogram tabular two-dimensional dist. helper class decl.
+//! \brief  The interpolated tabular two-dimensional dist. helper class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
-#define UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
+#ifndef UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
+#define UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
 
 // FRENSIE Includes
 #include "Utility_PartiallyTabularTwoDDistribution.hpp"
@@ -15,11 +15,10 @@
 
 namespace Utility{
 
-//! The histogram tabular two-dimensional dist. base implementation class
-template<typename Distribution>
-class UnitAwareHistogramTabularTwoDDistributionImplBase : public Distribution
-{
-  
+//! The interpolated tabular two-dimensional dist. base implementation class
+template<typename TwoDInterpPolicy, typename Distribution>
+class UnitAwareInterpolatedTabularTwoDDistributionImplBase : public Distribution{
+
 protected:
 
   // The parent distribution type
@@ -28,7 +27,7 @@ protected:
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
 
-  // Typedef for QuantityTraits<double>
+  // Typedef for QuantityTrais<double>
   typedef typename ParentType::QT QT;
 
   // Typedef for QuantityTraits<PrimaryIndepQuantity>
@@ -61,7 +60,7 @@ public:
   typedef typename ParentType::DistributionType DistributionType;
 
   //! Constructor
-  UnitAwareHistogramTabularTwoDDistributionImplBase(
+  UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                                          const DistributionType& distribution )
     : ParentType( distribution )
   { /* ... */ }
@@ -69,7 +68,7 @@ public:
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareHistogramTabularTwoDDistributionImplBase(
+  UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions )
@@ -77,7 +76,7 @@ public:
   { /* ... */ }
 
   //! Destructor
-  virtual ~UnitAwareHistogramTabularTwoDDistributionImplBase()
+  virtual ~UnitAwareInterpolatedTabularTwoDDistributionImplBase()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -111,18 +110,19 @@ public:
   bool isPrimaryDimensionContinuous() const;
 };
 
-//! The histogram tabular two-dimensional dist. impl. class (fully tabular)
-template<typename PrimaryIndependentUnit,
+//! The interpolated tabular two-d dist. impl. class (fully tabular)
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit,
          bool FullyTabular>
-class UnitAwareHistogramTabularTwoDDistributionImpl : public UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedTabularTwoDDistributionImpl : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwareFullyTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
@@ -160,7 +160,7 @@ public:
   typedef typename ParentType::DistributionType DistributionType;
 
   //! Constructor
-  UnitAwareHistogramTabularTwoDDistributionImpl(
+  UnitAwareInterpolatedTabularTwoDDistributionImpl(
                                          const DistributionType& distribution )
     : ParentType( distribution )
   { /* ... */ }
@@ -168,7 +168,7 @@ public:
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareHistogramTabularTwoDDistributionImpl(
+  UnitAwareInterpolatedTabularTwoDDistributionImpl(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions )
@@ -176,13 +176,27 @@ public:
   { /* ... */ }
 
   //! Destructor
-  virtual ~UnitAwareHistogramTabularTwoDDistributionImpl()
+  virtual ~UnitAwareInterpolatedTabularTwoDDistributionImpl()
   { /* ... */ }
 
   //! Evaluate the secondary conditional CDF
   double evaluateSecondaryConditionalCDF(
                 const PrimaryIndepQuantity primary_indep_var_value,
                 const SecondaryIndepQuantity secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF 
+  SecondaryIndepQuantity sampleSecondaryConditionalExact(
+                    const PrimaryIndepQuantity primary_indep_var_value ) const;
+
+  //! Return a random sample and record the number of trials
+  SecondaryIndepQuantity sampleSecondaryConditionalAndRecordTrials(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& trials ) const;
+
+  //! Return a random sample and record the number of trials
+  SecondaryIndepQuantity sampleSecondaryConditionalExactAndRecordTrials(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            unsigned& trials ) const;
 
   //! Return a random sample from the secondary conditional PDF and the index
   SecondaryIndepQuantity sampleSecondaryConditionalAndRecordBinIndex(
@@ -194,8 +208,18 @@ public:
                             const PrimaryIndepQuantity primary_indep_var_value,
                             const double random_number ) const;
 
+  //! Return a random sample from the secondary conditional PDF at the CDF val
+  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumber(
+                            const PrimaryIndepQuantity primary_indep_var_value,
+                            const double random_number ) const;
+
   //! Return a random sample from the secondary conditional PDF in the subrange
   SecondaryIndepQuantity sampleSecondaryConditionalInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalExactInSubrange(
             const PrimaryIndepQuantity primary_indep_var_value,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 
@@ -204,21 +228,44 @@ public:
             const PrimaryIndepQuantity primary_indep_var_value,
             const double random_number,
             const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
+
+  //! Return a random sample from the secondary conditional PDF in the subrange
+  SecondaryIndepQuantity sampleSecondaryConditionalExactWithRandomNumberInSubrange(
+            const PrimaryIndepQuantity primary_indep_var_value,
+            const double random_number,
+            const SecondaryIndepQuantity max_secondary_indep_var_value ) const;
 };
 
-//! The histogram tabular two-dimensional dist. impl. class (partially tabular)
-template<typename PrimaryIndependentUnit,
+//! The interpolated tabular two-d dist. impl. class (partiall tabular)
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> : public UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
+class UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> : public UnitAwareInterpolatedTabularTwoDDistributionImplBase<TwoDInterpPolicy,UnitAwarePartiallyTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> >
 {
+
 private:
 
   // The parent distribution type
-  typedef UnitAwareHistogramTabularTwoDDistributionImplBase<UnitAwarePartiallyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
+  typedef UnitAwareInterpolatedTabularTwoDDistributionImplBase<UnitAwareFullyTabularTwoDDistribution<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit> > ParentType;
 
   // The base one-dimensional distribution type
   typedef typename ParentType::BaseOneDDistributionType BaseOneDDistributionType;
+
+  // Typedef for QuantityTraits<double>
+  typedef typename ParentType::QT QT;
+
+  // Typedef for QuantityTraits<PrimaryIndepQuantity>
+  typedef typename ParentType::PIQT PIQT;
+
+  // Typddef for QuantityTraits<SecondaryIndepQuantity>
+  typedef typename ParentType::SIQT SIQT;
+
+  // Typedef for QuantityTriats<InverseSecondaryIndepQuantity>
+  typedef typename ParentType::ISIQT ISIQT;
+
+  // Typedef for QuantityTraits<DepQuantity>
+  typedef typename ParentType::DQT DQT;
   
 public:
 
@@ -238,7 +285,7 @@ public:
   typedef typename ParentType::DistributionType DistributionType;
 
   //! Constructor
-  UnitAwareHistogramTabularTwoDDistributionImpl(
+  UnitAwareInterpolatedTabularTwoDDistributionImpl(
                                          const DistributionType& distribution )
     : ParentType( distribution )
   { /* ... */ }
@@ -246,30 +293,22 @@ public:
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareHistogramTabularTwoDDistributionImpl(
+  UnitAwareInterpolatedTabularTwoDDistributionImpl(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
                 secondary_distributions )
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
-  
+
   //! Destructor
-  virtual ~UnitAwareHistogramTabularTwoDDistributionImpl()
+  virtual ~UnitAwareInterpolatedTabularTwoDDistributionImpl()
   { /* ... */ }
 };
   
 } // end Utility namespace
 
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "Utility_HistogramTabularTwoDDistributionHelpers_def.hpp"
+#endif // end UTILITY_INTERPOLATED_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-
-#endif // end UTILITY_HISTOGRAM_TABULAR_TWO_D_DISTRIBUTION_HELPERS_HPP
-
-//---------------------------------------------------------------------------//
-// end Utility_HistogramTabularTwoDDistributionHelpers.hpp
+// end Utility_InterpolatedTabularTwoDDistributionHelpers.hpp
 //---------------------------------------------------------------------------//

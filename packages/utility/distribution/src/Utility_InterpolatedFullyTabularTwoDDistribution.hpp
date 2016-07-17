@@ -1,26 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramFullyTabularTwoDDistribution.hpp
+//! \file   Utility_InterpolatedFullyTabularTwoDDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The histogram fully tabular two-dimensional dist. class decl.
+//! \brief  The interpolated fully tabular two-dimensional dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
-#define UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#ifndef UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Utility_HistogramTabularTwoDDistributionHelpers.hpp"
+#include "Utility_InterpolatedTabularTwoDDistributionHelpers.hpp"
 
 namespace Utility{
 
-/*! The unit-aware histogram fully tabular two-dimensional distribution
- * \ingroup two_d_distributions
+/*! The unit-aware inteprolated fully tabular two-dimensional distribution
+ * \ingroup two_d_distribution
  */
-template<typename PrimaryIndependentUnit,
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareHistogramFullyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>
+class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>
 {
 
 private:
@@ -46,7 +47,7 @@ public:
   typedef typename ParentType::DistributionType DistributionType;
 
   //! Constructor
-  UnitAwareHistogramFullyTabularTwoDDistribution(
+  UnitAwareInterpolatedFullyTabularTwoDDistribution(
                                          const DistributionType& distribution )
     : ParentType( distribution )
   { /* ... */ }
@@ -54,26 +55,29 @@ public:
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareHistogramFullyTabularTwoDDistribution(
+  UnitAwareInterpolatedFullyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
   //! Destructor
-  ~UnitAwareHistogramFullyTabularTwoDDistribution()
+  ~UnitAwareInterpolatedFullyTabularTwoDDistribution()
   { /* ... */ }
 };
 
-/*! The histogram fully tabular two-dimensional distribution (unit-agnostic)
+/*! \brief The interpolated fully tabular two-dimensional distribution 
+ * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-typedef UnitAwareHistogramFullyTabularTwoDDistribution<void,void,void> HistogramFullyTabularTwoDDistribution;
+template<typename TwoDInterpPolicy> using InterpolatedFullyTabularTwoDDistribution =
+  UnitAwareInterpolatedFullyTabularTwoDDistribution<TwoDInterpPolicy,void,void,void>;
   
 } // end Utility namespace
 
-#endif // end UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+
+#endif // end UTILITY_INTERPOLATED_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramFullyTabularTwoDDistribution.hpp
+// end Utility_InterpolatedFullyTabularTwoDDistribution.hpp
 //---------------------------------------------------------------------------//

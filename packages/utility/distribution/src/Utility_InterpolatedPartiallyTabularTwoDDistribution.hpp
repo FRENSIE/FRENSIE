@@ -1,32 +1,30 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_HistogramFullyTabularTwoDDistribution.hpp
+//! \file   Utility_InterpolatedPartiallyTabularTwoDDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The histogram fully tabular two-dimensional dist. class decl.
+//! \brief  The interpolated partially tabular two-d dist. class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
-#define UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
-
-// FRENSIE Includes
-#include "Utility_HistogramTabularTwoDDistributionHelpers.hpp"
+#ifndef UTILITY_INTERPOLATED_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#define UTILITY_INTERPOLATED_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 namespace Utility{
 
-/*! The unit-aware histogram fully tabular two-dimensional distribution
+/*! The unit-aware interpolated partially tabular two_dimensional distribution
  * \ingroup two_d_distributions
  */
-template<typename PrimaryIndependentUnit,
+template<typename TwoDInterpPolicy,
+         typename PrimaryIndependentUnit,
          typename SecondaryIndependentUnit,
          typename DependentUnit>
-class UnitAwareHistogramFullyTabularTwoDDistribution : public UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true>
+class UnitAwareInterpolatedFullyTabularTwoDDistribution : public UnitAwareInterpolatedTabularTwoDDistributionImpl<TwoDInterpPolicy,PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false>
 {
 
 private:
 
   // The parent distribution type
-  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,true> ParentType;
+  typedef UnitAwareHistogramTabularTwoDDistributionImpl<PrimaryIndependentUnit,SecondaryIndependentUnit,DependentUnit,false> ParentType;
   
 public:
   
@@ -44,9 +42,9 @@ public:
 
   //! The distribution type
   typedef typename ParentType::DistributionType DistributionType;
-
+  
   //! Constructor
-  UnitAwareHistogramFullyTabularTwoDDistribution(
+  UnitAwareInterpolatedPartiallyTabularTwoDDistribution(
                                          const DistributionType& distribution )
     : ParentType( distribution )
   { /* ... */ }
@@ -54,26 +52,28 @@ public:
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
-  UnitAwareHistogramFullyTabularTwoDDistribution(
+  UnitAwareInterpolatedPartiallyTabularTwoDDistribution(
                    const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                    const ArrayB<std::shared_ptr<const UnitAwareTabularOneDDistribution<SecondaryIndependentUnit,DependentUnit> > >& secondary_distributions )
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
   //! Destructor
-  ~UnitAwareHistogramFullyTabularTwoDDistribution()
+  ~UnitAwareInterpolatedPartiallyTabularTwoDDistribution()
   { /* ... */ }
 };
 
-/*! The histogram fully tabular two-dimensional distribution (unit-agnostic)
+/*! \brief The interpolated partially tabular two-dimensional distribution 
+ * (unit-agnostic)
  * \ingroup two_d_distributions
  */
-typedef UnitAwareHistogramFullyTabularTwoDDistribution<void,void,void> HistogramFullyTabularTwoDDistribution;
+template<typename TwoDInterpPolicy> using InterpolatedPartiallyTabularTwoDDistribution =
+  UnitAwareInterpolatedPartiallyTabularTwoDDistribution<TwoDInterpPolicy,void,void,void>;
   
 } // end Utility namespace
 
-#endif // end UTILITY_HISTOGRAM_FULLY_TABULAR_TWO_D_DISTRIBUTION_HPP
+#endif // end UTILITY_INTERPOLATED_PARTIALLY_TABULAR_TWO_D_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_HistogramFullyTabularTwoDDistribution.hpp
+// end Utility_InterpolatedPartiallyTabularTwoDDistribution.hpp
 //---------------------------------------------------------------------------//
