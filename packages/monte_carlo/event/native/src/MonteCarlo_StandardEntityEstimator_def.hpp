@@ -14,9 +14,14 @@
 #include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( StandardEntityEstimator<moab::EntityHandle> ); 
 
 // Constructor (for flux estimators)
 template<typename EntityId>

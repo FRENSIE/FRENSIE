@@ -42,6 +42,13 @@ struct HDF5TypeTraits<double>
   { return Teuchos::ScalarTraits<double>::one(); }
 };
 
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const double
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const double> : public HDF5TypeTraits<double>
+{ /* ... */ };
+
 /*! \brief The specialization of the Utility::HDF5TypeTraits for float
  * \ingroup hdf5_type_traits
  */
@@ -64,6 +71,13 @@ struct HDF5TypeTraits<float>
   static inline float one()
   { return Teuchos::ScalarTraits<float>::one(); }
 };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const float
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const float> : public HDF5TypeTraits<float>
+{ /* ... */ };
 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for int
  * \ingroup hdf5_type_traits
@@ -111,6 +125,43 @@ struct HDF5TypeTraits<unsigned int>
   { return Teuchos::ScalarTraits<unsigned>::one(); }
 };
 
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const int
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const int> : public HDF5TypeTraits<int>
+{ /* ... */ };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<long>
+{
+  //! Returns the HDF5 data type object corresponding to long
+  static inline H5::PredType dataType() 
+  { return H5::PredType::NATIVE_LONG; }
+  
+  //! Returns the name of the type
+  static inline std::string name() 
+  { return "long int"; }
+  
+  //! Returns the zero value for this type
+  static inline unsigned zero()
+  { return 0l; }
+
+  //! Returns the unity value for this type
+  static inline unsigned one()
+  { return 1l; }
+};
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const long> : public HDF5TypeTraits<long>
+{ /* ... */ };
+
 /*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
  * \ingroup hdf5_type_traits
  */
@@ -133,6 +184,45 @@ struct HDF5TypeTraits<unsigned long>
   static inline unsigned one()
   { return 1ul; }
 };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const unsigned
+ * long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const unsigned long> : public HDF5TypeTraits<unsigned long>
+{ /* ... */ };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for long long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<long long>
+{
+  //! Returns the HDF5 data type object corresponding to long long int
+  static inline H5::PredType dataType() 
+  { return H5::PredType::NATIVE_LLONG; }
+  
+  //! Returns the name of the type
+  static inline std::string name() 
+  { return "long long int"; }
+  
+  //! Returns the zero value for this type
+  static inline unsigned zero()
+  { return 0ll; }
+
+  //! Returns the unity value for this type
+  static inline unsigned one()
+  { return 1ll; }
+};
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const long 
+ * long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const long long> : public HDF5TypeTraits<long long>
+{ /* ... */ };
 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
  * long
@@ -158,6 +248,14 @@ struct HDF5TypeTraits<unsigned long long>
   { return 1ull; }
 };
 
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const unsigned
+ * long long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const unsigned long long> : public HDF5TypeTraits<unsigned long long>
+{ /* ... */ };
+
 /*! \brief The specialization of the Utility::HDF5TypeTraits for char
  * \ingroup hdf5_type_traits
  */
@@ -176,6 +274,13 @@ struct HDF5TypeTraits<char>
   static inline char one()
   { return '1'; }
 };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const char> : public HDF5TypeTraits<char>
+{ /* ... */ };
 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for signed char
  * \ingroup hdf5_type_traits
@@ -214,6 +319,14 @@ struct HDF5TypeTraits<unsigned char>
   static inline unsigned char one()
   { return 1; }
 };
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for const signed 
+ * char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<const signed char> : public HDF5TypeTraits<signed char>
+{ /* ... */ };
 
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
  * Utility::Pair struct
@@ -267,6 +380,14 @@ struct HDF5TypeTraits<Pair<T1,T2> >
     return Pair<T1,T2>( HDF5TypeTraits<T1>::one(), HDF5TypeTraits<T2>::one() );
   }
 };
+
+/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
+ * const Utility::Pair struct
+ * \ingroup hdf5_type_traits
+ */
+template<typename T1, typename T2>
+struct HDF5TypeTraits<const Pair<T1,T2> > : public HDF5TypeTraits<Pair<T1,T2> >
+{ /* ... */ };
 
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
  * Utility::Trip struct
@@ -327,6 +448,14 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
 			   HDF5TypeTraits<T3>::one() );
   }
 };
+
+/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
+ * const Utility::Trip struct
+ * \ingroup hdf5_type_traits
+ */
+template<typename T1, typename T2, typename T3>
+struct HDF5TypeTraits<const Trip<T1,T2,T3> > : public HDF5TypeTraits<Trip<T1,T2,T3> >
+{ /* ... */ };
 
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
  * Utility::Quad struct
@@ -394,6 +523,14 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
 			      HDF5TypeTraits<T4>::one() );
   }
 };
+
+/*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
+ * const Utility::Quad struct
+ * \ingroup hdf5_type_traits
+ */
+template<typename T1, typename T2, typename T3, typename T4>
+struct HDF5TypeTraits<const Quad<T1,T2,T3,T4> > : public HDF5TypeTraits<Quad<T1,T2,T3,T4> >
+{ /* ... */ };
 
 } // end Utility namespace
 

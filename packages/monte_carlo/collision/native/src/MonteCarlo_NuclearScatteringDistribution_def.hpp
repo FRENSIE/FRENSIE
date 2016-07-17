@@ -10,9 +10,16 @@
 #define MONTE_CARLO_NUCLEAR_SCATTERING_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+extern template class NuclearScatteringDistribution<NeutronState,NeutronState>;
+extern template class NuclearScatteringDistribution<NeutronState,PhotonState>;
+extern template class NuclearScatteringDistribution<PhotonState,NeutronState>;
 
 // Constructor
 template<typename IncomingParticleType, typename OutgoingParticleType>

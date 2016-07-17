@@ -15,9 +15,13 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( UnitAwareEquiprobableBinDistribution<void,void> );
 
 // Default constructor
 template<typename IndependentUnit, typename DependentUnit>
