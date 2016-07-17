@@ -15,9 +15,14 @@
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellPulseHeightEstimator<WeightMultiplier> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( CellPulseHeightEstimator<WeightAndEnergyMultiplier> );
 
 // Constructor
 template<typename ContributionMultiplierPolicy>

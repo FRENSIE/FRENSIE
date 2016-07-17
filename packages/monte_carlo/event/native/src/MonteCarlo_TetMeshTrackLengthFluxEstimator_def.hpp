@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_TetMeshTrackLengthFluxEstimator.cpp
 //! \author Alex Robinson, Eli Moll
-//! \brief  Tet mesh flux estimator class declaration.
+//! \brief  Tet mesh track length flux estimator class declaration.
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,10 +17,15 @@
 #include "Utility_Tuple.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightMultiplier> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> );
 
 // Initialize static member data
 template<typename ContributionMultiplierPolicy>

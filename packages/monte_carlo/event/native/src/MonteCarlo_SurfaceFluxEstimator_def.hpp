@@ -11,9 +11,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationGeneralProperties.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightMultiplier> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceFluxEstimator<WeightAndEnergyMultiplier> );
 
 // Constructor
 template<typename ContributionMultiplierPolicy>

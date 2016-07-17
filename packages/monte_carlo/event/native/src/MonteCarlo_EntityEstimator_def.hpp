@@ -12,14 +12,23 @@
 // Std Lib Includes
 #include <sstream>
 
+// Moab Includes
+#include <moab/EntityHandle.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Geometry_ModuleTraits.hpp"
 #include "Utility_CommHelpers.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<Geometry::ModuleTraits::InternalCellHandle> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( EntityEstimator<moab::EntityHandle> );
 
 // Constructor (for flux estimators)
 /*! \details Flux estimators need to divide the first moment by the cell 

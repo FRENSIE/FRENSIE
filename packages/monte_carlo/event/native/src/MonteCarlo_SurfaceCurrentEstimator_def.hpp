@@ -13,9 +13,14 @@
 #include <iostream>
 
 // FRENSIE Includes
+#include "Utility_ExplicitTemplateInstantiationMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
+
+// Explicit instantiation (extern declaration)
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightMultiplier> );
+EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( SurfaceCurrentEstimator<WeightAndEnergyMultiplier> );
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
