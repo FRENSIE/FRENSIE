@@ -25,10 +25,6 @@ ENFORCE_OUT_OF_SOURCE_BUILD()
 ENABLE_CXX11_STANDARD_SUPPORT()
 
 # Load the patch files
-SET(TEUCHOS_TWO_D_ARRAY_PATCH 
-  ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
-  CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
-
 SET(DAGMC_THREAD_SAFE_PATCH
   ${CMAKE_SOURCE_DIR}/patches/DagMC_cpp_patch
   CACHE STRING "The DagMC.cpp patch file" FORCE)

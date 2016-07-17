@@ -17,10 +17,11 @@
  * Explicit instantiation can be used to reduce compile times and compile
  * time memory overhead. When explicit instantiation has been enabled, these
  * macros will declare the templates to instantiate. Otherwise, these macros
- * will do nothing.
+ * will do nothing. Note that swig doesn't like the extern template declaration
+ * so these macros will be turned off when SWIG is processing files.
  */
 
-#if HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION
+#if HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION && !defined SWIG
 
 /*! Declare an external explicit instantiation of template class
  * \details This can only be called once for a given instantiation. It is
@@ -60,10 +61,10 @@
 
 #else // HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION
 
-#define EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( type )
-#define EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( func )
-#define EXPLICIT_TEMPLATE_CLASS_INST( type )
-#define EXPLICIT_TEMPLATE_FUNCTION_INST( func )
+#define EXTERN_EXPLICIT_TEMPLATE_CLASS_INST( ... )
+#define EXTERN_EXPLICIT_TEMPLATE_FUNCTION_INST( ... )
+#define EXPLICIT_TEMPLATE_CLASS_INST( ... )
+#define EXPLICIT_TEMPLATE_FUNCTION_INST( ... )
 
 #endif // end HAVE_FRENSIE_ENABLE_EXPLICIT_TEMPLATE_INSTANTIATION
 

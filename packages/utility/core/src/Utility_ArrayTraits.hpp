@@ -335,6 +335,55 @@ struct ArrayTraits<Teuchos::ArrayRCP<T> >
   { array = Teuchos::arcpClone( view ); }
 };
 
+/*! The partial specialization of the ArrayTraits struct for Teuchos::ArrayRCP.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<Teuchos::ArrayRCP<const T> >
+{
+  //! The size type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::size_type size_type;
+  //! The type contained in the array
+  typedef typename Teuchos::ArrayRCP<const T>::value_type value_type;
+  //! The pointer type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::pointer pointer;
+  //! The const pointer type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::const_pointer const_pointer;
+
+  //! The head pointer of the array
+  static inline pointer headPtr( Teuchos::ArrayRCP<const T> &array )
+  { return array.getRawPtr(); }
+  
+  //! The head pointer of the const array
+  static inline const_pointer headPtr( const Teuchos::ArrayRCP<const T> &array )
+  { return array.getRawPtr(); }
+
+  //! A view of the array
+  static inline Teuchos::ArrayView<const T> view( 
+	  Teuchos::ArrayRCP<const T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
+  
+  //! The size of the array
+  static inline size_type size( const Teuchos::ArrayRCP<const T> &array )
+  { return array.size(); }
+
+  //! Resize the array
+  static inline void resize( Teuchos::ArrayRCP<const T> &array, size_type n )
+  { array.resize( n ); }
+
+  //! Copy the ArrayView object
+  static inline void copyView( Teuchos::ArrayRCP<const T> &array, 
+			       const Teuchos::ArrayView<const T> &view )
+  { array = Teuchos::arcpClone( view.getConst() ); }
+};
+
 /*! \brief The partial specialization of the ArrayTraits struct for const
  * Teuchos::ArrayRCP.
  * \ingroup array_traits
@@ -384,6 +433,52 @@ struct ArrayTraits<const Teuchos::ArrayRCP<T> >
   static inline void copyView( const Teuchos::ArrayRCP<T> &array,
 			       const Teuchos::ArrayView<const T> &view )
   { testPrecondition( false ); } // cannot change a const array
+};
+
+/*! \brief The partial specialization of the ArrayTraits struct for const
+ * Teuchos::ArrayRCP.
+ * \ingroup array_traits
+ */
+template<typename T>
+struct ArrayTraits<const Teuchos::ArrayRCP<const T> >
+{
+  //! The size type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::size_type size_type;
+  //! The type contained in the array
+  typedef typename Teuchos::ArrayRCP<const T>::value_type value_type;
+  //! The pointer type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::const_pointer pointer;
+  //! The const pointer type of the array
+  typedef typename Teuchos::ArrayRCP<const T>::const_pointer const_pointer;
+
+  //! The head pointer of the array
+  static inline const_pointer headPtr( const Teuchos::ArrayRCP<const T> &array )
+  { return array.getRawPtr(); }
+
+  //! A view of the array
+  static inline Teuchos::ArrayView<const T> view( 
+	  const Teuchos::ArrayRCP<const T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
+  
+  //! The size of the array
+  static inline size_type size( const Teuchos::ArrayRCP<const T> &array )
+  { return array.size(); }
+
+  //! Resize the array
+  static inline void resize( const Teuchos::ArrayRCP<const T> &array, size_type n )
+  { testPrecondition( false ); } // cannot resize a const array
+
+  //! Copy the ArrayView object
+  static inline void copyView( const Teuchos::ArrayRCP<const T> &array, 
+			       const Teuchos::ArrayView<const T> &view )
+  { testPrecondition( false ); } // cannot change a const arraym
 };
 
 /*! \brief The partial specialization of the ArrayTraits struct for 
@@ -638,7 +733,7 @@ struct ArrayTraits<Teuchos::TwoDArray<T> >
 
   //! The head pointer of the const array
   static inline const_pointer headPtr( const Teuchos::TwoDArray<T> &array )
-  { return array[0].getRawPtr(); }
+  { return const_cast<Teuchos::TwoDArray<T>& >( array )[0].getRawPtr(); }
 
   //! A view of the array
   static inline Teuchos::ArrayView<T> view( 
@@ -659,9 +754,9 @@ struct ArrayTraits<Teuchos::TwoDArray<T> >
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { 
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return array.getDataArray()();
+      return array.getDataArray()().getConst();
     else
-      return array.getDataArray()( offset, size );
+      return array.getDataArray()( offset, size ).getConst();
   }
 
   //! The size of the array
@@ -729,9 +824,9 @@ struct ArrayTraits<const Teuchos::TwoDArray<T> >
 	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { 
     if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
-      return array.getDataArray()();
+      return array.getDataArray()().getConst();
     else
-      return array.getDataArray()( offset, size );
+      return array.getDataArray()( offset, size ).getConst();
   }
 
   //! The size of the array
