@@ -4,12 +4,6 @@ ADD_EXECUTABLE(tstStructuredHexMesh
 TARGET_LINK_LIBRARIES(tstStructuredHexMesh utility_core)
 ADD_TEST(StructuredHexMesh_test tstStructuredHexMesh)
 
-ADD_EXECUTABLE(tstStructuredHexMeshEstimator
-  tstStructuredHexMeshEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStructuredHexMeshEstimator utility_core)
-ADD_TEST(StructuredHexMesh_test tstStructuredHexMeshEstimator)
-
 ADD_EXECUTABLE(tstAssertion 
   tstAssertion.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

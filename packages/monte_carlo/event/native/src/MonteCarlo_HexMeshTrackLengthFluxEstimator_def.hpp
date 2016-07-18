@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------//
-//!
-//! \file   MonteCarlo_HexMeshTrackLengthFluxEstimator.cpp
-//! \author Philip Britt
-//! \brief  hex mesh flux estimator class declaration.
-//!
+//
+// \file   MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp
+// \author Philip Britt
+// \brief  Hex mesh flux estimator class declaration.
+//
 //---------------------------------------------------------------------------//
 
 #include <iostream>
@@ -26,6 +26,7 @@
 
 namespace MonteCarlo{
 
+// Constructor
 template<typename ContributionMultiplierPolicy>
 HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengthFluxEstimator(
 	const Estimator::idType id,
@@ -45,17 +46,31 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
 
   this->assignEntities( hex_volumes );
 
-  d_hex_begin = d_hex_mesh->getStartHexIDIterator();
-  d_hex_end = d_hex_mesh->getEndHexIDIterator();
 }
 
+// Set the particle types that can contribute to the estimator
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setParticleTypes( 
                 const Teuchos::Array<ParticleType>& particle_types )
 {
-  Estimator::setParticleTypes( particle_types );
+  if( particle_types.size() > 1 )
+  {
+    std::cerr << "Warning: Hex mesh estimators can only have one "
+	      << "particle type contribute. All but the first particle type "
+	      << "requested in estimator " << this->getId() 
+	      << " will be ignored."
+	      << std::endl;
+    
+    Teuchos::Array<ParticleType> valid_particle_types( 1 );
+    valid_particle_types[0] = particle_types.front();
+    
+    Estimator::setParticleTypes( valid_particle_types );
+  }
+  else
+    Estimator::setParticleTypes( particle_types );
 }
 
+// Set the response functions
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setResponseFunctions(
                 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions)
@@ -73,6 +88,7 @@ for( unsigned i = 0; i < response_functions.size(); ++i )
   StandardEntityEstimator::setResponseFunctions( response_functions );
 }
 
+// Add current history estimator contribution
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGlobalParticleSubtrackEndingEvent(
                 const ParticleState& particle,
@@ -85,21 +101,17 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                     start_point[1] != end_point[1] ||
                     start_point[2] != end_point[2] );
 
-  double ray[3] {end_point[0] - start_point[0],
-                 end_point[1] - start_point[1],
-                 end_point[2] - start_point[2]};
-
-  double track_length = Utility::vectorMagnitude( ray[0],
-                                                  ray[1],
-                                                  ray[2] );
-                                                  
-  double direction[3] { ray[0] / track_length,
-                        ray[1] / track_length,
-                        ray[2] / track_length };
-
-
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {        
+  {
+    double direction[3] {end_point[0] - start_point[0],
+                         end_point[1] - start_point[1],
+                         end_point[2] - start_point[2]};
+
+    double track_length = Utility::vectorMagnitude( direction[0],
+                                                    direction[1],
+                                                    direction[2] );
+                                                  
+    Utility::normalizeDirection( direction );
     
     Teuchos::Array<std::pair<Utility::StructuredHexMesh::HexIndex, double>> contribution_array =
       d_hex_mesh->computeTrackLengths( start_point,
@@ -115,7 +127,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
         double weighted_contribution = contribution_array[i].second *
           ContributionMultiplierPolicy::multiplier( particle );
         
-        addPartialHistoryContribution( contribution_array[i].first,
+        this->addPartialHistoryContribution( contribution_array[i].first,
                                        particle_state_wrapper,
                                        weighted_contribution );
       }
@@ -124,6 +136,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
 }
 
+// Export the estimator data
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
@@ -173,8 +186,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     unsigned size_of_coordinates = x_coordinates_size * y_coordinates_size * z_coordinates_size;
     double coordinates [size_of_coordinates*3];
     
-
-    
+    //construct array for moab
     unsigned l = 0;
     for( unsigned k = 0; k < z_coordinates_size; ++k)
     {
@@ -221,12 +233,14 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                            vov_tag( this->getNumberOfResponseFunctions() ),
                            fom_tag( vov_tag.size() );
     // Process moments    
-    Utility::StructuredHexMesh::HexIDIterator hex;
+    HexIDIterator hex;
+    HexIDIterator start_hex = getStartHex();
+    HexIDIterator end_hex = getEndHex();
     unsigned hex_parameter_indices[3];
-    for( hex = d_hex_begin; hex != d_hex_end; ++hex)
+    for( hex = start_hex; hex != end_hex; ++hex)
     {
       // convert from hex index to moab entity handle
-      d_hex_mesh->moabGetHexPlaneIndices( *hex, hex_parameter_indices);
+      d_hex_mesh->getHexPlaneIndices( *hex, hex_parameter_indices);
       moab::EntityHandle moab_hex = box->get_element( hex_parameter_indices[0],
                                                       hex_parameter_indices[1],
                                                       hex_parameter_indices[2] ); 
@@ -411,6 +425,25 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   }
 }
 
+// Get start iterator over list of hex element IDs
+template<typename ContributionMultiplierPolicy>
+auto HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getStartHex() const->HexIDIterator
+{
+
+  return d_hex_mesh->getStartHexIDIterator();
+
+}
+
+// Get end iterator over list of hex element IDs
+template<typename ContributionMultiplierPolicy>
+auto HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getEndHex() const->HexIDIterator
+{
+
+  return d_hex_mesh->getEndHexIDIterator();
+
+}
+
+// Print the estimator data
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary( 
 						       std::ostream& os ) const
@@ -502,23 +535,7 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::printSummary
 
 }
 
-//getter functions for start and end hex element iterators of the mesh
-template<typename ContributionMultiplierPolicy>
-Utility::StructuredHexMesh::HexIDIterator HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getStartHex() const
-{
-
-  return d_hex_begin;
-
-}
-
-template<typename ContributionMultiplierPolicy>
-Utility::StructuredHexMesh::HexIDIterator HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getEndHex() const
-{
-
-  return d_hex_end;
-
-}
-
+// Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
 void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )

@@ -406,7 +406,7 @@ double StructuredHexMesh::getZPlaneLocation( PlaneIndex i)
 
 }
 //! return the individual plane indices from a hex index for moab to use
-void StructuredHexMesh::moabGetHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3])
+void StructuredHexMesh::getHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3])
 {
 
   testPrecondition( h >= 0 &&
