@@ -61,17 +61,15 @@ public:
 
   //! Constructor
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
-                                         const DistributionType& distribution )
-    : ParentType( distribution )
-  { /* ... */ }
-
+                                        const DistributionType& distribution );
+  
   //! Constructor
   template<template<typename T, typename... Args> class ArrayA,
            template<typename T, typename... Args> class ArrayB>
   UnitAwareInterpolatedTabularTwoDDistributionImplBase(
                 const ArrayA<PrimaryIndepQuantity>& primary_indep_grid,
                 const ArrayB<std::shared_ptr<const BaseOneDDistributionType> >&
-                secondary_distributions )
+                secondary_distributions );
     : ParentType( primary_indep_grid, secondary_distributions )
   { /* ... */ }
 
