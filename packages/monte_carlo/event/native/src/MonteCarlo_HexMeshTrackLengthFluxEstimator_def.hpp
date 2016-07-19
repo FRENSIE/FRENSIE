@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //
-// \file   MonteCarlo_HexMeshTrackLengthFluxEstimator.hpp
+// \file   MonteCarlo_HexMeshTrackLengthFluxEstimator_def.hpp
 // \author Philip Britt
-// \brief  Hex mesh flux estimator class declaration.
+// \brief  Hex mesh flux estimator class definition.
 //
 //---------------------------------------------------------------------------//
 
@@ -103,21 +103,10 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    double direction[3] {end_point[0] - start_point[0],
-                         end_point[1] - start_point[1],
-                         end_point[2] - start_point[2]};
-
-    double track_length = Utility::vectorMagnitude( direction[0],
-                                                    direction[1],
-                                                    direction[2] );
-                                                  
-    Utility::normalizeDirection( direction );
     
     Teuchos::Array<std::pair<Utility::StructuredHexMesh::HexIndex, double>> contribution_array =
       d_hex_mesh->computeTrackLengths( start_point,
-                                       end_point,
-                                       direction,
-                                       track_length );
+                                       end_point );
     
     if( contribution_array.size() > 0 )
     {

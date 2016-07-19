@@ -36,6 +36,11 @@
 
 namespace MonteCarlo{
 
+/*! The hex-mesh track length flux estimator class.
+ * \Utilizes a structured hex mesh geometry to calculate
+ * \flux.
+ */
+
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
 class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::StructuredHexMesh::HexIndex>,
                                         public ParticleSubtrackEndingGlobalEventObserver

@@ -15,11 +15,14 @@
 
 // boost includes
 #include <boost/unordered_map.hpp>
+#include <boost/optional.hpp>
 
 // Trillinos Includes
 #include <Teuchos_Array.hpp>
 
 namespace Utility{
+/*! StructuredHexMesh stores the mesh itself and performs calculations
+ *  to return important information from the mesh */
 
 class StructuredHexMesh
 {
@@ -35,7 +38,7 @@ public:
   //! HexVolume handles
   typedef double HexVolume;
 
-  //! iterator handle over all hex elements
+  //! Iterator handle over all hex elements
   typedef std::list<HexIndex>::const_iterator HexIDIterator;
 
   //! Constructor
@@ -46,85 +49,128 @@ public:
   ~StructuredHexMesh()
   { /* ... */ }
 
-  //! returns the volumes of the hex elements for the estimator class
+  //! Returns the volumes of the hex elements for the estimator class.
   boost::unordered_map<HexIndex, HexVolume> calculateVolumes();
 
-  //! returns a bool that says whether or not a point is in the mesh
-  bool isPointInMesh( const double point[3] );
+  //! Returns a bool that says whether or not a point is in the mesh.
+  bool isPointInMesh( const double point[3] ) const;
   
-  //! returns the index of the hex that contains a given point
-  HexIndex whichHexIsPointIn( const double point[3] );
+  //! Returns the index of the hex that contains a given point.
+  HexIndex whichHexIsPointIn( const double point[3] ) const;
   
-  //! returns partial track lengths along a given line segment
+  //! Returns an array of pairs of hex IDs and partial track lengths along a given line segment.
   Teuchos::Array<std::pair<HexIndex,double>> computeTrackLengths( 
                               const double start_point[3],
-                              const double end_point[3],
-                              const double direction[3],
-                              const double track_length );
+                              const double end_point[3] );
   
-  //! get the start iterator of the hex element list
+  //! Get the start iterator of the hex element list.
+  /*! \details returns the iterator that points to the first element in the list containing
+   *           all of the hex ID elements */
   HexIDIterator getStartHexIDIterator();
   
-  //! get the end iterator of the hex element list
+  //! Get the end iterator of the hex element list.
+  /*! \details returns the iterator that points to one beyond the last element in the list containing
+   *           all of the hex ID elements */
   HexIDIterator getEndHexIDIterator();
   
-  //! get the number of planes on the X axis
+  //! Get the number of planes on the X axis.
   unsigned getNumberOfXPlanes();
   
-  //! get the number of planes on the Y axis
+  //! Get the number of planes on the Y axis.
   unsigned getNumberOfYPlanes();
   
-  //! get the number of planes on the Z axis
+  //! Get the number of planes on the Z axis.
   unsigned getNumberOfZPlanes();
   
-  //! get the location of a specific plane on the x axis
+  //! Get the location of a specific plane on the x axis.
   double getXPlaneLocation( PlaneIndex i);
   
-  //! get the location of a specific plane on the y axis
+  //! Get the location of a specific plane on the y axis.
   double getYPlaneLocation( PlaneIndex i);
   
-  //! get the location of a specific plane on the z axis
+  //! Get the location of a specific plane on the z axis.
   double getZPlaneLocation( PlaneIndex i);
   
-  //! deconstruct a hex index into indices of planes on each dimension
+  //! Deconstruct a hex index into indices of planes on each dimension.
+  /*! \details This method is used primarily with moab since the moab
+   *           methods used in the estimator class require the parameter space over
+   *           all three dimensions to form a structured mesh */
   void getHexPlaneIndices(const HexIndex h, unsigned hex_parameter_indices[3]);
   
 private:
-  //enumeration type converting dimensions to integers
-  enum planeDimension{ x_dim = 0,
-                       y_dim = 1,
-                       z_dim = 2 };
+  // enumeration type converting dimensions to integers
+  enum Dimension{ x_dim = 0,
+                  y_dim = 1,
+                  z_dim = 2 };
   
+  // set the plane indices that make up the hex element index
   void setMemberIndices( const double point[3],
                          const double direction[3],
-                         const Teuchos::Array<std::pair<planeDimension,PlaneIndex>>& interaction_planes );
+                         const Teuchos::Array<std::pair<Dimension,PlaneIndex>>& interaction_planes );
   
+  /*Deals with a special case of the particle being in the boundary region but traveling away from the mesh
+    and the particle born in the boundary region and staying in that boundary region.
+    If it does, it should just return true which will result in a return of an empty contribution array */
   bool boundaryRegionSpecialCase( const double start_point[3],
                                   const double end_point[3],
                                   const double direction[3] );
-
-  bool didParticleExitMesh( planeDimension intersection_dimension,
-                            Teuchos::Array<std::pair<planeDimension,PlaneIndex>> interaction_planes); 
-                       
-  Teuchos::Array<std::pair<planeDimension,PlaneIndex>> findInteractionPlanes( 
+  
+  // determines if the particle has exited the mesh
+  bool didParticleExitMesh( Dimension intersection_dimension,
+                            Teuchos::Array<std::pair<Dimension,PlaneIndex>> interaction_planes); 
+  
+  // returns the planes that a particle might interact with next
+  Teuchos::Array<std::pair<Dimension,PlaneIndex>> findInteractionPlanes( 
                                                         const double point[3],
                                                         const double direction[3] );
-                         
-  Teuchos::Array<std::pair<planeDimension,double>> findDistances( 
+                                                        
+  // finds distance to each of the possible interaction planes
+  Teuchos::Array<std::pair<Dimension,double>> findDistances( 
                                                         const double point[3],
                                                         const double direction[3],
-                      const Teuchos::Array<std::pair<planeDimension,PlaneIndex>>& planeSet );
+                      const Teuchos::Array<std::pair<Dimension,PlaneIndex>>& planeSet );
                       
   //used to find the relevant intersection point where the particle will intersect the mesh
-  std::pair<planeDimension,double> findIntersectionPoint( const Teuchos::Array<std::pair<planeDimension,double>>& distances);
+  std::pair<Dimension,double> findIntersectionPoint( const Teuchos::Array<std::pair<Dimension,double>>& distances);
   
   //form the index out of the x,y, and z lower hex plane bounding indices
   HexIndex findIndex( const unsigned x_index,
                       const unsigned y_index,
-                      const unsigned z_index );
+                      const unsigned z_index ) const;
   
   //overload function for ease
-  HexIndex findIndex( const unsigned indices[3] );
+  HexIndex findIndex( const unsigned indices[3] ) const;
+  
+  // sets the incrementer for mesh iteration
+  void setIncrementer( const double direction[3],
+                       int incrementer[3] ) const;
+
+  // pushes point along direction to new intersection point
+  void pushPoint( double point[3],
+                  const double direction[3],
+                  const double push_distance ) const;
+
+  // sets x dimension for hex index
+  void setXIndex( const double x );
+
+  // sets y dimension for hex index
+  void setYIndex( const double y );
+
+  // sets z dimension for hex index
+  void setZIndex( const double z );
+  
+  // finds the x interaction plane for a particle along its path
+  boost::optional<std::pair<Dimension, PlaneIndex>> findXInteractionPlane( const double x_location,
+                                                                           const double x_direction );
+
+  // finds the y interaction plane for a particle along its path
+  boost::optional<std::pair<Dimension, PlaneIndex>> findYInteractionPlane( const double y_location,
+                                                                           const double y_direction );
+
+  // finds the z interaction plane for a particle along its path
+  boost::optional<std::pair<Dimension, PlaneIndex>> findZInteractionPlane( const double z_location,
+                                                                           const double z_direction );
+  
   // The tolerance used for geometric tests
   static const double s_tol;
 
