@@ -164,7 +164,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   double iteration_length = 0;
   
   std::pair<Dimension, double> distance_to_intersection;
-  
+   
   bool pointInMesh = isPointInMesh(current_point);
 
   //test if point starts in mesh. If not, figure out if it interacts with mesh
@@ -174,7 +174,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
     //find the planes that the point interacts with
     interaction_plane_array = findInteractionPlanes( current_point,
                                                      direction );
-    
+                                                     
     //if it doesn't interact with any planes, return an empty array
     if( interaction_plane_array.size() == 0 )
     {
@@ -227,7 +227,7 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
       iteration_length = *push_distance;
     }
   }
-  
+
   //check special case of a point being caught in the boundary region but traveling away from mesh. This takes care of when the point was born in boundary zone but traveling away *and* when the particle entered mesh in the boundary region but never actually entered mesh
   if(boundaryRegionSpecialCase( current_point, end_point, direction ) )
   {
@@ -237,7 +237,6 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
   //find the planes that the particle will interact with (since point has either moved or these were never found if inside mesh) and set indices up for interaction planes and HexIndex planes
   interaction_plane_array = findInteractionPlanes( current_point,
                                                    direction );
-
   setMemberIndices( current_point,
                     direction,
                     interaction_plane_array );
@@ -427,76 +426,28 @@ bool StructuredHexMesh::boundaryRegionSpecialCase( const double start_point[3],
                                                    const double end_point[3],
                                                    const double direction[3] )
 {
-  bool isSpecialCase = false;
+  bool isSpecialCase;
+  
   //test boundary regions in x dimension
-  if( d_x_planes.back() <= start_point[x_dim] && start_point[x_dim] < d_x_planes.back() + s_tol )
-  {
-    if( direction[x_dim] >= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_x_planes.back() <= end_point[x_dim] && end_point[x_dim] < d_x_planes.back() + s_tol)
-    {
-      isSpecialCase = true;
-    }
-  }
-  else if(d_x_planes.front() - s_tol < start_point[x_dim] && start_point[x_dim] <= d_x_planes.front() )
-  {
-    if( direction[x_dim] <= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_x_planes.front() - s_tol < end_point[x_dim] && end_point[x_dim] <= d_x_planes.front() )
-    {
-      isSpecialCase = true;
-    }
-  }
+  isSpecialCase = boundaryRegionByDimension( start_point[x_dim],
+                                             end_point[x_dim],
+                                             direction[x_dim],
+                                             d_x_planes );
+  if( isSpecialCase ) return isSpecialCase;
+  
   //test boundary regions in y dimension
-  if( d_y_planes.back() <= start_point[y_dim] && start_point[y_dim] < d_y_planes.back() + s_tol )
-  {
-    if( direction[y_dim] >= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_y_planes.back() <= end_point[y_dim] && end_point[y_dim] < d_y_planes.back() + s_tol)
-    {
-      isSpecialCase = true;
-    }
-  }
-  else if(d_y_planes.front() - s_tol < start_point[y_dim] && start_point[y_dim] <= d_y_planes.front() )
-  {
-    if( direction[y_dim] <= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_y_planes.front() - s_tol < end_point[y_dim] && end_point[y_dim] <= d_y_planes.front() )
-    {
-      isSpecialCase = true;
-    }
-  }
+  isSpecialCase = boundaryRegionByDimension( start_point[y_dim],
+                                             end_point[y_dim],
+                                             direction[y_dim],
+                                             d_y_planes );
+  if( isSpecialCase ) return isSpecialCase;
+
   //test boundary regions in z dimension
-  if( d_z_planes.back() <= start_point[z_dim] && start_point[z_dim] < d_z_planes.back() + s_tol )
-  {
-    if( direction[z_dim] >= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_z_planes.back() <= end_point[z_dim] && end_point[z_dim] < d_z_planes.back() + s_tol)
-    {
-      isSpecialCase = true;
-    }
-  }
-  else if(d_z_planes.front() - s_tol < start_point[z_dim] && start_point[z_dim] <= d_z_planes.front() )
-  {
-    if( direction[z_dim] <= 0 )
-    {
-      isSpecialCase = true;
-    }
-    else if( d_z_planes.front() - s_tol < end_point[z_dim] && end_point[z_dim] <= d_z_planes.front() )
-    {
-      isSpecialCase = true;
-    }
-  }
+  isSpecialCase = boundaryRegionByDimension( start_point[z_dim],
+                                             end_point[z_dim],
+                                             direction[z_dim],
+                                             d_z_planes );
+
   return isSpecialCase;
 }
 
@@ -542,200 +493,25 @@ Teuchos::Array<std::pair<StructuredHexMesh::Dimension,StructuredHexMesh::PlaneIn
                                                           const double direction[3] )
 {
   Teuchos::Array<std::pair<Dimension,PlaneIndex>> interaction_planes;
+  //find interaction plane for each dimension.
+  findInteractionPlaneForDimension( x_dim,
+                                    point[x_dim],
+                                    direction[x_dim],
+                                    d_x_planes,
+                                    interaction_planes );
 
-  //X DIMENSION SEARCH
-  if(std::fabs(direction[x_dim]) > s_tol)
-  {
-    /*check if the point is above the x dimension upper bounding plane and the 
-      relevant direction component is negative */
-    if( point[x_dim] >= d_x_planes.back() + s_tol && direction[x_dim] < 0 )
-    {
-      std::pair<Dimension,PlaneIndex> x_interaction_plane = 
-        std::make_pair(x_dim, d_x_planes.size()-1);
-    
-      interaction_planes.push_back(x_interaction_plane);
-    }
-    //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_x_planes.back() <= point[x_dim] && point[x_dim] < d_x_planes.back() + s_tol && direction[x_dim] < 0)
-    {
-      std::pair<Dimension,PlaneIndex> x_interaction_plane = 
-        std::make_pair(x_dim, d_x_planes.size()-2);
-    
-      interaction_planes.push_back(x_interaction_plane);    
-    }
-    /*check if the point is below the x dimension lower bounding plane and the
-      relevant direction component is positive */
-    else if( point[x_dim] <= d_x_planes.front() - s_tol && direction[x_dim] > 0 )
-    {
-      std::pair<Dimension,PlaneIndex> x_interaction_plane = 
-        std::make_pair(x_dim, 0);
-    
-      interaction_planes.push_back(x_interaction_plane);
-    }
-    //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_x_planes.front() >= point[x_dim] && point[x_dim] > d_x_planes.front() - s_tol && direction[x_dim] > 0)
-    {
-      std::pair<Dimension,PlaneIndex> x_interaction_plane = 
-        std::make_pair(x_dim, 1);
-    
-      interaction_planes.push_back(x_interaction_plane);    
-    }
-    //otherwise, somewhere inside the mesh. Need to look for which plane it will interact with
-    else if( d_x_planes.front() <= point[x_dim] && point[x_dim] <= d_x_planes.back() )
-    {
-      if(direction[x_dim] > 0)
-      {
-        PlaneIndex x_plane_index =
-          Search::binaryUpperBoundIndex( d_x_planes.begin(),
-                                         d_x_planes.end(),
-                                         point[x_dim] );
-        std::pair<Dimension,PlaneIndex> x_interaction_plane =
-          std::make_pair(x_dim, x_plane_index);
-        interaction_planes.push_back(x_interaction_plane);
-      }
-      else if( direction[x_dim] < 0)
-      {
-        PlaneIndex x_plane_index =
-          Search::binaryLowerBoundIndex( d_x_planes.begin(),
-                                         d_x_planes.end(),
-                                         point[x_dim] );
-        std::pair<Dimension,PlaneIndex> x_interaction_plane =
-          std::make_pair(x_dim, x_plane_index);
-      
-        interaction_planes.push_back(x_interaction_plane);
-      }
-    }
-  }
-  
-//Y DIMENSION SEARCH
-  if(std::fabs(direction[y_dim]) > s_tol)
-  {
-    /*check if the point is above the y dimension upper bounding plane and the 
-      relevant direction component is negative */
-    if( point[y_dim] >= d_y_planes.back() + s_tol && direction[y_dim] < 0 )
-    {
-      std::pair<Dimension,PlaneIndex> y_interaction_plane = 
-        std::make_pair(y_dim, d_y_planes.size()-1);
-    
-      interaction_planes.push_back(y_interaction_plane);
-    }
-    //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_y_planes.back() <= point[y_dim] && point[y_dim] < d_y_planes.back() + s_tol && direction[y_dim] < 0)
-    {
-      std::pair<Dimension,PlaneIndex> y_interaction_plane = 
-        std::make_pair(y_dim, d_y_planes.size()-2);
-    
-      interaction_planes.push_back(y_interaction_plane);    
-    }
-    /*check if the point is below the y dimension lower bounding plane and the
-      relevant direction component is positive */
-    else if( point[y_dim] <= d_y_planes.front() - s_tol && direction[y_dim] > 0 )
-    {
-      std::pair<Dimension,PlaneIndex> y_interaction_plane = 
-        std::make_pair(y_dim, 0);
-      
-      interaction_planes.push_back(y_interaction_plane);
-    }
-    //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_y_planes.front() >= point[y_dim] && point[y_dim] > d_y_planes.front() - s_tol && direction[y_dim] > 0)
-    {
-      std::pair<Dimension,PlaneIndex> y_interaction_plane = 
-        std::make_pair(y_dim, 1);
-      
-      interaction_planes.push_back(y_interaction_plane);    
-    }
-    //otherwise, somewhere inside the mesh. Need to look for which plane it will interact with
-    else if( d_y_planes.front() <= point[y_dim] && point[y_dim] <= d_y_planes.back() )
-    {
-      if(direction[y_dim] > 0)
-      {
-        PlaneIndex y_plane_index =
-          Search::binaryUpperBoundIndex( d_y_planes.begin(),
-                                         d_y_planes.end(),
-                                         point[y_dim] );
-        std::pair<Dimension,PlaneIndex> y_interaction_plane =
-          std::make_pair(y_dim, y_plane_index);
-        interaction_planes.push_back(y_interaction_plane);
-      
-      }
-      else if( direction[y_dim] < 0)
-      {
-        PlaneIndex y_plane_index =
-          Search::binaryLowerBoundIndex( d_y_planes.begin(),
-                                         d_y_planes.end(),
-                                         point[y_dim] );
-        std::pair<Dimension,PlaneIndex> y_interaction_plane =
-          std::make_pair(y_dim, y_plane_index);
-      
-        interaction_planes.push_back(y_interaction_plane);
-      }
-    }
-  }
+  findInteractionPlaneForDimension( y_dim,
+                                    point[y_dim],
+                                    direction[y_dim],
+                                    d_y_planes,
+                                    interaction_planes );
 
-//Z DIMENSION SEARCH
-  if(std::fabs(direction[z_dim]) > s_tol )
-  {
-    /*check if the point is above the z dimension upper bounding plane and the 
-      relevant direction component is negative */
-    if( point[z_dim] >= d_z_planes.back() + s_tol && direction[z_dim] < 0 )
-    {
-      std::pair<Dimension,PlaneIndex> z_interaction_plane = 
-        std::make_pair(z_dim, d_z_planes.size()-1);
-    
-      interaction_planes.push_back(z_interaction_plane);
-    }
-    //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_z_planes.back() <= point[z_dim] && point[z_dim] < d_z_planes.back() + s_tol && direction[z_dim] < 0)
-    {
-      std::pair<Dimension,PlaneIndex> z_interaction_plane = 
-        std::make_pair(z_dim, d_z_planes.size()-2);
-    
-      interaction_planes.push_back(z_interaction_plane);    
-    }
-    /*check if the point is below the z dimension lower bounding plane and the
-      relevant direction component is positive */
-    else if( point[z_dim] <= d_z_planes.front() - s_tol && direction[z_dim] > 0 )
-    {
-      std::pair<Dimension,PlaneIndex> z_interaction_plane = 
-        std::make_pair(z_dim, 0);
-    
-      interaction_planes.push_back(z_interaction_plane);
-    }
-    //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
-    else if( d_z_planes.front() >= point[z_dim] && point[z_dim] > d_z_planes.front() - s_tol && direction[z_dim] > 0)
-    {
-      std::pair<Dimension,PlaneIndex> z_interaction_plane = 
-        std::make_pair(z_dim, 1);
-    
-      interaction_planes.push_back(z_interaction_plane);    
-    }
-    //otherwise, somewhere inside the mesh. Need to look for which plane it will interact with
-    else if( d_z_planes.front() <= point[z_dim] && point[z_dim] <= d_z_planes.back() )
-    {
-      if(direction[z_dim] > 0)
-      {
-        PlaneIndex z_plane_index =
-          Search::binaryUpperBoundIndex( d_z_planes.begin(),
-                                         d_z_planes.end(),
-                                         point[z_dim] );
-        std::pair<Dimension,PlaneIndex> z_interaction_plane =
-          std::make_pair(z_dim, z_plane_index);
-        interaction_planes.push_back(z_interaction_plane);
-      
-      }
-      else if( direction[z_dim] < 0)
-      {
-        PlaneIndex z_plane_index =
-          Search::binaryLowerBoundIndex( d_z_planes.begin(),
-                                         d_z_planes.end(),
-                                         point[z_dim] );
-        std::pair<Dimension,PlaneIndex> z_interaction_plane =
-          std::make_pair(z_dim, z_plane_index);
-      
-        interaction_planes.push_back(z_interaction_plane);
-      }
-    }
-  }
+  findInteractionPlaneForDimension( z_dim,
+                                    point[z_dim],
+                                    direction[z_dim],
+                                    d_z_planes,
+                                    interaction_planes );
+
   return interaction_planes;
 }
 
@@ -915,6 +691,113 @@ void StructuredHexMesh::setZIndex( const double z )
                                                                   z );
     }
   }
+}
+
+// finds interaction plane for a given dimension
+void StructuredHexMesh::findInteractionPlaneForDimension( const Dimension dim,
+                                                          const double coordinate_component,
+                                                          const double direction_component,
+                                                          const Teuchos::Array<double>& plane_set,
+                                                          Teuchos::Array<std::pair<Dimension,PlaneIndex>>& interaction_planes ) const
+{
+
+  if(std::fabs(direction_component) > s_tol )
+  {
+    /*check if the point is above the dimension upper bounding plane and the 
+      relevant direction component is negative */
+    if( coordinate_component >= plane_set.back() + s_tol && direction_component < 0 )
+    {
+      std::pair<Dimension,PlaneIndex> interaction_plane = 
+        std::make_pair(dim, plane_set.size()-1);
+    
+      interaction_planes.push_back(interaction_plane);
+    }
+    //case of when point is in the upper boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
+    else if( plane_set.back() <= coordinate_component && coordinate_component < plane_set.back() + s_tol && direction_component < 0)
+    {
+      std::pair<Dimension,PlaneIndex> interaction_plane = 
+        std::make_pair(dim, plane_set.size()-2);
+    
+      interaction_planes.push_back(interaction_plane);    
+    }
+    /*check if the point is below the dimension lower bounding plane and the
+      relevant direction component is positive */
+    else if( coordinate_component <= plane_set.front() - s_tol && direction_component > 0 )
+    {
+      std::pair<Dimension,PlaneIndex> interaction_plane = 
+        std::make_pair(dim, 0);
+    
+      interaction_planes.push_back(interaction_plane);
+    }
+    //case of when point is in the lower boundary region. Needed for catching of real numbers pushed up to boundary plane but not quite crossing it due to finite precision
+    else if( plane_set.front() >= coordinate_component && coordinate_component > plane_set.front() - s_tol && direction_component > 0)
+    {
+      std::pair<Dimension,PlaneIndex> interaction_plane = 
+        std::make_pair(dim, 1);
+    
+      interaction_planes.push_back(interaction_plane);    
+    }
+    //otherwise, somewhere inside the mesh. Need to look for which plane it will interact with
+    else if( plane_set.front() <= coordinate_component && coordinate_component <= plane_set.back() )
+    {
+      if(direction_component > 0)
+      {
+        PlaneIndex plane_index =
+          Search::binaryUpperBoundIndex( plane_set.begin(),
+                                         plane_set.end(),
+                                         coordinate_component );
+        std::pair<Dimension,PlaneIndex> interaction_plane =
+          std::make_pair(dim, plane_index);
+        interaction_planes.push_back(interaction_plane);
+      
+      }
+      else if( direction_component < 0)
+      {
+        PlaneIndex plane_index =
+          Search::binaryLowerBoundIndex( plane_set.begin(),
+                                         plane_set.end(),
+                                         coordinate_component );
+        std::pair<Dimension,PlaneIndex> interaction_plane =
+          std::make_pair(dim, plane_index);
+      
+        interaction_planes.push_back(interaction_plane);
+      }
+    }
+  }
+}
+
+// check boundary region special cases for each dimension
+bool StructuredHexMesh::boundaryRegionByDimension( const double start_point_component,
+                                                   const double end_point_component,
+                                                   const double direction_component,
+                                                   const Teuchos::Array<double>& plane_set ) const
+{
+  bool isSpecialCase = false;
+  
+  if( plane_set.back() <= start_point_component && start_point_component < plane_set.back() + s_tol )
+  {
+    if( direction_component >= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( plane_set.back() <= end_point_component && end_point_component < plane_set.back() + s_tol)
+    {
+      isSpecialCase = true;
+    }
+  }
+  else if( plane_set.front() - s_tol < start_point_component && start_point_component <= plane_set.front() )
+  {
+    if( direction_component <= 0 )
+    {
+      isSpecialCase = true;
+    }
+    else if( plane_set.front() - s_tol < end_point_component && end_point_component <= plane_set.front() )
+    {
+      isSpecialCase = true;
+    }
+  }
+  
+  return isSpecialCase;
 }
 
 } // end Utility namespace

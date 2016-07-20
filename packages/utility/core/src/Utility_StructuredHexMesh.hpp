@@ -15,7 +15,6 @@
 
 // boost includes
 #include <boost/unordered_map.hpp>
-#include <boost/optional.hpp>
 
 // Trillinos Includes
 #include <Teuchos_Array.hpp>
@@ -23,7 +22,6 @@
 namespace Utility{
 /*! StructuredHexMesh stores the mesh itself and performs calculations
  *  to return important information from the mesh */
-
 class StructuredHexMesh
 {
 
@@ -108,9 +106,11 @@ private:
                          const double direction[3],
                          const Teuchos::Array<std::pair<Dimension,PlaneIndex>>& interaction_planes );
   
-  /*Deals with a special case of the particle being in the boundary region but traveling away from the mesh
-    and the particle born in the boundary region and staying in that boundary region.
-    If it does, it should just return true which will result in a return of an empty contribution array */
+  /* Deals with a special case of the particle being born in the boundary region but traveling away from the mesh
+     and the particle born in the boundary region and staying in that boundary region.
+     If it does, it should just return true which will result in a return of an empty contribution array */
+
+  //! \todo this method should be deleted when the boundary region is successfully removed from the code
   bool boundaryRegionSpecialCase( const double start_point[3],
                                   const double end_point[3],
                                   const double direction[3] );
@@ -159,17 +159,18 @@ private:
   // sets z dimension for hex index
   void setZIndex( const double z );
   
-  // finds the x interaction plane for a particle along its path
-  boost::optional<std::pair<Dimension, PlaneIndex>> findXInteractionPlane( const double x_location,
-                                                                           const double x_direction );
+  // finds interaction plane for a given dimension
+  void findInteractionPlaneForDimension( const Dimension dim,
+                                         const double coordinate_component,
+                                         const double direction_component,
+                                         const Teuchos::Array<double>& plane_set,
+                                         Teuchos::Array<std::pair<Dimension,PlaneIndex>>& interaction_planes ) const;
 
-  // finds the y interaction plane for a particle along its path
-  boost::optional<std::pair<Dimension, PlaneIndex>> findYInteractionPlane( const double y_location,
-                                                                           const double y_direction );
-
-  // finds the z interaction plane for a particle along its path
-  boost::optional<std::pair<Dimension, PlaneIndex>> findZInteractionPlane( const double z_location,
-                                                                           const double z_direction );
+  // check boundary region special cases for each dimension
+  bool boundaryRegionByDimension( const double start_point_component,
+                                  const double end_point_component,
+                                  const double direction_component,
+                                  const Teuchos::Array<double>& plane_set ) const;
   
   // The tolerance used for geometric tests
   static const double s_tol;

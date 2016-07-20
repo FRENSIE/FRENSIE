@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, construct_mesh)
 //---------------------------------------------------------------------------//
 // Test the calculateVolumes method
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, calculate_volume)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, calculateVolumes)
 {
 
   boost::unordered_map<unsigned long, double> volume_map =
@@ -98,8 +98,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, calculate_volume)
 //---------------------------------------------------------------------------//
 // test whether or not the point in mesh method works
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST( StructuredHexMesh, is_point_in_mesh)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, isPointInMesh)
 {
 
   //points inside mesh and not in boundary region
@@ -151,8 +150,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, is_point_in_mesh)
 //---------------------------------------------------------------------------//
 // test whether or not the whichHexIsPointIn method works
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST( StructuredHexMesh, which_hex_is_point_in)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, whichHexIsPointIn)
 {
 
   //test points in the middle of the mesh elements. Points should be in order for index returned
@@ -165,30 +163,29 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, which_hex_is_point_in)
   double point7[3] {0.25, 0.75, 0.75};
   double point8[3] {0.75, 0.75, 0.75};
   
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point1) == 0);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point2) == 1);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point3) == 2);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point4) == 3);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point5) == 4);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point6) == 5);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point7) == 6);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point8) == 7);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point1), 0);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point2), 1);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point3), 2);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point4), 3);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point5), 4);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point6), 5);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point7), 6);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point8), 7);
   
   /* test points on mesh boundaries.*/
   double point9[3] {0, 0, 0};
   double point10[3] {0.5, 0.5, 0.5};
   double point11[3] {1.0, 1.0, 1.0};
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point9) == 0);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point10) == 7);
-  TEST_ASSERT( hex_mesh->whichHexIsPointIn(point11) == 7);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point9), 0);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point10), 7);
+  TEST_EQUALITY_CONST( hex_mesh->whichHexIsPointIn(point11), 7);
 }
 
 //---------------------------------------------------------------------------//
 // test simple cases of rays not interacting with mesh and computeTrackLengths
 // returning empty arrays
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST( StructuredHexMesh, ray_does_not_intersect_with_mesh)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_simple)
 {
 
  double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -302,9 +299,8 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, ray_does_not_intersect_with_mesh)
 // testing cases of rays interacting with mesh and returning appropriate results
 // First test is particle track is entirely within one cell
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( StructuredHexMesh, track_length_in_one_cell)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_one_cell)
 {
-
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;  
   
@@ -327,7 +323,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, track_length_in_one_cell)
   direction[0] = ray[0] / ray_length;
   direction[1] = ray[1] / ray_length;
   direction[2] = ray[2] / ray_length;
- 
+
   Teuchos::Array<std::pair<unsigned long,double>> contribution1 =
     hex_mesh->computeTrackLengths( start_point,
                                    end_point );
@@ -341,10 +337,8 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, track_length_in_one_cell)
 //---------------------------------------------------------------------------//
 // second test: particle starts in mesh and crosses into another mesh element and dies in that mesh element
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_ends_in_another)
+TEUCHOS_UNIT_TEST( StructuredHexMesh, computeTrackLengths_multiple_elements)
 {
-
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;  
   
@@ -444,8 +438,7 @@ TEUCHOS_UNIT_TEST( StructuredHexMesh, particle_starts_in_one_hex_element_and_end
 //---------------------------------------------------------------------------//
 // third test: Particle starts in mesh and exits mesh
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST(StructuredHexMesh, starts_in_mesh_and_exits_mesh)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_starts_mesh_exits_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -514,8 +507,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, starts_in_mesh_and_exits_mesh)
 // testing cases of where the particle starts outside of the mesh and enters the mesh
 // simple cases of particle entering mesh
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_mesh)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -648,7 +640,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_starts_outside_mesh_and_dies_in_me
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and travels away from mesh on negative side
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travles_away_from_mesh_negative)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_negative_away_from_mesh)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
@@ -681,7 +673,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travles_away_from_
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and travels away from mesh on positive side
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travels_away_from_mesh_positive)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_positive_away_from_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-13;
@@ -712,7 +704,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_travels_away_from_
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and dies in boundary region
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in_mesh)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_stays_in_region)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
   start_point[0] = 1+1e-13;
@@ -818,8 +810,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_particle_starts_and_dies_in
 //---------------------------------------------------------------------------//
 // particle starts in boundary region and dies inside mesh
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_enters_mesh)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, boundaryRegionSpecialCase_enters_mesh)
 {
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
 
@@ -860,8 +851,7 @@ TEUCHOS_UNIT_TEST(StructuredHexMesh, boundary_region_enters_mesh)
 // under specific conditions where multiple intersection points are inside mesh
 // but a dimension after the first one in order of x,y,z is the true intersection point
 //---------------------------------------------------------------------------//
-
-TEUCHOS_UNIT_TEST(StructuredHexMesh, particle_enters_mesh_dimension_test)
+TEUCHOS_UNIT_TEST(StructuredHexMesh, computeTrackLengths_enters_correct_dimension)
 {
 
   double start_point[3], end_point[3], ray[3], direction[3], ray_length;
