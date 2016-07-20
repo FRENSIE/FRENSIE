@@ -9,9 +9,9 @@ set rmargin at screen 0.95
 unset xlabel
 set ylabel "Neutron Flux Spectrum"
 set logscale x
-#set logscale y
+set logscale y
 set format x ""
-set format y "%4.3f"
+set format y "%4.3e"
 set grid
 #set xrange[0.0718:0.1]
 #set xrange[0.0718:0.075]
@@ -26,7 +26,7 @@ set lmargin at screen 0.12
 set rmargin at screen 0.95
 unset key
 unset title
-set format x "%3.2f"
+set format x "%3.2e"
 set format y "%3.2f"
 set xlabel "Energy (MeV)"
 set ylabel "C/E"

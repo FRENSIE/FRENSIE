@@ -204,9 +204,6 @@ void DecoupledPhotonProductionReactionACEFactory::parseSIGP(
 	  else if ( static_cast<unsigned>( sigp_block[cs_index] ) == 12u  ||
 	            static_cast<unsigned>( sigp_block[cs_index] ) == 16u )
 	  {
-	    std::cout << " " << std::endl;
-	    std::cout << "SIGP Block Interpolation Regions" << std::endl;
-	    std::cout << sigp_block(cs_index + 1u, 3) << std::endl;
 	  
 	    TEST_FOR_EXCEPTION( static_cast<unsigned>( sigp_block[cs_index + 2u] ) != 0,
 	                        std::runtime_error,

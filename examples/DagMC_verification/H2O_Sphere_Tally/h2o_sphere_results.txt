@@ -7,7 +7,7 @@ dag:
 0.00106135557984 0.000879527821406
 
 MCNP5:
-#  Hopefull output
+#  Hopefully output
 (1.05898E-03 0.0006) 
 
 
