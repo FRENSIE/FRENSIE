@@ -42,7 +42,7 @@ c
 c
 c Material Definition
 c
-m1   92235.80c 0.95
+m1   92235.80c 1.00
      92238.80c 0.05
 c
 c
@@ -55,12 +55,12 @@ c --------------------
 c Job Control
 c --------------------
 c run in neutron only mode
-mode n p
+mode n
 c Control the physics for the photons: 
 c Above 100 MeV treat as simple physics, Include
 c Bremsstrahlung, include coherent scattering, don't use photonuclear 
 c interactions, no Doppler broadening. 
-PHYS:P 100  1 0 0 1 
+PHYS:N 2j 1 2j      $ Line Alex had me add
 c 
 c run for 1000000 histories
 nps 1e7
