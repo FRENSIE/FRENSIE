@@ -3,8 +3,8 @@ Installation {#installation}
 
 ## Dependencies 
 To promote rapid scientific software development and research, FRENSIE is built
-off of a large number of software libraries. The software that FRENSIE
-depends on is listed below.
+off of a large number of software libraries. The software libraries that FRENSIE
+depends on are listed below.
 
 1. [HDF5 1.8.13+](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/) - optional
