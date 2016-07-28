@@ -39,13 +39,11 @@ HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::HexMeshTrackLengt
   d_hex_mesh( new Utility::StructuredHexMesh( x_planes, y_planes, z_planes) ),
   d_output_mesh_file_name( output_mesh_file_name )
 {
-  
   boost::unordered_map<Utility::StructuredHexMesh::HexIndex,
                        Utility::StructuredHexMesh::HexVolume> hex_volumes = 
                        d_hex_mesh->calculateVolumes();
 
   this->assignEntities( hex_volumes );
-
 }
 
 // Set the particle types that can contribute to the estimator
