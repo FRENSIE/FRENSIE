@@ -239,6 +239,10 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 (end_point[1]-start_point[1])*(end_point[1]-start_point[1]) +
                 (end_point[2]-start_point[2])*(end_point[2]-start_point[2]) );
 
+    // Calculate the contribution multiplier
+    double contribution_mult =
+      ContributionMultiplierPolicy::multiplier( particle );
+
     std::vector<double> ray_tet_intersections;
     std::vector<moab::EntityHandle> tet_surface_triangles;
                            
@@ -335,8 +339,8 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 	  {	
             EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
-            double tet_contribution =
-              tet_track_length*contribution_mult;
+            double tet_contribution = tet_track_length*contribution_mult;
+
             
 	    // Add partial history contribution
 	    this->addPartialHistoryContribution( tet,
@@ -364,8 +368,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
         {
           EstimatorParticleStateWrapper particle_state_wrapper( particle );
 
-          double tet_contribution = track_length*
-              ContributionMultiplierPolicy::multiplier( particle );
+          double tet_contribution = track_length*contribution_mult;
           
 	  this->addPartialHistoryContribution( tet, 
                                                particle_state_wrapper, 
