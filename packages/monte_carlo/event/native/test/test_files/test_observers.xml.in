@@ -1,8 +1,10 @@
-<ParameterList name="Estimators">
+<ParameterList name="Observers">
 
   <ParameterList name="Cell Track Length Flux Estimator">
     <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Type" type="string" value="cell.tl.flux"/>
+    <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+    <Parameter name="Particle Type" type="string" value="Photon"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Response Functions" type="Array" value="{0}"/>
     <ParameterList name="Bins">
@@ -13,8 +15,9 @@
 
   <ParameterList name="Cell Collision Flux Estimator">
     <Parameter name="Id" type="unsigned int" value="2"/>
-    <Parameter name="Type" type="string" value="cell.c.flux"/>
+    <Parameter name="Type" type="string" value="Cell Collision Flux"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
     <Parameter name="Response Functions" type="Array" value="{0,1}"/>
     <ParameterList name="Bins">
@@ -25,10 +28,10 @@
 
   <ParameterList name="Pulse Height Estimator">
     <Parameter name="Id" type="unsigned int" value="4"/>
-    <Parameter name="Type" type="string" value="cell.pulse.height"/>
+    <Parameter name="Type" type="string" value="Cell Pulse Height"/>
     <Parameter name="Particle Type" type="string" value="Photon"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
-    <Parameter name="Cells" type="Array" value="{1,26}"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Energy Multiplication" type="bool" value="true"/>
     <ParameterList name="Bins">
       <Parameter name="Energy Bins" type="Array" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
@@ -37,7 +40,7 @@
 
   <ParameterList name="Surface Flux Estimator">
     <Parameter name="Id" type="unsigned int" value="9"/>
-    <Parameter name="Type" type="string" value="surface.flux"/>
+    <Parameter name="Type" type="string" value="Surface Flux"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
@@ -49,7 +52,7 @@
   
   <ParameterList name="Surface Current Estimator">
     <Parameter name="Id" type="unsigned int" value="10"/>
-    <Parameter name="Type" type="string" value="surface.current"/>
+    <Parameter name="Type" type="string" value="Surface Current"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
@@ -77,7 +80,7 @@
     <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
     <Parameter name="Particle Type" type="string" value="Electron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
-    <Parameter name="Cells" type="Array" value="{1,26}"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Response Functions" type="Array" value="{0}"/>
   </ParameterList>
 
@@ -86,7 +89,7 @@
     <Parameter name="Type" type="string" value="Cell Collision Flux"/>
     <Parameter name="Particle Type" type="string" value="Electron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
-    <Parameter name="Cells" type="Array" value="{1,26}"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Response Functions" type="Array" value="{0}"/>
   </ParameterList>
 
@@ -95,7 +98,7 @@
     <Parameter name="Type" type="string" value="Cell Pulse Height"/>
     <Parameter name="Particle Type" type="string" value="Photon"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
-    <Parameter name="Cells" type="Array" value="{1,26}"/>
+    <Parameter name="Cells" type="Array" value="{1}"/>
     <Parameter name="Energy Multiplication" type="bool" value="true"/>
   </ParameterList>
 
@@ -113,6 +116,25 @@
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
+  </ParameterList>
+
+  <ParameterList name="Hex Mesh Track Length Flux Estimator">
+    <Parameter name="Id" type="unsigned int" value="17"/>
+    <Parameter name="Type" type="string" value="Hex Mesh Track-Length Flux"/>
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Multiplier" type="double" value="2.0"/>
+    <Parameter name="Output Mesh File Name" type="string" value="hexmesh_17.vtk"/>
+    <Parameter name="X Planes" type="Array" value="{0, 1, 2}"/>
+    <Parameter name="Y Planes" type="Array" value="{0, 1, 2}"/>
+    <Parameter name="Z Planes" type="Array" value="{0, 1, 2}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
+    </ParameterList>
+  </ParameterList>
+
+  <ParameterList name="Particle Tracker 1">
+    <Parameter name="Id" type="unsigned int" value="18"/>
+    <Parameter name="Type" type="string" value="Particle Tracker"/>
   </ParameterList>
 
 </ParameterList>

@@ -81,6 +81,10 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, isEstimatorRep )
   TEST_ASSERT( estimator_factory->isEstimatorRep( 
                                observer_reps->get<Teuchos::ParameterList>(
                                   "Tet Mesh Track Length Flux Estimator" ) ) );
+
+  TEST_ASSERT( estimator_factory->isEstimatorRep( 
+                               observer_reps->get<Teuchos::ParameterList>(
+                                  "Hex Mesh Track Length Flux Estimator" ) ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -102,7 +106,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   }
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 11 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 12 );
 
   std::string estimator_file_name( "estimator_factory_dagmc_partial.h5" );
 
@@ -139,6 +143,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 14 ) );
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 15 ) );
   TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 16 ) );
+  TEST_ASSERT( hdf5_file_handler.doesEstimatorExist( 17 ) );
 
   // Check that estimator 1 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 1 ) );
@@ -219,7 +224,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 2, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 36 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 37 );
 
   // Check that estimator 4 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 4 ) );
@@ -243,7 +248,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 4, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 4 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 3 );
 
   // Check that estimator 9 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 9 ) );
@@ -368,9 +373,8 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 12, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
 
   // Check that estimator 13 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 13 ) );
@@ -393,10 +397,9 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 13, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
-
+  
   // Check that estimator 14 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isCellEstimator( 14 ) );
   
@@ -419,10 +422,9 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   cell_id_vols.clear();
   hdf5_file_handler.getEstimatorEntities( 14, cell_id_vols );
   
-  TEST_EQUALITY_CONST( cell_id_vols.size(), 2 );
+  TEST_EQUALITY_CONST( cell_id_vols.size(), 1 );
   TEST_ASSERT( cell_id_vols.count( 1 ) );
-  TEST_ASSERT( cell_id_vols.count( 26 ) );
-
+  
   // Check that estimator 15 has the correct properties
   TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 15 ) );
   
@@ -476,6 +478,25 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC, createAndRegisterEstimator )
   TEST_ASSERT( surface_id_areas.count( 7 ) );
   TEST_ASSERT( surface_id_areas.count( 16 ) );
   TEST_ASSERT( surface_id_areas.count( 25 ) );
+
+  // Check that estimator 17 has the correct properties
+  TEST_ASSERT( hdf5_file_handler.isMeshEstimator( 17 ) );
+  
+  hdf5_file_handler.getEstimatorMultiplier( 17, multiplier );
+  
+  TEST_EQUALITY_CONST( multiplier, 2.0 );
+
+  hdf5_file_handler.getEstimatorDimensionOrdering( 17, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 1 );
+  TEST_EQUALITY_CONST( dimension_ordering[0], MonteCarlo::ENERGY_DIMENSION );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+                                                             17, energy_bins );
+
+  TEST_EQUALITY_CONST( energy_bins.size(), 14 );
+  TEST_EQUALITY_CONST( energy_bins.front(), 1e-3 );
+  TEST_EQUALITY_CONST( energy_bins.back(), 20.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -486,7 +507,7 @@ TEUCHOS_UNIT_TEST( StandardEstimatorFactory_DagMC,
   TEST_NOTHROW( estimator_factory->createAndRegisterCachedEstimators() );
 
   // Check that all of the estimators got created
-  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 17 );
+  TEST_EQUALITY_CONST( event_handler->getNumberOfObservers(), 18 );
 
   std::string estimator_file_name( "estimator_factory_dagmc_full.h5" );
 
