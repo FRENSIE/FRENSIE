@@ -11,7 +11,7 @@
 
 // Boost Includes
 #include <boost/bind.hpp>
-
+#include <iostream>
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -201,6 +201,7 @@ void ParticleSimulationManager<GeometryHandler,
     #pragma omp for
     for( unsigned long long history = batch_start_history; history < batch_end_history; ++history )
     {
+      std::cout << "HISTORY: " << history << std::endl;
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
       if( !d_end_simulation )

@@ -139,9 +139,9 @@ Teuchos::Array<std::pair<StructuredHexMesh::HexIndex,double>> StructuredHexMesh:
                                             const double end_point[3] )
 {
   //make sure end point isn't the same as start point
-  testPrecondition( start_point[0] != end_point[0] ||
+  /*testPrecondition( start_point[0] != end_point[0] ||
                     start_point[1] != end_point[1] ||
-                    start_point[2] != end_point[2] );
+                    start_point[2] != end_point[2] );*/
 
   //calculate track length and direction unit vector
   double direction[3] {end_point[0] - start_point[0],

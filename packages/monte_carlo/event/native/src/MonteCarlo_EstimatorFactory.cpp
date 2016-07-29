@@ -5,7 +5,7 @@
 //! \brief  The estimator factory class definition
 //!
 //---------------------------------------------------------------------------//
-
+#include <iostream>
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorFactory.hpp"
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"

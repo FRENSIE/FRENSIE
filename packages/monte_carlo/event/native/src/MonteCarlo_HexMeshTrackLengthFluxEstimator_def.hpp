@@ -93,11 +93,19 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                 const double start_point[3],
                 const double end_point[3])
 {
-
+  if( start_point[0] == end_point[0] &&
+      start_point[1] == end_point[1] &&
+      start_point[2] == end_point[2])
+  {
+    std::cout << std::endl;
+    std::cout << "START POINT: " << start_point[0] << ", " << start_point[1] << ", " << start_point[2] << std::endl;
+    std::cout << std::endl;
+    std::cout << "END POINT: " << end_point[0] << ", " << end_point[1] << ", " << end_point[2] << std::endl;
+  }
   //make sure end point isn't the same as start point
-  testPrecondition( start_point[0] != end_point[0] ||
-                    start_point[1] != end_point[1] ||
-                    start_point[2] != end_point[2] );
+  /*testPrecondition( !( start_point[0] == end_point[0] &&
+                         start_point[1] == end_point[1] &&
+                         start_point[2] == end_point[2] ) );*/
 
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
@@ -115,8 +123,8 @@ void HexMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
           ContributionMultiplierPolicy::multiplier( particle );
         
         this->addPartialHistoryContribution( contribution_array[i].first,
-                                       particle_state_wrapper,
-                                       weighted_contribution );
+                                             particle_state_wrapper,
+                                             weighted_contribution );
       }
     }
   }

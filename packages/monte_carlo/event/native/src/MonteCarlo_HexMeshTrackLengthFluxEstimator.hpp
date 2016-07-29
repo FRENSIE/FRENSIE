@@ -47,6 +47,9 @@ class HexMeshTrackLengthFluxEstimator : public StandardEntityEstimator<Utility::
 
 public:
 
+  //! Typedef for the cell id type
+  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
+  
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingGlobalEventObserver::EventTag>
   EventTags;
