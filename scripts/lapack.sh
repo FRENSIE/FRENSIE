@@ -2,8 +2,8 @@
 
 EXTRA_ARGS=$@
 
-LAPACK_INSTALL=$(pwd)/../../../install/lapack
-LAPACK_SRC=$(pwd)/../src
+LAPACK_INSTALL=
+LAPACK_SRC=
 
 source $HOME/.bashrc
 

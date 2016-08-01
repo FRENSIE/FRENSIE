@@ -29,7 +29,7 @@ public:
   CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
      const Teuchos::Array<double>& subshell_binding_energies,
      const Teuchos::Array<double>& subshell_occupancies,
-     const Teuchos::Array<SubshellType>& subshell_order,
+     const Teuchos::Array<Data::SubshellType>& subshell_order,
      const std::shared_ptr<const ComptonProfileSubshellConverter>&
      subshell_converter,
      const DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray&
@@ -42,12 +42,12 @@ public:
 protected:
 
   //! Return the binding energy of a subshell
-  double getSubshellBindingEnergy( const SubshellType subshell ) const;
+  double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
   
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
                                   double& subshell_binding_energy,
-                                  SubshellType& subshell ) const;
+                                  Data::SubshellType& subshell ) const;
 
 private:
 

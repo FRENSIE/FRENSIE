@@ -198,14 +198,14 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getMacroscopicReactionCrossSection )
   electron.setEnergy( 1.0e-05 );
   cross_section = CMI::getMacroscopicReactionCrossSection( 
                     electron,
-			        MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
 
   electron.setEnergy( 1.0e+05 );
   cross_section = CMI::getMacroscopicReactionCrossSection( 
                     electron,
-			        MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			        MonteCarlo::CUTOFF_ELASTIC_ELECTROATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
 }

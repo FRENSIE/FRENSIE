@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 5 );
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::M3_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::M3_SUBSHELL );
 }
 
 
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 6 );
@@ -165,7 +165,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -199,7 +199,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
@@ -219,7 +219,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -252,7 +252,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
@@ -273,7 +273,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

@@ -16,7 +16,7 @@
 #include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_SimulationPhotonProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -151,7 +151,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 							 scattering_function );
 
   // Create the subshell order array
-  Teuchos::Array<SubshellType> subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,

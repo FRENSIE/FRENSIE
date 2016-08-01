@@ -24,7 +24,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -51,7 +51,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
@@ -70,7 +70,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   Utility::RandomNumberGenerator::unsetFakeStream();
   
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -80,7 +80,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -97,7 +97,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -142,12 +142,12 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> subshell_endf_des = 
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order( 
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
 					      (unsigned)subshell_endf_des[i] );
   }
 

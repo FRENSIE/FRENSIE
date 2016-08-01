@@ -106,12 +106,12 @@ TEUCHOS_UNIT_TEST( AbsorptionElectroatomicReaction, react_ace )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   ace_absorption_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.isGone() );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 }		   
 
 //---------------------------------------------------------------------------//

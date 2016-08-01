@@ -32,7 +32,7 @@ DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHy
 void DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::scatterPhoton( 
 			             PhotonState& photon,
 				     ParticleBank& bank,
-			             SubshellType& shell_of_interaction ) const
+			             Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy, scattering_angle_cosine;
 

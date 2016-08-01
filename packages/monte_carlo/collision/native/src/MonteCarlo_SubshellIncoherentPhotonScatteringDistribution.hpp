@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -28,7 +28,7 @@ public:
 
   //! Constructor without Doppler broadening
   SubshellIncoherentPhotonScatteringDistribution(
-      const SubshellType interaction_subshell,
+      const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
@@ -39,7 +39,7 @@ public:
   { /* ... */ }
 
   //! Return the subshell
-  SubshellType getSubshell() const;
+  Data::SubshellType getSubshell() const;
   
   //! Return the number of electrons in the subshell
   double getSubshellOccupancy() const;
@@ -69,7 +69,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterPhoton( PhotonState& photon,
 			      ParticleBank& bank,
-			      SubshellType& shell_of_interaction ) const;
+			      Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 
@@ -85,7 +85,7 @@ protected:
 private:
 
   // The interaction subshell
-  SubshellType d_subshell;
+  Data::SubshellType d_subshell;
 
   // The number of electrons in the subshell
   double d_num_electrons_in_subshell;

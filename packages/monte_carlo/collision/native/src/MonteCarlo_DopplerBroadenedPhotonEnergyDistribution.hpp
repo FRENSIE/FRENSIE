@@ -17,7 +17,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -66,14 +66,14 @@ public:
   virtual void sample( const double incoming_energy,
 		       const double scattering_angle_cosine,
 		       double& outgoing_energy,
-		       SubshellType& shell_of_interaction ) const = 0;
+		       Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Sample an outgoing energy and record the number of trials
   virtual void sampleAndRecordTrials( 
 				const double incoming_energy,
 				const double scattering_angle_cosine,
 				double& outgoing_energy,
-				SubshellType& shell_of_interaction,
+				Data::SubshellType& shell_of_interaction,
 				unsigned& trials ) const = 0;
 
   //! Sample an electron momentum projection and record the number of trials
@@ -81,7 +81,7 @@ public:
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
                                           double& electron_momentum_projection,
-                                          SubshellType& shell_of_interaction,
+                                          Data::SubshellType& shell_of_interaction,
                                           unsigned& trials ) const = 0;
 
 protected:

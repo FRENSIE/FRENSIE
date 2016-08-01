@@ -70,6 +70,7 @@ const std::string CrossSectionsXMLProperties::atomic_weight_ratio_prop =
 const std::string CrossSectionsXMLProperties::temperature_prop = 
   "temperature";
 const std::string CrossSectionsXMLProperties::ace_file = "ACE";
+const std::string CrossSectionsXMLProperties::endl_file = "ENDL";
 const std::string CrossSectionsXMLProperties::native_file = "Native";
 
 // Extract the table info from the photoatom table info parameter list

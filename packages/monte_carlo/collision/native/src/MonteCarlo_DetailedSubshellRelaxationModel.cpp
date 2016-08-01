@@ -22,9 +22,9 @@ namespace MonteCarlo{
 
 // Constructor
 DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel( 
-       const SubshellType vacancy_subshell,
-       const Teuchos::Array<SubshellType>& primary_transition_vacancy_shells,
-       const Teuchos::Array<SubshellType>& secondary_transition_vacancy_shells,
+       const Data::SubshellType vacancy_subshell,
+       const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
+       const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
        const Teuchos::Array<double>& outgoing_particle_energies,
        const Teuchos::Array<double>& transition_pdf_or_cdf,
        const bool interpret_as_cdf )
@@ -34,8 +34,8 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
     d_transition_vacancy_shells( primary_transition_vacancy_shells.size() )
 {
   // Make sure the vacancy subshell is valid
-  testPrecondition( vacancy_subshell != INVALID_SUBSHELL );
-  testPrecondition( vacancy_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( vacancy_subshell != Data::INVALID_SUBSHELL );
+  testPrecondition( vacancy_subshell !=Data::UNKNOWN_SUBSHELL );
   // Make sure the arrays are valid
   testPrecondition( primary_transition_vacancy_shells.size() > 0 );
   testPrecondition( secondary_transition_vacancy_shells.size() == 
@@ -71,7 +71,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
  * new secondary vacancy shell corresponds to a new vacancy that is created
  * in the transition. In a radiative transition, the vacancy only moves - no
  * new vacancies are created (the new secondary vacancy shell will always
- * be set to INVALID_SUBSHELL). In a non-radiative the secondary vacancy shell 
+ * be set to Data::INVALID_SUBSHELL). In a non-radiative the secondary vacancy shell 
  * corresponds to the shell where the Auger electron is actually emitted from.
  * \todo Determine whether incrementing the collision number and/or generation
  * number is appropriate.
@@ -79,8 +79,8 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
 void DetailedSubshellRelaxationModel::relaxSubshell( 
 			      const ParticleState& particle,
 			      ParticleBank& bank,
-			      SubshellType& new_primary_vacancy_shell,
-		              SubshellType& new_secondary_vacancy_shell ) const
+			      Data::SubshellType& new_primary_vacancy_shell,
+		              Data::SubshellType& new_secondary_vacancy_shell ) const
 {
   // Sample the transition that occurs
   unsigned transition_index;
@@ -97,8 +97,8 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
     d_transition_vacancy_shells[transition_index].second;
 
   // A secondary transition will only occur with Auger electron emission
-  if( new_secondary_vacancy_shell == INVALID_SUBSHELL ||
-      new_secondary_vacancy_shell == UNKNOWN_SUBSHELL )
+  if( new_secondary_vacancy_shell == Data::INVALID_SUBSHELL ||
+      new_secondary_vacancy_shell ==Data::UNKNOWN_SUBSHELL )
     this->generateFluorescencePhoton( particle, new_particle_energy, bank );
   else
     this->generateAugerElectron( particle, new_particle_energy, bank );

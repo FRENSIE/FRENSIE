@@ -86,7 +86,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 void BremsstrahlungElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
 			                    ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+                                Data::SubshellType& shell_of_interaction ) const
 {
   // energy of the bremsstrahlung photon
   double photon_energy;

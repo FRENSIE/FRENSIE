@@ -24,34 +24,6 @@
 namespace Utility{
 
 // Constructor
-template<typename IndependentUnit, typename DependentUnit>
-UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMaxwellFissionDistribution(
-  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
-  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
-  const typename UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy,
-  const double constant_multiplier )
-  : d_incident_energy( incident_energy ),
-    d_nuclear_temperature( nuclear_temperature ),
-    d_restriction_energy( restriction_energy ),
-    d_multiplier( DMQT::initializeQuantity( constant_multiplier ) ),
-    d_norm_constant()
-{
-  // Make sure values are valid
-  testPrecondition( !IQT::isnaninf( incident_energy ) );
-  testPrecondition( !IQT::isnaninf( nuclear_temperature ) );
-  testPrecondition( !IQT::isnaninf( restriction_energy ) );
-  testPrecondition( !QT::isnaninf( constant_multiplier ) );
-  // Make sure that incident energy and nuclear temperature is positive
-  testPrecondition( incident_energy > IQT::zero() );
-  testPrecondition( nuclear_temperature > IQT::zero() );
-  // Make sure that the constant multiplier is positive
-  testPrecondition( constant_multiplier > 0.0 );
-
-  // Calculate the norm constant
-  this->calculateNormalizationConstant();
-}
-
-// Constructor
 /*! \details This constructor will explicitly cast the input quantities to
  * the distribution quantity (which includes any unit-conversion). The
  * dimension type must match and there must be a unit-conversion defined using

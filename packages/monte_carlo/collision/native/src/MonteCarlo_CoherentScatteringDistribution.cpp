@@ -140,7 +140,7 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 void CoherentScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -151,7 +151,7 @@ void CoherentScatteringDistribution::scatterPhoton(
 				   scattering_angle_cosine,
 				   trial_dummy );
 
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   photon.rotateDirection( scattering_angle_cosine, 
@@ -162,7 +162,7 @@ void CoherentScatteringDistribution::scatterPhoton(
 void CoherentScatteringDistribution::scatterAdjointPhoton( 
 				     AdjointPhotonState& adjoint_photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double scattering_angle_cosine;
 
@@ -173,7 +173,7 @@ void CoherentScatteringDistribution::scatterAdjointPhoton(
 				   scattering_angle_cosine,
 				   trial_dummy );
   
-  shell_of_interaction = UNKNOWN_SUBSHELL;
+  shell_of_interaction =Data::UNKNOWN_SUBSHELL;
 
   // Set the new direction
   adjoint_photon.rotateDirection( scattering_angle_cosine, 

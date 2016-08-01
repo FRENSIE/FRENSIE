@@ -51,7 +51,7 @@ public:
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
-                        SubshellType& shell_of_interaction ) const;
+                        Data::SubshellType& shell_of_interaction ) const;
 
   // Evaluate the screening angle at the given electron energy
   double evaluateScreeningFactor( const double energy ) const;
@@ -61,6 +61,34 @@ public:
 
   // Sample a scattering angle cosine
   double sampleScatteringAngleCosine( const double energy ) const;
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                           const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                              const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                              const double scattering_angle ) const
+  { /* ... */ }
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+                       double& outgoing_energy,
+                       double& scattering_angle_cosine ) const
+  { /* ... */ }
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+                                      double& outgoing_energy,
+                                      double& scattering_angle_cosine,
+                                      unsigned& trials ) const
+  { /* ... */ }
 
 private:
 

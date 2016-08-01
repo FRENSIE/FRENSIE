@@ -21,7 +21,7 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionACEFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -194,7 +194,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
   unsigned trials = 0;
   
   // Left branch of Kahn's method
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
@@ -299,7 +299,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

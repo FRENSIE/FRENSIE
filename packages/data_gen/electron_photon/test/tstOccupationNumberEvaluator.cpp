@@ -19,7 +19,7 @@
 #include "DataGen_OccupationNumberEvaluator.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -339,7 +339,7 @@ int main( int argc, char** argv )
 			           xss_data_extractor->extractAtomicNumber() );
 
     unsigned k_shell_index = converter->convertSubshellToIndex(
-						      MonteCarlo::K_SUBSHELL );
+						      Data::K_SUBSHELL );
 
     // Pull out the k-shell compton profile for hydrogen
     Teuchos::ArrayView<const double> lswd_block = 
@@ -401,10 +401,10 @@ int main( int argc, char** argv )
 			           xss_data_extractor->extractAtomicNumber() );
 
     unsigned k_shell_index = converter->convertSubshellToIndex(
-						      MonteCarlo::K_SUBSHELL );
+						      Data::K_SUBSHELL );
 
     unsigned p3_shell_index = converter->convertSubshellToIndex(
-						     MonteCarlo::P3_SUBSHELL );
+						     Data::P3_SUBSHELL );
 
     // Pull out the k-shell and p3-shell compton profiles for lead
     Teuchos::ArrayView<const double> lswd_block = 

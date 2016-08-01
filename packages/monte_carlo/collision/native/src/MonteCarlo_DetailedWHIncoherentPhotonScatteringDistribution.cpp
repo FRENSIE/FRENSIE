@@ -17,7 +17,7 @@ namespace MonteCarlo{
 DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScatteringDistribution(
    const std::shared_ptr<const ScatteringFunction>& scattering_function,
    const Teuchos::Array<double>& subshell_occupancies,
-   const Teuchos::Array<SubshellType>& subshell_order,
+   const Teuchos::Array<Data::SubshellType>& subshell_order,
    const double kahn_sampling_cutoff_energy )
   : WHIncoherentPhotonScatteringDistribution( scattering_function,
 					      kahn_sampling_cutoff_energy ),
@@ -48,7 +48,7 @@ DetailedWHIncoherentPhotonScatteringDistribution::DetailedWHIncoherentPhotonScat
 void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   double outgoing_energy, scattering_angle_cosine;
 
@@ -78,7 +78,7 @@ void DetailedWHIncoherentPhotonScatteringDistribution::scatterPhoton(
 
 // Sample the subshell that is interacted with
 void DetailedWHIncoherentPhotonScatteringDistribution::sampleInteractionSubshell(
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   // Sample the shell that is interacted with
   unsigned shell_index;

@@ -15,7 +15,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfilePolicy.hpp"
 #include "MonteCarlo_StandardComptonProfile.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_AtomicMomentumUnit.hpp"
 #include "Utility_InverseAtomicMomentumUnit.hpp"
@@ -33,7 +33,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDi
 		  const bool use_full_profile )
 {
   // Create the subshell order array
-  Teuchos::Array<SubshellType> subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,
@@ -104,7 +104,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledComplete
 		  const bool use_full_profile )
 {
   // Create the subshell order array
-  Teuchos::Array<SubshellType> subshell_order;
+  Teuchos::Array<Data::SubshellType> subshell_order;
 
   DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 							    raw_photoatom_data,
@@ -178,9 +178,9 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 		  const bool use_full_profile )
 {
   // Convert the endf subshell to a subshell type
-  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  Data::SubshellType subshell =Data::convertENDFDesignatorToSubshellEnum( endf_subshell );
   
-  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+  TEST_FOR_EXCEPTION( subshell == Data::INVALID_SUBSHELL,
 		      std::logic_error,
 		      "Error: the requested endf subshell " << 
 		      endf_subshell << " is invalid! " );
@@ -272,7 +272,7 @@ void DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellDistribut
 void 
 DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::Array<SubshellType>& subshell_order )
+			   Teuchos::Array<Data::SubshellType>& subshell_order )
 {
   Teuchos::ArrayView<const double> subshell_endf_designators = 
     raw_photoatom_data.extractSubshellENDFDesignators();
@@ -281,7 +281,7 @@ DopplerBroadenedPhotonEnergyDistributionACEFactory::createSubshellOrderArray(
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = convertENDFDesignatorToSubshellEnum(
+    subshell_order[i] =Data::convertENDFDesignatorToSubshellEnum(
 				      (unsigned)subshell_endf_designators[i] );
   }
 }

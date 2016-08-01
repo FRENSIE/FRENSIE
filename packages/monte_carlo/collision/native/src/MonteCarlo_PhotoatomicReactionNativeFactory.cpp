@@ -21,7 +21,7 @@
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -265,7 +265,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 	       subshell_photoelectric_cross_section,
 	       subshell_threshold_index,
 	       grid_searcher,
-	       convertENDFDesignatorToSubshellEnum( *subshell_it ),
+	      Data::convertENDFDesignatorToSubshellEnum( *subshell_it ),
 	       raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) ) );
 
     subshell_photoelectric_reactions.push_back( 

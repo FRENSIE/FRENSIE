@@ -9,7 +9,7 @@ ENDIF()
 
 SET(SUBPACKAGE_LIB_NAME geometry_core)
 
-# Create the utilitycore library
+# Create the geometry_core library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${GEOMETRY_CORE_SOURCES})
 TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_COMM} utility_core)
 

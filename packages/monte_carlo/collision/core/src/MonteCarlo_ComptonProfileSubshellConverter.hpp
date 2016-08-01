@@ -10,7 +10,7 @@
 #define MONTE_CARLO_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_SubshellType.hpp"
+#include "Data_SubshellType.hpp"
 
 namespace MonteCarlo{
 
@@ -30,10 +30,10 @@ public:
 
   //! Convert a subshell enum to a compton profile subshell index
   virtual unsigned convertSubshellToIndex( 
-				       const SubshellType subshell ) const = 0;
+				       const Data::SubshellType subshell ) const = 0;
 
   //! Test if a subshell enum is valid
-  virtual bool isSubshellValid( const SubshellType subshell ) const;
+  virtual bool isSubshellValid( const Data::SubshellType subshell ) const;
 };
 
 // Test if a subshell enum is valid
@@ -42,7 +42,7 @@ public:
  * the subshell is invalid.
  */
 inline bool ComptonProfileSubshellConverter::isSubshellValid( 
-					    const SubshellType subshell ) const
+					    const Data::SubshellType subshell ) const
 {
   bool valid_shell = true;
   

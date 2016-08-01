@@ -99,7 +99,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType subshell;
+  Data::SubshellType subshell;
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
-  TEST_EQUALITY_CONST( subshell, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( subshell, Data::UNKNOWN_SUBSHELL );
   
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

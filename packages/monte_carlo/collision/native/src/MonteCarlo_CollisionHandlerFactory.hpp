@@ -129,7 +129,7 @@ private:
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-   atomic_relaxation_model_factory,
+    atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
    const IncoherentModelType incoherent_model,
    const double kahn_sampling_cutoff_energy,
@@ -147,9 +147,11 @@ private:
    const CellIdMatIdMap& cell_id_mat_id_map,
    const CellIdDensityMap& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-   atomic_relaxation_model_factory,
+    atomic_relaxation_model_factory,
+   const unsigned hash_grid_bins,
    const BremsstrahlungAngularDistributionType photon_distribution_function,
-   const bool use_atomic_relaxation_data );
+   const bool use_atomic_relaxation_data,
+   const double cutoff_angle_cosine );
 
   //! Create the material name data maps
   template<typename ScatteringCenterType, typename MaterialType>

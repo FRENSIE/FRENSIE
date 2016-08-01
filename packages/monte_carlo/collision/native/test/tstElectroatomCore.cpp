@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getMiscReactions )
 // Check that the atomic relaxation model can be returned
 TEUCHOS_UNIT_TEST( ElectroatomCore, getAtomicRelaxationModel )
 {
-  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+  Data::SubshellType vacancy = Data::K_SUBSHELL;
 
   MonteCarlo::ElectronState electron( 0u );
   electron.setEnergy( 1.0 );
@@ -248,19 +248,28 @@ int main( int argc, char** argv )
 
     // Create the energy loss distributions
     MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
-     ae_energy_loss_distribution;
+     ae_energy_loss_function;
   
-    ae_energy_loss_distribution.reset( 
+    ae_energy_loss_function.reset( 
       new Utility::TabularDistribution<Utility::LinLin>( ae_energy_grid,
-		                                                 energy_loss ) );
+                                                         energy_loss ) );
+
+    Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+                      ae_energy_loss_distribution;
+
+    ae_energy_loss_distribution.reset( 
+    new MonteCarlo::AtomicExcitationElectronScatteringDistribution( 
+                      ae_energy_loss_function ) );
 
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-						    energy_grid,
-						    ae_cross_section,
-						    ae_threshold_index,
-                            ae_energy_loss_distribution ) );
+			    energy_grid,
+			    ae_cross_section,
+			    ae_threshold_index,
+                ae_energy_loss_distribution ) );
+
     
+    // Bremsstrahlung  
     Teuchos::ArrayView<const double> raw_b_cross_section = 
       xss_data_extractor->extractBremsstrahlungCrossSection();
     
@@ -313,27 +322,35 @@ int main( int argc, char** argv )
 
     // Create the bremsstrahlung scattering distributions
     MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
-      b_scattering_distribution( N );
+      b_scattering_function( N );
   
     for( unsigned n = 0; n < N; ++n )
     {
-      b_scattering_distribution[n].first = b_energy_grid[n];
+      b_scattering_function[n].first = b_energy_grid[n];
 
-      b_scattering_distribution[n].second.reset( 
+      b_scattering_function[n].second.reset( 
 	    new Utility::HistogramDistribution(
 		   breme_block( offset[n], table_length[n] ),
 		   breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
            true ) );
     }
 
+	Teuchos::RCP<const MonteCarlo::BremsstrahlungElectronScatteringDistribution>
+        b_scattering_distribution;
+
+    b_scattering_distribution.reset( 
+        new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
+            b_scattering_function,
+            xss_data_extractor->extractAtomicNumber() ) );
+    
+
     // Create the bremsstrahlung scattering reaction
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
-							energy_grid,
-							b_cross_section,
-							b_threshold_index,
-                            b_scattering_distribution,
-                            xss_data_extractor->extractAtomicNumber() ) );
+            energy_grid,
+            b_cross_section,
+            b_threshold_index,
+            b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 

@@ -27,10 +27,10 @@ public:
 
   //! Basic constructor
   IncoherentPhotoatomicReaction( 
-              const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const unsigned threshold_energy_index,
-              const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+        const Teuchos::ArrayRCP<const double>& cross_section,
+        const unsigned threshold_energy_index,
+        const Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	      scattering_distribution );
 
   //! Constructor
@@ -49,19 +49,22 @@ public:
   //! Return the number of photons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
+  //! Return the number of electrons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedElectrons( const double energy ) const;
+
   //! Return the reaction type
   PhotoatomicReactionType getReactionType() const;
 
   //! Simulate the reaction
   void react( PhotonState& photon, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      Data::SubshellType& shell_of_interaction ) const;
 
 private:
 
   // The incoherent scattering distribution
   Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
-  d_scattering_distribution;
+    d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

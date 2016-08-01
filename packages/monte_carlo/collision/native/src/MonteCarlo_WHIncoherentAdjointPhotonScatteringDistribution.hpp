@@ -58,7 +58,7 @@ public:
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank,
-			     SubshellType& shell_of_interaction ) const;
+			     Data::SubshellType& shell_of_interaction ) const;
 
 protected:
 

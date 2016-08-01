@@ -1,0 +1,141 @@
+#! ${PYTHON_EXECUTABLE}
+#-----------------------------------------------------------------------------#
+## Data.ACE.ACEFileHandler class unit tests
+#  \file   tstData.ACE.ACEFileHandler.py
+#  \author Alex Robinson
+#  \brief  Unit tests for the Data.ACE.ACEFileHandler class
+#-----------------------------------------------------------------------------#
+
+# System imports
+import numpy
+import sys
+import unittest
+from optparse import *
+
+# Parse the command-line arguments
+parser = OptionParser()
+parser.add_option("-v", "--verbosity", type="int", dest="verbosity", default=2,
+                  help="set the verbosity level [default 2]")
+parser.add_option("-a", "--acefile", type="string", dest="acefile",
+                  help="set the ACE file to test.")
+parser.add_option("-n", "--tablename", type="string", dest="tablename",
+                  help="set the ACE table name (must be in the file).")
+options,args = parser.parse_args()
+
+from testingHelpers import importPyFrensieModuleFromBuildDir
+ACE = importPyFrensieModuleFromBuildDir('Data.ACE')
+
+#-----------------------------------------------------------------------------#
+# Tests.
+#-----------------------------------------------------------------------------#
+# Test the ACEFileHandler
+class ACEFileHandlerTestCase(unittest.TestCase):
+    "TestCase for Data.ACE.ACEFileHandler class"
+    @classmethod
+    def setUpClass(cls):
+        cls.ace_file = ACE.ACEFileHandler( options.acefile, options.tablename, 1 )
+
+    def testConstructor(self):
+        "*Test Data.ACE.ACEFileHandler constructor"
+        self.assertTrue(isinstance(self.ace_file, ACE.ACEFileHandler))
+
+    def testGetLibraryName(self):
+        "*Test Data.ACE.ACEFileHandler getLibraryName method"
+        self.assertEqual(self.ace_file.getLibraryName(), options.acefile)
+
+    def testGetTableName(self):
+        "*Test Data.ACE.ACEFileHandler getTableName method"
+        self.assertEqual(self.ace_file.getTableName(), "1001.70c")
+
+    def testGetTableAtomicWeightRatio(self):
+        "*Test Data.ACE.ACEFileHandler getTableAtomicWeightRatio method"
+        self.assertEqual(self.ace_file.getTableAtomicWeightRatio(), 0.999167)
+
+    def testGetTableTemperature(self):
+        "*Test Data.ACE.ACEFileHandler getTableTemperature method"
+        self.assertEqual(self.ace_file.getTableTemperature(), 2.53010e-08)
+
+    def testGetTableProcessingDate(self):
+        "*Test Data.ACE.ACEFileHandler getTableProcessingDate method"
+        self.assertEqual(self.ace_file.getTableProcessingDate(), "03/27/08")
+
+    def testGetTableComment(self):
+        "*Test Data.ACE.ACEFileHandler getTableComment method"
+        self.assertEqual(self.ace_file.getTableComment(), \
+                         " 1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248                      ")
+
+    def testGetTableMatId(self):
+        "*Test Data.ACE.ACEFileHandler getTableMatId method"
+        self.assertEqual(self.ace_file.getTableMatId(), "   mat 125")
+
+    def testGetTableZAIDs(self):
+        "*Test Data.ACE.ACEFileHandler getTableZAIDs method"
+        zaids = self.ace_file.getTableZAIDs()
+        self.assertEqual(len(zaids), 16)
+        self.assertEqual(sum(zaids), 0)
+
+    def testGetTableAtomicWeightRatios(self):
+        "*Test Data.ACE.ACEFileHandler getTableAtomicWeightRatios method"
+        awrs = self.ace_file.getTableAtomicWeightRatios()
+        self.assertEqual(len(awrs), 16)
+        self.assertEqual(sum(awrs), 0)
+
+    def testGetTableNXSArray(self):
+        "*Test Data.ACE.ACEFileHandler getTableNXSArray method"
+        nxs = self.ace_file.getTableNXSArray()
+        ref_nxs = [8177, 1001, 590, 3, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.assertListEqual(list(nxs), ref_nxs)
+
+    def testGetTableJXSArray(self):
+        "*Test Data.ACE.ACEFileHandler getTableJXSArray method"
+        jxs = self.ace_file.getTableJXSArray()
+        ref_jxs = [1,     0,     2951, 2954,  2957,  2960,  2963, 4352,
+                   4353,  5644,  5644, 5644,  6234,  6235,  6236, 6244,
+                   6245,  6245,  6246, 6929,  0,     6930,  0,    0,
+                   0,     0,     0,    0,     0,     6931,  6932, 6933]
+        self.assertListEqual(list(jxs), ref_jxs)
+
+    def testGetTableXSSArray(self):
+        "*Test Data.ACE.ACEFileHandler getTableXSSArray method"
+        nxs = self.ace_file.getTableNXSArray()
+        xss = self.ace_file.getTableXSSArray()
+        self.assertEqual(len(xss), nxs[0])
+        self.assertEqual(xss[0], 1e-11)
+        self.assertEqual(xss[len(xss)-1], 102)
+
+#-----------------------------------------------------------------------------#
+# Custom main
+#-----------------------------------------------------------------------------#
+if __name__ == "__main__":
+
+    # Create the test suite object
+    suite = unittest.TestSuite()
+
+    # Add the test cases to the test suite
+    if options.tablename == "1001.70c":
+        suite.addTest(unittest.makeSuite(ACEFileHandlerTestCase))
+    else:
+        print >>sys.stderr, "Error: This test can only be used with the " + \
+            "1001.70c table (" + options.tablename + ") provided!"
+        sys.exit(1)
+
+    print >>sys.stderr, \
+        "\n****************\n" +\
+        "Testing Data.ACE \n" + \
+        "****************\n"
+    result = unittest.TextTestRunner(verbosity=options.verbosity).run(suite)
+
+    errs_plus_fails = len(result.errors) + len(result.failures)
+
+    if errs_plus_fails == 0:
+        print "End Result: TEST PASSED"
+
+    # Delete the suite
+    del suite
+
+    # Exit
+    sys.exit(errs_plus_fails)
+
+#-----------------------------------------------------------------------------#
+# end tstData.ACE.ACEFileHandler.py
+#-----------------------------------------------------------------------------#

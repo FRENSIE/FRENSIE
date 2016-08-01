@@ -39,12 +39,12 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
       Teuchos::ArrayView<const double> raw_subshell_endf_designators = 
 	raw_photoatom_data.extractSubshellENDFDesignators();
       
-      Teuchos::Array<MonteCarlo::SubshellType>
+      Teuchos::Array<Data::SubshellType>
 	subshells( raw_subshell_endf_designators.size() );
       
       for( unsigned i = 0; i < subshells.size(); ++i )
       {
-	subshells[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+	subshells[i] = Data::convertENDFDesignatorToSubshellEnum(
 					    raw_subshell_endf_designators[i] );
       }
       
@@ -118,14 +118,14 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 	  const std::vector<std::pair<unsigned,unsigned> >& transitions = 
 	    raw_photoatom_data.getSubshellRelaxationVacancies( *subshell_it );
 	  
-	  Teuchos::Array<SubshellType> primary_transitions(transitions.size()),
+	  Teuchos::Array<Data::SubshellType> primary_transitions(transitions.size()),
 	    secondary_transitions( transitions.size() );
 
 	  for( unsigned i = 0; i < transitions.size(); ++i )
 	  {
-	    primary_transitions[i] = convertENDFDesignatorToSubshellEnum(
+	    primary_transitions[i] =Data::convertENDFDesignatorToSubshellEnum(
 							transitions[i].first );
-	    secondary_transitions[i] = convertENDFDesignatorToSubshellEnum(
+	    secondary_transitions[i] =Data::convertENDFDesignatorToSubshellEnum(
 						       transitions[i].second );
 	  }
 
@@ -139,7 +139,7 @@ void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 
 	  Teuchos::RCP<const SubshellRelaxationModel> subshell_model(
 	          new DetailedSubshellRelaxationModel(
-	                   convertENDFDesignatorToSubshellEnum( *subshell_it ),
+	                  Data::convertENDFDesignatorToSubshellEnum( *subshell_it ),
 			   primary_transitions,
 			   secondary_transitions,
 			   relaxation_energies,
@@ -246,7 +246,7 @@ void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
 
 // Create the subshell relaxation models
 void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
-		  const Teuchos::Array<SubshellType>& subshell_designators,
+		  const Teuchos::Array<Data::SubshellType>& subshell_designators,
 		  const Teuchos::ArrayView<const double>& subshell_transitions,
 		  const Teuchos::ArrayView<const double>& relo_block,
 		  const Teuchos::ArrayView<const double>& xprob_block,
@@ -274,10 +274,10 @@ void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
     {
       // Extract the primary transition shells, secondary transition shells,
       // outgoing particle energies and transition CDF
-      Teuchos::Array<SubshellType> 
+      Teuchos::Array<Data::SubshellType> 
 	primary_transition_subshells( transitions );
       
-      Teuchos::Array<SubshellType>
+      Teuchos::Array<Data::SubshellType>
 	secondary_transition_subshells( transitions );
       
       Teuchos::Array<double>
@@ -288,11 +288,11 @@ void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
       for( unsigned j = 0; j < transitions; ++j )
       {
 	primary_transition_subshells[j] = 
-	  convertENDFDesignatorToSubshellEnum(
+	 Data::convertENDFDesignatorToSubshellEnum(
 					xprob_block[subshell_data_start+j*4] );
 	
 	secondary_transition_subshells[j] = 
-	  convertENDFDesignatorToSubshellEnum(
+	 Data::convertENDFDesignatorToSubshellEnum(
 				      xprob_block[subshell_data_start+j*4+1] );
 
 	outgoing_particle_energies[j] = 

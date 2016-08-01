@@ -89,6 +89,15 @@ unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::ge
     return 0u;
 }
 
+// Return the number of electrons emitted from the rxn at the given energy
+/*! \details This does not include electrons from atomic relaxation.
+ */ 
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+{
+  return 0u;
+}
+
 // Return the reaction type
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
@@ -101,7 +110,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     PhotonState& photon, 
 				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+				     Data::SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution->scatterPhoton(photon, bank, shell_of_interaction);
 

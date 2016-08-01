@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
@@ -22,50 +23,56 @@ class ElectroatomicReactionACEFactory
 
 public:
 
-  //! Create a hard elastic scattering electroatomic reaction
-  static void createHardElasticReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction );
+  //! Create an cutoff elastic scattering electroatomic reaction
+  static void createCutoffElasticReaction(
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+        const double lower_cutoff_angle_cosine = 0.999999 );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization electroatomic reaction
   static void createTotalElectroionizationReaction(
-		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+	Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
-		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
-		   electroionization_subshell_reactions );
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+        Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
+        electroionization_subshell_reactions );
 
   //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
-		BremsstrahlungAngularDistributionType photon_distribution_function );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+    const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
+	BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
         Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
-protected:
+//protected:
   
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(
-		     const Teuchos::ArrayRCP<const double>& energy_grid,
-		     const Teuchos::ArrayView<const double>& raw_cross_section,
-		     Teuchos::ArrayRCP<double>& cross_section,
-		     unsigned& threshold_energy_index );
+        const Teuchos::ArrayRCP<const double>& energy_grid,
+        const Teuchos::ArrayView<const double>& raw_cross_section,
+        Teuchos::ArrayRCP<double>& cross_section,
+        unsigned& threshold_energy_index );
 
 private:
 

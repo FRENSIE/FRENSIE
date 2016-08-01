@@ -338,7 +338,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
   
   MonteCarlo::ParticleBank bank;
 
-  MonteCarlo::SubshellType shell_of_interaction;
+  Data::SubshellType shell_of_interaction;
 
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 7 );
@@ -360,7 +360,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   
   // Right branch of Kahn's method
   fake_stream[0] = 0.273;
@@ -384,7 +384,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   
   // Koblinger's Method
   fake_stream.resize( 12 );
@@ -412,7 +412,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.6, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
 
   photon.setEnergy( 3.1 );
   photon.setDirection( 0.0, 0.0, 1.0 );
@@ -425,7 +425,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
 			  0.7030902148167004,
 			  1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   
   photon.setEnergy( 3.1 );
   photon.setDirection( 0.0, 0.0, 1.0 );
@@ -437,7 +437,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
   TEST_FLOATING_EQUALITY( photon.getZDirection(),
 			  0.9033799968311882,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
   
   photon.setEnergy( 3.1 );
   photon.setDirection( 0.0, 0.0, 1.0 );
@@ -450,7 +450,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
 			  0.8004496947064347,
 			  1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, Data::UNKNOWN_SUBSHELL );
     
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

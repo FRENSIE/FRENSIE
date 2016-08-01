@@ -29,6 +29,9 @@ class RandomNumberGenerator
   
 public:
 
+  //! Check if the streams have been created
+  static bool hasStreams();
+
   //! Create the number of random number streams required
   static void createStreams();
 
@@ -39,7 +42,7 @@ public:
   static void initializeNextHistory();
   
   //! Set a fake stream for the generator
-  static void setFakeStream( std::vector<double>& fake_stream,
+  static void setFakeStream( const std::vector<double>& fake_stream,
 			     const unsigned thread_id = 0u );
 
   //! Unset the fake stream
