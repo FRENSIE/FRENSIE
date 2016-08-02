@@ -166,9 +166,9 @@ void WHIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
 
 // Randomly scatter the photon and return the shell that was interacted with
 void WHIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton( 
-				     AdjointPhotonState& adjoint_photon,
-				     ParticleBank& bank,
-				     Data::SubshellType& shell_of_interaction ) const
+			       AdjointPhotonState& adjoint_photon,
+                               ParticleBank& bank,
+			       Data::SubshellType& shell_of_interaction ) const
 {
   // Make sure the adjoint photon energy is valid
   testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() );
@@ -192,7 +192,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 }
 
 // Check if an energy is above the scattering window
-/*! \details Becuase of the scattering function evaluating to zero when 
+/*! \details Because of the scattering function evaluating to zero when 
  * the scattering angle cosine is 1.0, the scattering window upper bound must
  * exclude the energy of interest.
  */
