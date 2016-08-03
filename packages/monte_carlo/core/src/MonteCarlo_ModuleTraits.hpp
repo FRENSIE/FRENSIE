@@ -12,13 +12,6 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/units/quantity.hpp>
-#include <boost/units/systems/cgs.hpp>
-
-// FRENSIE Includes
-#include "Utility_ElectronVoltUnit.hpp"
-
 /*! \defgroup module_traits Module Traits
  * \ingroup traits
  *
@@ -43,20 +36,6 @@ struct ModuleTraits
   typedef unsigned long long InternalEventObserverHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
-
-  //! The length unit (cm)
-  typedef boost::units::cgs::length LengthUnit;
-  //! The energy unit (MeV)
-  typedef Utility::Units::MegaElectronVoltUnit EnergyUnit;
-  //! The time unit (s)
-  typedef boost::units::cgs::time TimeUnit;
-
-  //! The length quantity type
-  typedef boost::units::quantity<LengthUnit> LengthQuantity;
-  //! The energy quantity type
-  typedef boost::units::quantity<EnergyUnit> EnergyQuantity;
-  //! The time quantity type
-  typedef boost::units::quantity<TimeUnit> TimeQuantity;
 
   //! The invalid source handle value
   static const InternalSourceHandle invalid_internal_source_handle;
