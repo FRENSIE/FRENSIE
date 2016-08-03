@@ -22,7 +22,7 @@ SubshellIncoherentAdjointPhotonScatteringDistribution::SubshellIncoherentAdjoint
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number )
+      const std::shared_ptr<const OccupationNumber>& occupation_number )
   : IncoherentAdjointPhotonScatteringDistribution( max_energy ),
     d_subshell( interaction_subshell ),
     d_num_electrons_in_subshell( num_electrons_in_subshell ),
@@ -39,8 +39,9 @@ SubshellIncoherentAdjointPhotonScatteringDistribution::SubshellIncoherentAdjoint
   // Make sure the subshell occupancy is valid
   testPrecondition( num_electrons_in_subshell > 0.0 );
   // Make sure the occupation number is valid
-  testPrecondition( !occupation_number.is_null() );
-  testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );
+  testPrecondition( occupation_number.get() );
+  testPrecondition( occupation_number->getLowerBoundOfMomentum() ==
+                    -1.0*Utility::Units::mec_momentum );
 }
 
 // Return the subshell
@@ -164,7 +165,7 @@ void SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrial
                                                   min_scattering_angle_cosine);
 
   const double max_occupation_number =
-    d_occupation_number->evaluate( max_pz_max );
+    this->evaluateOccupationNumber( max_pz_max );
 
   while( true )
   {
@@ -294,10 +295,10 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateAdjointOcc
                                             pz_max );
   
   const double upper_occupation_number_value =
-    d_occupation_number->evaluate( pz_max );
+    this->evaluateOccupationNumber( pz_max );
 
   const double lower_occupation_number_value =
-    d_occupation_number->evaluate( pz_min );
+    this->evaluateOccupationNumber( pz_min );
 
   // Evaluate the adjoint occupation number
   const double adjoint_occupation_number =
@@ -323,21 +324,9 @@ double SubshellIncoherentAdjointPhotonScatteringDistribution::calculateOccupatio
                     calculateMinScatteringAngleCosine( incoming_energy, max_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  double occupation_number_arg =
-    calculateMaxElectronMomentumProjectionAdjoint( incoming_energy,
-                                                   d_binding_energy,
-                                                   scattering_angle_cosine );
-
-  if( occupation_number_arg >= d_occupation_number->getUpperBoundOfIndepVar() )
-    occupation_number_arg = d_occupation_number->getUpperBoundOfIndepVar();
-
-  // Make sure the occupation number arg is valid
-  testPrecondition( occupation_number_arg >=
-                    d_occupation_number->getLowerBoundOfIndepVar() );
-  testPrecondition( occupation_number_arg <=
-                    d_occupation_number->getUpperBoundOfIndepVar() );
-
-  return occupation_number_arg;
+  return calculateMaxElectronMomentumProjectionAdjoint( incoming_energy,
+                                                        d_binding_energy,
+                                                        scattering_angle_cosine );
 }
   
 } // end MonteCarlo namespace

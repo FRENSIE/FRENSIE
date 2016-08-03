@@ -10,8 +10,8 @@
 #ifndef MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_DOPPLER_BROADENED_SUBSHELL_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
@@ -32,12 +32,12 @@ public:
 
   //! Constructor
   DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
-        const double max_energy,
-        const Data::SubshellType interaction_subshell,
-        const double num_electrons_in_subshell,
-        const double binding_energy,
-        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-        const Teuchos::RCP<const ComptonProfile>& compton_profile );
+     const double max_energy,
+     const Data::SubshellType interaction_subshell,
+     const double num_electrons_in_subshell,
+     const double binding_energy,
+     const std::shared_ptr<const OccupationNumber>& occupation_number,
+     const std::shared_ptr<const ComptonProfile>& compton_profile );
 
   //! Destructor
   ~DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution()
@@ -66,7 +66,7 @@ protected:
                             ParticleBank& bank ) const;
 
   // The Compton profile
-  Teuchos::RCP<const ComptonProfile> d_compton_profile;
+  std::shared_ptr<const ComptonProfile> d_compton_profile;
 };
   
 } // end MonteCarlo namespace

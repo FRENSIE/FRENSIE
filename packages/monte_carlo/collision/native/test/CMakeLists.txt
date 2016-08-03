@@ -220,6 +220,11 @@ ADD_EXECUTABLE(tstStandardComptonProfile
 TARGET_LINK_LIBRARIES(tstStandardComptonProfile monte_carlo_collision_native)
 ADD_TEST(StandardComptonProfile_test tstStandardComptonProfile)
 
+ADD_EXECUTABLE(tstStandardOccupationNumber
+  tstStandardOccupationNumber.cpp)
+TARGET_LINK_LIBRARIES(tstStandardOccupationNumber monte_carlo_collision_native)
+ADD_TEST(StandardOccupationNumber_test tstStandardOccupationNumber)
+
 ADD_EXECUTABLE(tstStandardScatteringFunction
   tstStandardScatteringFunction.cpp)
 TARGET_LINK_LIBRARIES(tstStandardScatteringFunction monte_carlo_collision_native)

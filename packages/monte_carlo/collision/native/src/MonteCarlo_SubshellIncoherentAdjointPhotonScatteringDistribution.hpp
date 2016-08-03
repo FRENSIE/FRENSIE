@@ -9,13 +9,13 @@
 #ifndef MONTE_CARLO_SUBSHELL_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_SUBSHELL_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
+// Std Lib Includes
+#include <memory>
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
-#include "MonteCarlo_ComptonProfile.hpp"
+#include "MonteCarlo_OccupationNumber.hpp"
 
 namespace MonteCarlo{
 
@@ -34,7 +34,7 @@ public:
       const Data::SubshellType interaction_subshell,
       const double num_electrons_in_subshell,
       const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
+      const std::shared_ptr<const OccupationNumber>& occupation_number );
 
   //! Destructor
   virtual ~SubshellIncoherentAdjointPhotonScatteringDistribution()
@@ -117,13 +117,15 @@ private:
   double d_binding_energy;
 
   // The occupation number
-  Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
+  std::shared_ptr<const OccupationNumber> d_occupation_number;
 };
 
 // Evaluate the occupation number
 inline double SubshellIncoherentAdjointPhotonScatteringDistribution::evaluateOccupationNumber( const double pz ) const
 {
-  return d_occupation_number->evaluate( pz );
+  OccupationNumber::MomentumQuantity momentum = pz*Utility::Units::mec_momentum;
+  
+  return d_occupation_number->evaluate( momentum );
 }
   
 } // end MonteCarlo namespace

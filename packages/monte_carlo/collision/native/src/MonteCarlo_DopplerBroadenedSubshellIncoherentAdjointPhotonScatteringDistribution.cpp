@@ -18,12 +18,12 @@ namespace MonteCarlo{
 
 // Constructor
 DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
-        const double max_energy,
-        const Data::SubshellType interaction_subshell,
-        const double num_electrons_in_subshell,
-        const double binding_energy,
-        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-        const Teuchos::RCP<const ComptonProfile>& compton_profile )
+     const double max_energy,
+     const Data::SubshellType interaction_subshell,
+     const double num_electrons_in_subshell,
+     const double binding_energy,
+     const std::shared_ptr<const OccupationNumber>& occupation_number,
+     const std::shared_ptr<const ComptonProfile>& compton_profile )
   : SubshellIncoherentAdjointPhotonScatteringDistribution(
                                                      max_energy,
                                                      interaction_subshell,
@@ -42,10 +42,11 @@ DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBr
   // Make sure the subshell occupancy is valid
   testPrecondition( num_electrons_in_subshell > 0.0 );
   // Make sure the occupation number is valid
-  testPrecondition( !occupation_number.is_null() );
-  testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );
+  testPrecondition( !occupation_number.get() );
+  testPrecondition( occupation_number->getLowerBoundOfMomentum() ==
+                    -1.0*Utility::Units::mec_momentum );
   // Make sure the Compton profile is valid
-  testPrecondition( !compton_profile.is_null() );
+  testPrecondition( compton_profile.get() );
   testPrecondition( compton_profile->getLowerBoundOfMomentum() ==
                     -1.0*Utility::Units::mec_momentum );
   testPrecondition( compton_profile->getUpperBoundOfMomentum() >=
