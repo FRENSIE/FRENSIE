@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstModuleInterface.cpp
 //! \author Alex Robinson
 //! \brief  Geometry module interface unit tests
@@ -36,7 +36,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, initialize )
 TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
 {
   typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
-  
+
   TEST_ASSERT( !GMI::doesCellExist( 0 ) );
   TEST_ASSERT( GMI::doesCellExist( 1 ) );
   TEST_ASSERT( !GMI::doesCellExist( 2 ) );
@@ -97,9 +97,9 @@ TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
   TEST_ASSERT( GMI::doesCellExist( 168 ) );
   TEST_ASSERT( GMI::doesCellExist( 184 ) );
   TEST_ASSERT( GMI::doesCellExist( 188 ) );
-  
+
   // Implicit compliment cell
-  TEST_ASSERT( GMI::doesCellExist( 189 ) ); 
+  TEST_ASSERT( GMI::doesCellExist( 189 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface, doesCellExist )
 TEUCHOS_UNIT_TEST( ModuleInterface, doesSurfaceExist )
 {
   typedef Geometry::ModuleInterface<Geometry::DagMC> GMI;
-  
+
   TEST_ASSERT( !GMI::doesSurfaceExist( 0 ) );
   TEST_ASSERT( GMI::doesSurfaceExist( 1 ) );
   TEST_ASSERT( !GMI::doesSurfaceExist( 2 ) );
@@ -127,19 +127,19 @@ TEUCHOS_UNIT_TEST( ModuleInterface, doesSurfaceExist )
 TEUCHOS_UNIT_TEST( ModuleInterface, setInternalRay )
 {
   // Set the internal ray
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
+
   Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( *ray, 53 );
-  
-  const double* ray_position = 
+
+  const double* ray_position =
     Geometry::ModuleInterface<Geometry::DagMC>::getInternalRayPosition();
-  
+
   TEST_EQUALITY_CONST( ray_position[0], -40.0 );
   TEST_EQUALITY_CONST( ray_position[1], -40.0 );
   TEST_EQUALITY_CONST( ray_position[2], 59.0 );
 
-  const double* ray_direction = 
+  const double* ray_direction =
     Geometry::ModuleInterface<Geometry::DagMC>::getInternalRayDirection();
 
   TEST_EQUALITY_CONST( ray_direction[0], 0.0 );
@@ -152,34 +152,34 @@ TEUCHOS_UNIT_TEST( ModuleInterface, setInternalRay )
 TEUCHOS_UNIT_TEST( ModuleInterface, findCellContainingStartRay )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
+
   // Find the cell that contains the point
-  Geometry::ModuleTraits::InternalCellHandle cell = 
-    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay( 
+  Geometry::ModuleTraits::InternalCellHandle cell =
+    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay(
                                                                         *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Initailize a new ray
   ray.reset( new Geometry::Ray( -40.0, -40.0, 61.0, 0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  cell = 
-    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay( 
+  cell =
+    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay(
                                                                         *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 54 );
 
   // Initialize the new ray
   ray.reset( new Geometry::Ray( -40.0, -40.0, 64.0, 0.0, 0.0, 1.0 ) );
 
   // Find the cell that contains the point
-  cell = 
-    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay( 
+  cell =
+    Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay(
                                                                         *ray );
-  
+
   TEST_EQUALITY_CONST( cell, 55 );
 
   // Check the found cell cache
@@ -199,12 +199,12 @@ TEUCHOS_UNIT_TEST( ModuleInterface, findCellContainingStartRay )
 // Check that the cell containing the internal ray can be found
 TEUCHOS_UNIT_TEST( ModuleInterface, findCellContainingInternalRay )
 {
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( *ray, 53 );
-  
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
@@ -221,10 +221,10 @@ TEUCHOS_UNIT_TEST( ModuleInterface, fireInternalRay )
 
   // Fire an external ray through the geometry
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::ModuleInterface<Geometry::DagMC>::fireInternalRay( surface_hit );
- 
+
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
   TEST_EQUALITY_CONST( surface_hit, 242 );
 }
@@ -236,19 +236,19 @@ TEUCHOS_UNIT_TEST( ModuleInterface, advanceInternalRayToCellBoundary )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( ray, 53 );
   }
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
 
   // Advance the ray to the boundary surface
   double surface_normal[3];
-  
+
   bool reflection = Geometry::ModuleInterface<Geometry::DagMC>::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( !reflection );
@@ -268,22 +268,22 @@ TEUCHOS_UNIT_TEST( ModuleInterface, advanceInternalRayBySubstep )
   // Initialize the ray
   {
     Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
-    
+
     Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( ray, 53 );
   }
 
   Geometry::ModuleInterface<Geometry::DagMC>::advanceInternalRayBySubstep( 0.959999084 );
 
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 53 );
-  
+
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::ModuleInterface<Geometry::DagMC>::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.0, 1e-9 );
@@ -294,16 +294,16 @@ TEUCHOS_UNIT_TEST( ModuleInterface, advanceInternalRayBySubstep )
 // Check that the internal ray direction can be changed
 TEUCHOS_UNIT_TEST( ModuleInterface, changeInternalRayDirection )
 {
-  std::shared_ptr<Geometry::Ray> ray( 
+  std::shared_ptr<Geometry::Ray> ray(
                       new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
 
   Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( *ray, 53 );
 
   ray.reset( new Geometry::Ray( -40.0, -40.0, 59.0, 1.0, 0.0, 0.0 ) );
-  
+
   Geometry::ModuleInterface<Geometry::DagMC>::changeInternalRayDirection( ray->getDirection() );
 
-  const double* ray_direction = 
+  const double* ray_direction =
     Geometry::ModuleInterface<Geometry::DagMC>::getInternalRayDirection();
 
   TEST_EQUALITY_CONST( ray_direction[0], 1.0 );
@@ -378,24 +378,24 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isTerminationCell )
 TEUCHOS_UNIT_TEST( ModuleInterface, getPointLocation )
 {
   // Initialize the ray
-  std::shared_ptr<Geometry::Ray> ray( new Geometry::Ray( 
+  std::shared_ptr<Geometry::Ray> ray( new Geometry::Ray(
                                          -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
-  
-  Geometry::PointLocation location = 
+
+  Geometry::PointLocation location =
     Geometry::ModuleInterface<Geometry::DagMC>::getPointLocation( *ray, 53 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
 
   ray.reset( new Geometry::Ray( -42.647, -40.0, 59.0, -1.0, 0.0, 0.0 ) );
 
-  location = 
+  location =
     Geometry::ModuleInterface<Geometry::DagMC>::getPointLocation( *ray, 53 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_INSIDE_CELL );
 
   ray.reset( new Geometry::Ray( -42.648, -40.0, 59.0, -1.0, 0.0, 0.0 ) );
 
-  location = 
+  location =
     Geometry::ModuleInterface<Geometry::DagMC>::getPointLocation( *ray, 53 );
 
   TEST_EQUALITY_CONST( location, Geometry::POINT_OUTSIDE_CELL );
@@ -412,29 +412,29 @@ TEUCHOS_UNIT_TEST( ModuleInterface, ray_trace )
     Geometry::ModuleTraits::InternalCellHandle start_cell =
       Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingStartRay(
                                                                          ray );
-    
-    Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay( 
+
+    Geometry::ModuleInterface<Geometry::DagMC>::setInternalRay(
                                                              ray, start_cell );
   }
-  
+
   // Find the cell that contains the ray
-  Geometry::ModuleTraits::InternalCellHandle cell = 
+  Geometry::ModuleTraits::InternalCellHandle cell =
     Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingInternalRay();
 
   TEST_EQUALITY_CONST( cell, 82 );
 
   // Fire the ray
   Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-  double distance_to_surface_hit = 
+
+  double distance_to_surface_hit =
     Geometry::ModuleInterface<Geometry::DagMC>::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.474, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 394 );
-  
+
   // Advance the ray to the boundary surface
   double surface_normal[3];
-  
+
   bool reflection = Geometry::ModuleInterface<Geometry::DagMC>::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( !reflection );
@@ -442,18 +442,18 @@ TEUCHOS_UNIT_TEST( ModuleInterface, ray_trace )
   TEST_EQUALITY_CONST( surface_normal[1], 0.0 );
   TEST_EQUALITY_CONST( surface_normal[2], 1.0 );
 
-  cell = 
+  cell =
     Geometry::ModuleInterface<Geometry::DagMC>::findCellContainingInternalRay();
-  
+
   TEST_EQUALITY_CONST( cell, 83 );
 
-  distance_to_surface_hit = 
+  distance_to_surface_hit =
     Geometry::ModuleInterface<Geometry::DagMC>::fireInternalRay( surface_hit );
 
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 17.526, 1e-6 );
   TEST_EQUALITY_CONST( surface_hit, 408 );
 
-  // Advance the ray to the boundary surface (reflecting)  
+  // Advance the ray to the boundary surface (reflecting)
   reflection = Geometry::ModuleInterface<Geometry::DagMC>::advanceInternalRayToCellBoundary( surface_normal );
 
   TEST_ASSERT( reflection );
@@ -483,11 +483,11 @@ int main( int argc, char** argv )
   clp.setOption( "test_xml_file",
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -500,15 +500,15 @@ int main( int argc, char** argv )
 
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
-  
+
   // Initialize DagMC
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

@@ -59,27 +59,27 @@ DecoupledPhotonProductionNuclide::DecoupledPhotonProductionNuclide( const std::s
 }
 
 // Get the photon production reaction cross section
-double DecoupledPhotonProductionNuclide::getPhotonProductionCrossSection( 
+double DecoupledPhotonProductionNuclide::getPhotonProductionCrossSection(
                                                      const double energy,
 				                                             const unsigned reaction )
 {
   return d_photon_production_reactions[reaction]->getCrossSection( energy );
 }
-  
+
 // Collide with a neutron
-void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron, 
+void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron,
 			       ParticleBank& bank ) const
 {
   NeutronState neutron_copy = neutron;
-  
+
   // Call the base class implementation for the neutron
   Nuclide::collideAnalogue( neutron, bank );
-  
+
   // Sample photon production stochastically
-  double total_cross_section = getTotalPhotonProductionCrossSection( 
+  double total_cross_section = getTotalPhotonProductionCrossSection(
                                                     neutron_copy.getEnergy() );
 
-  double scaled_random_number = 
+  double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
 
@@ -87,61 +87,61 @@ void DecoupledPhotonProductionNuclide::collideAnalogue( NeutronState& neutron,
 }
 
 // Collide with a neutron and survival bias
-void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutron, 
+void DecoupledPhotonProductionNuclide::collideSurvivalBias( NeutronState& neutron,
 				   ParticleBank& bank) const
-{  
+{
   NeutronState neutron_copy = neutron;
 
   // Call the base class implementation for the neutron
   Nuclide::collideSurvivalBias( neutron, bank );
-  
+
   // Sample photon production stochastically
-  double total_cross_section = getTotalPhotonProductionCrossSection( 
+  double total_cross_section = getTotalPhotonProductionCrossSection(
                                                    neutron_copy.getEnergy() );
-  
-  double scaled_random_number = 
+
+  double scaled_random_number =
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
     total_cross_section;
-  
+
   samplePhotonProductionReaction( scaled_random_number, neutron_copy, bank );
 }
 
 // Sample a decoupled photon production reaction
-void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction( 
+void DecoupledPhotonProductionNuclide::samplePhotonProductionReaction(
                                             const double scaled_random_number,
-			                                      NeutronState& neutron, 
+			                                      NeutronState& neutron,
 			                                      ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-  
+
   ConstPhotonProductionReactionMap::const_iterator nuclear_reaction, nuclear_reaction_end;
-  
+
   nuclear_reaction = d_photon_production_reactions.begin();
   nuclear_reaction_end = d_photon_production_reactions.end();
-  
+
   while( nuclear_reaction != nuclear_reaction_end )
-  { 
+  {
     partial_cross_section +=
       nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
-      
+
     if( scaled_random_number < partial_cross_section )
       break;
-      
+
     ++nuclear_reaction;
   }
-    
+
   // Make sure a reaction was selected
   testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
   // Undergo the reaction selected
-  nuclear_reaction->second->react( 
-         neutron, 
+  nuclear_reaction->second->react(
+         neutron,
          bank,
          getTotalPhotonProductionCrossSection( neutron.getEnergy() ) );
 }
 
 // Get total photon production cross section
-double DecoupledPhotonProductionNuclide::getTotalPhotonProductionCrossSection( 
+double DecoupledPhotonProductionNuclide::getTotalPhotonProductionCrossSection(
                                                    const double energy ) const
 {
   // Loop over all photon production reactions to get total cross section
@@ -154,12 +154,12 @@ double DecoupledPhotonProductionNuclide::getTotalPhotonProductionCrossSection(
 
   while( reaction_type_pointer != end_reaction_type_pointer )
   {
-    total_cross_section += 
+    total_cross_section +=
                       reaction_type_pointer->second->getCrossSection( energy );
 
     ++reaction_type_pointer;
   }
-  
+
   return total_cross_section;
 }
 

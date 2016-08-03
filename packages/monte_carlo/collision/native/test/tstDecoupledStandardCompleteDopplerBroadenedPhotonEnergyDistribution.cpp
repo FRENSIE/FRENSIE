@@ -36,23 +36,23 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   half_distribution;
 
-Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
   half_complete_distribution;
 
-Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   full_distribution;
 
-Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution> 
+Teuchos::RCP<MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>
   full_complete_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check if the distribution is complete
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              isComplete )
 {
@@ -60,133 +60,133 @@ TEUCHOS_UNIT_TEST(
 
   TEST_ASSERT( full_distribution->isComplete() );
 }
-                  
+
 //---------------------------------------------------------------------------//
 // Check if a subshell is valid
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              isValidSubshell )
 {
   // Half distribution
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                     Data::K_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::L3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::M5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N6_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::N7_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O3_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O4_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::O5_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P1_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P2_SUBSHELL ) );
-  TEST_ASSERT( half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( half_complete_distribution->isValidSubshell(
                                                    Data::P3_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                                    Data::Q3_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                               Data::INVALID_SUBSHELL ) );
-  TEST_ASSERT( !half_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !half_complete_distribution->isValidSubshell(
                                               Data::UNKNOWN_SUBSHELL ) );
 
   // Full distribution
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                     Data::K_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::L3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::M5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N6_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::N7_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O3_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O4_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::O5_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P1_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P2_SUBSHELL ) );
-  TEST_ASSERT( full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( full_complete_distribution->isValidSubshell(
                                                    Data::P3_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                                    Data::Q3_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                               Data::INVALID_SUBSHELL ) );
-  TEST_ASSERT( !full_complete_distribution->isValidSubshell( 
+  TEST_ASSERT( !full_complete_distribution->isValidSubshell(
                                               Data::UNKNOWN_SUBSHELL ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the subshell binding energy can be returned
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              getSubshellBindingEnergy )
 {
-  // Half distribution 
+  // Half distribution
   TEST_FLOATING_EQUALITY( half_complete_distribution->getSubshellBindingEnergy(
                                                       Data::K_SUBSHELL ),
                           0.088005,
@@ -385,7 +385,7 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell occupancy can be returned
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              getSubshellOccupancy )
 {
@@ -540,7 +540,7 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell distribution can be evaluated
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshell_half )
 {
@@ -550,7 +550,7 @@ TEUCHOS_UNIT_TEST(
                                                       0.412,
                                                       0.0,
                                                       Data::K_SUBSHELL );
-  
+
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Max energy
@@ -560,7 +560,7 @@ TEUCHOS_UNIT_TEST(
                                                       0.0,
                                                       Data::K_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           0.077179060436207,
                           1e-15 );
 
@@ -671,7 +671,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           1.4364930672258214,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -682,7 +682,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           2.2113525633910784,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -693,7 +693,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           3.6032956960778817,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -737,7 +737,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           5.625556432361759,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -748,7 +748,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           4.626950854598549,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -759,7 +759,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           6.233749824572172,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -825,7 +825,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           26.794039864962183,
                           1e-14 );
-  
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -836,7 +836,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           20.841524452812,
                           1e-15 );
- 
+
   // Compton-line energy
   cross_section = half_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -851,7 +851,7 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell distribution can be evaluated
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshell_full )
 {
@@ -861,7 +861,7 @@ TEUCHOS_UNIT_TEST(
                                                       0.412,
                                                       0.0,
                                                       Data::K_SUBSHELL );
-  
+
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   // Max energy
@@ -871,7 +871,7 @@ TEUCHOS_UNIT_TEST(
                                                       0.0,
                                                       Data::K_SUBSHELL );
 
-  TEST_FLOATING_EQUALITY( cross_section, 
+  TEST_FLOATING_EQUALITY( cross_section,
                           0.077179060436207,
                           1e-15 );
 
@@ -895,7 +895,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section,
                           0.009842522369949987,
-                          1e-15 ); 
+                          1e-15 );
 
   // Compton-line energy
   cross_section = full_complete_distribution->evaluateSubshell(
@@ -1116,7 +1116,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           17.448311930633853,
                           1e-15 );
-  
+
   // Compton-line energy
   cross_section = full_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -1138,7 +1138,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( cross_section,
                           20.841524452812,
                           1e-15 );
- 
+
   // Compton-line energy
   cross_section = full_complete_distribution->evaluateSubshell(
                                                      0.5,
@@ -1178,26 +1178,26 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshellIntegratedCrossSection_half )
 {
-  double cross_section = 
-    half_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  double cross_section =
+    half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                         0.5,
                                                         0.0,
                                                         Data::K_SUBSHELL,
                                                         1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0506787976678307606, 1e-12 );
-  
-  cross_section = 
-    half_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+
+  cross_section =
+    half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L1_SUBSHELL,
                                                        1e-3 );
-                                                              
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0539421594075661509, 1e-12 );
 
-  cross_section = 
-    half_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  cross_section =
+    half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L2_SUBSHELL,
@@ -1205,25 +1205,25 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0544804774400405936, 1e-12 );
 
-  cross_section = 
-    half_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  cross_section =
+    half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.108643678063119545, 1e-12 );
 
-  cross_section = 
-    half_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  cross_section =
+    half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M1_SUBSHELL,
                                                        1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0537557438879969415, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1232,16 +1232,16 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0538845285472215121, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107670237956284012, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1250,16 +1250,16 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.107645274793230467, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M5_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.161418283770527915, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1267,8 +1267,8 @@ TEUCHOS_UNIT_TEST(
                                                        1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0536342777913152297, 1e-12 );
- 
-  cross_section = 
+
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1277,16 +1277,16 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.053665026335982989, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.10729807014692927, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1295,7 +1295,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.107276124378478083, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1304,7 +1304,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.160895822405358047, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1313,7 +1313,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.160854431039325119, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1322,7 +1322,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.21446862724054877, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1331,16 +1331,16 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0535797701764630513, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0535831274038866892, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1349,25 +1349,25 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.107157222253782866, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O4_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107143514635324733, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O5_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.16071289870148503, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1376,7 +1376,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0535621266370162954, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1385,7 +1385,7 @@ TEUCHOS_UNIT_TEST(
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0535613424402932373, 1e-12 );
 
-  cross_section = 
+  cross_section =
     half_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1401,214 +1401,214 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshellIntegratedCrossSection_full )
 {
-  double cross_section = 
-    full_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  double cross_section =
+    full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                         0.5,
                                                         0.0,
                                                         Data::K_SUBSHELL,
                                                         1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0519379030758085128, 1e-12 );
-  
-  cross_section = 
-    full_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+
+  cross_section =
+    full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L1_SUBSHELL,
                                                        1e-3 );
-                                                              
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0542261359375576096, 1e-12 );
-  
-  cross_section = 
-    full_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+
+  cross_section =
+    full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0545496676195199245, 1e-12 );
 
-  cross_section = 
-    full_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  cross_section =
+    full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::L3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.108712226617216717, 1e-12 );
 
-  cross_section = 
-    full_complete_distribution->evaluateSubshellIntegratedCrossSection( 
+  cross_section =
+    full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M1_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0538286427776931836, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0539132788874106678, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107691472905151867, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M4_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107646395205054715, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::M5_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.161419179774725308, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N1_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0536534010499861644, 1e-12 );
- 
-  cross_section = 
+
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0536725588587172869, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107304077175130422, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N4_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.10727645774553729, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N5_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.160896098697318413, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N6_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.160854432895073562, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::N7_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.214468628834499186, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O1_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0535835334668938595, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0535845893672419471, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O3_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107158181783069198, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O4_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.107143553741129008, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::O5_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.160712932063177688, 1e-12 );
-  
-  cross_section = 
+
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::P1_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.05356259121654907, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
                                                        Data::P2_SUBSHELL,
                                                        1e-3 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 0.0535614418966963851, 1e-12 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateSubshellIntegratedCrossSection(
                                                        0.5,
                                                        0.0,
@@ -1624,13 +1624,13 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateIntegratedCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     half_complete_distribution->evaluateIntegratedCrossSection(
                                                               0.5, 0.0, 1e-4 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.1995115631200073, 1e-5 );
 
-  cross_section = 
+  cross_section =
     full_complete_distribution->evaluateIntegratedCrossSection(
                                                               0.5, 0.0, 1e-4 );
 
@@ -1639,21 +1639,21 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell PDF can be evaluated
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshellPDF_half )
 {
   // Compton-line energy
-  double pdf_value = 
+  double pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
                                                      Data::K_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 4.8831545944539485, 1e-12 );
-                                                     
+
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1662,7 +1662,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 15.116109094889707, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1671,7 +1671,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 7.090470797577038, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1680,7 +1680,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 8.094948861129208, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1689,7 +1689,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 32.78034651756172, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1698,7 +1698,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 18.91482041646647, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1707,16 +1707,16 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 20.64369177002927, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
                                                      Data::M4_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 13.344692277344242, 1e-12 );
-  
+
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1725,16 +1725,16 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 13.699517252548263, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
                                                      Data::N1_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 67.18270189258236, 1e-12 );
-  
+
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1743,7 +1743,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 42.30673235398174, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1752,7 +1752,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 45.93109750676158, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1761,7 +1761,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 34.14125794825788, 1e-12 );
 
   // Compton-line energy
-  pdf_value = 
+  pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
                                                      0.25271981255859755,
                                                      0.0,
@@ -1786,7 +1786,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::N7_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 29.066021938865568, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1813,7 +1813,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::O3_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 113.51104143812852, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1822,7 +1822,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::O4_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 105.61286442377467, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1831,7 +1831,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::O5_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 108.56821121149143, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1840,7 +1840,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::P1_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 500.24227093412435, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1849,7 +1849,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::P2_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 389.11505020705556, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     half_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -1860,7 +1860,7 @@ TEUCHOS_UNIT_TEST(
   TEST_FLOATING_EQUALITY( pdf_value, 389.11505020705556, 1e-12 );
 
   // Check that the pdf evaluates to 1.0
-  boost::function<double (double x)> double_diff_cs_wrapper = 
+  boost::function<double (double x)> double_diff_cs_wrapper =
     boost::bind<double>( &MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution::evaluateSubshellPDF,
                          boost::cref( *half_complete_distribution ),
                          0.5,
@@ -1868,12 +1868,12 @@ TEUCHOS_UNIT_TEST(
                          -1.0,
                          Data::K_SUBSHELL );
 
-  Utility::GaussKronrodIntegrator quadrature_set( 1e-3 );
+  Utility::GaussKronrodIntegrator<double> quadrature_set( 1e-3 );
 
   double abs_error, value;
 
   const double binding_energy = half_complete_distribution->getSubshellBindingEnergy( Data::K_SUBSHELL );
-  
+
   quadrature_set.integrateAdaptively<15>( double_diff_cs_wrapper,
                                           0.0,
                                           0.5 - binding_energy,
@@ -1885,7 +1885,7 @@ TEUCHOS_UNIT_TEST(
 
 //---------------------------------------------------------------------------//
 // Check that the subshell PDF can be evaluated
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              evaluateSubshellPDF_full )
 {
@@ -1987,7 +1987,7 @@ TEUCHOS_UNIT_TEST(
                                                      Data::N1_SUBSHELL );
 
   TEST_FLOATING_EQUALITY( pdf_value, 67.15875649189272, 1e-12 );
-  
+
   // Compton-line energy
   pdf_value =
     full_complete_distribution->evaluateSubshellPDF( 0.5,
@@ -2142,7 +2142,7 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              sampleSubshellMomentum )
 {
-  
+
 }
 
 //---------------------------------------------------------------------------//
@@ -2151,12 +2151,12 @@ TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              sampleMomentumAndRecordTrials )
 {
-  
+
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              sample_half )
 {
@@ -2170,7 +2170,7 @@ TEUCHOS_UNIT_TEST(
   fake_stream[1] = 0.005; // select first shell for collision - endf
   fake_stream[2] = 6.427713151861e-01; // select pz = 0.291894102792
   fake_stream[3] = 0.25; // select energy loss
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   half_distribution->sample( incoming_energy,
@@ -2179,14 +2179,14 @@ TEUCHOS_UNIT_TEST(
 			     shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
-  
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( 
+TEUCHOS_UNIT_TEST(
              DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution,
              sample_full )
 {
@@ -2199,7 +2199,7 @@ TEUCHOS_UNIT_TEST(
   fake_stream[0] = 0.005; // select first shell for collision - old
   fake_stream[1] = 0.005; // select first shell for collision - endf
   fake_stream[2] = 0.5; // select pz = 0.0
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   full_distribution->sample( incoming_energy,
@@ -2219,9 +2219,9 @@ TEUCHOS_UNIT_TEST(
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_ace_file",
 		 &test_ace_file_name,
 		 "Test ACE file name" );
@@ -2229,10 +2229,10 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -2241,54 +2241,54 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 					      (unsigned)subshell_endf_des[i] );
   }
 
   // Create the Compton profile subshell converter
   std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
-  
+
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
 
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
-  
+
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
   {
     unsigned shell_index = lswd_block[shell]; // ignore interp parameter
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid( 
+    Teuchos::Array<double> half_momentum_grid(
 				  swd_block( shell_index + 1, num_mom_vals ) );
 
     Teuchos::Array<double> half_profile(
@@ -2331,23 +2331,23 @@ int main( int argc, char** argv )
     if( shell == 0 )
     {
       std::shared_ptr<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> > raw_compton_profile_copy = std::dynamic_pointer_cast<Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum> >( raw_compton_profile );
-      
+
       raw_compton_profile_copy->toStream( std::cout );
     }
 
-    half_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+    half_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
-    
+
     raw_compton_profile.reset(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        full_momentum_grid,
                                                        full_profile ) );
-    
-    full_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+
+    full_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
-    
+
   }
 
   half_complete_distribution.reset(
@@ -2360,7 +2360,7 @@ int main( int argc, char** argv )
 			  half_compton_profiles ) );
 
   half_distribution = half_complete_distribution;
-  
+
   full_complete_distribution.reset(
       new MonteCarlo::DecoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellOccupancies(),
@@ -2369,7 +2369,7 @@ int main( int argc, char** argv )
 			  xss_data_extractor->extractLNEPSBlock(),
                           converter,
 			  full_compton_profiles ) );
-  
+
   full_distribution = full_complete_distribution;
 
   // Clear setup data
@@ -2378,7 +2378,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

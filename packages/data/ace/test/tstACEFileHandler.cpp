@@ -27,19 +27,19 @@ std::string test_sab_ace_file_name;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the ACEFileHandler can open and read a neutron ace file when 
+// Check that the ACEFileHandler can open and read a neutron ace file when
 // constructed.
 TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 {
   std::string table_name( "1001.70c" );
-  
+
   // Create the ace file handler
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 			  new Data::ACEFileHandler( test_neutron_ace_file_name,
 						    table_name,
 						    1u ) );
-  
-  TEST_EQUALITY( ace_file_handler->getLibraryName(), 
+
+  TEST_EQUALITY( ace_file_handler->getLibraryName(),
 		 test_neutron_ace_file_name );
   TEST_EQUALITY( ace_file_handler->getTableName(), table_name );
   TEST_EQUALITY_CONST( ace_file_handler->getTableAtomicWeightRatio(),
@@ -52,12 +52,12 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 		       " 1-H -  1 at 293.6K from endf/b-vii.0 njoy99.248                      " );
   TEST_EQUALITY_CONST( ace_file_handler->getTableMatId(),
 		       "   mat 125" );
-  
+
   Teuchos::ArrayView<const int> zaids = ace_file_handler->getTableZAIDs();
   Teuchos::Array<int> ref_zaids( 16, 0 );
   TEST_COMPARE_ARRAYS( zaids, ref_zaids );
-		       
-  Teuchos::ArrayView<const double> awrs = 
+
+  Teuchos::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
   Teuchos::Array<double> ref_awrs( 16, 0.0 );
   TEST_COMPARE_ARRAYS( awrs, ref_awrs );
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
   ref_nxs[8] = 0;    ref_nxs[9] = 0;    ref_nxs[10] = 0;  ref_nxs[11] = 0;
   ref_nxs[12] = 0;   ref_nxs[13] = 0;   ref_nxs[14] = 0;  ref_nxs[15] = 0;
   TEST_COMPARE_ARRAYS( nxs, ref_nxs );
-  
+
   Teuchos::ArrayView<const int> jxs = ace_file_handler->getTableJXSArray();
   Teuchos::Array<int> ref_jxs( 32 );
   ref_jxs[0] = 1;     ref_jxs[1] = 0;     ref_jxs[2] = 2951; ref_jxs[3] = 2954;
@@ -89,18 +89,18 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_neutron )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the ACEFileHandler can open and read a neutron ace file when 
+// Check that the ACEFileHandler can open and read a neutron ace file when
 // constructed.
 TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 {
   std::string table_name( "lwtr.10t" );
-  
+
   // Create the ace file handler
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 			      new Data::ACEFileHandler( test_sab_ace_file_name,
 							table_name,
 							1u ) );
-  
+
   TEST_EQUALITY( ace_file_handler->getLibraryName(), test_sab_ace_file_name );
   TEST_EQUALITY( ace_file_handler->getTableName(), table_name );
   TEST_EQUALITY_CONST( ace_file_handler->getTableAtomicWeightRatio(),
@@ -113,13 +113,13 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
 		       "H in h2o at 293.6k from ENDF/B-VII                                    " );
   TEST_EQUALITY_CONST( ace_file_handler->getTableMatId(),
 		       "   mat 125" );
-  
+
   Teuchos::ArrayView<const int> zaids = ace_file_handler->getTableZAIDs();
   Teuchos::Array<int> ref_zaids( 16, 0 );
   ref_zaids[0] = 1001;
   TEST_COMPARE_ARRAYS( zaids, ref_zaids );
-		       
-  Teuchos::ArrayView<const double> awrs = 
+
+  Teuchos::ArrayView<const double> awrs =
     ace_file_handler->getTableAtomicWeightRatios();
   Teuchos::Array<double> ref_awrs( 16, 0.0 );
   TEST_COMPARE_ARRAYS( awrs, ref_awrs );
@@ -131,7 +131,7 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get_sab )
   ref_nxs[8] = 0;    ref_nxs[9] = 0;    ref_nxs[10] = 0;  ref_nxs[11] = 0;
   ref_nxs[12] = 0;   ref_nxs[13] = 0;   ref_nxs[14] = 0;  ref_nxs[15] = 0;
   TEST_COMPARE_ARRAYS( nxs, ref_nxs );
-  
+
   Teuchos::ArrayView<const int> jxs = ace_file_handler->getTableJXSArray();
   Teuchos::Array<int> ref_jxs( 32 );
   ref_jxs[0] = 1;  ref_jxs[1] = 118; ref_jxs[2] = 234; ref_jxs[3] = 0;

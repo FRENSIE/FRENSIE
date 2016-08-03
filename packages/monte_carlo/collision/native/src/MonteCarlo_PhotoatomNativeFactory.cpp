@@ -40,7 +40,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign( raw_photoatom_data.getPhotonEnergyGrid().begin(),
 		      raw_photoatom_data.getPhotonEnergyGrid().end() );
-  
+
   // Construct the hash-based grid searcher for this atom
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
@@ -61,17 +61,17 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
-      scattering_reactions[reaction_pointers[i]->getReactionType()] = 
+      scattering_reactions[reaction_pointers[i]->getReactionType()] =
 	reaction_pointers[i];
     }
   }
 
   // Create the coherent scattering reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[COHERENT_PHOTOATOMIC_REACTION];
 
-    PhotoatomicReactionNativeFactory::createCoherentReaction( 
+    PhotoatomicReactionNativeFactory::createCoherentReaction(
 							    raw_photoatom_data,
 							    energy_grid,
 							    grid_searcher,
@@ -80,7 +80,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   // Create the pair production reaction
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       scattering_reactions[PAIR_PRODUCTION_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createPairProductionReaction(
@@ -104,13 +104,13 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
-      absorption_reactions[reaction_pointers[i]->getReactionType()] = 
+      absorption_reactions[reaction_pointers[i]->getReactionType()] =
 	reaction_pointers[i];
     }
   }
   else
   {
-    Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+    Photoatom::ReactionMap::mapped_type& reaction_pointer =
       absorption_reactions[TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION];
 
     PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
@@ -121,7 +121,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   }
 
   // Create the heating reaction
-  Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+  Photoatom::ReactionMap::mapped_type& reaction_pointer =
     absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
 
   PhotoatomicReactionNativeFactory::createHeatingReaction( raw_photoatom_data,
@@ -142,11 +142,11 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 // Create the photoatom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * atom. Special care must be taken to assure that the model corresponds with
- * the atom of interest. If the use of atomic relaxation data has been 
+ * the atom of interest. If the use of atomic relaxation data has been
  * requested, a photoelectric reaction for each subshell will be created.
  * Otherwise a single total photoelectric reaction will be created. If
- * impulse approximation data is requested, an incoherent reaction for each 
- * subshell will be created (can only be done with the impulse approximation). 
+ * impulse approximation data is requested, an incoherent reaction for each
+ * subshell will be created (can only be done with the impulse approximation).
  * Otherwise a single incoherent reaction will be created (using the more
  * common Waller-Hartree theory).
  */
@@ -169,7 +169,7 @@ void PhotoatomNativeFactory::createPhotoatom(
 
   Teuchos::RCP<PhotoatomCore> core;
 
-  PhotoatomNativeFactory::createPhotoatomCore( 
+  PhotoatomNativeFactory::createPhotoatomCore(
 					     raw_photoatom_data,
 					     atomic_relaxation_model,
 					     core,

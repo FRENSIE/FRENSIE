@@ -30,7 +30,7 @@ void DagMCEntityHandler::setEntities( const moab::Range& entities )
 {
   // Make sure there are entities
   testPrecondition( !entities.empty() );
-  
+
   d_entities = entities;
 }
 
@@ -41,7 +41,7 @@ size_t DagMCEntityHandler::getNumberOfEntities() const
 }
 
 // Check if the entity exists
-bool DagMCEntityHandler::doesEntityHandleExist( 
+bool DagMCEntityHandler::doesEntityHandleExist(
                                  const moab::EntityHandle entity_handle ) const
 {
   return d_entities.find( entity_handle ) != d_entities.end();

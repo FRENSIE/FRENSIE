@@ -29,9 +29,9 @@ class StandardAdjointIncoherentGridGenerator : public AdjointIncoherentGridGener
 {
 
 public:
-  
+
   //! Constructor
-  StandardAdjointIncoherentGridGenerator( 
+  StandardAdjointIncoherentGridGenerator(
       const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
       const double convergence_tol = 0.001,
       const double absolute_diff_tol = 1e-12,
@@ -49,10 +49,10 @@ public:
 
   //! Set the convergence tolerance
   void setConvergenceTolerance( const double convergence_tol );
-  
+
   //! Set the absolute difference tolerance
   void setAbsoluteDifferenceTolerance( const double absolute_diff_tol );
-  
+
   //! Set the distance tolerance
   void setDistanceTolerance( const double distance_tol );
 
@@ -73,7 +73,7 @@ public:
 			 const Teuchos::Array<double>& max_energy_grid_1,
 			 const Teuchos::Array<double>& cross_section_0,
 			 const Teuchos::Array<double>& cross_section_1 ) const;
-			     
+
 private:
 
   // Calculate the energy midpoint
@@ -95,16 +95,16 @@ private:
 
   // The absolute difference tolerance
   double d_absolute_diff_tol;
-  
+
   // The distance tolerance
   double d_distance_tol;
 
   // The grid generator
-  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy> 
+  Utility::GridGenerator<typename TwoDInterpPolicy::ZYInterpPolicy>
   d_max_energy_grid_generator;
-  
+
   // The adjoint incoherent cross section evaluator
-  MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution 
+  MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution
   d_adjoint_incoherent_cross_section;
 };
 

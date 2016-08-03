@@ -23,14 +23,14 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, defaults )
 {
   TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold(),
                        400.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                MonteCarlo::SimulationNeutronProperties::getAbsoluteMinNeutronEnergy(),
                1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
                        1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),
                        20.0 );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                MonteCarlo::SimulationNeutronProperties::getAbsoluteMaxNeutronEnergy(),
                20.0 );
 }
@@ -40,7 +40,7 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, defaults )
 // Test that the free gas thermal treatment temp threshold can be set
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationNeutronProperties::getFreeGasThreshold();
 
   MonteCarlo::SimulationNeutronProperties::setFreeGasThreshold( 1000.0 );
@@ -58,11 +58,11 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setFreeGasThreshold )
 // Test that the min neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMinNeutronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy();
 
   MonteCarlo::SimulationNeutronProperties::setMinNeutronEnergy( 1e-8 );
-  
+
   TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy() !=
 	       default_value );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMinNeutronEnergy(),
@@ -76,11 +76,11 @@ TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMinNeutronEnergy )
 // Test that the max neutron energy can be set
 TEUCHOS_UNIT_TEST( SimulationNeutronProperties, setMaxNeutronEnergy )
 {
-  double default_value = 
+  double default_value =
     MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy();
 
   MonteCarlo::SimulationNeutronProperties::setMaxNeutronEnergy( 15.0 );
-  
+
   TEST_ASSERT( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy() !=
 	       default_value );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationNeutronProperties::getMaxNeutronEnergy(),

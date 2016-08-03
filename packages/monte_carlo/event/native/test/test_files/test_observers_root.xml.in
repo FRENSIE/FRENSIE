@@ -34,7 +34,7 @@
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="1"/>
   </ParameterList>
-  
+
   <ParameterList name="Surface Current Estimator 2">
     <Parameter name="Id" type="unsigned int" value="16"/>
     <Parameter name="Type" type="string" value="Surface Current"/>
@@ -42,5 +42,5 @@
     <Parameter name="Multiplier" type="double" value="2.0"/>
     <Parameter name="Surfaces" type="Array" value="2"/>
   </ParameterList>
-  
+
 </ParameterList>

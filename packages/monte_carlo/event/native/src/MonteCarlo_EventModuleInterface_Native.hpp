@@ -84,7 +84,7 @@ public:
 	    const int root_process );
 
   //! Export the observer data
-  static void exportObserverData( 
+  static void exportObserverData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const unsigned long long last_history_number,
                     const unsigned long long histories_completed,
@@ -99,10 +99,10 @@ private:
 };
 
 // Set the event handler instance
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::setHandlerInstance(
                const std::shared_ptr<MonteCarlo::EventHandler>& event_handler )
-{ 
+{
   // Make sure the handler is valid
   testPrecondition( event_handler.get() );
 
@@ -110,15 +110,15 @@ EventModuleInterface<MonteCarlo::EventHandler>::setHandlerInstance(
 }
 
 // Enable support for multiple threads
-inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::enableThreadSupport( 
+inline void
+EventModuleInterface<MonteCarlo::EventHandler>::enableThreadSupport(
 						   const unsigned num_threads )
 {
   s_event_handler->enableThreadSupport( num_threads );
 }
 
 // Update the observers from a particle entering cell event
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleEnteringCellEvent(
               const ParticleState& particle,
               const Geometry::ModuleTraits::InternalCellHandle cell_entering )
@@ -128,7 +128,7 @@ EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleEnter
 }
 
 // Update the observers from a particle leaving cell event
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromParticleLeavingCellEvent(
                const ParticleState& particle,
                const Geometry::ModuleTraits::InternalCellHandle cell_leaving )
@@ -156,7 +156,7 @@ inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromP
                                     const ParticleState& particle,
                                     const double inverse_total_cross_section )
 {
-  s_event_handler->updateObserversFromParticleCollidingInCellEvent( 
+  s_event_handler->updateObserversFromParticleCollidingInCellEvent(
                                                  particle,
                                                  inverse_total_cross_section );
 }
@@ -186,15 +186,15 @@ inline void EventModuleInterface<MonteCarlo::EventHandler>::updateObserversFromP
 }
 
 // Commit the observer history constributions
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::commitObserverHistoryContributions()
 {
   s_event_handler->commitObserverHistoryContributions();
 }
 
 //! Print the observer data
-inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::printObserverSummaries( 
+inline void
+EventModuleInterface<MonteCarlo::EventHandler>::printObserverSummaries(
 						    std::ostream& os,
 						    const double num_histories,
 						    const double start_time,
@@ -207,14 +207,14 @@ EventModuleInterface<MonteCarlo::EventHandler>::printObserverSummaries(
 }
 
 // Reset the observer data
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::resetObserverData()
 {
   s_event_handler->resetObserverData();
 }
 
 // Reduce observer data on all processes in comm and collect on the root
-inline void 
+inline void
 EventModuleInterface<MonteCarlo::EventHandler>::reduceObserverData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
@@ -223,8 +223,8 @@ EventModuleInterface<MonteCarlo::EventHandler>::reduceObserverData(
 }
 
 // Export the observer data
-inline void 
-EventModuleInterface<MonteCarlo::EventHandler>::exportObserverData( 
+inline void
+EventModuleInterface<MonteCarlo::EventHandler>::exportObserverData(
                     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file,
                     const unsigned long long last_history_number,
                     const unsigned long long histories_completed,

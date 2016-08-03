@@ -63,9 +63,9 @@ private:
   std::shared_ptr<const ScatteringFunction> d_scattering_function;
 };
 
-// Evaluate the scattering function 
-inline double 
-WHIncoherentPhotonScatteringDistribution::evaluateScatteringFunction( 
+// Evaluate the scattering function
+inline double
+WHIncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -74,15 +74,15 @@ WHIncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
+
   // The inverse wavelength of the photon (1/cm)
-  const ScatteringFunction::ArgumentQuantity inverse_wavelength = 
+  const ScatteringFunction::ArgumentQuantity inverse_wavelength =
     incoming_energy/(Utility::PhysicalConstants::planck_constant*
 		     Utility::PhysicalConstants::speed_of_light)*
     Utility::Units::inverse_centimeter;
 
   // The scattering function argument (1/cm)
-  const ScatteringFunction::ArgumentQuantity scattering_function_arg =  
+  const ScatteringFunction::ArgumentQuantity scattering_function_arg =
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
 
   return d_scattering_function->evaluate( scattering_function_arg );

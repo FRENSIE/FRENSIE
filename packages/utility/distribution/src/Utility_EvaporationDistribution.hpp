@@ -37,10 +37,10 @@ private:
 
   // The distribution multiplier unit traits typedef
   typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistMultiplierUnitTraits;
-  
+
   // The distribution multiplier quantity type
   typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
-  
+
   // The distribution normalization quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
 
@@ -77,12 +77,12 @@ public:
   template<typename InputIndepQuantityA = IndepQuantity,
 	   typename InputIndepQuantityB = IndepQuantity,
 	   typename InputIndepQuantityC = IndepQuantity>
-  UnitAwareEvaporationDistribution( 
-                                const InputIndepQuantityA incident_energy = 
+  UnitAwareEvaporationDistribution(
+                                const InputIndepQuantityA incident_energy =
                                 QuantityTraits<InputIndepQuantityA>::one(),
                                 const InputIndepQuantityB nuclear_temperature =
                                 QuantityTraits<InputIndepQuantityB>::one(),
-				const InputIndepQuantityC restriction_energy = 
+				const InputIndepQuantityC restriction_energy =
                                 QuantityTraits<InputIndepQuantityC>::one(),
 				const double constant_multiplier = 1.0 );
 
@@ -158,7 +158,7 @@ private:
   // All possible instantiations are friends
   template<typename FriendIndepUnit, typename FriendDepUnit>
   friend class UnitAwareEvaporationDistribution;
- 
+
   // The distribution type
   static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
 
@@ -167,7 +167,7 @@ private:
 
   // The nuclear temperature of the distribution
   IndepQuantity d_nuclear_temperature;
-  
+
   // The restriction energy of the distribution
   IndepQuantity d_restriction_energy;
 
@@ -200,14 +200,14 @@ public:
   {
     return "Evaporation Distribution";
   }
-  static std::string concreteName( 
+  static std::string concreteName(
 			     const Utility::EvaporationDistribution& instance )
   {
     return name();
   }
 };
 
-/*! \brief Type name traits partial specialization for the 
+/*! \brief Type name traits partial specialization for the
  * Utility::UnitAwareEvaporationDistribution
  *
  * \details The name function will set the type name that must be used in

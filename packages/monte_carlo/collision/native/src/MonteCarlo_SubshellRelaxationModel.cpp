@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Constructor
-SubshellRelaxationModel::SubshellRelaxationModel( 
+SubshellRelaxationModel::SubshellRelaxationModel(
 					  const Data::SubshellType vacancy_subshell )
   : d_vacancy_subshell( vacancy_subshell )
 {

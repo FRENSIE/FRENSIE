@@ -32,9 +32,9 @@ public:
   //! Typedef for event tags used for quick dispatcher registering
   typedef boost::mpl::vector<ParticleSubtrackEndingInCellEventObserver::EventTag>
   EventTags;
-  
+
   //! Constructor
-  CellTrackLengthFluxEstimator( 
+  CellTrackLengthFluxEstimator(
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,

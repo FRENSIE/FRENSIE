@@ -34,19 +34,19 @@ void Root::getMaterialIds( Set& material_ids )
 
   Root::getCellMaterialIds( cell_id_mat_id_map );
 
-  typename std::unordered_map<ModuleTraits::InternalCellHandle,typename Set::value_type>::const_iterator 
+  typename std::unordered_map<ModuleTraits::InternalCellHandle,typename Set::value_type>::const_iterator
     cell_id_mat_id_it = cell_id_mat_id_map.begin();
 
   while( cell_id_mat_id_it != cell_id_mat_id_map.end() )
   {
     material_ids.insert( cell_id_mat_id_it->second );
-    
+
     ++cell_id_mat_id_it;
   }
 }
 
 // Get the problem cells
-/*! \details The set value type should be a ModuleTraits::InternalCellHandle. 
+/*! \details The set value type should be a ModuleTraits::InternalCellHandle.
  * This method is thread safe as long as enableThreadSupport has been called.
  */
 template<typename Set>
@@ -57,18 +57,18 @@ void Root::getCells( Set& cell_set,
   // Get a list of the cells
   TObjArray* cells = s_manager->GetListOfVolumes();
   unsigned long long number_of_cells = cells->GetEntries();
-  
+
   TIterator* cell_it  = cells->MakeIterator();
-  
+
   for( unsigned long long i = 0ull; i < number_of_cells; ++i )
   {
     // Get the cell
     TGeoVolume* cell = dynamic_cast<TGeoVolume*>( cell_it->Next() );
 
     // Get the cell id
-    Geometry::ModuleTraits::InternalCellHandle cell_id = 
+    Geometry::ModuleTraits::InternalCellHandle cell_id =
       cell->GetUniqueID();
-    
+
     // Check if it is a void cell
     if( Root::isVoidCell( cell_id ) )
     {
@@ -88,7 +88,7 @@ void Root::getCells( Set& cell_set,
 
 // Get the cell materials
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be a string. This method is thread safe as long as 
+ * mapped type must be a string. This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Map>
@@ -100,14 +100,14 @@ void Root::getCellMaterialNames( Map& cell_id_mat_name_map )
   // Get a list of the cells
   TObjArray* cells = s_manager->GetListOfVolumes();
   unsigned long long number_of_cells = cells->GetEntries();
-  
+
   TIterator* cell_it  = cells->MakeIterator();
 
   for( unsigned long long i = 0ull; i < number_of_cells; ++i )
   {
     // Get the cell
     TGeoVolume* cell = dynamic_cast<TGeoVolume*>( cell_it->Next() );
-    
+
     // Get the cell material
     TGeoMaterial* mat = cell->GetMaterial();
 
@@ -118,7 +118,7 @@ void Root::getCellMaterialNames( Map& cell_id_mat_name_map )
 
 // Get the cell material ids
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
- * mapped type must be an unsigned int. This method is thread safe as long as 
+ * mapped type must be an unsigned int. This method is thread safe as long as
  * enableThreadSupport has been called.
  */
 template<typename Map>
@@ -128,13 +128,13 @@ void Root::getCellMaterialIds( Map& cell_id_mat_id_map )
   testPrecondition( Root::isInitialized() );
 
   // Set the material property name plus underscore separator
-  std::string material_property_suffix = 
+  std::string material_property_suffix =
     Root::getMaterialPropertyName() + "_";
 
   // Get the cell material names
   std::unordered_map<ModuleTraits::InternalCellHandle,std::string>
     cell_id_material_name;
-  
+
   Root::getCellMaterialNames( cell_id_material_name );
 
   std::unordered_map<ModuleTraits::InternalCellHandle,std::string>::const_iterator
@@ -149,24 +149,24 @@ void Root::getCellMaterialIds( Map& cell_id_mat_id_map )
     {
       TEST_FOR_EXCEPTION( material_name.find( material_property_suffix ) != 0,
                           InvalidRootGeometry,
-                          "Error: ROOT cell " << cell_it->first << 
+                          "Error: ROOT cell " << cell_it->first <<
                           " used an invalid material name ("
                           << material_name << ")!" );
-      
+
       TEST_FOR_EXCEPTION( material_name.find_first_not_of( "0123456789", material_property_suffix.size() )
                           < material_name.size(),
                           InvalidRootGeometry,
-                          "Error: ROOT cell " << cell_it->first << 
+                          "Error: ROOT cell " << cell_it->first <<
                           "used an invalid material name ("
                           << material_name << ")!" );
-      
+
       // Extract the material id from the name
       std::istringstream iss( material_name.substr( material_property_suffix.size() ) );
 
       unsigned long long mat_id;
-      
+
       iss >> mat_id;
-      
+
       cell_id_mat_id_map[cell_it->first] = mat_id;
     }
 
@@ -177,7 +177,7 @@ void Root::getCellMaterialIds( Map& cell_id_mat_id_map )
 // Get the cell densities
 /*! \details The key type must be a ModuleTraits::InternalCellHandle. The
  * mapped type must be a double. Note that void and terminal cells will
- * not be added to the map. This method is thread safe as long as 
+ * not be added to the map. This method is thread safe as long as
  * enableThreadSupport has been called
  */
 template<typename Map>
@@ -189,14 +189,14 @@ void Root::getCellDensities( Map& cell_id_density_map )
   // Get a list of the cells
   TObjArray* cells = s_manager->GetListOfVolumes();
   unsigned long long number_of_cells = cells->GetEntries();
-  
+
   TIterator* cell_it  = cells->MakeIterator();
 
   for( unsigned long long i = 0ull; i < number_of_cells; ++i )
   {
     // Get the cell
     TGeoVolume* cell = dynamic_cast<TGeoVolume*>( cell_it->Next() );
-    
+
     // Get the cell material
     TGeoMaterial* mat = cell->GetMaterial();
 
@@ -212,7 +212,7 @@ void Root::getCellDensities( Map& cell_id_density_map )
                           "Error: ROOT cell " << cell->GetUniqueID() <<
                           "has an invalid density ("
                           << mat->GetDensity() << ")!" );
-      
+
       cell_id_density_map[cell->GetUniqueID()] = mat->GetDensity();
     }
   }

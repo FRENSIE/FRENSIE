@@ -31,6 +31,7 @@
     <Parameter name="Max Electron Energy" type="double" value="10.0"/>
     <Parameter name="Electron Atomic Relaxation" type="bool" value="false"/>
     <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+    <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
   </ParameterList>
 
 </ParameterList>

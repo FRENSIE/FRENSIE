@@ -31,7 +31,7 @@ unsigned XsdirEntry::extractZaidFromTableName( const std::string& table_name )
   if( table_name.find_first_not_of( "0123456789" ) >= pos )
   {
     std::istringstream iss( table_name.substr( 0, pos ) );
-    
+
     unsigned zaid;
 
     iss >> zaid;

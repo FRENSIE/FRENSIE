@@ -20,7 +20,7 @@
 namespace Utility{
 
 // Test if the direction is valid
-bool validDirection( const double x_direction, 
+bool validDirection( const double x_direction,
 		     const double y_direction,
 		     const double z_direction )
 {
@@ -30,10 +30,10 @@ bool validDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
 
-  double argument = 
+  double argument =
     vectorMagnitude( x_direction, y_direction, z_direction ) - 1.0;
   argument = Teuchos::ScalarTraits<double>::magnitude( argument );
-  
+
   return argument < Teuchos::ScalarTraits<double>::prec();
 }
 
@@ -45,7 +45,7 @@ void normalizeDirection( double direction[3] )
   testPrecondition( !ST::isnaninf( direction[0] ) );
   testPrecondition( !ST::isnaninf( direction[0] ) );
   testPrecondition( !ST::isnaninf( direction[0] ) );
-  
+
   double magnitude = vectorMagnitude( direction );
 
   direction[0] /= magnitude;
@@ -61,17 +61,17 @@ double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
   testPrecondition( validDirection( direction_a ) );
   testPrecondition( validDirection( direction_b ) );
 
-  double angle_cosine = direction_a[0]*direction_b[0] + 
+  double angle_cosine = direction_a[0]*direction_b[0] +
     direction_a[1]*direction_b[1] + direction_a[2]*direction_b[2];
-  
+
   // Check for round-off error.
   if( Teuchos::ScalarTraits<double>::magnitude( angle_cosine ) > 1.0 )
     angle_cosine = copysign( 1.0, angle_cosine );
-  
+
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= -1.0 );
   testPrecondition( angle_cosine <= 1.0 );
-  
+
   return angle_cosine;
 }
 
@@ -86,7 +86,7 @@ double reflectDirection( const double direction[3],
   testPrecondition( validDirection( unit_normal ) );
 
   // Calculate the angle cosine between the direction and unit normal
-  double angle_cosine = 
+  double angle_cosine =
     calculateCosineOfAngleBetweenVectors( direction, unit_normal );
 
   reflected_direction[0] = direction[0] - 2.0*angle_cosine*unit_normal[0];
@@ -96,11 +96,11 @@ double reflectDirection( const double direction[3],
 
 // Rotate a direction (unit vector) through a polar and azimuthal angle
 /*! \details The polar and azimuthal angles are with respect to the direction.
- * The cosine of the polar angle should be passed as the first 
+ * The cosine of the polar angle should be passed as the first
  * argument instead of the polar angle. This is because the cosine of the
- * polar angle is commonly sampled and used much more often than the 
+ * polar angle is commonly sampled and used much more often than the
  * polar angle. The azimuthal angle should be passed as the second argument
- * instead of the cosine of the azimuthal angle. This is because the 
+ * instead of the cosine of the azimuthal angle. This is because the
  * azimuthal angle is often directly sampled.
  */
 void rotateDirectionThroughPolarAndAzimuthalAngle(
@@ -117,18 +117,18 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
   testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
   // Make sure the direction is valid
   testPrecondition( validDirection( direction ) );
-  
-  double polar_angle_sine = 
+
+  double polar_angle_sine =
     sqrt( std::max(0.0, 1.0 - polar_angle_cosine*polar_angle_cosine) );
   double azimuthal_angle_cosine = cos(azimuthal_angle);
   double azimuthal_angle_sine = sin(azimuthal_angle);
-  double direction_polar_angle_sine = 
+  double direction_polar_angle_sine =
     sqrt( std::max(0.0, 1.0 - direction[2]*direction[2]) );
 
   if( direction_polar_angle_sine > 1e-10 )
   {
     rotated_direction[0] = polar_angle_cosine*direction[0] +
-      polar_angle_sine*(direction[0]*direction[2]*azimuthal_angle_cosine - 
+      polar_angle_sine*(direction[0]*direction[2]*azimuthal_angle_cosine -
 			direction[1]*azimuthal_angle_sine)/
       direction_polar_angle_sine;
 
@@ -138,7 +138,7 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
       direction_polar_angle_sine;
 
     rotated_direction[2] = polar_angle_cosine*direction[2] -
-      polar_angle_sine*direction_polar_angle_sine*azimuthal_angle_cosine;      
+      polar_angle_sine*direction_polar_angle_sine*azimuthal_angle_cosine;
   }
   // For the special case where z_dir ~ 1 => sqrt(1 - z^2) ~ 0, assume
   // spherical coordinates are w.r.t. y-axis instead of z-axis
@@ -160,10 +160,10 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
 			direction[0]*azimuthal_angle_sine)/
       direction_polar_angle_sine;
   }
-  
+
   // Clean roundoff errors
   normalizeDirection( rotated_direction );
-  
+
   // Make sure that the rotated direction is valid
   testPostcondition( validDirection( rotated_direction ) );
 }

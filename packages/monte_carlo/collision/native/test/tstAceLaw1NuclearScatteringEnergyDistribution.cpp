@@ -23,10 +23,10 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution,
 		   sampleEnergy_lower_bound )
 {
-   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray 
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray
      energy_grid;
 
    energy_grid.resize(2);
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution,
 		   sampleEnergy_upper_bound )
 {
    MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray energy_grid;
@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution,
 		   sampleEnergy )
 {
    MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray energy_grid;

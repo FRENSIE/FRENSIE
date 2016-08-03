@@ -38,9 +38,9 @@ Teuchos::RCP<MonteCarlo::PhotoatomicReaction> reaction;
 TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 		   createIncoherentReaction_no_doppler )
 {
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > 
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> >
     reactions;
-  
+
   MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
 					       *data_container,
 					       energy_grid,
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   double cross_section = reactions[0]->getCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
-  
+
   cross_section = reactions[0]->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
@@ -71,9 +71,9 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 		   createIncoherentReaction_doppler )
 {
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > 
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> >
     reactions;
-  
+
   MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
 		 *data_container,
 		 energy_grid,
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   double cross_section = reactions[0]->getCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
-  
+
   cross_section = reactions[0]->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   MonteCarlo::ParticleBank bank;
 
   // Set up the random number stream
@@ -115,23 +115,23 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   fake_stream[3] = 0.08; // select L3 shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
   fake_stream[5] = 0.0; // azimuthal_angle = 0.0
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
+
   reactions[0]->react( photon, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
   			  19.50173181484825,
   			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-  			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+  			  0.9996898054103247,
   			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-  			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+  			  0.024905681252821114,
   			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
@@ -164,15 +164,15 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
 		       8.82900086220703151e-02 );
 
-  double cross_section = reactions.front()->getCrossSection( 
+  double cross_section = reactions.front()->getCrossSection(
 						     8.82900086220703151e-02 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
-  
+
   cross_section = reactions.front()->getCrossSection( 20.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-6 );
-						     
+
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(reactions.back()->getReactionType(),
 		      MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION);
@@ -185,7 +185,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 
   cross_section = reactions.back()->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-9 );  
+  TEST_FLOATING_EQUALITY( cross_section, 4.02322890775264064e-02, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -211,23 +211,23 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
 		       8.82900086220703151e-02 );
 
-  double cross_section = reactions.front()->getCrossSection( 
+  double cross_section = reactions.front()->getCrossSection(
 						     8.82900086220703151e-02 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 5.25553220583787745e-09, 1e-6 );
-  
+
   cross_section = reactions.front()->getCrossSection( 20.0 );
-  
+
   TEST_FLOATING_EQUALITY( cross_section, 6.03100615156834802e-02, 1e-9 );
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
-  
+
   MonteCarlo::ParticleBank bank;
 
   Data::SubshellType shell_of_interaction;
-  
+
   std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
@@ -243,14 +243,14 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+			  0.024905681252821114,
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
-						     
+
   // Check the last shell's reaction properties
   TEST_EQUALITY_CONST(reactions.back()->getReactionType(),
 		      MonteCarlo::P3_SUBSHELL_INCOHERENT_PHOTOATOMIC_REACTION);
@@ -286,14 +286,14 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  TEST_FLOATING_EQUALITY( bank.top().getEnergy(), 
+  TEST_FLOATING_EQUALITY( bank.top().getEnergy(),
 			  19.50173181484825,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getZDirection(), 
-			  0.9996898054103247, 
+  TEST_FLOATING_EQUALITY( bank.top().getZDirection(),
+			  0.9996898054103247,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top().getYDirection(), 
-			  0.024905681252821114, 
+  TEST_FLOATING_EQUALITY( bank.top().getYDirection(),
+			  0.024905681252821114,
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top().getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
@@ -405,7 +405,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
   // Test the first shell's reaction properties
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		   reactions.front()->getReactionType(),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.front()->getThresholdEnergy(),
@@ -415,13 +415,13 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 						     8.82900099999595622e-02 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.95582145812230942e+03, 1e-15 );
-		      
+
   cross_section = reactions.front()->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 6.61425467896072372e-02, 1e-15 );
 
   // Test the last shell's reaction properties
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
 		  reactions.back()->getReactionType(),
 		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reactions.back()->getThresholdEnergy(),
@@ -430,10 +430,10 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   cross_section = reactions.back()->getCrossSection( 1e-3 );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.38175550850533909e+02, 1e-24 );
-  
+
   cross_section = reactions.back()->getCrossSection( 20.0 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 3.03007633456089762e-07, 1e-15 );  
+  TEST_FLOATING_EQUALITY( cross_section, 3.03007633456089762e-07, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -446,7 +446,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 							       energy_grid,
 							       grid_searcher,
 							       reaction );
-  
+
   // Test the reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
 		       MonteCarlo::HEATING_PHOTOATOMIC_REACTION );
@@ -476,13 +476,13 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
@@ -490,7 +490,7 @@ int main( int argc, char** argv )
 
   {
     // Create the native data file container
-    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+    data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
 
     // Extract the common energy grid
@@ -498,7 +498,7 @@ int main( int argc, char** argv )
 			data_container->getPhotonEnergyGrid().end() );
 
     // Create the hash-based grid searcher
-    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>( 
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
 					     energy_grid,
 					     energy_grid[0],
 					     energy_grid[energy_grid.size()-1],
@@ -507,7 +507,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

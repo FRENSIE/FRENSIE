@@ -29,11 +29,11 @@ void CoherentScatteringDistributionNativeFactory::createBasicCoherentDistributio
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  CoherentScatteringDistributionNativeFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
 
-  coherent_distribution.reset( 
+  coherent_distribution.reset(
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
 }
 
@@ -46,11 +46,11 @@ void CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistrib
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  CoherentScatteringDistributionNativeFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
-  
-  coherent_distribution.reset( 
+
+  coherent_distribution.reset(
 	  new EfficientCoherentScatteringDistribution( form_factor_squared ) );
 }
 
@@ -59,10 +59,10 @@ void CoherentScatteringDistributionNativeFactory::createFormFactorSquared(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor )
 {
-  Teuchos::Array<double> recoil_momentum_squared = 
+  Teuchos::Array<double> recoil_momentum_squared =
     raw_photoatom_data.getWallerHartreeAtomicFormFactorMomentumGrid();
 
-  Teuchos::Array<double> form_factor_squared = 
+  Teuchos::Array<double> form_factor_squared =
     raw_photoatom_data.getWallerHartreeAtomicFormFactor();
 
   for( unsigned i = 0; i < recoil_momentum_squared.size(); ++i )

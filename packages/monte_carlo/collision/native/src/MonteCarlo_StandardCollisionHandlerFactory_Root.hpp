@@ -29,10 +29,10 @@
 
 namespace MonteCarlo{
 
-/*! The specialization of the CollimatorHandlerFactory class for the Root 
+/*! The specialization of the CollimatorHandlerFactory class for the Root
  * geometry handler.
  * \ingroup estimator_module
- */ 
+ */
 template<>
 class StandardCollisionHandlerFactory<Geometry::Root> : public CollisionHandlerFactory
 {

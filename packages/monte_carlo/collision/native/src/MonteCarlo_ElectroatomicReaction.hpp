@@ -34,7 +34,7 @@ public:
 	/*
   //! Test if two electroatomic reactions share the same energy grid
   bool isEnergyGridShared( const ElectroatomicReaction& other_reaction ) const;
-  
+
   //! Test if the energy falls within the energy grid
   virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
 
@@ -58,12 +58,12 @@ public:
   virtual ElectroatomicReactionType getReactionType() const = 0;
 
   //! Simulate the reaction
-  virtual void react( ElectronState& electron, 
+  virtual void react( ElectronState& electron,
 		      ParticleBank& bank,
 		      Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Simulate the reaction and track the number of sampling trials
-  virtual void react( ElectronState& electron, 
+  virtual void react( ElectronState& electron,
 		      ParticleBank& bank,
 		      Data::SubshellType& shell_of_interaction,
 		      unsigned& trials ) const;
@@ -75,14 +75,14 @@ protected:
 };
 /*
 // Test if two electroatomic reactions share the same energy grid
-inline bool ElectroatomicReaction::isEnergyGridShared( 
+inline bool ElectroatomicReaction::isEnergyGridShared(
 			      const ElectroatomicReaction& other_reaction ) const
 {
   return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
 }
 */
 // Simulate the reaction and track the number of sampling trials
-inline void ElectroatomicReaction::react( ElectronState& electron, 
+inline void ElectroatomicReaction::react( ElectronState& electron,
 					ParticleBank& bank,
 					Data::SubshellType& shell_of_interaction,
 					unsigned& trials ) const

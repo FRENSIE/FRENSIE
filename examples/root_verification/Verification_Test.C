@@ -42,14 +42,14 @@ void Verification_Test()
   TGeoVolume *terminal_cube = gGeoManager->MakeBox( "TERMINAL",
                                                      terminal_med,
                                                      2.0, 2.0, 2.0 );
-  terminal_cube->SetUniqueID(3);   
-                                                     
+  terminal_cube->SetUniqueID(3);
+
   // Set the graveyard to be the top volume (rest-of-universe)
   gGeoManager->SetTopVolume( terminal_cube );
 
   // Void Volume (cube)
   TGeoVolume *cube = gGeoManager->MakeBox( "CUBE",
-                                           void_med, 
+                                           void_med,
                                            1.5, 1.5, 1.5 );
   cube->SetUniqueID(2);
 
@@ -65,7 +65,7 @@ void Verification_Test()
 
   // Add SPHERE as a daughter of CUBE
   terminal_cube->AddNode( cube, 1 );
-  
+
   // Add CUBE as a daughter of TERMINAL
   cube->AddNode( sphere, 1 );
 
@@ -76,7 +76,7 @@ void Verification_Test()
   // Close the geometry
   gGeoManager->CloseGeometry();
   gGeoManager->SetTopVisible();
-  
+
   // Uncomment to draw the geometry in an X-Window
   // terminal_cube->Draw();
 

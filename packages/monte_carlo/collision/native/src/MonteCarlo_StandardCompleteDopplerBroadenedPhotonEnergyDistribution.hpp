@@ -76,13 +76,13 @@ public:
                               const Data::SubshellType subshell ) const;
 
   //! Evaluate the integrated cross section (b/mu)
-  virtual double evaluateIntegratedCrossSection( 
+  virtual double evaluateIntegratedCrossSection(
                                           const double incoming_energy,
                                           const double scattering_angle_cosine,
                                           const double precision ) const;
 
   //! Evaluate the integrated cross section (b/mu)
-  double evaluateSubshellIntegratedCrossSection( 
+  double evaluateSubshellIntegratedCrossSection(
 				          const double incoming_energy,
 					  const double scattering_angle_cosine,
 					  const Data::SubshellType subshell,
@@ -102,7 +102,7 @@ public:
 			      unsigned& trials ) const;
 
   //! Sample an electron momentum from the distribution
-  void sampleMomentumAndRecordTrials( 
+  void sampleMomentumAndRecordTrials(
                                     const double incoming_energy,
                                     const double scattering_angle_cosine,
                                     double& electron_momentum,
@@ -127,9 +127,9 @@ protected:
 
   //! Return the Compton profile for a subshell
   const ComptonProfile& getComptonProfile( const Data::SubshellType& subshell) const;
-  
-  //! Return the Compton profile for an old subshell index 
-  const ComptonProfile& getComptonProfile( 
+
+  //! Return the Compton profile for an old subshell index
+  const ComptonProfile& getComptonProfile(
                                     const unsigned& old_subshell_index ) const;
 
   //! Sample an ENDF subshell

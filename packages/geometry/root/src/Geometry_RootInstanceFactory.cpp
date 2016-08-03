@@ -22,7 +22,7 @@ namespace Geometry{
 std::ostream* RootInstanceFactory::s_os_warn = NULL;
 
 // Initialize Root
-void RootInstanceFactory::initializeRoot( 
+void RootInstanceFactory::initializeRoot(
 				       const Teuchos::ParameterList& geom_rep,
 				       std::ostream& os_warn )
 {
@@ -35,7 +35,7 @@ void RootInstanceFactory::initializeRoot(
   // Get the terminal material name (optional)
   if( geom_rep.isParameter( "Terminal Material Name" ) )
   {
-    std::string terminal_material_name = 
+    std::string terminal_material_name =
       geom_rep.get<std::string>( "Terminal Material Name" );
 
     TEST_FOR_EXCEPTION( terminal_material_name.size() == 0,
@@ -76,13 +76,13 @@ void RootInstanceFactory::initializeRoot(
                         std::runtime_error,
                         "Error: the material property name cannot be "
                         "an empty string!" );
-                       
+
     Root::setMaterialPropertyName( material_property_name );
   }
 
   // Get the Root file name
   std::string root_file_name = geom_rep.get<std::string>( "Root File" );
-  
+
   // Initialize the Root geometry handler
   Geometry::Root::initialize( root_file_name );
 
@@ -92,11 +92,11 @@ void RootInstanceFactory::initializeRoot(
 }
 
 // Validate a geometry representation
-void RootInstanceFactory::validateGeometryRep( 
+void RootInstanceFactory::validateGeometryRep(
 				       const Teuchos::ParameterList& geom_rep )
 {
   testPrecondition( geom_rep.get<std::string>( "Handler" ) == "ROOT" );
-  
+
   TEST_FOR_EXCEPTION( !geom_rep.isParameter( "Root File" ),
 		      InvalidGeometryRepresentation,
 		      "Error: The Root file needs to be specified!" );

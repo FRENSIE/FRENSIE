@@ -38,14 +38,14 @@ public:
   { /* ... */ }
 
   //! Dispatch the particle entering cell event to the observers
-  void dispatchParticleEnteringCellEvent( 
+  void dispatchParticleEnteringCellEvent(
 	      const ParticleState& particle,
 	      const Geometry::ModuleTraits::InternalCellHandle cell_entering );
 };
 
 // Dispatch the particle entering cell event to the observers
 inline void
-ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent( 
+ParticleEnteringCellEventDispatcher::dispatchParticleEnteringCellEvent(
 	       const ParticleState& particle,
 	       const Geometry::ModuleTraits::InternalCellHandle cell_entering )
 {

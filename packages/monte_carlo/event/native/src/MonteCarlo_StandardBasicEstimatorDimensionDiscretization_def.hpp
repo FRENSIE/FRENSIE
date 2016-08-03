@@ -19,14 +19,14 @@ namespace MonteCarlo{
 // Constructor
 template<typename T>
 StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::StandardBasicEstimatorDimensionDiscretization(
-                       const PhaseSpaceDimension dimension, 
-                       const Teuchos::Array<T>& dimension_bin_boundaries ) 
+                       const PhaseSpaceDimension dimension,
+                       const Teuchos::Array<T>& dimension_bin_boundaries )
   : BasicEstimatorDimensionDiscretization<T>( dimension, dimension_bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( dimension_bin_boundaries.size() >= 2 );
   // Make sure the bins are sorted
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
                                             this->getBinBoundaries().begin(),
                                             this->getBinBoundaries().end() ) );
 }
@@ -34,14 +34,14 @@ StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost:
 // Constructor
 template<typename T>
 StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::StandardBasicEstimatorDimensionDiscretization(
-                       const PhaseSpaceDimension dimension, 
+                       const PhaseSpaceDimension dimension,
                        const Teuchos::Array<T>& dimension_bin_boundaries )
   : BasicEstimatorDimensionDiscretization<T>( dimension, dimension_bin_boundaries )
 {
   // Make sure there is at least one bin
   testPrecondition( dimension_bin_boundaries.size() >= 1 );
   // Make sure the bins are sorted
-  testPrecondition( Utility::Sort::isSortedAscending( 
+  testPrecondition( Utility::Sort::isSortedAscending(
                                             this->getBinBoundaries().begin(),
                                             this->getBinBoundaries().end() ) );
 }
@@ -62,28 +62,28 @@ unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_
 
 // Print the boundaries of a bin
 template<typename T>
-void StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::printBoundariesOfBin( 
-                                               std::ostream& os, 
+void StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::printBoundariesOfBin(
+                                               std::ostream& os,
                                                const unsigned bin_index ) const
 {
   // Make sure the bin requested is valid
   testPrecondition( bin_index < this->getNumberOfBins() );
-  
+
   os << this->getDimensionName();
-  
+
   if( bin_index == 0u )
     os << " Bin: [";
   else
     os << " Bin: (";
 
-  os << this->getBinBoundaries()[bin_index] << "," 
+  os << this->getBinBoundaries()[bin_index] << ","
      << this->getBinBoundaries()[bin_index+1u] << "]";
 }
 
 // Print the boundaries of a bin
 template<typename T>
-void StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::printBoundariesOfBin( 
-                                               std::ostream& os, 
+void StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::printBoundariesOfBin(
+                                               std::ostream& os,
                                                const unsigned bin_index ) const
 {
   // Make sure the bin requested is valid
@@ -92,16 +92,16 @@ void StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<b
   os << this->getDimensionName() << " Bin: [";
 
   if( bin_index == 0u )
-    os << 0u; 
+    os << 0u;
   else
     os << this->getBinBoundaries()[bin_index-1u]+1u;
-    
+
   os << "," << this->getBinBoundaries()[bin_index] << "]";
 }
 
 // Check if the value is contianed in the discretization
 template<typename T>
-bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::isValueInDiscretization( 
+bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::isValueInDiscretization(
                                                           const T value ) const
 {
   return value >= this->getBinBoundaries().front() &&
@@ -110,7 +110,7 @@ bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<b
 
 // Check if the value is contianed in the discretization
 template<typename T>
-bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::isValueInDiscretization( 
+bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::isValueInDiscretization(
                                                           const T value ) const
 {
   return value <= this->getBinBoundaries().back();
@@ -118,13 +118,13 @@ bool StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<b
 
 // Calculate the index of the bin that the value falls in
 template<typename T>
-unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::calculateBinIndex( 
+unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_floating_point<T> >::type>::calculateBinIndex(
                                                           const T value ) const
 {
   // Make sure the value is in the discretization
   testPrecondition( this->isValueInDiscretization( value ) );
-  
-  unsigned bin = 
+
+  unsigned bin =
     Utility::Search::binaryUpperBoundIndex( this->getBinBoundaries().begin(),
 					    this->getBinBoundaries().end(),
 					    value );
@@ -136,13 +136,13 @@ unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_
 
 // Calculate the index of the bin that the value falls in
 template<typename T>
-unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::calculateBinIndex( 
+unsigned StandardBasicEstimatorDimensionDiscretization<T,typename boost::enable_if<boost::is_integral<T> >::type>::calculateBinIndex(
                                                           const T value ) const
 {
   // Make sure the value is in the discretization
   testPrecondition( this->isValueInDiscretization( value ) );
-  
-  return Utility::Search::binaryUpperBoundIndex( 
+
+  return Utility::Search::binaryUpperBoundIndex(
                                               this->getBinBoundaries().begin(),
                                               this->getBinBoundaries().end(),
                                               value );

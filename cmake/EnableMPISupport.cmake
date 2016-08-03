@@ -1,6 +1,6 @@
 # Configure the MPI options that will be required in a project using MPI
 MACRO(ENABLE_MPI_SUPPORT)
-  
+
   # Add the user supplied MPI prefix to help find MPI
   IF(DEFINED MPI_PREFIX)
     SET(CMAKE_PREFIX_PATH ${MPI_PREFIX} ${CMAKE_PREFIX_PATH})

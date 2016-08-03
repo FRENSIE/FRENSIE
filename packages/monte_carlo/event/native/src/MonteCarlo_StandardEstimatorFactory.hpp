@@ -18,11 +18,11 @@ namespace MonteCarlo{
 template<typename GeometryHandler>
 class StandardEstimatorFactory : public EstimatorFactory
 {
-  
+
 public:
 
   //! Constructor
-  StandardEstimatorFactory( 
+  StandardEstimatorFactory(
           const std::shared_ptr<EventHandler>& event_handler,
           const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
           response_function_id_map,
@@ -41,13 +41,13 @@ public:
 //! Helper function for creating an estimator factory instance
 template<typename GeometryHandler>
 inline std::shared_ptr<EstimatorFactory>
-getEstimatorFactoryInstance( 
+getEstimatorFactoryInstance(
        const std::shared_ptr<EventHandler>& event_handler,
        const boost::unordered_map<unsigned,std::shared_ptr<ResponseFunction> >&
        response_function_id_map,
        std::ostream* os_warn = &std::cerr )
 {
-  return std::shared_ptr<EstimatorFactory>( 
+  return std::shared_ptr<EstimatorFactory>(
        new StandardEstimatorFactory<GeometryHandler>( event_handler,
                                                       response_function_id_map,
                                                       os_warn ) );

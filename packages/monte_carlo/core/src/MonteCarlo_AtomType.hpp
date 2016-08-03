@@ -118,7 +118,7 @@ enum AtomType{
   Bk_ATOM,
   Cf_ATOM,
   Es_ATOM,
-  Fm_ATOM  
+  Fm_ATOM
 };
 
 //! Convert an atomic number to an AtomType enumeration

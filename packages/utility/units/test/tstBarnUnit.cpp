@@ -33,7 +33,7 @@ TEUCHOS_UNIT_TEST( BarnUnit, initialize )
   TEST_EQUALITY_CONST( barn_area.value(), 1.0 );
 
   barn_area = 2.0*barn;
-  
+
   TEST_EQUALITY_CONST( barn_area.value(), 2.0 );
 }
 
@@ -54,7 +54,7 @@ TEUCHOS_UNIT_TEST( BarnUnit, initialize_from_cgs_si )
 TEUCHOS_UNIT_TEST( BarnUnit, initialize_cgs_si )
 {
   quantity<cgs::area> cgs_area( 1.0*barn );
-  
+
   quantity<si::area> si_area( 1.0*barn );
 
   TEST_EQUALITY_CONST( cgs_area.value(), 1e-24 );

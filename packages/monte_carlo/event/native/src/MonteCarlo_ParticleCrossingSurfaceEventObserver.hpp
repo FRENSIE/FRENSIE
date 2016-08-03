@@ -54,7 +54,7 @@ public:
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine ) = 0;
 };
-  
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PARTICLE_CROSSING_SURFACE_EVENT_OBSERVER_HPP

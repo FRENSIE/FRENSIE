@@ -55,8 +55,8 @@ unsigned CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::
 
 // Simulate the reaction
 template<typename OutgoingParticleType>
-void CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::react( 
-						     PhotonState& photon, 
+void CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::react(
+						     PhotonState& photon,
 						     ParticleBank& bank ) const
 {
   // Make sure the photon energy is valid
@@ -68,15 +68,15 @@ void CrossSectionBasedPhotonuclearProductionReaction<OutgoingParticleType>::reac
     Teuchos::RCP<OutgoingParticleType> new_particle(
 			      new OutgoingParticleType( photon, true, true ) );
 
-    d_outgoing_particle_distributions[i]->scatterParticle( photon, 
+    d_outgoing_particle_distributions[i]->scatterParticle( photon,
 							   *new_particle );
-						       
+
     // Add the new particle to the bank
     bank.push( new_particle, this->getReactionType() );
   }
-  
+
   // Kill the original photon
-  photon.setAsGone();   
+  photon.setAsGone();
 }
 
 } // end MonteCarlo namespace

@@ -30,11 +30,11 @@ void convertSphericalCoordsToCartesian( const double spherical_point[3],
   testPrecondition( spherical_point[1] <= 2*PhysicalConstants::pi );
   testPrecondition( spherical_point[2] >= -1.0 );
   testPrecondition( spherical_point[2] <= 1.0 );
-  
+
   double cos_theta = cos( spherical_point[1] );
   double sin_theta = sin( spherical_point[1] );
   double sin_phi = sqrt( 1.0 - spherical_point[2]*spherical_point[2] );
-  
+
   switch( axis )
   {
   case Z_AXIS:
@@ -79,15 +79,15 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
   testPrecondition( !ST::isnaninf( origin[0] ) );
   testPrecondition( !ST::isnaninf( origin[1] ) );
   testPrecondition( !ST::isnaninf( origin[2] ) );
-  
+
   double x_distance = (cartesian_point[0] - origin[0]);
   double y_distance = (cartesian_point[1] - origin[1]);
   double z_distance = (cartesian_point[2] - origin[2]);
-  
-  double radius = sqrt( x_distance*x_distance + y_distance*y_distance + 
+
+  double radius = sqrt( x_distance*x_distance + y_distance*y_distance +
 			z_distance*z_distance );
   spherical_point[0] = radius;
-  
+
   if( radius > 0.0 )
   {
     switch( axis )

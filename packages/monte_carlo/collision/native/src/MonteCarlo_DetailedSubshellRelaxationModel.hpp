@@ -24,16 +24,16 @@
 namespace MonteCarlo{
 
 /*! Detailed subshell relaxation model class
- * \details This model accounts for all possible transitions to fill a 
+ * \details This model accounts for all possible transitions to fill a
  * vacancy in the initial shell.
  */
 class DetailedSubshellRelaxationModel : public SubshellRelaxationModel
 {
-  
+
 public:
 
   //! Constructor
-  DetailedSubshellRelaxationModel( 
+  DetailedSubshellRelaxationModel(
        const Data::SubshellType vacancy_subshell,
        const Teuchos::Array<Data::SubshellType>& primary_transition_vacancy_shells,
        const Teuchos::Array<Data::SubshellType>& secondary_transition_vacancy_shells,
@@ -54,7 +54,7 @@ public:
 private:
 
   // Generate a fluorescence photon
-  void generateFluorescencePhoton( 
+  void generateFluorescencePhoton(
 			       const ParticleState& particle,
 			       const double new_photon_energy,
 			       ParticleBank& bank ) const;
@@ -67,7 +67,7 @@ private:
   // Sample emission direction
   void sampleEmissionDirection( double& angle_cosine,
 				double& azimuthal_angle ) const;
-				   
+
   // The transition distribution (also stores the outgoing particle energies )
   boost::scoped_ptr<Utility::DiscreteDistribution> d_transition_distribution;
 
@@ -75,7 +75,7 @@ private:
   Teuchos::Array<double> d_outgoing_particle_energies;
 
   // The transition vacancy shells (first = primary, second = secondary)
-  Teuchos::Array<Utility::Pair<Data::SubshellType,Data::SubshellType> > 
+  Teuchos::Array<Utility::Pair<Data::SubshellType,Data::SubshellType> >
   d_transition_vacancy_shells;
 };
 

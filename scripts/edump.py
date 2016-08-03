@@ -44,13 +44,13 @@ print "# ", estimator_group, ":"
 if estimator_group in hdf5_file:
     dset = hdf5_file[estimator_group]
     array = dset[:]
-    
+
     if bin_group in hdf5_file:
         bin_dset = hdf5_file[bin_group]
         bins = bin_dset[:]
-        
+
         print bins[0], 0.0, 0.0
-        
+
         for i in range(0,len(array)):
             print bins[i+1], array[i][0], array[i][1]
 
@@ -62,4 +62,4 @@ else:
     print "Error: the requested estimator id and/or entity id does not exist"
 
 hdf5_file.close()
-        
+

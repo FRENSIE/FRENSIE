@@ -26,15 +26,15 @@ template<>
 struct HDF5TypeTraits<double>
 {
   //! Returns the HDF5 data type object corresponding to double
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_DOUBLE; }
-  
+
   //! Returns the name of this type
-  static inline std::string name() 
+  static inline std::string name()
   { return "double"; }
-  
+
   //! Returns the zero value for this type
-  static inline double zero() 
+  static inline double zero()
   { return Teuchos::ScalarTraits<double>::zero(); }
 
   //! Returns the unity value for this type
@@ -49,15 +49,15 @@ template<>
 struct HDF5TypeTraits<float>
 {
   //! Returns the HDF5 data type object corresponding to double
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_FLOAT; }
-  
+
   //! Returns the name of this type
-  static inline std::string name() 
+  static inline std::string name()
   { return "double"; }
-  
+
   //! Returns the zero value for this type
-  static inline float zero() 
+  static inline float zero()
   { return Teuchos::ScalarTraits<float>::zero(); }
 
   //! Returns the unity value for this type
@@ -72,11 +72,11 @@ template<>
 struct HDF5TypeTraits<int>
 {
   //! Returns the HDF5 data type object corresponding to int
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_INT; }
 
   //! Returns the name of this type
-  static inline std::string name() 
+  static inline std::string name()
   { return "int"; }
 
   //! Returns the zero value for this type
@@ -95,13 +95,13 @@ template<>
 struct HDF5TypeTraits<unsigned int>
 {
   //! Returns the HDF5 data type object corresponding to unsigned int
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_UINT; }
-  
+
   //! Returns the name of the type
-  static inline std::string name() 
+  static inline std::string name()
   { return "unsigned int"; }
-  
+
   //! Returns the zero value for this type
   static inline unsigned zero()
   { return Teuchos::ScalarTraits<unsigned>::zero(); }
@@ -118,13 +118,13 @@ template<>
 struct HDF5TypeTraits<unsigned long>
 {
   //! Returns the HDF5 data type object corresponding to unsigned int
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_ULONG; }
-  
+
   //! Returns the name of the type
-  static inline std::string name() 
+  static inline std::string name()
   { return "unsigned long int"; }
-  
+
   //! Returns the zero value for this type
   static inline unsigned zero()
   { return 0ul; }
@@ -142,13 +142,13 @@ template<>
 struct HDF5TypeTraits<unsigned long long>
 {
   //! Returns the HDF5 data type object corresponding to unsigned int
-  static inline H5::PredType dataType() 
+  static inline H5::PredType dataType()
   { return H5::PredType::NATIVE_ULLONG; }
-  
+
   //! Returns the name of the type
-  static inline std::string name() 
+  static inline std::string name()
   { return "unsigned long long int"; }
-  
+
   //! Returns the zero value for this type
   static inline unsigned zero()
   { return 0ull; }
@@ -226,30 +226,30 @@ struct HDF5TypeTraits<Pair<T1,T2> >
   static H5::CompType dataType()
   {
     typedef Pair<T1,T2> Tuple;
-    
+
     H5::CompType memtype( sizeof(Tuple) );
-    
+
     // the insertMember function can throw H5::DataTypeIException exceptions
     try
     {
-    
+
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
 			    HDF5TypeTraits<T1>::dataType() );
-      
+
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
 			    HDF5TypeTraits<T2>::dataType() );
-      
+
     }
-    
+
     HDF5_EXCEPTION_CATCH_AND_EXIT();
-    
+
     return memtype;
   }
-  
+
   //! Returns the name of this type
-  static inline std::string name() 
+  static inline std::string name()
   {
     return "Pair<" + HDF5TypeTraits<T1>::name() + "," +
     HDF5TypeTraits<T2>::name() + ">";
@@ -257,7 +257,7 @@ struct HDF5TypeTraits<Pair<T1,T2> >
 
   //! Returns the zero value for this type
   static inline Pair<T1,T2> zero()
-  { 
+  {
     return Pair<T1,T2>(HDF5TypeTraits<T1>::zero(), HDF5TypeTraits<T2>::zero());
   }
 
@@ -279,33 +279,33 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
   static H5::CompType dataType()
   {
     typedef Trip<T1,T2,T3> Tuple;
-    
+
     H5::CompType memtype( sizeof(Tuple) );
-    
+
     // the insertMember function can throw H5::DataTypeIException exceptions
     try
     {
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
 			    HDF5TypeTraits<T1>::dataType() );
-      
+
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
 			    HDF5TypeTraits<T2>::dataType() );
-      
+
       memtype.insertMember( "third",
 			    HOFFSET( Tuple, third ),
 			    HDF5TypeTraits<T3>::dataType() );
     }
-    
+
     HDF5_EXCEPTION_CATCH_AND_EXIT();
-    
+
     return memtype;
   }
-  
+
   //! Returns the name of this type
-  static inline std::string name() 
-  { 
+  static inline std::string name()
+  {
     return "Trip<" + HDF5TypeTraits<T1>::name() + "," +
     HDF5TypeTraits<T2>::name() + "," +
     HDF5TypeTraits<T3>::name() + ">";
@@ -339,43 +339,43 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
   static H5::CompType dataType()
   {
     typedef Quad<T1,T2,T3,T4> Tuple;
-    
+
     H5::CompType memtype( sizeof(Tuple) );
-    
+
     // the insertMember function can throw H5::DataTypeIException exceptions
     try
     {
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
 			    HDF5TypeTraits<T1>::dataType() );
-      
+
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
 			    HDF5TypeTraits<T2>::dataType() );
-      
+
       memtype.insertMember( "third",
 			    HOFFSET( Tuple, third ),
 			    HDF5TypeTraits<T3>::dataType() );
-      
+
       memtype.insertMember( "fourth",
 			    HOFFSET( Tuple, fourth ),
 			    HDF5TypeTraits<T4>::dataType() );
     }
-    
+
     HDF5_EXCEPTION_CATCH_AND_EXIT();
-    
+
     return memtype;
   }
-    
+
   //! Returns the name of this type
-  static inline std::string name() 
-  { 
+  static inline std::string name()
+  {
     return "Quad<" + HDF5TypeTraits<T1>::name() + "," +
       HDF5TypeTraits<T2>::name() + "," +
       HDF5TypeTraits<T3>::name() + "," +
       HDF5TypeTraits<T4>::name() + ">";
   }
-  
+
   //! Returns the zero value for this type
   static inline Quad<T1,T2,T3,T4> zero()
   {
@@ -384,7 +384,7 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
 			      HDF5TypeTraits<T3>::zero(),
 			      HDF5TypeTraits<T4>::zero() );
   }
-  
+
   //! Returns the unity value for this type
   static inline Quad<T1,T2,T3,T4> one()
   {

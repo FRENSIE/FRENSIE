@@ -112,22 +112,22 @@ private:
 
   // The kd-tree for finding point in tet
   boost::scoped_ptr<moab::AdaptiveKDTree> d_kd_tree;
-  
+
   // The root of the kd-tree
   moab::EntityHandle d_kd_tree_root;
 
   // The map of tet ids and barycentric coordinate transform matrices
-  boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
+  boost::unordered_map<moab::EntityHandle,moab::Matrix3>
   d_tet_barycentric_transform_matrices;
-  
+
   // The map of tet ids and reference vertices
   boost::unordered_map<moab::EntityHandle, moab::CartVect>
   d_tet_reference_vertices;
-  
+
   // The output mesh file name
   std::string d_output_mesh_name;
 };
-  
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

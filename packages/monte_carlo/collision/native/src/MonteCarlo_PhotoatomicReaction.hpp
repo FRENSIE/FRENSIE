@@ -31,17 +31,17 @@ public:
   //! Destructor
   virtual ~PhotoatomicReaction()
   { /* ... */ }
-  
+
   //! Return the reaction type
   virtual PhotoatomicReactionType getReactionType() const = 0;
 
   //! Simulate the reaction
-  virtual void react( PhotonState& photon, 
+  virtual void react( PhotonState& photon,
 		      ParticleBank& bank,
 		      Data::SubshellType& shell_of_interaction ) const = 0;
 
   //! Simulate the reaction and track the number of sampling trials
-  virtual void react( PhotonState& photon, 
+  virtual void react( PhotonState& photon,
 		      ParticleBank& bank,
 		      Data::SubshellType& shell_of_interaction,
 		      unsigned& trials ) const;
@@ -49,8 +49,8 @@ public:
 };
 
 // Simulate the reaction and track the number of sampling trials
-inline void PhotoatomicReaction::react( 
-        PhotonState& photon, 
+inline void PhotoatomicReaction::react(
+        PhotonState& photon,
         ParticleBank& bank,
         Data::SubshellType& shell_of_interaction,
         unsigned& trials ) const

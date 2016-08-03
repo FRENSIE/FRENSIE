@@ -16,7 +16,7 @@
 namespace DataGen{
 
 // Constructor
-StandardENDLDataGenerator::StandardENDLDataGenerator( 
+StandardENDLDataGenerator::StandardENDLDataGenerator(
     const unsigned atomic_number,
     const std::string eadl_file_name,
     const std::string epdl_file_name,
@@ -84,21 +84,21 @@ void StandardENDLDataGenerator::populateEEDLDataContainer(
 
 
 // Set the relaxation data
-void StandardENDLDataGenerator::setRelaxationData( 
+void StandardENDLDataGenerator::setRelaxationData(
 			   Data::ENDLVolatileDataContainer&
 			   data_container ) const
 {
   // Check if file exists
-  if ( (bool)fileExistsUsingFortran( d_eadl_file_name.c_str(), 
+  if ( (bool)fileExistsUsingFortran( d_eadl_file_name.c_str(),
                                      d_eadl_file_name.size() ) )
   {
     // Open eadl file
-    Teuchos::RCP<Data::ENDLFileHandler> eadl_file_handler( 
+    Teuchos::RCP<Data::ENDLFileHandler> eadl_file_handler(
       new Data::ENDLFileHandler( d_eadl_file_name ) );
 
     // Information in first header of the EADL file
-    int atomic_number_in_table, 
-        outgoing_particle_designator, 
+    int atomic_number_in_table,
+        outgoing_particle_designator,
         interpolation_flag;
     double atomic_weight;
 
@@ -111,7 +111,7 @@ void StandardENDLDataGenerator::setRelaxationData(
     std::set<unsigned> endf_subshells;
     unsigned endf_subshell;
 
-    std::cout << " Reading EADL Data file";
+    std::cout << " Reading EADL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EADL file
@@ -122,14 +122,14 @@ void StandardENDLDataGenerator::setRelaxationData(
                                                outgoing_particle_designator,
                                                atomic_weight,
                                                interpolation_flag );
-      
+
       // Check that the EADL file is still valid (eof has not been reached)
       if( eadl_file_handler->endOfFile() )
       {
 	    continue;
       }
-        
-      testPostcondition( atomic_number_in_table == 
+
+      testPostcondition( atomic_number_in_table ==
                          data_container.getAtomicNumber() );
 
       // Read second table header and determine the reaction type
@@ -139,7 +139,7 @@ void StandardENDLDataGenerator::setRelaxationData(
       if ( electron_shell > 0 )
       {
         // Convert subshell number to endf number
-        endf_subshell = 
+        endf_subshell =
           Data::convertEADLDesignatorToENDFDesignator( electron_shell );
 
         // insert subshell to set
@@ -150,16 +150,16 @@ void StandardENDLDataGenerator::setRelaxationData(
       // file
       switch( reaction_type )
       {
-    
+
       case 91912:
       {
         // Number of electrons in subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -177,18 +177,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellOccupancy( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 91913:
       {
         // Binding energy of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -199,18 +199,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellBindingEnergy( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 91914:
       {
         // Kinetic energy of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -221,18 +221,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellKineticEnergy( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 91915:
       {
         // Average radius of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -243,18 +243,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellAverageRadius( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 91921:
       {
         // Radiative level width of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -263,18 +263,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellRadiativeLevel( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 91922:
       {
         // Non radiative level of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -283,7 +283,7 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setSubshellNonRadiativeLevel( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 92931:
@@ -291,7 +291,7 @@ void StandardENDLDataGenerator::setRelaxationData(
         // Radiative transition probability per subshell
 
         std::map<unsigned,double> indep_subshell_data, dep_subshell_data;
-        eadl_file_handler->mapThreeColumnTable( 
+        eadl_file_handler->mapThreeColumnTable(
             subshells,
             indep_subshell_data,
             dep_subshell_data,
@@ -305,7 +305,7 @@ void StandardENDLDataGenerator::setRelaxationData(
             dep_subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 92932:
@@ -314,7 +314,7 @@ void StandardENDLDataGenerator::setRelaxationData(
         std::map<unsigned,std::vector<unsigned> > secondary_subshells;
         std::map<unsigned,std::map<unsigned,double> >
             indep_subshell_data, dep_subshell_data;
-        eadl_file_handler->mapFourColumnTable( 
+        eadl_file_handler->mapFourColumnTable(
             subshells,
             secondary_subshells,
             indep_subshell_data,
@@ -329,18 +329,18 @@ void StandardENDLDataGenerator::setRelaxationData(
             dep_subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
      case 92933:
       {
         // The average number of particles per initial vacancy of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -352,7 +352,7 @@ void StandardENDLDataGenerator::setRelaxationData(
           // set the subshell data
           data_container.setAveragePhotonsPerInitialVacancy( subshell_data );
         }
-        else 
+        else
         // Average number of electrons emitted per initial vacancy ( Yo == 9 )
         {
           testPostcondition( outgoing_particle_designator == 9 );
@@ -362,18 +362,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
      case 92934:
       {
         // The average energy of particles per initial vacancy
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -386,7 +386,7 @@ void StandardENDLDataGenerator::setRelaxationData(
           data_container.setAveragePhotonEnergyPerInitialVacancy(
             subshell_data );
         }
-        else 
+        else
         {
           // Average energy of electrons emitted per initial vacancy ( Yo == 9 )
 
@@ -396,18 +396,18 @@ void StandardENDLDataGenerator::setRelaxationData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
      case 92935:
       {
         // The local deposition per initial vacancy of a subshell
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<unsigned,double> subshell_data;
-        eadl_file_handler->mapTwoColumnTable( 
+        eadl_file_handler->mapTwoColumnTable(
             subshells,
             subshell_data,
             convert_subshell );
@@ -418,7 +418,7 @@ void StandardENDLDataGenerator::setRelaxationData(
         data_container.setLocalDepositionPerInitialVacancy( subshell_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       default:
@@ -438,27 +438,27 @@ void StandardENDLDataGenerator::setRelaxationData(
   }
   else
   {
-    std::cout << "\033[1;31mWARNING:\033[0m EADL file " + d_eadl_file_name + 
-    " does not exists. No EADL data will be generated!" << std::endl;
+    std::cout << "\033[1;31mWARNING:\033[0m EADL file " + d_eadl_file_name +
+    " does not exists. No EADL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 
 // Set the photon data
-void StandardENDLDataGenerator::setPhotonData( 
+void StandardENDLDataGenerator::setPhotonData(
 			   Data::ENDLVolatileDataContainer&
 			   data_container ) const
 {
   // Check if file exists
-  if ( (bool)fileExistsUsingFortran( d_epdl_file_name.c_str(), 
+  if ( (bool)fileExistsUsingFortran( d_epdl_file_name.c_str(),
                                      d_epdl_file_name.size() ) )
   {
     // Open epdl file
-    Teuchos::RCP<Data::ENDLFileHandler> epdl_file_handler( 
+    Teuchos::RCP<Data::ENDLFileHandler> epdl_file_handler(
       new Data::ENDLFileHandler( d_epdl_file_name ) );
 
     // Information in first header of the EPDL file
-    int atomic_number_in_table, 
-        outgoing_particle_designator, 
+    int atomic_number_in_table,
+        outgoing_particle_designator,
         interpolation_flag;
     double atomic_weight;
 
@@ -469,7 +469,7 @@ void StandardENDLDataGenerator::setPhotonData(
     unsigned endf_subshell;
     std::set<unsigned> endf_subshells;
 
-    std::cout << " Reading EPDL Data file";
+    std::cout << " Reading EPDL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EPDL file
@@ -480,14 +480,14 @@ void StandardENDLDataGenerator::setPhotonData(
                                                outgoing_particle_designator,
                                                atomic_weight,
                                                interpolation_flag );
-      
+
       // Check that the EPDL file is still valid (eof has not been reached)
       if( epdl_file_handler->endOfFile() )
       {
 	    continue;
       }
-        
-      testPostcondition( atomic_number_in_table == 
+
+      testPostcondition( atomic_number_in_table ==
                          data_container.getAtomicNumber() );
 
       // Read second table header and determine the reaction type
@@ -497,7 +497,7 @@ void StandardENDLDataGenerator::setPhotonData(
       if ( electron_shell > 0 )
       {
         // Convert subshell number to endf number
-        endf_subshell = 
+        endf_subshell =
           Data::convertEADLDesignatorToENDFDesignator( electron_shell );
 
         // insert subshell to set
@@ -508,13 +508,13 @@ void StandardENDLDataGenerator::setPhotonData(
       // file
       switch( reaction_type )
       {
-    
+
       case 71000:
-      {  
+      {
       // Read in the integrated coherent cross section data
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -522,7 +522,7 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setCoherentCrossSection( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 71010:
@@ -530,7 +530,7 @@ void StandardENDLDataGenerator::setPhotonData(
         // Average energy of scattered photon from coherent scattering ignored
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -538,18 +538,18 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setCoherentAveragePhotonEnergy( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 72000:
       {
         // Read in the integrated incoherent cross section data
-      
-        // Interpolation should always be LogLog = 5 
+
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -557,7 +557,7 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setIncoherentCrossSection( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 72010:
@@ -565,7 +565,7 @@ void StandardENDLDataGenerator::setPhotonData(
         // Average energy of scattered particle from incoherent scattering
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -585,18 +585,18 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 73000:
       {
         // Read in the integrated photoelectric cross section data
-      
-        // Interpolation should always be LogLog = 5 
+
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -617,7 +617,7 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 73010:
@@ -625,7 +625,7 @@ void StandardENDLDataGenerator::setPhotonData(
         // Average energy of secondary particle from photoelectric effect
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -675,7 +675,7 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 73011:
@@ -683,7 +683,7 @@ void StandardENDLDataGenerator::setPhotonData(
         // Average energy to residual atom from photoelectric effect
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -704,18 +704,18 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 74000:
       {
         // Read the integrated pair production cross section
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -723,15 +723,15 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setPairProductionCrossSection( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 74010:
       {
-        // Average energy of secondary particle from pair production 
+        // Average energy of secondary particle from pair production
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -753,18 +753,18 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 75000:
       {
         // Read the integrated triplet production cross section
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -772,15 +772,15 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setTripletProductionCrossSection( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 75010:
       {
-        // Average energy of secondary particle from triplet production 
+        // Average energy of secondary particle from triplet production
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -802,14 +802,14 @@ void StandardENDLDataGenerator::setPhotonData(
         }
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 93941:
       {
         // Read the atomic form factor
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
@@ -819,14 +819,14 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setCoherentFormFactor( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 93942:
       {
         // Read the scattering function
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> indep_data, dep_data;
@@ -836,14 +836,14 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setIncoherentScatteringFunction( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 93943:
       {
         // Imaginary anomalous scattering factor
 
-        // Interpolation should always be LinLin = 2 
+        // Interpolation should always be LinLin = 2
         testPrecondition( interpolation_flag == 2 )
 
         std::vector<double> indep_data, dep_data;
@@ -854,18 +854,18 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setCoherentImaginaryAnomalousFactor( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 93944:
       {
         // Real anomalous scattering factor
 
-        // Interpolation should always be LinLin = 2 
+        // Interpolation should always be LinLin = 2
         testPrecondition( interpolation_flag == 2 )
 
         std::vector<double> indep_data, dep_data;
-        epdl_file_handler->processTwoColumnTable( 
+        epdl_file_handler->processTwoColumnTable(
             indep_data,
             dep_data );
 
@@ -874,7 +874,7 @@ void StandardENDLDataGenerator::setPhotonData(
         data_container.setCoherentRealAnomalousFactor( dep_data );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       default:
@@ -894,15 +894,15 @@ void StandardENDLDataGenerator::setPhotonData(
 
     // Set the subshells
     if ( data_container.getSubshells().empty() )
-    { 
+    {
       data_container.setSubshells( endf_subshells );
     }
 
   }
   else
   {
-    std::cout << "\033[1;31mWARNING:\033[0m EPDL file " + d_epdl_file_name + 
-    " does not exists. No EPDL data will be generated!" << std::endl;
+    std::cout << "\033[1;31mWARNING:\033[0m EPDL file " + d_epdl_file_name +
+    " does not exists. No EPDL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 
@@ -910,22 +910,22 @@ void StandardENDLDataGenerator::setPhotonData(
 // Process EEDL file
 /*! \details This function uses the Data::ENDLFileHandler to read the
  * EEDL data file. The data that is read is then processed into an appropriate
- * format and finally stored in the necessary HDF5 file. 
+ * format and finally stored in the necessary HDF5 file.
  */
-void StandardENDLDataGenerator::setElectronData( 
+void StandardENDLDataGenerator::setElectronData(
     Data::ENDLVolatileDataContainer& data_container ) const
-{ 
+{
   // Check if file exists
-  if ( (bool)fileExistsUsingFortran( d_eedl_file_name.c_str(), 
+  if ( (bool)fileExistsUsingFortran( d_eedl_file_name.c_str(),
                                      d_eedl_file_name.size() ) )
     {
     // Open eedl file
-    Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler( 
+    Teuchos::RCP<Data::ENDLFileHandler> eedl_file_handler(
       new Data::ENDLFileHandler( d_eedl_file_name ) );
 
     // Information in first header of the EEDL file
-    int atomic_number_in_table, 
-        outgoing_particle_designator, 
+    int atomic_number_in_table,
+        outgoing_particle_designator,
         interpolation_flag;
     double atomic_weight;
 
@@ -941,7 +941,7 @@ void StandardENDLDataGenerator::setElectronData(
     std::map<double,std::vector<double> > elastic_pdf;
 
 
-    std::cout << " Reading EEDL Data file";
+    std::cout << " Reading EEDL " << data_container.getAtomicNumber() << " Data file";
     std::cout.flush();
 
     // Process every table in the EEDL file
@@ -952,14 +952,14 @@ void StandardENDLDataGenerator::setElectronData(
                                                outgoing_particle_designator,
                                                atomic_weight,
                                                interpolation_flag );
-      
+
       // Check that the EEDL file is still valid (eof has not been reached)
       if( eedl_file_handler->endOfFile() )
       {
 	    continue;
       }
-        
-      testPostcondition( atomic_number_in_table == 
+
+      testPostcondition( atomic_number_in_table ==
                          data_container.getAtomicNumber() );
 
       // Read second table header and determine the reaction type
@@ -969,172 +969,172 @@ void StandardENDLDataGenerator::setElectronData(
       if ( electron_shell > 0 )
       {
         // Convert subshell number to endf number
-        endf_subshell = 
+        endf_subshell =
           Data::convertEADLDesignatorToENDFDesignator( electron_shell );
 
         // insert subshell to set
         endf_subshells.insert( endf_subshell );
-        
+
       }
 
       // Read and process the data in the current table, then store in the HDF5
       // file
       switch( reaction_type )
       {
-    
+
       case 7000:
       {
         // Integrated elastic transport cross section data
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> energy_grid, cross_section;
-        eedl_file_handler->processTwoColumnTable( energy_grid, 
+        eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
-        
+
         data_container.setElasticEnergyGrid( energy_grid );
         data_container.setElasticTransportCrossSection( cross_section );
 
         std::cout << ".";
-        std::cout.flush();   
+        std::cout.flush();
         break;
       }
-      case 8000: 
+      case 8000:
       {
         // Integrated large angle scattering cross section data
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> energy_grid, cross_section;
-        eedl_file_handler->processTwoColumnTable( energy_grid, 
+        eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
         // Test that the cutoff energy grid is the same as the transport
-        testPostcondition( energy_grid.size() == 
+        testPostcondition( energy_grid.size() ==
                            data_container.getElasticEnergyGrid().size() );
 
         data_container.setCutoffElasticCrossSection( cross_section );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 8011:
       {
         // Average energy to residual atom from elastic scattering
-        
-        // Interpolation should always be LinLin = 0 
+
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> residual_incident_energy, residual_energy;
-        eedl_file_handler->processTwoColumnTable( residual_incident_energy, 
+        eedl_file_handler->processTwoColumnTable( residual_incident_energy,
                                                   residual_energy );
 
-        data_container.setCutoffElasticResidualIncidentEnergy( 
+        data_container.setCutoffElasticResidualIncidentEnergy(
           residual_incident_energy );
         data_container.setCutoffElasticResidualEnergy( residual_energy );
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 8010:
       {
         // Average energy of scattered electron from elastic scattering
-        
-        // Interpolation should always be LinLin = 0 
+
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> scattered_incident_energy, scattered_energy;
-        eedl_file_handler->processTwoColumnTable( scattered_incident_energy, 
+        eedl_file_handler->processTwoColumnTable( scattered_incident_energy,
                                                   scattered_energy );
 
-        data_container.setCutoffElasticScatteredElectronIncidentEnergy( 
+        data_container.setCutoffElasticScatteredElectronIncidentEnergy(
           scattered_incident_energy );
-        data_container.setCutoffElasticScatteredElectronEnergy( 
+        data_container.setCutoffElasticScatteredElectronEnergy(
           scattered_energy );
 
         std::cout << ".";
-        std::cout.flush();    
+        std::cout.flush();
         break;
       }
       case 8022:
       {
         // Elastic angular distribution of the scattered electron data
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::map<double,std::vector<double> > elastic_angle;
 
-        eedl_file_handler->mapThreeColumnTable( 
-              elastic_angular_energy_grid, 
+        eedl_file_handler->mapThreeColumnTable(
+              elastic_angular_energy_grid,
               elastic_angle,
               elastic_pdf );
 
-        data_container.setCutoffElasticAngularEnergyGrid( 
+        data_container.setCutoffElasticAngularEnergyGrid(
           elastic_angular_energy_grid );
         data_container.setCutoffElasticAngles( elastic_angle );
-        data_container.setCutoffElasticPDF( elastic_pdf ); 
+        data_container.setCutoffElasticPDF( elastic_pdf );
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 10000:
       {
         // Integrated total elastic cross section data
 
-        // Interpolation should always be LogLog = 5 
+        // Interpolation should always be LogLog = 5
         testPrecondition( interpolation_flag == 5 )
 
         std::vector<double> energy_grid, cross_section;
-        eedl_file_handler->processTwoColumnTable( energy_grid, 
+        eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
         // Test that the energy grid is the same as the transport and cutoff
-        testPostcondition( energy_grid.size() == 
+        testPostcondition( energy_grid.size() ==
                            data_container.getElasticEnergyGrid().size() );
 
         data_container.setTotalElasticCrossSection( cross_section );
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 81000:
       {
         // Extract the integrated ionization (electroionization) cross section
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> energy_grid, cross_section;
-        eedl_file_handler->processTwoColumnTable( energy_grid, 
+        eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
-        data_container.setElectroionizationCrossSectionEnergyGrid( 
-          endf_subshell, 
+        data_container.setElectroionizationCrossSectionEnergyGrid(
+          endf_subshell,
           energy_grid );
-        data_container.setElectroionizationCrossSection( 
-          endf_subshell, 
+        data_container.setElectroionizationCrossSection(
+          endf_subshell,
           cross_section );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 81010:
       {
         // Average energy of primary and secondary electrons from ionization
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> incident_energy, average_outgoing_energy;
-        eedl_file_handler->processTwoColumnTable( incident_energy, 
+        eedl_file_handler->processTwoColumnTable( incident_energy,
                                                   average_outgoing_energy );
 
         // Average energy of electron from ionization
@@ -1162,12 +1162,12 @@ void StandardENDLDataGenerator::setElectronData(
         }
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 81021:
       {
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
         // The outgoing particle designator should be electron as recoil (19)
         testPrecondition( outgoing_particle_designator == 19 );
@@ -1179,54 +1179,54 @@ void StandardENDLDataGenerator::setElectronData(
         // Read the recoil electron spectrum from ionization for a subshell
         // If electron_shell == 0 then no subshell data only total
 
-        eedl_file_handler->mapThreeColumnTable( 
-              electron_energy_grid, 
+        eedl_file_handler->mapThreeColumnTable(
+              electron_energy_grid,
               electroionization_recoil_energy,
-              electroionization_recoil_pdf );  
+              electroionization_recoil_pdf );
 
 
-        data_container.setElectroionizationRecoilEnergyGrid( 
+        data_container.setElectroionizationRecoilEnergyGrid(
                           endf_subshell,
                           electron_energy_grid );
 
-        data_container.setElectroionizationRecoilEnergy( 
+        data_container.setElectroionizationRecoilEnergy(
                           endf_subshell,
                           electroionization_recoil_energy );
 
-        data_container.setElectroionizationRecoilPDF( 
+        data_container.setElectroionizationRecoilPDF(
                           endf_subshell,
                           electroionization_recoil_pdf );
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 82000:
       {
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         // Extract the integrated bremsstrahlung cross section
         std::vector<double> energy_grid, cross_section;
-        eedl_file_handler->processTwoColumnTable( energy_grid, 
+        eedl_file_handler->processTwoColumnTable( energy_grid,
                                                   cross_section );
 
         data_container.setBremsstrahlungCrossSectionEnergyGrid( energy_grid );
         data_container.setBremsstrahlungCrossSection( cross_section );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       case 82010:
       {
         // Average energy of secondary particles from bremsstrahlung
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> incident_energy, average_outgoing_energy;
-        eedl_file_handler->processTwoColumnTable( incident_energy, 
+        eedl_file_handler->processTwoColumnTable( incident_energy,
                                                   average_outgoing_energy );
 
         // Average energy of secondary photon from bremsstrahlung
@@ -1250,14 +1250,14 @@ void StandardENDLDataGenerator::setElectronData(
         }
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 82021:
       {
         // Read the sprectrum of the secondary photon from bremsstrahlung
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
         // The outgoing particle designator should be photon (7)
         testPrecondition( outgoing_particle_designator == 7 );
@@ -1266,28 +1266,28 @@ void StandardENDLDataGenerator::setElectronData(
         std::map<double,std::vector<double> > bremsstrahlung_photon_energy,
                                               bremsstrahlung_photon_pdf;
 
-        eedl_file_handler->mapThreeColumnTable( 
-              electron_energy_grid, 
+        eedl_file_handler->mapThreeColumnTable(
+              electron_energy_grid,
               bremsstrahlung_photon_energy,
-              bremsstrahlung_photon_pdf );  
+              bremsstrahlung_photon_pdf );
 
         data_container.setBremsstrahlungPhotonEnergyGrid( electron_energy_grid );
 
-        data_container.setBremsstrahlungPhotonEnergy( 
+        data_container.setBremsstrahlungPhotonEnergy(
                           bremsstrahlung_photon_energy );
 
-        data_container.setBremsstrahlungPhotonPDF( 
+        data_container.setBremsstrahlungPhotonPDF(
                           bremsstrahlung_photon_pdf );
 
         std::cout << ".";
-        std::cout.flush();    
+        std::cout.flush();
         break;
       }
       case 83000:
       {
         // Extract the integrated (atomic) excitation cross section
 
-        // Interpolation should always be LinLin = 0 
+        // Interpolation should always be LinLin = 0
         testPrecondition( interpolation_flag == 0 )
 
         std::vector<double> energy_grid, cross_section;
@@ -1297,7 +1297,7 @@ void StandardENDLDataGenerator::setElectronData(
         data_container.setAtomicExcitationCrossSection( cross_section );
 
         std::cout << ".";
-        std::cout.flush(); 
+        std::cout.flush();
         break;
       }
       case 83011:
@@ -1305,21 +1305,21 @@ void StandardENDLDataGenerator::setElectronData(
         // Read the average energy loss from excitation
         testPrecondition( interpolation_flag == 0 );
 
-        std::vector<double> atomic_excitation_energy_grid, 
-                            atomic_excitation_energy_loss; 
+        std::vector<double> atomic_excitation_energy_grid,
+                            atomic_excitation_energy_loss;
 
-        eedl_file_handler->processTwoColumnTable( 
-              atomic_excitation_energy_grid, 
+        eedl_file_handler->processTwoColumnTable(
+              atomic_excitation_energy_grid,
               atomic_excitation_energy_loss );
 
-        testPostcondition( atomic_excitation_energy_grid.size() == 
+        testPostcondition( atomic_excitation_energy_grid.size() ==
                            data_container.getAtomicExcitationEnergyGrid().size() );
 
-        data_container.setAtomicExcitationEnergyLoss( 
+        data_container.setAtomicExcitationEnergyLoss(
               atomic_excitation_energy_loss );
 
         std::cout << ".";
-        std::cout.flush();     
+        std::cout.flush();
         break;
       }
       default:
@@ -1339,41 +1339,41 @@ void StandardENDLDataGenerator::setElectronData(
 
     // Set the subshells
     if ( data_container.getSubshells().empty() )
-    { 
+    {
       data_container.setSubshells( endf_subshells );
     }
 
   /*
     // Set the screened Rutherford cross section data
-    setScreenedRutherfordData( cutoff_elastic_cross_section, 
+    setScreenedRutherfordData( cutoff_elastic_cross_section,
                                total_elastic_cross_section,
-                               elastic_angular_energy_grid, 
+                               elastic_angular_energy_grid,
                                elastic_pdf,
                                data_container );
   */
   }
   else
   {
-    std::cout << "\033[1;31mWARNING:\033[0m EEDL file " + d_eedl_file_name + 
-    " does not exists. No EEDL data will be generated!" << std::endl;
+    std::cout << "\033[1;31mWARNING:\033[0m EEDL file " + d_eedl_file_name +
+    " does not exists. No EEDL " << data_container.getAtomicNumber() << " data will be generated!" << std::endl;
   }
 }
 
 /*
 // Set the screened rutherford data
-void StandardENDLDataGenerator::setScreenedRutherfordData( 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
-        cutoff_elastic_cross_section, 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
+void StandardENDLDataGenerator::setScreenedRutherfordData(
+    const Teuchos::RCP<const Utility::OneDDistribution>&
+        cutoff_elastic_cross_section,
+    const Teuchos::RCP<const Utility::OneDDistribution>&
         total_elastic_cross_section,
     const std::vector<double>& elastic_angular_energy_grid,
     const std::map<double,std::vector<double> >& elastic_pdf,
     Data::ENDLVolatileDataContainer& data_container ) const
 {
   // Calculate Moliere's screening constant and the screened rutherford normalization constant
-  std::vector<double> moliere_screening_constant, 
+  std::vector<double> moliere_screening_constant,
                       screened_rutherford_normalization_constant;
-  
+
   // iterate through all angular energy bins
   for ( int i = 0; i < elastic_angular_energy_grid.size(); ++i )
   {
@@ -1381,7 +1381,7 @@ void StandardENDLDataGenerator::setScreenedRutherfordData(
     double energy = elastic_angular_energy_grid[i];
 
     // get the screened rutherford cross section
-    double sr_cross_section = 
+    double sr_cross_section =
         ( total_elastic_cross_section->evaluate( energy ) -
         cutoff_elastic_cross_section->evaluate( energy ) );
 
@@ -1394,7 +1394,7 @@ void StandardENDLDataGenerator::setScreenedRutherfordData(
      * angle.
      *//*
     // get the pdf value at the cutoff angle for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.front(); 
+    double cutoff_pdf = elastic_pdf.find( energy )->second.front();
 
     // calculate Moliere's screening constant
     moliere_screening_constant.push_back( 1.01*d_cutoff_angle );
@@ -1406,15 +1406,15 @@ void StandardENDLDataGenerator::setScreenedRutherfordData(
     else
     {
     // get the pdf value at the cutoff angle for the given energy
-    double cutoff_pdf = elastic_pdf.find( energy )->second.front(); 
+    double cutoff_pdf = elastic_pdf.find( energy )->second.front();
 
     // calculate Moliere's screening constant
-    moliere_screening_constant.push_back( d_cutoff_angle/( 
+    moliere_screening_constant.push_back( d_cutoff_angle/(
         sr_cross_section/( d_cutoff_angle*cutoff_pdf ) - 1.0 ) );
 
     // calculate the screened rutherford normalization constant
-    screened_rutherford_normalization_constant.push_back( cutoff_pdf*( 
-        ( d_cutoff_angle + moliere_screening_constant.back() )* 
+    screened_rutherford_normalization_constant.push_back( cutoff_pdf*(
+        ( d_cutoff_angle + moliere_screening_constant.back() )*
         ( d_cutoff_angle + moliere_screening_constant.back() ) ) );
     }
   }
@@ -1422,8 +1422,8 @@ void StandardENDLDataGenerator::setScreenedRutherfordData(
   data_container.setMoliereScreeningConstant( moliere_screening_constant );
 
   // Set the screened rutherford normalization constant
-  data_container.setScreenedRutherfordNormalizationConstant( 
-    screened_rutherford_normalization_constant );  
+  data_container.setScreenedRutherfordNormalizationConstant(
+    screened_rutherford_normalization_constant );
 }
 */
 } // end DataGen namespace

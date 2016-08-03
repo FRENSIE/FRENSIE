@@ -36,7 +36,7 @@ unsigned NeutronAbsorptionReaction::getNumberOfEmittedNeutrons(
 }
 
 // Simulate the reaction
-void NeutronAbsorptionReaction::react( NeutronState& neutron, 
+void NeutronAbsorptionReaction::react( NeutronState& neutron,
 				       ParticleBank& bank ) const
 {
   neutron.setAsGone();

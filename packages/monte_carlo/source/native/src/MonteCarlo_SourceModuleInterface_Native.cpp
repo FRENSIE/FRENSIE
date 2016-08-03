@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Initialize the static source pointer
-std::shared_ptr<ParticleSource> 
+std::shared_ptr<ParticleSource>
 SourceModuleInterface<ParticleSource>::s_source;
 
 // Constructor
@@ -20,7 +20,7 @@ SourceModuleInterface<ParticleSource>::SourceModuleInterface()
 { /* ... */ }
 
 // Initialize the source
-void SourceModuleInterface<ParticleSource>::setHandlerInstance( 
+void SourceModuleInterface<ParticleSource>::setHandlerInstance(
 				const std::shared_ptr<ParticleSource>& source )
 {
   // Make sure the source is valid

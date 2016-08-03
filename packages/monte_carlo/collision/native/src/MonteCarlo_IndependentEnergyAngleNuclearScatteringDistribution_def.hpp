@@ -21,7 +21,7 @@ template<typename IncomingParticleType,
 	 typename SystemConversionPolicy>
 IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 						    OutgoingParticleType,
-						    SystemConversionPolicy>::IndependentEnergyAngleNuclearScatteringDistribution( 
+						    SystemConversionPolicy>::IndependentEnergyAngleNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
 		     const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
 		     energy_scattering_distribution,
@@ -41,7 +41,7 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 template<typename IncomingParticleType,
 	 typename OutgoingParticleType,
 	 typename SystemConversionPolicy>
-void 
+void
 IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 						    OutgoingParticleType,
 						    SystemConversionPolicy>::scatterParticle(
@@ -49,30 +49,30 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 				OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
-  double outgoing_sys_energy = 
-    d_energy_scattering_distribution->sampleEnergy( 
+  double outgoing_sys_energy =
+    d_energy_scattering_distribution->sampleEnergy(
 					       incoming_particle.getEnergy() );
 
-  double sys_scattering_angle_cosine = 
-    d_angular_scattering_distribution->sampleAngleCosine( 
+  double sys_scattering_angle_cosine =
+    d_angular_scattering_distribution->sampleAngleCosine(
 					       incoming_particle.getEnergy() );
 
   // convert the outgoing energy from this system to the lab system
-  double outgoing_energy = 
+  double outgoing_energy =
     SystemConversionPolicy::convertToLabEnergy( incoming_particle.getEnergy(),
   						outgoing_sys_energy,
   						sys_scattering_angle_cosine,
   						this->getAtomicWeightRatio() );
 
   // convert the scattering angle cosine from this system to the lab system
-  double scattering_angle_cosine = 
-    SystemConversionPolicy::convertToLabAngleCosine( 
+  double scattering_angle_cosine =
+    SystemConversionPolicy::convertToLabAngleCosine(
   						incoming_particle.getEnergy(),
   						outgoing_sys_energy,
   						outgoing_energy,
   						sys_scattering_angle_cosine,
   						this->getAtomicWeightRatio() );
-  
+
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );

@@ -31,7 +31,7 @@
   typedef Utility::Trip<unsigned,double,double> trip_u_d_d;		\
   typedef Utility::Quad<double,double,double,double> quad_d_d_d_d;	\
   typedef Utility::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
-  
+
 #define UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_ARRAY( type, name, array ) \
   TUPLE_TYPEDEFS()							\
   UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
@@ -79,7 +79,7 @@
 							     FOURTH,	\
 							     quad_u_u_d_d, \
 							     array )	\
-  
+
 #define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY( type, name, array ) \
   TUPLE_TYPEDEFS()							\
   UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
@@ -190,14 +190,14 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( MaterialHelpers,
   array<type> weight_fractions( 4 );
   fillWeightFractions<member>( weight_fractions );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesValid<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesValid<member>(
 					            weight_fractions.begin(),
 					            weight_fractions.end() ) );
 
-  Utility::set<member>( weight_fractions[0], 
+  Utility::set<member>( weight_fractions[0],
 		       -1.0*Utility::get<member>( weight_fractions[0] ) );
 
-  TEST_ASSERT( !MonteCarlo::areFractionValuesValid<member>( 
+  TEST_ASSERT( !MonteCarlo::areFractionValuesValid<member>(
 					            weight_fractions.begin(),
 					            weight_fractions.end() ) );
 
@@ -207,14 +207,14 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( MaterialHelpers,
   array<type> atom_fractions( 4 );
   fillReferenceAtomFractions<member>( atom_fractions );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesValid<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesValid<member>(
 					              atom_fractions.begin(),
 					              atom_fractions.end() ) );
 
-  Utility::set<member>( atom_fractions[0], 
+  Utility::set<member>( atom_fractions[0],
 		       -1.0*Utility::get<member>( atom_fractions[0] ) );
 
-  TEST_ASSERT( !MonteCarlo::areFractionValuesValid<member>( 
+  TEST_ASSERT( !MonteCarlo::areFractionValuesValid<member>(
 					              atom_fractions.begin(),
 					              atom_fractions.end() ) );
 
@@ -242,7 +242,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( MaterialHelpers,
 					       weight_fractions.end() ) );
 
   weight_fractions[0] *= -1.0;
-  
+
   TEST_ASSERT( !MonteCarlo::areFractionValuesValid( weight_fractions.begin(),
 						weight_fractions.end() ) );
 
@@ -270,7 +270,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that fractional values can be tested as normalized
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 						   MaterialHelpers,
 						   areFractionValuesNormalized,
 						   member,
@@ -281,30 +281,30 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   array<type> weight_fractions( 4 );
   fillWeightFractions<member>( weight_fractions );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>(
 						    weight_fractions.begin(),
 						    weight_fractions.end() ) );
 
-  Utility::set<member>( weight_fractions[0], 
+  Utility::set<member>( weight_fractions[0],
 		       2.0*Utility::get<member>( weight_fractions[0] ) );
 
   TEST_ASSERT( !MonteCarlo::areFractionValuesNormalized<member>(
 						    weight_fractions.begin(),
 						    weight_fractions.end() ) );
   weight_fractions.clear();
-  
+
   // Test atom fractions
   array<type> atom_fractions( 4 );
   fillReferenceAtomFractions<member>( atom_fractions );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>(
 					              atom_fractions.begin(),
 					              atom_fractions.end() ) );
 
-  Utility::set<member>( atom_fractions[0], 
+  Utility::set<member>( atom_fractions[0],
 		       2.0*Utility::get<member>( atom_fractions[0] ) );
 
-  TEST_ASSERT( !MonteCarlo::areFractionValuesNormalized<member>( 
+  TEST_ASSERT( !MonteCarlo::areFractionValuesNormalized<member>(
 					              atom_fractions.begin(),
 					              atom_fractions.end() ) );
 }
@@ -331,7 +331,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( MaterialHelpers,
 						    weight_fractions.end() ) );
 
   weight_fractions[0] *= 2.0;
-  
+
   TEST_ASSERT( !MonteCarlo::areFractionValuesNormalized(weight_fractions.begin(),
 						    weight_fractions.end() ) );
 
@@ -359,7 +359,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that a set of fractional values can be normalized
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 						   MaterialHelpers,
 						   normalizeFractionValues,
 						   member,
@@ -370,13 +370,13 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   array<type> weight_fractions( 4 );
   fillWeightFractions<member>( weight_fractions );
 
-  Utility::set<member>( weight_fractions[0], 
+  Utility::set<member>( weight_fractions[0],
 		       2.0*Utility::get<member>( weight_fractions[0] ) );
 
   MonteCarlo::normalizeFractionValues<member>( weight_fractions.begin(),
 					   weight_fractions.end() );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>(
 						    weight_fractions.begin(),
 						    weight_fractions.end() ) );
   TEST_EQUALITY_CONST( Utility::get<member>( weight_fractions[0] ), -0.4 );
@@ -385,18 +385,18 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   TEST_EQUALITY_CONST( Utility::get<member>( weight_fractions[3] ), -0.2 );
 
   weight_fractions.clear();
-  
+
   // Test atom fractions
   array<type> atom_fractions( 4 );
   fillReferenceAtomFractions<member>( atom_fractions );
 
-  Utility::set<member>( atom_fractions[0], 
+  Utility::set<member>( atom_fractions[0],
 		       2.0*Utility::get<member>( atom_fractions[0] ) );
 
   MonteCarlo::normalizeFractionValues<member>( atom_fractions.begin(),
 					   atom_fractions.end() );
 
-  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>( 
+  TEST_ASSERT( MonteCarlo::areFractionValuesNormalized<member>(
 					              atom_fractions.begin(),
 					              atom_fractions.end() ) );
   TEST_EQUALITY_CONST( Utility::get<member>( atom_fractions[0] ), 24.0/37 );
@@ -436,7 +436,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( MaterialHelpers,
   TEST_EQUALITY_CONST( weight_fractions[3], -0.2 );
 
   weight_fractions.clear();
-  
+
   // Test atom fractions
   array<type> atom_fractions( 4 );
   fillReferenceAtomFractions<Utility::FIRST>( atom_fractions );
@@ -463,7 +463,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that weight fractions can be converted to atom fractions
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL(
 					 MaterialHelpers,
 					 convertWeightFractionsToAtomFractions,
 					 fracMember,
@@ -475,11 +475,11 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL(
   fillWeightFractions<fracMember>( fraction_data );
   fillAtomicWeights<atomicWgtMember>( fraction_data );
 
-  MonteCarlo::convertWeightFractionsToAtomFractions<fracMember,atomicWgtMember>( 
+  MonteCarlo::convertWeightFractionsToAtomFractions<fracMember,atomicWgtMember>(
 							fraction_data.begin(),
 							fraction_data.end(),
 							fraction_data.begin(),
-							fraction_data.end() ); 
+							fraction_data.end() );
 
   array<type> ref_fraction_data( 4 );
   fillReferenceAtomFractions<fracMember>( ref_fraction_data );
@@ -488,11 +488,11 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL(
   UTILITY_TEST_COMPARE_ARRAYS( fraction_data, ref_fraction_data );
 }
 
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY( 
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY(
 					 MaterialHelpers,
 					 convertWeightFractionsToAtomFractions,
 					 Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY( 
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY(
 					 MaterialHelpers,
 					 convertWeightFractionsToAtomFractions,
 					 ArrayRCP );
@@ -514,7 +514,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL(
 						 fractions.end(),
 						 weights.begin(),
 						 weights.end() );
-  
+
   array<type> ref_fractions( 4 );
   fillReferenceAtomFractions<Utility::FIRST>( ref_fractions );
 
@@ -530,7 +530,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that a mass density can be converted to a number density
-UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL(
 					     MaterialHelpers,
 					     convertMassDensityToNumberDensity,
 					     fracMember,
@@ -542,29 +542,29 @@ UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL(
   fillReferenceAtomFractions<fracMember>( fraction_data );
   fillAtomicWeights<atomicWgtMember>( fraction_data );
 
-  double number_density = 
-    MonteCarlo::convertMassDensityToNumberDensity<fracMember,atomicWgtMember>( 
+  double number_density =
+    MonteCarlo::convertMassDensityToNumberDensity<fracMember,atomicWgtMember>(
 							1.0,
 							fraction_data.begin(),
 							fraction_data.end(),
 							fraction_data.begin(),
-							fraction_data.end() ); 
+							fraction_data.end() );
 
   TEST_FLOATING_EQUALITY( number_density, 0.031365319232812, 1e-13 );
 }
 
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY( 
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY(
 					 MaterialHelpers,
 					 convertMassDensityToNumberDensity,
 					 Array );
-UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY( 
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_ARRAY(
 					 MaterialHelpers,
 					 convertMassDensityToNumberDensity,
 					 ArrayRCP );
 
 //---------------------------------------------------------------------------//
 // Check that a mass density can be converted to a number density
-UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL(
 				       MaterialHelpers,
 				       convertMassDensityToNumberDensity_basic,
 				       type,
@@ -575,13 +575,13 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL(
   fillReferenceAtomFractions<Utility::FIRST>( fractions );
   fillAtomicWeights<Utility::FIRST>( weights );
 
-  double number_density = 
+  double number_density =
     MonteCarlo::convertMassDensityToNumberDensity( 1.0,
 					       fractions.begin(),
 					       fractions.end(),
 					       weights.begin(),
 					       weights.end() );
-  
+
   TEST_FLOATING_EQUALITY( number_density, 0.031365319232812, 1e-13 );
 }
 
@@ -594,7 +594,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that a set of atom fractions can be scaled by a number density
-UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 					     MaterialHelpers,
 					     scaleAtomFractionsByNumberDensity,
 					     member,
@@ -603,7 +603,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
 {
   array<type> number_densities( 4 );
   fillReferenceAtomFractions<member>( number_densities );
-  
+
   MonteCarlo::scaleAtomFractionsByNumberDensity<member>( 0.01,
 						     number_densities.begin(),
 						     number_densities.end() );
@@ -623,7 +623,7 @@ UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_ARRAY(MaterialHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that a set of atom fractions can be scaled by a number density
-UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( 
+UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL(
 				       MaterialHelpers,
 				       scaleAtomFractionsByNumberDensity_basic,
 				       type,
@@ -631,7 +631,7 @@ UTILITY_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL(
 {
   array<type> number_densities( 4 );
   fillReferenceAtomFractions<Utility::FIRST>( number_densities );
-  
+
   MonteCarlo::scaleAtomFractionsByNumberDensity( 0.01,
 					     number_densities.begin(),
 					     number_densities.end() );

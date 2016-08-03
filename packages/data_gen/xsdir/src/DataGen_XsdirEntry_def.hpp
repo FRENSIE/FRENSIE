@@ -29,24 +29,24 @@ unsigned XsdirEntry::extractTableTokensFromXsdirLine(
   entry_tokens.clear();
 
     std::string xsdir_line_copy = xsdir_line;
- 
+
     boost::trim( xsdir_line_copy );
 
-    boost::split( entry_tokens, 
-		  xsdir_line_copy, 
-		  boost::is_any_of( " " ), 
+    boost::split( entry_tokens,
+		  xsdir_line_copy,
+		  boost::is_any_of( " " ),
 		  boost::algorithm::token_compress_on );
 }
 
 // Check if the line is a table entry
 template<typename STLCompliantContainer>
-bool XsdirEntry::isLineTableEntry( 
+bool XsdirEntry::isLineTableEntry(
 				 const STLCompliantContainer& entry_tokens )
 {
   // Make sure the value type is a string
   testStaticPrecondition( (boost::is_same<typename STLCompliantContainer::value_type,std::string>::value) );
-  
-  return entry_tokens.size() > 0 && 
+
+  return entry_tokens.size() > 0 &&
     entry_tokens.front().find( "." ) <
     entry_tokens.front().size();
 }
@@ -68,7 +68,7 @@ bool XsdirEntry::isTableTypeSupported(
 
 // Extract the table version from the entry tokens
 template<typename STLCompliantContainer>
-unsigned XsdirEntry::extractTableVersionFromEntryTokens( 
+unsigned XsdirEntry::extractTableVersionFromEntryTokens(
 			        const STLCompliantContainer& entry_tokens )
 {
   // Make sure the value type is a string
@@ -77,7 +77,7 @@ unsigned XsdirEntry::extractTableVersionFromEntryTokens(
   testPrecondition( XsdirEntry::isLineTableEntry( entry_tokens ) );
 
   unsigned start_pos = entry_tokens.front().find( "." );
-  
+
   std::istringstream iss( entry_tokens.front().substr( start_pos+1, 2 ) );
 
   unsigned version;
@@ -86,8 +86,8 @@ unsigned XsdirEntry::extractTableVersionFromEntryTokens(
 
   return version;
 }
-  
-// Extract the table type from the entry tokens 
+
+// Extract the table type from the entry tokens
 template<typename STLCompliantContainer>
 XsdirEntry::TableType XsdirEntry::extractTableTypeFromEntryTokens(
 				const STLCompliantContainer& entry_tokens )
@@ -99,15 +99,15 @@ XsdirEntry::TableType XsdirEntry::extractTableTypeFromEntryTokens(
 
   if( entry_tokens[4] == "1" )
   {
-    if( entry_tokens.front().find_last_of( "c" ) == 
+    if( entry_tokens.front().find_last_of( "c" ) ==
 	entry_tokens.front().size()-1 )
       return CONTINUOUS_ENERGY_NEUTRON_TABLE;
-    if( entry_tokens.front().find_last_of( "t" ) == 
+    if( entry_tokens.front().find_last_of( "t" ) ==
 	entry_tokens.front().size()-1 )
       return S_ALPHA_BETA_TABLE;
     else if( entry_tokens.front().find( "12p" ) < entry_tokens.front().size() )
       return ELECTRON_PHOTON_RELAXATION_TABLE;
-    else if( entry_tokens.front().find_last_of( "u" ) == 
+    else if( entry_tokens.front().find_last_of( "u" ) ==
 	     entry_tokens.front().size()-1 )
       return PHOTONUCLEAR_TABLE;
     else
@@ -189,7 +189,7 @@ double XsdirEntry::extractTableAtomicWeightRatioFromEntryTokens(
   testPrecondition( isLineTableEntry( entry_tokens ) );
 
   std::istringstream iss( entry_tokens[1] );
-  
+
   double atomic_weight_ratio;
 
   iss >> atomic_weight_ratio;
@@ -210,11 +210,11 @@ double XsdirEntry::extractTableTemperatureFromEntryTokens(
   if( entry_tokens.size() > 7 )
   {
     std::istringstream iss( entry_tokens[9] );
-    
+
     double temperature;
-    
+
     iss >> temperature;
-    
+
     return temperature;
   }
   else

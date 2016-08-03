@@ -36,7 +36,7 @@
 //! Main function for the sample_csd (Coherent Scattering Dist.) tool
 int main( int argc, char** argv )
 {
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -48,7 +48,7 @@ int main( int argc, char** argv )
 
   // The number of samples
   int samples;
-  
+
   // The cross section alias for scattering distributions
   std::string cross_section_alias;
 
@@ -64,7 +64,7 @@ int main( int argc, char** argv )
 
   // The number of threads
   int threads = 1;
-  
+
   sample_csd_clp.setDocString( "sample from a distribution and output "
 			       "the results\n" );
   sample_csd_clp.setOption( "s",
@@ -103,7 +103,7 @@ int main( int argc, char** argv )
                             "Number of parallel threads" );
 
   sample_csd_clp.throwExceptions( false );
-  
+
   // Parse the command line
   Teuchos::CommandLineProcessor::EParseCommandLineReturn
     parse_return = sample_csd_clp.parse( argc, argv );
@@ -118,13 +118,13 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
+
   // Extract the energy (range)
   if( energy_range.find( "{" ) >= energy_range.size() &&
       energy_range.find( "}" ) >= energy_range.size() )
   {
     std::istringstream iss( energy_range );
-    
+
     energies.resize( 1 );
     iss >> energies[0];
   }
@@ -147,10 +147,10 @@ int main( int argc, char** argv )
     // Open the cross_sections.xml file
     std::string cross_sections_xml_file = cross_section_directory;
     cross_sections_xml_file += "/cross_sections.xml";
-    
-    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+
+    Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
       Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
-    
+
     std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
     int photoatom_file_start_line;
     double atomic_weight;
@@ -168,7 +168,7 @@ int main( int argc, char** argv )
     if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::ace_file )
     {
       std::cerr << "Loading ACE photoatomic cross section table "
-		<< photoatom_table_name << " (" << cross_section_alias 
+		<< photoatom_table_name << " (" << cross_section_alias
 		<< ") ... ";
 
       // Create the ACEFileHandler
@@ -176,9 +176,9 @@ int main( int argc, char** argv )
 					     photoatom_table_name,
 					     photoatom_file_start_line,
 					     true );
-    
+
       // Create the XSS data extractor
-      Data::XSSEPRDataExtractor xss_data_extractor( 
+      Data::XSSEPRDataExtractor xss_data_extractor(
 					 ace_file_handler.getTableNXSArray(),
 					 ace_file_handler.getTableJXSArray(),
 					 ace_file_handler.getTableXSSArray() );
@@ -204,7 +204,7 @@ int main( int argc, char** argv )
 		<< photoatom_table_name << " ... ";
 
       // Create the epr data container
-      Data::ElectronPhotonRelaxationDataContainer 
+      Data::ElectronPhotonRelaxationDataContainer
 	data_container( photoatom_file_path );
 
       std::cerr << "done." << std::endl;
@@ -225,7 +225,7 @@ int main( int argc, char** argv )
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: photoatomic file type " 
+		       "Error: photoatomic file type "
 		       << photoatom_file_type <<
 		       " is not supported!" );
     }
@@ -247,7 +247,7 @@ int main( int argc, char** argv )
   {
     sofile.reset( new std::ofstream( sample_output_file.c_str() ) );
     dofile.reset( new std::ofstream( dist_output_file.c_str() ) );
-    
+
     sofile->precision( 18 );
     dofile->precision( 18 );
   }
@@ -268,15 +268,15 @@ int main( int argc, char** argv )
   #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned i = 0; i < 1000; ++i )
     pdf_evaluation_cosines[i+1000] = -0.9 + 1.8*i/1e3;
-      
+
   #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned i = 0; i <= 1000; ++i )
     pdf_evaluation_cosines[i+2000] = 0.9 + 0.1*i/1e3;
 
   // Generate the samples
-  Teuchos::RCP<const MonteCarlo::PhotonScatteringDistribution> 
+  Teuchos::RCP<const MonteCarlo::PhotonScatteringDistribution>
     base_scattering_dist =
-    Teuchos::rcp_dynamic_cast<const MonteCarlo::PhotonScatteringDistribution>( 
+    Teuchos::rcp_dynamic_cast<const MonteCarlo::PhotonScatteringDistribution>(
 							     scattering_dist );
   return samplePhotonDistributionCore( base_scattering_dist,
                                        energies,

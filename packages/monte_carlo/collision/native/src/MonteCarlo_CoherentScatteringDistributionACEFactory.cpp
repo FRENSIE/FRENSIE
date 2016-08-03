@@ -29,11 +29,11 @@ void CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
 
-  coherent_distribution.reset( 
+  coherent_distribution.reset(
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
 }
 
@@ -46,11 +46,11 @@ void CoherentScatteringDistributionACEFactory::createEfficientCoherentDistributi
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 							 raw_photoatom_data,
 							 form_factor_squared );
-  
-  coherent_distribution.reset( 
+
+  coherent_distribution.reset(
 	  new EfficientCoherentScatteringDistribution( form_factor_squared ) );
 }
 
@@ -59,7 +59,7 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
 	   const Data::XSSEPRDataExtractor& raw_photoatom_data,
            Teuchos::RCP<const Utility::TabularOneDDistribution>& form_factor )
 {
-  Teuchos::ArrayView<const double> jcohe_block = 
+  Teuchos::ArrayView<const double> jcohe_block =
     raw_photoatom_data.extractJCOHEBlock();
 
   unsigned form_factor_size = jcohe_block.size()/3;
@@ -75,7 +75,7 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
   for( unsigned i = 0; i < form_factor_size; ++i )
   {
     recoil_momentum_squared[i] *= recoil_momentum_squared[i]*1e16;
-    
+
     form_factor_squared[i] *= form_factor_squared[i];
   }
 

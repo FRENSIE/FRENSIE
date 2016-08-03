@@ -35,9 +35,9 @@ std::string test_geom_xml_file_name;
 // Check that DagMC can be properly initialized
 TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 {
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-  
+
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
   TEST_EQUALITY_CONST( Geometry::DagMC::getTerminationCellPropertyName(),
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 168 )->second, 7 );
 
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 1 )->second, 8 );
-  
+
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 26 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 27 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 28 )->second, 9 );
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 79 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 80 )->second, 9 );
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 81 )->second, 9 );
-  
+
   TEST_EQUALITY_CONST( cell_id_mat_id_map.find( 5 )->second, 10 );
 
   std::map<Geometry::ModuleTraits::InternalCellHandle,double>
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
   TEST_EQUALITY_CONST( cell_id_density_map.find( 168 )->second, -5.65 );
 
   TEST_EQUALITY_CONST( cell_id_density_map.find( 1 )->second, -1.8583 );
-  
+
   TEST_EQUALITY_CONST( cell_id_density_map.find( 26 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 27 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 28 )->second, -7.83 );
@@ -204,12 +204,12 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
   TEST_EQUALITY_CONST( cell_id_density_map.find( 79 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 80 )->second, -7.83 );
   TEST_EQUALITY_CONST( cell_id_density_map.find( 81 )->second, -7.83 );
-  
+
   TEST_EQUALITY_CONST( cell_id_density_map.find( 5 )->second, -13.31 );
 
   std::map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::ModuleTraits::InternalCellHandle> > > cell_estimator_id_data_map;
 
-  TEST_NOTHROW( Geometry::DagMC::getCellEstimatorData( 
+  TEST_NOTHROW( Geometry::DagMC::getCellEstimatorData(
                                                 cell_estimator_id_data_map ) );
 
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.size(), 5 );
@@ -223,15 +223,15 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "cell.tl.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 0 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 0 )->second.third.size(),
                      55 );
-  
+
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 1 )->second.first,
                        "cell.tl.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 1 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 1 )->second.third.size(),
                      55 );
 
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "cell.c.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 2 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 2 )->second.third.size(),
                      36 );
 
@@ -247,21 +247,21 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "cell.c.flux" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 3 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 3 )->second.third.size(),
                      36 );
-  
+
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 4 )->second.first,
                        "cell.pulse.height" );
   TEST_EQUALITY_CONST( cell_estimator_id_data_map.find( 4 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                      cell_estimator_id_data_map.find( 4 )->second.third.size(),
                      2 );
 
   std::map<unsigned,Utility::Trip<std::string,std::string,std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> > > surface_estimator_id_data_map;
 
-  TEST_NOTHROW( Geometry::DagMC::getSurfaceEstimatorData( 
+  TEST_NOTHROW( Geometry::DagMC::getSurfaceEstimatorData(
                                              surface_estimator_id_data_map ) );
 
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.size(), 4 );
@@ -274,7 +274,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "surface.flux" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 5 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 5 )->second.third.size(),
                   7 );
 
@@ -282,7 +282,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "surface.flux" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 6 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 6 )->second.third.size(),
                   7 );
 
@@ -290,7 +290,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "surface.current" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 7 )->second.second,
                        "n" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 7 )->second.third.size(),
                   7 );
 
@@ -298,7 +298,7 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
                        "surface.current" );
   TEST_EQUALITY_CONST( surface_estimator_id_data_map.find( 8 )->second.second,
                        "p" );
-  TEST_EQUALITY_CONST( 
+  TEST_EQUALITY_CONST(
                   surface_estimator_id_data_map.find( 8 )->second.third.size(),
                   7 );
 }
@@ -309,11 +309,11 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 int main( int argc, char* argv[] )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_xml_file",
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
-  
+
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }

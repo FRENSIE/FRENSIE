@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_AceLaw5NuclearScatteringEnergyDistribution.hpp
 //! \author Eli Moll
 //! \brief  The law 5 scattering energy distribution class
@@ -47,7 +47,7 @@ public:
 private:
 
   EnergyDistribution d_energy_distribution;
-  
+
   EnergyDistribution d_probabilistic_function;
 
 };

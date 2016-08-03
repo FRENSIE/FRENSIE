@@ -68,16 +68,16 @@ mesh_estimator;
 //---------------------------------------------------------------------------//
 // Initialize a cell estimator
 template<typename CellEstimator>
-void initializeCellEstimator( 
+void initializeCellEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     std::shared_ptr<CellEstimator>& estimator )
-{  
+{
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
   Teuchos::Array<double> cell_volumes( cell_ids.size(), 1.0 );
-  
+
   estimator.reset( new CellEstimator( estimator_id,
 				      estimator_multiplier,
 				      cell_ids,
@@ -85,7 +85,7 @@ void initializeCellEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -95,7 +95,7 @@ void initializeCellPulseHeightEstimator(
     const unsigned estimator_id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     std::shared_ptr<CellPulseHeightEstimator>& estimator )
-{  
+{
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
@@ -105,13 +105,13 @@ void initializeCellPulseHeightEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
 // Initialize a surface estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceFluxEstimator( 
+void initializeSurfaceFluxEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
@@ -135,7 +135,7 @@ void initializeSurfaceFluxEstimator(
 
 // Initialize a surface estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceCurrentEstimator( 
+void initializeSurfaceCurrentEstimator(
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
@@ -166,11 +166,11 @@ void initializeMeshEstimator( const unsigned estimator_id,
 				      1.0,
 				      mesh_file_name,
 				      "unit_cube_output.vtk" ) );
-  
+
   // Set the particle types
   Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-    
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -256,7 +256,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-  
+
   EMI::updateObserversFromParticleLeavingCellEvent( particle, 1 );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -311,7 +311,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
-    
+
   EMI::updateObserversFromParticleSubtrackEndingInCellEvent(
                                                        particle, 1, 1.0, 0.0 );
 
@@ -345,7 +345,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
 //---------------------------------------------------------------------------//
 // Check that the estimator module interface can update estimators from
 // a particle colliding in cell event
-TEUCHOS_UNIT_TEST( EventModuleInterface, 
+TEUCHOS_UNIT_TEST( EventModuleInterface,
 		   updateObserversFromParticleCollidingInCellEvent )
 {
   typedef MonteCarlo::EventModuleInterface<MonteCarlo::EventHandler> EMI;
@@ -355,10 +355,10 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   particle.setEnergy( 1.0 );
   particle.setDirection( 1.0, 0.0, 0.0 );
   particle.setCell( 1 );
-  
+
   double start_point[3] = { 0.25, 0.0, 0.75 };
   double end_point[3] = { 0.75, 0.25, 1.0 };
-  
+
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
@@ -418,7 +418,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   surface_normal[0] = 1.0;
   surface_normal[1] = 0.0;
   surface_normal[2] = 0.0;
-  
+
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
@@ -431,7 +431,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  EMI::updateObserversFromParticleCrossingSurfaceEvent( 
+  EMI::updateObserversFromParticleCrossingSurfaceEvent(
 				     particle, 1, surface_normal.getRawPtr() );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -490,7 +490,7 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
-  EMI::updateObserversFromParticleSubtrackEndingGlobalEvent( 
+  EMI::updateObserversFromParticleSubtrackEndingGlobalEvent(
                                             particle, start_point, end_point );
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -526,17 +526,17 @@ TEUCHOS_UNIT_TEST( EventModuleInterface,
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   std::string test_input_mesh_file_name;
 
   clp.setOption( "test_input_mesh_file_name",
 		 &test_input_mesh_file_name,
 		 "Test input mesh file name" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -545,14 +545,14 @@ int main( int argc, char** argv )
   }
 
   // Initialize an event handler
-  std::shared_ptr<MonteCarlo::EventHandler> 
+  std::shared_ptr<MonteCarlo::EventHandler>
     event_handler( new MonteCarlo::EventHandler );
 
   // Initialize estimators
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );
   cell_ids[0] = 1;
   cell_ids[1] = 2;
-  
+
   initializeCellEstimator( 0u, cell_ids, estimator_1 );
   initializeCellEstimator( 1u, cell_ids, estimator_2 );
   initializeCellEstimator( 2u, cell_ids, estimator_3 );
@@ -570,7 +570,7 @@ int main( int argc, char** argv )
   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> surface_ids(2);
   surface_ids[0] = 1;
   surface_ids[1] = 2;
-  
+
   initializeSurfaceFluxEstimator( 6u, surface_ids, estimator_7 );
   initializeSurfaceFluxEstimator( 7u, surface_ids, estimator_8 );
   initializeSurfaceCurrentEstimator( 8u, surface_ids, estimator_9 );
@@ -580,9 +580,9 @@ int main( int argc, char** argv )
   event_handler->addEntityEventObserver( estimator_8, surface_ids );
   event_handler->addEntityEventObserver( estimator_9, surface_ids );
   event_handler->addEntityEventObserver( estimator_10, surface_ids );
-  
+
   initializeMeshEstimator( 10u, test_input_mesh_file_name, mesh_estimator );
-  
+
   event_handler->addGlobalEventObserver( mesh_estimator );
 
   // Set the interface handler instance
@@ -590,7 +590,7 @@ int main( int argc, char** argv )
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

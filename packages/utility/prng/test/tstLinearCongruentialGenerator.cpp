@@ -24,9 +24,9 @@
 TEUCHOS_UNIT_TEST( LinearCongruentialGenerator, getRandomNumber )
 {
   Utility::LinearCongruentialGenerator lcg;
-  
+
   double random_number = lcg.getRandomNumber();
-  
+
   TEST_COMPARE( random_number, >=, 0.0 );
   TEST_COMPARE( random_number, <, 1.0 );
 }

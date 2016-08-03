@@ -31,9 +31,9 @@ Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
 
 Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
 
-Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> > 
+Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::PhotonState> >
   photon_production_distribution;
-    
+
 unsigned reaction_type;
 
 Teuchos::RCP<MonteCarlo::DecoupledYieldBasedPhotonProductionReaction> nuclear_reaction;
@@ -51,24 +51,24 @@ void initializeDecoupledYieldBasedPhotonProductionReaction(Teuchos::RCP<MonteCar
 {
   // Reaction type
   reaction_type = 102001u;
-  
+
   // Create the ace file handler
   ace_file_handler.reset(new Data::ACEFileHandler( test_basic_ace_file_name,
 						     test_basic_ace_table_name,
 						     1u ) );
-						     
+
 	// Create the XSS data extractor
   xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
- 
+
   // Create the photon production nuclear scattering distribution ACE factory
-  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory 
+  MonteCarlo::PhotonProductionNuclearScatteringDistributionACEFactory
     photon_production_dist_factory( test_basic_ace_file_name,
 			                              ace_file_handler->getTableAtomicWeightRatio(),
 			                              *xss_data_extractor );
- 
+
   // Create the photon production nuclear scattering distribution
   photon_production_dist_factory.createScatteringDistribution(
 					     reaction_type,
@@ -81,7 +81,7 @@ void initializeDecoupledYieldBasedPhotonProductionReaction(Teuchos::RCP<MonteCar
   total_cross_section.deepCopy( xss_data_extractor->extractTotalCrossSection() );
 
   // Create the total reaction
-  total_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction( 
+  total_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
                MonteCarlo::N__TOTAL_REACTION,
 			         ace_file_handler->getTableTemperature(),
 				       0.0,
@@ -90,7 +90,7 @@ void initializeDecoupledYieldBasedPhotonProductionReaction(Teuchos::RCP<MonteCar
 				       total_cross_section ) );
 
   // Create the base reaction with fictitious cross section data (total)
-  base_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction( 
+  base_reaction.reset( new MonteCarlo::NeutronAbsorptionReaction(
                MonteCarlo::N__GAMMA_REACTION,
 			         ace_file_handler->getTableTemperature(),
 				       0.0,
@@ -99,23 +99,23 @@ void initializeDecoupledYieldBasedPhotonProductionReaction(Teuchos::RCP<MonteCar
 				       total_cross_section ) );
 
   // Construct the yield energy grid and yield data
-  std::vector<double> yield_energy_grid = { 1.00000000000E-11, 
+  std::vector<double> yield_energy_grid = { 1.00000000000E-11,
                                             2.00000000000E+01 };
   std::vector<double> yield_energy_values = { 2.00000000000E+00,
                                               2.00000000000E+00 };
-                                              
+
   Teuchos::ArrayView<double> yield_energy_grid_av( yield_energy_grid );
   Teuchos::ArrayView<double> yield_energy_values_av( yield_energy_values );
-  
-  std::shared_ptr<Utility::OneDDistribution> d_mtp_yield( 
-        new Utility::TabularDistribution<Utility::LinLin>( 
+
+  std::shared_ptr<Utility::OneDDistribution> d_mtp_yield(
+        new Utility::TabularDistribution<Utility::LinLin>(
                               yield_energy_grid,
                               yield_energy_values ) );
-                              
+
   d_total_mt_yield_array.push_back( d_mtp_yield );
 
   // Create the nuclear reaction
-  nuclear_reaction.reset( new MonteCarlo::DecoupledYieldBasedPhotonProductionReaction( 
+  nuclear_reaction.reset( new MonteCarlo::DecoupledYieldBasedPhotonProductionReaction(
 			         MonteCarlo::N__GAMMA_REACTION,
 			         reaction_type,
 				       ace_file_handler->getTableTemperature(),
@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( DecoupledYieldBasedPhotonProductionReaction, getThresholdEner
 {
   initializeDecoupledYieldBasedPhotonProductionReaction( nuclear_reaction );
 
-  TEST_EQUALITY_CONST( nuclear_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( nuclear_reaction->getThresholdEnergy(),
 		       1.00000000000E-11 );
 }
 
@@ -142,21 +142,21 @@ TEUCHOS_UNIT_TEST( DecoupledYieldBasedPhotonProductionReaction, getThresholdEner
 // Check that the base reaction type can be returned
 TEUCHOS_UNIT_TEST( DecoupledYieldBasedPhotonProductionReaction, getCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     nuclear_reaction->getCrossSection( 1.00000000000e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.0*1.17724711000E+03 );
 
   cross_section = nuclear_reaction->getCrossSection( 1.03125000000E-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.0*1.15927812000E+03 );
-  
+
   cross_section = nuclear_reaction->getCrossSection( 1.95e1 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.0*4.95490443000E-01 );
 
   cross_section = nuclear_reaction->getCrossSection( 2.0e1 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 2.0*4.82773424000E-01 );
 }
 

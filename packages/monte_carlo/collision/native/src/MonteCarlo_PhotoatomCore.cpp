@@ -13,8 +13,8 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-const boost::unordered_set<PhotoatomicReactionType> 
-PhotoatomCore::absorption_reaction_types = 
+const boost::unordered_set<PhotoatomicReactionType>
+PhotoatomCore::absorption_reaction_types =
   PhotoatomCore::setDefaultAbsorptionReactionTypes();
 
 // Set the default absorption reaction types
@@ -22,11 +22,11 @@ boost::unordered_set<PhotoatomicReactionType>
 PhotoatomCore::setDefaultAbsorptionReactionTypes()
 {
   boost::unordered_set<PhotoatomicReactionType> tmp_absorption_reaction_types;
-  tmp_absorption_reaction_types.insert( 
+  tmp_absorption_reaction_types.insert(
 				    TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   tmp_absorption_reaction_types.insert(
 			       K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert( 
+  tmp_absorption_reaction_types.insert(
 			      L1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   tmp_absorption_reaction_types.insert(
 			      L2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
@@ -42,7 +42,7 @@ PhotoatomCore::setDefaultAbsorptionReactionTypes()
 			      M4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   tmp_absorption_reaction_types.insert(
 			      M5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert( 
+  tmp_absorption_reaction_types.insert(
 			      N1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
   tmp_absorption_reaction_types.insert(
 			      N2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
@@ -122,8 +122,8 @@ PhotoatomCore::PhotoatomCore()
  * reactions have already been organized appropriately. The total and total
  * absorption cross sections should have been created from the scattering
  * and absorption reactions.
- */ 
-PhotoatomCore::PhotoatomCore( 
+ */
+PhotoatomCore::PhotoatomCore(
       const Teuchos::RCP<const PhotoatomicReaction>& total_reaction,
       const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
       const ConstReactionMap& scattering_reactions,
@@ -144,7 +144,7 @@ PhotoatomCore::PhotoatomCore(
   // Make sure the absorption reaction is valid
   testPrecondition( !total_absorption_reaction.is_null() );
   // Make sure the scattering reactions map is valid
-  testPrecondition( scattering_reactions.size() > 0 );  
+  testPrecondition( scattering_reactions.size() > 0 );
   // Make sure the absorption reactions map is valid
   testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
@@ -201,7 +201,7 @@ PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
     d_relaxation_model = instance.d_relaxation_model;
     d_grid_searcher = instance.d_grid_searcher;
   }
-  
+
   return *this;
 }
 
@@ -209,16 +209,16 @@ PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
 bool PhotoatomCore::hasSharedEnergyGrid() const
 {
   if( !d_total_reaction->isEnergyGridShared( *d_total_absorption_reaction ) )
-    return false; 
+    return false;
 
-  ConstReactionMap::const_iterator reaction_it = 
+  ConstReactionMap::const_iterator reaction_it =
     d_scattering_reactions.begin();
 
   while( reaction_it != d_scattering_reactions.end() )
   {
     if( !d_total_reaction->isEnergyGridShared( *reaction_it->second ) )
       return false;
-    
+
     ++reaction_it;
   }
 
@@ -231,7 +231,7 @@ bool PhotoatomCore::hasSharedEnergyGrid() const
 
     ++reaction_it;
   }
-  
+
   return true;
 }
 

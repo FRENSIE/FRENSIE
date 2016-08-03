@@ -66,7 +66,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -83,31 +83,31 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 3.354834939813898e3, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 0.1, 0.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 4.14635765360550668, 1e-15 );
-  
+
   dist_value = distribution->evaluate( 0.1, -1.0 );
-  
+
   TEST_FLOATING_EQUALITY( dist_value, 3.59193477234775882, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
-    
+
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.75;
   fake_stream[1] = 0.5;
   fake_stream[2] = 0.003; // reject
   fake_stream[3] = 0.7;
   fake_stream[4] = 0.8;
-  fake_stream[5] = 0.006; 
+  fake_stream[5] = 0.006;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->sample( 0.1,
 			outgoing_energy,
 			scattering_angle_cosine );
-  
+
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
 
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
 
   // Test distribution properties
   double outgoing_energy, scattering_angle_cosine;
-  
+
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.942; // reject
@@ -137,10 +137,10 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionNativeFactory,
   distribution->sample( 0.1,
 			outgoing_energy,
 			scattering_angle_cosine );
-  
+
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940354738810264323, 1e-15 );
-  
+
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -157,25 +157,25 @@ int main( int argc, char** argv )
 		 &test_native_file_name,
 		 "Test Native file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
-  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) 
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create the native data file container
-  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer( 
+  data_container.reset( new Data::ElectronPhotonRelaxationDataContainer(
 						     test_native_file_name ) );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
@@ -188,8 +188,8 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);      
-}  
+  return (success ? 0 : 1);
+}
 
 //---------------------------------------------------------------------------//
 // end tstCoherentScatteringDistributionNativeFactory.cpp

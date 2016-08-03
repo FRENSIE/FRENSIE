@@ -28,7 +28,7 @@ class PhotoatomACEFactory
 public:
 
   //! Create a photoatom core (using the provided atomic relaxation model)
-  static void createPhotoatomCore( 
+  static void createPhotoatomCore(
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,

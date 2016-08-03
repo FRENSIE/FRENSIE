@@ -21,11 +21,11 @@ namespace MonteCarlo{
 //! The simulation electron properties factory
 class SimulationElectronPropertiesFactory
 {
-  
+
 public:
-  
+
   //! Initialize the simulation electron properties
-  static void initializeSimulationElectronProperties( 
+  static void initializeSimulationElectronProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn = &std::cerr );
 };

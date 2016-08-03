@@ -17,7 +17,7 @@ namespace DataGen{
 //! The S(alpha,beta) xsdir entry
 class SAlphaBetaXsdirEntry : public XsdirEntry
 {
-  
+
 public:
 
   //! Constructor

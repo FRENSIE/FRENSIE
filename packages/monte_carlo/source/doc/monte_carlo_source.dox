@@ -15,23 +15,23 @@
  * \section mc_source_sec Particle Sources
  * An integral part of a Monte Carlo simulation is the generation of
  * particle states through sampling of a particle source model. The
- * MonteCarlo::ParticleSource abstract base class provides the 
+ * MonteCarlo::ParticleSource abstract base class provides the
  * pure virtual interface that must be implemented by the sources
- * created in the native source subpackage. 
+ * created in the native source subpackage.
  *
  * Care must be taken when implementing several of the interface methods
  * since it is assumed that the classes that inherit from the
  * MonteCarlo::ParticleSource will be used in shared memory and
  * distributed memory settings. The enableThreadSupport method allows
  * objects of a class to be used in shared memory settings with no more
- * than the number of threads requested. Typically, this involves 
+ * than the number of threads requested. Typically, this involves
  * allocating a workspace for each thread inside of the class object. For
  * most sources the only stored data that will be modified during the
  * sampling process are sampling efficiency statistics. The reduceData method
  * allows objects of a class that are distributed across nodes (e.g. on
  * a computing cluster) to communicate with each other and collect all of
  * their data on the root node. Implementation of this method will rely on
- * C++ MPI wrapper methods (see Utility_CommHelpers.hpp and 
+ * C++ MPI wrapper methods (see Utility_CommHelpers.hpp and
  * Teuchos_CommHelpers.hpp). Before implementing these methods please read the
  * section on \ref parallel_considerations "Parallel Considerations".
  *
@@ -45,7 +45,7 @@
  * (see the \ref mc_standard_source "standard source section") the
  * efficiency reported will be 1.0. In the future additional sampling
  * statistics might also be added (e.g. energy, time, direction, etc. sampling
- * efficiency). 
+ * efficiency).
  *
  * \subsection mc_standard_source The Standard Particle Source
  * The MonteCarlo::StandardParticleSource requires a user to specify
@@ -57,19 +57,19 @@
  * more complicated sources there are also a series of optional settings
  * that can be used, which will be discussed in the rest of this subsection.
  *
- * Currently, there are only implementations of the 
+ * Currently, there are only implementations of the
  * Utility::SpatialDistribution for basic shapes (right rectangular prism,
  * sphere, right circular cylinder, point). For more complicated source
  * shapes, especially those that conform to a particular cell or series
  * of cells, a rejection cell or set of rejection cells can be specified.
  * The setRejectionCell method simply takes a cell id and a function
- * pointer to the desired location_function 
+ * pointer to the desired location_function
  * (e.g. Geometry::DagMC::getPointLocation). The class is designed to
  * keep track of the sampling efficiency that results from the use
  * of rejection cells. If there are no rejection cells the sampling
  * efficiency reported will be 1.0.
  *
- * It is often desirable to bias the source distribution. Each of the 
+ * It is often desirable to bias the source distribution. Each of the
  * phase space dimensions defined in the standard particle source can have
  * an importance distribution set. If the importance distribution for
  * a phase space dimension is set, it will be used for sampling instead of the
@@ -77,7 +77,7 @@
  * is made from the importance distribution the particle weight will be
  * multiplied by the ratio of the original distribution pdf evaluated
  * at the sampled dimension value to the importance distribution pdf
- * evaluated at the same value. 
+ * evaluated at the same value.
  *
  * \subsection mc_compound_source The Compound Standard Particle Source
  * The MonteCarlo::CompoundStandardParticleSource allows one to construct
@@ -98,19 +98,19 @@
  * The MonteCarlo::CachedStateParticleSource is similar to the MCNP
  * surface source, though it does not care about the particular entity
  * (i.e. surface or cell) where the particle states were recorded. All
- * that it requires is the name of the boost::archive 
- * (see Utility::ArchivableObject) file where the cached particle states are 
- * stored. 
+ * that it requires is the name of the boost::archive
+ * (see Utility::ArchivableObject) file where the cached particle states are
+ * stored.
  *
- * Upon loading the cached particle state archive file, the cached state 
+ * Upon loading the cached particle state archive file, the cached state
  * particle source will sort all of the cached particle states by history
  * number. It will then reset the history numbers starting from 0. When
  * the sampleParticleState method is called, all of the cached states
- * with the requested history number will be added to the 
+ * with the requested history number will be added to the
  * MonteCarlo::ParticleBank.
  *
  * Note that this source is not fully supported yet as there is currently
- * no way to generate the cached particle states needed by the 
+ * no way to generate the cached particle states needed by the
  * source. The class that will generate the cached particle state file
  * will likely be a new type of MonteCarlo::ParticleHistoryObserver
  * (see the \ref mc_particle_history_observers "event module" documentation).
@@ -119,22 +119,22 @@
  * The Utility::HDF5FileHandler class provides a very general interface for
  * writing to and reading from an HDF5 file. A more restrictive interface
  * for writing/reading source data to an HDF5 file was required to reduce
- * the complexity associated with this process. The 
+ * the complexity associated with this process. The
  * MonteCarlo::SourceHDF5FileHandler provides this more restrictive
  * interface and should be used whenever source data needs to be
  * written to or read from an HDF5 file.
  *
  * \section mc_source_module_interface The Source Module Interface
  * The MonteCarlo::SourceModuleInterface is a template interface that
- * add an "extra level of abstraction" to the 
+ * add an "extra level of abstraction" to the
  * MonteCarlo::ParticleSimulationManager. The reason this extra level
- * of abstraction is used is to ensure that FRENSIE stays highly 
+ * of abstraction is used is to ensure that FRENSIE stays highly
  * extensible. In addition, new specializations of the interface can
  * be made without having to make any changes to the particle simulation
- * manager. 
+ * manager.
  *
  * Currently, there is only a specialization of the interface for the
- * MonteCarlo::ParticleSource 
+ * MonteCarlo::ParticleSource
  * (MonteCarlo::SourceModuleInterface<MonteCarlo::ParticleSource>). This
  * can be thought of as the native interface specialization. If in the future
  * another development team releases a software package for creating

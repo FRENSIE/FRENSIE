@@ -28,25 +28,25 @@ namespace MonteCarlo{
 // Create the source represented by the parameter list
 template<typename GeometryModuleInterface>
 std::shared_ptr<ParticleSource>
-ParticleSourceFactory::createSourceImpl( 
+ParticleSourceFactory::createSourceImpl(
 				     const Teuchos::ParameterList& source_rep,
 		    		     const ParticleModeType& particle_mode,
                                      std::ostream& os_warn )
 {
   // Get the number of parameters in the list
   unsigned num_params = source_rep.numParams();
-  
+
   // Validate all sources defined
-  Teuchos::ParameterList::ConstIterator param_iter = 
+  Teuchos::ParameterList::ConstIterator param_iter =
     source_rep.begin();
-  
+
   while( param_iter != source_rep.end() )
   {
     Teuchos::ParameterList sub_source;
-    
+
     try{
-      sub_source = 
-        Teuchos::any_cast<Teuchos::ParameterList>( 
+      sub_source =
+        Teuchos::any_cast<Teuchos::ParameterList>(
                                                  param_iter->second.getAny() );
     }
     EXCEPTION_CATCH_RETHROW_AS( std::exception,
@@ -54,23 +54,23 @@ ParticleSourceFactory::createSourceImpl(
                                 "Error: The source xml file is not valid! "
                                 "The source definition must be a "
                                 "ParameterList." );
-    
+
     ParticleSourceFactory::validateSourceRep( sub_source, num_params );
-    
+
     ++param_iter;
   }
-  
+
   std::shared_ptr<ParticleSource> source;
-  
+
   if( num_params == 1 )
   {
-    const Teuchos::ParameterList& sub_source = 
-      Teuchos::any_cast<Teuchos::ParameterList>( 
+    const Teuchos::ParameterList& sub_source =
+      Teuchos::any_cast<Teuchos::ParameterList>(
 					 source_rep.begin()->second.getAny() );
-    
+
     if( sub_source.isParameter( "Spatial Distribution" ) )
     {
-      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>( 
+      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>(
 							         sub_source,
                                                                  particle_mode,
                                                                  source,
@@ -78,8 +78,8 @@ ParticleSourceFactory::createSourceImpl(
     }
     else
     {
-      ParticleSourceFactory::createCachedStateSource( sub_source, 
-                                                      particle_mode, 
+      ParticleSourceFactory::createCachedStateSource( sub_source,
+                                                      particle_mode,
                                                       source,
                                                       os_warn );
     }
@@ -87,18 +87,18 @@ ParticleSourceFactory::createSourceImpl(
   else
   {
     ParticleSourceFactory::createCompoundStandardSource<GeometryModuleInterface>(
-                                                                 source_rep, 
+                                                                 source_rep,
 								 particle_mode,
                                                                  source,
                                                                  os_warn );
   }
-  
+
   // Make sure the source has been created
   testPostcondition( source.get() );
 
   // Print out unused parameters
   source_rep.unused( os_warn );
-  
+
   return source;
 }
 
@@ -113,38 +113,38 @@ double ParticleSourceFactory::createStandardSource(
 {
   // Extract the source id
   unsigned id = source_rep.get<int>( "Id" );
-  
-  Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
+
+  Teuchos::RCP<const Teuchos::ParameterEntry> entry =
     source_rep.getEntryRCP( "Spatial Distribution" );
-  
+
   // Extract the spatial distribution
-  const Teuchos::ParameterList& spatial_dist_rep = 
+  const Teuchos::ParameterList& spatial_dist_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
-  
+
   std::shared_ptr<Utility::SpatialDistribution> spatial_distribution;
   try{
-    spatial_distribution = 
-      Utility::SpatialDistributionFactory::createDistribution( 
+    spatial_distribution =
+      Utility::SpatialDistributionFactory::createDistribution(
 							    spatial_dist_rep );
-					      
+
   }
   EXCEPTION_CATCH_RETHROW_AS(Utility::InvalidSpatialDistributionRepresentation,
 			     InvalidParticleSourceRepresentation,
 			     "Error: An invalid spatial distribution was "
 			     "specified in the standard source!" );
-  
+
   // Extract the directional distribution
   std::shared_ptr<Utility::DirectionalDistribution> directional_distribution;
-  
+
   if( source_rep.isParameter( "Directional Distribution" ) )
   {
     entry = source_rep.getEntryRCP( "Directional Distribution" );
-  
-    const Teuchos::ParameterList& directional_dist_rep = 
+
+    const Teuchos::ParameterList& directional_dist_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
-  
+
     try{
-      directional_distribution = 
+      directional_distribution =
 	Utility::DirectionalDistributionFactory::createDistribution(
 							directional_dist_rep );
     }
@@ -156,34 +156,34 @@ double ParticleSourceFactory::createStandardSource(
   }
   else // create an isotropic distribution
   {
-    directional_distribution = 
+    directional_distribution =
       Utility::DirectionalDistributionFactory::createIsotropicDistribution();
   }
 
   // Extract the energy distribution
   entry = source_rep.getEntryRCP( "Energy Distribution" );
 
-  std::shared_ptr<Utility::OneDDistribution> energy_distribution = 
+  std::shared_ptr<Utility::OneDDistribution> energy_distribution =
     Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
 
   // Extract the time distribution
   std::shared_ptr<Utility::OneDDistribution> time_distribution;
-  
+
   if( source_rep.isParameter( "Time Distribution" ) )
   {
     entry = source_rep.getEntryRCP( "Time Distribution" );
 
-    time_distribution = 
+    time_distribution =
       Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
   }
   else // use the default time distribution
     time_distribution = s_default_time_dist;
- 
+
   ParticleType particle_type = getParticleType( source_rep, particle_mode );
-  
+
   // Create the new source
-  std::shared_ptr<StandardParticleSource> source_tmp( 
-                                           new StandardParticleSource( 
+  std::shared_ptr<StandardParticleSource> source_tmp(
+                                           new StandardParticleSource(
                                                       id,
                                                       spatial_distribution,
 	                                              directional_distribution,
@@ -211,7 +211,7 @@ double ParticleSourceFactory::createStandardSource(
     // Make sure the rejection cells exist
     for( unsigned i = 0; i < rejection_cells.size(); ++i )
     {
-      TEST_FOR_EXCEPTION( 
+      TEST_FOR_EXCEPTION(
                  !GeometryModuleInterface::doesCellExist( rejection_cells[i] ),
                  InvalidParticleSourceRepresentation,
                  "Error: Rejection cell " << rejection_cells[i] <<
@@ -222,7 +222,7 @@ double ParticleSourceFactory::createStandardSource(
     // Add the rejection cells
     for( unsigned i = 0; i < rejection_cells.size(); ++i )
     {
-      source_tmp->setRejectionCell(rejection_cells[i], 
+      source_tmp->setRejectionCell(rejection_cells[i],
                                    GeometryModuleInterface::getPointLocation );
     }
   }
@@ -231,13 +231,13 @@ double ParticleSourceFactory::createStandardSource(
   {
     entry = source_rep.getEntryRCP( "Spatial Importance Function" );
 
-    const Teuchos::ParameterList& spatial_dist_rep = 
+    const Teuchos::ParameterList& spatial_dist_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
-  
+
     std::shared_ptr<Utility::SpatialDistribution> spatial_importance_func;
     try{
-      spatial_importance_func = 
-	Utility::SpatialDistributionFactory::createDistribution( 
+      spatial_importance_func =
+	Utility::SpatialDistributionFactory::createDistribution(
 							    spatial_dist_rep );
     }
     EXCEPTION_CATCH_RETHROW_AS(
@@ -247,7 +247,7 @@ double ParticleSourceFactory::createStandardSource(
 			     "was specified in the standard source!" );
 
     // Make sure the importance function is compatible with the spatial dist
-    TEST_FOR_EXCEPTION( 
+    TEST_FOR_EXCEPTION(
 	      !spatial_importance_func->hasSameBounds( *spatial_distribution ),
 	      InvalidParticleSourceRepresentation,
 	      "Error: The bounds of the spatial importance function must be "
@@ -260,46 +260,46 @@ double ParticleSourceFactory::createStandardSource(
   {
     entry = source_rep.getEntryRCP( "Directional Importance Function" );
 
-    const Teuchos::ParameterList& directional_dist_rep = 
+    const Teuchos::ParameterList& directional_dist_rep =
       Teuchos::any_cast<Teuchos::ParameterList>( entry->getAny() );
-  
+
     std::shared_ptr<Utility::DirectionalDistribution> directional_importance_func;
     try{
-      directional_importance_func = 
+      directional_importance_func =
 	Utility::DirectionalDistributionFactory::createDistribution(
 							directional_dist_rep );
     }
-    EXCEPTION_CATCH_RETHROW_AS( 
+    EXCEPTION_CATCH_RETHROW_AS(
 		         Utility::InvalidDirectionalDistributionRepresentation,
 			 InvalidParticleSourceRepresentation,
 			 "Error: An invalid direcional importance "
 			 "function was specified in the standard source!" );
 
     // Make sure the importance function is compatible with the direct. dist
-    TEST_FOR_EXCEPTION( 
+    TEST_FOR_EXCEPTION(
       !directional_importance_func->hasSameBounds( *directional_distribution ),
       InvalidParticleSourceRepresentation,
       "Error: The bounds of the directional importance function must be "
       "the same as the bounds of the directional distribution!" );
 
-    source_tmp->setDirectionalImportanceDistribution( 
+    source_tmp->setDirectionalImportanceDistribution(
 						 directional_importance_func );
   }
 
   if( source_rep.isParameter( "Energy Importance Function" ) )
   {
     entry = source_rep.getEntryRCP( "Energy Importance Function" );
-    
-    std::shared_ptr<Utility::OneDDistribution> energy_importance_func = 
+
+    std::shared_ptr<Utility::OneDDistribution> energy_importance_func =
       Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-   
+
     // Make sure the importance function is compatible with the energy dist
     TEST_FOR_EXCEPTION(
 		!energy_importance_func->hasSameBounds( *energy_distribution ),
 		InvalidParticleSourceRepresentation,
 		"Error: The bounds of the energy importance function must be "
 		"the same as the bounds of the energy distribution!" );
-    
+
     source_tmp->setEnergyImportanceDistribution( energy_importance_func );
   }
 
@@ -307,9 +307,9 @@ double ParticleSourceFactory::createStandardSource(
   {
     entry = source_rep.getEntryRCP( "Time Importance Function" );
 
-    std::shared_ptr<Utility::OneDDistribution> time_importance_func = 
+    std::shared_ptr<Utility::OneDDistribution> time_importance_func =
       Utility::OneDDistributionEntryConverterDB::convertEntryToSharedPtr( entry );
-    
+
     // Make sure the importance function is compatible with the time dist
     TEST_FOR_EXCEPTION(
 		 !time_importance_func->hasSameBounds( *time_distribution ),
@@ -319,7 +319,7 @@ double ParticleSourceFactory::createStandardSource(
 
     source_tmp->setTimeImportanceDistribution( time_importance_func );
   }
-  
+
   // Set the return source
   source = source_tmp;
 
@@ -349,19 +349,19 @@ void ParticleSourceFactory::createCompoundStandardSource(
 
   std::set<unsigned> source_ids;
 
-  Teuchos::Array<std::shared_ptr<StandardParticleSource> > 
+  Teuchos::Array<std::shared_ptr<StandardParticleSource> >
     sources( num_sources );
   Teuchos::Array<double> source_weights( num_sources );
-  
+
   Teuchos::ParameterList::ConstIterator param_iter = source_rep.begin();
 
   while( param_iter != source_rep.end() )
   {
-    const Teuchos::ParameterList& sub_source = 
+    const Teuchos::ParameterList& sub_source =
       Teuchos::any_cast<Teuchos::ParameterList>( param_iter->second.getAny() );
-    
-    source_weights[source_index] = 
-      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>( 
+
+    source_weights[source_index] =
+      ParticleSourceFactory::createStandardSource<GeometryModuleInterface>(
 							 sub_source,
 							 particle_mode,
 							 sources[source_index],
@@ -377,11 +377,11 @@ void ParticleSourceFactory::createCompoundStandardSource(
                         "unique." );
 
     source_ids.insert( sources[source_index]->getId() );
-    
+
     ++source_index;
     ++param_iter;
   }
-  
+
   source.reset( new CompoundStandardParticleSource( sources, source_weights ));
 }
 

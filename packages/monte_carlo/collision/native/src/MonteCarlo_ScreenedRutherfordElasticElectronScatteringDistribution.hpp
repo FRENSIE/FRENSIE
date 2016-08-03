@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ScreenedRutherfordElasticElectronScatteringDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The screened Rutherford elastic electronscattering distribution base class
+//! \brief  The screened Rutherford elastic electron scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
@@ -26,36 +26,27 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "MonteCarlo_CutoffElasticElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronScatteringDistribution
+class ScreenedRutherfordElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
+    public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the array of energy dependent screened rutherford paramters
-  //! (first = energy, second = Moliere screening constant, 
-  //!  third = normalization constant
-  typedef Teuchos::Array<Utility::Trip<double,double,double> > ParameterArray;
+  typedef std::shared_ptr<const CutoffElasticElectronScatteringDistribution>
+            ElasticDistribution;
 
-  typedef Teuchos::RCP<const CutoffElasticElectronScatteringDistribution>
-            ElasticDistribution;    
-
-  //! Constructor from ACE table data
+  //! Constructor
   ScreenedRutherfordElasticElectronScatteringDistribution(
     const ElasticDistribution& elastic_cutoff_distribution,
-    const int atomic_number,
-    const double lower_cutoff_angle_cosine = 0.999999 );
+    const int atomic_number );
 
-  //! Constructor from ENDL table data
-  ScreenedRutherfordElasticElectronScatteringDistribution(
-    const ParameterArray& screened_rutherford_parameters,
-    const double lower_cutoff_angle_cosine = 0.999999 );
-
-  //! Destructor 
+  //! Destructor
   virtual ~ScreenedRutherfordElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -63,13 +54,27 @@ public:
   double evaluate( const double incoming_energy,
                    const double scattering_angle_cosine ) const;
 
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle_cosine,
+                   const double eta ) const;
+
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine,
+                      const double eta ) const;
+
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine,
+                      const double eta ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -86,7 +91,22 @@ public:
   void scatterElectron( ElectronState& electron,
                         ParticleBank& bank,
                         Data::SubshellType& shell_of_interaction ) const;
-                        
+
+  //! Randomly scatter the adjoint electron
+  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
+                               ParticleBank& bank,
+                               Data::SubshellType& shell_of_interaction ) const;
+
+  //! Evaluate Moliere's atomic screening constant at the given electron energy
+  double evaluateMoliereScreeningConstant( const double energy ) const;
+
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy ) const;
+
+  //! Evaluate the integrated PDF
+  double evaluateIntegratedPDF( const double incoming_energy,
+                                const double eta ) const;
+
 protected:
 
    //! Sample an outgoing direction from the distribution
@@ -94,20 +114,13 @@ protected:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-  //! Evaluate Moliere's atomic screening constant at the given electron energy
-  double evaluateMoliereScreeningConstant( const double energy ) const;
-
 private:
 
-  //! Evaluate the integrated PDF
-  double evaluateIntegratedPDF( const double incoming_energy) const;
+  // The change scattering angle cosine below which the screened Rutherford distribution is used
+  static double s_cutoff_delta_mu;
 
-  // evaluate the pdf integrated from 0 to angle
-  double evaluateIntegratedPDF( 
-        const double& scattering_angle, 
-        const ParameterArray::const_iterator& lower_bin_boundary, 
-        const ParameterArray::const_iterator& upper_bin_boundary,
-        const double& interpolation_fraction ) const;
+  // The scattering angle cosine above which the screened Rutherford distribution is used
+  static double s_cutoff_mu;
 
   // The fine structure constant (fsc) squared
   static double s_fine_structure_const_squared;
@@ -124,20 +137,8 @@ private:
   // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
   double d_screening_param2;
 
-  // The scattering angle below which the screened Rutherford distribution is used
-  double d_upper_cutoff_delta_mu;
-
-  // The scattering angle cosine above which the screened Rutherford distribution is used
-  double d_lower_cutoff_angle_cosine;
-
-  // Flag to indicate that tabulated screened rutherford parameters are used
-  bool d_using_endl_tables;
-
   // Cutoff elastic scattering distribution
   ElasticDistribution d_elastic_cutoff_distribution;
-
-  // Screened Rutherford energy depended paramters: Moliere's screening constant and normalization constant
-  ParameterArray d_screened_rutherford_parameters;
 };
 
 } // end MonteCarlo namespace

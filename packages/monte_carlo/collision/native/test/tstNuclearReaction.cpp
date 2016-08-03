@@ -39,7 +39,7 @@ Teuchos::RCP<MonteCarlo::NuclearReaction> nuclear_reaction;
 class TestNuclearReaction : public MonteCarlo::NuclearReaction
 {
 public:
-  TestNuclearReaction( 
+  TestNuclearReaction(
 		   const MonteCarlo::NuclearReactionType reaction_type,
 		   const double temperature,
 		   const double q_value,
@@ -56,7 +56,7 @@ public:
 
   ~TestNuclearReaction()
   { /* ... */ }
-  
+
   unsigned getNumberOfEmittedNeutrons( const double energy ) const
   { return 0u; }
 
@@ -76,14 +76,14 @@ void initializeElasticReaction(Teuchos::RCP<MonteCarlo::NuclearReaction>& reacti
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
-   
+
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
 
-  nuclear_reaction.reset( new TestNuclearReaction( 
+  nuclear_reaction.reset( new TestNuclearReaction(
 			               MonteCarlo::N__N_ELASTIC_REACTION,
 			               ace_file_handler->getTableTemperature(),
 				       0.0,
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getReactionType )
 {
   initializeElasticReaction( nuclear_reaction );
 
-  TEST_EQUALITY_CONST( nuclear_reaction->getReactionType(), 
+  TEST_EQUALITY_CONST( nuclear_reaction->getReactionType(),
 		       MonteCarlo::N__N_ELASTIC_REACTION );
 }
 
@@ -108,14 +108,14 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getReactionType )
 // Check that the Q value can be returned
 TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getQValue )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getQValue(), 0.0 );		       
+  TEST_EQUALITY_CONST( nuclear_reaction->getQValue(), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getThresholdEnergy )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getThresholdEnergy(), 
+  TEST_EQUALITY_CONST( nuclear_reaction->getThresholdEnergy(),
 		       1.00000000000e-11 );
 }
 
@@ -123,37 +123,37 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getThresholdEnergy )
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getCrossSection )
 {
-  double cross_section = 
+  double cross_section =
     nuclear_reaction->getCrossSection( 1.00000000000e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.16054600000e+03 );
 
   cross_section = nuclear_reaction->getCrossSection( 1.015625e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.151689e3 );
 
   cross_section = nuclear_reaction->getCrossSection( 1.03125e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.142832e3 );
 
   cross_section = nuclear_reaction->getCrossSection( 1.0625e-11 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 1.125904e3 );
 
   cross_section = nuclear_reaction->getCrossSection( 1.09375e-11 );
 
   TEST_EQUALITY_CONST( cross_section, 1.109708e3 );
-    
+
   cross_section = nuclear_reaction->getCrossSection( 1.90e1 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 5.087783e-1 );
-  
+
   cross_section = nuclear_reaction->getCrossSection( 1.95e1 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 4.95463e-1 );
 
   cross_section = nuclear_reaction->getCrossSection( 2.0e1 );
-  
+
   TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
 }
 

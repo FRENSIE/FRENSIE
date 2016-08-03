@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstXSSElectronDataExtractor.cpp
 //! \author Luke Kersting
 //! \brief  XSS electron condensed history data extractor class unit tests.
@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSElectronDataExtractor.hpp"
-  
+
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
@@ -40,7 +40,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractAtomicNumber )
 // Check that the K edge can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractKEdge )
 {
-  double k_edge = 
+  double k_edge =
     b_xss_data_extractor->extractKEdge();
 
   TEST_EQUALITY_CONST( k_edge, 1.880000000000E-01 );
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractAugerEmissionEnergy )
 // Check that the radiation stopping power interpolation data block can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractStoppingPowersBlock )
 {
-  Teuchos::ArrayView<const double> stopping_powers_block = 
+  Teuchos::ArrayView<const double> stopping_powers_block =
     b_xss_data_extractor->extractStoppingPowersBlock();
 
   TEST_EQUALITY_CONST( stopping_powers_block.size(), 171 );
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractStoppingPowersBlock )
 // Check that the Mott scattering correction points data block can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractMottScatteringCorrectionBlock )
 {
-  Teuchos::ArrayView<const double> mott_scattering_block = 
+  Teuchos::ArrayView<const double> mott_scattering_block =
     b_xss_data_extractor->extractMottScatteringCorrectionBlock();
 
   TEST_EQUALITY_CONST( mott_scattering_block.size(), 108 );
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractMottScatteringCorrectionBloc
 // Check that the Riley scattering cross section data block can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractRileyBlock )
 {
-  Teuchos::ArrayView<const double> riley_block = 
+  Teuchos::ArrayView<const double> riley_block =
     b_xss_data_extractor->extractRileyBlock();
 
   TEST_EQUALITY_CONST( riley_block.size(), 126 );
@@ -112,7 +112,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractRileyBlock )
   TEST_EQUALITY_CONST( riley_block.back(), 6.056827290000E-03 );
 
   riley_block = pb_xss_data_extractor->extractRileyBlock();
-  
+
   TEST_EQUALITY_CONST( riley_block.size(), 126 );
   TEST_EQUALITY_CONST( riley_block.front(), 2.560000000000E+02 );
   TEST_EQUALITY_CONST( riley_block.back(), 1.698662370000E-02 );
@@ -122,14 +122,14 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractRileyBlock )
 // Check that the Bremsstrahlung interpolation data block can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractBremsstrahlungInterpolationBlock )
 {
-  Teuchos::ArrayView<const double> bremsstrahlung_Interpolation = 
+  Teuchos::ArrayView<const double> bremsstrahlung_Interpolation =
     b_xss_data_extractor->extractBremsstrahlungInterpolationBlock();
 
   TEST_EQUALITY_CONST( bremsstrahlung_Interpolation.size(), 1797 );
   TEST_EQUALITY_CONST( bremsstrahlung_Interpolation.front(), 1.000000000000E-03 );
   TEST_EQUALITY_CONST( bremsstrahlung_Interpolation.back(), 2.314500000000E-04 );
 
-  bremsstrahlung_Interpolation = 
+  bremsstrahlung_Interpolation =
     pb_xss_data_extractor->extractBremsstrahlungInterpolationBlock();
 
   TEST_EQUALITY_CONST( bremsstrahlung_Interpolation.size(), 1797 );
@@ -141,7 +141,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractBremsstrahlungInterpolationB
 // Check that the photon to electron energy ratios for spectrum can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractEnergySpectrumRatios )
 {
-  Teuchos::ArrayView<const double> rkt = 
+  Teuchos::ArrayView<const double> rkt =
     b_xss_data_extractor->extractEnergySpectrumRatios();
 
   TEST_EQUALITY_CONST( rkt.size(), 89 );
@@ -159,9 +159,9 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractEnergySpectrumRatios )
 // Check that photon to electron energy ratios for angular can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractEnergyAngularRatios )
 {
-  Teuchos::ArrayView<const double> rka = 
+  Teuchos::ArrayView<const double> rka =
     b_xss_data_extractor->extractEnergyAngularRatios();
-  
+
   TEST_EQUALITY_CONST( rka.size(), 34 );
   TEST_EQUALITY_CONST( rka.front(), 9.999000000000E-01 );
   TEST_EQUALITY_CONST( rka.back(), 1.000000000000E-06 );
@@ -177,7 +177,7 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractEnergyAngularRatios )
 // Check that the occupation number can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractOccupationNumbers )
 {
-  Teuchos::ArrayView<const double> occupation_number = 
+  Teuchos::ArrayView<const double> occupation_number =
     b_xss_data_extractor->extractOccupationNumbers();
 
   TEST_EQUALITY_CONST( occupation_number.size(), 2 );
@@ -196,9 +196,9 @@ TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractOccupationNumbers )
 // Check that the binding energy can be extracted
 TEUCHOS_UNIT_TEST( XSSElectronDataExtractor, extractBindingEnergy )
 {
-  Teuchos::ArrayView<const double> binding_energy = 
+  Teuchos::ArrayView<const double> binding_energy =
     b_xss_data_extractor->extractBindingEnergy();
-  
+
   TEST_EQUALITY_CONST( binding_energy.size(), 2 );
   TEST_EQUALITY_CONST( binding_energy.front(), 1.920000000000E+02 );
   TEST_EQUALITY_CONST( binding_energy.back(), 1.138600000000E+01 );
@@ -233,24 +233,24 @@ int main( int argc, char** argv )
 		 &b_ace_table_name,
 		 "Test B ACE table name in ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize ace file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
                                  new Data::ACEFileHandler( pb_ace_file_name,
                                                            pb_ace_table_name,
                                                            1u ) );
 
-  pb_xss_data_extractor.reset( 
+  pb_xss_data_extractor.reset(
       new Data::XSSElectronDataExtractor( ace_file_handler->getTableNXSArray(),
 				     ace_file_handler->getTableJXSArray(),
 				     ace_file_handler->getTableXSSArray() ) );
@@ -258,8 +258,8 @@ int main( int argc, char** argv )
   ace_file_handler.reset( new Data::ACEFileHandler( b_ace_file_name,
                                                     b_ace_table_name,
                                                     1u ) );
-  
-  b_xss_data_extractor.reset( 
+
+  b_xss_data_extractor.reset(
       new Data::XSSElectronDataExtractor( ace_file_handler->getTableNXSArray(),
                                           ace_file_handler->getTableJXSArray(),
                                           ace_file_handler->getTableXSSArray() ) );
@@ -279,7 +279,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

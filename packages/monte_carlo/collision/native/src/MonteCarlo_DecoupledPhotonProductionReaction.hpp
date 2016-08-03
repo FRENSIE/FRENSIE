@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_DecoupledPhotonProductionReaction.hpp
 //! \author Alex Robinson, Eli Moll
 //! \brief  The decoupled photon production reaction base class declaration
@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 //! The photon production (resulting from neutron absorption) reaction
-class DecoupledPhotonProductionReaction 
+class DecoupledPhotonProductionReaction
 {
 
 private:
@@ -32,7 +32,7 @@ private:
 public:
 
   //! Constructor
-  DecoupledPhotonProductionReaction( 
+  DecoupledPhotonProductionReaction(
    const NuclearReactionType base_reaction_type,
    const unsigned photon_production_id,
    const double temperature,
@@ -47,19 +47,19 @@ public:
 
   //! Return the base nuclear reaction type
   NuclearReactionType getBaseReactionType() const;
-			   
+
   //! Return the photon production id for the base reaction type
   unsigned getPhotonProductionId() const;
-  
+
   //! Return the photon production reaction id
   unsigned getPhotonProductionReactionId() const;
-  
+
   //! Return the temperature (in MeV) at which the reaction occurs
   double getTemperature() const;
-  
+
   //! Return the total neutron cross section
   double getTotalCrossSection( const double energy ) const;
-  
+
   //! Return the total yield
   double getTotalYield( const double energy ) const;
 
@@ -73,7 +73,7 @@ public:
   virtual double getCrossSection( const double energy ) const = 0;
 
   //! Simulate the reaction
-  virtual void react( const NeutronState& neutron, 
+  virtual void react( const NeutronState& neutron,
                       ParticleBank& bank,
                       double total_photon_production_cross_section ) const;
 
@@ -81,9 +81,9 @@ private:
 
   // The base nuclear reaction type
   NuclearReactionType d_base_reaction_type;
-  
+
   // The array of all yield distributions
-  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> > 
+  Teuchos::Array<std::shared_ptr<Utility::OneDDistribution> >
     d_total_mt_yield_array;
 
   // The photon production id
@@ -93,20 +93,20 @@ private:
   double d_temperature;
 
   // The photon production distribution (energy and angle)
-  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> > 
-  d_photon_production_distribution; 
-  
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,PhotonState> >
+  d_photon_production_distribution;
+
   // The total reaction class
   const Teuchos::RCP<NuclearReaction> d_total_neutron_reaction;
 };
 
 // Return the base nuclear reaction type
-inline NuclearReactionType 
+inline NuclearReactionType
 DecoupledPhotonProductionReaction::getBaseReactionType() const
 {
   return d_base_reaction_type;
 }
-			   
+
 // Return the photon production id for the base reaction type
 inline unsigned DecoupledPhotonProductionReaction::getPhotonProductionId() const
 {

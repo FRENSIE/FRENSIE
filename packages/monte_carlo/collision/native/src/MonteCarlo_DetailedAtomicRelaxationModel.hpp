@@ -29,16 +29,16 @@ namespace MonteCarlo{
  */
 class DetailedAtomicRelaxationModel : public AtomicRelaxationModel
 {
-  
+
 public:
 
   //! Default constructor
   DetailedAtomicRelaxationModel();
 
-  //! Constructor 
+  //! Constructor
   DetailedAtomicRelaxationModel(
 	    const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
-	    subshell_relaxtion_models ); 
+	    subshell_relaxtion_models );
 
   //! Destructor
   ~DetailedAtomicRelaxationModel()
@@ -50,7 +50,7 @@ public:
 		  ParticleBank& bank ) const;
 
 private:
-  
+
   // The map of subshells and their relaxation data
   boost::unordered_map<Data::SubshellType,
 		       Teuchos::RCP<const SubshellRelaxationModel> >

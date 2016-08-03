@@ -20,7 +20,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Data{
-// Map two column subshell data table in EADL file 
+// Map two column subshell data table in EADL file
 template< typename T >
 void ENDLFileHandler::mapTwoColumnSubshellData(
     std::vector<unsigned>& subshells,
@@ -61,7 +61,7 @@ void ENDLFileHandler::mapTwoColumnTable(
   bin_data.clear();
 
   T data_bin;
- 
+
   // Loop through the data points
   for ( int i = 0; i < column_one.size(); ++i )
   {
@@ -154,7 +154,7 @@ void ENDLFileHandler::mapThreeColumnTable(
 
   // Process the table data
   std::pair<T,std::vector<P> > indep, dep;
- 
+
   // Assign energy of first data point
   T data_bin;
   if ( convert_subshell )

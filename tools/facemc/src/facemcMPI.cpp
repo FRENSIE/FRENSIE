@@ -36,7 +36,7 @@ int main( int argc, char** argv )
 
   // Create the communicator
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm;
-  
+
   if( Teuchos::GlobalMPISession::mpiIsInitialized() )
     comm.reset( new Teuchos::MpiComm<unsigned long long>( MPI_COMM_WORLD ) );
   else

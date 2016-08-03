@@ -18,7 +18,7 @@ namespace MonteCarlo{
 template<typename InterpPolicy, bool processed_cross_section = true>
 class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>
 {
-  
+
  public:
 
   //! Basic constructor
@@ -59,7 +59,7 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
 private:
 
   // The interaction subshell
-  Data::SubshellType d_interaction_subshell;	
+  Data::SubshellType d_interaction_subshell;
 
   // The subshell binding energy
   double d_binding_energy;

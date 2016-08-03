@@ -26,19 +26,19 @@ class ParticleTrackerHDF5FileHandler
 {
 
 public:
-    
+
   typedef std::vector< std::vector< double > >
     ParticleDataTwoDArray;
-    
+
   typedef std::unordered_map< unsigned, ParticleDataTwoDArray >
     IndividualParticleSubmap;
-    
+
   typedef std::unordered_map< unsigned, IndividualParticleSubmap >
     GenerationNumberSubmap;
-        
+
   typedef std::unordered_map< unsigned, GenerationNumberSubmap >
     ParticleTypeSubmap;
-    
+
   typedef std::unordered_map< unsigned, ParticleTypeSubmap >
     OverallHistoryMap;
 
@@ -50,12 +50,12 @@ public:
   };
 
   //! Constructor (file ownership)
-  ParticleTrackerHDF5FileHandler( 
+  ParticleTrackerHDF5FileHandler(
 	  const std::string& hdf5_file_name,
 	  const ParticleTrackerHDF5FileOps file_op = OVERWRITE_PTRACK_HDF5_FILE );
 
   //! Constructor (file sharing)
-  ParticleTrackerHDF5FileHandler( 
+  ParticleTrackerHDF5FileHandler(
 		     const std::shared_ptr<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
@@ -63,15 +63,15 @@ public:
 
   //! Assign particle tracker data to HDF5 file
   void setParticleTrackerData( OverallHistoryMap particle_tracker_data_map );
-  
+
   //! Get particle tracker data from HDF5 file
   void getXPositionData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getYPositionData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getZPositionData( std::string particle_data_location,
                          std::vector< double >& data );
@@ -79,11 +79,11 @@ public:
   //! Get particle tracker data from HDF5 file
   void getXDirectionData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getYDirectionData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getZDirectionData( std::string particle_data_location,
                          std::vector< double >& data );
@@ -91,11 +91,11 @@ public:
   //! Get particle tracker data from HDF5 file
   void getEnergyData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getCollisionNumberData( std::string particle_data_location,
                          std::vector< double >& data );
-                         
+
   //! Get particle tracker data from HDF5 file
   void getWeightData( std::string particle_data_location,
                          std::vector< double >& data );

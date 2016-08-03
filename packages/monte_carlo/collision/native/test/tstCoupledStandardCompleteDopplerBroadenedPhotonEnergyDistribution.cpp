@@ -10,7 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
-  
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -36,10 +36,10 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   half_distribution;
 
-std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+std::shared_ptr<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution>
   full_distribution;
 
 //---------------------------------------------------------------------------//
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   fake_stream[1] = 6.427713151861e-01; // select pz = 0.291894102792
   fake_stream[2] = 0.25; // select energy loss
   fake_stream[3] = 0.5; // select pz = 0.0
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   half_distribution->sample( incoming_energy,
@@ -68,7 +68,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 			     shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
-  
+
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
   TEST_EQUALITY_CONST( shell_of_interaction, Data::K_SUBSHELL );
 }
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.005; // select first shell for collision
   fake_stream[1] = 0.5; // select pz = 0.0
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   full_distribution->sample( incoming_energy,
@@ -106,9 +106,9 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
   clp.setOption( "test_ace_file",
 		 &test_ace_file_name,
 		 "Test ACE file name" );
@@ -116,10 +116,10 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -128,61 +128,61 @@ int main( int argc, char** argv )
   }
 
   // Create a file handler and data extractor
-  std::shared_ptr<Data::ACEFileHandler> ace_file_handler( 
+  std::shared_ptr<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
   std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+                            new Data::XSSEPRDataExtractor(
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_des =
     xss_data_extractor->extractSubshellENDFDesignators();
 
-  Teuchos::Array<Data::SubshellType> subshell_order( 
+  Teuchos::Array<Data::SubshellType> subshell_order(
 						    subshell_endf_des.size() );
 
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum( 
+    subshell_order[i] = Data::convertENDFDesignatorToSubshellEnum(
 					      (unsigned)subshell_endf_des[i] );
   }
 
   // Create the Compton profile subshell converter
   std::shared_ptr<MonteCarlo::ComptonProfileSubshellConverter> converter;
-  
+
   MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
 				   converter,
 			           xss_data_extractor->extractAtomicNumber() );
-    
+
   // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
+  Teuchos::ArrayView<const double> lswd_block =
     xss_data_extractor->extractLSWDBlock();
 
-  Teuchos::ArrayView<const double> swd_block = 
+  Teuchos::ArrayView<const double> swd_block =
     xss_data_extractor->extractSWDBlock();
 
   MonteCarlo::DopplerBroadenedPhotonEnergyDistribution::ElectronMomentumDistArray
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
-  
+
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
   {
     unsigned shell_index = lswd_block[shell]; // ignore interp parameter
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::Array<double> half_momentum_grid( 
+    Teuchos::Array<double> half_momentum_grid(
 				  swd_block( shell_index + 1, num_mom_vals ) );
 
     Teuchos::Array<double> half_profile(
 		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
 
     Teuchos::Array<double> full_momentum_grid, full_profile;
-    
+
     MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
 						  half_momentum_grid.end(),
 						  half_profile.begin(),
@@ -195,22 +195,22 @@ int main( int argc, char** argv )
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        half_momentum_grid,
                                                        half_profile ) );
-    half_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+    half_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
-    
+
     raw_compton_profile.reset(
        new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::AtomicMomentum,Utility::Units::InverseAtomicMomentum>(
                                                        full_momentum_grid,
                                                        full_profile ) );
-    
-    full_compton_profiles[shell].reset( 
-       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>( 
+
+    full_compton_profiles[shell].reset(
+       new MonteCarlo::StandardComptonProfile<Utility::Units::AtomicMomentum>(
                                                        raw_compton_profile ) );
   }
 
   half_distribution.reset(
-     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>( 
+     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::DoubledHalfComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
@@ -218,7 +218,7 @@ int main( int argc, char** argv )
 			  half_compton_profiles ) );
 
   full_distribution.reset(
-     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>( 
+     new MonteCarlo::CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution<MonteCarlo::FullComptonProfilePolicy>(
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
@@ -231,7 +231,7 @@ int main( int argc, char** argv )
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

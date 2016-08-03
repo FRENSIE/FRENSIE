@@ -23,20 +23,20 @@
 namespace MonteCarlo{
 
 // Constructor without doppler broadening
-/*! \details The recoil electron momentum (scattering function independent 
+/*! \details The recoil electron momentum (scattering function independent
  * variable) should have units of 1/cm.
- */ 
+ */
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 				     const double kahn_sampling_cutoff_energy )
   : d_kahn_sampling_cutoff_energy( kahn_sampling_cutoff_energy )
 {
   // Make sure the cutoff energy is valid
-  testPrecondition( kahn_sampling_cutoff_energy >= 
+  testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 }
 
 // Evaluate the PDF
-double IncoherentPhotonScatteringDistribution::evaluatePDF( 
+double IncoherentPhotonScatteringDistribution::evaluatePDF(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -51,10 +51,10 @@ double IncoherentPhotonScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the Klein-Nishina distribution
-/*! The Klein-Nishina cross section (b) differential in the scattering angle 
+/*! The Klein-Nishina cross section (b) differential in the scattering angle
  * cosine is returned from this function.
  */
-double IncoherentPhotonScatteringDistribution::evaluateKleinNishinaDist( 
+double IncoherentPhotonScatteringDistribution::evaluateKleinNishinaDist(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -63,12 +63,12 @@ double IncoherentPhotonScatteringDistribution::evaluateKleinNishinaDist(
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
+
   const double mult = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius;
 
-  const double outgoing_energy = 
+  const double outgoing_energy =
     calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
   return mult*1e24*((outgoing_energy*outgoing_energy)/
@@ -88,12 +88,12 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
   testPrecondition( incoming_energy > 0.0 );
 
   // The unitless incoming energy
-  const double alpha = 
+  const double alpha =
       incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // The argument used by both sampling schemes
   const double arg = 1.0 + 2.0*alpha;
-  
+
   // The sampled inverse energy loss ratio
   double x;
 
@@ -112,17 +112,17 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
       random_number_2 =
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
-      random_number_3 = 
+      random_number_3 =
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
-      
+
       // Increment the number of trials
       ++trials;
-      
+
       // Take the first branch
       if( random_number_1 <= branching_ratio )
       {
 	x = 1.0 + 2.0*random_number_2*alpha;
-	
+
 	if( random_number_3 <= 4.0*(1.0/x - 1.0/(x*x)) )
 	  break;
       }
@@ -130,9 +130,9 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
       else
       {
 	x = (arg)/(1.0 + 2.0*random_number_2*alpha);
-	
+
 	double branch_arg = (1.0 - x)/alpha + 1.0;
-	
+
 	if( 2*random_number_3 <= branch_arg*branch_arg + 1.0/x )
 	  break;
       }
@@ -156,13 +156,13 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
     p2 /= norm;
     p3 /= norm;
     p4 /= norm;
-    
+
     // Sample from the individual pdfs
-    double random_number_1 = 
+    double random_number_1 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    double random_number_2 = 
+    double random_number_2 =
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
+
     if( random_number_1 <= p1 )
       x = 1.0 + 2.0*alpha*random_number_2;
     else if( random_number_1 <= p1+p2 )
@@ -175,10 +175,10 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
 
   // Calculate the outgoing energy
   outgoing_energy = incoming_energy/x;
-  
+
   // Calculate the outgoing scattering angle cosine
   scattering_angle_cosine = 1.0 - (x - 1.0)/alpha;
-  
+
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
@@ -195,7 +195,7 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
 }
 
 // Create ejected electron
-void IncoherentPhotonScatteringDistribution::createEjectedElectron( 
+void IncoherentPhotonScatteringDistribution::createEjectedElectron(
 					  const PhotonState& photon,
 				          const double scattering_angle_cosine,
 					  const double azimuthal_angle,
@@ -209,15 +209,15 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
   // Make sure the azimuthal angle is valid
   testPrecondition( azimuthal_angle >= 0.0 );
   testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
-  
+
   // Calculate the compton line energy
-  const double compton_line_energy = 
-    calculateComptonLineEnergy( photon.getEnergy(), 
+  const double compton_line_energy =
+    calculateComptonLineEnergy( photon.getEnergy(),
 				scattering_angle_cosine );
-    
+
   double electron_energy = photon.getEnergy() - compton_line_energy;
 
-  double electron_scattering_angle_cosine = 
+  double electron_scattering_angle_cosine =
     (photon.getEnergy() - compton_line_energy*scattering_angle_cosine)/
     sqrt(electron_energy*electron_energy + 2*electron_energy*
 	 Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -226,20 +226,20 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
   // cosine to be outside [-1,1]. When this occurs, manually set to -1 or 1.
   if( fabs( electron_scattering_angle_cosine ) > 1.0 )
   {
-    electron_scattering_angle_cosine = 
+    electron_scattering_angle_cosine =
       copysign( 1.0, electron_scattering_angle_cosine );
   }
-  
+
   // Create the new electron
   if( electron_energy > 0.0 )
   {
-    Teuchos::RCP<ParticleState> electron( 
+    Teuchos::RCP<ParticleState> electron(
 				     new ElectronState( photon, true, true ) );
 
     electron->setEnergy( electron_energy );
-    
+
     double electron_azimuthal_angle = azimuthal_angle;
-    
+
     if( azimuthal_angle <= Utility::PhysicalConstants::pi )
       electron_azimuthal_angle += Utility::PhysicalConstants::pi;
     else

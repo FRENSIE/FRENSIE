@@ -34,7 +34,7 @@ void dummyPreconditionFailTestFunction()
 double dummyPostconditionPassTestFunction( const double )
 {
   testPostcondition( true );
-  
+
   return 1.0;
 }
 
@@ -62,7 +62,7 @@ double dummyInvariantFailTestFunction( const double, const double )
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that a Utility::ContractException looks different than a 
+// Check that a Utility::ContractException looks different than a
 // std::runtime_error as it inherits from std::logic_error.
 TEUCHOS_UNIT_TEST( ContractException, differentiation_test )
 {
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( ContractException, message_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that we can throw a Utility::ContractException with 
+// Check that we can throw a Utility::ContractException with
 // TEUCHOS_TEST_FOR_EXCEPTION
 TEUCHOS_UNIT_TEST( ContractException, teuchos_throw_test )
 {
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( ContractException, invariant_test )
 TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
 {
   double dummy;
-  
+
   // Check that nothing happens when nested function conditions pass
   try{
     testNestedConditions( dummyPreconditionPassTestFunction() );
@@ -237,7 +237,7 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
   {
     TEST_ASSERT( 0 );
   }
-  
+
   // Check that nested function conditions can be caught
   try{
     testNestedConditions( dummyPreconditionFailTestFunction() );
@@ -262,7 +262,7 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
     TEST_ASSERT( 0 );
 #endif
   }
-  
+
   try{
     testNestedConditions( dummy = dummyPostconditionFailTestFunction( 1.0 ) );
   }
@@ -317,11 +317,11 @@ TEUCHOS_UNIT_TEST( ContractException, nested_function_conditions_test )
 TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
 {
   double dummy;
-  
+
   // Check that nothing happens when nested function conditions pass
   try{
     testNestedConditionsBegin(1);
-    
+
     dummyPreconditionPassTestFunction();
     dummy = dummyPostconditionPassTestFunction( 1.0 );
     dummy = dummyInvariantPassTestFunction( 1.0, 1.0 );
@@ -332,13 +332,13 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
   {
     TEST_ASSERT( 0 );
   }
-  
+
   // Check that nested function conditions can be caught
   try{
     testNestedConditionsBegin(1);
-    
+
     dummyPreconditionFailTestFunction();
-    
+
     testNestedConditionsEnd(1);
   }
   catch( const Utility::ContractException& exception )
@@ -361,10 +361,10 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
     TEST_ASSERT( 0 );
 #endif
   }
-  
+
   try{
     testNestedConditionsBegin(2);
-    
+
     dummy = dummyPostconditionFailTestFunction( 1.0 );
 
     testNestedConditionsEnd(2);
@@ -394,7 +394,7 @@ TEUCHOS_UNIT_TEST( ContractException, nested_block_conditions_test )
     testNestedConditionsBegin(1);
 
     testNestedConditionsBegin(2);
-    
+
     dummy = dummyInvariantFailTestFunction( 1.0, 1.0 );
 
     testNestedConditionsEnd(2);

@@ -31,10 +31,10 @@ std::string test_resp_func_xml_file_name;
 // Check that the response function id map can be constructed
 TEUCHOS_UNIT_TEST( ResponseFunctionFactory, createResponseFunctions )
 {
-  Teuchos::RCP<Teuchos::ParameterList> response_reps = 
+  Teuchos::RCP<Teuchos::ParameterList> response_reps =
     Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
 
-  boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> > 
+  boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
     response_id_map;
 
   MonteCarlo::ResponseFunctionFactory::createResponseFunctions( *response_reps,
@@ -59,10 +59,10 @@ int main( int argc, char** argv )
 		 &test_resp_func_xml_file_name,
 		 "Test response function xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -71,7 +71,7 @@ int main( int argc, char** argv )
   }
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

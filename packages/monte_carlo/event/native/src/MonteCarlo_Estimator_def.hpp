@@ -16,15 +16,15 @@ namespace MonteCarlo{
 
 // Set the bin boundaries for a dimension of the sphase space
 template<PhaseSpaceDimension dimension, typename DimensionType>
-void Estimator::setBinBoundaries( 
+void Estimator::setBinBoundaries(
 			  const Teuchos::Array<DimensionType>& bin_boundaries )
 {
   // Make sure the DimensionType matches the type associated with the dimension
   testStaticPrecondition((boost::is_same<typename PhaseSpaceDimensionTraits<dimension>::dimensionType,DimensionType>::value));
-  
+
   std::shared_ptr<EstimatorDimensionDiscretization> dimension_bin_boundaries(
     new GeneralEstimatorDimensionDiscretization<dimension>( bin_boundaries ) );
-  
+
   assignBinBoundaries( dimension_bin_boundaries );
 }
 

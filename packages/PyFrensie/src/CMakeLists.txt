@@ -9,7 +9,7 @@ LIST(APPEND HEADERS ${CMAKE_CURRENT_BINARY_DIR}/${SWIG_RUNTIME})
 SET(HEADERS "")
 SET(SOURCES "")
 
-LIST(APPEND HEADERS 
+LIST(APPEND HEADERS
   PyFrensie_NumPyTypeTraitsDecl.hpp
   PyFrensie_NumPyTypeTraits.hpp
   PyFrensie_ArrayConversionHelpers.hpp
@@ -75,7 +75,7 @@ ADD_SUBDIRECTORY(PyFrensie)
 
 # Loop over the PyFrensie modules and parse the corresponding swig .i files
 FOREACH(MODULE ${PyFrensie_MODULES})
-  
+
   # Set the module interface file properties
   SET_SOURCE_FILES_PROPERTIES(${MODULE}.i PROPERTIES CPLUSPLUS ON)
 
@@ -104,11 +104,11 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Utility/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Utility)
-    
+
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Data")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${DATA_PACKAGE_LINK_LIBRARIES})
 
@@ -121,11 +121,11 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Data/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Data)
-  
+
   ELSEIF("${MODULE_OUTDIR}" MATCHES "PyFrensie/Geometry")
     SWIG_LINK_LIBRARIES(${PyFrensie_TARGET_NAME} ${GEOMETRY_PACKAGE_LINK_LIBRARIES})
 
@@ -138,7 +138,7 @@ FOREACH(MODULE ${PyFrensie_MODULES})
     # Install the generated files
     INSTALL(TARGETS ${PyFrensie_TARGET_NAME}
       DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)
-    INSTALL(FILES 
+    INSTALL(FILES
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.py
       ${CMAKE_CURRENT_BINARY_DIR}/PyFrensie/Geometry/${MODULE_NAME}.pyc
       DESTINATION ${PyFrensie_INSTALL_DIR}/Geometry)

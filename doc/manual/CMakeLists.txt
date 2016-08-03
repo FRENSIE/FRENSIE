@@ -7,7 +7,7 @@ FIND_PACKAGE(Doxygen 1.8.0 REQUIRED)
 
 # Set up the doxygen depends
 FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox ${CMAKE_SOURCE_DIR}/tools/*.cpp ${CMAKE_SOURCE_DIR}/tools/*.dox *.dox *.in *.bib DoxygenLayout.xml ${CMAKE_SOURCE_DIR}/README.md ${CMAKE_SOURCE_DIR}/LICENSE.md)
-  
+
 # Configure the Doxygen file
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
@@ -25,7 +25,7 @@ ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/html
   COMMENT "Generating FRENSIE manual with Doxygen" VERBATIM)
 
 # Add a custom build target
-ADD_CUSTOM_TARGET(manual 
+ADD_CUSTOM_TARGET(manual
   DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html)
 
 # Install the manuals

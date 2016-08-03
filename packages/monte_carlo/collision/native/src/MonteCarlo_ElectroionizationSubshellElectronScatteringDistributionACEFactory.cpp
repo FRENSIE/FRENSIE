@@ -24,10 +24,10 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
         const unsigned number_of_tables,
         const double binding_energy,
 	const Teuchos::ArrayView<const double>& raw_electroionization_data,
-	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+	std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution )
 {
-  // Subshell distribution 
+  // Subshell distribution
   ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
                                       subshell_distribution( number_of_tables );
 
@@ -37,11 +37,11 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
                               number_of_tables,
 	                      raw_electroionization_data,
 	                      subshell_distribution );
- 
-  electroionization_subshell_distribution.reset( 
-    new ElectroionizationSubshellElectronScatteringDistribution( 
-                                                          subshell_distribution, 
-                                                          binding_energy ) );
+
+  electroionization_subshell_distribution.reset(
+    new ElectroionizationSubshellElectronScatteringDistribution(
+        subshell_distribution,
+        binding_energy ) );
 }
 
 // Create the scattering function
@@ -54,28 +54,28 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSu
 	 subshell_distribution )
 {
   // Extract the energies for which knock-on sampling tables are given
-  Teuchos::Array<double> table_energy_grid( raw_electroionization_data( 
+  Teuchos::Array<double> table_energy_grid( raw_electroionization_data(
                                             table_info_location,
                                             number_of_tables ) );
- 
+
   // Extract the length of the knock-on sampling tables
-  Teuchos::Array<double> table_length( raw_electroionization_data( 
+  Teuchos::Array<double> table_length( raw_electroionization_data(
                                        table_info_location + number_of_tables,
                                        number_of_tables ) );
 
   // Extract the offset of the knock-on sampling tables
-  Teuchos::Array<double> table_offset( raw_electroionization_data( 
+  Teuchos::Array<double> table_offset( raw_electroionization_data(
                                        table_info_location + 2*number_of_tables,
                                        number_of_tables ) );
-  
+
   for( unsigned n = 0; n < number_of_tables; ++n )
   {
     subshell_distribution[n].first = table_energy_grid[n];
 
-    subshell_distribution[n].second.reset( 
+    subshell_distribution[n].second.reset(
       new Utility::HistogramDistribution(
         raw_electroionization_data( table_location + table_offset[n], table_length[n] ),
-        raw_electroionization_data( table_location + table_offset[n] + table_length[n] + 1, 
+        raw_electroionization_data( table_location + table_offset[n] + table_length[n] + 1,
                                     table_length[n] - 1 ),
         true ) );
   }

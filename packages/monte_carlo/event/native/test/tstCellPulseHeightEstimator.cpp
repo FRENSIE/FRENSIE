@@ -47,11 +47,11 @@ void setEstimatorBins( Teuchos::RCP<MonteCarlo::Estimator>& estimator )
 
 // Initialize the estimator
 template<typename PulseHeightEstimator>
-void initializePulseHeightEstimator( 
+void initializePulseHeightEstimator(
 				Teuchos::RCP<PulseHeightEstimator>& estimator )
-{  
+{
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
     entity_ids( 2 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
@@ -59,13 +59,13 @@ void initializePulseHeightEstimator(
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
-  estimator.reset( new PulseHeightEstimator( 0ull, 
+  estimator.reset( new PulseHeightEstimator( 0ull,
 					     estimator_multiplier,
 					     entity_ids ) );
-					     
-  Teuchos::RCP<MonteCarlo::Estimator> estimator_base = 
+
+  Teuchos::RCP<MonteCarlo::Estimator> estimator_base =
     Teuchos::rcp_dynamic_cast<MonteCarlo::Estimator>( estimator );
-  
+
   // Set the estimator bins (and response functions)
   setEstimatorBins( estimator_base );
 }
@@ -78,7 +78,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   getNumberOfBins,
 				   ContributionMultiplierPolicy )
 {
-  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy>
     CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   double_bins[1] = 1.0;
 
   estimator->template setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( double_bins);
-  
+
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2u );
 
   estimator->template setBinBoundaries<MonteCarlo::TIME_DIMENSION>( double_bins );
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   Teuchos::Array<unsigned> unsigned_bins( 1 );
   unsigned_bins[0] = 0u;
 
-  estimator->template setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+  estimator->template setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 							       unsigned_bins );
 
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2u );
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   setParticleTypes,
 				   ContributionMultiplierPolicy )
 {
-  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy>
     CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   particle_types[1] = MonteCarlo::NEUTRON;
   particle_types[2] = MonteCarlo::ADJOINT_PHOTON;
   particle_types[3] = MonteCarlo::ADJOINT_NEUTRON;
-  
+
   estimator->setParticleTypes( particle_types );
 
   TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::PHOTON ) );
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   exportData_raw,
 				   ContributionMultiplierPolicy )
 {
-  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy>
     CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
@@ -155,7 +155,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hfd5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator.h5" );
 
@@ -221,9 +221,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   // Check that the entity norm constants have been set
   double entity_norm_constant;
   hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
-  
+
   TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
-  
+
   hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
 
   TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
@@ -261,23 +261,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 						     1u,
 						     processed_bin_data_copy ),
 	      std::runtime_error );
-  
+
   // Check that the raw total bin data has been set
   Teuchos::Array<Utility::Pair<double,double> >
     raw_total_bin_data( 2, Utility::Pair<double,double>( 0.0, 0.0 ) ),
     raw_total_bin_data_copy;
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 
   // Check that the processed total bin data has no been set
   Teuchos::Array<Utility::Pair<double,double> >
     processed_total_bin_data;
 
-  TEST_THROW( hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  TEST_THROW( hdf5_file_handler.getProcessedEstimatorTotalBinData(
 						0u, processed_total_bin_data ),
-	      std::runtime_error );    
+	      std::runtime_error );
 }
 
 UNIT_TEST_INSTANTIATION( CellPulseHeightEstimator, exportData_raw );
@@ -288,7 +288,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   exportData_process,
 				   ContributionMultiplierPolicy )
 {
-  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+  typedef MonteCarlo::CellPulseHeightEstimator<ContributionMultiplierPolicy>
     CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   estimator->setParticleTypes( particle_types );
 
   // Initialize the hfd5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator.h5" );
 
@@ -370,9 +370,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   // Check that the entity norm constants have been set
   double entity_norm_constant;
   hdf5_file_handler.getEntityNormConstant( 0u, 0u, entity_norm_constant );
-  
+
   TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
-  
+
   hdf5_file_handler.getEntityNormConstant( 0u, 1u, entity_norm_constant );
 
   TEST_EQUALITY_CONST( entity_norm_constant, 1.0 );
@@ -405,23 +405,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 						     0u,
 						     0u,
 						     processed_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						     0u,
 						     1u,
 						     processed_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( processed_bin_data, processed_bin_data_copy );
-  
+
   // Check that the raw total bin data has been set
   Teuchos::Array<Utility::Pair<double,double> >
     raw_total_bin_data( 2, Utility::Pair<double,double>( 0.0, 0.0 ) ),
     raw_total_bin_data_copy;
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data_copy );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( raw_total_bin_data, raw_total_bin_data_copy );
 
   // Check that the processed total bin data has no been set
@@ -429,10 +429,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
     processed_total_bin_data( 2, Utility::Pair<double,double>( 0.0, 0.0 ) ),
     processed_total_bin_data_copy;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 					   0u, processed_total_bin_data_copy );
-  
-  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data, 
+
+  UTILITY_TEST_COMPARE_ARRAYS( processed_total_bin_data,
 			       processed_total_bin_data_copy );
 }
 
@@ -445,17 +445,17 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base, estimator_2_base;
   Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
-  
+
   {
     // Set the entity ids
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
       entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;
-    
-    estimator_1.reset( 
+
+    estimator_1.reset(
         new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier>(
-					                        0ull, 
+					                        0ull,
 								10.0,
 							        entity_ids ) );
 
@@ -463,18 +463,18 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 
     estimator_2.reset(
 	 new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
-								1ull, 
+								1ull,
 								10.0,
 							        entity_ids ) );
     estimator_2_base = estimator_2;
-    
+
     // Set the energy bins
     Teuchos::Array<double> energy_bin_boundaries( 3 );
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 1e-1;
     energy_bin_boundaries[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
@@ -485,7 +485,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
     estimator_1->setParticleTypes( particle_types );
     estimator_2->setParticleTypes( particle_types );
   }
-  
+
   MonteCarlo::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
@@ -503,21 +503,21 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 
   estimator_1->updateFromParticleLeavingCellEvent( particle, 0 );
   estimator_2->updateFromParticleLeavingCellEvent( particle, 0 );
-  
+
   estimator_1->updateFromParticleEnteringCellEvent( particle, 1 );
   estimator_2->updateFromParticleEnteringCellEvent( particle, 1 );
-  
+
   TEST_ASSERT( estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2_base->hasUncommittedHistoryContribution() );
-  
+
   particle.setEnergy( 0.45 );
-  
+
   estimator_1->updateFromParticleLeavingCellEvent( particle, 1 );
   estimator_2->updateFromParticleLeavingCellEvent( particle, 1 );
 
   TEST_ASSERT( estimator_1_base->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2_base->hasUncommittedHistoryContribution() );
-  
+
   estimator_1_base->commitHistoryContribution();
   estimator_2_base->commitHistoryContribution();
 
@@ -528,7 +528,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator2.h5");
 
@@ -544,83 +544,83 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 1.0, 1.0 )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data );
-  
+
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( 1.0, 1.0 )) );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 1u, 0u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 0.5, 0.25 )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 1u, 1u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_FLOATING_EQUALITY( raw_bin_data[0],
 				  (Utility::Pair<double,double>(0.05,0.0025)),
 				  1e-15 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
   // Retrieve the processed bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data;
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 
+  hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  0u, 0u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
 
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  0u, 1u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  1u, 0u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 5.0, 0.0 )) );
 
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  1u, 1u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0],
 				  (Utility::Pair<double,double>( 0.5, 0.0 )),
 				  1e-15 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
-  // Retrieve the raw total bin data 
+  // Retrieve the raw total bin data
   Teuchos::Array<Utility::Pair<double,double> > raw_total_bin_data;
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data );
 
   TEST_EQUALITY_CONST( raw_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_EQUALITY( raw_total_bin_data[1],
 			 (Utility::Pair<double,double>( 1.0, 1.0 )) );
@@ -628,7 +628,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data );
 
   TEST_EQUALITY_CONST( raw_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_FLOATING_EQUALITY( raw_total_bin_data[1],
 				  (Utility::Pair<double,double>(0.55,0.3025)),
@@ -637,20 +637,20 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
   // Retrieve the processed total bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_total_bin_data;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 						0u, processed_total_bin_data );
-  
+
   TEST_EQUALITY_CONST( processed_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_EQUALITY( processed_total_bin_data[1],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 						1u, processed_total_bin_data );
 
   TEST_EQUALITY_CONST( processed_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_FLOATING_EQUALITY( processed_total_bin_data[1],
 				  (Utility::Pair<double,double>( 5.5, 0.0 )),
@@ -659,23 +659,23 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
-TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, 
+TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
 		   updateFromParticleEvent_thread_safe )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base, estimator_2_base;
   Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
-  
+
   {
     // Set the entity ids
-    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> 
+    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>
       entity_ids( 2 );
     entity_ids[0] = 0;
     entity_ids[1] = 1;
-    
-    estimator_1.reset( 
+
+    estimator_1.reset(
         new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier>(
-					                        0ull, 
+					                        0ull,
 								10.0,
 							        entity_ids ) );
 
@@ -683,18 +683,18 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
 
     estimator_2.reset(
 	 new MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier>(
-								1ull, 
+								1ull,
 								10.0,
 							        entity_ids ) );
     estimator_2_base = estimator_2;
-    
+
     // Set the energy bins
     Teuchos::Array<double> energy_bin_boundaries( 3 );
     energy_bin_boundaries[0] = 0.0;
     energy_bin_boundaries[1] = 1e-1;
     energy_bin_boundaries[2] = 1.0;
 
-    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( 
+    estimator_1_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
     estimator_2_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
 						       energy_bin_boundaries );
@@ -705,47 +705,47 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
     estimator_1->setParticleTypes( particle_types );
     estimator_2->setParticleTypes( particle_types );
 
-    estimator_1->enableThreadSupport( 
+    estimator_1->enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-    estimator_2->enableThreadSupport( 
+    estimator_2->enableThreadSupport(
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   }
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
-  
+
   #pragma omp parallel num_threads( threads )
   {
-    MonteCarlo::PhotonState particle( 
+    MonteCarlo::PhotonState particle(
 				 Utility::GlobalOpenMPSession::getThreadId() );
     particle.setWeight( 1.0 );
     particle.setEnergy( 1.0 );
-    
+
     estimator_1->updateFromParticleEnteringCellEvent( particle, 0 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 0 );
-    
+
     particle.setEnergy( 0.5 );
-    
+
     estimator_1->updateFromParticleLeavingCellEvent( particle, 0 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 0 );
-    
+
     estimator_1->updateFromParticleEnteringCellEvent( particle, 1 );
     estimator_2->updateFromParticleEnteringCellEvent( particle, 1 );
-    
+
     particle.setEnergy( 0.45 );
-    
+
     estimator_1->updateFromParticleLeavingCellEvent( particle, 1 );
     estimator_2->updateFromParticleLeavingCellEvent( particle, 1 );
-    
+
     estimator_1_base->commitHistoryContribution();
     estimator_2_base->commitHistoryContribution();
   }
-  
+
   MonteCarlo::ParticleHistoryObserver::setNumberOfHistories( threads );
   MonteCarlo::ParticleHistoryObserver::setEndTime( 1.0 );
 
   // Initialize the HDF5 file
-  std::shared_ptr<Utility::HDF5FileHandler> 
+  std::shared_ptr<Utility::HDF5FileHandler>
     hdf5_file( new Utility::HDF5FileHandler );
   hdf5_file->openHDF5FileAndOverwrite( "test_cell_pulse_height_estimator2.h5");
 
@@ -761,85 +761,85 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 0u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( threads, threads )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 0u, 1u, raw_bin_data );
-  
+
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( threads, threads )) );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 1u, 0u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_EQUALITY(
-		 raw_bin_data[1], 
+		 raw_bin_data[1],
 		 (Utility::Pair<double,double>( 0.5*threads, 0.25*threads )) );
 
   hdf5_file_handler.getRawEstimatorEntityBinData( 1u, 1u, raw_bin_data );
 
   TEST_EQUALITY_CONST( raw_bin_data.size(), 2 );
-  UTILITY_TEST_FLOATING_EQUALITY( 
-		 raw_bin_data[0], 
+  UTILITY_TEST_FLOATING_EQUALITY(
+		 raw_bin_data[0],
 		 (Utility::Pair<double,double>( 0.05*threads, 0.0025*threads)),
 		 1e-15 );
-  UTILITY_TEST_EQUALITY( raw_bin_data[1], 
+  UTILITY_TEST_EQUALITY( raw_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
   // Retrieve the processed bin data for each entity
   Teuchos::Array<Utility::Pair<double,double> > processed_bin_data;
 
-  hdf5_file_handler.getProcessedEstimatorEntityBinData( 
+  hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  0u, 0u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
 
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  0u, 1u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  
+
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  1u, 0u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 5.0, 0.0 )) );
 
   hdf5_file_handler.getProcessedEstimatorEntityBinData(
 						  1u, 1u, processed_bin_data );
 
   TEST_EQUALITY_CONST( processed_bin_data.size(), 2 );
-  UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0], 
+  UTILITY_TEST_FLOATING_EQUALITY( processed_bin_data[0],
 				  (Utility::Pair<double,double>( 0.5, 0.0 )),
 				  1e-15 );
-  UTILITY_TEST_EQUALITY( processed_bin_data[1], 
+  UTILITY_TEST_EQUALITY( processed_bin_data[1],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
 
-  // Retrieve the raw total bin data 
+  // Retrieve the raw total bin data
   Teuchos::Array<Utility::Pair<double,double> > raw_total_bin_data;
 
   hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_total_bin_data );
 
   TEST_EQUALITY_CONST( raw_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_EQUALITY( raw_total_bin_data[1],
 			 (Utility::Pair<double,double>( threads, threads )) );
@@ -847,9 +847,9 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
   hdf5_file_handler.getRawEstimatorTotalBinData( 1u, raw_total_bin_data );
 
   TEST_EQUALITY_CONST( raw_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( raw_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( raw_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
-  UTILITY_TEST_FLOATING_EQUALITY( 
+  UTILITY_TEST_FLOATING_EQUALITY(
 		   raw_total_bin_data[1],
 		   (Utility::Pair<double,double>(0.55*threads,0.3025*threads)),
 		   1e-15 );
@@ -857,20 +857,20 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator,
   // Retrieve the processed total bin data
   Teuchos::Array<Utility::Pair<double,double> > processed_total_bin_data;
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 						0u, processed_total_bin_data );
-  
+
   TEST_EQUALITY_CONST( processed_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_EQUALITY( processed_total_bin_data[1],
 			 (Utility::Pair<double,double>( 10.0, 0.0 )) );
 
-  hdf5_file_handler.getProcessedEstimatorTotalBinData( 
+  hdf5_file_handler.getProcessedEstimatorTotalBinData(
 						1u, processed_total_bin_data );
 
   TEST_EQUALITY_CONST( processed_total_bin_data.size(), 2 );
-  UTILITY_TEST_EQUALITY( processed_total_bin_data[0], 
+  UTILITY_TEST_EQUALITY( processed_total_bin_data[0],
 			 (Utility::Pair<double,double>( 0.0, 0.0 )) );
   UTILITY_TEST_FLOATING_EQUALITY( processed_total_bin_data[1],
 				  (Utility::Pair<double,double>( 5.5, 0.0 )),
@@ -890,10 +890,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {

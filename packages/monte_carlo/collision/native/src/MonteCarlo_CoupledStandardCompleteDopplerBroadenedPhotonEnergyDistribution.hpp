@@ -24,7 +24,7 @@ class CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution : public S
 {
 
 public:
-  
+
   //! Constructor
   CoupledStandardCompleteDopplerBroadenedPhotonEnergyDistribution(
      const Teuchos::Array<double>& subshell_binding_energies,
@@ -43,7 +43,7 @@ protected:
 
   //! Return the binding energy of a subshell
   double getSubshellBindingEnergy( const Data::SubshellType subshell ) const;
-  
+
   //! Sample an interaction subshell
   void sampleInteractionSubshell( unsigned& old_subshell_index,
                                   double& subshell_binding_energy,

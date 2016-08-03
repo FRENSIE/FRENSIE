@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getIncoherentScatteringVacancySh
   shell_data_ref.first = 3;
   shell_data_ref.second = 1;
   shell_data_ref.third = BINDING_ENERGY_REF;
-  
+
   FRENSIE_TEST_EQUALITY( shell_data, shell_data_ref );
 }
 
@@ -104,17 +104,17 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileCDF )
   double cdf_value =
     test_photon_data_db.getComptonProfileCDF( COMPTON_PROFILE_INDEX_1,
 					      MOMENTUM );
-  
-  TEST_FLOATING_EQUALITY( cdf_value, 
-			  CDF_VALUE_REF_1, 
+
+  TEST_FLOATING_EQUALITY( cdf_value,
+			  CDF_VALUE_REF_1,
 			  TOL );
 
-  cdf_value = 
+  cdf_value =
     test_photon_data_db.getComptonProfileCDF( COMPTON_PROFILE_INDEX_2,
 					      MOMENTUM );
-  
-  TEST_FLOATING_EQUALITY( cdf_value, 
-			  CDF_VALUE_REF_2, 
+
+  TEST_FLOATING_EQUALITY( cdf_value,
+			  CDF_VALUE_REF_2,
 			  TOL );
 }
 
@@ -130,32 +130,32 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileMomentum )
   double momentum =
     test_photon_data_db.getComptonProfileMomentum( COMPTON_PROFILE_INDEX_1,
 						   CDF_VALUE );
-  
-  TEST_FLOATING_EQUALITY( momentum, 
-			  MOMENTUM_REF_1, 
+
+  TEST_FLOATING_EQUALITY( momentum,
+			  MOMENTUM_REF_1,
 			  TOL );
 
-  momentum = 
+  momentum =
     test_photon_data_db.getComptonProfileMomentum( COMPTON_PROFILE_INDEX_2,
 						   CDF_VALUE );
-  
-  TEST_FLOATING_EQUALITY( momentum, 
-			  MOMENTUM_REF_2, 
+
+  TEST_FLOATING_EQUALITY( momentum,
+			  MOMENTUM_REF_2,
 			  TOL );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the PhotonDataDopplerBroadening class returns the correct 
+// Check that the PhotonDataDopplerBroadening class returns the correct
 // kinetic energy
 TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getShellKineticEnergy )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,
 							  ENERGY_MAX );
-  
-  double kinetic_energy = 
+
+  double kinetic_energy =
     test_photon_data_db.getShellKineticEnergy( SHELL_1 );
-  
+
   TEST_FLOATING_EQUALITY( kinetic_energy,
 			  KINETIC_ENERGY_REF,
 			  TOL );

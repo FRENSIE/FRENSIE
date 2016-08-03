@@ -30,7 +30,7 @@ estimator_1;
 std::shared_ptr<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-std::shared_ptr<MonteCarlo::ParticleEnteringCellEventLocalDispatcher> 
+std::shared_ptr<MonteCarlo::ParticleEnteringCellEventLocalDispatcher>
 dispatcher( new MonteCarlo::ParticleEnteringCellEventLocalDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -57,7 +57,7 @@ void initializeCellPulseHeightEstimator(
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, getCellId )
 
 //---------------------------------------------------------------------------//
 // Check that the number of observers attached to the disp. can be returned
-TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher,
 		   getNumberOfObservers )
 {
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
@@ -86,15 +86,15 @@ TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, attachObserver )
   initializeCellPulseHeightEstimator( 1u, estimator_2 );
 
   std::shared_ptr<MonteCarlo::ParticleEnteringCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleEnteringCellEventObserver>( 
+    std::dynamic_pointer_cast<MonteCarlo::ParticleEnteringCellEventObserver>(
 								 estimator_1 );
   std::shared_ptr<MonteCarlo::ParticleEnteringCellEventObserver> observer_2 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleEnteringCellEventObserver>(
 								 estimator_2 );
-  
+
   dispatcher->attachObserver( estimator_1->getId(), observer_1 );
   dispatcher->attachObserver( estimator_2->getId(), observer_2 );
-  
+
   observer_1.reset();
   observer_2.reset();
 
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, attachObserver )
 
 //---------------------------------------------------------------------------//
 // Check that a collision event can be dispatched
-TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher,
 		   dispatchParticleEnteringCellEvent )
 {
   MonteCarlo::PhotonState particle( 0ull );
@@ -135,14 +135,14 @@ TEUCHOS_UNIT_TEST( ParticleEnteringCellEventDispatcher, detachObserver )
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

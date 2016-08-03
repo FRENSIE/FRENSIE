@@ -9,23 +9,19 @@
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <limits>
-
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_TabularOneDDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace MonteCarlo{
 
 /*! The scattering distribution base class
- *  \details currently the binding energy is not taken into account when 
+ *  \details currently the binding energy is not taken into account when
  *  calculating the outgoing energy and direction of the original electron
  */
 class ElectroionizationSubshellElectronScatteringDistribution : public ElectronScatteringDistribution
@@ -34,29 +30,38 @@ class ElectroionizationSubshellElectronScatteringDistribution : public ElectronS
 public:
 
   //! Typedef for the  electroionization subshell distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-  ElectroionizationSubshellDistribution;
+  typedef MonteCarlo::TwoDDistribution ElectroionizationSubshellDistribution;
 
-  //! Constructor 
+  //! Constructor
   ElectroionizationSubshellElectronScatteringDistribution(
-    const ElectroionizationSubshellDistribution& 
+    const ElectroionizationSubshellDistribution&
       electroionization_subshell_scattering_distribution,
     const double& binding_energy );
 
-  //! Destructor 
+  //! Destructor
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
+
+  //! Return the binding energy
+  double getBindingEnergy() const;
+
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
+
+  //! Return the max incoming electron energy for a given knock-on electron energy
+  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
                    const double scattering_angle ) const
   { /* ... */ }
 
-  //! Evaluate the PDF
+  //! Evaluate the PDF value for a given incoming and knock-on energy
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle ) const
-  { /* ... */ }
+                      const double knock_on_energy ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const double incoming_energy,
@@ -65,16 +70,21 @@ public:
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
+               double& knock_on_energy,
+               double& knock_on_angle_cosine  ) const;
+
+  // Sample the distribution
+  void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const
-  { /* ... */ }
+               double& knock_on_energy,
+               double& scattering_angle_cosine,
+               double& knock_on_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
-                              double& outgoing_energy,
-                              double& scattering_angle_cosine,
-                              unsigned& trials ) const
-  { /* ... */ }
+                              double& knock_on_energy,
+                              double& knock_on_angle_cosine,
+                              unsigned& trials ) const;
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
@@ -84,27 +94,15 @@ public:
 private:
 
   // electroionization subshell scattering cross sections
-  ElectroionizationSubshellDistribution 
+  ElectroionizationSubshellDistribution
      d_electroionization_subshell_scattering_distribution;
 
   // Subshell binding energy
   double d_binding_energy;
 
   // Calculate the outgoing angle cosine
-  double outgoingAngle( double& normalized_incoming_energy,
-                        double& energy_ratio ) const;
-
-/*
-  // Calculate the outgoing angle cosine of the original electron
-  double polarDeflectionAngle( double& incoming_momentum_squared,
-                               double& outgoing_momentum_squared,
-                               double& knock_on_energy ) const;
-
-  // Calculate the outgoing angle cosine of the knock-on electron
-  double knockOnDeflectionAngle( double& incoming_momentum_squared,
-                                 double& outgoing_momentum_squared,
-                                 double& outgoing_cosine ) const;
-*/
+  double outgoingAngle( const double incoming_energy,
+                        const double outgoing_energy ) const;
 
 };
 

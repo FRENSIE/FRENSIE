@@ -35,7 +35,7 @@ public:
   size_t getNumberOfCells() const;
 
   //! Check if the cell exists
-  virtual bool doesCellExist( 
+  virtual bool doesCellExist(
                     const ModuleTraits::InternalCellHandle cell_id ) const = 0;
 
   //! Check if the cell handle exists
@@ -43,7 +43,7 @@ public:
                                   const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell id from a cell handle
-  virtual ModuleTraits::InternalCellHandle getCellId( 
+  virtual ModuleTraits::InternalCellHandle getCellId(
                               const moab::EntityHandle cell_handle ) const = 0;
 
   //! Get the cell handle from a cell id

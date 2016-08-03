@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Constructor
 template<typename AceLaw44InterpolationPolicy>
-StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARDistribution( 
+StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARDistribution(
 		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		   const Teuchos::ArrayView<const double>& A_array,
 		   const Teuchos::ArrayView<const double>& R_array )
@@ -25,13 +25,13 @@ StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::StandardAceLaw44ARD
 
 // Sample A and R from the distribution
 template<typename AceLaw44InterpolationPolicy>
-void StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::sampleAR( 
+void StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::sampleAR(
 						const unsigned outgoing_index,
 						const double energy_prime,
 						double& sampled_A,
 						double& sampled_R ) const
 {
-  sampled_A = AceLaw44InterpolationPolicy::interpolate( 
+  sampled_A = AceLaw44InterpolationPolicy::interpolate(
 			     energy_prime,
 			     getOutgoingEnergyGridPoint( outgoing_index ),
 			     getOutgoingEnergyGridPoint( outgoing_index + 1u ),

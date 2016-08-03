@@ -15,10 +15,10 @@
 namespace MonteCarlo{
 
 //! Initialize the simulation properties
-void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties( 
+void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn )
-{  
+{
   // Get the min photon energy - optional
   if( properties.isParameter( "Min Photon Energy" ) )
   {
@@ -30,7 +30,7 @@ void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
     {
       SimulationPhotonProperties::setMinPhotonEnergy(
 			  SimulationPhotonProperties::getAbsoluteMinPhotonEnergy() );
-      
+
       *os_warn << "Warning: the lowest supported photon energy is "
 		<< SimulationPhotonProperties::getAbsoluteMinPhotonEnergy()
 		<< ". This value will be used instead of "
@@ -49,14 +49,14 @@ void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
     {
       SimulationPhotonProperties::setMaxPhotonEnergy(
 			  SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy() );
-      
+
       *os_warn << "Warning: the highest supported photon energy is "
 		<< SimulationPhotonProperties::getAbsoluteMaxPhotonEnergy()
 		<< ". This value will be used instead of "
 		<< max_energy << "." << std::endl;
     }
   }
-  
+
 
   // Get the kahn sampling cutoff energy - optional
   if( properties.isParameter( "Kahn Sampling Cutoff Energy" ) )
@@ -74,7 +74,7 @@ void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
 		<< SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
 		<< " MeV. The default value of "
 		<< SimulationPhotonProperties::getKahnSamplingCutoffEnergy()
-		<< " MeV will be used instead of " << energy << "." 
+		<< " MeV will be used instead of " << energy << "."
 		<< std::endl;
     }
   }
@@ -90,18 +90,18 @@ void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
   // Get the incohernt scattering model - optional
   if( properties.isParameter( "Incoherent Photon Scattering Model" ) )
   {
-    std::string model_name = 
+    std::string model_name =
       properties.get<std::string>( "Incoherent Photon Scattering Model" );
 
     IncoherentModelType model;
-    
+
     try{
       model = convertStringToIncoherentModelTypeEnum( model_name );
     }
     catch( std::logic_error )
     {
       model = SimulationPhotonProperties::getIncoherentModelType();
-      
+
       *os_warn << "Warning: incohernt photon scattering model "
 		<< model_name << " is unknown. The default model "
 		<< model << " will be used instead." << std::endl;
@@ -130,7 +130,7 @@ void SimulationPhotonPropertiesFactory::initializeSimulationPhotonProperties(
     if( properties.get<bool>( "Photonuclear Interaction" ) )
       SimulationPhotonProperties::setPhotonuclearInteractionModeOn();
   }
-  
+
   properties.unused( *os_warn );
 }
 

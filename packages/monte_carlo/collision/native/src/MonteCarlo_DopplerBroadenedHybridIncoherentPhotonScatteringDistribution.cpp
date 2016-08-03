@@ -12,10 +12,10 @@
 
 namespace MonteCarlo{
 
-// Constructor  
-DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHybridIncoherentPhotonScatteringDistribution( 
+// Constructor
+DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHybridIncoherentPhotonScatteringDistribution(
       const std::shared_ptr<const ScatteringFunction>& scattering_function,
-      const std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>& 
+      const std::shared_ptr<const MonteCarlo::CompleteDopplerBroadenedPhotonEnergyDistribution>&
       doppler_broadened_energy_dist,
       const double kahn_sampling_cutoff_energy )
   : WHIncoherentPhotonScatteringDistribution( scattering_function,
@@ -29,7 +29,7 @@ DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::DopplerBroadenedHy
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
-void DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::scatterPhoton( 
+void DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::scatterPhoton(
 			             PhotonState& photon,
 				     ParticleBank& bank,
 			             Data::SubshellType& shell_of_interaction ) const
@@ -50,9 +50,9 @@ void DopplerBroadenedHybridIncoherentPhotonScatteringDistribution::scatterPhoton
   // Sample the azimuthal angle of the outgoing photon
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
-  // Create the ejectected electron 
-  this->createEjectedElectron( photon, 
-			       scattering_angle_cosine, 
+  // Create the ejectected electron
+  this->createEjectedElectron( photon,
+			       scattering_angle_cosine,
 			       azimuthal_angle,
 			       bank );
 

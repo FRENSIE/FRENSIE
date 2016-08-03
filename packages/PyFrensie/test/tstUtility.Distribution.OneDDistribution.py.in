@@ -31,87 +31,87 @@ class DeltaDistributionTestCase(unittest.TestCase):
     "TestCase class for Utility.Distribution.DeltaDistribution class"
 
     def setUp(self):
-        self.dist = Distribution.DeltaDistribution( 0.0 )   
-    
+        self.dist = Distribution.DeltaDistribution( 0.0 )
+
     def testConstructor(self):
         "*Test Utility.Distribution.DeltaDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.DeltaDistribution))
-    
+
     def testEvaluate(self):
         "*Test Utility.Distribution.DeltaDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluate( 0.0 ) != 0.0)
         self.assertTrue(self.dist.evaluate( 1.0 ) == 0.0)
-    
+
     def testEvaluatePDF(self):
         "*Test Utility.Distribution.DeltaDistribution evaluatePDF method"
         self.assertTrue(self.dist.evaluatePDF( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluatePDF( 0.0 ) != 0.0)
         self.assertTrue(self.dist.evaluatePDF( 1.0 ) == 0.0)
-    
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.DeltaDistribution evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( -1.0 ) == 0.0)
         self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 1.0 )
         self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0 )
-    
+
     def testSample(self):
         "*Test Utility.Distribution.DeltaDistribution sample method"
         sample = self.dist.sample()
         self.assertTrue(sample == 0.0)
-    
+
     def testSampleAndRecordTrials(self):
         "*Test Utility.Distribution.DeltaDistribution sampleAndRecordTrials method"
         trials = 0
         sample,trials = self.dist.sampleAndRecordTrials( trials )
         self.assertTrue(sample == 0.0)
         self.assertTrue(trials == 1)
-    
+
     def testSampleAndRecordBinIndex(self):
         "*Test Utility.Distribution.DeltaDistribution sampleAndRecordBinIndex method"
         sample,bin_index = self.dist.sampleAndRecordBinIndex()
         self.assertTrue(sample == 0.0)
         self.assertTrue(bin_index == 0)
-    
+
     def testSampleWithRandomNumber(self):
         "*Test Utility.Distribution.DeltaDistribution sampleWithRandomNumber method"
         sample = self.dist.sampleWithRandomNumber( 0.5 )
         self.assertTrue(sample == 0.0)
-    
+
     def testSampleInSubrange(self):
         "*Test Utility.Distribution.DeltaDistribution sampleInSubrange method"
         sample = self.dist.sampleInSubrange( 1.0 )
         self.assertTrue(sample == 0.0 )
-    
+
     def testSampleWithRandomNumberInSubrange(self):
         "*Test Utility.Distribution.DeltaDistribution sampleWithRandomNumberInSubrange method"
         sample = self.dist.sampleWithRandomNumberInSubrange( 0.5, 1.0 )
         self.assertTrue(sample == 0.0)
-    
+
     def testGetUpperBoundOfIndepVar(self):
         "*Test Utility.Distribution.DeltaDistribution getUpperBoundOfIndepVar method"
         upper_bound = self.dist.getUpperBoundOfIndepVar()
         self.assertTrue(upper_bound == 0.0)
-    
+
     def testGetLowerBoundOfIndepVar(self):
         "*Test Utility.Distribution.DeltaDistribution getLowerBoundOfIndepVar method"
         lower_bound = self.dist.getLowerBoundOfIndepVar()
         self.assertTrue(lower_bound == 0.0)
-    
+
     def testIsContinuous(self):
         "*Test Utility.Distribution.DeltaDistribution isContinuous method"
         self.assertTrue(not self.dist.isContinuous())
-    
+
     def testIsTabular(self):
         "*Test Utility.Distribution.DeltaDistribution isTabular method"
         self.assertTrue(self.dist.isTabular())
-    
+
     def testIsEqual(self):
         "*Test Utility.Distribution.DeltaDistribution isEqual method"
         other_dist = Distribution.DeltaDistribution( 1.0 )
         self.assertTrue(not self.dist.isEqual(other_dist))
         self.assertTrue(self.dist.isEqual(self.dist))
-    
+
     def testToParameterList(self):
         "*Test Utility.Distribution.DeltaDistribution toParameterList method"
         plist = ParameterList()
@@ -119,7 +119,7 @@ class DeltaDistributionTestCase(unittest.TestCase):
         self.assertTrue(plist.isParameter('delta_dist'))
         dummy = plist.set('extra_double', 1.0)
         self.assertTrue(plist.isParameter('extra_double'))
-    
+
     def testFromParameterList(self):
         "*Test Utility.Distribution.DeltaDistribution fromParameterList method"
         plist = ParameterList()
@@ -143,7 +143,7 @@ class DiscreteDistributionTestCase(unittest.TestCase):
     def setUp(self):
         self.dist = Distribution.DiscreteDistribution( [0.0,1.0], [1.0,3.0] )
         self.cdf_dist = Distribution.DiscreteDistribution( [0.0,1.0], [0.25,1.0], True )
-        
+
     def testConstructor(self):
         "*Test Utility.Distribution.DiscreteDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.DiscreteDistribution))
@@ -156,7 +156,7 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluate( 0.5 ) == 0.0)
         self.assertTrue(self.dist.evaluate( 1.0 ) != 0.0)
         self.assertTrue(self.dist.evaluate( 2.0 ) == 0.0)
-        
+
         self.assertTrue(self.cdf_dist.evaluate( -1.0 ) == 0.0)
         self.assertTrue(self.cdf_dist.evaluate( 0.0 ) != 0.0)
         self.assertTrue(self.cdf_dist.evaluate( 0.5 ) == 0.0)
@@ -170,7 +170,7 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 0.5 ) == 0.0)
         self.assertTrue(self.dist.evaluatePDF( 1.0 ) != 0.0)
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) == 0.0)
-        
+
         self.assertTrue(self.cdf_dist.evaluatePDF( -1.0 ) == 0.0)
         self.assertTrue(self.cdf_dist.evaluatePDF( 0.0 ) != 0.0)
         self.assertTrue(self.cdf_dist.evaluatePDF( 0.5 ) == 0.0)
@@ -184,7 +184,7 @@ class DiscreteDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluateCDF( 0.5 ) == 0.25)
         self.assertTrue(self.dist.evaluateCDF( 1.0 ) == 1.0)
         self.assertTrue(self.dist.evaluateCDF( 2.0 ) == 1.0)
-        
+
         self.assertTrue(self.cdf_dist.evaluateCDF( -1.0 ) == 0.0)
         self.assertTrue(self.cdf_dist.evaluateCDF( 0.0 ) == 0.25)
         self.assertTrue(self.cdf_dist.evaluateCDF( 0.5 ) == 0.25)
@@ -307,7 +307,7 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.EquiprobableBinDistribution( [0.0,1.0,2.0] )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.EquiprobableBinDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.EquiprobableBinDistribution))
@@ -325,7 +325,7 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 0.0 ) != 0.0)
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) != 0.0)
         self.assertTrue(self.dist.evaluatePDF( 3.0 ) == 0.0)
-        
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.EquiprobableBinDistribution evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( -1.0 ) == 0.0)
@@ -334,7 +334,7 @@ class EquiprobableBinDistributionTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluateCDF( 3.0 ) == 1.0)
 
     def testSample(self):
-        "*Test Utility.Distribution.EquiprobableBinDistribution sample method" 
+        "*Test Utility.Distribution.EquiprobableBinDistribution sample method"
         sample = self.dist.sample()
         self.assertTrue(sample >= 0.0 and sample <= 2.0)
 
@@ -416,7 +416,7 @@ class EvaporationDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.EvaporationDistribution( 1.0, 1.0, 0.1 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.EvaporationDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.EvaporationDistribution))
@@ -497,7 +497,7 @@ class ExponentialDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.ExponentialDistribution( 1.0, 1.0 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.ExponentialDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.ExponentialDistribution))
@@ -579,7 +579,7 @@ class HistogramDistributionTestCase(unittest.TestCase):
     def setUp(self):
         self.dist = Distribution.HistogramDistribution( [-1.0, 0.0, 1.0], [1.0, 1.0] )
         self.cdf_dist = Distribution.HistogramDistribution( [-1.0, 0.0, 1.0], [0.5, 1.0], True )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.HistogramDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.HistogramDistribution))
@@ -723,11 +723,11 @@ class MaxwellFissionDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.MaxwellFissionDistribution( 1.0, 1.0, 0.1 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.MaxwellFissionDistribution))
-        
+
     def testEvaluate(self):
         "*Test Utility.Distribution.MaxwellFissionDistribution evaluate method"
         self.assertTrue(self.dist.evaluate( 0.0 ) == 0.0)
@@ -804,7 +804,7 @@ class NormalDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.NormalDistribution( 0.0, 0.1 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.NormalDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.NormalDistribution))
@@ -887,7 +887,7 @@ class PolynomialDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.PolynomialDistribution( [1.0, 2.0], 0.0, 1.0 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.PolynomialDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.PolynomialDistribution))
@@ -972,7 +972,7 @@ class PowerDistribution_1TestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.PowerDistribution_1( 0.0, 1.0 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.PowerDistribution_1 constructor"
         self.assertTrue(isinstance(self.dist, Distribution.PowerDistribution_1))
@@ -1056,7 +1056,7 @@ class PowerDistribution_2TestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.PowerDistribution_2( 0.0, 1.0 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.PowerDistribution_2 constructor"
         self.assertTrue(isinstance(self.dist, Distribution.PowerDistribution_2))
@@ -1140,7 +1140,7 @@ class TabularDistribution_LinLinTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.TabularDistribution_LinLin( [1.0, 2.0, 3.0], [0.0, 1.0, 2.0] )
-                        
+
     def testConstructor(self):
         "*Test Utility.Distribution.TabularDistribution_LinLin constructor"
         self.assertTrue(isinstance(self.dist, Distribution.TabularDistribution_LinLin))
@@ -1160,7 +1160,7 @@ class TabularDistribution_LinLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) == 0.5)
         self.assertTrue(self.dist.evaluatePDF( 3.0 ) == 1.0)
         self.assertTrue(self.dist.evaluatePDF( 4.0 ) == 0.0)
-        
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.TabularDistribution_LinLin evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
@@ -1258,7 +1258,7 @@ class TabularDistribution_LinLogTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.TabularDistribution_LinLog( [1.0, 2.0, 3.0], [0.0, 1.0, 2.0] )
-                        
+
     def testConstructor(self):
         "*Test Utility.Distribution.TabularDistribution_LinLog constructor"
         self.assertTrue(isinstance(self.dist, Distribution.TabularDistribution_LinLog))
@@ -1278,7 +1278,7 @@ class TabularDistribution_LinLogTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) == 0.5)
         self.assertTrue(self.dist.evaluatePDF( 3.0 ) == 1.0)
         self.assertTrue(self.dist.evaluatePDF( 4.0 ) == 0.0)
-        
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.TabularDistribution_LinLog evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
@@ -1376,7 +1376,7 @@ class TabularDistribution_LogLinTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.TabularDistribution_LogLin( [1.0, 2.0, 3.0], [1.0, 2.0, 3.0] )
-                        
+
     def testConstructor(self):
         "*Test Utility.Distribution.TabularDistribution_LogLin constructor"
         self.assertTrue(isinstance(self.dist, Distribution.TabularDistribution_LogLin))
@@ -1396,7 +1396,7 @@ class TabularDistribution_LogLinTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) == 0.5)
         self.assertTrue(self.dist.evaluatePDF( 3.0 ) == 0.75)
         self.assertTrue(self.dist.evaluatePDF( 4.0 ) == 0.0)
-        
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.TabularDistribution_LogLin evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
@@ -1494,7 +1494,7 @@ class TabularDistribution_LogLogTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.TabularDistribution_LogLog( [1.0, 2.0, 3.0], [1.0, 2.0, 3.0] )
-                        
+
     def testConstructor(self):
         "*Test Utility.Distribution.TabularDistribution_LogLog constructor"
         self.assertTrue(isinstance(self.dist, Distribution.TabularDistribution_LogLog))
@@ -1514,7 +1514,7 @@ class TabularDistribution_LogLogTestCase(unittest.TestCase):
         self.assertTrue(self.dist.evaluatePDF( 2.0 ) == 0.5)
         self.assertTrue(self.dist.evaluatePDF( 3.0 ) == 0.75)
         self.assertTrue(self.dist.evaluatePDF( 4.0 ) == 0.0)
-        
+
     def testEvaluateCDF(self):
         "*Test Utility.Distribution.TabularDistribution_LogLog evaluateCDF method"
         self.assertTrue(self.dist.evaluateCDF( 0.0 ) == 0.0)
@@ -1612,7 +1612,7 @@ class UniformDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.UniformDistribution( -1.0, 1.0 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.UniformDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.UniformDistribution))
@@ -1724,7 +1724,7 @@ class WattDistributionTestCase(unittest.TestCase):
 
     def setUp(self):
         self.dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.1 )
-                
+
     def testConstructor(self):
         "*Test Utility.Distribution.WattDistribution constructor"
         self.assertTrue(isinstance(self.dist, Distribution.WattDistribution))
@@ -1797,7 +1797,7 @@ class WattDistributionTestCase(unittest.TestCase):
         same_dist = Distribution.WattDistribution( 1.0, 1.0, 1.0, 0.1 )
         self.assertTrue(self.dist != diff_dist)
         self.assertTrue(self.dist == same_dist)
-     
+
 #-----------------------------------------------------------------------------#
 # Custom main
 #-----------------------------------------------------------------------------#

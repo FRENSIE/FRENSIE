@@ -22,7 +22,7 @@ DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadened
     doppler_broadened_energy_dist,
     const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy )
-  : SubshellIncoherentPhotonScatteringDistribution( 
+  : SubshellIncoherentPhotonScatteringDistribution(
 	       doppler_broadened_energy_dist->getSubshell(),
 	       doppler_broadened_energy_dist->getSubshellOccupancy(),
 	       doppler_broadened_energy_dist->getSubshellBindingEnergy(),
@@ -35,7 +35,7 @@ DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadened
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
-void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhoton( 
+void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
@@ -52,7 +52,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
 					   scattering_angle_cosine,
 					   outgoing_energy,
 					   shell_of_interaction );
-  
+
   // Sample an azimuthal angle
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 
@@ -66,7 +66,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
   if( outgoing_energy > 0.0 )
   {
     photon.setEnergy( outgoing_energy );
-    
+
     // Set the new direction
     photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
   }
@@ -75,7 +75,7 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
     photon.setEnergy( std::numeric_limits<double>::min() );
 
     photon.setAsGone();
-  }  
+  }
 }
 
 } // end MonteCarlo namespace

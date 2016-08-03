@@ -59,7 +59,7 @@ Teuchos::RCP<TestDelayedNeutronEmissionDistributionACEFactory> factory;
 TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   getPrecursorGroupDecayConsts )
 {
-  const Teuchos::Array<double>& group_consts = 
+  const Teuchos::Array<double>& group_consts =
     factory->getPrecursorGroupDecayConsts();
 
   TEST_EQUALITY_CONST( group_consts.size(), 6 );
@@ -85,58 +85,58 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
   TEST_FLOATING_EQUALITY( prob_dists[0]->evaluate( 30.0 ), 1.03412800000e-02, 1e-15 );
 
   TEST_ASSERT( !prob_dists[1].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1e-11 ), 
-			  1.14819800000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1e-11 ),
+			  1.14819800000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1.0 ), 
-			  1.14819800000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 1.0 ),
+			  1.14819800000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 30.0 ), 
-			  1.14819800000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[1]->evaluate( 30.0 ),
+			  1.14819800000e-01,
 			  1e-15 );
 
   TEST_ASSERT( !prob_dists[2].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1e-11 ), 
-			  1.27807200000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1e-11 ),
+			  1.27807200000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1.0 ), 
-			  1.27807200000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 1.0 ),
+			  1.27807200000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 30.0 ), 
-			  1.27807200000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[2]->evaluate( 30.0 ),
+			  1.27807200000e-01,
 			  1e-15 );
-  
+
   TEST_ASSERT( !prob_dists[3].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1e-11 ), 
-			  4.51836500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1e-11 ),
+			  4.51836500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1.0 ), 
-			  4.51836500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 1.0 ),
+			  4.51836500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 30.0 ), 
-			  4.51836500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[3]->evaluate( 30.0 ),
+			  4.51836500000e-01,
 			  1e-15 );
 
   TEST_ASSERT( !prob_dists[4].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1e-11 ), 
-			  2.33506500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1e-11 ),
+			  2.33506500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1.0 ), 
-			  2.33506500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 1.0 ),
+			  2.33506500000e-01,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 30.0 ), 
-			  2.33506500000e-01, 
+  TEST_FLOATING_EQUALITY( prob_dists[4]->evaluate( 30.0 ),
+			  2.33506500000e-01,
 			  1e-15 );
-  
+
   TEST_ASSERT( !prob_dists[5].is_null() );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1e-11 ), 
-			  6.16886800000e-02, 
+  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1e-11 ),
+			  6.16886800000e-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1.0 ), 
-			  6.16886800000e-02, 
+  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 1.0 ),
+			  6.16886800000e-02,
 			  1e-15 );
-  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 30.0 ), 
-			  6.16886800000e-02, 
+  TEST_FLOATING_EQUALITY( prob_dists[5]->evaluate( 30.0 ),
+			  6.16886800000e-02,
 			  1e-15 );
 }
 
@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   createEmissionDistribution )
 {
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     distribution;
 
   factory->createEmissionDistribution( distribution );
@@ -162,7 +162,7 @@ int main( int argc, char** argv )
 
   std::string test_u238_ace_file_name;
   std::string test_u238_ace_table_name;
-  
+
   clp.setOption( "test_u238_ace_file",
 		 &test_u238_ace_file_name,
 		 "Test U238 ACE file name" );
@@ -170,10 +170,10 @@ int main( int argc, char** argv )
 		 &test_u238_ace_table_name,
 		 "Test U238 ACE table name in basic ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -188,7 +188,7 @@ int main( int argc, char** argv )
 					      1u ) );
 
   Teuchos::RCP<Data::XSSNeutronDataExtractor>
-  xss_data_extractor( 
+  xss_data_extractor(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
@@ -196,7 +196,7 @@ int main( int argc, char** argv )
   factory.reset( new TestDelayedNeutronEmissionDistributionACEFactory(
 				 ace_file_handler->getTableName(),
 				 ace_file_handler->getTableAtomicWeightRatio(),
-				 xss_data_extractor->extractBDDBlock(),    
+				 xss_data_extractor->extractBDDBlock(),
 				 xss_data_extractor->extractDNEDLBlock(),
 				 xss_data_extractor->extractDNEDBlock() ) );
 
@@ -212,7 +212,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

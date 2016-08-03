@@ -3,7 +3,7 @@
 //! \file   MonteCarlo_EstimatorParticleStateWrapper.hpp
 //! \author Alex Robinson
 //! \brief  The estimator particle state wrapper
-//! 
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_ESTIMATOR_PARTICLE_STATE_WRAPPER_HPP
@@ -22,7 +22,7 @@ namespace MonteCarlo{
  */
 class EstimatorParticleStateWrapper
 {
-  
+
 public:
 
   //! Constructor

@@ -20,13 +20,13 @@
 #include "Data_ENDFFissionYieldsHelperWrappers.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables 
+// Testing Variables
 //---------------------------------------------------------------------------//
- 
+
 std::string test_endf_file_name;
 
 //---------------------------------------------------------------------------//
-// Tests 
+// Tests
 //---------------------------------------------------------------------------//
 // Check read ENDF Fission Yields Header
 TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsHeader )
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsData )
    Teuchos::Array<double> yield( number_data_sets );
    Teuchos::Array<double> yield_std( number_data_sets );
 
-   readEndfFissionYieldsData( file_id, &number_data_sets, yield_zaid.getRawPtr(), 
+   readEndfFissionYieldsData( file_id, &number_data_sets, yield_zaid.getRawPtr(),
            yield_meta_state.getRawPtr(), yield.getRawPtr(), yield_std.getRawPtr() );
 
    closeFileUsingFortran( file_id );
@@ -116,12 +116,12 @@ TEUCHOS_UNIT_TEST( EndfFissionYields, readEndfFissionYieldsData )
 }
 
 //---------------------------------------------------------------------------//
-// Custom Main Function 
+// Custom Main Function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
    Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-   
+
    clp.setOption( "test_endf_file",
                   &test_endf_file_name,
                   "Test file for checking ENDF fission yields helpers." );
@@ -130,7 +130,7 @@ int main( int argc, char** argv )
    return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
- 
+
 //---------------------------------------------------------------------------//
-// end tstEndfFissionYieldsHelpers.cpp 
+// end tstEndfFissionYieldsHelpers.cpp
 //---------------------------------------------------------------------------//

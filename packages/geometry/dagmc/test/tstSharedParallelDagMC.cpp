@@ -41,11 +41,11 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_external_ray_trace )
 
   Teuchos::Array<Utility::Pair<double,double> >
     distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
     std::shared_ptr<Geometry::Ray> ray;
-    
+
     // Initialize the ray
     if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
       ray.reset( new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
@@ -68,14 +68,14 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_external_ray_trace )
 
     // Fire the ray
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-    double distance_to_surface_hit = 
+
+    double distance_to_surface_hit =
       Geometry::DagMC::fireExternalRay( *ray, cell, surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first =
       distance_to_surface_hit;
 
     // Advance the ray to the boundary surface
@@ -85,15 +85,15 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_external_ray_trace )
     cell = Geometry::DagMC::getBoundaryCell( cell, surface_hit );
 
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second = cell;
-    
+
     // Fire the ray
-    distance_to_surface_hit = 
+    distance_to_surface_hit =
       Geometry::DagMC::fireExternalRay( *ray, cell, surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       surface_hit;
-    
-    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second =
       distance_to_surface_hit;
 
     // Advance the ray to the boundary surface
@@ -110,10 +110,10 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_external_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 53, 54, 55 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 
   Teuchos::Array<Utility::Pair<Geometry::ModuleTraits::InternalSurfaceHandle,
@@ -151,12 +151,12 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
 
   Teuchos::Array<Utility::Quad<double,double,double,double> >
     distances( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
     {
       std::shared_ptr<Geometry::Ray> ray;
-    
+
       // Initialize the ray
       if( Utility::GlobalOpenMPSession::getThreadId()%6 == 0 )
         ray.reset( new Geometry::Ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 ) );
@@ -175,21 +175,21 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
     }
 
     // Find the cell that contains the ray
-    Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::ModuleTraits::InternalCellHandle cell =
       Geometry::DagMC::findCellContainingInternalRay();
 
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first = cell;
 
     // Fire the ray
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-    double distance_to_surface_hit = 
+
+    double distance_to_surface_hit =
       Geometry::DagMC::fireInternalRay( surface_hit );
 
     surface_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first =
       distance_to_surface_hit;
 
     // Advance the ray to the boundary surface
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
     surface_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second =
       distance_to_surface_hit;
 
     // Advance the ray to the boundary surface
@@ -218,12 +218,12 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
     // Fire the ray
     distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].third =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].third =
       distance_to_surface_hit;
-    
+
     // Advance the ray a substep
     Geometry::DagMC::advanceInternalRayBySubstep( 0.5*distance_to_surface_hit);
 
@@ -233,10 +233,10 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
     // Fire the ray
     distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].fourth = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].fourth =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].fourth = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].fourth =
       distance_to_surface_hit;
   }
 
@@ -245,10 +245,10 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
                                Geometry::ModuleTraits::InternalCellHandle,
                                Geometry::ModuleTraits::InternalCellHandle> >
     correct_cell_ids( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 53, 54, 55 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 
   Teuchos::Array<Utility::Quad<Geometry::ModuleTraits::InternalSurfaceHandle,
@@ -267,7 +267,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace )
 
   for( unsigned i = 0; i < correct_distances.size(); ++i )
     correct_distances[i]( 1.959999084, 2.54, 2.54, 1.27 );
-  
+
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( distances, correct_distances, 1e-6 );
 }
 
@@ -290,64 +290,64 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace_with_reflection )
 
   Teuchos::Array<Utility::Pair<int,int> >
     reflection( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
-  
+
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
     // Initialize the ray
     {
       Geometry::Ray ray( -40.0, -40.0, 108.0, 0.0, 0.0, 1.0 );
-    
+
       Geometry::DagMC::setInternalRay( ray );
     }
-    
+
     // Find the cell that contains the ray
-    Geometry::ModuleTraits::InternalCellHandle cell = 
+    Geometry::ModuleTraits::InternalCellHandle cell =
       Geometry::DagMC::findCellContainingInternalRay();
 
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].first = cell;
 
     // Fire the ray
     Geometry::ModuleTraits::InternalSurfaceHandle surface_hit;
-  
-    double distance_to_surface_hit = 
+
+    double distance_to_surface_hit =
       Geometry::DagMC::fireInternalRay( surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].first =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].first =
       distance_to_surface_hit;
 
     // Advance the ray to the boundary surface
-    reflection[Utility::GlobalOpenMPSession::getThreadId()].first = 
+    reflection[Utility::GlobalOpenMPSession::getThreadId()].first =
       Geometry::DagMC::advanceInternalRayToCellBoundary();
-    
+
     cell = Geometry::DagMC::findCellContainingInternalRay();
-    
+
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].second = cell;
-    
+
     distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].second =
       surface_hit;
-    
-    distances[Utility::GlobalOpenMPSession::getThreadId()].second = 
+
+    distances[Utility::GlobalOpenMPSession::getThreadId()].second =
       distance_to_surface_hit;
-    
+
     // Advance the ray to the boundary surface (reflecting)
-    reflection[Utility::GlobalOpenMPSession::getThreadId()].second = 
+    reflection[Utility::GlobalOpenMPSession::getThreadId()].second =
       Geometry::DagMC::advanceInternalRayToCellBoundary();
 
     cell = Geometry::DagMC::findCellContainingInternalRay();
 
     cell_ids[Utility::GlobalOpenMPSession::getThreadId()].third = cell;
-    
+
     distance_to_surface_hit = Geometry::DagMC::fireInternalRay( surface_hit );
 
-    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    surface_ids[Utility::GlobalOpenMPSession::getThreadId()].third =
       surface_hit;
 
-    distances[Utility::GlobalOpenMPSession::getThreadId()].third = 
+    distances[Utility::GlobalOpenMPSession::getThreadId()].third =
       distance_to_surface_hit;
   }
 
@@ -359,7 +359,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace_with_reflection )
 
   for( unsigned i = 0; i < correct_cell_ids.size(); ++i )
     correct_cell_ids[i]( 82, 83, 83 );
-  
+
   UTILITY_TEST_COMPARE_ARRAYS( cell_ids, correct_cell_ids );
 
   Teuchos::Array<Utility::Trip<Geometry::ModuleTraits::InternalSurfaceHandle,
@@ -379,7 +379,7 @@ TEUCHOS_UNIT_TEST( DagMC, parallel_internal_ray_trace_with_reflection )
     correct_distances[i]( 1.474, 17.526, 17.526 );
 
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( distances, correct_distances, 1e-6 );
-      
+
   Teuchos::Array<Utility::Pair<int,int> >
     correct_reflection( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
 
@@ -407,11 +407,11 @@ int main( int argc, char** argv )
   clp.setOption( "threads",
 		 &threads,
 		 "Number of threads to use" );
-  
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -430,16 +430,16 @@ int main( int argc, char** argv )
   Geometry::DagMC::setMaterialPropertyName( "mat" );
   Geometry::DagMC::setDensityPropertyName( "rho" );
   Geometry::DagMC::setEstimatorPropertyName( "tally" );
-  
+
   Geometry::DagMC::initialize( test_dagmc_geom_file_name, 1e-3, false );
   Geometry::DagMC::enableThreadSupport( threads );
 
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
+
   mpiSession.barrier();
-  
+
   // Run the unit tests
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 

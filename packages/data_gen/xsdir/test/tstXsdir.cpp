@@ -72,16 +72,16 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_ASSERT( cross_sections.isSublist( "He" ) );
   TEST_ASSERT( cross_sections.isSublist( "Miscellaneous" ) );
 
-  Teuchos::ParameterList& misc_list = 
+  Teuchos::ParameterList& misc_list =
     cross_sections.sublist( "Miscellaneous" );
-  
+
   TEST_EQUALITY_CONST( misc_list.numParams(), 4 );
   TEST_ASSERT( misc_list.isSublist( "H-2_v7" ) );
   TEST_ASSERT( misc_list.isSublist( "H-2_v2" ) );
   TEST_ASSERT( misc_list.isSublist( "C-12_v7" ) );
   TEST_ASSERT( misc_list.isSublist( "C-12_v2" ) );
-		       
-  Teuchos::ParameterList& h2_list = 
+
+  Teuchos::ParameterList& h2_list =
     cross_sections.sublist( "H-2_900.0K_v8" );
 
   TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   h2_list = cross_sections.sublist( "H-2_293.6K_v8" );
 
   TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
-  
+
   h2_list = cross_sections.sublist( "H-2_900.0K_v7" );
 
   TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
@@ -106,11 +106,11 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
 
   TEST_EQUALITY_CONST( h2_list.numParams(), 21 );
 
-  Teuchos::ParameterList& other_list = 
+  Teuchos::ParameterList& other_list =
     cross_sections.sublist( "H-1_900.0K_v8" );
 
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
-  
+
   other_list = cross_sections.sublist( "H-1_600.0K_v8" );
 
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
@@ -132,7 +132,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-3_900.0K_v8" );
-  
+
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-3_600.0K_v8" );
@@ -144,7 +144,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-3_900.0K_v7" );
-  
+
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-3_600.0K_v7" );
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-4_900.0K_v8" );
-  
+
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-4_600.0K_v8" );
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-4_900.0K_v7" );
-  
+
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "He-4_600.0K_v7" );
@@ -180,13 +180,13 @@ TEUCHOS_UNIT_TEST( XsdirEntry, exportInfo )
   TEST_EQUALITY_CONST( other_list.numParams(), 17 );
 
   other_list = cross_sections.sublist( "be_293.6K_v2" );
-  
+
   TEST_EQUALITY_CONST( other_list.numParams(), 5 );
 
   other_list = cross_sections.sublist( "be_400.0K_v2" );
 
   TEST_EQUALITY_CONST( other_list.numParams(), 5 );
-  
+
   other_list = cross_sections.sublist( "H" );
 
   TEST_EQUALITY_CONST( other_list.numParams(), 10 );
@@ -207,10 +207,10 @@ int main( int argc, char** argv )
 		 &xsdir_file_name,
 		 "Test xsdir file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -230,7 +230,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1); 
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

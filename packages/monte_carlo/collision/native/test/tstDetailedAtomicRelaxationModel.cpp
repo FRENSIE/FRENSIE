@@ -55,7 +55,7 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   fake_stream[6] = 0.40361; // Chose the radiative P1 transition
   fake_stream[7] = 0.5; // direction
   fake_stream[8] = 0.5; // direction
-  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   detailed_atomic_relaxation_model->relaxAtom( vacancy, photon, bank );
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
 
   bank.pop();
-  
+
   // L1 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.584170000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
@@ -81,9 +81,9 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   TEST_EQUALITY_CONST( bank.top().getZPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top().getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( bank.top().getGenerationNumber(), 1 );
-  
+
   bank.pop();
-  
+
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top().getEnergy(), 1.523590000000E-02 );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
@@ -112,19 +112,19 @@ int main( int argc, char** argv )
 		 &test_ace_table_name,
 		 "Test ACE table name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Create a file handler and data extractor
-  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+  Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
@@ -137,8 +137,8 @@ int main( int argc, char** argv )
   // Create a subshell transition model for each subshell
   Teuchos::ArrayView<const double> raw_subshell_endf_designators =
     xss_data_extractor->extractSubshellENDFDesignators();
-  
-  Teuchos::Array<Data::SubshellType> 
+
+  Teuchos::Array<Data::SubshellType>
     subshells( raw_subshell_endf_designators.size() );
 
   for( unsigned i = 0; i < subshells.size(); ++i )
@@ -150,13 +150,13 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> subshell_transitions =
     xss_data_extractor->extractSubshellVacancyTransitionPaths();
 
-  Teuchos::ArrayView<const double> relo_block = 
+  Teuchos::ArrayView<const double> relo_block =
     xss_data_extractor->extractRELOBlock();
 
-  Teuchos::ArrayView<const double> xprob_block = 
+  Teuchos::ArrayView<const double> xprob_block =
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> > 
+  Teuchos::Array<Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> >
     subshell_relaxation_models;
 
   for( unsigned i = 0; i < subshell_transitions.size(); ++i )
@@ -164,12 +164,12 @@ int main( int argc, char** argv )
     unsigned shell_transitions = (unsigned)subshell_transitions[i];
 
     unsigned shell_start = (unsigned)relo_block[i];
-    
-    Teuchos::Array<Data::SubshellType> 
+
+    Teuchos::Array<Data::SubshellType>
       primary_transition_shells( shell_transitions );
-    Teuchos::Array<Data::SubshellType> 
+    Teuchos::Array<Data::SubshellType>
       secondary_transition_shells( shell_transitions );
-    Teuchos::Array<double> 
+    Teuchos::Array<double>
       outgoing_particle_energies( shell_transitions );
     Teuchos::Array<double> transition_cdf( shell_transitions );
 
@@ -177,18 +177,18 @@ int main( int argc, char** argv )
     {
       for( unsigned j = 0; j < shell_transitions; ++j )
       {
-	primary_transition_shells[j] = 
+	primary_transition_shells[j] =
 	  Data::convertENDFDesignatorToSubshellEnum(
 					        xprob_block[shell_start+j*4] );
-    
-	secondary_transition_shells[j] = 
-	  Data::convertENDFDesignatorToSubshellEnum( 
+
+	secondary_transition_shells[j] =
+	  Data::convertENDFDesignatorToSubshellEnum(
 					      xprob_block[shell_start+j*4+1] );
-    
+
 	outgoing_particle_energies[j] = xprob_block[shell_start+j*4+2];
 	transition_cdf[j] = xprob_block[shell_start+j*4+3];
       }
-  
+
       Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> shell_model(
 			       new MonteCarlo::DetailedSubshellRelaxationModel(
 						   subshells[i],
@@ -196,7 +196,7 @@ int main( int argc, char** argv )
 						   secondary_transition_shells,
 						   outgoing_particle_energies,
 						   transition_cdf ) );
-      
+
       subshell_relaxation_models.push_back( shell_model );
     }
   }
@@ -224,7 +224,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  	
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

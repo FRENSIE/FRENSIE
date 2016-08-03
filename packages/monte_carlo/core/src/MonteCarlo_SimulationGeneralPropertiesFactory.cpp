@@ -21,7 +21,7 @@ namespace MonteCarlo{
 void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn )
-{  
+{
   // Get the particle mode - required
   TEST_FOR_EXCEPTION( !properties.isParameter( "Mode" ),
 		      std::runtime_error,
@@ -49,24 +49,24 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
   TEST_FOR_EXCEPTION( !properties.isParameter( "Histories" ),
 		      std::runtime_error,
 		      "Error: the number of histories must be specified!" );
-  
-  SimulationGeneralProperties::setNumberOfHistories( 
+
+  SimulationGeneralProperties::setNumberOfHistories(
 				 properties.get<unsigned int>( "Histories" ) );
-				 
+
   // Get the number of batches per processor - optional
   if( properties.isParameter( "Ideal Batches Per Processor" ) )
   {
-    unsigned int number_of_batches_per_processor = 
+    unsigned int number_of_batches_per_processor =
       properties.get<unsigned int>( "Ideal Batches Per Processor" );
-    
-    SimulationGeneralProperties::setNumberOfBatchesPerProcessor( 
+
+    SimulationGeneralProperties::setNumberOfBatchesPerProcessor(
 					     number_of_batches_per_processor );
   }
 
   // Get the angle cosine cutoff value for surface flux estimators - optional
   if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )
   {
-    double cutoff = 
+    double cutoff =
       properties.get<double>( "Surface Flux Angle Cosine Cutoff" );
 
     TEST_FOR_EXCEPTION( cutoff < 0.0,
@@ -81,7 +81,7 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
 
     SimulationGeneralProperties::setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
   }
-  
+
   // Get the warnings mode - optional
   if( properties.isParameter( "Warnings" ) )
   {
@@ -95,7 +95,7 @@ void SimulationGeneralPropertiesFactory::initializeSimulationGeneralProperties(
     if( properties.get<bool>( "Implicit Capture" ) )
       SimulationGeneralProperties::setImplicitCaptureModeOn();
   }
-  
+
   properties.unused( *os_warn );
 }
 

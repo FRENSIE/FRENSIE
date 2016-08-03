@@ -25,17 +25,17 @@
 
 std::shared_ptr<MonteCarlo::SimulationManager> facemc_manager;
 
-/*! \details This function should be executed by simply wrapping a main 
+/*! \details This function should be executed by simply wrapping a main
  * function around it. If desired a signal handler can also be attached
  */
-int facemcCore( int argc, 
+int facemcCore( int argc,
                 char** argv,
                 Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm )
 {
   // Make sure the communicator is valid
   testPrecondition( !comm.is_null() );
-  
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   Teuchos::RCP<Teuchos::ParameterList> simulation_info;
@@ -44,7 +44,7 @@ int facemcCore( int argc,
   Teuchos::RCP<Teuchos::ParameterList> response_function_definitions;
   Teuchos::RCP<Teuchos::ParameterList> observer_definitions;
   Teuchos::RCP<Teuchos::ParameterList> material_definitions;
-  
+
   std::string simulation_info_xml_file;
   std::string geometry_definition_xml_file;
   std::string source_definition_xml_file;
@@ -54,13 +54,13 @@ int facemcCore( int argc,
   std::string cross_section_directory;
   std::string simulation_name = "simulation.h5";
   int threads = 1;
-  
+
   // Set up the command line options
   Teuchos::CommandLineProcessor facemc_clp;
 
   facemc_clp.setDocString( "Forward-Adjoint Continuous Energy Monte Carlo "
 			   "Program\n" );
-  facemc_clp.setOption( "sim_info", 
+  facemc_clp.setOption( "sim_info",
 			&simulation_info_xml_file,
 			"Name of XML file containing simulation info",
 			true );
@@ -103,17 +103,17 @@ int facemcCore( int argc,
   // Parse the command line
   Teuchos::CommandLineProcessor::EParseCommandLineReturn
     parse_return = facemc_clp.parse( argc, argv );
-  
+
   if( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL )
   {
     facemc_clp.printHelpMessage( argv[0], *out );
-    
+
     return parse_return;
   }
 
   // Create parameter list from the input xml files
   try{
-    simulation_info = 
+    simulation_info =
       Teuchos::getParametersFromXmlFile( simulation_info_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
@@ -121,14 +121,14 @@ int facemcCore( int argc,
                             " has an xml syntax error!" );
 
   try{
-    geometry_definition = 
+    geometry_definition =
       Teuchos::getParametersFromXmlFile( geometry_definition_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: xml file " 
+                            "Error: xml file "
                             << geometry_definition_xml_file <<
                             " has an xml syntax error!" );
-  
+
   try{
     source_definition =
       Teuchos::getParametersFromXmlFile( source_definition_xml_file );
@@ -136,34 +136,34 @@ int facemcCore( int argc,
   EXCEPTION_CATCH_AND_EXIT( std::exception,
                             "Error: xml file " << source_definition_xml_file <<
                             " has an xml syntax error!" );
-    
+
   try{
-    response_function_definitions = 
+    response_function_definitions =
       Teuchos::getParametersFromXmlFile( response_function_definition_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: xml file " 
-                            << response_function_definition_xml_file << 
+                            "Error: xml file "
+                            << response_function_definition_xml_file <<
                             " has an xml syntax error!" );
   try{
-    observer_definitions = 
+    observer_definitions =
       Teuchos::getParametersFromXmlFile( observer_definition_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: xml file " 
+                            "Error: xml file "
                             << observer_definition_xml_file <<
                             " has an xml syntax error!" );
-  
+
   try{
-    material_definitions = 
+    material_definitions =
       Teuchos::getParametersFromXmlFile( material_definition_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: xml file " 
+                            "Error: xml file "
                             << material_definition_xml_file <<
                             " has an xml syntax error!" );
-  
-    
+
+
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
@@ -178,11 +178,11 @@ int facemcCore( int argc,
 
   Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info;
   try{
-    cross_sections_table_info = 
+    cross_sections_table_info =
       Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
-                            "Error: xml file " 
+                            "Error: xml file "
                             << cross_sections_xml_file <<
                             " has an xml syntax error!" );
 
@@ -225,7 +225,7 @@ int facemcCore( int argc,
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception,
                             "Error: could not print the simulation summary!" );
-  
+
   // Create a parameter list with all inputs for continue runs
   if( comm->getRank() == 0 )
   {
@@ -236,12 +236,12 @@ int facemcCore( int argc,
     master_list.set( "response_function_definitions", *response_function_definitions );
     master_list.set( "observer_definitions", *observer_definitions );
     master_list.set( "material_definitions", *material_definitions );
-    
+
     Teuchos::writeParameterListToXmlFile( master_list, "continue_run.xml" );
   }
-  
+
   comm->barrier();
-  
+
   return 0;
 }
 

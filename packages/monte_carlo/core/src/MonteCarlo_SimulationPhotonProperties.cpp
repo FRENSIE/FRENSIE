@@ -24,7 +24,7 @@ double SimulationPhotonProperties::min_photon_energy =
 const double SimulationPhotonProperties::absolute_max_photon_energy = 20.0;
 
 // The max photon energy (MeV)
-double SimulationPhotonProperties::max_photon_energy = 
+double SimulationPhotonProperties::max_photon_energy =
   SimulationPhotonProperties::absolute_max_photon_energy;
 
 // The absolute min Kahn sampling cutoff energy
@@ -37,8 +37,8 @@ double SimulationPhotonProperties::kahn_sampling_cutoff_energy = 3.0;
 // The number of photon has grid bins
 unsigned SimulationPhotonProperties::num_photon_hash_grid_bins = 1000;
 
-// The incoherent model 
-IncoherentModelType SimulationPhotonProperties::incoherent_model_type = 
+// The incoherent model
+IncoherentModelType SimulationPhotonProperties::incoherent_model_type =
   COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL;
 
 // The atomic relaxation mode (true = on - default, false = off)
@@ -56,7 +56,7 @@ void SimulationPhotonProperties::setMinPhotonEnergy( const double energy )
   // Make sure the energy is valid
   testPrecondition(energy >= SimulationPhotonProperties::absolute_min_photon_energy);
   testPrecondition( energy < SimulationPhotonProperties::max_photon_energy );
-  
+
   SimulationPhotonProperties::min_photon_energy = energy;
 }
 
@@ -70,7 +70,7 @@ void SimulationPhotonProperties::setMaxPhotonEnergy( const double energy )
   SimulationPhotonProperties::max_photon_energy = energy;
 }
 
-// Set the Kahn sampling cutoff energy (MeV) 
+// Set the Kahn sampling cutoff energy (MeV)
 void SimulationPhotonProperties::setKahnSamplingCutoffEnergy( const double energy )
 {
   // Make sure the energy is valid
@@ -89,7 +89,7 @@ void SimulationPhotonProperties::setNumberOfPhotonHashGridBins( const unsigned b
 }
 
 // Set the incoherent model type
-void SimulationPhotonProperties::setIncoherentModelType( 
+void SimulationPhotonProperties::setIncoherentModelType(
 					      const IncoherentModelType model )
 {
   SimulationPhotonProperties::incoherent_model_type = model;

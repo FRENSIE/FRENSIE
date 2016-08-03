@@ -29,7 +29,7 @@
 //---------------------------------------------------------------------------//
 Teuchos::RCP<Teuchos::ParameterList> observer_reps;
 
-boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> > 
+boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
   response_function_id_map;
 
 //---------------------------------------------------------------------------//
@@ -38,8 +38,8 @@ boost::unordered_map<unsigned,std::shared_ptr<MonteCarlo::ResponseFunction> >
 // Check that the estimator handler can be initialized
 TEUCHOS_UNIT_TEST( EventHandlerFactoryRoot, initializeHandlerUsingRoot )
 {
-  std::shared_ptr<MonteCarlo::EventHandler> event_handler = 
-    MonteCarlo::EventHandlerFactory<Geometry::Root>::createHandler( 
+  std::shared_ptr<MonteCarlo::EventHandler> event_handler =
+    MonteCarlo::EventHandlerFactory<Geometry::Root>::createHandler(
                                                     *observer_reps,
                                                     response_function_id_map );
 
@@ -54,7 +54,7 @@ int main( int argc, char** argv )
   std::string test_geom_xml_file_name;
   std::string test_resp_func_xml_file_name;
   std::string test_observer_xml_file_name;
-  
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_geom_xml_file",
@@ -69,10 +69,10 @@ int main( int argc, char** argv )
 		 &test_observer_xml_file_name,
 		 "Test estimator xml file name" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
-  
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -81,7 +81,7 @@ int main( int argc, char** argv )
   }
 
   // Initialize Root
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep =
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
@@ -89,22 +89,22 @@ int main( int argc, char** argv )
   Geometry::ModuleInterface<Geometry::Root>::initialize();
 
   // Load the observer parameter lists
-  observer_reps = 
+  observer_reps =
     Teuchos::getParametersFromXmlFile( test_observer_xml_file_name );
 
   // Load the response functions
   {
-    Teuchos::RCP<Teuchos::ParameterList> response_reps = 
+    Teuchos::RCP<Teuchos::ParameterList> response_reps =
       Teuchos::getParametersFromXmlFile( test_resp_func_xml_file_name );
 
     MonteCarlo::ResponseFunctionFactory::createResponseFunctions(
                                                     *response_reps,
                                                     response_function_id_map );
   }
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  
+
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

@@ -17,7 +17,7 @@ namespace DataGen{
 //! The electron-photon-relaxation data generator base class
 class ENDLDataGenerator
 {
-  
+
 public:
 
   //! Constructor
@@ -28,22 +28,22 @@ public:
   { /* ... */ }
 
   //! Populate the ENDL data container
-  virtual void populateENDLDataContainer( 
+  virtual void populateENDLDataContainer(
         Data::ENDLVolatileDataContainer&
         data_container ) const = 0;
 
   //! Populate the EADL data container
-  virtual void populateEADLDataContainer( 
+  virtual void populateEADLDataContainer(
         Data::ENDLVolatileDataContainer&
         data_container ) const = 0;
 
   //! Populate the EPDL data container
-  virtual void populateEPDLDataContainer( 
+  virtual void populateEPDLDataContainer(
         Data::ENDLVolatileDataContainer&
         data_container ) const = 0;
 
   //! Populate the EEDL data container
-  virtual void populateEEDLDataContainer( 
+  virtual void populateEEDLDataContainer(
         Data::ENDLVolatileDataContainer&
         data_container ) const = 0;
 

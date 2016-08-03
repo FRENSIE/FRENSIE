@@ -42,7 +42,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
   {
     case KN_INCOHERENT_MODEL:
     {
-      IncoherentPhotonScatteringDistributionACEFactory::createKleinNishinaDistribution( 
+      IncoherentPhotonScatteringDistributionACEFactory::createKleinNishinaDistribution(
 						 incoherent_distribution,
 						 kahn_sampling_cutoff_energy );
       break;
@@ -59,12 +59,12 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     {
       std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 							raw_photoatom_data,
 							doppler_broadened_dist,
 							false );
-      
+
       IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHybridDistribution(
 						 raw_photoatom_data,
 						 doppler_broadened_dist,
@@ -76,12 +76,12 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     {
       std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createDecoupledCompleteDistribution(
 							raw_photoatom_data,
 							doppler_broadened_dist,
 							true );
-      
+
       IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHybridDistribution(
 						 raw_photoatom_data,
 						 doppler_broadened_dist,
@@ -93,12 +93,12 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     {
       std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 							raw_photoatom_data,
 							doppler_broadened_dist,
 							false );
-      
+
       IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHybridDistribution(
 						 raw_photoatom_data,
 						 doppler_broadened_dist,
@@ -110,12 +110,12 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
     {
       std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>
 	doppler_broadened_dist;
-      
+
       DopplerBroadenedPhotonEnergyDistributionACEFactory::createCoupledCompleteDistribution(
 							raw_photoatom_data,
 							doppler_broadened_dist,
 							true );
-      
+
       IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHybridDistribution(
 						 raw_photoatom_data,
 						 doppler_broadened_dist,
@@ -133,7 +133,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 }
 
 // Create a Waller-Hartree incoherent distribution
-void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistribution( 
+void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistribution(
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
@@ -142,11 +142,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-  
+
   // Create the scattering function
   std::shared_ptr<const ScatteringFunction> scattering_function;
 
-  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
+  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 							 raw_photoatom_data,
 							 scattering_function );
 
@@ -157,8 +157,8 @@ void IncoherentPhotonScatteringDistributionACEFactory::createWallerHartreeDistri
 							    raw_photoatom_data,
 							    subshell_order );
 
-  incoherent_distribution.reset( 
-			 new DetailedWHIncoherentPhotonScatteringDistribution( 
+  incoherent_distribution.reset(
+			 new DetailedWHIncoherentPhotonScatteringDistribution(
 			   scattering_function,
 			   raw_photoatom_data.extractSubshellOccupancies(),
 			   subshell_order,
@@ -171,7 +171,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
  const std::shared_ptr<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
  doppler_broadened_dist,
  Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
- incoherent_distribution,     
+ incoherent_distribution,
  const double kahn_sampling_cutoff_energy )
 {
   // Make sure the Doppler broadened distribution is valid
@@ -179,11 +179,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
 		    SimulationPhotonProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
-  
+
   // Create the scattering function
   std::shared_ptr<const ScatteringFunction> scattering_function;
 
-  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
+  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 							 raw_photoatom_data,
 							 scattering_function );
 
@@ -192,31 +192,31 @@ void IncoherentPhotonScatteringDistributionACEFactory::createDopplerBroadenedHyb
 					       scattering_function,
 					       doppler_broadened_dist,
 					       kahn_sampling_cutoff_energy ) );
-}	
+}
 
 // Create the scattering function
-void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
+void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  std::shared_ptr<const ScatteringFunction>& scattering_function )
 {
-  Teuchos::ArrayView<const double> jince_block = 
+  Teuchos::ArrayView<const double> jince_block =
     raw_photoatom_data.extractJINCEBlock();
-  
+
   unsigned scatt_func_size = jince_block.size()/2;
-  
+
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
-  
+
   std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function;
 
-  Teuchos::Array<double> scattering_function_values( 
+  Teuchos::Array<double> scattering_function_values(
 			     jince_block( scatt_func_size, scatt_func_size ) );
 
-  raw_scattering_function.reset( 
-    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
+  raw_scattering_function.reset(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>(
 						recoil_momentum,
 						scattering_function_values ) );
-  
-  scattering_function.reset( 
+
+  scattering_function.reset(
 	       new StandardScatteringFunction<Utility::Units::InverseAngstrom>(
 						   raw_scattering_function ) );
 }

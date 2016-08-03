@@ -20,14 +20,14 @@
 
 namespace MonteCarlo{
 
-// Basic Constructor 
+// Basic Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
     const Teuchos::ArrayRCP<const double>& cross_section,
     const unsigned threshold_energy_index,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
@@ -35,7 +35,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
                                                        threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
     d_electroionization_subshell_distribution( electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
+    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum(
                                                         interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
@@ -43,11 +43,11 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
-  testPrecondition( !electroionization_subshell_distribution.is_null() );
+  testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
 }
 
 
-// Constructor 
+// Constructor
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationSubshellElectroatomicReaction(
     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -55,7 +55,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     const unsigned threshold_energy_index,
     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
     const Data::SubshellType interaction_subshell,
-    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+    const std::shared_ptr<const ElectroionizationSubshellElectronScatteringDistribution>&
             electroionization_subshell_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
             incoming_energy_grid,
@@ -63,9 +63,9 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
             threshold_energy_index,
             grid_searcher ),
     d_interaction_subshell( interaction_subshell ),
-    d_electroionization_subshell_distribution( 
+    d_electroionization_subshell_distribution(
             electroionization_subshell_distribution ),
-    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
+    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum(
             interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
@@ -73,19 +73,50 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( interaction_subshell !=Data::UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
-  testPrecondition( !electroionization_subshell_distribution.is_null() );
+  testPrecondition( electroionization_subshell_distribution.use_count() > 0 );
+}
+
+// Return the differential cross section
+template<typename InterpPolicy, bool processed_cross_section>
+double ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::getDifferentialCrossSection(
+    const double incoming_energy,
+    const double outgoing_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > 0.0 );
+
+  // Evaluate the forward cross section at the incoming energy
+  double forward_cs = this->getCrossSection( incoming_energy );
+
+  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
+  double knock_on_pdf =
+    d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
+                                                            outgoing_energy );
+
+  /* Calculate the energy of a knock on electron from a primary electron with
+     outgoing energy = outgoing_energy */
+  double knock_on_energy = incoming_energy - outgoing_energy -
+    d_electroionization_subshell_distribution->getBindingEnergy();
+
+  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
+  double primary_pdf =
+    d_electroionization_subshell_distribution->evaluatePDF( incoming_energy,
+                                                            knock_on_energy );
+
+  return forward_cs*( knock_on_pdf + primary_pdf );
 }
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
-				     ElectronState& electron, 
+void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
+				     ElectronState& electron,
 				     ParticleBank& bank,
 				     Data::SubshellType& shell_of_interaction ) const
 {
-  d_electroionization_subshell_distribution->scatterElectron( 
-                                               electron, 
-                                               bank, 
+  d_electroionization_subshell_distribution->scatterElectron(
+                                               electron,
+                                               bank,
                                                shell_of_interaction);
 
   electron.incrementCollisionNumber();

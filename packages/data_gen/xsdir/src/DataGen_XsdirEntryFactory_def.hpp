@@ -28,7 +28,7 @@ void XsdirEntryFactory::createEntry( const STLCompliantContainer& entry_tokens,
   testPrecondition( XsdirEntry::isLineTableEntry( entry_tokens ) );
   testPrecondition( XsdirEntry::isTableTypeSupported( entry_tokens ) );
 
-  XsdirEntry::TableType table_type = 
+  XsdirEntry::TableType table_type =
     XsdirEntry::extractTableTypeFromEntryTokens( entry_tokens );
 
   switch( table_type )

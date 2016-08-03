@@ -14,11 +14,11 @@
 namespace Data{
 
 // Constructor
-/*! \details A copy of the jxs array will be made so that it can be modified. 
- * All indices in the jxs array correspond to a starting index of 1 (1 is 
+/*! \details A copy of the jxs array will be made so that it can be modified.
+ * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
  */
-XSSNeutronDataExtractor::XSSNeutronDataExtractor( 
+XSSNeutronDataExtractor::XSSNeutronDataExtractor(
 				  const Teuchos::ArrayView<const int>& nxs,
 				  const Teuchos::ArrayView<const int>& jxs,
 		                  const Teuchos::ArrayRCP<const double>& xss )
@@ -67,7 +67,7 @@ bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
 }
 
 // Extract the ESZ block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractESZBlock() const
 {
   return d_esz_block;
@@ -78,11 +78,11 @@ Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractEnergyGrid() const
 {
   Teuchos::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
-  
+
   // Make sure the extracted energy grid is sorted
-  testPostcondition( Utility::Sort::isSortedAscending( energy_grid.begin(), 
+  testPostcondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 					      energy_grid.end() ) );
-		    
+
   return energy_grid;
 }
 
@@ -115,7 +115,7 @@ XSSNeutronDataExtractor::extractAverageHeatingNumbers() const
 }
 
 // Extract the NU block form the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractNUBlock() const
 {
   if( d_jxs[1] >= 0 )
@@ -125,7 +125,7 @@ XSSNeutronDataExtractor::extractNUBlock() const
 }
 
 // Extract the MTR block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractMTRBlock() const
 {
   if( d_nxs[3] != 0 )
@@ -135,7 +135,7 @@ XSSNeutronDataExtractor::extractMTRBlock() const
 }
 
 // Extract the MTRP block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractMTRPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -145,17 +145,17 @@ XSSNeutronDataExtractor::extractMTRPBlock() const
 }
 
 // Extract the LQR block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLQRBlock() const
 {
   if( d_nxs[3] != 0 )
     return d_xss( d_jxs[3], d_nxs[3] );
-  else 
+  else
     return Teuchos::ArrayView<const double>();
 }
 
 // Extract the TYR block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractTYRBlock() const
 {
   if( d_nxs[3] != 0 )
@@ -167,8 +167,8 @@ XSSNeutronDataExtractor::extractTYRBlock() const
 // Extract the LSIG block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
- */ 
-Teuchos::ArrayView<const double> 
+ */
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLSIGBlock() const
 {
   if( d_nxs[3] != 0 )
@@ -176,12 +176,12 @@ XSSNeutronDataExtractor::extractLSIGBlock() const
   else
     return Teuchos::ArrayView<const double>();
 }
-  
+
 // Extract the LSIGP block from the XSS array
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -191,12 +191,12 @@ XSSNeutronDataExtractor::extractLSIGPBlock() const
 }
 
 // Extract the SIG block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGBlock() const
 {
   if( d_nxs[3] != 0 )
     return d_xss( d_jxs[6], d_jxs[7]-d_jxs[6] );
-  else 
+  else
     return Teuchos::ArrayView<const double>();
 }
 
@@ -204,14 +204,14 @@ XSSNeutronDataExtractor::extractSIGBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLANDBlock() const
 {
   return d_xss( d_jxs[7], d_nxs[4]+1 );
 }
 
 // Extract the AND block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDBlock() const
 {
   return d_xss( d_jxs[8], d_jxs[9]-d_jxs[8] );
@@ -221,12 +221,12 @@ XSSNeutronDataExtractor::extractANDBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLDLWBlock() const
 {
   if( d_nxs[4] != 0 )
     return d_xss( d_jxs[9], d_nxs[4] );
-  else 
+  else
     return Teuchos::ArrayView<const double>();
 }
 
@@ -234,7 +234,7 @@ XSSNeutronDataExtractor::extractLDLWBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -244,7 +244,7 @@ XSSNeutronDataExtractor::extractLDLWPBlock() const
 }
 
 // Extract the DLW block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWBlock() const
 {
   if( d_nxs[4] != 0 )
@@ -254,7 +254,7 @@ XSSNeutronDataExtractor::extractDLWBlock() const
 }
 
 // Extract the DLWP block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -278,7 +278,7 @@ XSSNeutronDataExtractor::extractGPDBlock() const
 }
 
 // Extract the SIGP block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractSIGPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -291,7 +291,7 @@ XSSNeutronDataExtractor::extractSIGPBlock() const
 /*! \details All indices in this array are for Fortran arrays.
  * Subtract by one to get the corresponding C array indices.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractLANDPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -306,7 +306,7 @@ XSSNeutronDataExtractor::extractLANDPBlock() const
  * entry in the LANDP block is 0 (indicating that the outgoing photon angle is
  * isotropic in the lab frame).
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractANDPBlock() const
 {
   if( d_nxs[5] != 0 )
@@ -316,13 +316,13 @@ XSSNeutronDataExtractor::extractANDPBlock() const
 }
 
 // Extract the YP block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractYPBlock() const
 {
   if( d_nxs[5] != 0 )
   {
     int size = (int)d_xss[d_jxs[19]] + 1;
-    
+
     return d_xss( d_jxs[19], size );
   }
   else
@@ -330,13 +330,13 @@ XSSNeutronDataExtractor::extractYPBlock() const
 }
 
 // Extract the FIS block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractFISBlock() const
 {
   if( d_jxs[20] >= 0 )
   {
     int size = (int)d_xss[d_jxs[20]+1] + 2;
-    
+
     return d_xss( d_jxs[20], size );
   }
   else
@@ -344,7 +344,7 @@ XSSNeutronDataExtractor::extractFISBlock() const
 }
 
 // Extract the UNR block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
@@ -354,7 +354,7 @@ XSSNeutronDataExtractor::extractUNRBlock() const
 }
 
 // Extract the DNU (delayed NU) block from the XSS array
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractDNUBlock() const
 {
   if( hasDelayedNeutronData() )
@@ -382,7 +382,7 @@ XSSNeutronDataExtractor::extractDNEDLBlock() const
 {
   if( d_nxs[7] != 0 )
     return d_xss( d_jxs[25], d_nxs[7] );
-  else 
+  else
     return Teuchos::ArrayView<const double>();
 }
 
@@ -401,17 +401,17 @@ Teuchos::ArrayRCP<double>
 XSSNeutronDataExtractor::extractAceLaws() const
 {
 	Teuchos::ArrayRCP<double> AceLaws;
-		
+
   if( d_nxs[4] != 0 )
   {
-		Teuchos::ArrayView<const double> LDLWBlock = 
+		Teuchos::ArrayView<const double> LDLWBlock =
 		                               XSSNeutronDataExtractor::extractLDLWBlock();
-		                               
-		Teuchos::ArrayView<const double> MTRBlock = 
+
+		Teuchos::ArrayView<const double> MTRBlock =
 		                               XSSNeutronDataExtractor::extractMTRBlock();
-		                                 
+
 		AceLaws.resize( LDLWBlock.size() );
-		                              
+
 		for ( int i = 0; i < LDLWBlock.size(); ++i )
 		{
 		  if (d_xss[ int(LDLWBlock[i]) + int(d_jxs[10]) -1] == 0)
@@ -424,7 +424,7 @@ XSSNeutronDataExtractor::extractAceLaws() const
 		    int(MTRBlock[i]) << ". This is not currently supported!" << std::endl;
 		  }
 		}
-		
+
 		return AceLaws;
   }
   else

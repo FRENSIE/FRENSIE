@@ -23,7 +23,7 @@ class XsdirEntry
 {
 
 public:
-  
+
   //! The table types
   enum TableType{CONTINUOUS_ENERGY_NEUTRON_TABLE,
 		 S_ALPHA_BETA_TABLE,
@@ -36,7 +36,7 @@ public:
   static unsigned extractTableTokensFromXsdirLine(
                                       const std::string& xsdir_line,
 				      STLCompliantContainer& entry_tokens );
-  
+
   //! Check if the line is a table entry
   template<typename STLCompliantContainer>
   static bool isLineTableEntry( const STLCompliantContainer& entry_tokens );
@@ -99,14 +99,14 @@ public:
   double getTableTemperatureKelvin() const;
 
   //! Add information to parameter list
-  virtual void addInfoToParameterList( 
+  virtual void addInfoToParameterList(
 			    Teuchos::ParameterList& parameter_list ) const = 0;
 
 protected:
 
   //! Extract the table version from the entry tokens
   template<typename STLCompliantContainer>
-  static unsigned extractTableVersionFromEntryTokens( 
+  static unsigned extractTableVersionFromEntryTokens(
 			        const STLCompliantContainer& entry_tokens );
 
   //! Extract the file path from the entry tokens
@@ -133,7 +133,7 @@ protected:
   template<typename STLCompliantContainer>
   static double extractTableTemperatureFromEntryTokens(
 				const STLCompliantContainer& entry_tokens );
-					   
+
 
 private:
 

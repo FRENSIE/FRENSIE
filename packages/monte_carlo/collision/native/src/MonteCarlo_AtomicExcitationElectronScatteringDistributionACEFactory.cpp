@@ -7,7 +7,6 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
@@ -20,31 +19,31 @@ namespace MonteCarlo{
 // Create a atomic excitation distribution
 void AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcitationDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
+			  std::shared_ptr<const AtomicExcitationElectronScatteringDistribution>&
 			    energy_loss_distribution )
 {
   // Create the energy loss function
-  AtomicExcitationElectronScatteringDistribution::AtomicDistribution 
+  AtomicExcitationElectronScatteringDistribution::AtomicDistribution
                                                     energy_loss_function;
 
-  AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossFunction( 
+  AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossFunction(
 							  raw_electroatom_data,
 							  energy_loss_function );
 
-  energy_loss_distribution.reset( 
+  energy_loss_distribution.reset(
    new AtomicExcitationElectronScatteringDistribution( energy_loss_function ) );
 }
 
 // Create the energy loss function
 void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossFunction(
 	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-           AtomicExcitationElectronScatteringDistribution::AtomicDistribution& 
+           AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
                                                         energy_loss_function )
 {
    // Extract the atomic excitation scattering information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
 				      raw_electroatom_data.extractEXCITBlock() );
-  
+
   // Extract the number of tabulated energies
   int size = excit_block.size()/2;
 
@@ -54,7 +53,7 @@ void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossF
   // Extract the energy loss for atomic excitation
   Teuchos::Array<double> energy_loss(excit_block(size,size));
 
-  energy_loss_function.reset( 
+  energy_loss_function.reset(
     new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
 		                                       energy_loss ) );
 }

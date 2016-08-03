@@ -2,7 +2,7 @@
 //!
 //! \file   Geometry_PointLocation.hpp
 //! \author Alex Robinson
-//! \brief  Point location (relative to a cell) enumeration 
+//! \brief  Point location (relative to a cell) enumeration
 //!
 //---------------------------------------------------------------------------//
 

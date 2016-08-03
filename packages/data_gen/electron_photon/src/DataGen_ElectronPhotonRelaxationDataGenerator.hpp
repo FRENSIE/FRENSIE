@@ -17,7 +17,7 @@ namespace DataGen{
 //! The electron-photon-relaxation data generator base class
 class ElectronPhotonRelaxationDataGenerator
 {
-  
+
 public:
 
   //! Constructor
@@ -28,7 +28,7 @@ public:
   { /* ... */ }
 
   //! Populate the electron-photon-relaxation data container
-  virtual void populateEPRDataContainer( 
+  virtual void populateEPRDataContainer(
                            Data::ElectronPhotonRelaxationVolatileDataContainer&
 			   data_container ) const = 0;
 

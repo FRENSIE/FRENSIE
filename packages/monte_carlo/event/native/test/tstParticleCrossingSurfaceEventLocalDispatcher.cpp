@@ -31,7 +31,7 @@ estimator_1;
 std::shared_ptr<MonteCarlo::SurfaceFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_2;
 
-std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher> 
+std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher>
 dispatcher( new MonteCarlo::ParticleCrossingSurfaceEventLocalDispatcher( 0 ) );
 
 //---------------------------------------------------------------------------//
@@ -43,7 +43,7 @@ void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> 
+  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
@@ -72,7 +72,7 @@ void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
 				 std::shared_ptr<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
-  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> 
+  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>
     surface_ids( 2 );
   surface_ids[0] = 0;
   surface_ids[1] = 1;
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, getId )
 
 //---------------------------------------------------------------------------//
 // Check that the number of observers attached tot he disp. can be returned
-TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher,
 		   getNumberOfObservers )
 {
   TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
@@ -118,7 +118,7 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, attachObserver )
   initializeSurfaceCurrentEstimator( 0u, estimator_1 );
   initializeSurfaceFluxEstimator( 1u, estimator_2 );
 
-  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 = 
+  std::shared_ptr<MonteCarlo::ParticleCrossingSurfaceEventObserver> observer_1 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleCrossingSurfaceEventObserver>(
 								 estimator_1 );
 
@@ -169,14 +169,14 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcher, detachObserver )
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 
   // Remove nonexistent estimator
   dispatcher->detachObserver( 2u );
 
   TEST_EQUALITY_CONST( estimator_1.use_count(), 1 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 1 );
-  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );  
+  TEST_EQUALITY_CONST( dispatcher->getNumberOfObservers(), 0 );
 }
 
 //---------------------------------------------------------------------------//

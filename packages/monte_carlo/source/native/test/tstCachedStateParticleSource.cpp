@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   tstCachedStateParticleSource.cpp
 //! \author Alex Robinson
 //! \brief  Cached state particle source unit tests.
@@ -34,55 +34,55 @@
 void initializeSource( std::shared_ptr<MonteCarlo::ParticleSource>& source )
 {
   MonteCarlo::ParticleBank bank;
-    
-  boost::shared_ptr<MonteCarlo::ParticleState> particle( 
+
+  boost::shared_ptr<MonteCarlo::ParticleState> particle(
 					 new MonteCarlo::PhotonState( 1ull ) );
 
   bank.push( *particle );
-  
+
   particle.reset( new MonteCarlo::NeutronState( 10ull ) );
-  
+
   bank.push( *particle );
-  
+
   particle.reset( new MonteCarlo::PhotonState( 1ull ) );
-  
+
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::ElectronState( 11ull ) );
-  
+
   bank.push( *particle );
-  
+
   particle.reset( new MonteCarlo::NeutronState( 12ull ) );
-  
+
   bank.push( *particle );
-  
+
   particle.reset( new MonteCarlo::PhotonState( 13ull ) );
-  
+
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::ElectronState( 14ull ) );
-  
+
   bank.push( *particle );
-  
+
   particle.reset( new MonteCarlo::NeutronState( 15ull ) );
-  
+
   bank.push( *particle );
 
   particle.reset( new MonteCarlo::PhotonState( 16ull ) );
-  
+
   bank.push( *particle );
-  
+
   std::string bank_archive_name( "test_state_source_bank_archive.xml" );
   std::string bank_name_in_archive( "state_bank" );
- 
+
   {
     std::ofstream ofs( bank_archive_name.c_str() );
-    
+
     boost::archive::xml_oarchive ar(ofs);
     ar << boost::serialization::make_nvp( bank_name_in_archive.c_str(), bank );
   }
 
-  source.reset( new MonteCarlo::CachedStateParticleSource( 
+  source.reset( new MonteCarlo::CachedStateParticleSource(
 				    bank_archive_name,
 				    bank_name_in_archive,
 				    Utility::ArchivableObject::XML_ARCHIVE ) );
@@ -105,7 +105,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   MonteCarlo::ParticleBank bank;
   source->sampleParticleState( bank, 0 );
 
@@ -113,12 +113,12 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
-    
+
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
 
   // Sample from the source again
@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
-  
+
   bank.pop();
 
   // Sample from the source again
@@ -138,7 +138,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  
+
   bank.pop();
 
   // Sample from the source again
@@ -203,48 +203,48 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, sampleParticleState_thread_safe )
 
   initializeSource( source );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   source->enableThreadSupport( threads );
-  
+
   std::vector<MonteCarlo::ParticleBank> banks( threads );
 
   #pragma omp parallel for num_threads( threads )
   for( unsigned i = 0; i < 8; ++i )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                        banks[Utility::GlobalOpenMPSession::getThreadId()], i );
   }
-  
+
   // Merge the banks
   MonteCarlo::ParticleBank bank;
 
   for( unsigned i = 0; i < banks.size(); ++i )
     bank.merge( banks[i], compareHistoryNumbers );
-  
+
   banks.clear();
 
   TEST_EQUALITY_CONST( bank.size(), 9 );
-  
+
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
-    
+
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::PHOTON );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 1ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::NEUTRON );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 2ull );
   TEST_EQUALITY_CONST( bank.top().getParticleType(), MonteCarlo::ELECTRON );
-  
+
   bank.pop();
 
   TEST_EQUALITY_CONST( bank.top().getHistoryNumber(), 3ull );
@@ -280,10 +280,10 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfTrials )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   TEST_EQUALITY_CONST( source->getNumberOfTrials(), 0ull );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   source->enableThreadSupport( threads );
@@ -293,7 +293,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfTrials )
   #pragma omp parallel for num_threads( threads )
   for( unsigned i = 0; i < 8; ++i )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                        banks[Utility::GlobalOpenMPSession::getThreadId()], i );
   }
 
@@ -307,10 +307,10 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfSamples )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0ull );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   source->enableThreadSupport( threads );
@@ -320,7 +320,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getNumberOfSamples )
   #pragma omp parallel for num_threads( threads )
   for( unsigned i = 0; i < 8; ++i )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                        banks[Utility::GlobalOpenMPSession::getThreadId()], i );
   }
 
@@ -334,10 +334,10 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getSamplingEfficiency )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   source->enableThreadSupport( threads );
@@ -347,7 +347,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, getSamplingEfficiency )
   #pragma omp parallel for num_threads( threads )
   for( unsigned i = 0; i < 8; ++i )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                        banks[Utility::GlobalOpenMPSession::getThreadId()], i );
   }
 
@@ -361,9 +361,9 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, exportData )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   MonteCarlo::ParticleBank bank;
-  
+
   // Conduct 10 samples
   for( unsigned i = 0; i < 8; ++i )
     source->sampleParticleState( bank, i );
@@ -380,7 +380,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, exportData )
   }
 
   // Check that the source data was written correctly
-  MonteCarlo::SourceHDF5FileHandler source_file_handler( 
+  MonteCarlo::SourceHDF5FileHandler source_file_handler(
                source_data_file_name,
                MonteCarlo::SourceHDF5FileHandler::READ_ONLY_SOURCE_HDF5_FILE );
 
@@ -397,10 +397,10 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, resetData )
   std::shared_ptr<MonteCarlo::ParticleSource> source;
 
   initializeSource( source );
-  
+
   TEST_EQUALITY_CONST( source->getNumberOfSamples(), 0ull );
 
-  unsigned threads = 
+  unsigned threads =
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
 
   source->enableThreadSupport( threads );
@@ -410,7 +410,7 @@ TEUCHOS_UNIT_TEST( CachedStateParticleSource, resetData )
   #pragma omp parallel for num_threads( threads )
   for( unsigned i = 0; i < 8; ++i )
   {
-    source->sampleParticleState( 
+    source->sampleParticleState(
                        banks[Utility::GlobalOpenMPSession::getThreadId()], i );
   }
 
@@ -434,10 +434,10 @@ int main( int argc, char** argv )
 		 &threads,
 		 "Number of threads to use" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
@@ -448,10 +448,10 @@ int main( int argc, char** argv )
   // Set up the global OpenMP session
   if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
     Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
-  
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-  
+
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 

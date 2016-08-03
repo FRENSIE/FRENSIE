@@ -73,11 +73,11 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, hasUnresolvedResonanceData_u238 )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the XSSNeutronDataExtractor can extract the ESZ block from the 
+// Check that the XSSNeutronDataExtractor can extract the ESZ block from the
 // XSS array
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock_h1 )
 {
-  Teuchos::ArrayView<const double> esz_block = 
+  Teuchos::ArrayView<const double> esz_block =
     xss_data_extractor_h1->extractESZBlock();
 
   TEST_EQUALITY_CONST( esz_block.size(), 590*5 );
@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock_u238 )
 {
-  Teuchos::ArrayView<const double> esz_block = 
+  Teuchos::ArrayView<const double> esz_block =
     xss_data_extractor_u238->extractESZBlock();
 
   TEST_EQUALITY_CONST( esz_block.size(), 788770 );
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractESZBlock_u238 )
 // XSS array
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_h1 )
 {
-  Teuchos::ArrayView<const double> energy_grid = 
+  Teuchos::ArrayView<const double> energy_grid =
     xss_data_extractor_h1->extractEnergyGrid();
 
   TEST_EQUALITY_CONST( energy_grid.size(), 590 );
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
 {
-  Teuchos::ArrayView<const double> energy_grid = 
+  Teuchos::ArrayView<const double> energy_grid =
     xss_data_extractor_u238->extractEnergyGrid();
 
   TEST_EQUALITY_CONST( energy_grid.size(), 157754 );
@@ -123,7 +123,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractEnergyGrid_u238 )
 // from the XSS array
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_h1 )
 {
-  Teuchos::ArrayView<const double> total_cross_sec = 
+  Teuchos::ArrayView<const double> total_cross_sec =
     xss_data_extractor_h1->extractTotalCrossSection();
 
   TEST_EQUALITY_CONST( total_cross_sec.size(), 590 );
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTotalCrossSec_u238 )
 {
-  Teuchos::ArrayView<const double> total_cross_sec = 
+  Teuchos::ArrayView<const double> total_cross_sec =
     xss_data_extractor_u238->extractTotalCrossSection();
 
   TEST_EQUALITY_CONST( total_cross_sec.size(), 157754 );
@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractAbsorptionCrossSec_u238 )
 // from the XSS array
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_h1 )
 {
-  Teuchos::ArrayView<const double> elastic_cross_sec = 
+  Teuchos::ArrayView<const double> elastic_cross_sec =
     xss_data_extractor_h1->extractElasticCrossSection();
 
   TEST_EQUALITY_CONST( elastic_cross_sec.size(), 590 );
@@ -179,7 +179,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractElasticCrossSection_u238 )
 {
-  Teuchos::ArrayView<const double> elastic_cross_sec = 
+  Teuchos::ArrayView<const double> elastic_cross_sec =
     xss_data_extractor_u238->extractElasticCrossSection();
 
   TEST_EQUALITY_CONST( elastic_cross_sec.size(), 157754 );
@@ -214,7 +214,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractAverageHeatingNumbers_u238)
 // Check that the XSSNeutronDataExtractor can extract the NU block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractNUBlock_h1 )
 {
-  Teuchos::ArrayView<const double> nu_block = 
+  Teuchos::ArrayView<const double> nu_block =
     xss_data_extractor_h1->extractNUBlock();
 
   TEST_EQUALITY_CONST( nu_block.size(), 0 );
@@ -222,7 +222,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractNUBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractNUBlock_u238 )
 {
-  Teuchos::ArrayView<const double> nu_block = 
+  Teuchos::ArrayView<const double> nu_block =
     xss_data_extractor_u238->extractNUBlock();
 
   TEST_EQUALITY_CONST( nu_block.size(), 47 );
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractNUBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the MTR block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock_h1 )
 {
-  Teuchos::ArrayView<const double> mtr_block = 
+  Teuchos::ArrayView<const double> mtr_block =
     xss_data_extractor_h1->extractMTRBlock();
 
   TEST_EQUALITY_CONST( mtr_block.size(), 3 );
@@ -245,7 +245,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock_u238 )
 {
-  Teuchos::ArrayView<const double> mtr_block = 
+  Teuchos::ArrayView<const double> mtr_block =
     xss_data_extractor_u238->extractMTRBlock();
 
   TEST_EQUALITY_CONST( mtr_block.size(), 47 );
@@ -259,7 +259,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the MTRP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> mtrp_block = 
+  Teuchos::ArrayView<const double> mtrp_block =
     xss_data_extractor_h1->extractMTRPBlock();
 
   TEST_EQUALITY_CONST( mtrp_block.size(), 1 );
@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> mtrp_block = 
+  Teuchos::ArrayView<const double> mtrp_block =
     xss_data_extractor_u238->extractMTRPBlock();
 
   TEST_EQUALITY_CONST( mtrp_block.size(), 6  );
@@ -280,7 +280,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractMTRPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LQR block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock_h1 )
 {
-  Teuchos::ArrayView<const double> lqr_block = 
+  Teuchos::ArrayView<const double> lqr_block =
     xss_data_extractor_h1->extractLQRBlock();
 
   TEST_EQUALITY_CONST( lqr_block.size(), 3 );
@@ -291,7 +291,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock_u238 )
 {
-  Teuchos::ArrayView<const double> lqr_block = 
+  Teuchos::ArrayView<const double> lqr_block =
     xss_data_extractor_u238->extractLQRBlock();
 
   TEST_EQUALITY_CONST( lqr_block.size(), 47 );
@@ -303,18 +303,18 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLQRBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the TYR block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock_h1 )
 {
-  Teuchos::ArrayView<const double> tyr_block = 
+  Teuchos::ArrayView<const double> tyr_block =
     xss_data_extractor_h1->extractTYRBlock();
 
   TEST_EQUALITY_CONST( tyr_block.size(), 3 );
   TEST_EQUALITY_CONST( tyr_block[0], 0.0 );
   TEST_EQUALITY_CONST( tyr_block[1], 0.0 );
-  TEST_EQUALITY_CONST( tyr_block[2], 0.0 );  
+  TEST_EQUALITY_CONST( tyr_block[2], 0.0 );
 }
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock_u238 )
 {
-  Teuchos::ArrayView<const double> tyr_block = 
+  Teuchos::ArrayView<const double> tyr_block =
     xss_data_extractor_u238->extractTYRBlock();
 
   TEST_EQUALITY_CONST( tyr_block.size(), 47  );
@@ -326,7 +326,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractTYRBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LSIG block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock_h1 )
 {
-  Teuchos::ArrayView<const double> lsig_block = 
+  Teuchos::ArrayView<const double> lsig_block =
     xss_data_extractor_h1->extractLSIGBlock();
 
   TEST_EQUALITY_CONST( lsig_block.size(), 3 );
@@ -337,7 +337,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock_u238 )
 {
-  Teuchos::ArrayView<const double> lsig_block = 
+  Teuchos::ArrayView<const double> lsig_block =
     xss_data_extractor_u238->extractLSIGBlock();
 
   TEST_EQUALITY_CONST( lsig_block.size(), 47 );
@@ -349,7 +349,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LSIGP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> lsigp_block = 
+  Teuchos::ArrayView<const double> lsigp_block =
     xss_data_extractor_h1->extractLSIGPBlock();
 
   TEST_EQUALITY_CONST( lsigp_block.size(), 1 );
@@ -358,7 +358,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLSIGPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> lsigp_block = 
+  Teuchos::ArrayView<const double> lsigp_block =
     xss_data_extractor_u238->extractLSIGPBlock();
 
   TEST_EQUALITY_CONST( lsigp_block.size(), 6 );
@@ -413,7 +413,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLANDBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the AND block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDBlock_h1 )
 {
-  Teuchos::ArrayView<const double> and_block = 
+  Teuchos::ArrayView<const double> and_block =
     xss_data_extractor_h1->extractANDBlock();
 
   TEST_EQUALITY_CONST( and_block.size(), 1291 );
@@ -423,7 +423,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDBlock_u238 )
 {
-  Teuchos::ArrayView<const double> and_block = 
+  Teuchos::ArrayView<const double> and_block =
     xss_data_extractor_u238->extractANDBlock();
 
   TEST_EQUALITY_CONST( and_block.size(), 93093 );
@@ -435,7 +435,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LDLW block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock_h1 )
 {
-  Teuchos::ArrayView<const double> ldlw_block = 
+  Teuchos::ArrayView<const double> ldlw_block =
     xss_data_extractor_h1->extractLDLWBlock();
 
   TEST_EQUALITY_CONST( ldlw_block.size(), 0 );
@@ -443,7 +443,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock_u238 )
 {
-  Teuchos::ArrayView<const double> ldlw_block = 
+  Teuchos::ArrayView<const double> ldlw_block =
     xss_data_extractor_u238->extractLDLWBlock();
 
   TEST_EQUALITY_CONST( ldlw_block.size(), 45 );
@@ -455,7 +455,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LDLWP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> ldlwp_block = 
+  Teuchos::ArrayView<const double> ldlwp_block =
     xss_data_extractor_h1->extractLDLWPBlock();
 
   TEST_EQUALITY_CONST( ldlwp_block.size(), 1 );
@@ -464,7 +464,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> ldlwp_block = 
+  Teuchos::ArrayView<const double> ldlwp_block =
     xss_data_extractor_u238->extractLDLWPBlock();
 
   TEST_EQUALITY_CONST( ldlwp_block.size(), 6 );
@@ -476,7 +476,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the DLW block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_h1 )
 {
-  Teuchos::ArrayView<const double> dlw_block = 
+  Teuchos::ArrayView<const double> dlw_block =
     xss_data_extractor_h1->extractDLWBlock();
 
   TEST_EQUALITY_CONST( dlw_block.size(), 0 );
@@ -484,7 +484,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_u238 )
 {
-  Teuchos::ArrayView<const double> dlw_block = 
+  Teuchos::ArrayView<const double> dlw_block =
     xss_data_extractor_u238->extractDLWBlock();
 
   TEST_EQUALITY_CONST( dlw_block.size(), 112255 );
@@ -496,7 +496,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the DLWP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> dlwp_block = 
+  Teuchos::ArrayView<const double> dlwp_block =
     xss_data_extractor_h1->extractDLWPBlock();
 
   TEST_EQUALITY_CONST( dlwp_block.size(), 683 );
@@ -506,7 +506,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> dlwp_block = 
+  Teuchos::ArrayView<const double> dlwp_block =
     xss_data_extractor_u238->extractDLWPBlock();
 
   TEST_EQUALITY_CONST( dlwp_block.size(), 3170 );
@@ -518,7 +518,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the GPD block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractGPDBlock_h1 )
 {
-  Teuchos::ArrayView<const double> gpd_block = 
+  Teuchos::ArrayView<const double> gpd_block =
     xss_data_extractor_h1->extractGPDBlock();
 
   TEST_EQUALITY_CONST( gpd_block.size(), 590 );
@@ -528,7 +528,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractGPDBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractGPDBlock_u238 )
 {
-  Teuchos::ArrayView<const double> gpd_block = 
+  Teuchos::ArrayView<const double> gpd_block =
     xss_data_extractor_u238->extractGPDBlock();
 
   TEST_EQUALITY_CONST( gpd_block.size(), 157754 );
@@ -540,7 +540,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractGPDBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the SIGP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractSIGPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> sigp_block = 
+  Teuchos::ArrayView<const double> sigp_block =
     xss_data_extractor_h1->extractSIGPBlock();
 
   TEST_EQUALITY_CONST( sigp_block.size(), 8 );
@@ -550,7 +550,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractSIGPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractSIGPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> sigp_block = 
+  Teuchos::ArrayView<const double> sigp_block =
     xss_data_extractor_u238->extractSIGPBlock();
 
   TEST_EQUALITY_CONST( sigp_block.size(), 539 );
@@ -562,7 +562,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractSIGPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the LANDP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> landp_block = 
+  Teuchos::ArrayView<const double> landp_block =
     xss_data_extractor_h1->extractLANDPBlock();
 
   TEST_EQUALITY_CONST( landp_block.size(), 1 );
@@ -571,7 +571,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> landp_block = 
+  Teuchos::ArrayView<const double> landp_block =
     xss_data_extractor_u238->extractLANDPBlock();
 
   TEST_EQUALITY_CONST( landp_block.size(), 6 );
@@ -583,7 +583,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLANDPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the ANDP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> andp_block = 
+  Teuchos::ArrayView<const double> andp_block =
     xss_data_extractor_h1->extractANDPBlock();
 
   TEST_EQUALITY_CONST( andp_block.size(), 0 );
@@ -591,7 +591,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> andp_block = 
+  Teuchos::ArrayView<const double> andp_block =
     xss_data_extractor_u238->extractANDPBlock();
 
   TEST_EQUALITY_CONST( andp_block.size(), 0 );
@@ -601,7 +601,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractANDPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the YP block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock_h1 )
 {
-  Teuchos::ArrayView<const double> yp_block = 
+  Teuchos::ArrayView<const double> yp_block =
     xss_data_extractor_h1->extractYPBlock();
 
   TEST_EQUALITY_CONST( yp_block.size(), 2 );
@@ -611,7 +611,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock_u238 )
 {
-  Teuchos::ArrayView<const double> yp_block = 
+  Teuchos::ArrayView<const double> yp_block =
     xss_data_extractor_u238->extractYPBlock();
 
   TEST_EQUALITY_CONST( yp_block.size(), 3 );
@@ -623,7 +623,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractYPBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the FIS block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock_h1 )
 {
-  Teuchos::ArrayView<const double> fis_block = 
+  Teuchos::ArrayView<const double> fis_block =
     xss_data_extractor_h1->extractFISBlock();
 
   TEST_EQUALITY_CONST( fis_block.size(), 0 );
@@ -631,7 +631,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock_u238 )
 {
-  Teuchos::ArrayView<const double> fis_block = 
+  Teuchos::ArrayView<const double> fis_block =
     xss_data_extractor_u238->extractFISBlock();
 
   TEST_EQUALITY_CONST( fis_block.size(), 157756 );
@@ -643,7 +643,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractFISBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the UNR block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractUNRBlock_h1 )
 {
-  Teuchos::ArrayView<const double> unr_block = 
+  Teuchos::ArrayView<const double> unr_block =
     xss_data_extractor_h1->extractUNRBlock();
 
   TEST_EQUALITY_CONST( unr_block.size(), 0 );
@@ -651,7 +651,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractUNRBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractUNRBlock_u238 )
 {
-  Teuchos::ArrayView<const double> unr_block = 
+  Teuchos::ArrayView<const double> unr_block =
     xss_data_extractor_u238->extractUNRBlock();
 
   TEST_EQUALITY_CONST( unr_block.size(), 2184 );
@@ -663,7 +663,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractUNRBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the DNU block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_h1 )
 {
-  Teuchos::ArrayView<const double> dnu_block = 
+  Teuchos::ArrayView<const double> dnu_block =
     xss_data_extractor_h1->extractDNUBlock();
 
   TEST_EQUALITY_CONST( dnu_block.size(), 0 );
@@ -671,7 +671,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_u238 )
 {
-  Teuchos::ArrayView<const double> dnu_block = 
+  Teuchos::ArrayView<const double> dnu_block =
     xss_data_extractor_u238->extractDNUBlock();
 
   TEST_EQUALITY_CONST( dnu_block.size(), 11 );
@@ -685,13 +685,13 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractBDDBlock_h1 )
 {
   Teuchos::ArrayView<const double> bdd_block =
     xss_data_extractor_h1->extractBDDBlock();
-  
+
   TEST_EQUALITY_CONST( bdd_block.size(), 0 );
 }
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractBDDBlock_u238 )
 {
-  Teuchos::ArrayView<const double> bdd_block = 
+  Teuchos::ArrayView<const double> bdd_block =
     xss_data_extractor_u238->extractBDDBlock();
 
   TEST_EQUALITY_CONST( bdd_block.size(), 42 );
@@ -703,7 +703,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractBDDBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the DNEDL block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_h1 )
 {
-  Teuchos::ArrayView<const double> dnedl_block = 
+  Teuchos::ArrayView<const double> dnedl_block =
     xss_data_extractor_h1->extractDNEDLBlock();
 
   TEST_EQUALITY_CONST( dnedl_block.size(), 0 );
@@ -711,7 +711,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_h1 )
 
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_u238 )
 {
-  Teuchos::ArrayView<const double> dnedl_block = 
+  Teuchos::ArrayView<const double> dnedl_block =
     xss_data_extractor_u238->extractDNEDLBlock();
 
   TEST_EQUALITY_CONST( dnedl_block.size(), 6 );
@@ -723,7 +723,7 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_u238 )
 // Check that the XSSNeutronDataExtractor can extract the DNED block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDBlock_h1 )
 {
-  Teuchos::ArrayView<const double> dned_block = 
+  Teuchos::ArrayView<const double> dned_block =
     xss_data_extractor_h1->extractDNEDBlock();
 
   TEST_EQUALITY_CONST( dned_block.size(), 0 );
@@ -760,17 +760,17 @@ int main( int argc, char** argv )
 		 &test_u238_ace_table_name,
 		 "Test u238 ACE table name in u238 ACE file" );
 
-  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+  const Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
-  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return =
     clp.parse(argc,argv);
 
   if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   // Initialize ace file handler and data extractor
   ace_file_handler_h1.reset( new Data::ACEFileHandler( test_h1_ace_file_name,
 						    test_h1_ace_table_name,
@@ -780,12 +780,12 @@ int main( int argc, char** argv )
 						    test_u238_ace_table_name,
 						    1u ) );
 
-  xss_data_extractor_h1.reset( 
+  xss_data_extractor_h1.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler_h1->getTableNXSArray(),
 				      ace_file_handler_h1->getTableJXSArray(),
 				      ace_file_handler_h1->getTableXSSArray() ) );
 
-  xss_data_extractor_u238.reset( 
+  xss_data_extractor_u238.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler_u238->getTableNXSArray(),
 				      ace_file_handler_u238->getTableJXSArray(),
 				      ace_file_handler_u238->getTableXSSArray() ) );
@@ -802,7 +802,7 @@ int main( int argc, char** argv )
 
   clp.printFinalTimerSummary(out.ptr());
 
-  return (success ? 0 : 1);  
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

@@ -21,11 +21,11 @@ namespace MonteCarlo{
 //! The simulation general properties factory
 class SimulationGeneralPropertiesFactory
 {
-  
+
 public:
-  
+
   //! Initialize the simulation general properties
-  static void initializeSimulationGeneralProperties( 
+  static void initializeSimulationGeneralProperties(
 				      const Teuchos::ParameterList& properties,
 				      std::ostream* os_warn = &std::cerr );
 };

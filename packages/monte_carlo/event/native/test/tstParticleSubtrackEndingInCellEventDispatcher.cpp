@@ -61,7 +61,7 @@ void initializeCellEstimator( const unsigned estimator_id,
 
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
-  
+
   estimator->setParticleTypes( particle_types );
 }
 
@@ -69,7 +69,7 @@ void initializeCellEstimator( const unsigned estimator_id,
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the correct event dispatchers can be returned
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   getLocalDispatcher )
 {
   TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getId(), 0 );
@@ -79,30 +79,30 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that observers can be attached to dispatchers
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   attachObserver )
 {
   initializeCellEstimator( 0u, estimator_1 );
   initializeCellEstimator( 1u, estimator_2 );
 
   std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_1 );
   std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_2 );
-  
+
   dispatcher->attachObserver( 0, estimator_1->getId(), observer_1 );
-  
+
   dispatcher->attachObserver( 1, estimator_1->getId(), observer_1 );
-  
+
   dispatcher->attachObserver( 0, estimator_2->getId(), observer_2 );
-  
+
   dispatcher->attachObserver( 1, estimator_2->getId(), observer_2 );
-    
+
   observer_1.reset();
   observer_2.reset();
-  
+
   TEST_EQUALITY_CONST( estimator_1.use_count(), 3 );
   TEST_EQUALITY_CONST( estimator_2.use_count(), 3 );
 
@@ -127,13 +127,13 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
-  
+
   estimator_1->commitHistoryContribution();
   estimator_2->commitHistoryContribution();
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
-  
+
   dispatcher->dispatchParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 
 //---------------------------------------------------------------------------//
 // Check that an observer can be detached from the dispatcher
-TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher, 
+TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   detachObserver_dispatcher )
 {
   dispatcher->detachObserver( 0, 0 );
@@ -172,31 +172,31 @@ TEUCHOS_UNIT_TEST( ParticleSubtrackEndingInCellEventDispatcher,
 		   detachAllObservers )
 {
   std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_1 =
-    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>( 
+    std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_1 );
   std::shared_ptr<MonteCarlo::ParticleSubtrackEndingInCellEventObserver> observer_2 =
     std::dynamic_pointer_cast<MonteCarlo::ParticleSubtrackEndingInCellEventObserver>(
 								 estimator_2 );
-  
+
   dispatcher->attachObserver( 0, estimator_1->getId(), observer_1 );
-  
+
   dispatcher->attachObserver( 1, estimator_1->getId(), observer_1 );
-  
+
   dispatcher->attachObserver( 0, estimator_2->getId(), observer_2 );
-  
+
   dispatcher->attachObserver( 1, estimator_2->getId(), observer_2 );
-    
+
   observer_1.reset();
   observer_2.reset();
 
   TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 2 );
-  
+
   TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 2 );
-  
+
   dispatcher->detachAllObservers();
 
   TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 0 ).getNumberOfObservers(), 0 );
-  
+
   TEST_EQUALITY_CONST( dispatcher->getLocalDispatcher( 1 ).getNumberOfObservers(), 0 );
 }
 

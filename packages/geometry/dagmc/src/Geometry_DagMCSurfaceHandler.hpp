@@ -35,7 +35,7 @@ public:
   size_t getNumberOfSurfaces() const;
 
   //! Check if the surface exists
-  virtual bool doesSurfaceExist( 
+  virtual bool doesSurfaceExist(
               const ModuleTraits::InternalSurfaceHandle surface_id ) const = 0;
 
   //! Check if the surface handle exists
@@ -43,7 +43,7 @@ public:
                                const moab::EntityHandle surface_handle ) const;
 
   //! Get the surface id from a surface handle
-  virtual ModuleTraits::InternalSurfaceHandle getSurfaceId( 
+  virtual ModuleTraits::InternalSurfaceHandle getSurfaceId(
                            const moab::EntityHandle surface_handle ) const = 0;
 
   //! Get the surface handle from a surface id

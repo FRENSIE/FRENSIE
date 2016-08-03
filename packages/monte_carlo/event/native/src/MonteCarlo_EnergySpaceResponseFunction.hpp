@@ -23,9 +23,9 @@ class EnergySpaceResponseFunction : public ResponseFunction
 {
 
 public:
-  
+
   //! Constructor
-  EnergySpaceResponseFunction( 
+  EnergySpaceResponseFunction(
 	const unsigned id,
         const std::string& name,
 	const std::shared_ptr<Utility::OneDDistribution> energy_distribution );

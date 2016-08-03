@@ -24,7 +24,7 @@ namespace Geometry{
 /*! The FastDagMCCellHandler class
  * \details This class is optimized for performance. The conversion from
  * cell handle to cell id or cell id to cell handle is fast. The handles
- * are stored twice to allow for the fast lookup times (extra storage 
+ * are stored twice to allow for the fast lookup times (extra storage
  * overhead).
  */
 class FastDagMCCellHandler : public DagMCCellHandler
@@ -46,7 +46,7 @@ public:
   bool doesCellHandleExist( const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell id from a cell handle
-  ModuleTraits::InternalCellHandle getCellId( 
+  ModuleTraits::InternalCellHandle getCellId(
                                   const moab::EntityHandle cell_handle ) const;
 
   //! Get the cell handle from a cell id

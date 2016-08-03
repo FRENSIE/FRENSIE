@@ -23,7 +23,7 @@ class NuclearReaction
 {
 
 private:
-  
+
   // Teuchos ScalarTraits typedef
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -44,7 +44,7 @@ public:
   //! Return the reaction type
   NuclearReactionType getReactionType() const;
 
-  //! Return the temperature (in MeV) at which the reaction occurs 
+  //! Return the temperature (in MeV) at which the reaction occurs
   double getTemperature() const;
 
   //! Return the reaction Q value
@@ -55,7 +55,7 @@ public:
 
   //! Return the cross section at a given energy
   double getCrossSection( const double energy ) const;
-  
+
   //! Return the number of neutrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedNeutrons( const double energy ) const = 0;
 
@@ -68,9 +68,9 @@ public:
 protected:
 
   //! Return an integer number of emitted neutrons given a non-integer value
-  unsigned sampleNumberOfEmittedNeutrons( 
+  unsigned sampleNumberOfEmittedNeutrons(
 				     const double average_multiplicity ) const;
-  
+
 private:
 
   // The nuclear reaction type
@@ -109,7 +109,7 @@ inline double NuclearReaction::getThresholdEnergy() const
  * at the desired energy, this function should be overridden in the derived
  * class. It will be used in implicit multiplication weighting games.
  */
-inline double NuclearReaction::getAverageNumberOfEmittedNeutrons( 
+inline double NuclearReaction::getAverageNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
   return this->getNumberOfEmittedNeutrons( energy );
@@ -117,20 +117,20 @@ inline double NuclearReaction::getAverageNumberOfEmittedNeutrons(
 
 // Return an integer number of emitted neutrons given a non-integer value
 /*! In reality, only an integer number of neutrons can be released per
- * reaction. The integer return type of this function reflects this reality. 
+ * reaction. The integer return type of this function reflects this reality.
  * The integer value is sampled so that the expected value is the average
  * multiplicity.
  */
-inline unsigned NuclearReaction::sampleNumberOfEmittedNeutrons( 
+inline unsigned NuclearReaction::sampleNumberOfEmittedNeutrons(
 				      const double average_multiplicity ) const
 {
   // Make sure the average multiplicity is valid
   testPrecondition( average_multiplicity >= 0.0 );
 
   double floor_multiplicity;
-  double round_down_prob = 1.0 - modf( average_multiplicity, 
+  double round_down_prob = 1.0 - modf( average_multiplicity,
 				       &floor_multiplicity );
-  
+
   if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
       round_down_prob )
     return (unsigned)floor_multiplicity;

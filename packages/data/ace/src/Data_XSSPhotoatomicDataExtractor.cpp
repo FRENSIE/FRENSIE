@@ -16,7 +16,7 @@ namespace Data{
 /*! \details A copy of the jxs array will be made so that it can be modified.
  * All indices in the jxs array correspond to a starting index of 1 (1 is
  * subtracted from all indices so that the correct array location is accessed).
- */ 
+ */
 XSSPhotoatomicDataExtractor::XSSPhotoatomicDataExtractor(
 				  const Teuchos::ArrayView<const int>& nxs,
 				  const Teuchos::ArrayView<const int>& jxs,
@@ -57,7 +57,7 @@ bool XSSPhotoatomicDataExtractor::hasComptonProfileData() const
 }
 
 // Extract the ESZG block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractESZGBlock() const
 {
   return d_eszg_block;
@@ -66,7 +66,7 @@ XSSPhotoatomicDataExtractor::extractESZGBlock() const
 // Extract the energy grid
 /*! \details the values stored are the logarithms of the incoming energies.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractEnergyGrid() const
 {
   return d_eszg_block( 0, d_nxs[2] );
@@ -75,7 +75,7 @@ XSSPhotoatomicDataExtractor::extractEnergyGrid() const
 // Extract the incoherent cross section
 /*! \details the values stored are the logarithms of the incoherent cross sec.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractIncoherentCrossSection() const
 {
   return d_eszg_block( d_nxs[2], d_nxs[2] );
@@ -84,48 +84,48 @@ XSSPhotoatomicDataExtractor::extractIncoherentCrossSection() const
 // Extract the coherent cross section
 /*! \details the values stored are the logarithms of the coherent cross sec.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractCoherentCrossSection() const
 {
   return d_eszg_block( 2*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the photoelectric cross section
-/*! \details the values stored are the logarithms of the photoelectric cross 
+/*! \details the values stored are the logarithms of the photoelectric cross
  * sec.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractPhotoelectricCrossSection() const
 {
   return d_eszg_block( 3*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the pair production cross section
-/*! \details the values stored are the logarithms of the pair production cross 
+/*! \details the values stored are the logarithms of the pair production cross
  * sec.
  */
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractPairProductionCrossSection() const
 {
   return d_eszg_block( 4*d_nxs[2], d_nxs[2] );
 }
 
 // Extract the JINC block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJINCBlock() const
 {
   return d_xss( d_jxs[1], 21 );
 }
 
 // Extract the JCOH block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJCOHBlock() const
 {
   return d_xss( d_jxs[2], 110 );
 }
 
 // Extract the JFLO block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractJFLOBlock() const
 {
   if( hasFluorescenceData() )
@@ -135,14 +135,14 @@ XSSPhotoatomicDataExtractor::extractJFLOBlock() const
 }
 
 // Extract the LHNM block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLHNMBlock() const
 {
   return d_xss( d_jxs[4], d_nxs[2] );
 }
- 
+
 // Extract the LNEPS block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLNEPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
@@ -152,7 +152,7 @@ XSSPhotoatomicDataExtractor::extractLNEPSBlock() const
 }
 
 // Extract the LBEPS block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLBEPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
@@ -162,7 +162,7 @@ XSSPhotoatomicDataExtractor::extractLBEPSBlock() const
 }
 
 // Extract the LPIPS block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLPIPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
@@ -172,7 +172,7 @@ XSSPhotoatomicDataExtractor::extractLPIPSBlock() const
 }
 
 // Extract the LSWD block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLSWDBlock() const
 {
   if( hasComptonProfileData() )
@@ -182,7 +182,7 @@ XSSPhotoatomicDataExtractor::extractLSWDBlock() const
 }
 
 // Extract the SWD block
-Teuchos::ArrayView<const double> 
+Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractSWDBlock() const
 {
   if( hasComptonProfileData() )

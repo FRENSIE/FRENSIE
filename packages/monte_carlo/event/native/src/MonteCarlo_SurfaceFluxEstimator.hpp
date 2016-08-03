@@ -28,7 +28,7 @@ public:
   typedef StandardSurfaceEstimator::EventTags EventTags;
 
   //! Constructor
-  SurfaceFluxEstimator( 
+  SurfaceFluxEstimator(
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,

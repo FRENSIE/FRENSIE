@@ -39,7 +39,7 @@ public:
 			 const double min_grid_value,
 			 const double max_grid_value,
 			 const unsigned hash_grid_bins );
-  
+
   //! Destructor
   ~StandardHashBasedGridSearcher()
   { /* ... */ }
@@ -84,7 +84,7 @@ public:
 template<typename STLCompliantArray>
 class StandardHashBasedGridSearcher<STLCompliantArray,false> : public HashBasedGridSearcher
 {
-  
+
 public:
 
   //! Basic constructor
@@ -96,7 +96,7 @@ public:
 				 const double min_grid_value,
 				 const double max_grid_value,
 				 const unsigned hash_grid_bins );
-  
+
   //! Destructor
   ~StandardHashBasedGridSearcher()
   { /* ... */ }

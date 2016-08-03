@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   MonteCarlo_PhotonuclearNeutronScatteringDistributionACEFactory.hpp
 //! \author Alex Robinson, Ryan Pease
 //! \brief  Photon neutron (photonuclear) scattering distribution factory class declaration
@@ -33,15 +33,15 @@ namespace MonteCarlo{
 //! The scattering distribution factory class
 class PhotonuclearNeutronScatteringDistributionACEFactory : public NuclearScatteringDistributionACEFactory<PhotonState,NeutronState>
 {
-  
+
 public:
 
-  //! Constructor 
-  PhotonuclearNeutronScatteringDistributionACEFactory( 
+  //! Constructor
+  PhotonuclearNeutronScatteringDistributionACEFactory(
 		       const std::string& table_name,
 		       const double atomic_weight_ratio,
 		       const Data::XSSPhotonuclearDataExtractor& raw_nuclide_data );
-			
+
   //! Destructor
   ~PhotonuclearNeutronScatteringDistributionACEFactory()
   { /* ... */ }

@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-std::shared_ptr<MonteCarlo::EventHandler> 
+std::shared_ptr<MonteCarlo::EventHandler>
 EventModuleInterface<MonteCarlo::EventHandler>::s_event_handler;
 
 } // end MonteCarlo namespace

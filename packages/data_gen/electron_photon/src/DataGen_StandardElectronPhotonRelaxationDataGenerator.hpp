@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Luke Kersting
 //! \brief  The standard electron-photon-relaxation data generator class decl.
 //!
 //---------------------------------------------------------------------------//
@@ -18,8 +18,10 @@
 
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_ElasticElectronMomentsEvaluator.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "Data_ENDLDataContainer.hpp"
+#include "Data_MomentPreservingElectronDataContainer.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -31,19 +33,34 @@ class StandardElectronPhotonRelaxationDataGenerator : public ElectronPhotonRelax
 
 public:
 
-  //! Constructor
-  StandardElectronPhotonRelaxationDataGenerator( 
+  //! Constructor 
+  StandardElectronPhotonRelaxationDataGenerator(
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
-       const Teuchos::RCP<const Data::ENDLDataContainer>&
-            endl_data_container,
+       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
 	   const double min_photon_energy,
 	   const double max_photon_energy,
        const double min_electron_energy,
        const double max_electron_energy,
-       const double cutoff_angle_cosine,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
+	   const double grid_convergence_tol = 0.001,
+	   const double grid_absolute_diff_tol = 1e-13,
+	   const double grid_distance_tol = 1e-13 );
+
+  //! Constructor with moment preserving data
+  StandardElectronPhotonRelaxationDataGenerator(
+	   const unsigned atomic_number,
+	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+       const Teuchos::RCP<const Data::ENDLDataContainer>& endl_data_container,
+	   const double min_photon_energy,
+	   const double max_photon_energy,
+       const double min_electron_energy,
+       const double max_electron_energy,
+	   const double occupation_number_evaluation_tolerance,
+	   const double subshell_incoherent_evaluation_tolerance,
+       const double cutoff_angle_cosine = 1.0,
+       const unsigned number_of_moment_preserving_angles = 0,
 	   const double grid_convergence_tol = 0.001,
 	   const double grid_absolute_diff_tol = 1e-13,
 	   const double grid_distance_tol = 1e-13 );
@@ -56,6 +73,12 @@ public:
   void populateEPRDataContainer(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
+  //! Repopulate the electron moment preserving data
+  static void repopulateMomentPreservingData(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+    const double cutoff_angle_cosine = 0.9,
+    const unsigned number_of_moment_preserving_angles = 1 );
+
 protected:
 
   // Set the atomic data
@@ -63,7 +86,7 @@ protected:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the Compton profile data
-  void setComptonProfileData( 
+  void setComptonProfileData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the occupation number data
@@ -79,11 +102,11 @@ protected:
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the photon data
-  void setPhotonData( 
+  void setPhotonData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Set the electron data
-  void setElectronData( 
+  void setElectronData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
 private:
@@ -105,37 +128,46 @@ private:
 			  data_container ) const;
 
   // Extract the half Compton profile from the ACE table
-  void extractHalfComptonProfile( 
+  void extractHalfComptonProfile(
 			   const unsigned subshell,
 			   std::vector<double>& half_momentum_grid,
 			   std::vector<double>& half_profile ) const;
 
-  // Set the screened rutherford data
-  void setScreenedRutherfordData( 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
-        cutoff_elastic_cross_section, 
-    const Teuchos::RCP<const Utility::OneDDistribution>& 
-        total_elastic_cross_section,
-    const std::vector<double>& elastic_energy_grid,
-    const std::map<double,std::vector<double> >& elastic_pdf,
+  // Set the electron cross section union energy grid
+  void setElectronCrossSectionsData(
     Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+//  // Set the screened rutherford data
+//  void setScreenedRutherfordData(
+//    const std::shared_ptr<const Utility::OneDDistribution>&
+//        cutoff_elastic_cross_section,
+//    const std::shared_ptr<const Utility::OneDDistribution>&
+//        total_elastic_cross_section,
+//    const std::vector<double>& elastic_energy_grid,
+//    const std::map<double,std::vector<double> >& elastic_pdf,
+//    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
+
+  // Set the moment preserving data
+  static void setMomentPreservingData(
+    const std::vector<double>& elastic_energy_grid,
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container );
 
   // Extract the average photon heating numbers
   template<typename InterpPolicy>
   void extractCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
-	  Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
+	  std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract electron cross sections
   template<typename InterpPolicy>
   void extractElectronCrossSection(
         const std::vector<double>& raw_energy_grid,
         const std::vector<double>& raw_cross_section,
-        Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
+        std::shared_ptr<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
-  void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const;
+  void extractSubshellPhotoelectricCrossSections( std::vector<std::pair<unsigned,std::shared_ptr<const Utility::OneDDistribution> > >& cross_sections ) const;
 
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -143,14 +175,14 @@ private:
      Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const;
 
   // Initialize the photon union energy grid
-  void initializePhotonUnionEnergyGrid( 
+  void initializePhotonUnionEnergyGrid(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
      std::list<double>& union_energy_grid ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
-   const Teuchos::RCP<const Utility::OneDDistribution>& original_cross_section,
+   const std::shared_ptr<const Utility::OneDDistribution>& original_cross_section,
    std::vector<double>& cross_section,
    unsigned& threshold_index ) const;
 
@@ -163,19 +195,17 @@ private:
 	     unsigned& threshold_index ) const;
 
   // Merge the electron union energy grid
-  void mergeElectronUnionEnergyGrid( 
+  void mergeElectronUnionEnergyGrid(
     const std::vector<double>& energy_grid,
     std::list<double>& union_energy_grid ) const;
 
   // Calculate the total photoelectric cross section
-  void calculateTotalPhotoelectricCrossSection( 
-    Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+  void calculateTotalPhotoelectricCrossSection(
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the total impulse approx. incoherent cross section
   void calculateImpulseApproxTotalIncoherentCrossSection(
-    Data::ElectronPhotonRelaxationVolatileDataContainer&
-			   data_container ) const;
+    Data::ElectronPhotonRelaxationVolatileDataContainer& data_container ) const;
 
   // Calculate the Waller-Hartree total cross section
   void calculateWallerHartreeTotalCrossSection(
@@ -192,6 +222,27 @@ private:
     std::vector<double>& elastic_angle,
     std::vector<double>& elastic_pdf ) const;
 
+  // Generate elastic moment preserving discrete angle cosines and weights
+  static void evaluateDisceteAnglesAndWeights(
+    const std::shared_ptr<DataGen::ElasticElectronMomentsEvaluator>& moments_evaluator,
+    const double& energy,
+    const int& number_of_moment_preserving_angles,
+    std::vector<double>& discrete_angles,
+    std::vector<double>& weights,
+    double& cross_section_reduction );
+
+  // Generate elastic moment preserving cross section
+  static void evaluateMomentPreservingCrossSection(
+    const Teuchos::ArrayRCP<double>& electron_energy_grid,
+    const Teuchos::RCP<MonteCarlo::AnalogElasticElectroatomicReaction<Utility::LinLin> >
+        analog_reaction,
+    const std::shared_ptr<const MonteCarlo::AnalogElasticElectronScatteringDistribution>
+        analog_distribution,
+    const std::shared_ptr<const Utility::OneDDistribution>& reduction_distribution,
+    const double cutoff_angle_cosine,
+    const unsigned threshold_energy_index,
+    std::vector<double>& moment_preserving_cross_section );
+
   // The threshold energy nudge factor
   static const double s_threshold_energy_nudge_factor;
 
@@ -199,8 +250,10 @@ private:
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
 
   // The ENDL data
-  Teuchos::RCP<const Data::ENDLDataContainer>
-    d_endl_data_container;
+  Teuchos::RCP<const Data::ENDLDataContainer> d_endl_data_container;
+
+  // The Native data
+  Teuchos::RCP<const Data::ElectronPhotonRelaxationDataContainer> d_native_epr_data;
 
   // The min photon energy
   double d_min_photon_energy;
@@ -222,7 +275,7 @@ private:
 
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
-  
+
   // The grid convergence tolerance
   double d_grid_convergence_tol;
 
@@ -231,26 +284,29 @@ private:
 
   // The grid distance tolerance
   double d_grid_distance_tol;
+
+  // The number of moment preserving angles
+  int d_number_of_moment_preserving_angles;
 };
 
 // Test if a value is greater than or equal to one
-inline bool 
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne( 
+inline bool
+StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
 							   const double value )
 {
   return value >= 1.0;
 }
 
 // Test if a value is greater than one
-inline bool 
-StandardElectronPhotonRelaxationDataGenerator::greaterThanOne( 
+inline bool
+StandardElectronPhotonRelaxationDataGenerator::greaterThanOne(
 							   const double value )
 {
   return value > 1.0;
 }
 
 // The if a value is not equal to zero
-inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero( 
+inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
 							   const double value )
 {
   return value != 0.0;

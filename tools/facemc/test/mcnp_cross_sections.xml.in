@@ -93,7 +93,7 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="H-1_2500K">
     <Parameter name="nuclear_file_path" type="string" value="${MCNP_DATA_DIR_REL_PATH}/xdata/endf70a"/>
     <Parameter name="nuclear_file_type" type="string" value="ACE"/>
@@ -233,7 +233,7 @@
     <Parameter name="atomic_mass_number" type="int" value="235"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="U-235_600K">
     <Parameter name="nuclear_file_path" type="string" value="${MCNP_DATA_DIR_REL_PATH}/xdata/endf70j"/>
     <Parameter name="nuclear_file_type" type="string" value="ACE"/>
@@ -353,7 +353,7 @@
     <Parameter name="atomic_mass_number" type="int" value="238"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
   <ParameterList name="U-238_900K">
     <Parameter name="nuclear_file_path" type="string" value="${MCNP_DATA_DIR_REL_PATH}/xdata/endf70j"/>
     <Parameter name="nuclear_file_type" type="string" value="ACE"/>
@@ -413,5 +413,5 @@
     <Parameter name="atomic_mass_number" type="int" value="238"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  
+
 </ParameterList>

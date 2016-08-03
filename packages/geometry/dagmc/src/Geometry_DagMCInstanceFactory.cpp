@@ -18,7 +18,7 @@
 namespace Geometry{
 
 // Initialize DagMC
-void DagMCInstanceFactory::initializeDagMC( 
+void DagMCInstanceFactory::initializeDagMC(
 				        const Teuchos::ParameterList& geom_rep,
 					std::ostream& os_warn )
 {
@@ -36,9 +36,9 @@ void DagMCInstanceFactory::initializeDagMC(
 
   if( geom_rep.isParameter( "Termination Cell Property" ) )
   {
-    std::string property_name = 
-      geom_rep.get<std::string>( "Termination Cell Property" ); 
-    
+    std::string property_name =
+      geom_rep.get<std::string>( "Termination Cell Property" );
+
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
 			"Error: the termination cell property name cannot "
@@ -49,7 +49,7 @@ void DagMCInstanceFactory::initializeDagMC(
 
   if( geom_rep.isParameter( "Reflecting Surface Property" ) )
   {
-    std::string property_name = 
+    std::string property_name =
       geom_rep.get<std::string>( "Reflecting Surface Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
@@ -62,20 +62,20 @@ void DagMCInstanceFactory::initializeDagMC(
 
   if( geom_rep.isParameter( "Material Property" ) )
   {
-    std::string property_name = 
+    std::string property_name =
       geom_rep.get<std::string>( "Material Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
 			std::runtime_error,
 			"Error: the material property name cannot have an "
 			"underscore character!" );
-    
+
     DagMC::setMaterialPropertyName( property_name );
   }
 
   if( geom_rep.isParameter( "Density Property" ) )
   {
-    std::string property_name = 
+    std::string property_name =
       geom_rep.get<std::string>( "Density Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
@@ -85,10 +85,10 @@ void DagMCInstanceFactory::initializeDagMC(
 
     DagMC::setDensityPropertyName( property_name );
   }
-  
+
   if( geom_rep.isParameter( "Estimator Property" ) )
   {
-    std::string property_name = 
+    std::string property_name =
       geom_rep.get<std::string>( "Estimator Property" );
 
     TEST_FOR_EXCEPTION( property_name.find( "_" ) < property_name.size(),
@@ -115,7 +115,7 @@ void DagMCInstanceFactory::initializeDagMC(
   if( geom_rep.isParameter( "Surface Flux Name" ) )
   {
     std::string name = geom_rep.get<std::string>( "Surface Flux Name" );
-    
+
     TEST_FOR_EXCEPTION( name.find( "_" ) < name.size(),
 			std::runtime_error,
 			"Error: the surface flux name cannot have an "
@@ -173,7 +173,7 @@ void DagMCInstanceFactory::initializeDagMC(
 }
 
 // Validate a geometry representation
-void DagMCInstanceFactory::validateGeometryRep( 
+void DagMCInstanceFactory::validateGeometryRep(
 				       const Teuchos::ParameterList& geom_rep )
 {
   TEST_FOR_EXCEPTION( !geom_rep.isParameter( "Handler" ),
@@ -186,7 +186,7 @@ void DagMCInstanceFactory::validateGeometryRep(
 		      "Error: The geometry handler type is "
 		      << geom_rep.get<std::string>( "Handler" ) <<
 		      " and not DagMC!" );
-  
+
   TEST_FOR_EXCEPTION( !geom_rep.isParameter( "CAD File" ),
 		      InvalidGeometryRepresentation,
 		      "Error: The CAD file needs to be specified!" );

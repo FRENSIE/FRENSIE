@@ -2,7 +2,7 @@
 //!
 //! \file   endl_cs_xml_modifier.cpp
 //! \author Luke Kersting
-//! \brief  tool to modify the cross_section.xml file with endl data 
+//! \brief  tool to modify the cross_section.xml file with endl data
 //!
 //---------------------------------------------------------------------------//
 
@@ -23,8 +23,8 @@
 
 int main( int argc, char** argv )
 {
-  
-  Teuchos::RCP<Teuchos::FancyOStream> out = 
+
+  Teuchos::RCP<Teuchos::FancyOStream> out =
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
   // Set up the command line options
@@ -59,17 +59,17 @@ int main( int argc, char** argv )
   std::string cross_sections_xml_file = cross_section_directory;
   cross_sections_xml_file += "/cross_sections.xml";
 
-  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
+  Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info =
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
   // Get info from paramter list
   std::string new_cross_section_alias( cross_section_alias );
   new_cross_section_alias += "-ENDL";
 
-  Teuchos::ParameterList& old_table_info = 
+  Teuchos::ParameterList& old_table_info =
     cross_sections_table_info->sublist( cross_section_alias );
-    
-  Teuchos::ParameterList& new_table_info = 
+
+  Teuchos::ParameterList& new_table_info =
     cross_sections_table_info->sublist( new_cross_section_alias );
 
   new_table_info.setParameters( old_table_info );
@@ -83,38 +83,38 @@ int main( int argc, char** argv )
   std::string file_path = "endldata/";
   file_path += oss.str();
 
-  // photoatom info    
-  new_table_info.set( 
+  // photoatom info
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop,
     file_path );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop,
     MonteCarlo::CrossSectionsXMLProperties::endl_file );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
     -1 );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
     "" );
 
-  // electroatom info  
-  new_table_info.set( 
+  // electroatom info
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_path_prop,
     file_path );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_type_prop,
     MonteCarlo::CrossSectionsXMLProperties::endl_file );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::electroatomic_file_start_line_prop,
     -1 );
-  new_table_info.set( 
+  new_table_info.set(
     MonteCarlo::CrossSectionsXMLProperties::electroatomic_table_name_prop,
     "" );
 
-  Teuchos::writeParameterListToXmlFile( 
+  Teuchos::writeParameterListToXmlFile(
     *cross_sections_table_info,
     cross_sections_xml_file );
-							      
+
   return 0;
 }
 

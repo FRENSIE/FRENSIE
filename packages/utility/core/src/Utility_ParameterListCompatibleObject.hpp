@@ -31,7 +31,7 @@ public:
 
   //! Constructor
   ParameterListCompatibleObject();
-  
+
   //! Destructor
   virtual ~ParameterListCompatibleObject()
   { /* ... */ }
@@ -75,7 +75,7 @@ inline void ParameterListCompatibleObject<DerivedType>::unpackDataFromString(
 
 //! Stream operator for placing an object in an output stream
 template<typename DerivedType>
-inline std::ostream& operator<<( 
+inline std::ostream& operator<<(
 	       std::ostream &os,
 	       const Utility::ParameterListCompatibleObject<DerivedType> &obj )
 {
@@ -84,7 +84,7 @@ inline std::ostream& operator<<(
 
 //! Stream operator for initializing an object from a stream
 template<typename DerivedType>
-inline std::istream& operator>>( 
+inline std::istream& operator>>(
 			       std::istream &is,
 			       Utility::ParameterListCompatibleObject<DerivedType> &obj )
 {
@@ -99,9 +99,9 @@ inline bool operator==(const Utility::ParameterListCompatibleObject<DerivedTypeA
   if( Teuchos::TypeNameTraits<DerivedTypeA>::name() ==
       Teuchos::TypeNameTraits<DerivedTypeB>::name() )
   {
-    const DerivedTypeA& obj_b_derived = 
+    const DerivedTypeA& obj_b_derived =
       dynamic_cast<const DerivedTypeA&>( obj_b );
-    
+
     return obj_a.isEqual( obj_b_derived );
   }
   else

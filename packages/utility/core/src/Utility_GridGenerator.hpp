@@ -18,7 +18,7 @@ namespace Utility{
 template<typename InterpPolicy>
 class GridGenerator
 {
-  
+
 public:
 
   //! Constructor
@@ -32,10 +32,10 @@ public:
 
   //! Set the convergence tolerance
   void setConvergenceTolerance( const double convergence_tol );
-  
+
   //! Set the absolute difference tolerance
   void setAbsoluteDifferenceTolerance( const double absolute_diff_tol );
-  
+
   //! Set the distance tolerance
   void setDistanceTolerance( const double distance_tol );
 
@@ -43,9 +43,9 @@ public:
   template<typename STLCompliantContainer, typename Functor>
   void generateInPlace( STLCompliantContainer& grid,
 			const Functor& function ) const;
-  
+
   //! Generate the grid in place (return evaluated function on grid)
-  template<typename STLCompliantContainerA, 
+  template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
 	   typename Functor>
   void generateAndEvaluateInPlace( STLCompliantContainerA& grid,
@@ -53,7 +53,7 @@ public:
 				   const Functor& function ) const;
 
   //! Generate the grid
-  template<typename STLCompliantContainerA, 
+  template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
 	   typename Functor>
   void generate( STLCompliantContainerA& grid,
@@ -61,7 +61,7 @@ public:
 		 const Functor& evaluated_function ) const;
 
   //! Generate the linear grid (return evaluated function on grid)
-  template<typename STLCompliantContainerA, 
+  template<typename STLCompliantContainerA,
 	   typename STLCompliantContainerB,
 	   typename STLCompliantContainerC,
 	   typename Functor>
@@ -69,7 +69,7 @@ public:
 			    STLCompliantContainerB& evaluated_function,
 			    const STLCompliantContainerC& initial_grid_points,
 			    const Functor& function ) const;
-  
+
 private:
 
   // The convergence tolerance
@@ -79,7 +79,7 @@ private:
   double d_absolute_diff_tol;
 
   // The distance tolerance
-  double d_distance_tol;  
+  double d_distance_tol;
 };
 
 } // end Utility namespace

@@ -56,7 +56,7 @@ public:
 				      unsigned& trials ) const = 0;
 
   //! Randomly scatter the photon and return the shell that was interacted with
-  virtual void scatterAdjointPhoton( 
+  virtual void scatterAdjointPhoton(
 				AdjointPhotonState& adjoint_photon,
 				ParticleBank& bank,
 				Data::SubshellType& shell_of_interaction ) const = 0;

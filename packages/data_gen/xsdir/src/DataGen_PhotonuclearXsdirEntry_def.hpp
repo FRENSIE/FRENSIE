@@ -20,14 +20,14 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-PhotonuclearXsdirEntry::PhotonuclearXsdirEntry( 
+PhotonuclearXsdirEntry::PhotonuclearXsdirEntry(
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_atomic_number(),
     d_atomic_mass_number(),
     d_isomer_number( 0 ),
     d_alias()
-{ 
+{
   // Make sure the table type is valid
   testPrecondition( extractTableTypeFromEntryTokens( entry_tokens ) ==
 		    PHOTONUCLEAR_TABLE );
@@ -37,7 +37,7 @@ PhotonuclearXsdirEntry::PhotonuclearXsdirEntry(
   d_atomic_number = extractAtomicNumberFromZaid( zaid );
   d_atomic_mass_number = extractAtomicMassNumberFromZaid( zaid );
 
-  MonteCarlo::AtomType atom = 
+  MonteCarlo::AtomType atom =
     MonteCarlo::convertAtomicNumberToAtomTypeEnum( d_atomic_number );
 
   std::ostringstream oss;
@@ -46,8 +46,8 @@ PhotonuclearXsdirEntry::PhotonuclearXsdirEntry(
       << "-" << d_atomic_mass_number << "_v"
       << this->getTableVersion()/10;
 
-  d_alias = oss.str();  
-  
+  d_alias = oss.str();
+
   // Make sure the atomic number is valid
   testPostcondition( d_atomic_number > 0 );
   testPostcondition( d_atomic_number <= 100 );

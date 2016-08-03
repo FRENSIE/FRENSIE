@@ -3,7 +3,7 @@
 ## Geometry.Ray class unit tests
 #  \file   tstGeometry.Ray.py
 #  \author Alex Robinson
-#  \brief  Unit tests for the Geometry.Ray class 
+#  \brief  Unit tests for the Geometry.Ray class
 #-----------------------------------------------------------------------------#
 
 # System imports

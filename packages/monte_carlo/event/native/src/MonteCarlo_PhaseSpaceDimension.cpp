@@ -76,7 +76,7 @@ PhaseSpaceDimension convertUnsignedToPhaseSpaceDimensionEnum(
     return COLLISION_NUMBER_DIMENSION;
   default:
     THROW_EXCEPTION( std::logic_error,
-                     "Error: the raw dimension value " << dimension << 
+                     "Error: the raw dimension value " << dimension <<
                      " cannot be converted to a PhaseSpaceDimension enum!" );
   }
 }

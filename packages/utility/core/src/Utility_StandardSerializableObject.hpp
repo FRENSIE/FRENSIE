@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Utility_StandardSerializationObject.hpp
 //! \author Alex Robinson
 //! \brief  Standard serializable object base class declaration

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-//! 
+//!
 //! \file   Geometry_ModuleInterfaceDecl.hpp
 //! \author Alex Robinson
 //! \brief  Geometry module interface class declaration
@@ -22,7 +22,7 @@
  * \ingroup physics_simulation_modules
  *
  * The handling of a geometry used in particle tracking simulations has
- * been abstracted. This allows any of the geometry handling packages 
+ * been abstracted. This allows any of the geometry handling packages
  * currently available (i.e. DagMC, ROOT, etc) to be used in this software
  * without having to change other code modules. The other code modules only
  * interact with the generic geometry module interface that has been created.
@@ -39,12 +39,12 @@ struct UndefinedGeometryHandler
 };
 
 /*! \brief Default geometry module interface class
- * \ingroup geometry_module 
- * 
+ * \ingroup geometry_module
+ *
  * This struct specifies the interface to the geometry module. This class
- * must be specialized for a particular geometry handling package. Attempting 
- * to use this class without a specialization will result in a compile time 
- * error. The compile time error message is defined by the 
+ * must be specialized for a particular geometry handling package. Attempting
+ * to use this class without a specialization will result in a compile time
+ * error. The compile time error message is defined by the
  * Geometry::UndefinedGeometryHandler struct.
  */
 template<typename GeometryHandler>
@@ -54,7 +54,7 @@ class ModuleInterface
 public:
 
   //! Set the geometry handler instance
-  static inline void setHandlerInstance( 
+  static inline void setHandlerInstance(
                      const std::shared_ptr<GeometryHandler>& handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
@@ -65,7 +65,7 @@ public:
   //! Enable support for multiple threads
   static void enableThreadSupport( const unsigned num_threads )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
-  
+
   //! Check if a cell exists
   static inline bool doesCellExist(
                                   const ModuleTraits::InternalCellHandle cell )
@@ -82,25 +82,25 @@ public:
    * if an error occurs. These exceptions will be caught in the main
    * particle simulation algorithms and are used to indicate lost particles
    */
-  static inline void setInternalRay( 
-                            const Ray& ray, 
+  static inline void setInternalRay(
+                            const Ray& ray,
                             const ModuleTraits::InternalCellHandle start_cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   /*! Find the cell that contains a given start ray
    *
-   * A std::runtime_error (or class derived from it) must be thrown 
-   * if an error occurs. These exceptions will be caught in the main particle 
+   * A std::runtime_error (or class derived from it) must be thrown
+   * if an error occurs. These exceptions will be caught in the main particle
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline ModuleTraits::InternalCellHandle findCellContainingStartRay( 
+  static inline ModuleTraits::InternalCellHandle findCellContainingStartRay(
                                                                const Ray& ray )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   /*! Find the cell that contains the internal ray
    *
-   * A std::runtime_error (or class derived from it) must be thrown 
-   * if an error occurs. These exceptions will be caught in the main particle 
+   * A std::runtime_error (or class derived from it) must be thrown
+   * if an error occurs. These exceptions will be caught in the main particle
    * simulation algorithms and are used to indicate lost particles.
    */
    static inline ModuleTraits::InternalCellHandle findCellContainingInternalRay()
@@ -108,12 +108,12 @@ public:
 
   /*! Fire the internal ray through the geometry
    *
-   * A std::runtime_error (or class derived from it) must be thrown 
+   * A std::runtime_error (or class derived from it) must be thrown
    * if a ray tracing error occurs. These exceptions will be caught in the
-   * main particle simulation algorithms and are used to indicate lost 
+   * main particle simulation algorithms and are used to indicate lost
    * particles.
    */
-  static inline double fireInternalRay(                           
+  static inline double fireInternalRay(
                              ModuleTraits::InternalSurfaceHandle& surface_hit )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
@@ -121,17 +121,17 @@ public:
    *
    * If a reflecting surface is hit "true" will be returned.
    */
-  static inline bool advanceInternalRayToCellBoundary( 
+  static inline bool advanceInternalRayToCellBoundary(
                                                      double surface_normal[3] )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Advance the internal ray by a substep (less than distance to boundary)
-  static inline void advanceInternalRayBySubstep( const double step_size ) 
+  static inline void advanceInternalRayBySubstep( const double step_size )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Change the internal ray direction
   static inline void changeInternalRayDirection( const double direction[3] )
-  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }         
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   //! Get the internal ray position
   static inline const double* getInternalRayPosition()
@@ -142,17 +142,17 @@ public:
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Check if the cell is a termination cell
-  static inline bool isTerminationCell( 
+  static inline bool isTerminationCell(
                                   const ModuleTraits::InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   /*! Get the point location w.r.t. a given cell
    *
-   * A std::runtime_error (or class derived from it) must be thrown 
-   * if an error occurs. These exceptions will be caught in the main particle 
+   * A std::runtime_error (or class derived from it) must be thrown
+   * if an error occurs. These exceptions will be caught in the main particle
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline PointLocation getPointLocation( 
+  static inline PointLocation getPointLocation(
                                   const Ray& ray,
 				  const ModuleTraits::InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
@@ -163,7 +163,7 @@ template<typename GeometryHandler>
 void setGeometryHandlerInstance(
                      const std::shared_ptr<GeometryHandler>& handler_instance )
 {
-  Geometry::ModuleInterface<GeometryHandler>::setHandlerInstance( 
+  Geometry::ModuleInterface<GeometryHandler>::setHandlerInstance(
 							    handler_instance );
 }
 

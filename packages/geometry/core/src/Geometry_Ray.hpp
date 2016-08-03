@@ -22,7 +22,7 @@ class Ray : public Utility::PrintableObject
 {
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
@@ -47,7 +47,7 @@ public:
 
   //! Destructor
   ~Ray();
-  
+
   //! Return the x position of the ray
   double getXPosition() const;
 
@@ -90,7 +90,7 @@ private:
 
   // Default constructor
   Ray();
-  
+
   // Copy constructor
   Ray( const Ray& );
 

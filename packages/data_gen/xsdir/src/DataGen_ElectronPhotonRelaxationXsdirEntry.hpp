@@ -17,12 +17,12 @@ namespace DataGen{
 //! The electron-photon-relaxation xsdir entry
 class ElectronPhotonRelaxationXsdirEntry : public XsdirEntry
 {
-  
+
 public:
 
   //! Constructor
   template<typename STLCompliantContainer>
-  ElectronPhotonRelaxationXsdirEntry( 
+  ElectronPhotonRelaxationXsdirEntry(
 				   const STLCompliantContainer& entry_tokens );
 
   //! Destructor

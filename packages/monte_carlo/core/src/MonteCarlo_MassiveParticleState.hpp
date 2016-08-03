@@ -19,7 +19,7 @@ class MassiveParticleState : public ParticleState
 {
 
 private:
-  
+
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 

@@ -29,7 +29,7 @@ public:
   typedef Teuchos::Array<Utility::Pair<double,
 		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   AngularDistribution;
-  
+
   //! Constructor
   NuclearScatteringAngularDistribution( const AngularDistribution& dist );
 

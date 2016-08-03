@@ -4,14 +4,14 @@
     <Parameter name="Id" type="int" value="1"/>
 
     <Parameter name="Particle Type" type="string" value="Neutron"/>
-    
+
     <ParameterList name="Spatial Distribution">
       <Parameter name="Position" type="Array(double)" value="{0,0,0}"/>
     </ParameterList>
-    
-    <Parameter name="Energy Distribution" type="Delta Distribution" 
+
+    <Parameter name="Energy Distribution" type="Delta Distribution"
 	       value="{1}"/>
-    
+
     <Parameter name="Weight" type="double" value="0.2"/>
   </ParameterList>
 
@@ -19,15 +19,15 @@
     <Parameter name="Id" type="int" value="2"/>
 
     <Parameter name="Particle Type" type="string" value="Photon"/>
-    
+
     <ParameterList name="Spatial Distribution">
       <Parameter name="Position" type="Array(double)" value="{0,0,0}"/>
     </ParameterList>
-    
-    <Parameter name="Energy Distribution" type="Delta Distribution" 
+
+    <Parameter name="Energy Distribution" type="Delta Distribution"
 	       value="{2}"/>
-    
+
     <Parameter name="Weight" type="double" value="0.8"/>
   </ParameterList>
-  
+
 </ParameterList>

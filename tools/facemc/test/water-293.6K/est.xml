@@ -1,5 +1,5 @@
 <ParameterList name="Estimators">
-  
+
   <ParameterList name="Water Sphere Current">
     <Parameter name="Id" type="unsigned int" value="1"/>
     <Parameter name="Type" type="string" value="Surface Current"/>
@@ -43,5 +43,5 @@
       <Parameter name="Energy Bins" type="Array" value="{1e-11, 2l, 19.0}"/>
     </ParameterList>
   </ParameterList>
-  
+
 </ParameterList>
