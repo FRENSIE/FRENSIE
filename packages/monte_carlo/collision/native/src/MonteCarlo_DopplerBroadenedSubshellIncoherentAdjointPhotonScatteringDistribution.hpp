@@ -32,15 +32,15 @@ public:
 
   //! Constructor
   DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
-         const double max_energy,
-         const Data::SubshellType interaction_subshell,
-         const double num_electrons_in_subshell,
-         const double binding_energy,
-         const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number
-         const Teuchos::RCP<const ComptonProfile>& compton_profile );
+        const double max_energy,
+        const Data::SubshellType interaction_subshell,
+        const double num_electrons_in_subshell,
+        const double binding_energy,
+        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+        const Teuchos::RCP<const ComptonProfile>& compton_profile );
 
   //! Destructor
-  ~DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution();
+  ~DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Sample an outgoing energy and direction from the distribution

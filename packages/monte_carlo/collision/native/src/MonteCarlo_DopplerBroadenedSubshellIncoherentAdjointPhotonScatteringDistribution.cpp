@@ -8,22 +8,22 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_MonteCarlo_DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "ContractException.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution(
-         const double max_energy,
-         const Data::SubshellType interaction_subshell,
-         const double num_electrons_in_subshell,
-         const double binding_energy,
-         const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number
-         const Teuchos::RCP<const ComptonProfile>& compton_profile )
+        const double max_energy,
+        const Data::SubshellType interaction_subshell,
+        const double num_electrons_in_subshell,
+        const double binding_energy,
+        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+        const Teuchos::RCP<const ComptonProfile>& compton_profile )
   : SubshellIncoherentAdjointPhotonScatteringDistribution(
                                                      max_energy,
                                                      interaction_subshell,
@@ -37,15 +37,15 @@ DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBr
   // Make sure the max energy is valid
   testPrecondition( max_energy > binding_energy );
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
-  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell != Data::UNKNOWN_SUBSHELL );
   // Make sure the subshell occupancy is valid
   testPrecondition( num_electrons_in_subshell > 0.0 );
   // Make sure the occupation number is valid
   testPrecondition( !occupation_number.is_null() );
   testPrecondition( occupation_number->getLowerBoundOfIndepVar() == -1.0 );
   // Make sure the Compton profile is valid
-  testPrecondition( !compton_profile->is_null() );
+  testPrecondition( !compton_profile.is_null() );
   testPrecondition( compton_profile->getLowerBoundOfMomentum() ==
                     -1.0*Utility::Units::mec_momentum );
   testPrecondition( compton_profile->getUpperBoundOfMomentum() >=
@@ -60,7 +60,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() - this->getBindingEnergy() );
+  testPrecondition( incoming_energy <= this->getMaxEnergy() - this->getSubshellBindingEnergy() );
 
   unsigned trial_dummy;
 
@@ -79,7 +79,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() - this->getBindingEnergy() );
+  testPrecondition( incoming_energy <= this->getMaxEnergy() - this->getSubshellBindingEnergy() );
 
   // Sample the scattering angle
   SubshellIncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrials(
@@ -89,13 +89,20 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
                                                        trials );
 
   // Calculate the occupation number arguments
-  double pz_min, pz_max;
+  ComptonProfile::MomentumQuantity pz_min, pz_max;
   
-  this->calculateOccupationNumberArguments( incoming_energy,
-                                            outgoing_energy,
-                                            scattering_angle_cosine,
-                                            pz_min,
-                                            pz_max );
+  {
+    double raw_pz_min, raw_pz_max;
+  
+    this->calculateOccupationNumberArguments( incoming_energy,
+                                              outgoing_energy,
+                                              scattering_angle_cosine,
+                                              raw_pz_min,
+                                              raw_pz_max );
+
+    Utility::setQuantity( pz_min, raw_pz_min );
+    Utility::setQuantity( pz_max, raw_pz_max );
+  }
 
   // Sample the electron momentum projection
   ComptonProfile::MomentumQuantity pz =
@@ -104,7 +111,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
   // Calculate the doppler broadened adjoint photon energy
   bool energetically_possible;
 
-  calculateDopplerBroadenedEnergyAdjoint( pz,
+  calculateDopplerBroadenedEnergyAdjoint( pz.value(),
                                           incoming_energy,
                                           scattering_angle_cosine,
                                           energetically_possible );
@@ -136,9 +143,10 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
 {
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
-  testPrecondition( energy_of_interest <= d_max_energy );
+  testPrecondition( energy_of_interest <= this->getMaxEnergy() );
   // Make sure the adjoint photon energy is valid
-  testPrecondition( adjoint_photon.getEnergy() <= d_max_energy - this->getBindingEnergy() );
+  testPrecondition( adjoint_photon.getEnergy() <=
+                    this->getMaxEnergy() - this->getSubshellBindingEnergy() );
   // Make sure the energy of interest is in the scattering window
   testPrecondition( this->isEnergyInScatteringWindow( 
 						energy_of_interest,
@@ -163,7 +171,7 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
                                              scattering_angle_cosine );
     
     // Calculate pz corresponding to the energy of interest
-    const ComptonProfile::MomentumQuantity pz;
+    ComptonProfile::MomentumQuantity pz;
     Utility::setQuantity( pz, calculateElectronMomentumProjectionAdjoint(
                                                     adjoint_photon.getEnergy(),
                                                     energy_of_interest,
@@ -181,11 +189,11 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::crea
     
     // Calculate the probe weight multiplier
     const double weight_mult = pdf_conversion*
-      (d_compton_profile.evaluate( pz ).value()/adjoint_occupation_number);
+      (d_compton_profile->evaluate( pz ).value()/adjoint_occupation_number);
 
     // Create the probe with the desired energy and modified weight
-    Teuchos::RCP<AdjointPhotonProbe> probe(
-                                    new AdjointPhotonProbe( adjoint_photon ) );
+    Teuchos::RCP<AdjointPhotonProbeState> probe(
+                               new AdjointPhotonProbeState( adjoint_photon ) );
 
     probe->setEnergy( energy_of_interest );
     probe->rotateDirection( scattering_angle_cosine,

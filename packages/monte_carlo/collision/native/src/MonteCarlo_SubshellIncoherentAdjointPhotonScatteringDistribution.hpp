@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_AdjointPhotonKinematicHelpers.hpp"
+#include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ComptonProfile.hpp"
 
 namespace MonteCarlo{
@@ -104,6 +104,7 @@ private:
   // Calculate the occupation number upper argument
   double calculateOccupationNumberUpperArgument(
                                   const double incoming_energy,
+                                  const double max_energy,
                                   const double scattering_angle_cosine ) const;
 
   // The interaction subshell

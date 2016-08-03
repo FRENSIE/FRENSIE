@@ -10,6 +10,7 @@
 #define MONTE_CARLO_STANDARD_COMPTON_PROFILE_DEF_HPP
 
 // Std Lib Includes
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
