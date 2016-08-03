@@ -2,8 +2,8 @@
 
 <ParameterList name="Bare_Reactor">
     <Parameter name="Id" type="unsigned int" value="1"/>
-    <Parameter name="Fractions" type="Array" value="{0.95,0.05}"/>
-    <Parameter name="Isotopes" type="Array(string)" value="{U-235_293.6K_v8, U-238_293.6K_v8}"/>
+    <Parameter name="Fractions" type="Array" value="{1.00}"/>
+    <Parameter name="Isotopes" type="Array(string)" value="{U-235_293.6K_v8}"/>
 </ParameterList>
 
 </ParameterList>
