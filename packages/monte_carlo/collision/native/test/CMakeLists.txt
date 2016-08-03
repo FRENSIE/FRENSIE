@@ -53,6 +53,12 @@ TARGET_LINK_LIBRARIES(tstAceLaw44NuclearScatteringDistribution monte_carlo_colli
 ADD_TEST(AceLaw44NuclearScatteringDistribution_test
 tstAceLaw44NuclearScatteringDistribution)
 
+ADD_EXECUTABLE(tstAceLaw61NuclearScatteringDistribution
+  tstAceLaw61NuclearScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAceLaw61NuclearScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(AceLaw61NuclearScatteringDistribution_test
+tstAceLaw61NuclearScatteringDistribution)
+
 ADD_EXECUTABLE(tstLabSystemConversionPolicy
   tstLabSystemConversionPolicy.cpp)
 TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy monte_carlo_collision_native)
@@ -213,6 +219,11 @@ ADD_EXECUTABLE(tstStandardComptonProfile
   tstStandardComptonProfile.cpp)
 TARGET_LINK_LIBRARIES(tstStandardComptonProfile monte_carlo_collision_native)
 ADD_TEST(StandardComptonProfile_test tstStandardComptonProfile)
+
+ADD_EXECUTABLE(tstStandardOccupationNumber
+  tstStandardOccupationNumber.cpp)
+TARGET_LINK_LIBRARIES(tstStandardOccupationNumber monte_carlo_collision_native)
+ADD_TEST(StandardOccupationNumber_test tstStandardOccupationNumber)
 
 ADD_EXECUTABLE(tstStandardScatteringFunction
   tstStandardScatteringFunction.cpp)
@@ -381,16 +392,19 @@ ADD_EXECUTABLE(tstKleinNishinaAdjointPhotonScatteringDistribution
 TARGET_LINK_LIBRARIES(tstKleinNishinaAdjointPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(KleinNishinaAdjointPhotonScatteringDistribution_test tstKleinNishinaAdjointPhotonScatteringDistribution)
 
-# ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
-#   tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
-# TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
-# ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_EXECUTABLE(tstWHIncoherentAdjointPhotonScatteringDistribution
+  tstWHIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstWHIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(WHIncoherentAdjointPhotonScatteringDistribution_test tstWHIncoherentAdjointPhotonScatteringDistribution --test_ace_file="${GLOBAL_ACE_TEST_DATA_SOURCE_DIR}/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-##----------------------------------------------------------------------------##
+ADD_EXECUTABLE(tstSubshellIncoherentAdjointPhotonScatteringDistribution
+  tstSubshellIncoherentAdjointPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellIncoherentAdjointPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(SubshellIncoherentAdjointPhotonScatteringDistribution_test tstSubshellIncoherentAdjointPhotonScatteringDistribution --test_native_file="${GLOBAL_NATIVE_TEST_DATA_SOURCE_DIR}/test_epr_82_native.xml")
+
+##---------------------------------------------------------------------------##
 ##      electron class tests                                                  
-##----------------------------------------------------------------------------##
-
-
+##---------------------------------------------------------------------------##
 ##      electron distribution tests                                           
 ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
   tstHardElasticElectronScatteringDistribution.cpp)

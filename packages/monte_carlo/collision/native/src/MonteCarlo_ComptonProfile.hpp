@@ -51,7 +51,13 @@ public:
   virtual MomentumQuantity sample() const = 0;
 
   //! Sample from the Compton profile in a subrange
-  virtual MomentumQuantity sampleInSubrange( const MomentumQuantity momentum ) const = 0;
+  virtual MomentumQuantity sampleInSubrange(
+                             const MomentumQuantity upper_momentum ) const = 0;
+
+  //! Sample from the Compton profile in a subrange
+  virtual MomentumQuantity sampleInSubrange(
+                             const MomentumQuantity upper_momentum,
+                             const MomentumQuantity lower_momentum ) const = 0;
 
   //! Return the lower bound of the momentum
   virtual MomentumQuantity getLowerBoundOfMomentum() const = 0;

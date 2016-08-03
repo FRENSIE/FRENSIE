@@ -50,7 +50,13 @@ public:
   MomentumQuantity sample() const;
 
   //! Sample from the Compton profile in a subrange
-  MomentumQuantity sampleInSubrange( const MomentumQuantity momentum ) const;
+  MomentumQuantity sampleInSubrange(
+                                 const MomentumQuantity upper_momentum ) const;
+
+  //! Sample from the Compton profile in a subrange
+  MomentumQuantity sampleInSubrange(
+                                 const MomentumQuantity upper_momentum,
+                                 const MomentumQuantity lower_momentum ) const;
 
   //! Return the lower bound of the momentum
   MomentumQuantity getLowerBoundOfMomentum() const;

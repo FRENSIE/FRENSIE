@@ -8,25 +8,27 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <memory>
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_StandardScatteringFunction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_InverseAngstromUnit.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution> 
+std::shared_ptr<MonteCarlo::AdjointPhotonScatteringDistribution> 
   distribution;
 
 //---------------------------------------------------------------------------//
@@ -379,11 +381,11 @@ int main( int argc, char** argv )
 
   {
     // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
+    std::shared_ptr<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-    Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+    std::shared_ptr<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
@@ -405,12 +407,14 @@ int main( int argc, char** argv )
       std::cout << recoil_momentum[i] << " " << scat_func_values[i] << std::endl;
     }
 
-    Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-	  new Utility::TabularDistribution<Utility::LinLin>( 
+    std::shared_ptr<Utility::UnitAwareOneDDistribution<Utility::Units::InverseAngstrom,void> > raw_scattering_function(
+    new Utility::UnitAwareTabularDistribution<Utility::LinLin,Utility::Units::InverseAngstrom,void>( 
 							  recoil_momentum,
 			                                  scat_func_values ) );
-  
-  
+
+  std::shared_ptr<MonteCarlo::ScatteringFunction> scattering_function(
+      new MonteCarlo::StandardScatteringFunction<Utility::Units::InverseAngstrom>( raw_scattering_function ) );
+    
     // Create the scattering distribution
     Teuchos::ArrayRCP<double> critical_line_energies( 3 );
     
@@ -419,7 +423,7 @@ int main( int argc, char** argv )
       Utility::PhysicalConstants::electron_rest_mass_energy;
     critical_line_energies[2] = 1.0;
 
-    Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+    std::shared_ptr<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
     incoherent_base_dist( 
               new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution( 
 						       20.0,
