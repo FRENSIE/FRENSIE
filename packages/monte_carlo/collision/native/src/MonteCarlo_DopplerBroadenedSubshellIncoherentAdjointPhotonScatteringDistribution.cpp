@@ -42,7 +42,7 @@ DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::DopplerBr
   // Make sure the subshell occupancy is valid
   testPrecondition( num_electrons_in_subshell > 0.0 );
   // Make sure the occupation number is valid
-  testPrecondition( !occupation_number.get() );
+  testPrecondition( occupation_number.get() );
   testPrecondition( occupation_number->getLowerBoundOfMomentum() ==
                     -1.0*Utility::Units::mec_momentum );
   // Make sure the Compton profile is valid
@@ -96,26 +96,27 @@ void DopplerBroadenedSubshellIncoherentAdjointPhotonScatteringDistribution::samp
     double raw_pz_min, raw_pz_max;
   
     this->calculateOccupationNumberArguments( incoming_energy,
-                                              outgoing_energy,
+                                              this->getMaxEnergy(),
                                               scattering_angle_cosine,
                                               raw_pz_min,
                                               raw_pz_max );
 
-    Utility::setQuantity( pz_min, raw_pz_min );
-    Utility::setQuantity( pz_max, raw_pz_max );
+    pz_min = raw_pz_min*Utility::Units::mec_momentum;
+    pz_max = raw_pz_max*Utility::Units::mec_momentum;
   }
 
   // Sample the electron momentum projection
   ComptonProfile::MomentumQuantity pz =
     d_compton_profile->sampleInSubrange( pz_max, pz_min );
-
+  
   // Calculate the doppler broadened adjoint photon energy
   bool energetically_possible;
 
-  calculateDopplerBroadenedEnergyAdjoint( pz.value(),
-                                          incoming_energy,
-                                          scattering_angle_cosine,
-                                          energetically_possible );
+  outgoing_energy = 
+    calculateDopplerBroadenedEnergyAdjoint( pz.value(),
+                                            incoming_energy,
+                                            scattering_angle_cosine,
+                                            energetically_possible );
 
   // Make sure the outgoing energy was energetically possible
   testPostcondition( energetically_possible );
